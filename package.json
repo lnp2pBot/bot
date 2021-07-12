@@ -5,7 +5,7 @@
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./app"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,5 +15,12 @@
     "lightning": "^3.3.11",
     "mongoose": "^5.12.14",
     "telegraf": "^4.3.0"
-  }
+  },
+  "keywords": [
+    "lightning",
+    "telegram",
+    "bot",
+    "p2p",
+    "network"
+  ]
 }
