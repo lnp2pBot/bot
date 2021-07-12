@@ -6,7 +6,7 @@ Telegram bot which allows to people to trade using lightning network with other 
 ## Creting a sell order
 1. Alice tells to the bot that she wants to sell 5000 sats by **n** fiat amount.
 2. The bot send to alice a hold-invoice, Alice has to pay a hold-invoice of 5000 sats to the bot, this invoice is "pending", the money is not accepted or rejected by the bot at that moment.
-3. After the bot detects Alices pay the invoice the offer is published on the channel.
+3. After the bot detects that Alice paid the invoice, the offer is published on the channel.
 4. Bob accepts the offer for 5000 sats
 5. The bot put in contact Bob and Alice.
 6. Bob sends the fiat money via bank transfer and also sends a new LN invoice for 5000 sats to the bot
