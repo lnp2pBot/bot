@@ -83,7 +83,7 @@ const start = () => {
       if (!(await validateTakeSellOrder(bot, user, invoice, order))) return;
 
       order.status = 'ACTIVE';
-      order.buyerId = user._id;
+      order.buyer_id = user._id;
       order.buyer_invoice = lnInvoice;
       await order.save();
 

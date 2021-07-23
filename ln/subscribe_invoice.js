@@ -33,7 +33,7 @@ const subscribeInvoice = async (ctx, bot, id) => {
           // el bot envia un mensaj
           const orderUser = await User.findOne({ _id: order.creator_id });
           if (order.type === 'sell') {
-            const buyerUser = await User.findOne({ _id: order.buyerId });
+            const buyerUser = await User.findOne({ _id: order.buyer_id });
             await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
             buyerUser.trades_completed++;
             buyerUser.save();

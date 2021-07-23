@@ -4,9 +4,9 @@ const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
-  const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
   try {
     if (type === 'sell') {
+      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const invoiceDescription = `Venta por @P2PLNBot`;
       const { request, hash, secret } = await createHoldInvoice({
         amount: amount + amount * process.env.FEE,
@@ -35,12 +35,12 @@ const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, 
         return { request, order };
       }
     } else {
-      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nRecibo pago por ${paymentMethod}`;
+      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const order = new Order({
         description,
         amount,
         creator_id: buyer._id,
-        buyerId: buyer._id,
+        buyer_id: buyer._id,
         type,
         fiat_amountrice: fiatAmount,
         fiat_code: fiatCode,
