@@ -1,3 +1,4 @@
+const { parsePaymentRequest } = require('invoices');
 const messages = require('./messages');
 const { Order, User } = require('../models');
 
@@ -26,6 +27,11 @@ const validateSellOrder = async (ctx, bot, user) => {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
+  const [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
+  if (!Number.isInteger(amount)) return false;
+  if (isNaN(fiatAmount)) return false;
+  if (fiatCode.length != 3) return false;
+
   return sellOrderParams;
 };
 
@@ -35,8 +41,19 @@ const validateBuyOrder = async (ctx, bot, user) => {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
+  const [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
+  if (!Number.isInteger(amount)) return false;
+  if (isNaN(fiatAmount)) return false;
+  if (fiatCode.length != 3) return false;
 
-  const invoice = buyOrderParams[5];
+  const invoice = parsePaymentRequest({ request: lnInvoice });
+  if (invoice.tokens != amount) {
+    await messages.amountMustTheSameInvoiceMessage(bot, user, amount);
+    return false;
+  }
+
+  if (!(await validateInvoice(bot, user, invoice))) return;
+
   const order = await Order.findOne({ buyer_invoice: invoice });
   if (order) {
     await messages.repeatedInvoiceMessage(bot, user);
@@ -46,32 +63,33 @@ const validateBuyOrder = async (ctx, bot, user) => {
   return buyOrderParams;
 };
 
-const validateBuyInvoice = async (bot, user, invoice, amount) => {
+const validateInvoice = async (bot, user, invoice) => {
   const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
   if (invoice.tokens < 100) {
     await messages.minimunAmountInvoiceMessage(bot, user);
     return false;
   }
-  if (invoice.tokens != amount) {
-    await messages.amountMustTheSameInvoiceMessage(bot, user, amount);
-    return false;
-  }
+
   if (new Date(invoice.expires_at) < latestDate) {
     await messages.minimunExpirationTimeInvoiceMessage(bot, user);
     return false;
   }
+
   if (invoice.is_expired !== false) {
     await messages.expiredInvoiceMessage(bot, user);
     return false;
   }
+
   if (!invoice.destination) {
     await messages.requiredAddressInvoiceMessage(bot, user);
     return false;
   }
+
   if (!invoice.id) {
     await messages.requiredHashInvoiceMessage(bot, user);
     return false;
   }
+
   return true;
 };
 
@@ -81,29 +99,19 @@ const validateTakeSell = async (ctx, bot, user) => {
     await messages.takeSellCorrectFormatMessage(bot, user);
     return false;
   }
+  const [_, orderId, lnInvoice] = takeSellParams;
+  const invoice = parsePaymentRequest({ request: lnInvoice });
+
+  if (!(await validateInvoice(bot, user, invoice))) return;
+
   return takeSellParams;
 };
 
-const validateTakeSellOrder = async (bot, user, invoice, order) => {
+const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
+  const invoice = parsePaymentRequest({ request: lnInvoice });
   const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
   if (invoice.tokens !== order.amount) {
     await messages.amountMustTheSameInvoiceMessage(bot, user, order.amount);
-    return false;
-  }
-  if (new Date(invoice.expires_at) < latestDate) {
-    await messages.minimunExpirationTimeInvoiceMessage(bot, user);
-    return false;
-  }
-  if (invoice.is_expired !== false) {
-    await messages.expiredInvoiceMessage(bot, user);
-    return false;
-  }
-  if (!invoice.destination) {
-    await messages.requiredAddressInvoiceMessage(bot, user);
-    return false;
-  }
-  if (!invoice.id) {
-    await messages.requiredHashInvoiceMessage(bot, user);
     return false;
   }
   if (!order) {
@@ -177,7 +185,7 @@ module.exports = {
   validateSellOrder,
   validateBuyOrder,
   validateUser,
-  validateBuyInvoice,
+  validateInvoice,
   validateTakeSell,
   validateTakeSellOrder,
   validateTakeBuy,

@@ -258,7 +258,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
     const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando 👇`;
-    const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
+    const publishMessage2 = `/takesell ${order._id} <lightning_invoice amount = ${order.amount}>`;
 
     // Mensaje al canal
     order.tg_channel_message1 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage)).message_id;

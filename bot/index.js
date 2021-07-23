@@ -1,5 +1,4 @@
 const { Telegraf } = require('telegraf');
-const { parsePaymentRequest } = require('invoices');
 const { Order, User } = require('../models');
 const { createOrder } = require('./createOrders');
 const { settleHoldInvoice, createHoldInvoice, subscribeInvoice } = require('../ln');
@@ -20,7 +19,11 @@ const start = () => {
 
     const sellOrderParams = await validateSellOrder(ctx, bot, user);
 
-    if (!sellOrderParams) return;
+    if (!sellOrderParams) {
+      await messages.invalidDataMessage(bot, user);
+
+      return;
+    };
 
     const [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
 
@@ -41,13 +44,14 @@ const start = () => {
     if (!user) return;
 
     const buyOrderParams = await validateBuyOrder(ctx, bot, user);
-    if (!buyOrderParams) return;
+
+    if (!buyOrderParams) {
+      await messages.invalidDataMessage(bot, user);
+
+      return;
+    };
 
     const [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
-
-    // validamos la invoice
-    const invoice = parsePaymentRequest({ request: lnInvoice });
-    if (!(await validateBuyInvoice(bot, user, invoice, amount))) return;
 
     const { order } = await createOrder(ctx, bot, {
       type: 'buy',
@@ -76,10 +80,8 @@ const start = () => {
     const [_, orderId, lnInvoice] = takeSellParams;
 
     try {
-      // validamos la invoice
-      const invoice = parsePaymentRequest({ request: lnInvoice });
       const order = await Order.findOne({ _id: orderId });
-      if (!(await validateTakeSellOrder(bot, user, invoice, order))) return;
+      if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
 
       order.status = 'ACTIVE';
       order.buyer_id = user._id;
