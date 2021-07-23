@@ -20,9 +20,10 @@ const OrderSchema = new mongoose.Schema({
   fiat_code: { type: String },
   payment_method: { type: String },
   created_at: { type: Date, default: Date.now },
+  tg_chatID: { type: String },
+  tg_order_message: { type: String },
   tg_channel_message1: { type: String },
   tg_channel_message2: { type: String },
-  tg_chatID: { type: String },
   tg_group_message1: { type: String },
   tg_group_message2: { type: String },
 });

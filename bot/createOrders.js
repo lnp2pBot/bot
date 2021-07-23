@@ -3,7 +3,8 @@ const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
 const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
-  const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}`;
+  const trades = type == 'sell' ? seller.tradesCompleted : buyer.tradesCompleted;
+  const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
   try {
     if (type === 'sell') {
       const invoiceDescription = `Venta por @P2PLNBot`;
@@ -25,6 +26,7 @@ const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, 
           payment_method: paymentMethod,
           buyerInvoice,
           tg_chatID: ctx.message.chat.id,
+          tg_order_message: ctx.message.message_id,
         });
         await order.save();
         // monitoreamos esa invoice para saber cuando el usuario realice el pago
@@ -46,6 +48,7 @@ const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, 
         buyerInvoice,
         status,
         tg_chatID: ctx.message.chat.id,
+        tg_order_message: ctx.message.message_id,
       });
       await order.save();
 

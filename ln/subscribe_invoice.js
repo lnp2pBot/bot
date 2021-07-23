@@ -16,7 +16,6 @@ const subscribeInvoice = async (ctx, bot, id) => {
           const orderUser = await User.findOne({ _id: order.creatorId });
 
           messages.publishSellOrderMessage(ctx, bot, order);
-
           messages.pendingSellMessage(bot, orderUser);
         } else if (order.type === 'buy') {
           const orderUser = await User.findOne({ _id: order.creatorId });
@@ -36,10 +35,16 @@ const subscribeInvoice = async (ctx, bot, id) => {
           if (order.type === 'sell') {
             const buyerUser = await User.findOne({ _id: order.buyerId });
             await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
+            buyerUser.tradesCompleted++;
+            buyerUser.save();
           } else if (order.type === 'buy') {
             const sellerUser = await User.findOne({ _id: order.sellerId });
             await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
+            sellerUser.tradesCompleted++;
+            sellerUser.save();
           }
+          orderUser.tradesCompleted++;
+          orderUser.save();
         } else {
           // TODO: guardo esto en una tabla de pagos pendientes,
           // puedo correr luego un cronjob que haga estos pagos cada cierto tiempo

@@ -85,8 +85,8 @@ const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) =
   await bot.telegram.sendMessage(sellerUser.tg_id, `Por favor paga esta invoice al bot para comenzar tu venta con el comprador:`);
   await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
 
-  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} procesada ✅`);
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, `Orden ${order._id} procesada ✅`);
+  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
+  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_chatID, order.tg_group_message2, null, `${order._id} procesada ✅`);
 };
 
 const onGoingTakeBuyMessage = async (bot, orderUser, sellerUser, order) => {
@@ -105,8 +105,8 @@ const beginTakeSellMessage = async (bot, orderUser, buyerUser, order) => {
   await bot.telegram.sendMessage(orderUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por FIAT.\n\nUna vez confirmes su pago FIAT debes liberar los fondos con el comando:`);
   await bot.telegram.sendMessage(orderUser.tg_id, `/release ${order._id}`);
 
-  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} procesada ✅`);
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, `Orden ${order._id} procesada ✅`);
+  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
+  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_chatID, order.tg_group_message2, null, `${order._id} procesada ✅`);
 };
 
 const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {
@@ -127,7 +127,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 };
 
 const publishBuyOrderMessage = async (ctx, bot, order) => {
-  const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando:`;
+  const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando 👇`;
   const publishMessage2 = `/takebuy ${order._id}`;
 
   // Mensaje al canal
@@ -136,7 +136,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
   // Mensaje al grupo origen en caso de haber
   if (ctx.message.chat.type != 'private') {
-    order.tg_group_message1 = (await ctx.reply(publishMessage)).message_id;
+    order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
     order.tg_group_message2 = (await ctx.reply(publishMessage2)).message_id;
   }
 
@@ -144,7 +144,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 };
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
-  const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando:`;
+  const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando 👇`;
   const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
 
   // Mensaje al canal
@@ -153,7 +153,7 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
 
   // Mensaje al grupo origen en caso de haber
   if (ctx.message.chat.type != 'private') {
-    order.tg_group_message1 = (await ctx.reply(publishMessage)).message_id;
+    order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
     order.tg_group_message2 = (await ctx.reply(publishMessage2)).message_id;
   }
 
