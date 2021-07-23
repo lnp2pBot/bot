@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   last_name: { type: String },
   lang: { type: String, default: 'ESP' },
   balance: { type: Number, default: 0, min: 0 },
-  tradesCompleted: { type: Number, default: 0 },
+  trades_completed: { type: Number, default: 0 },
   created_at: { type: Date, default: Date.now },
 });
 

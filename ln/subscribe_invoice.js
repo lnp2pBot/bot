@@ -35,15 +35,15 @@ const subscribeInvoice = async (ctx, bot, id) => {
           if (order.type === 'sell') {
             const buyerUser = await User.findOne({ _id: order.buyerId });
             await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
-            buyerUser.tradesCompleted++;
+            buyerUser.trades_completed++;
             buyerUser.save();
           } else if (order.type === 'buy') {
             const sellerUser = await User.findOne({ _id: order.seller_id });
             await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
-            sellerUser.tradesCompleted++;
+            sellerUser.trades_completed++;
             sellerUser.save();
           }
-          orderUser.tradesCompleted++;
+          orderUser.trades_completed++;
           orderUser.save();
         } else {
           // TODO: guardo esto en una tabla de pagos pendientes,

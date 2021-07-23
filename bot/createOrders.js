@@ -3,7 +3,7 @@ const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
 const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
-  const trades = type == 'sell' ? seller.tradesCompleted : buyer.tradesCompleted;
+  const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
   try {
     if (type === 'sell') {
