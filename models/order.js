@@ -5,10 +5,10 @@ const OrderSchema = new mongoose.Schema({
   amount: { type: Number, min: 100 }, // amount in satoshis
   hash: { type: String, unique: true }, // hold invoice hash
   secret: { type: String, unique: true }, // hold invoice secret
-  creatorId: { type: String },
-  sellerId: { type: String },
-  buyerId: { type: String },
-  buyerInvoice: { type: String },
+  creator_id: { type: String },
+  seller_id: { type: String },
+  buyer_id: { type: String },
+  buyer_invoice: { type: String },
   status: {
     type: String,
     enum: ['WAITING_PAYMENT', 'PENDING', 'ACTIVE', 'CLOSED'],
@@ -20,7 +20,7 @@ const OrderSchema = new mongoose.Schema({
   fiat_code: { type: String },
   payment_method: { type: String },
   created_at: { type: Date, default: Date.now },
-  tg_chatID: { type: String },
+  tg_chat_id: { type: String },
   tg_order_message: { type: String },
   tg_channel_message1: { type: String },
   tg_channel_message2: { type: String },

@@ -13,13 +13,13 @@ const subscribeInvoice = async (ctx, bot, id) => {
           // paso la orden a pending
           order.status = 'PENDING';
           order.save();
-          const orderUser = await User.findOne({ _id: order.creatorId });
+          const orderUser = await User.findOne({ _id: order.creator_id });
 
           messages.publishSellOrderMessage(ctx, bot, order);
           messages.pendingSellMessage(bot, orderUser);
         } else if (order.type === 'buy') {
-          const orderUser = await User.findOne({ _id: order.creatorId });
-          const sellerUser = await User.findOne({ _id: order.sellerId });
+          const orderUser = await User.findOne({ _id: order.creator_id });
+          const sellerUser = await User.findOne({ _id: order.seller_id });
 
           await messages.onGoingTakeBuyMessage(bot, orderUser, sellerUser, order);
         }
@@ -28,17 +28,17 @@ const subscribeInvoice = async (ctx, bot, id) => {
         const order = await Order.findOne({ hash: invoice.id });
         order.status = 'CLOSED';
         order.save();
-        const payment = await pay({ lnd, request: order.buyerInvoice });
+        const payment = await pay({ lnd, request: order.buyer_invoice });
         if (payment.is_confirmed) {
           // el bot envia un mensaj
-          const orderUser = await User.findOne({ _id: order.creatorId });
+          const orderUser = await User.findOne({ _id: order.creator_id });
           if (order.type === 'sell') {
             const buyerUser = await User.findOne({ _id: order.buyerId });
             await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
             buyerUser.tradesCompleted++;
             buyerUser.save();
           } else if (order.type === 'buy') {
-            const sellerUser = await User.findOne({ _id: order.sellerId });
+            const sellerUser = await User.findOne({ _id: order.seller_id });
             await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
             sellerUser.tradesCompleted++;
             sellerUser.save();

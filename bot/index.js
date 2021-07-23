@@ -57,7 +57,7 @@ const start = () => {
       fiatAmount,
       fiatCode,
       paymentMethod,
-      buyerInvoice: lnInvoice || '',
+      buyer_invoice: lnInvoice || '',
       status: 'PENDING',
     });
 
@@ -84,10 +84,10 @@ const start = () => {
 
       order.status = 'ACTIVE';
       order.buyerId = user._id;
-      order.buyerInvoice = lnInvoice;
+      order.buyer_invoice = lnInvoice;
       await order.save();
 
-      const orderUser = await User.findOne({ _id: order.creatorId });
+      const orderUser = await User.findOne({ _id: order.creator_id });
       await messages.beginTakeSellMessage(bot, orderUser, user, order);
     } catch (e) {
       console.log(e);
@@ -115,13 +115,13 @@ const start = () => {
       order.hash = hash;
       order.secret = secret;
       order.status = 'ACTIVE';
-      order.sellerId = user._id;
+      order.seller_id = user._id;
       await order.save();
 
       // monitoreamos esa invoice para saber cuando el usuario realice el pago
-      await subscribeInvoice(ctx, bot, request);
+      await subscribeInvoice(ctx, bot, hash);
 
-      const orderUser = await User.findOne({ _id: order.creatorId });
+      const orderUser = await User.findOne({ _id: order.creator_id });
       await messages.beginTakeBuyMessage(bot, user, orderUser, request, order);
     } catch (e) {
       console.log(e);

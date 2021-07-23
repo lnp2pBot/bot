@@ -86,7 +86,7 @@ const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) =
   await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
 
   await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_chatID, order.tg_group_message2, null, `${order._id} procesada ✅`);
+  if (order.tg_chat_id < 0) await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
 };
 
 const onGoingTakeBuyMessage = async (bot, orderUser, sellerUser, order) => {
@@ -106,7 +106,7 @@ const beginTakeSellMessage = async (bot, orderUser, buyerUser, order) => {
   await bot.telegram.sendMessage(orderUser.tg_id, `/release ${order._id}`);
 
   await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_chatID, order.tg_group_message2, null, `${order._id} procesada ✅`);
+  if (order.tg_chat_id < 0) await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
 };
 
 const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {

@@ -37,7 +37,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
   }
 
   const invoice = buyOrderParams[5];
-  const order = await Order.findOne({ buyerInvoice: invoice });
+  const order = await Order.findOne({ buyer_invoice: invoice });
   if (order) {
     await messages.repeatedInvoiceMessage(bot, user);
     return false;
@@ -157,7 +157,7 @@ const validateRelease = async (ctx, bot, user) => {
 
 const validateReleaseOrder = async (bot, user, orderId) => {
   const where = {
-    sellerId: user._id,
+    seller_id: user._id,
     status: 'ACTIVE',
   };
 
