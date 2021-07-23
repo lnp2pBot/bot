@@ -1,46 +1,14 @@
-const { Order, User } = require('../models');
+const { Order } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
-// busca en base de datos si el usuario de telegram existe,
-// si no lo encuentra lo crea
-const getUser = async tgUser => {
-  let user = await User.findOne({ tg_id: tgUser.id });
-  if (!user) {
-    user = new User({
-      tg_id: tgUser.id,
-      username: tgUser.username,
-      first_name: tgUser.first_name,
-      last_name: tgUser.last_name,
-    });
-    await user.save();
-  }
-  return user;
-};
-
-const createOrder = async ({
-  type,
-  amount,
-  seller,
-  buyer,
-  fiatAmount,
-  fiatCode,
-  paymentMethod,
-  buyerInvoice,
-  status,
-}) => {
-  const action = type == 'sell' ? 'Vendo' : 'Compro';
-  const description = `${action} ${amount} sats
-por ${fiatCode} ${fiatAmount}
-Pago por ${paymentMethod}`;
+const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
+  const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
+  const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}`;
   try {
     if (type === 'sell') {
       const invoiceDescription = `Venta por @P2PLNBot`;
-      const {
-        request,
-        hash,
-        secret,
-      } = await createHoldInvoice({
-        amount: amount + (amount * process.env.FEE),
+      const { request, hash, secret } = await createHoldInvoice({
+        amount: amount + amount * process.env.FEE,
         description: invoiceDescription,
       });
       if (!!hash) {
@@ -56,17 +24,16 @@ Pago por ${paymentMethod}`;
           fiat_code: fiatCode,
           payment_method: paymentMethod,
           buyerInvoice,
+          tg_chatID: ctx.message.chat.id,
         });
         await order.save();
         // monitoreamos esa invoice para saber cuando el usuario realice el pago
-        await subscribeInvoice(hash);
+        await subscribeInvoice(ctx, bot, hash);
 
         return { request, order };
       }
     } else {
-      const description = `${action} ${amount} sats
-por ${fiatCode} ${fiatAmount}
-Recibo pago por ${paymentMethod}`;
+      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nRecibo pago por ${paymentMethod}`;
       const order = new Order({
         description,
         amount,
@@ -78,18 +45,17 @@ Recibo pago por ${paymentMethod}`;
         payment_method: paymentMethod,
         buyerInvoice,
         status,
+        tg_chatID: ctx.message.chat.id,
       });
       await order.save();
 
       return { order };
     }
-
   } catch (e) {
     console.log(e);
   }
 };
 
 module.exports = {
-  getUser,
   createOrder,
 };
