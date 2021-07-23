@@ -13,7 +13,8 @@ const initBotErrorMessage = async (ctx) => {
 };
 
 const invoicePaymentRequestMessage = async (bot, user, request) => {
-  await bot.telegram.sendMessage(user.tg_id, `Por favor paga esta invoice para comenzar la venta:\n\n ${request}`);
+  await bot.telegram.sendMessage(user.tg_id, `Por favor paga esta invoice para comenzar la venta:`);
+  await bot.telegram.sendMessage(user.tg_id, `${request}`);
 };
 
 const pendingSellMessage = async (bot, user) => {
@@ -84,31 +85,33 @@ const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) =
   await bot.telegram.sendMessage(sellerUser.tg_id, `Por favor paga esta invoice al bot para comenzar tu venta con el comprador:`);
   await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
 
-  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, 'Orden procesada ✅');
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, 'Orden procesada ✅');
+  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} procesada ✅`);
+  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, `Orden ${order._id} procesada ✅`);
 };
 
 const onGoingTakeBuyMessage = async (bot, orderUser, sellerUser, order) => {
-  await bot.telegram.sendMessage(sellerUser.tg_id, `Pago recibido!\n\nPonte en contacto con el usuario @${orderUser.username} para darle los detalles de metodo de pago FIAT que te hara. Una vez confirmes su pago FIAT debes liberar los fondos con el comando /release ${order._id}`);
+  await bot.telegram.sendMessage(sellerUser.tg_id, `Pago recibido!\n\nPonte en contacto con el usuario @${orderUser.username} para darle los detalles de metodo de pago FIAT que te hara. Una vez confirmes su pago FIAT debes liberar los fondos con el comando:`);
+  await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
   await bot.telegram.sendMessage(orderUser.tg_id, `El usuario @${sellerUser.username} ha tomado tu compra y te quiere vender sats. Comunicate con el para que le hagas el pago por FIAT y te libere sus sats. `);
 };
 
 const doneTakeBuyMessage = async (bot, orderUser, sellerUser) => {
-  await bot.telegram.sendMessage(sellerUser.tg_id, `Confirmaste el pago FIAT del comprador @${orderUser.username} y has vendido exitosamente tus sats  ⚡️🍊⚡️`);
-  await bot.telegram.sendMessage(orderUser.tg_id, `Tu compra de sats ha sido completada exitosamente con @${sellerUser.username} tras confirmar tu pago FIAT y ya he pagado tu invoice,  que disfrutes tus sats ⚡️🍊⚡️`);
+  await bot.telegram.sendMessage(sellerUser.tg_id, `Confirmaste el pago FIAT del comprador @${orderUser.username} y has vendido exitosamente tus sats\n⚡️🍊⚡️`);
+  await bot.telegram.sendMessage(orderUser.tg_id, `Tu compra de sats ha sido completada exitosamente con @${sellerUser.username} tras confirmar tu pago FIAT y ya he pagado tu invoice,  que disfrutes tus sats\n⚡️🍊⚡️`);
 };
 
 const beginTakeSellMessage = async (bot, orderUser, buyerUser, order) => {
-  await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${orderUser.username} para que te de detalle de como enviarle el dinero fiat.\n\n Cuando el usuario @${orderUser.username} confirme que recibió tu pago FIAT, estaré liberando tus sats.`);
-  await bot.telegram.sendMessage(orderUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por FIAT.\n\nUna vez confirmes su pago FIAT debes liberar los fondos con el comando /release ${order._id}`);
+  await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${orderUser.username} para que te de detalle de como enviarle el dinero fiat.\n\nCuando el usuario @${orderUser.username} confirme que recibió tu pago FIAT, estaré liberando tus sats.`);
+  await bot.telegram.sendMessage(orderUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por FIAT.\n\nUna vez confirmes su pago FIAT debes liberar los fondos con el comando:`);
+  await bot.telegram.sendMessage(orderUser.tg_id, `/release ${order._id}`);
 
-  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, 'Orden procesada ✅');
-  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, 'Orden procesada ✅');
+  await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} procesada ✅`);
+  if (order.tg_chatID < 0) await bot.telegram.editMessageText(order.tg_groupID, order.tg_group_message2, null, `Orden ${order._id} procesada ✅`);
 };
 
 const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {
-  await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor @${orderUser.username} nos indicó que recibió tu pago FIAT y he pagado tu invoice, que disfrutes tus sats ⚡️🍊⚡️`);
-  await bot.telegram.sendMessage(orderUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago FIAT de  @${buyerUser.username}  ⚡️🍊⚡️`);
+  await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor @${orderUser.username} nos indicó que recibió tu pago FIAT y he pagado tu invoice, que disfrutes tus sats\n⚡️🍊⚡️`);
+  await bot.telegram.sendMessage(orderUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago FIAT de  @${buyerUser.username}\n⚡️🍊⚡️`);
 };
 
 const releaseCorrectFormatMessage = async (bot, user) => {
