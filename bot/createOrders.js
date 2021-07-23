@@ -2,6 +2,7 @@ const { Order } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
 const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
+  amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   try {
@@ -9,7 +10,7 @@ const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, 
       const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const invoiceDescription = `Venta por @P2PLNBot`;
       const { request, hash, secret } = await createHoldInvoice({
-        amount: amount + amount * process.env.FEE,
+        amount: amount + amount * parseFloat(process.env.FEE),
         description: invoiceDescription,
       });
       if (!!hash) {

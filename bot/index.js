@@ -7,7 +7,6 @@ const { validateSellOrder, validateUser, validateBuyOrder, validateTakeSell, val
 const messages = require('./messages');
 
 const start = () => {
-  console.log(process.env.BOT_TOKEN);
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
   bot.start(async (ctx) => {
@@ -110,7 +109,7 @@ const start = () => {
       const invoiceDescription = `Venta por @P2PLNBot`;
       const { request, hash, secret } = await createHoldInvoice({
         description: invoiceDescription,
-        amount: order.amount + order.amount * process.env.FEE,
+        amount: order.amount + order.amount * parseFloat(process.env.FEE),
       });
       order.hash = hash;
       order.secret = secret;
