@@ -27,12 +27,16 @@ const validateSellOrder = async (ctx, bot, user) => {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  const [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
-  if (!Number.isInteger(amount)) return false;
+  let [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
+  amount = parseInt(amount);
+  if (!Number.isInteger(amount)) {
+    await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+    return false;
+  };
   if (isNaN(fiatAmount)) return false;
   if (fiatCode.length != 3) return false;
 
-  return sellOrderParams;
+  return {amount, fiatAmount, fiatCode, paymentMethod};
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
@@ -41,8 +45,12 @@ const validateBuyOrder = async (ctx, bot, user) => {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  const [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
-  if (!Number.isInteger(amount)) return false;
+  let [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
+  amount = parseInt(amount);
+  if (!Number.isInteger(amount)) {
+    await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+    return false;
+  };
   if (isNaN(fiatAmount)) return false;
   if (fiatCode.length != 3) return false;
 
@@ -60,7 +68,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   }
 
-  return buyOrderParams;
+  return {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice};
 };
 
 const validateInvoice = async (bot, user, invoice) => {

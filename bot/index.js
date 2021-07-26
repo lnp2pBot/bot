@@ -18,14 +18,9 @@ const start = () => {
     if (!user) return;
 
     const sellOrderParams = await validateSellOrder(ctx, bot, user);
+    if (!sellOrderParams) return;
 
-    if (!sellOrderParams) {
-      await messages.invalidDataMessage(bot, user);
-
-      return;
-    };
-
-    const [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
+    const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
 
     const { request, order } = await createOrder(ctx, bot, {
       type: 'sell',
@@ -52,7 +47,7 @@ const start = () => {
       return;
     };
 
-    const [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
+    const {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice} = buyOrderParams;
 
     const { order } = await createOrder(ctx, bot, {
       type: 'buy',

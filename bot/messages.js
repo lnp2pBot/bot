@@ -49,6 +49,14 @@ const pendingBuyMessage = async (bot, user) => {
   }
 };
 
+const mustBeIntMessage = async (bot, user, fieldName) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser entero positivo`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago>`);
@@ -311,4 +319,5 @@ module.exports = {
   pendingSellMessage,
   pendingBuyMessage,
   repeatedInvoiceMessage,
+  mustBeIntMessage,
 };
