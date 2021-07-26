@@ -5,7 +5,8 @@
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
   "scripts": {
-    "start": "node ./app"
+    "start": "node ./app",
+    "dev": "nodemon ./app"
   },
   "license": "MIT",
   "dependencies": {
@@ -22,5 +23,8 @@
     "bot",
     "p2p",
     "network"
-  ]
+  ],
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
 }
