@@ -1,12 +1,16 @@
 const startMessage = async (ctx) => {
   try {
-    await ctx.reply(`Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.\n\n
-      Es fácil:\n\n
-      1. Únete al grupo @satoshienvenezuela.\n
-      2. Publica tu oferta de compra o venta en el grupo, usando SIEMPRE el hashtag #P2PLN.\n
-      3. Tu oferta o calificación estará visible en el canal @SEVLIGHTNING.\n\n
-      ¡Intercambia seguro y rápido!\n\n
-      Support: @franklinzerocr`);
+    await ctx.reply(`Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
+
+Es fácil:
+
+1. Únete al grupo @satoshienvenezuela.
+2. Publica tu oferta de compra o venta en el grupo, usando SIEMPRE el hashtag #P2PLN.
+3. Tu oferta o calificación estará visible en el canal @SEVLIGHTNING.
+
+¡Intercambia seguro y rápido!
+
+Support: @franklinzerocr`);
   } catch (error) {
     console.log(error);
   }
@@ -79,7 +83,8 @@ const amountMustTheSameInvoiceMessage = async (bot, user, amount) => {
 
 const minimunExpirationTimeInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `El tiempo de expiración de la invoice debe ser de al menos 1 hora`);
+    const expirationTime = parseInt(INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
+    await bot.telegram.sendMessage(user.tg_id, `El tiempo de expiración de la invoice debe ser de al menos ${expirationTime} minutos`);
   } catch (error) {
     console.log(error);
   }
@@ -212,7 +217,7 @@ const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {
 
 const releaseCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/release [order_id]>`);
+    await bot.telegram.sendMessage(user.tg_id, `/release <order_id>`);
   } catch (error) {
     console.log(error);
   }
@@ -257,8 +262,8 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando 👇`;
-    const publishMessage2 = `/takesell ${order._id} <lightning_invoice amount = ${order.amount}>`;
+    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @p2plnbot una lightning invoice con monto = ${order.amount} con el comando 👇`;
+    const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
 
     // Mensaje al canal
     order.tg_channel_message1 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage)).message_id;

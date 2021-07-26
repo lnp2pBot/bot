@@ -34,6 +34,7 @@ const start = () => {
       fiatAmount,
       fiatCode,
       paymentMethod,
+      status: 'WAITING_PAYMENT',
     });
 
     if (!!order) await messages.invoicePaymentRequestMessage(bot, user, request);
