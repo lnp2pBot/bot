@@ -300,11 +300,11 @@ const disputeCorrectFormatMessage = async (bot, user) => {
 const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, userType) => {
   try {
     if (userType === 'buyer') {
-      await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
-    } else {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu venta con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+    } else {
+      await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu venta con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     }
   } catch (error) {
     console.log(error);
