@@ -2,105 +2,135 @@ const { Telegraf } = require('telegraf');
 const { Order, User } = require('../models');
 const { createOrder } = require('./createOrders');
 const { settleHoldInvoice, createHoldInvoice, subscribeInvoice } = require('../ln');
-const { validateSellOrder, validateUser, validateBuyOrder, validateTakeSell, validateBuyInvoice, validateTakeBuyOrder, validateReleaseOrder, validateTakeBuy, validateTakeSellOrder, validateRelease } = require('./validations');
+const {
+  validateSellOrder,
+  validateUser,
+  validateBuyOrder,
+  validateTakeSell,
+  validateBuyInvoice,
+  validateTakeBuyOrder,
+  validateReleaseOrder,
+  validateTakeBuy,
+  validateTakeSellOrder,
+  validateRelease,
+} = require('./validations');
 const messages = require('./messages');
 
 const start = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
   bot.start(async (ctx) => {
-    messages.startMessage(ctx);
-    await validateUser(ctx, true);
+    try {
+      messages.startMessage(ctx);
+      await validateUser(ctx, true);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   bot.command('sell', async (ctx) => {
-    const user = await validateUser(ctx, false);
-    if (!user) return;
+    try {
+      const user = await validateUser(ctx, false);
+      if (!user) return;
 
-    const sellOrderParams = await validateSellOrder(ctx, bot, user);
-    if (!sellOrderParams) return;
+      const sellOrderParams = await validateSellOrder(ctx, bot, user);
+      if (!sellOrderParams) return;
 
-    const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
+      const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
 
-    const { request, order } = await createOrder(ctx, bot, {
-      type: 'sell',
-      amount,
-      seller: user,
-      fiatAmount,
-      fiatCode,
-      paymentMethod,
-      status: 'WAITING_PAYMENT',
-    });
+      const { request, order } = await createOrder(ctx, bot, {
+        type: 'sell',
+        amount,
+        seller: user,
+        fiatAmount,
+        fiatCode,
+        paymentMethod,
+        status: 'WAITING_PAYMENT',
+      });
 
-    if (!!order) await messages.invoicePaymentRequestMessage(bot, user, request);
+      if (!!order) await messages.invoicePaymentRequestMessage(bot, user, request);
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   bot.command('buy', async (ctx) => {
-    const user = await validateUser(ctx, false);
-    if (!user) return;
+    try {
+      const user = await validateUser(ctx, false);
+      if (!user) return;
 
-    const buyOrderParams = await validateBuyOrder(ctx, bot, user);
+      const buyOrderParams = await validateBuyOrder(ctx, bot, user);
 
-    if (!buyOrderParams) {
-      await messages.invalidDataMessage(bot, user);
+      if (!buyOrderParams) {
+        await messages.invalidDataMessage(bot, user);
 
-      return;
-    };
+        return;
+      };
 
-    const {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice} = buyOrderParams;
+      const {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice} = buyOrderParams;
 
-    const { order } = await createOrder(ctx, bot, {
-      type: 'buy',
-      amount,
-      buyer: user,
-      fiatAmount,
-      fiatCode,
-      paymentMethod,
-      buyer_invoice: lnInvoice || '',
-      status: 'PENDING',
-    });
+      const { order } = await createOrder(ctx, bot, {
+        type: 'buy',
+        amount,
+        buyer: user,
+        fiatAmount,
+        fiatCode,
+        paymentMethod,
+        buyer_invoice: lnInvoice || '',
+        status: 'PENDING',
+      });
 
-    if (!!order) {
-      await messages.publishBuyOrderMessage(ctx, bot, order);
-      await messages.pendingBuyMessage(bot, user);
+      if (!!order) {
+        await messages.publishBuyOrderMessage(ctx, bot, order);
+        await messages.pendingBuyMessage(bot, user);
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
 
   bot.command('takesell', async (ctx) => {
-    const user = await validateUser(ctx, false);
-    if (!user) return;
-
-    const takeSellParams = await validateTakeSell(ctx, bot, user);
-    if (!takeSellParams) return;
-
-    const [_, orderId, lnInvoice] = takeSellParams;
-
     try {
-      const order = await Order.findOne({ _id: orderId });
-      if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
+      const user = await validateUser(ctx, false);
+      if (!user) return;
 
-      order.status = 'ACTIVE';
-      order.buyer_id = user._id;
-      order.buyer_invoice = lnInvoice;
-      await order.save();
+      const takeSellParams = await validateTakeSell(ctx, bot, user);
+      if (!takeSellParams) return;
 
-      const orderUser = await User.findOne({ _id: order.creator_id });
-      await messages.beginTakeSellMessage(bot, orderUser, user, order);
-    } catch (e) {
-      console.log(e);
-      await messages.invalidDataMessage(bot, user);
+      const [_, orderId, lnInvoice] = takeSellParams;
+
+      try {
+        const order = await Order.findOne({ _id: orderId });
+        if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
+
+        order.status = 'ACTIVE';
+        order.buyer_id = user._id;
+        order.buyer_invoice = lnInvoice;
+        await order.save();
+
+        const orderUser = await User.findOne({ _id: order.creator_id });
+        await messages.beginTakeSellMessage(bot, orderUser, user, order);
+      } catch (e) {
+        console.log(e);
+        await messages.invalidDataMessage(bot, user);
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
 
   bot.command('takebuy', async (ctx) => {
-    const user = await validateUser(ctx, false);
-    if (!user) return;
-
-    const takeBuyParams = await validateTakeBuy(ctx, bot, user);
-    if (!takeBuyParams) return;
-
-    const [_, orderId] = takeBuyParams;
     try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      const takeBuyParams = await validateTakeBuy(ctx, bot, user);
+
+      if (!takeBuyParams) return;
+
+      const [_, orderId] = takeBuyParams;
+
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
@@ -120,25 +150,29 @@ const start = () => {
 
       const orderUser = await User.findOne({ _id: order.creator_id });
       await messages.beginTakeBuyMessage(bot, user, orderUser, request, order);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.log(error);
       await messages.invalidDataMessage(bot, user);
     }
   });
 
   bot.command('release', async (ctx) => {
-    const user = await validateUser(ctx, false);
-    if (!user) return;
+    try {
+      const user = await validateUser(ctx, false);
+      if (!user) return;
 
-    const releaseParams = await validateRelease(ctx, bot, user);
-    if (!releaseParams) return;
+      const releaseParams = await validateRelease(ctx, bot, user);
+      if (!releaseParams) return;
 
-    const [_, orderId] = releaseParams;
+      const [_, orderId] = releaseParams;
 
-    const order = await validateReleaseOrder(bot, user, orderId);
-    if (!order) return;
+      const order = await validateReleaseOrder(bot, user, orderId);
+      if (!order) return;
 
-    await settleHoldInvoice({ secret: order.secret });
+      await settleHoldInvoice({ secret: order.secret });
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   bot.launch();
