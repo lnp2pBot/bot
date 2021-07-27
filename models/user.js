@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   lang: { type: String, default: 'ESP' },
   balance: { type: Number, default: 0, min: 0 },
   trades_completed: { type: Number, default: 0 },
+  banned: { type: Boolean, default: false },
+  disputes: { type: Number, min: 0 },
   created_at: { type: Date, default: Date.now },
 });
 

@@ -7,12 +7,13 @@ const {
   validateUser,
   validateBuyOrder,
   validateTakeSell,
-  validateBuyInvoice,
   validateTakeBuyOrder,
   validateReleaseOrder,
   validateTakeBuy,
   validateTakeSellOrder,
   validateRelease,
+  validateDispute,
+  validateDisputeOrder,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -97,7 +98,7 @@ const start = () => {
       const takeSellParams = await validateTakeSell(ctx, bot, user);
       if (!takeSellParams) return;
 
-      const [_, orderId, lnInvoice] = takeSellParams;
+      const {orderId, lnInvoice} = takeSellParams;
 
       try {
         const order = await Order.findOne({ _id: orderId });
@@ -125,11 +126,9 @@ const start = () => {
 
       if (!user) return;
 
-      const takeBuyParams = await validateTakeBuy(ctx, bot, user);
+      const orderId = await validateTakeBuy(ctx, bot, user);
 
-      if (!takeBuyParams) return;
-
-      const [_, orderId] = takeBuyParams;
+      if (!orderId) return;
 
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
@@ -161,15 +160,50 @@ const start = () => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const releaseParams = await validateRelease(ctx, bot, user);
-      if (!releaseParams) return;
+      const orderId = await validateRelease(ctx, bot, user);
 
-      const [_, orderId] = releaseParams;
+      if (!orderId) return;
 
       const order = await validateReleaseOrder(bot, user, orderId);
+
       if (!order) return;
 
       await settleHoldInvoice({ secret: order.secret });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('dispute', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      const orderId = await validateDispute(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await validateDisputeOrder(bot, user, orderId);
+
+      if (!order) return;
+      let userType = 'buyer';
+      let counterPartyUser = await User.findOne({ _id: order.seller_id });
+      if (user._id === order.seller_id) {
+        userType = 'seller';
+      }
+
+      order[`${userType}_dispute`] = true;
+      order.status = 'DISPUTE';
+      await order.save();
+      // we increment the number of disputes on both users
+      await User.updateOne(
+        { _id: user._id },
+        { $inc: { disputes: 1 } }).exec();
+      await User.updateOne(
+        { _id: counterPartyUser._id },
+        { $inc: { disputes: 1 } }).exec();
+      await messages.beginDisputeMessage(bot, user, counterPartyUser, order, userType);
     } catch (error) {
       console.log(error);
     }

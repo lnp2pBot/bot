@@ -62,7 +62,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
 
   if (!(await validateInvoice(bot, user, invoice))) return;
 
-  const order = await Order.findOne({ buyer_invoice: invoice });
+  const order = await Order.findOne({ buyer_invoice: lnInvoice });
   if (order) {
     await messages.repeatedInvoiceMessage(bot, user);
     return false;
@@ -112,7 +112,7 @@ const validateTakeSell = async (ctx, bot, user) => {
 
   if (!(await validateInvoice(bot, user, invoice))) return;
 
-  return takeSellParams;
+  return {orderId, lnInvoice};
 };
 
 const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
@@ -143,7 +143,7 @@ const validateTakeBuy = async (ctx, bot, user) => {
     await messages.takeBuyCorrectFormatMessage(bot, user);
     return false;
   }
-  return takeBuyParams;
+  return takeBuyParams[1];
 };
 
 const validateTakeBuyOrder = async (bot, user, order) => {
@@ -164,11 +164,11 @@ const validateTakeBuyOrder = async (bot, user, order) => {
 
 const validateRelease = async (ctx, bot, user) => {
   const releaseParams = ctx.update.message.text.split(' ');
-  if (releaseParams.length > 2) {
+  if (releaseParams.length !== 2) {
     await messages.releaseCorrectFormatMessage(bot, user);
     return false;
   }
-  return releaseParams;
+  return releaseParams[1];
 };
 
 const validateReleaseOrder = async (bot, user, orderId) => {
@@ -189,6 +189,35 @@ const validateReleaseOrder = async (bot, user, orderId) => {
   return order;
 };
 
+const validateDispute = async (ctx, bot, user) => {
+  const disputeParams = ctx.update.message.text.split(' ');
+  if (disputeParams.length !== 2) {
+    await messages.disputeCorrectFormatMessage(bot, user);
+    return false;
+  }
+
+  return disputeParams[1];
+};
+
+const validateDisputeOrder = async (bot, user, orderId) => {
+  const where = {
+    status: 'ACTIVE',
+    _id: orderId,
+    $or: [
+      {seller_id: user._id},
+      {buyer_id: user._id},
+    ],
+  };
+
+  const order = await Order.findOne(where);
+  if (!order) {
+    await messages.notActiveOrderMessage(bot, user);
+    return false;
+  }
+
+  return order;
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -200,4 +229,6 @@ module.exports = {
   validateTakeBuyOrder,
   validateRelease,
   validateReleaseOrder,
+  validateDispute,
+  validateDisputeOrder,
 };

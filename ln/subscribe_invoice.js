@@ -8,7 +8,7 @@ const subscribeInvoice = async (ctx, bot, id) => {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async (invoice) => {
       if (invoice.is_held) {
-        console.log(`invoice with hash: id is being held!`);
+        console.log(`invoice with hash: ${id} is being held!`);
         const order = await Order.findOne({ hash: invoice.id });
         if (order.type === 'sell') {
           // paso la orden a pending
