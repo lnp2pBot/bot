@@ -1,7 +1,22 @@
+const ObjectId = require('mongoose').Types.ObjectId;
 const { Order } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
+const messages = require('./messages');
 
-const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
+const createOrder = async (
+  ctx,
+  bot,
+  {
+    type,
+    amount,
+    seller,
+    buyer,
+    fiatAmount,
+    fiatCode,
+    paymentMethod,
+    buyerInvoice,
+    status,
+  }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
@@ -60,6 +75,30 @@ const createOrder = async (ctx, bot, { type, amount, seller, buyer, fiatAmount, 
   }
 };
 
+const getOrder = async (bot, user, orderId) => {
+  if (!ObjectId.isValid(orderId)) {
+    await messages.customMessage(bot, user, 'Order Id no válido!');
+    return false;
+  }
+
+  const where = {
+    _id: orderId,
+    $or: [
+      {seller_id: user._id},
+      {buyer_id: user._id},
+    ],
+  };
+
+  const order = await Order.findOne(where);
+  if (!order) {
+    await messages.notOrderMessage(bot, user);
+    return false;
+  }
+
+  return order;
+};
+
 module.exports = {
   createOrder,
+  getOrder,
 };

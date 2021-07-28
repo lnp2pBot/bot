@@ -176,7 +176,9 @@ const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) =
     await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
 
     await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
-    if (order.tg_chat_id < 0) await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
+    if (order.tg_chat_id < 0) {
+      await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
+    }
   } catch (error) {
     console.log(error);
   }
@@ -234,6 +236,14 @@ const releaseCorrectFormatMessage = async (bot, user) => {
 const notActiveOrderMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `No tienes esa orden activa`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const notOrderMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `No tienes ninguna orden asociada con ese Id`);
   } catch (error) {
     console.log(error);
   }
@@ -299,6 +309,7 @@ const disputeCorrectFormatMessage = async (bot, user) => {
 
 const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, userType) => {
   try {
+    await bot.telegram.sendMessage(process.env.CHANNEL, `El usuario @${initiatorUser.username} ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}`);
     if (userType === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
@@ -306,6 +317,22 @@ const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, 
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu venta con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const cancelCorrectFormatMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `/cancel <order_id>`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const customMessage = async (bot, user, message) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, message);
   } catch (error) {
     console.log(error);
   }
@@ -344,4 +371,7 @@ module.exports = {
   mustBeIntMessage,
   disputeCorrectFormatMessage,
   beginDisputeMessage,
+  cancelCorrectFormatMessage,
+  notOrderMessage,
+  customMessage,
 };

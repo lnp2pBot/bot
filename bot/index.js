@@ -1,7 +1,12 @@
 const { Telegraf } = require('telegraf');
 const { Order, User } = require('../models');
-const { createOrder } = require('./createOrders');
-const { settleHoldInvoice, createHoldInvoice, subscribeInvoice } = require('../ln');
+const { createOrder, getOrder } = require('./ordersActions');
+const {
+  settleHoldInvoice,
+  createHoldInvoice,
+  cancelHoldInvoice,
+  subscribeInvoice,
+} = require('../ln');
 const {
   validateSellOrder,
   validateUser,
@@ -14,6 +19,7 @@ const {
   validateRelease,
   validateDispute,
   validateDisputeOrder,
+  validateCancel,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -77,7 +83,7 @@ const start = () => {
         fiatAmount,
         fiatCode,
         paymentMethod,
-        buyer_invoice: lnInvoice || '',
+        buyerInvoice: lnInvoice || '',
         status: 'PENDING',
       });
 
@@ -204,6 +210,44 @@ const start = () => {
         { _id: counterPartyUser._id },
         { $inc: { disputes: 1 } }).exec();
       await messages.beginDisputeMessage(bot, user, counterPartyUser, order, userType);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  // For now we only cancel pending orders, probably this will change
+  bot.command('cancel', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+      if (!user) return;
+
+      const orderId = await validateCancel(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await getOrder(bot, user, orderId);
+
+      if (!order) return;
+
+      if (order.status === 'PENDING') {
+        // if we already have a holdInvoice we cancel it and return the money
+        if (!!order.hash) {
+          await cancelHoldInvoice({ hash: order.hash });
+        }
+
+        order.status = 'CANCELED';
+        order.canceled_by = user._id;
+        await order.save();
+        // we sent a private message to the user
+        await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
+        // we update this order message in the channel
+        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} CANCELADA ❌`);
+        if (order.tg_chat_id < 0) {
+          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} CANCELADA ❌`);
+        }
+      } else {
+        await messages.customMessage(bot, user, `Solo se pueden cancelar las ordenes con status = PENDING`);
+      }
     } catch (error) {
       console.log(error);
     }
