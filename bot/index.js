@@ -44,7 +44,7 @@ const start = () => {
       if (!sellOrderParams) return;
 
       const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
-
+console.log(sellOrderParams)
       const { request, order } = await createOrder(ctx, bot, {
         type: 'sell',
         amount,
@@ -140,9 +140,11 @@ const start = () => {
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
       const invoiceDescription = `Venta por @P2PLNBot`;
+      let amount = order.amount + order.amount * parseFloat(process.env.FEE);
+      amount = Math.floor(amount);
       const { request, hash, secret } = await createHoldInvoice({
         description: invoiceDescription,
-        amount: order.amount + order.amount * parseFloat(process.env.FEE),
+        amount,
       });
       order.hash = hash;
       order.secret = secret;

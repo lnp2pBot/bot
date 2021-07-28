@@ -24,8 +24,10 @@ const createOrder = async (
     if (type === 'sell') {
       const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const invoiceDescription = `Venta por @P2PLNBot`;
+      amount = amount + amount * parseFloat(process.env.FEE);
+      amount = Math.floor(amount);
       const { request, hash, secret } = await createHoldInvoice({
-        amount: amount + amount * parseFloat(process.env.FEE),
+        amount,
         description: invoiceDescription,
       });
       if (!!hash) {
