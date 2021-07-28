@@ -1,5 +1,5 @@
 const { createHash, randomBytes } = require('crypto');
-const { createHodlInvoice, settleHodlInvoice } = require('lightning');
+const { createHodlInvoice, settleHodlInvoice, cancelHodlInvoice } = require('lightning');
 const lnd = require('./connect');
 
 const createHoldInvoice = async ({ description, amount }) => {
@@ -32,4 +32,13 @@ const settleHoldInvoice = async ({ secret }) => {
   }
 };
 
-module.exports = { createHoldInvoice, settleHoldInvoice };
+const cancelHoldInvoice = async ({ hash }) => {
+  try {
+    await cancelHodlInvoice({ lnd, id: hash });
+  } catch (e) {
+    console.log(e);
+    return e;
+  }
+};
+
+module.exports = { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice };
