@@ -44,7 +44,6 @@ const start = () => {
       if (!sellOrderParams) return;
 
       const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
-console.log(sellOrderParams)
       const { request, order } = await createOrder(ctx, bot, {
         type: 'sell',
         amount,
