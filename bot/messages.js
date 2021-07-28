@@ -41,9 +41,10 @@ const invoicePaymentRequestMessage = async (bot, user, request) => {
   }
 };
 
-const pendingSellMessage = async (bot, user) => {
+const pendingSellMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Invoice pagado y publicada la oferta en el canal ${process.env.CHANNEL}\n\nEspera que alguien tome tu venta.`);
+    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando: /cancel ${order._id}`);
   } catch (error) {
     console.log(error);
   }

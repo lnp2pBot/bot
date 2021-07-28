@@ -17,7 +17,7 @@ const subscribeInvoice = async (ctx, bot, id) => {
           const orderUser = await User.findOne({ _id: order.creator_id });
 
           messages.publishSellOrderMessage(ctx, bot, order);
-          messages.pendingSellMessage(bot, orderUser);
+          messages.pendingSellMessage(bot, orderUser, order);
         } else if (order.type === 'buy') {
           const orderUser = await User.findOne({ _id: order.creator_id });
           const sellerUser = await User.findOne({ _id: order.seller_id });
