@@ -122,6 +122,10 @@ const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
     await messages.amountMustTheSameInvoiceMessage(bot, user, order.amount);
     return false;
   }
+  if (new Date(invoice.expires_at) < latestDate) {
+    await messages.minimunExpirationTimeInvoiceMessage(bot, user);
+    return false;
+  }
   if (!order) {
     await messages.invalidOrderMessage(bot, user);
     return false;
@@ -218,6 +222,16 @@ const validateDisputeOrder = async (bot, user, orderId) => {
   return order;
 };
 
+const validateCancel = async (ctx, bot, user) => {
+  const cancelParams = ctx.update.message.text.split(' ');
+  if (cancelParams.length !== 2) {
+    await messages.cancelCorrectFormatMessage(bot, user);
+    return false;
+  }
+
+  return cancelParams[1];
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -231,4 +245,5 @@ module.exports = {
   validateReleaseOrder,
   validateDispute,
   validateDisputeOrder,
+  validateCancel,
 };
