@@ -28,6 +28,11 @@ const start = () => {
 
   bot.start(async (ctx) => {
     try {
+      const tgUser = ctx.update.message.from;
+      if (!tgUser.username) {
+        await messages.nonHandleErrorMessage(ctx);
+        return;
+      }
       messages.startMessage(ctx);
       await validateUser(ctx, true);
     } catch (error) {

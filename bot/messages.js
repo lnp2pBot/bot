@@ -24,6 +24,14 @@ const initBotErrorMessage = async (ctx) => {
   }
 };
 
+const nonHandleErrorMessage = async (ctx) => {
+  try {
+    await ctx.reply(`Para usar este bot debes activar tu username de telegram`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const invoicePaymentRequestMessage = async (bot, user, request) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Por favor paga esta invoice para comenzar la venta:`);
@@ -374,4 +382,5 @@ module.exports = {
   cancelCorrectFormatMessage,
   notOrderMessage,
   customMessage,
+  nonHandleErrorMessage,
 };
