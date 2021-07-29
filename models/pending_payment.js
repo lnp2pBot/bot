@@ -18,4 +18,4 @@ const PendingPaymentSchema = new mongoose.Schema({
   order_id: { type: String },
 });
 
-module.exports = mongoose.model('PendingPayments', PendingPaymentSchema);
+module.exports = mongoose.model('PendingPayment', PendingPaymentSchema);
