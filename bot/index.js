@@ -236,7 +236,7 @@ const start = () => {
       if (!order) return;
 
       if (order.status === 'PENDING') {
-        // if we already have a holdInvoice we cancel it and return the money
+        // If we already have a holdInvoice we cancel it and return the money
         if (!!order.hash) {
           await cancelHoldInvoice({ hash: order.hash });
         }
