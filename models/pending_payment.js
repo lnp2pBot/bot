@@ -11,6 +11,7 @@ const PendingPaymentSchema = new mongoose.Schema({
     }
   },
   attempts: { type: Number, min: 1, default: 0 },
+  paid: { type: Boolean, default: false },
   payment_request: { type: String },
   hash: { type: String },
   created_at: { type: Date, default: Date.now },
