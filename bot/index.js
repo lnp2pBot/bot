@@ -247,9 +247,9 @@ const start = () => {
         // we sent a private message to the user
         await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
         // we update this order message in the channel
-        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} CANCELADA ❌`);
+        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
         if (order.tg_chat_id < 0) {
-          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} CANCELADA ❌`);
+          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
         }
       } else {
         await messages.customMessage(bot, user, `Solo se pueden cancelar las ordenes con status = PENDING`);
