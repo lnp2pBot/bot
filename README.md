@@ -1,9 +1,9 @@
 # P2PLNBot
-Telegram bot which allows to people to trade using lightning network with other people from telegram groups, the bot will be used and tested on the Satoshi in Venezuela community but is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
+Telegram bot which allows to people to trade using lightning network with other people on telegram, this is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
 
-**p2plnbot** is being developed on nodejs and connect with an LND node, after some thinking it was impossible to make a telegram bot that give this kind of service without being custodial, but we developed a trust minimized model for this, we are no custodian of the users funds.
+**p2plnbot** is being developed on nodejs and connect with a LND node, after some thinking we couldn't find a good way telegram bot that give this kind of service without being custodial, but we developed a trust minimized model for this, we are not custodians of funds of the users, this is why we use hold invoices, the bot only settle seller invoices when each party is ok with it and at that same times the bot pay the buyer's invoice.
 
-## Creting a sell order
+## Creating a sell order
 1. Alice tells to the bot that she wants to sell 5000 sats by **n** fiat amount.
 2. The bot send to alice a hold-invoice, Alice has to pay a hold-invoice of 5000 sats to the bot, this invoice is "pending", the money is not accepted or rejected by the bot at that moment.
 3. After the bot detects that Alice paid the invoice, the offer is published on the channel.
@@ -13,7 +13,7 @@ Telegram bot which allows to people to trade using lightning network with other 
 7. When Alice confirmed that she received the money, the bot settles Alice's initial invoice and pays Bob's invoice.
 8. If Alice does not confirm the operation that she received the payment in one hour, the bot cancels the hold-invoice and closes the order.
 
-## Creting a buy order
+## Creating a buy order
 1. Alice wants to buy 5000 sats
 2. Alice publishes a buy offer of 5000 sats with **n** fiat amount, Alice does not have satoshis, but she has fiat, Alice sends an invoice to the bot, the bot saves it when she creates the order
 3. The bot shows the offer in the group
@@ -56,4 +56,8 @@ $ npm install
 ## Running it
 ```
 $ npm start
+```
+## Testing
+```
+$ npm test
 ```
