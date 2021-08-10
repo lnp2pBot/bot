@@ -28,40 +28,59 @@ const subscribeInvoice = async (ctx, bot, id) => {
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: invoice.id });
         order.status = 'PAID_HOLD_INVOICE';
-        const payment = await pay({ lnd, request: order.buyer_invoice });
-        if (payment.is_confirmed) {
-          order.status = 'SUCCESS';
-          const orderUser = await User.findOne({ _id: order.creator_id });
-          if (order.type === 'sell') {
-            const buyerUser = await User.findOne({ _id: order.buyer_id });
-            await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
-            buyerUser.trades_completed++;
-            await buyerUser.save();
-          } else if (order.type === 'buy') {
-            const sellerUser = await User.findOne({ _id: order.seller_id });
-            await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
-            sellerUser.trades_completed++;
-            sellerUser.save();
-          }
-          orderUser.trades_completed++;
-          await orderUser.save();
-        } else {
-          // TODO: cronjob que haga estos pagos cada cierto tiempo y con cada intento incremente 'attempts'
-          // si attemps > 3 el admin se debe comunicar directamente con el usuario para hacer el pago manualmente
-          const buyerUser = await User.findOne({ _id: order.buyer_id });
-          const message = 'No he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
-          await messages.customMessage(bot, buyerUser, message);
-          const pp = new PendingPayment({
-            amount: order.amount,
-            payment_request: order.buyer_invoice,
-            user_id: buyerUser._id,
-            description: order.description,
-            hash: order.hash,
-            order_id: order._id,
-          });
-          await pp.save();
-        }
         await order.save();
+        try {
+          const payment = await pay({ lnd, request: order.buyer_invoice });
+          if (payment.is_confirmed) {
+            order.status = 'SUCCESS';
+            await order.save();
+            const orderUser = await User.findOne({ _id: order.creator_id });
+            if (order.type === 'sell') {
+              const buyerUser = await User.findOne({ _id: order.buyer_id });
+              await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
+              buyerUser.trades_completed++;
+              await buyerUser.save();
+            } else if (order.type === 'buy') {
+              const sellerUser = await User.findOne({ _id: order.seller_id });
+              await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
+              sellerUser.trades_completed++;
+              sellerUser.save();
+            }
+            orderUser.trades_completed++;
+            await orderUser.save();
+          } else {
+            // TODO: cronjob que haga estos pagos cada cierto tiempo y con cada intento incremente 'attempts'
+            // si attemps > 3 el admin se debe comunicar directamente con el usuario para hacer el pago manualmente
+            const buyerUser = await User.findOne({ _id: order.buyer_id });
+            const message = 'No he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
+            await messages.customMessage(bot, buyerUser, message);
+            const pp = new PendingPayment({
+              amount: order.amount,
+              payment_request: order.buyer_invoice,
+              user_id: buyerUser._id,
+              description: order.description,
+              hash: order.hash,
+              order_id: order._id,
+            });
+            await pp.save();
+          }
+        } catch (error) {
+          if (order.status === 'PAID_HOLD_INVOICE') {
+            const buyerUser = await User.findOne({ _id: order.buyer_id });
+            const message = 'El vendedor ha liberado los satoshis pero no he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
+            await messages.customMessage(bot, buyerUser, message);
+            const pp = new PendingPayment({
+              amount: order.amount,
+              payment_request: order.buyer_invoice,
+              user_id: buyerUser._id,
+              description: order.description,
+              hash: order.hash,
+              order_id: order._id,
+            });
+            await pp.save();
+          }
+          console.log(error)
+        }
       }
     });
   } catch (e) {

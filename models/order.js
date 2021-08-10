@@ -21,7 +21,7 @@ const OrderSchema = new mongoose.Schema({
   canceled_by: { type: String },
   status: {
     type: String,
-    enum: ['WAITING_PAYMENT', 'PENDING', 'ACTIVE', 'CLOSED', 'DISPUTE', 'CANCELED', 'SUCCESS', 'PAID_HODL_INVOICE'],
+    enum: ['WAITING_PAYMENT', 'PENDING', 'ACTIVE', 'CLOSED', 'DISPUTE', 'CANCELED', 'SUCCESS', 'PAID_HOLD_INVOICE'],
     default: 'WAITING_PAYMENT',
   },
   type: { type: String },
