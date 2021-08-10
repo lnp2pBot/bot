@@ -10,7 +10,7 @@ const PendingPaymentSchema = new mongoose.Schema({
       message   : '{VALUE} is not an integer value'
     }
   },
-  attempts: { type: Number, min: 1, default: 0 },
+  attempts: { type: Number, min: 0, default: 0 },
   paid: { type: Boolean, default: false },
   payment_request: { type: String },
   hash: { type: String },
