@@ -114,6 +114,10 @@ const validateTakeSell = async (ctx, bot, user) => {
     return false;
   }
   const [_, orderId, lnInvoice] = takeSellParams;
+  if (!lnInvoice) {
+    await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
+    return false;
+  }
   const invoice = parsePaymentRequest({ request: lnInvoice });
 
   if (!(await validateInvoice(bot, user, invoice))) return;
