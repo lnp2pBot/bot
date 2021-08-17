@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema({
   last_name: { type: String },
   lang: { type: String, default: 'ESP' },
   trades_completed: { type: Number, default: 0 },
+  admin: { type: Boolean, default: false },
   banned: { type: Boolean, default: false },
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },

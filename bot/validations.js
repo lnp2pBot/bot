@@ -21,6 +21,19 @@ const validateUser = async (ctx, start) => {
   return user;
 };
 
+const validateAdmin = async (ctx) => {
+  const tgUser = ctx.update.message.from;
+  let user = await User.findOne({ tg_id: tgUser.id });
+  if (!user) {
+    await bot.telegram.sendMessage(tgUser.id, 'No puede realizar esta operación');
+    return false;
+  } else if (!user.admin) {
+    bot.telegram.sendMessage(tgUser.id, 'No puede realizar esta operación');
+    return false;
+  }
+  return user;
+};
+
 const validateSellOrder = async (ctx, bot, user) => {
   const sellOrderParams = ctx.update.message.text.split(' ');
   if (sellOrderParams.length !== 5) {
@@ -242,10 +255,21 @@ const validateCancel = async (ctx, bot, user) => {
   return cancelParams[1];
 };
 
+const validateCancelAdmin = async (ctx, bot, user) => {
+  const cancelParams = ctx.update.message.text.split(' ');
+  if (cancelParams.length !== 2) {
+    await messages.customMessage(bot, user, '/cancelinvoice <order_id>');
+    return false;
+  }
+
+  return cancelParams[1];
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
   validateUser,
+  validateAdmin,
   validateInvoice,
   validateTakeSell,
   validateTakeSellOrder,
@@ -256,4 +280,5 @@ module.exports = {
   validateDispute,
   validateDisputeOrder,
   validateCancel,
+  validateCancelAdmin,
 };

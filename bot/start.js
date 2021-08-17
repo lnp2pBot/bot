@@ -238,6 +238,44 @@ const start = () => {
     }
   });
 
+  bot.command('cancelorder', async (ctx) => {
+    try {
+      const user = await validateAdmin(ctx);
+      if (!user) return;
+
+      const orderId = await validateCancelAdmin(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await getOrder(bot, user, orderId);
+
+      if (!order) return;
+
+      if (!!order.hash) {
+        await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      order.status = 'CANCELED_BY_ADMIN';
+      order.canceled_by = user._id;
+      const buyer = await User.findOne({ _id: order.buyer_id });
+      const seller = await User.findOne({ _id: order.seller_id });
+      await order.save();
+      // we sent a private message to the admin
+      await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
+      // we sent a private message to the seller
+      await messages.customMessage(bot, seller, `El admin ha cancelado la orden Id: ${order._id}!`);
+      // we sent a private message to the buyer
+      await messages.customMessage(bot, buyer, `El admin cancelado la orden Id: ${order._id}!`);
+      // we update this order message in the channel
+      await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
+      if (order.tg_chat_id < 0) {
+        await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   bot.launch();
 
   // Enable graceful stop
