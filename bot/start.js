@@ -17,6 +17,7 @@ const {
   validateCancel,
   validateCancelAdmin,
   validateAdmin,
+  validateSettleAdmin,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -291,12 +292,13 @@ const start = () => {
     }
   });
 
+
   bot.command('settleorder', async (ctx) => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
 
-      const orderId = await validateCancelAdmin(ctx, bot, user);
+      const orderId = await validateSettleAdmin(ctx, bot, user);
 
       if (!orderId) return;
 
@@ -304,7 +306,7 @@ const start = () => {
 
       if (!order) return;
 
-      if (!!order.hash) {
+      if (!!order.secret) {
         await settleHoldInvoice({ secret: order.secret });
       }
 
@@ -328,6 +330,33 @@ const start = () => {
       console.log(error);
     }
   });
+
+
+  bot.command('checkorder', async (ctx) => {
+    try {
+      const user = await validateAdmin(ctx);
+      if (!user) return;
+
+      const orderId = await validateCancelAdmin(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await getOrder(bot, user, orderId);
+
+      if (!order) return; 
+
+      const creator = await User.findOne({ _id: order.seller_id }); 
+      const buyer = await User.findOne({ _id: order.buyer_id });
+      const seller = await User.findOne({ _id: order.seller_id }); 
+
+      await messages.checkOrderMessage(ctx,order,creator.username,buyer.username,seller.username);
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+
 
   bot.launch();
 

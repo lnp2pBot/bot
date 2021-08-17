@@ -258,7 +258,17 @@ const validateCancel = async (ctx, bot, user) => {
 const validateCancelAdmin = async (ctx, bot, user) => {
   const cancelParams = ctx.update.message.text.split(' ');
   if (cancelParams.length !== 2) {
-    await messages.customMessage(bot, user, '/cancelinvoice <order_id>');
+    await messages.customMessage(bot, user, '/cancelorder <order_id>');
+    return false;
+  }
+
+  return cancelParams[1];
+};
+
+const validateSettleAdmin = async (ctx, bot, user) => {
+  const cancelParams = ctx.update.message.text.split(' ');
+  if (cancelParams.length !== 2) {
+    await messages.customMessage(bot, user, '/settleorder <order_id>');
     return false;
   }
 
@@ -281,4 +291,5 @@ module.exports = {
   validateDisputeOrder,
   validateCancel,
   validateCancelAdmin,
+  validateSettleAdmin,
 };

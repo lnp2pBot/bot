@@ -357,6 +357,23 @@ const customMessage = async (bot, user, message) => {
   }
 };
 
+const checkOrderMessage = async (ctx,order,creator,buyer,seller) => {
+  try {
+    await ctx.reply(`Orden id: ${order._id}:
+      Creator: ${creator} 
+      Buyer: ${buyer} 
+      Seller: ${seller} 
+      Monto sats: ${order.amount}
+      Monto ${order.fiat_code}: ${order.fiat_amount}
+      Método de pago: ${order.payment_method}
+      seller invoice hash: ${order.hash}
+      seller invoice secret: ${order.secret}
+      buyer payment request: ${order.buyer_invoice}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -394,4 +411,5 @@ module.exports = {
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
+  checkOrderMessage,
 };
