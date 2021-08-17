@@ -182,9 +182,9 @@ const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) =
     await bot.telegram.sendMessage(sellerUser.tg_id, `Por favor paga esta invoice al bot para comenzar tu venta con el comprador:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
 
-    await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
+    await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} PROCESADA ✅`);
     if (order.tg_chat_id < 0) {
-      await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
+      await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} PROCESADA ✅`);
     }
   } catch (error) {
     console.log(error);
@@ -216,8 +216,8 @@ const beginTakeSellMessage = async (bot, orderUser, buyerUser, order) => {
     await bot.telegram.sendMessage(orderUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por FIAT.\n\nUna vez confirmes su pago FIAT debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(orderUser.tg_id, `/release ${order._id}`);
 
-    await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} procesada ✅`);
-    if (order.tg_chat_id < 0) await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} procesada ✅`);
+    await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `${order._id} PROCESADA ✅`);
+    if (order.tg_chat_id < 0) await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `${order._id} PROCESADA ✅`);
   } catch (error) {
     console.log(error);
   }
