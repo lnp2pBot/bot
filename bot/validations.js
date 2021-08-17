@@ -46,6 +46,12 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   }
   let [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
+  
+  if (!lnInvoice) {
+    await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
+    return false;
+  }
+
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
     await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
