@@ -8,9 +8,7 @@ Es fácil:
 2. Publica tu oferta de compra o venta en el grupo, usando SIEMPRE el hashtag #P2PLN.
 3. Tu oferta o calificación estará visible en el canal @SEVLIGHTNING.
 
-¡Intercambia seguro y rápido!
-
-Support: @franklinzerocr`);
+¡Intercambia seguro y rápido!`);
   } catch (error) {
     console.log(error);
   }
