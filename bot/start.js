@@ -304,12 +304,11 @@ const start = () => {
 
       if (!order) return;
 
-      if (!!order.hash) {
+      if (!!order.secret) {
         await settleHoldInvoice({ secret: order.secret });
       }
 
       order.status = 'COMPLETED_BY_ADMIN';
-      order.canceled_by = user._id;
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
@@ -318,7 +317,7 @@ const start = () => {
       // we sent a private message to the seller
       await messages.customMessage(bot, seller, `El admin ha completado la orden Id: ${order._id}!`);
       // we sent a private message to the buyer
-      await messages.customMessage(bot, buyer, `El admin copmletado la orden Id: ${order._id}!`);
+      await messages.customMessage(bot, buyer, `El admin completado la orden Id: ${order._id}!`);
       // we update this order message in the channel
       await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} COMPLETADA ✅`);
       if (order.tg_chat_id < 0) {
