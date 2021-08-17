@@ -1,26 +1,8 @@
 const { Telegraf } = require('telegraf');
 const { Order, User } = require('../models');
 const { createOrder, getOrder } = require('./ordersActions');
-const {
-  settleHoldInvoice,
-  createHoldInvoice,
-  cancelHoldInvoice,
-  subscribeInvoice,
-} = require('../ln');
-const {
-  validateSellOrder,
-  validateUser,
-  validateBuyOrder,
-  validateTakeSell,
-  validateTakeBuyOrder,
-  validateReleaseOrder,
-  validateTakeBuy,
-  validateTakeSellOrder,
-  validateRelease,
-  validateDispute,
-  validateDisputeOrder,
-  validateCancel,
-} = require('./validations');
+const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
+const { validateSellOrder, validateUser, validateBuyOrder, validateTakeSell, validateTakeBuyOrder, validateReleaseOrder, validateTakeBuy, validateTakeSellOrder, validateRelease, validateDispute, validateDisputeOrder, validateCancel } = require('./validations');
 const messages = require('./messages');
 
 const start = () => {
@@ -48,7 +30,7 @@ const start = () => {
       const sellOrderParams = await validateSellOrder(ctx, bot, user);
       if (!sellOrderParams) return;
 
-      const {amount, fiatAmount, fiatCode, paymentMethod} = sellOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
       const { request, order } = await createOrder(ctx, bot, {
         type: 'sell',
         amount,
@@ -76,9 +58,9 @@ const start = () => {
         await messages.invalidDataMessage(bot, user);
 
         return;
-      };
+      }
 
-      const {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice} = buyOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice } = buyOrderParams;
 
       const { order } = await createOrder(ctx, bot, {
         type: 'buy',
@@ -108,7 +90,7 @@ const start = () => {
       const takeSellParams = await validateTakeSell(ctx, bot, user);
       if (!takeSellParams) return;
 
-      const {orderId, lnInvoice} = takeSellParams;
+      const { orderId, lnInvoice } = takeSellParams;
 
       try {
         const order = await Order.findOne({ _id: orderId });
@@ -209,12 +191,8 @@ const start = () => {
       order.status = 'DISPUTE';
       await order.save();
       // we increment the number of disputes on both users
-      await User.updateOne(
-        { _id: user._id },
-        { $inc: { disputes: 1 } }).exec();
-      await User.updateOne(
-        { _id: counterPartyUser._id },
-        { $inc: { disputes: 1 } }).exec();
+      await User.updateOne({ _id: user._id }, { $inc: { disputes: 1 } }).exec();
+      await User.updateOne({ _id: counterPartyUser._id }, { $inc: { disputes: 1 } }).exec();
       await messages.beginDisputeMessage(bot, user, counterPartyUser, order, userType);
     } catch (error) {
       console.log(error);
