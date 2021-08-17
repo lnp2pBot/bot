@@ -10,8 +10,22 @@ const OrderSchema = new mongoose.Schema({
       message   : '{VALUE} is not an integer value'
     }
   },
-  hash: { type: String, unique: true }, // hold invoice hash
-  secret: { type: String, unique: true }, // hold invoice secret
+  hash: {
+    type: String,
+    index: {
+      unique: true,
+      partialFilterExpression: { hash: { $type: 'string' } },
+    },
+    default : null,
+  }, // hold invoice hash
+  secret: {
+    type: String,
+    index: {
+      unique: true,
+      partialFilterExpression: { secret: { $type: 'string' } },
+    },
+    default : null
+  }, // hold invoice secret
   creator_id: { type: String },
   seller_id: { type: String },
   buyer_id: { type: String },
