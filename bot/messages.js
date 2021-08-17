@@ -2,13 +2,35 @@ const startMessage = async (ctx) => {
   try {
     await ctx.reply(`Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
 
-Es fácil:
+Una vez incializado el Bot en privado es fácil:
 
-1. Únete al grupo @satoshienvenezuela.
-2. Publica tu oferta de compra o venta en el grupo, usando SIEMPRE el hashtag #P2PLN.
-3. Tu oferta o calificación estará visible en el canal @SEVLIGHTNING.
+1. Publica tu oferda de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.
+2. Espera que otro usuario tome la oferta por medio de /takesell o /takebuy. Tambien puedes tomar las ofertas de otros usuarios con estos comandos!
+3. Tu oferta y calificación estará visible en el canal de @testeandoCosas.
 
-¡Intercambia seguro y rápido!`);
+/sell:
+4. Si estas vendiendo el bot te pedira que pagues un invoice el cual estara retenido por 1 hora mientras alguien toma tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+5. Una vez alguien tome tu venta, le debes contactar y brindarle tus datos de pago para que te pague el monto FIAT correspondiente. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
+
+/buy:
+6. Si estas comprando, solo debes publicar la oferta, crear un invoice para recibir los sats y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+7. Una vez alguien tome tu compra, contacta al vendedor para que te de los datos de pago FIAT. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
+
+/takesell:
+8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago FIAT.
+9. Una vez el otro usuario confirme su pago FIAT usara el comando /release para liberarte los sats a tu invoice. 
+
+/takebuy:
+9. Si estas tomando una compra, debes pagar el invoice el cual estara retenido por 1 mientras el otro usuario realiza tu pago FIAT. Debes contactarle y brindarle tus datos para ello.
+10. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen sus sats a su invoice.
+
+/dispute:
+11. Si en algun punto los usuarios no pueden solucionar su transaccion, pueden usar este comando para llamar a los admin a que resuelvan la operacion como intermediarios.
+
+/cancel:
+12. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el este comando
+
+¡Intercambia seguro y rápido! #P2PLN`);
   } catch (error) {
     console.log(error);
   }
@@ -16,7 +38,7 @@ Es fácil:
 
 const initBotErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`Debes primero inicializar este bot @p2plnbot para poder realizar operaciones`);
+    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @p2plnbot el protocolo del bot`);
   } catch (error) {
     console.log(error);
   }
