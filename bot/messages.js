@@ -316,7 +316,7 @@ const disputeCorrectFormatMessage = async (bot, user) => {
 
 const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, userType) => {
   try {
-    await bot.telegram.sendMessage(process.env.CHANNEL, `El usuario @${initiatorUser.username} ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}`);
+    await bot.telegram.sendMessage(process.env.ADMINCHANNEL, `El usuario @${initiatorUser.username} ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}`);
     if (userType === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
