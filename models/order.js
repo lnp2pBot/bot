@@ -10,8 +10,8 @@ const OrderSchema = new mongoose.Schema({
       message   : '{VALUE} is not an integer value'
     }
   },
-  hash: { type: String, unique: true }, // hold invoice hash
-  secret: { type: String, unique: true }, // hold invoice secret
+  hash: { type: String, unique: true, sparse: true }, // hold invoice hash
+  secret: { type: String, unique: true, sparse: true }, // hold invoice secret
   creator_id: { type: String },
   seller_id: { type: String },
   buyer_id: { type: String },
