@@ -327,8 +327,8 @@ seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}
 buyer payment request: ${order.buyer_invoice}
 
-@${initiatorUser.username} ya tiene @${initiatorUser.disputes}
-@${counterPartyUser.username} ya tiene @${counterPartyUser.disputes}`);
+@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputas
+@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputas`);
     if (userType === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
