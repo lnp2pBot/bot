@@ -185,6 +185,7 @@ const start = () => {
       let counterPartyUser = await User.findOne({ _id: order.seller_id });
       if (user._id === order.seller_id) {
         userType = 'seller';
+        counterPartyUser = await User.findOne({ _id: order.buyer_id });
       }
 
       order[`${userType}_dispute`] = true;
