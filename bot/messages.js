@@ -397,6 +397,22 @@ const checkOrderMessage = async (ctx,order,creator,buyer,seller) => {
   }
 };
 
+const mustBeValidCurrency = async (bot, user, fieldName) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un código de moneda válido, ejemplo: USD, EUR`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const mustBeANumber = async (bot, user, fieldName) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un número`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -435,4 +451,6 @@ module.exports = {
   customMessage,
   nonHandleErrorMessage,
   checkOrderMessage,
+  mustBeValidCurrency,
+  mustBeANumber,
 };

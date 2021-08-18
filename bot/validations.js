@@ -1,6 +1,7 @@
 const { parsePaymentRequest } = require('invoices');
 const messages = require('./messages');
 const { Order, User } = require('../models');
+const { isIso4217 } = require('../util');
 
 // busca en base de datos si el usuario de telegram existe,
 // si no lo encuentra lo crea
@@ -46,8 +47,16 @@ const validateSellOrder = async (ctx, bot, user) => {
     await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
     return false;
   };
-  if (isNaN(fiatAmount)) return false;
-  if (fiatCode.length != 3) return false;
+
+  if (isNaN(fiatAmount)) {
+    await messages.mustBeANumber(bot, user, 'monto_en_fiat');
+    return false;
+  }
+
+  if (!isIso4217(fiatCode)) {
+    await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+    return false
+  };
 
   return {amount, fiatAmount, fiatCode, paymentMethod};
 };
@@ -70,8 +79,16 @@ const validateBuyOrder = async (ctx, bot, user) => {
     await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
     return false;
   };
-  if (isNaN(fiatAmount)) return false;
-  if (fiatCode.length != 3) return false;
+
+  if (isNaN(fiatAmount)) {
+    await messages.mustBeANumber(bot, user, 'monto_en_fiat');
+    return false;
+  }
+
+  if (!isIso4217(fiatCode)) {
+    await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+    return false
+  };
 
   const invoice = parsePaymentRequest({ request: lnInvoice });
   if (invoice.tokens != amount) {
@@ -79,7 +96,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   }
 
-  if (!(await validateInvoice(bot, user, invoice))) return;
+  if (!(await validateInvoice(bot, user, invoice))) return false;
 
   const order = await Order.findOne({ buyer_invoice: lnInvoice });
   if (order) {
