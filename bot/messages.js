@@ -38,7 +38,7 @@ Una vez incializado el Bot en privado es fácil:
 
 const initBotErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @lnp2pbot el protocolo del bot`);
+    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @${ctx.botInfo.username} el protocolo del bot`);
   } catch (error) {
     console.log(error);
   }
@@ -289,7 +289,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 
 const publishBuyOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @lnp2pbot el comando 👇`;
+    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @${ctx.botInfo.username} el comando 👇`;
     const publishMessage2 = `/takebuy ${order._id}`;
 
     // Mensaje al canal
@@ -310,7 +310,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @lnp2pbot una lightning invoice con monto = ${order.amount} con el comando 👇`;
+    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @${ctx.botInfo.username} una lightning invoice con monto = ${order.amount} con el comando 👇`;
     const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
 
     // Mensaje al canal
