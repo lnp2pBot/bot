@@ -157,8 +157,7 @@ const start = () => {
       // monitoreamos esa invoice para saber cuando el usuario realice el pago
       await subscribeInvoice(ctx, bot, hash);
 
-      const orderUser = await User.findOne({ _id: order.creator_id });
-      await messages.beginTakeBuyMessage(bot, user, orderUser, request, order);
+      await messages.beginTakeBuyMessage(bot, user, request, order);
     } catch (error) {
       console.log(error);
       await messages.invalidDataMessage(bot, user);

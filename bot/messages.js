@@ -200,7 +200,7 @@ const takeBuyCorrectFormatMessage = async (bot, user) => {
   }
 };
 
-const beginTakeBuyMessage = async (bot, orderUser, sellerUser, request, order) => {
+const beginTakeBuyMessage = async (bot, sellerUser, request, order) => {
   try {
     await bot.telegram.sendMessage(sellerUser.tg_id, `Por favor paga esta invoice al bot para comenzar tu venta con el comprador:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `${request}`);
@@ -413,6 +413,14 @@ const mustBeANumber = async (bot, user, fieldName) => {
   }
 };
 
+const invalidInvoice = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Lightning invoice no válida`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -453,4 +461,5 @@ module.exports = {
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumber,
+  invalidInvoice,
 };
