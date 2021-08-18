@@ -38,7 +38,7 @@ Una vez incializado el Bot en privado es fácil:
 
 const initBotErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @p2plnbot el protocolo del bot`);
+    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @lnp2pbot el protocolo del bot`);
   } catch (error) {
     console.log(error);
   }
@@ -64,7 +64,8 @@ const invoicePaymentRequestMessage = async (bot, user, request) => {
 const pendingSellMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Invoice pagado y publicada la oferta en el canal ${process.env.CHANNEL}\n\nEspera que alguien tome tu venta.`);
-    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando: /cancel ${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando:`);
+    await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
   } catch (error) {
     console.log(error);
   }
@@ -288,7 +289,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 
 const publishBuyOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @p2plnbot el comando 👇`;
+    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @lnp2pbot el comando 👇`;
     const publishMessage2 = `/takebuy ${order._id}`;
 
     // Mensaje al canal
@@ -309,7 +310,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @p2plnbot una lightning invoice con monto = ${order.amount} con el comando 👇`;
+    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @lnp2pbot una lightning invoice con monto = ${order.amount} con el comando 👇`;
     const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
 
     // Mensaje al canal
