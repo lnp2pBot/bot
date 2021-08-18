@@ -141,7 +141,7 @@ const start = () => {
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
-      const invoiceDescription = `Venta por @lnp2pbot`;
+      const invoiceDescription = `Venta por @${ctx.botInfo.username}`;
       let amount = order.amount + order.amount * parseFloat(process.env.FEE);
       amount = Math.floor(amount);
       const { request, hash, secret } = await createHoldInvoice({
@@ -354,11 +354,6 @@ const start = () => {
       console.log(error);
     }
   });
-
-   
-
-
-
 
   bot.launch();
 
