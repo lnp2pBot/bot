@@ -4,7 +4,7 @@ const isIso4217 = (code) => {
         return false;
     }
     alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    code.toLowerCase().split('');
+    code = code.toLowerCase().split('');
     code.forEach(letter => {
         if (alphabet.indexOf(letter) === -1) {
             return false;
