@@ -48,6 +48,11 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false;
   };
 
+  if (amount < 100) {
+    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+    return false;
+  };
+
   if (isNaN(fiatAmount)) {
     await messages.mustBeANumber(bot, user, 'monto_en_fiat');
     return false;
@@ -85,6 +90,11 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   };
 
+  if (amount < 100) {
+    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+    return false;
+  };
+  
   if (isNaN(fiatAmount)) {
     await messages.mustBeANumber(bot, user, 'monto_en_fiat');
     return false;
