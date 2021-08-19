@@ -53,6 +53,11 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false;
   }
 
+  if (fiatAmount < 1) {
+    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+    return false;
+  };
+
   if (!isIso4217(fiatCode)) {
     await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
     return false
@@ -84,6 +89,11 @@ const validateBuyOrder = async (ctx, bot, user) => {
     await messages.mustBeANumber(bot, user, 'monto_en_fiat');
     return false;
   }
+
+  if (fiatAmount < 1) {
+    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+    return false;
+  };
 
   if (!isIso4217(fiatCode)) {
     await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
