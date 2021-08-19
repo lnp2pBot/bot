@@ -28,12 +28,12 @@ After a user creates a new order and before another user take it, the user can c
 
 Only if both parties cancel cooperatively the order is canceled and the seller sats are returned.
 
-If users have a disagreement on canceling or going forward the can open a dispute.
+If users have a disagreement on canceling or going forward they can start a dispute.
 
 ## Disputes
 Both parties can start a dispute at any moment, after a dispute is started a human will be notified with all the information, this human will contact both parties to evaluate the situation and take a decision.
 
-After a user starts a dispute, both parties will have increased by 1 their own `dispute` field in database and after **4** disputes users will be banned from using the bot.
+After a user starts a dispute, both parties will have increased by **1** their own `dispute` field in database and after **4** disputes users will be banned from using the bot.
 
 ## Incentive to release funds
 A seller that didn't release funds to the buyer can't open or take another order from the bot and probably will be involved in a dispute from the buyer damaging his/her reputation
