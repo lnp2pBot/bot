@@ -341,7 +341,10 @@ const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, 
   try {
 
     const type = userType === 'seller' ? 'comprador' : 'vendedor';
-    await bot.telegram.sendMessage(process.env.ADMINCHANNEL, `El ${type} @${initiatorUser.username} 
+    // We increment manually the dispute number by one to avoid query database again
+    const initiatiorUserDisputes = initiatorUser.disputes + 1;
+    const counterPartyUserDisputes = counterPartyUser.disputes + 1;
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username} 
 ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}:
 Monto sats: ${order.amount}
 Monto ${order.fiat_code}: ${order.fiat_amount}
@@ -350,8 +353,8 @@ seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}
 buyer payment request: ${order.buyer_invoice}
 
-@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputas
-@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputas`);
+@${initiatorUser.username} ya tiene ${initiatiorUserDisputes} disputas
+@${counterPartyUser.username} ya tiene ${counterPartyUserDisputes} disputas`);
     if (userType === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
@@ -429,6 +432,14 @@ const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
   }
 };
 
+const maxDisputesErrorMessage = async (ctx) => {
+  try {
+    await ctx.reply(`¡Has sido baneado! Tienes muchas disputas`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -471,4 +482,5 @@ module.exports = {
   mustBeANumber,
   invalidInvoice,
   mustBeGreatherEqThan,
+  maxDisputesErrorMessage,
 };

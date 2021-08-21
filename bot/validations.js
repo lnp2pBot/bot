@@ -3,8 +3,8 @@ const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217 } = require('../util');
 
-// busca en base de datos si el usuario de telegram existe,
-// si no lo encuentra lo crea
+// We look in database if the telegram user exists,
+// if not, it creates a new user
 const validateUser = async (ctx, start) => {
   const tgUser = ctx.update.message.from;
   let user = await User.findOne({ tg_id: tgUser.id });
@@ -18,6 +18,10 @@ const validateUser = async (ctx, start) => {
     await user.save();
   } else if (!user) {
     await messages.initBotErrorMessage(ctx);
+  } else if (user.disputes >= process.env.MAX_DISPUTES) {
+    await messages.maxDisputesErrorMessage(ctx);
+
+    return false;
   }
   return user;
 };
