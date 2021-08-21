@@ -429,6 +429,14 @@ const helpMessage = async (ctx) => {
   }
 };
 
+const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser mayor o igual que ${qty}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -471,4 +479,5 @@ module.exports = {
   mustBeANumber,
   invalidInvoice,
   helpMessage,
+  mustBeGreatherEqThan,
 };
