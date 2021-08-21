@@ -421,6 +421,14 @@ const invalidInvoice = async (bot, user) => {
   }
 };
 
+const helpMessage = async (ctx) => {
+  try {
+    await ctx.reply(`Mensaje de ayuda`); 
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -462,4 +470,5 @@ module.exports = {
   mustBeValidCurrency,
   mustBeANumber,
   invalidInvoice,
+  helpMessage,
 };
