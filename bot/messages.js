@@ -424,6 +424,14 @@ const invalidInvoice = async (bot, user) => {
   }
 };
 
+const helpMessage = async (ctx) => {
+  try {
+    await ctx.reply(`Mensaje de ayuda`); 
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser mayor o igual que ${qty}`);
@@ -481,6 +489,7 @@ module.exports = {
   mustBeValidCurrency,
   mustBeANumber,
   invalidInvoice,
+  helpMessage,
   mustBeGreatherEqThan,
   maxDisputesErrorMessage,
 };

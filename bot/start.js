@@ -354,6 +354,19 @@ const start = () => {
     }
   });
 
+  
+  bot.command('help', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+      if (!user) return; 
+      
+      await messages.helpMessage(ctx);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+
   bot.launch();
 
   // Enable graceful stop
