@@ -325,6 +325,50 @@ const validateSettleAdmin = async (ctx, bot, user) => {
   return cancelParams[1];
 };
 
+const validateFiatSent = async (ctx, bot, user) => {
+  const sentFiatParams = ctx.update.message.text.split(' ');
+  if (sentFiatParams.length !== 2) {
+    await messages.fiatSentCorrectFormatMessage(bot, user);
+    return false;
+  }
+
+  return sentFiatParams[1];
+};
+
+const validateFiatSentOrder = async (bot, user, orderId) => {
+  const where = {
+    buyer_id: user._id,
+    status: 'ACTIVE',
+  };
+
+  if (!!orderId) {
+    where._id = orderId;
+  }
+  const order = await Order.findOne(where);
+  if (!order) {
+    await messages.notActiveOrderMessage(bot, user);
+    return false;
+  }
+
+  return order;
+};
+
+// If a seller have an order with status FIAT_SENT, return false
+const validateSeller = async (bot, user) => {
+  const where = {
+    seller_id: user._id,
+    status: 'FIAT_SENT',
+  };
+
+  const order = await Order.findOne(where);
+  if (!!order) {
+    await messages.orderOnfiatSentStatusMessages(bot, user);
+    return false;
+  }
+
+  return true;
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -342,4 +386,7 @@ module.exports = {
   validateCancel,
   validateCancelAdmin,
   validateSettleAdmin,
+  validateFiatSent,
+  validateFiatSentOrder,
+  validateSeller,
 };

@@ -389,15 +389,15 @@ const customMessage = async (bot, user, message) => {
 const checkOrderMessage = async (ctx,order,creator,buyer,seller) => {
   try {
     await ctx.reply(`Orden id: ${order._id}:
-      Creator: ${creator} 
-      Buyer: ${buyer} 
-      Seller: ${seller} 
-      Monto sats: ${order.amount}
-      Monto ${order.fiat_code}: ${order.fiat_amount}
-      Método de pago: ${order.payment_method}
-      seller invoice hash: ${order.hash}
-      seller invoice secret: ${order.secret}
-      buyer payment request: ${order.buyer_invoice}`);
+Creator: ${creator} 
+Buyer: ${buyer} 
+Seller: ${seller} 
+Monto sats: ${order.amount}
+Monto ${order.fiat_code}: ${order.fiat_amount}
+Método de pago: ${order.payment_method}
+seller invoice hash: ${order.hash}
+seller invoice secret: ${order.secret}
+buyer payment request: ${order.buyer_invoice}`);
   } catch (error) {
     console.log(error);
   }
@@ -451,6 +451,32 @@ const bannedUserErrorMessage = async (ctx) => {
   }
 };
 
+const fiatSentCorrectFormatMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `/fiatsent <order_id>`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const fiatSentMessages = async (bot, buyer, seller) => {
+  try {
+    await bot.telegram.sendMessage(buyer.tg_id, `Le hemos avisado al vendedor que has enviado el dinero fiat, en lo que el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
+    await bot.telegram.sendMessage(seller.tg_id, `El comprador me ha indicado que ya te envió el dinero fiat, esperamos que una vez confirmes la recepción del dinero liberes los fondos con el comando release, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+const orderOnfiatSentStatusMessages = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -495,4 +521,7 @@ module.exports = {
   helpMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,
+  fiatSentCorrectFormatMessage,
+  fiatSentMessages,
+  orderOnfiatSentStatusMessages,
 };
