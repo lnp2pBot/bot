@@ -337,13 +337,16 @@ const disputeCorrectFormatMessage = async (bot, user) => {
   }
 };
 
-const beginDisputeMessage = async (bot, initiatorUser, counterPartyUser, order, userType) => {
+const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
   try {
 
-    const type = userType === 'seller' ? 'comprador' : 'vendedor';
-    // We increment manually the dispute number by one to avoid query database again
-    const initiatiorUserDisputes = initiatorUser.disputes + 1;
-    const counterPartyUserDisputes = counterPartyUser.disputes + 1;
+    const type = initiator === 'seller' ? 'vendedor' : 'comprador';
+    let initiatorUser = buyer;
+    let counterPartyUser = seller;
+    if (initiator === 'seller') {
+      initiatorUser = seller;
+      counterPartyUser = buyer;
+    }
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username} 
 ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}:
 Monto sats: ${order.amount}
@@ -353,14 +356,14 @@ seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}
 buyer payment request: ${order.buyer_invoice}
 
-@${initiatorUser.username} ya tiene ${initiatiorUserDisputes} disputas
-@${counterPartyUser.username} ya tiene ${counterPartyUserDisputes} disputas`);
-    if (userType === 'buyer') {
+@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputas
+@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputas`);
+    if (initiator === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu compra con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu orden con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     } else {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu venta con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu orden con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     }
   } catch (error) {
     console.log(error);
@@ -440,9 +443,9 @@ const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
   }
 };
 
-const maxDisputesErrorMessage = async (ctx) => {
+const bannedUserErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`¡Has sido baneado! Tienes muchas disputas`);
+    await ctx.reply(`¡Has sido baneado!`);
   } catch (error) {
     console.log(error);
   }
@@ -491,5 +494,5 @@ module.exports = {
   invalidInvoice,
   helpMessage,
   mustBeGreatherEqThan,
-  maxDisputesErrorMessage,
+  bannedUserErrorMessage,
 };

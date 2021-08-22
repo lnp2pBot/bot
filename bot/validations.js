@@ -18,8 +18,8 @@ const validateUser = async (ctx, start) => {
     await user.save();
   } else if (!user) {
     await messages.initBotErrorMessage(ctx);
-  } else if (user.disputes >= process.env.MAX_DISPUTES) {
-    await messages.maxDisputesErrorMessage(ctx);
+  } else if (user.banned) {
+    await messages.bannedUserErrorMessage(ctx);
 
     return false;
   }
