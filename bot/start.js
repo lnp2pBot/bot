@@ -196,20 +196,30 @@ const start = () => {
       const order = await validateDisputeOrder(bot, user, orderId);
 
       if (!order) return;
-      let userType = 'buyer';
-      let counterPartyUser = await User.findOne({ _id: order.seller_id });
-      if (order.creator_id === order.seller_id) {
-        userType = 'seller';
-        counterPartyUser = await User.findOne({ _id: order.buyer_id });
-      }
 
-      order[`${userType}_dispute`] = true;
+      let buyer = await User.findOne({ _id: order.buyer_id });
+      let seller = await User.findOne({ _id: order.seller_id });
+      let initiator = 'seller';
+      if (user._id == order.buyer_id) initiator = 'buyer';
+
+      order[`${initiator}_dispute`] = true;
       order.status = 'DISPUTE';
       await order.save();
-      // we increment the number of disputes on both users
-      await User.updateOne({ _id: user._id }, { $inc: { disputes: 1 } }).exec();
-      await User.updateOne({ _id: counterPartyUser._id }, { $inc: { disputes: 1 } }).exec();
-      await messages.beginDisputeMessage(bot, user, counterPartyUser, order, userType);
+      // We increment the number of disputes on both users
+      // If a user disputes is equal to MAX_DISPUTES, we ban the user
+      const buyerDisputes = buyer.disputes + 1;
+      const sellerDisputes = seller.disputes + 1;
+      buyer.disputes = buyerDisputes;
+      seller.disputes = sellerDisputes;
+      if (buyerDisputes >= process.env.MAX_DISPUTES) {
+        buyer.banned = true;
+      }
+      if (sellerDisputes >= process.env.MAX_DISPUTES) {
+        seller.banned = true;
+      }
+      await buyer.save();
+      await seller.save();
+      await messages.beginDisputeMessage(bot, buyer, seller, order, initiator);
     } catch (error) {
       console.log(error);
     }
