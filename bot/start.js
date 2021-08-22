@@ -18,6 +18,9 @@ const {
   validateCancelAdmin,
   validateAdmin,
   validateSettleAdmin,
+  validateFiatSent,
+  validateFiatSentOrder,
+  validateSeller,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -42,6 +45,10 @@ const start = () => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
+      // Sellers with orders in status = FIAT_SENT, have to solve the order
+      const isOnFiatSentStatus = await validateSeller(bot, user);
+
+      if (!isOnFiatSentStatus) return;
 
       const sellOrderParams = await validateSellOrder(ctx, bot, user);
       if (!sellOrderParams) return;
@@ -133,6 +140,11 @@ const start = () => {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
+
+      // Sellers with orders in status = FIAT_SENT, have to solve the order
+      const isOnFiatSentStatus = await validateSeller(bot, user);
+
+      if (!isOnFiatSentStatus) return;
 
       const orderId = await validateTakeBuy(ctx, bot, user);
 
@@ -376,6 +388,31 @@ const start = () => {
     }
   });
 
+  // Only buyers can use this command
+  bot.command('fiatsent', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      const orderId = await validateFiatSent(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await validateFiatSentOrder(bot, user, orderId);
+
+      if (!order) return;
+
+      order.status = 'FIAT_SENT';
+      const seller = await User.findOne({ _id: order.seller_id });
+      await order.save();
+      // We sent messages to both parties
+      await messages.fiatSentMessages(bot, user, seller);
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
   bot.launch();
 

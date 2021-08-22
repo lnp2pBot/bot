@@ -39,6 +39,7 @@ const OrderSchema = new mongoose.Schema({
       'WAITING_PAYMENT',
       'PENDING',
       'ACTIVE',
+      'FIAT_SENT',
       'CLOSED',
       'DISPUTE',
       'CANCELED',
