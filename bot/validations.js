@@ -251,13 +251,17 @@ const validateRelease = async (ctx, bot, user) => {
 const validateReleaseOrder = async (bot, user, orderId) => {
   const where = {
     seller_id: user._id,
-    status: 'ACTIVE',
+    $or: [
+      {status: 'ACTIVE'},
+      {status: 'FIAT_SENT'},
+    ],
   };
 
   if (!!orderId) {
     where._id = orderId;
   }
   const order = await Order.findOne(where);
+
   if (!order) {
     await messages.notActiveOrderMessage(bot, user);
     return false;
