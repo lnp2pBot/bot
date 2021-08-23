@@ -23,7 +23,7 @@ Telegram bot which allows to people to trade using lightning network with other 
 7. When Bob confirms that he received the fiat, the bot settles Bob's invoice and pays Alice's invoice.
 8. If Bob does not confirm the operation that he received the payment in certain amount of time (initially we set this in two hours but this can be changed), the bot cancels the hold-invoice and closes the order, before the time expires Alice will be notified that Bob is not responding and Alice can start a dispute.
 
-## Cooperative close
+## Cooperative cancel
 After a user creates a new order and before another user take it, the user can cancel the order, but in some cases users may need to cancel the order, it shouldn't be unilateral.
 
 Only if both parties cancel cooperatively the order is canceled and seller's funds are returned.
@@ -33,7 +33,7 @@ If users have a disagreement on canceling or don't want to go forward they can s
 ## Disputes
 Both parties can start a dispute at any moment, after a dispute is started a human will be notified with all the information, this human will contact both parties to evaluate the situation and take a decision.
 
-After a user starts a dispute, both parties will have increased by **1** their own `dispute` field in database and after **4** disputes users will be banned from using the bot.
+After a user starts a dispute, both parties will have increased by **1** their own `dispute` field in database and after **2** disputes users will be banned from using the bot.
 
 ## Incentive to release funds
 A seller that didn't release funds to the buyer can't open or take another order from the bot and probably will be involved in a dispute from the buyer damaging his/her reputation

@@ -437,7 +437,15 @@ const invalidInvoice = async (bot, user) => {
 
 const helpMessage = async (ctx) => {
   try {
-    await ctx.reply(`Mensaje de ayuda`); 
+    await ctx.reply(`/sell <order_id> - Crea una orden de venta
+/buy <order_id> - Crea una orden de compra
+/takebuy <order_id> - Toma una orden de compra
+/takesell <order_id> - Toma una orden de venta
+/fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
+/release <order_id> - El vendedor libera los satoshis
+/dispute <order_id> - Abre una disputa entre los participantes
+/cancel <order_id> - Cancela una orden que no ha sido tomada
+/cooperativecancel <order_id> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa`); 
   } catch (error) {
     console.log(error);
   }
