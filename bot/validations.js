@@ -309,6 +309,16 @@ const validateCancel = async (ctx, bot, user) => {
   return cancelParams[1];
 };
 
+const validateCooperativeCancel = async (ctx, bot, user) => {
+  const cancelParams = ctx.update.message.text.split(' ');
+  if (cancelParams.length !== 2) {
+    await messages.cooperativeCancelCorrectFormatMessage(bot, user);
+    return false;
+  }
+
+  return cancelParams[1];
+};
+
 const validateCancelAdmin = async (ctx, bot, user) => {
   const cancelParams = ctx.update.message.text.split(' ');
   if (cancelParams.length !== 2) {
@@ -393,4 +403,5 @@ module.exports = {
   validateFiatSent,
   validateFiatSentOrder,
   validateSeller,
+  validateCooperativeCancel,
 };

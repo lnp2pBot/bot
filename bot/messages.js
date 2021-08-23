@@ -378,6 +378,14 @@ const cancelCorrectFormatMessage = async (bot, user) => {
   }
 };
 
+const cooperativeCancelCorrectFormatMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `/cooperativecancel <order_id>`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const customMessage = async (bot, user, message) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, message);
@@ -524,4 +532,5 @@ module.exports = {
   fiatSentCorrectFormatMessage,
   fiatSentMessages,
   orderOnfiatSentStatusMessages,
+  cooperativeCancelCorrectFormatMessage,
 };

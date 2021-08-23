@@ -32,6 +32,8 @@ const OrderSchema = new mongoose.Schema({
   buyer_invoice: { type: String },
   buyer_dispute: { type: Boolean, default: false },
   seller_dispute: { type: Boolean, default: false },
+  buyer_cooperativecancel: { type: Boolean, default: false },
+  seller_cooperativecancel: { type: Boolean, default: false },
   canceled_by: { type: String },
   status: {
     type: String,

@@ -21,6 +21,7 @@ const {
   validateFiatSent,
   validateFiatSentOrder,
   validateSeller,
+  validateCooperativeCancel,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -237,7 +238,8 @@ const start = () => {
     }
   });
 
-  // For now we only cancel pending orders, probably this will change
+  // We allow users cancel pending orders,
+  // pending orders are the ones that are not taken by another user
   bot.command('cancel', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
@@ -251,24 +253,25 @@ const start = () => {
 
       if (!order) return;
 
-      if (order.status === 'PENDING') {
-        // If we already have a holdInvoice we cancel it and return the money
-        if (!!order.hash) {
-          await cancelHoldInvoice({ hash: order.hash });
-        }
+      if (order.status !== 'PENDING') {
+        await messages.customMessage(bot, user, `Esta opción solo permite cancelar las ordenes que no han sido tomadas`);
+        return;
+      }
 
-        order.status = 'CANCELED';
-        order.canceled_by = user._id;
-        await order.save();
-        // we sent a private message to the user
-        await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
-        // we update this order message in the channel
-        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
-        if (order.tg_chat_id < 0) {
-          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
-        }
-      } else {
-        await messages.customMessage(bot, user, `Solo se pueden cancelar las ordenes con status = PENDING`);
+      // If we already have a holdInvoice we cancel it and return the money
+      if (!!order.hash) {
+        await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      order.status = 'CANCELED';
+      order.canceled_by = user._id;
+      await order.save();
+      // we sent a private message to the user
+      await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
+      // we update this order message in the channel
+      await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
+      if (order.tg_chat_id < 0) {
+        await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
       }
     } catch (error) {
       console.log(error);
@@ -408,6 +411,73 @@ const start = () => {
       await order.save();
       // We sent messages to both parties
       await messages.fiatSentMessages(bot, user, seller);
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('cooperativecancel', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      const orderId = await validateCooperativeCancel(ctx, bot, user);
+
+      if (!orderId) return;
+
+      const order = await getOrder(bot, user, orderId);
+
+      if (!order) return;
+
+      if (order.status !== 'ACTIVE') {
+        await messages.customMessage(bot, user, `Esta opción solo permite cancelar cooperativamente las ordenes activas`);
+        return;
+      }
+      let initiatorUser, counterPartyUser, initiator, counterParty;
+
+      if (user._id == order.buyer_id) {
+        initiatorUser = user;
+        counterPartyUser = await User.findOne({ _id: order.seller_id });
+        initiator = 'buyer';
+        counterParty = 'seller';
+      } else {
+        counterPartyUser = await User.findOne({ _id: order.buyer_id });
+        initiatorUser = user;
+        initiator = 'seller';
+        counterParty = 'buyer';
+      }
+
+      if (order[`${initiator}_cooperativecancel`]) {
+        await messages.customMessage(bot, initiatorUser, `Ya has realizado esta operación, debes esperar por tu contraparte`);
+        return;
+      }
+
+      order[`${initiator}_cooperativecancel`] = true;
+
+      // If the counter party already requested a cooperative cancel order
+      if (order[`${counterParty}_cooperativecancel`]) {
+        // If we already have a holdInvoice we cancel it and return the money
+        if (!!order.hash) {
+          await cancelHoldInvoice({ hash: order.hash });
+        }
+
+        order.status = 'CANCELED';
+        // We sent a private message to the users
+        await messages.customMessage(bot, initiatorUser, `Has cancelado la orden Id: ${order._id}!`);
+        await messages.customMessage(bot, counterPartyUser, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: ${order._id}!`);
+        // We update this order message in the channel
+        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
+        if (order.tg_chat_id < 0) {
+          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
+        }
+      } else {
+        await messages.customMessage(bot, initiatorUser, `Has iniciado la cancelación de la orden Id: ${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
+        await messages.customMessage(bot, counterPartyUser, `Tu contraparte quiere cancelar la orden Id: ${order._id}, si estás de acuerdo utiliza el comando 👇`);
+        await messages.customMessage(bot, counterPartyUser, `/cooperativecancel ${order._id}`);
+      }
+      await order.save();
 
     } catch (error) {
       console.log(error);
