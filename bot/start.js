@@ -55,17 +55,20 @@ const start = () => {
       if (!sellOrderParams) return;
 
       const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
-      const { request, order } = await createOrder(ctx, bot, {
+      const order = await createOrder(ctx, {
         type: 'sell',
         amount,
         seller: user,
         fiatAmount,
         fiatCode,
         paymentMethod,
-        status: 'WAITING_PAYMENT',
+        status: 'PENDING',
       });
 
-      if (!!order) await messages.invoicePaymentRequestMessage(bot, user, request);
+      if (!!order) {
+        await messages.publishSellOrderMessage(ctx, bot, order);
+        await messages.pendingSellMessage(bot, user, order);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +89,7 @@ const start = () => {
 
       const { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice } = buyOrderParams;
 
-      const { order } = await createOrder(ctx, bot, {
+      const order = await createOrder(ctx, {
         type: 'buy',
         amount,
         buyer: user,
@@ -120,13 +123,26 @@ const start = () => {
         const order = await Order.findOne({ _id: orderId });
         if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
 
-        order.status = 'ACTIVE';
+        order.status = 'WAITING_PAYMENT';
         order.buyer_id = user._id;
         order.buyer_invoice = lnInvoice;
-        await order.save();
 
-        const orderUser = await User.findOne({ _id: order.creator_id });
-        await messages.beginTakeSellMessage(bot, orderUser, user, order);
+        const seller = await User.findOne({ _id: order.creator_id });
+        // We create a hold invoice
+        const description = `Venta por @${ctx.botInfo.username}`;
+        const amount = Math.floor(order.amount + order.fee);
+        const { request, hash, secret } = await createHoldInvoice({
+          amount,
+          description,
+        });
+        order.hash = hash;
+        order.secret = secret;
+        await order.save();
+        // We monitor the invoice to know when the seller makes the payment
+        await subscribeInvoice(bot, hash);
+        // We send the hold invoice to the seller
+        await messages.invoicePaymentRequestMessage(bot, seller, request);
+        await messages.takeSellWaitingSellerToPayMessage(bot, user);
       } catch (e) {
         console.log(e);
         await messages.invalidDataMessage(bot, user);
@@ -154,21 +170,20 @@ const start = () => {
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
-      const invoiceDescription = `Venta por @${ctx.botInfo.username}`;
-      let amount = order.amount + order.amount * parseFloat(process.env.FEE);
-      amount = Math.floor(amount);
+      const description = `Venta por @${ctx.botInfo.username}`;
+      const amount = Math.floor(order.amount + order.fee);
       const { request, hash, secret } = await createHoldInvoice({
-        description: invoiceDescription,
+        description,
         amount,
       });
       order.hash = hash;
       order.secret = secret;
-      order.status = 'ACTIVE';
+      order.status = 'WAITING_PAYMENT';
       order.seller_id = user._id;
       await order.save();
 
-      // monitoreamos esa invoice para saber cuando el usuario realice el pago
-      await subscribeInvoice(ctx, bot, hash);
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
 
       await messages.beginTakeBuyMessage(bot, user, request, order);
     } catch (error) {
@@ -253,8 +268,8 @@ const start = () => {
 
       if (!order) return;
 
-      if (order.status !== 'PENDING') {
-        await messages.customMessage(bot, user, `Esta opción solo permite cancelar las ordenes que no han sido tomadas`);
+      if (order.status !== 'PENDING' && order.status !== 'WAITING_PAYMENT') {
+        await messages.customMessage(bot, user, `Esta opción solo permite cancelar las ordenes que no han sido tomadas o en las cuales el vendedor ha tardado mucho para pagar la factura`);
         return;
       }
 
