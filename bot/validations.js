@@ -119,7 +119,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
 
     if (!(await validateInvoice(bot, user, invoice))) return false;
 
-    if (invoice.tokens != amount) {
+    if (!!invoice.tokens && invoice.tokens != amount) {
       await messages.amountMustTheSameInvoiceMessage(bot, user, amount);
       return false;
     }
@@ -191,7 +191,7 @@ const validateTakeSell = async (ctx, bot, user) => {
 const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
   const invoice = parsePaymentRequest({ request: lnInvoice });
   const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-  if (invoice.tokens !== order.amount) {
+  if (!!invoice.tokens && invoice.tokens !== order.amount) {
     await messages.amountMustTheSameInvoiceMessage(bot, user, order.amount);
     return false;
   }
