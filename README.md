@@ -4,12 +4,12 @@ Telegram bot which allows to people to trade using lightning network with other 
 **p2plnbot** is being developed on nodejs and connect with an LND node, after some thinking we couldn't find a good way telegram bot that give this kind of service without being custodial, but we developed a **trust minimized** model for this, we are not custodians of funds of the users, this is why we use hold invoices, the bot only settle seller invoices when each party is ok with it and at that same times the bot pay the buyer's invoice.
 
 ## Creating a sell order
-1. Alice tells to the bot that she wants to sell 5000 sats by **n** fiat amount.
-2. The bot send to alice a hold-invoice, Alice has to pay a hold-invoice of 5000 sats to the bot, this invoice is "pending", the money is not accepted or rejected by the bot at that moment.
-3. After the bot detects that Alice paid the invoice, the order is published on the channel.
-4. Bob accepts the order for 5000 sats sending a new lightning invoice to the bot.
-5. The bot put in contact Bob and Alice.
-6. Bob sends the fiat money via bank transfer.
+1. Alice tells to the bot that she wants to sell 5000 sats for **n** fiat amount.
+2. The bot publishes a sell order of 5000 sats on the bot channel.
+3. Bob accepts the order for 5000 sats sending a new lightning invoice to the bot.
+4. The bot send to alice a hold-invoice, Alice has to pay a hold-invoice of 5000 sats to the bot, this invoice is "pending", the money is not accepted or rejected by the bot at that moment.
+5. After the bot detects that Alice paid the invoice, the bot puts Alicia in contact with Bob.
+6. Bob sends the fiat money to Alice and indicates to the bot that the fiat money was sent to Alice.
 7. When Alice confirmed that she received the money, the bot settles Alice's initial invoice and pays Bob's invoice.
 8. If Alice does not confirm the operation that she received the payment in certain amount of time (initially we set this in two hours but this can be changed), the bot cancels the hold-invoice and closes the order, before the time expires Bob will be notified that Alice is not responding and Bob can start a dispute.
 

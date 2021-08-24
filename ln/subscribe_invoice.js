@@ -25,7 +25,11 @@ const subscribeInvoice = async (bot, id) => {
         order.status = 'PAID_HOLD_INVOICE';
         await order.save();
         try {
-          const payment = await pay({ lnd, request: order.buyer_invoice });
+          const payment = await pay({
+            lnd,
+            request: order.buyer_invoice,
+            tokens: order.amount,
+          });
           if (payment.is_confirmed) {
             order.status = 'SUCCESS';
             await order.save();
