@@ -216,7 +216,7 @@ const beginTakeBuyMessage = async (bot, sellerUser, request, order) => {
 
 const onGoingTakeBuyMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `Pago recibido!\n\nPonte en contacto con el usuario @${buyerUser.username} para darle los detalles de metodo de pago fiat que te hara. Una vez confirmes su pago debes liberar los fondos con el comando:`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `¡Pago recibido!\n\nPonte en contacto con el usuario @${buyerUser.username} para darle los detalles de metodo de pago fiat que te hara. Una vez confirmes su pago debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `El usuario @${sellerUser.username} ha tomado tu compra y te quiere vender sats. Comunicate con el para que le hagas el pago por fiat y te libere sus sats. `);
   } catch (error) {
@@ -463,7 +463,7 @@ const orderOnfiatSentStatusMessages = async (bot, user) => {
 
 const userBannedMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Usuario baneado!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡Usuario baneado!`);
   } catch (error) {
     console.log(error);
   }
@@ -471,7 +471,7 @@ const userBannedMessage = async (bot, user) => {
 
 const notFoundUserMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Usuario no encontrado en base de datos!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡Usuario no encontrado en base de datos!`);
   } catch (error) {
     console.log(error);
   }

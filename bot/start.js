@@ -327,7 +327,7 @@ const start = () => {
 
   bot.command('settleorder', async (ctx) => {
     try {
-      const user = await (ctx);
+      const user = await validateAdmin(ctx, bot);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
