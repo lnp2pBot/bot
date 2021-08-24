@@ -26,7 +26,7 @@ const validateUser = async (ctx, start) => {
   return user;
 };
 
-const validateAdmin = async (ctx) => {
+const validateAdmin = async (ctx, bot) => {
   const tgUser = ctx.update.message.from;
   let user = await User.findOne({ tg_id: tgUser.id });
   if (!user) {
@@ -115,11 +115,9 @@ const validateBuyOrder = async (ctx, bot, user) => {
   };
 
   try {
-    const invoice = parsePaymentRequest({ request: lnInvoice });
+    if (!(await validateInvoice(bot, user, lnInvoice))) return false;
 
-    if (!(await validateInvoice(bot, user, invoice))) return false;
-
-    if (invoice.tokens != amount) {
+    if (!!invoice.tokens && invoice.tokens != amount) {
       await messages.amountMustTheSameInvoiceMessage(bot, user, amount);
       return false;
     }
@@ -136,34 +134,40 @@ const validateBuyOrder = async (ctx, bot, user) => {
   }
 };
 
-const validateInvoice = async (bot, user, invoice) => {
-  const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-  if (invoice.tokens < 100) {
-    await messages.minimunAmountInvoiceMessage(bot, user);
+const validateInvoice = async (bot, user, lnInvoice) => {
+  try {
+    const invoice = parsePaymentRequest({ request: lnInvoice });
+    const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
+    if (invoice.tokens < 100) {
+      await messages.minimunAmountInvoiceMessage(bot, user);
+      return false;
+    }
+
+    if (new Date(invoice.expires_at) < latestDate) {
+      await messages.minimunExpirationTimeInvoiceMessage(bot, user);
+      return false;
+    }
+
+    if (invoice.is_expired !== false) {
+      await messages.expiredInvoiceMessage(bot, user);
+      return false;
+    }
+
+    if (!invoice.destination) {
+      await messages.requiredAddressInvoiceMessage(bot, user);
+      return false;
+    }
+
+    if (!invoice.id) {
+      await messages.requiredHashInvoiceMessage(bot, user);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    await messages.errorParsingInvoiceMessage(bot, user);
     return false;
   }
-
-  if (new Date(invoice.expires_at) < latestDate) {
-    await messages.minimunExpirationTimeInvoiceMessage(bot, user);
-    return false;
-  }
-
-  if (invoice.is_expired !== false) {
-    await messages.expiredInvoiceMessage(bot, user);
-    return false;
-  }
-
-  if (!invoice.destination) {
-    await messages.requiredAddressInvoiceMessage(bot, user);
-    return false;
-  }
-
-  if (!invoice.id) {
-    await messages.requiredHashInvoiceMessage(bot, user);
-    return false;
-  }
-
-  return true;
 };
 
 const validateTakeSell = async (ctx, bot, user) => {
@@ -178,9 +182,7 @@ const validateTakeSell = async (ctx, bot, user) => {
     return false;
   }
   try {
-    const invoice = parsePaymentRequest({ request: lnInvoice });
-
-    if (!(await validateInvoice(bot, user, invoice))) return;
+    if (!(await validateInvoice(bot, user, lnInvoice))) return;
   } catch (error) {
     await messages.invalidInvoice(bot, user);
   }
@@ -191,7 +193,7 @@ const validateTakeSell = async (ctx, bot, user) => {
 const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
   const invoice = parsePaymentRequest({ request: lnInvoice });
   const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-  if (invoice.tokens !== order.amount) {
+  if (!!invoice.tokens && invoice.tokens !== order.amount) {
     await messages.amountMustTheSameInvoiceMessage(bot, user, order.amount);
     return false;
   }
@@ -239,15 +241,6 @@ const validateTakeBuyOrder = async (bot, user, order) => {
   return true;
 };
 
-const validateRelease = async (ctx, bot, user) => {
-  const releaseParams = ctx.update.message.text.split(' ');
-  if (releaseParams.length !== 2) {
-    await messages.releaseCorrectFormatMessage(bot, user);
-    return false;
-  }
-  return releaseParams[1];
-};
-
 const validateReleaseOrder = async (bot, user, orderId) => {
   const where = {
     seller_id: user._id,
@@ -270,16 +263,6 @@ const validateReleaseOrder = async (bot, user, orderId) => {
   return order;
 };
 
-const validateDispute = async (ctx, bot, user) => {
-  const disputeParams = ctx.update.message.text.split(' ');
-  if (disputeParams.length !== 2) {
-    await messages.disputeCorrectFormatMessage(bot, user);
-    return false;
-  }
-
-  return disputeParams[1];
-};
-
 const validateDisputeOrder = async (bot, user, orderId) => {
   const where = {
     status: 'ACTIVE',
@@ -299,56 +282,6 @@ const validateDisputeOrder = async (bot, user, orderId) => {
   return order;
 };
 
-const validateCancel = async (ctx, bot, user) => {
-  const cancelParams = ctx.update.message.text.split(' ');
-  if (cancelParams.length !== 2) {
-    await messages.cancelCorrectFormatMessage(bot, user);
-    return false;
-  }
-
-  return cancelParams[1];
-};
-
-const validateCooperativeCancel = async (ctx, bot, user) => {
-  const cancelParams = ctx.update.message.text.split(' ');
-  if (cancelParams.length !== 2) {
-    await messages.cooperativeCancelCorrectFormatMessage(bot, user);
-    return false;
-  }
-
-  return cancelParams[1];
-};
-
-const validateCancelAdmin = async (ctx, bot, user) => {
-  const cancelParams = ctx.update.message.text.split(' ');
-  if (cancelParams.length !== 2) {
-    await messages.customMessage(bot, user, '/cancelorder <order_id>');
-    return false;
-  }
-
-  return cancelParams[1];
-};
-
-const validateSettleAdmin = async (ctx, bot, user) => {
-  const cancelParams = ctx.update.message.text.split(' ');
-  if (cancelParams.length !== 2) {
-    await messages.customMessage(bot, user, '/settleorder <order_id>');
-    return false;
-  }
-
-  return cancelParams[1];
-};
-
-const validateFiatSent = async (ctx, bot, user) => {
-  const sentFiatParams = ctx.update.message.text.split(' ');
-  if (sentFiatParams.length !== 2) {
-    await messages.fiatSentCorrectFormatMessage(bot, user);
-    return false;
-  }
-
-  return sentFiatParams[1];
-};
-
 const validateFiatSentOrder = async (bot, user, orderId) => {
   const where = {
     buyer_id: user._id,
@@ -358,13 +291,18 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
   if (!!orderId) {
     where._id = orderId;
   }
-  const order = await Order.findOne(where);
-  if (!order) {
-    await messages.notActiveOrderMessage(bot, user);
+  try {
+    const order = await Order.findOne(where);
+    if (!order) {
+      await messages.notActiveOrderMessage(bot, user);
+      return false;
+    }
+
+    return order;
+  } catch (error) {
+    await messages.customMessage(bot, user, '/fiatsent <order_id>');
     return false;
   }
-
-  return order;
 };
 
 // If a seller have an order with status FIAT_SENT, return false
@@ -383,6 +321,18 @@ const validateSeller = async (bot, user) => {
   return true;
 };
 
+const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
+  const paramsArray = ctx.update.message.text.split(' ');
+  const params = paramsArray.filter(el => el != '');
+  if (params.length != paramNumber) {
+    await messages.customMessage(bot, user, `${params[0]} ${errOutputString}`);
+
+    return [];
+  }
+
+  return params.slice(1);
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -393,15 +343,9 @@ module.exports = {
   validateTakeSellOrder,
   validateTakeBuy,
   validateTakeBuyOrder,
-  validateRelease,
   validateReleaseOrder,
-  validateDispute,
   validateDisputeOrder,
-  validateCancel,
-  validateCancelAdmin,
-  validateSettleAdmin,
-  validateFiatSent,
   validateFiatSentOrder,
   validateSeller,
-  validateCooperativeCancel,
+  validateParams,
 };

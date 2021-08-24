@@ -9,19 +9,12 @@ const {
   validateTakeSell,
   validateTakeBuyOrder,
   validateReleaseOrder,
-  validateTakeBuy,
   validateTakeSellOrder,
-  validateRelease,
-  validateDispute,
   validateDisputeOrder,
-  validateCancel,
-  validateCancelAdmin,
   validateAdmin,
-  validateSettleAdmin,
-  validateFiatSent,
   validateFiatSentOrder,
   validateSeller,
-  validateCooperativeCancel,
+  validateParams,
 } = require('./validations');
 const messages = require('./messages');
 
@@ -55,17 +48,20 @@ const start = () => {
       if (!sellOrderParams) return;
 
       const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
-      const { request, order } = await createOrder(ctx, bot, {
+      const order = await createOrder(ctx, {
         type: 'sell',
         amount,
         seller: user,
         fiatAmount,
         fiatCode,
         paymentMethod,
-        status: 'WAITING_PAYMENT',
+        status: 'PENDING',
       });
 
-      if (!!order) await messages.invoicePaymentRequestMessage(bot, user, request);
+      if (!!order) {
+        await messages.publishSellOrderMessage(ctx, bot, order);
+        await messages.pendingSellMessage(bot, user, order);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -86,7 +82,7 @@ const start = () => {
 
       const { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice } = buyOrderParams;
 
-      const { order } = await createOrder(ctx, bot, {
+      const order = await createOrder(ctx, {
         type: 'buy',
         amount,
         buyer: user,
@@ -110,23 +106,36 @@ const start = () => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
-
       const takeSellParams = await validateTakeSell(ctx, bot, user);
       if (!takeSellParams) return;
-
       const { orderId, lnInvoice } = takeSellParams;
+
+      if (!orderId) return;
 
       try {
         const order = await Order.findOne({ _id: orderId });
         if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
 
-        order.status = 'ACTIVE';
+        order.status = 'WAITING_PAYMENT';
         order.buyer_id = user._id;
         order.buyer_invoice = lnInvoice;
-        await order.save();
 
-        const orderUser = await User.findOne({ _id: order.creator_id });
-        await messages.beginTakeSellMessage(bot, orderUser, user, order);
+        const seller = await User.findOne({ _id: order.creator_id });
+        // We create a hold invoice
+        const description = `Venta por @${ctx.botInfo.username}`;
+        const amount = Math.floor(order.amount + order.fee);
+        const { request, hash, secret } = await createHoldInvoice({
+          amount,
+          description,
+        });
+        order.hash = hash;
+        order.secret = secret;
+        await order.save();
+        // We monitor the invoice to know when the seller makes the payment
+        await subscribeInvoice(bot, hash);
+        // We send the hold invoice to the seller
+        await messages.invoicePaymentRequestMessage(bot, seller, request);
+        await messages.takeSellWaitingSellerToPayMessage(bot, user);
       } catch (e) {
         console.log(e);
         await messages.invalidDataMessage(bot, user);
@@ -147,28 +156,27 @@ const start = () => {
 
       if (!isOnFiatSentStatus) return;
 
-      const orderId = await validateTakeBuy(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
-      const invoiceDescription = `Venta por @${ctx.botInfo.username}`;
-      let amount = order.amount + order.amount * parseFloat(process.env.FEE);
-      amount = Math.floor(amount);
+      const description = `Venta por @${ctx.botInfo.username}`;
+      const amount = Math.floor(order.amount + order.fee);
       const { request, hash, secret } = await createHoldInvoice({
-        description: invoiceDescription,
+        description,
         amount,
       });
       order.hash = hash;
       order.secret = secret;
-      order.status = 'ACTIVE';
+      order.status = 'WAITING_PAYMENT';
       order.seller_id = user._id;
       await order.save();
 
-      // monitoreamos esa invoice para saber cuando el usuario realice el pago
-      await subscribeInvoice(ctx, bot, hash);
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
 
       await messages.beginTakeBuyMessage(bot, user, request, order);
     } catch (error) {
@@ -182,7 +190,7 @@ const start = () => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const orderId = await validateRelease(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -202,7 +210,7 @@ const start = () => {
 
       if (!user) return;
 
-      const orderId = await validateDispute(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -245,7 +253,7 @@ const start = () => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const orderId = await validateCancel(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -253,8 +261,8 @@ const start = () => {
 
       if (!order) return;
 
-      if (order.status !== 'PENDING') {
-        await messages.customMessage(bot, user, `Esta opción solo permite cancelar las ordenes que no han sido tomadas`);
+      if (order.status !== 'PENDING' && order.status !== 'WAITING_PAYMENT') {
+        await messages.customMessage(bot, user, `Esta opción solo permite cancelar las ordenes que no han sido tomadas o en las cuales el vendedor ha tardado mucho para pagar la factura`);
         return;
       }
 
@@ -280,10 +288,10 @@ const start = () => {
 
   bot.command('cancelorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx);
+      const user = await validateAdmin(ctx, bot);
       if (!user) return;
 
-      const orderId = await validateCancelAdmin(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -319,10 +327,10 @@ const start = () => {
 
   bot.command('settleorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx);
+      const user = await validateAdmin(ctx, bot);
       if (!user) return;
 
-      const orderId = await validateSettleAdmin(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -357,10 +365,10 @@ const start = () => {
 
   bot.command('checkorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx);
+      const user = await validateAdmin(ctx, bot);
       if (!user) return;
 
-      const orderId = await validateCancelAdmin(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -372,14 +380,13 @@ const start = () => {
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id }); 
 
-      await messages.checkOrderMessage(ctx,order,creator.username,buyer.username,seller.username);
+      await messages.checkOrderMessage(ctx, order, creator.username, buyer.username, seller.username);
 
     } catch (error) {
       console.log(error);
     }
   });
 
-  
   bot.command('help', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
@@ -397,8 +404,7 @@ const start = () => {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
-
-      const orderId = await validateFiatSent(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -423,7 +429,7 @@ const start = () => {
 
       if (!user) return;
 
-      const orderId = await validateCooperativeCancel(ctx, bot, user);
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
 
@@ -479,6 +485,30 @@ const start = () => {
       }
       await order.save();
 
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('ban', async (ctx) => {
+    try {
+      const adminUser = await validateAdmin(ctx, bot);
+
+      if (!adminUser) return;
+
+      const params = await validateParams(ctx, bot, adminUser, 2, '<username>');
+
+      if (!params) return;
+
+      const user = await User.findOne({ username: params[0] });
+
+      if (!user) {
+        await messages.notFoundUserMessage(bot, adminUser);
+        return;
+      }
+      user.banned = true;
+      await user.save();
+      await messages.userBannedMessage(bot, adminUser);
     } catch (error) {
       console.log(error);
     }

@@ -3,25 +3,21 @@ const { Order, User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
 
-const subscribeInvoice = async (ctx, bot, id) => {
+const subscribeInvoice = async (bot, id) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async (invoice) => {
       if (invoice.is_held) {
         console.log(`invoice with hash: ${id} is being held!`);
         const order = await Order.findOne({ hash: invoice.id });
+        const buyerUser = await User.findOne({ _id: order.buyer_id });
+        const sellerUser = await User.findOne({ _id: order.seller_id });
+        order.status = 'ACTIVE';
+        await order.save();
         if (order.type === 'sell') {
-          // paso la orden a pending
-          order.status = 'PENDING';
-          const orderUser = await User.findOne({ _id: order.creator_id });
-
-          messages.publishSellOrderMessage(ctx, bot, order);
-          messages.pendingSellMessage(bot, orderUser, order);
+          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
         } else if (order.type === 'buy') {
-          const orderUser = await User.findOne({ _id: order.creator_id });
-          const sellerUser = await User.findOne({ _id: order.seller_id });
-
-          await messages.onGoingTakeBuyMessage(bot, orderUser, sellerUser, order);
+          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
         }
         order.invoice_held_at = Date.now();
         order.save();
@@ -31,7 +27,11 @@ const subscribeInvoice = async (ctx, bot, id) => {
         order.status = 'PAID_HOLD_INVOICE';
         await order.save();
         try {
-          const payment = await pay({ lnd, request: order.buyer_invoice });
+          const payment = await pay({
+            lnd,
+            request: order.buyer_invoice,
+            tokens: order.amount,
+          });
           if (payment.is_confirmed) {
             order.status = 'SUCCESS';
             await order.save();

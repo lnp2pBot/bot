@@ -10,13 +10,13 @@ const OrderSchema = new mongoose.Schema({
       message   : '{VALUE} is not an integer value'
     }
   },
+  fee: { type: Number, min: 0 },
   hash: {
     type: String,
     index: {
       unique: true,
       partialFilterExpression: { hash: { $type: 'string' } },
     },
-    default : null,
   }, // hold invoice hash
   secret: {
     type: String,
@@ -24,7 +24,6 @@ const OrderSchema = new mongoose.Schema({
       unique: true,
       partialFilterExpression: { secret: { $type: 'string' } },
     },
-    default : null
   }, // hold invoice secret
   creator_id: { type: String },
   seller_id: { type: String },
@@ -50,7 +49,6 @@ const OrderSchema = new mongoose.Schema({
       'CANCELED_BY_ADMIN',
       'COMPLETED_BY_ADMIN',
     ],
-    default: 'WAITING_PAYMENT',
   },
   type: { type: String },
   fiat_amount: { type: Number, min: 1 }, // amount in fiat
