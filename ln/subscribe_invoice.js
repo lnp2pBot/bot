@@ -13,7 +13,6 @@ const subscribeInvoice = async (ctx, bot, id) => {
         if (order.type === 'sell') {
           // paso la orden a pending
           order.status = 'PENDING';
-          order.save();
           const orderUser = await User.findOne({ _id: order.creator_id });
 
           messages.publishSellOrderMessage(ctx, bot, order);
@@ -24,6 +23,8 @@ const subscribeInvoice = async (ctx, bot, id) => {
 
           await messages.onGoingTakeBuyMessage(bot, orderUser, sellerUser, order);
         }
+        order.invoice_held_at = Date.now();
+        order.save();
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: invoice.id });
@@ -52,7 +53,7 @@ const subscribeInvoice = async (ctx, bot, id) => {
             // TODO: cronjob que haga estos pagos cada cierto tiempo y con cada intento incremente 'attempts'
             // si attemps > 3 el admin se debe comunicar directamente con el usuario para hacer el pago manualmente
             const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const message = 'No he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
+            const message = 'El vendedor ha liberado los satoshis pero el pago a tu invoice ha fallado, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
             await messages.customMessage(bot, buyerUser, message);
             const pp = new PendingPayment({
               amount: order.amount,
