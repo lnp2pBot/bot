@@ -216,7 +216,7 @@ const beginTakeBuyMessage = async (bot, sellerUser, request, order) => {
 
 const onGoingTakeBuyMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `Pago recibido!\n\nPonte en contacto con el usuario @${buyerUser.username} para darle los detalles de metodo de pago fiat que te hara. Una vez confirmes su pago debes liberar los fondos con el comando:`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `¡Pago recibido!\n\nPonte en contacto con el usuario @${buyerUser.username} para darle los detalles de metodo de pago fiat que te hara. Una vez confirmes su pago debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `El usuario @${sellerUser.username} ha tomado tu compra y te quiere vender sats. Comunicate con el para que le hagas el pago por fiat y te libere sus sats. `);
   } catch (error) {
@@ -258,14 +258,6 @@ const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {
   try {
     await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor @${orderUser.username} nos indicó que recibió tu pago y he pagado tu invoice, que disfrutes tus sats\n⚡️🍊⚡️`);
     await bot.telegram.sendMessage(orderUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de  @${buyerUser.username}\n⚡️🍊⚡️`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const releaseCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/release <order_id>`);
   } catch (error) {
     console.log(error);
   }
@@ -337,14 +329,6 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
   }
 };
 
-const disputeCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/dispute <order_id>`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
   try {
 
@@ -373,22 +357,6 @@ buyer payment request: ${order.buyer_invoice}
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
       await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu orden con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const cancelCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/cancel <order_id>`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const cooperativeCancelCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/cooperativecancel <order_id>`);
   } catch (error) {
     console.log(error);
   }
@@ -475,14 +443,6 @@ const bannedUserErrorMessage = async (ctx) => {
   }
 };
 
-const fiatSentCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/fiatsent <order_id>`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const fiatSentMessages = async (bot, buyer, seller) => {
   try {
     await bot.telegram.sendMessage(buyer.tg_id, `Le hemos avisado al vendedor que has enviado el dinero fiat, en lo que el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
@@ -496,6 +456,30 @@ const fiatSentMessages = async (bot, buyer, seller) => {
 const orderOnfiatSentStatusMessages = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const userBannedMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Usuario baneado!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const notFoundUserMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Usuario no encontrado en base de datos!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const errorParsingInvoiceMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Error parseando la invoice`);
   } catch (error) {
     console.log(error);
   }
@@ -522,7 +506,6 @@ module.exports = {
   takeBuyCorrectFormatMessage,
   takeSellCorrectFormatMessage,
   beginTakeBuyMessage,
-  releaseCorrectFormatMessage,
   notActiveOrderMessage,
   publishSellOrderMessage,
   onGoingTakeBuyMessage,
@@ -532,9 +515,7 @@ module.exports = {
   pendingBuyMessage,
   repeatedInvoiceMessage,
   mustBeIntMessage,
-  disputeCorrectFormatMessage,
   beginDisputeMessage,
-  cancelCorrectFormatMessage,
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
@@ -545,9 +526,10 @@ module.exports = {
   helpMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,
-  fiatSentCorrectFormatMessage,
   fiatSentMessages,
   orderOnfiatSentStatusMessages,
-  cooperativeCancelCorrectFormatMessage,
   takeSellWaitingSellerToPayMessage,
+  userBannedMessage,
+  notFoundUserMessage,
+  errorParsingInvoiceMessage,
 };
