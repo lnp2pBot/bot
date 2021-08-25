@@ -237,17 +237,16 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
     await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
-
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
   } catch (error) {
     console.log(error);
   }
 };
 
-const takeSellWaitingSellerToPayMessage = async (bot, buyerUser) => {
+const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
   try {
     await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una invoice al vendedor para que nos envíe tus sats, en cuanto realice el pago los pondremos en contacto`);
+    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
   } catch (error) {
     console.log(error);
   }

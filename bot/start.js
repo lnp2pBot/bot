@@ -142,7 +142,7 @@ const start = () => {
         await subscribeInvoice(bot, hash);
         // We send the hold invoice to the seller
         await messages.invoicePaymentRequestMessage(bot, seller, request);
-        await messages.takeSellWaitingSellerToPayMessage(bot, user);
+        await messages.takeSellWaitingSellerToPayMessage(bot, user, order);
       } catch (e) {
         console.log(e);
         await messages.invalidDataMessage(bot, user);
