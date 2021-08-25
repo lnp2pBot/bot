@@ -130,6 +130,7 @@ const start = () => {
         });
         order.hash = hash;
         order.secret = secret;
+        order.taken_at = Date.now();
         await order.save();
         // We monitor the invoice to know when the seller makes the payment
         await subscribeInvoice(bot, hash);
@@ -173,6 +174,7 @@ const start = () => {
       order.secret = secret;
       order.status = 'WAITING_PAYMENT';
       order.seller_id = user._id;
+      order.taken_at = Date.now();
       await order.save();
 
       // We monitor the invoice to know when the seller makes the payment

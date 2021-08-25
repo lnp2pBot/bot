@@ -1,52 +1,40 @@
 require("dotenv").config();
-const { pay } = require('lightning');
-const lnd = require('../ln/connect');
+const { cancelHoldInvoice } = require('../ln');
 const mongoConnect = require("../db_connect");
-const { PendingPayment, Order, User } = require('../models');
+const { Order } = require('../models');
 
 mongoConnect();
 
 const cancelOrders = async () => {
-    const now = new Date();
-    const orders = await Order.find({
+    const time = new Date();
+    time.setSeconds(time.getSeconds() - parseInt(process.env.ORDER_EXPIRATION_WINDOW));
+    // We get the expired orders where the seller never sent sats
+    const waitingPaymentOrders = await Order.find({
         status: 'WAITING_PAYMENT',
-        created_at: { $lt: 3 },
+        taken_at: { $lte: time },
     });
-    if (pendingPayments.length === 0) {
-        process.exit();
+    for (const order of waitingPaymentOrders) {
+        order.status = 'EXPIRED';
+        console.log(`Order Id: ${order._id} expired!`);
+        await order.save();
+        await cancelHoldInvoice({ hash: order.hash });
+        // TODO: We should send a message to both parties to indicate that this order expired
     }
-    for (const pending of pendingPayments) {
-        pending.attempts++;
-        const order = await Order.findOne({ _id: pending.order_id });
-        if (order.status === 'SUCCESS') {
-            pending.paid = true;
-            await pending.save();
-            console.log(`Order id: ${order._id} was already paid`);
-            process.exit();
-        }
-        try {
-            const payment = await pay({ lnd, request: order.buyer_invoice });
-            if (payment.is_confirmed) {
-                order.status = 'SUCCESS';
-                pending.paid = true;
-                await order.save();
-                // We add a new completed trade for the buyer
-                const buyerUser = await User.findOne({ _id: order.buyer_id });
-                buyerUser.trades_completed++;
-                await buyerUser.save();
-                // We add a new completed trade for the seller
-                const sellerUser = await User.findOne({ _id: order.seller_id });
-                sellerUser.trades_completed++;
-                sellerUser.save();
-                console.log(`Invoice with hash: ${pending.hash} paid`)
-              }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            await pending.save();
-            process.exit();
-        }
+    // We get the expired order where the seller sent the sats but never release the order
+    // In this case we use another time field, `invoice_held_at` is the time when the
+    // seller sent the money to the hold invoice, this is an important moment cause
+    // we don't want to have a CLTV timeout
+    const activeOrders = await Order.find({
+        invoice_held_at: { $lte: time },
+        $or: [{
+            status: 'ACTIVE',
+            status: 'FIAT_SENT',
+        }],
+    });
+    for (const order of activeOrders) {
+        // TODO: We should send a message to admin with all information
+        // to manually cancel or complete the order
     }
 };
 
-attemptPendingPayments();
+cancelOrders();
