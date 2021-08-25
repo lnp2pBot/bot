@@ -18,9 +18,15 @@ const {
   validateParams,
 } = require('./validations');
 const messages = require('./messages');
+const attemptPendingPayments = require('../jobs/pending_payments');
 
 const start = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
+
+  // We schedule pending payments job
+  const job = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
+    await attemptPendingPayments(bot);
+  });
 
   bot.start(async (ctx) => {
     try {

@@ -138,7 +138,7 @@ const validateInvoice = async (bot, user, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-    if (invoice.tokens < 100) {
+    if (!!invoice.tokens && invoice.tokens < 100) {
       await messages.minimunAmountInvoiceMessage(bot, user);
       return false;
     }
