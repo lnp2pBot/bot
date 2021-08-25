@@ -233,7 +233,8 @@ const doneTakeBuyMessage = async (bot, orderUser, sellerUser) => {
 
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero fiat.\n\nCuando el usuario @${sellerUser.username} confirme que recibió tu pago, estaré liberando tus sats.`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero fiat.\n\nUna vez hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `El usuario @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Comunicate con el usuario para que te haga el pago por fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
 
