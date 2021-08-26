@@ -80,10 +80,10 @@ const start = () => {
   bot.command('buy', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
+
       if (!user) return;
 
       const buyOrderParams = await validateBuyOrder(ctx, bot, user);
-
       if (!buyOrderParams) {
         await messages.invalidDataMessage(bot, user);
 

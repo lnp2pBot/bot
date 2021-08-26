@@ -40,12 +40,13 @@ const validateAdmin = async (ctx, bot) => {
 };
 
 const validateSellOrder = async (ctx, bot, user) => {
-  const sellOrderParams = ctx.update.message.text.split(' ');
-  if (sellOrderParams.length !== 5) {
+  const paramsArray = ctx.update.message.text.split(' ');
+  const params = paramsArray.filter(el => el != '');
+  if (params.length !== 5) {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [_, amount, fiatAmount, fiatCode, paymentMethod] = sellOrderParams;
+  let [_, amount, fiatAmount, fiatCode, paymentMethod] = params;
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
     await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
@@ -72,16 +73,17 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false
   };
 
-  return {amount, fiatAmount, fiatCode, paymentMethod};
+  return { amount, fiatAmount, fiatCode, paymentMethod };
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
-  const buyOrderParams = ctx.update.message.text.split(' ');
-  if (buyOrderParams.length !== 6) {
+  const paramsArray = ctx.update.message.text.split(' ');
+  const params = paramsArray.filter(el => el != '');
+  if (params.length !== 6) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = buyOrderParams;
+  let [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = params;
   
   if (!lnInvoice) {
     await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
@@ -117,19 +119,15 @@ const validateBuyOrder = async (ctx, bot, user) => {
   try {
     if (!(await validateInvoice(bot, user, lnInvoice))) return false;
 
-    if (!!invoice.tokens && invoice.tokens != amount) {
-      await messages.amountMustTheSameInvoiceMessage(bot, user, amount);
-      return false;
-    }
-
     const order = await Order.findOne({ buyer_invoice: lnInvoice });
     if (order) {
       await messages.repeatedInvoiceMessage(bot, user);
       return false;
     }
 
-    return {amount, fiatAmount, fiatCode, paymentMethod, lnInvoice};
+    return { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice };
   } catch (error) {
+    console.log(error);
     await messages.invalidInvoice(bot, user);
   }
 };
