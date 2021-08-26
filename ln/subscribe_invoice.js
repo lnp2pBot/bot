@@ -1,5 +1,6 @@
 const { subscribeToInvoice, pay } = require('lightning');
 const { Order, User, PendingPayment } = require('../models');
+const payRequest = require('./pay_request');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
 
@@ -23,14 +24,14 @@ const subscribeInvoice = async (bot, id) => {
         order.save();
       }
       if (invoice.is_confirmed) {
+        console.log(`Invoice with hash: ${id} is being paid!`);
         const order = await Order.findOne({ hash: invoice.id });
         order.status = 'PAID_HOLD_INVOICE';
         await order.save();
         try {
-          const payment = await pay({
-            lnd,
+          const payment = await payRequest({
             request: order.buyer_invoice,
-            tokens: order.amount,
+            amount: order.amount,
           });
           if (payment.is_confirmed) {
             order.status = 'SUCCESS';

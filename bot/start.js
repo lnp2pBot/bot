@@ -1,4 +1,5 @@
 const { Telegraf } = require('telegraf');
+const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const { createOrder, getOrder } = require('./ordersActions');
 const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
@@ -17,9 +18,15 @@ const {
   validateParams,
 } = require('./validations');
 const messages = require('./messages');
+const attemptPendingPayments = require('../jobs/pending_payments');
 
 const start = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
+
+  // We schedule pending payments job
+  const job = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
+    await attemptPendingPayments(bot);
+  });
 
   bot.start(async (ctx) => {
     try {
@@ -136,7 +143,7 @@ const start = () => {
         await subscribeInvoice(bot, hash);
         // We send the hold invoice to the seller
         await messages.invoicePaymentRequestMessage(bot, seller, request);
-        await messages.takeSellWaitingSellerToPayMessage(bot, user);
+        await messages.takeSellWaitingSellerToPayMessage(bot, user, order);
       } catch (e) {
         console.log(e);
         await messages.invalidDataMessage(bot, user);
@@ -278,11 +285,9 @@ const start = () => {
       await order.save();
       // we sent a private message to the user
       await messages.customMessage(bot, user, `Has cancelado la orden Id: ${order._id}!`);
-      // we update this order message in the channel
-      await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
-      if (order.tg_chat_id < 0) {
-        await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
-      }
+      // We delete the messages related to that order from the channel
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     } catch (error) {
       console.log(error);
     }
@@ -316,11 +321,9 @@ const start = () => {
       await messages.customMessage(bot, seller, `El admin ha cancelado la orden Id: ${order._id}!`);
       // we sent a private message to the buyer
       await messages.customMessage(bot, buyer, `El admin cancelado la orden Id: ${order._id}!`);
-      // we update this order message in the channel
-      await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
-      if (order.tg_chat_id < 0) {
-        await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
-      }
+      // We delete the messages related to that order from the channel
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     } catch (error) {
       console.log(error);
     }
@@ -475,11 +478,9 @@ const start = () => {
         // We sent a private message to the users
         await messages.customMessage(bot, initiatorUser, `Has cancelado la orden Id: ${order._id}!`);
         await messages.customMessage(bot, counterPartyUser, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: ${order._id}!`);
-        // We update this order message in the channel
-        await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} CANCELADA ❌`);
-        if (order.tg_chat_id < 0) {
-          await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} CANCELADA ❌`);
-        }
+        // We delete the messages related to that order from the channel
+        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
       } else {
         await messages.customMessage(bot, initiatorUser, `Has iniciado la cancelación de la orden Id: ${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
         await messages.customMessage(bot, counterPartyUser, `Tu contraparte quiere cancelar la orden Id: ${order._id}, si estás de acuerdo utiliza el comando 👇`);

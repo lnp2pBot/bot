@@ -1,31 +1,28 @@
-require("dotenv").config();
-const { pay } = require('lightning');
-const lnd = require('../ln/connect');
-const mongoConnect = require("../db_connect");
+const { payRequest } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
 
-mongoConnect();
-
-const attemptPendingPayments = async () => {
+const attemptPendingPayments = async (bot) => {
     const pendingPayments = await PendingPayment.find({
         paid: false,
         attempts: { $lt: 3 },
     });
     if (pendingPayments.length === 0) {
-        process.exit();
+        return;
     }
     for (const pending of pendingPayments) {
         pending.attempts++;
         const order = await Order.findOne({ _id: pending.order_id });
         if (order.status === 'SUCCESS') {
             pending.paid = true;
-            await pending.save();
             console.log(`Order id: ${order._id} was already paid`);
-            process.exit();
+            return;
         }
         try {
-            const payment = await pay({ lnd, request: order.buyer_invoice });
-            if (payment.is_confirmed) {
+            const payment = await payRequest({
+                amount: order.amount,
+                request: order.buyer_invoice,
+            });
+            if (!!payment && payment.is_confirmed) {
                 order.status = 'SUCCESS';
                 pending.paid = true;
                 await order.save();
@@ -37,15 +34,19 @@ const attemptPendingPayments = async () => {
                 const sellerUser = await User.findOne({ _id: order.seller_id });
                 sellerUser.trades_completed++;
                 sellerUser.save();
-                console.log(`Invoice with hash: ${pending.hash} paid`)
-              }
+                console.log(`Invoice with hash: ${pending.hash} paid`);
+                await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El usuario @${buyerUser.username} tenía un pago pendiente en su compra de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos`);
+                await bot.telegram.sendMessage(buyerUser.tg_id, `He pagado tu factura lightning por tu compra Id: ${order._id}!\n\nPrueba de pago: ${payment.secret}`);
+            } else {
+                const buyerUser = await User.findOne({ _id: order.buyer_id });
+                await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El pago a la invoice de la compra Id: ${order._id} del usuario @${buyerUser.username} ha fallado!\n\nIntento de pago ${pending.attempts}`);
+            }
         } catch (error) {
             console.log(error);
         } finally {
             await pending.save();
-            process.exit();
         }
     }
 };
 
-attemptPendingPayments();
+module.exports = attemptPendingPayments;

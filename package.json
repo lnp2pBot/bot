@@ -16,6 +16,7 @@
     "invoices": "^1.2.1",
     "lightning": "^3.3.11",
     "mongoose": "^5.12.14",
+    "node-schedule": "^2.0.0",
     "telegraf": "^4.3.0"
   },
   "keywords": [
