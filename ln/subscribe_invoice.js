@@ -20,6 +20,8 @@ const subscribeInvoice = async (bot, id) => {
         } else if (order.type === 'buy') {
           await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
         }
+        order.invoice_held_at = Date.now();
+        order.save();
       }
       if (invoice.is_confirmed) {
         console.log(`Invoice with hash: ${id} is being paid!`);
@@ -49,10 +51,8 @@ const subscribeInvoice = async (bot, id) => {
             orderUser.trades_completed++;
             await orderUser.save();
           } else {
-            // TODO: cronjob que haga estos pagos cada cierto tiempo y con cada intento incremente 'attempts'
-            // si attemps > 3 el admin se debe comunicar directamente con el usuario para hacer el pago manualmente
             const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const message = 'No he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
+            const message = `El vendedor ha liberado los satoshis pero el pago a tu invoice ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`;
             await messages.customMessage(bot, buyerUser, message);
             const pp = new PendingPayment({
               amount: order.amount,
@@ -67,7 +67,7 @@ const subscribeInvoice = async (bot, id) => {
         } catch (error) {
           if (order.status === 'PAID_HOLD_INVOICE') {
             const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const message = 'El vendedor ha liberado los satoshis pero no he podido pagar tu invoice, en unos minutos intentaré pagarla nuevamente, asegúrate que tu nodo/wallet esté online';
+            const message = `El vendedor ha liberado los satoshis pero no he podido pagar tu invoice, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`;
             await messages.customMessage(bot, buyerUser, message);
             const pp = new PendingPayment({
               amount: order.amount,

@@ -9,7 +9,7 @@ Telegram bot which allows to people to trade using lightning network with other 
 3. Bob accepts the order for 5000 sats sending a new lightning invoice to the bot.
 4. The bot send to alice a hold-invoice, Alice has to pay a hold-invoice of 5000 sats to the bot, this invoice is "pending", the money is not accepted or rejected by the bot at that moment.
 5. After the bot detects that Alice paid the invoice, the bot puts Alicia in contact with Bob.
-6. Bob sends the fiat money to Alice and indicates to the bot that the fiat money was sent to Alice.
+6. Bob sends the fiat money to Alice and tells to the bot that the fiat money was sent to Alice.
 7. When Alice confirmed that she received the money, the bot settles Alice's initial invoice and pays Bob's invoice.
 8. If Alice does not confirm the operation that she received the payment in certain amount of time (initially we set this in two hours but this can be changed), the bot cancels the hold-invoice and closes the order, before the time expires Bob will be notified that Alice is not responding and Bob can start a dispute.
 
@@ -19,7 +19,7 @@ Telegram bot which allows to people to trade using lightning network with other 
 3. The bot shows the order in the public group.
 4. Bob takes the order, the bot sends him a hold-invoice for 5000.
 5. Bob pays the invoice.
-6. The bot tells Alice that Bob has already made the payment, she can now send the fiat to Bob.
+6. The bot tells Alice that Bob has already made the payment, she can now send the fiat to Bob, after she sent the money she tells to the bot that the fiat was sent.
 7. When Bob confirms that he received the fiat, the bot settles Bob's invoice and pays Alice's invoice.
 8. If Bob does not confirm the operation that he received the payment in certain amount of time (initially we set this in two hours but this can be changed), the bot cancels the hold-invoice and closes the order, before the time expires Alice will be notified that Bob is not responding and Alice can start a dispute.
 

@@ -18,14 +18,17 @@ const {
   validateParams,
 } = require('./validations');
 const messages = require('./messages');
-const attemptPendingPayments = require('../jobs/pending_payments');
+const { attemptPendingPayments, cancelOrders } = require('../jobs');
 
 const start = () => {
   const bot = new Telegraf(process.env.BOT_TOKEN);
 
   // We schedule pending payments job
-  const job = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
+  const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
     await attemptPendingPayments(bot);
+  });
+  const cancelOrderJob = schedule.scheduleJob(`*/10 * * * *`, async () => {
+    await cancelOrders(bot);
   });
 
   bot.start(async (ctx) => {
@@ -137,6 +140,7 @@ const start = () => {
         });
         order.hash = hash;
         order.secret = secret;
+        order.taken_at = Date.now();
         await order.save();
         // We monitor the invoice to know when the seller makes the payment
         await subscribeInvoice(bot, hash);
@@ -180,6 +184,7 @@ const start = () => {
       order.secret = secret;
       order.status = 'WAITING_PAYMENT';
       order.seller_id = user._id;
+      order.taken_at = Date.now();
       await order.save();
 
       // We monitor the invoice to know when the seller makes the payment
