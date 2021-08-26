@@ -14,4 +14,11 @@ const isIso4217 = (code) => {
     return true;
 };
 
-module.exports = { isIso4217 };
+const plural = (n) => {
+    if (n == 1) {
+        return '';
+    }
+    return 's';
+};
+
+module.exports = { isIso4217, plural };

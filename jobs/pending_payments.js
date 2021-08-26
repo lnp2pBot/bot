@@ -6,9 +6,6 @@ const attemptPendingPayments = async (bot) => {
         paid: false,
         attempts: { $lt: 3 },
     });
-    if (pendingPayments.length === 0) {
-        return;
-    }
     for (const pending of pendingPayments) {
         pending.attempts++;
         const order = await Order.findOne({ _id: pending.order_id });
