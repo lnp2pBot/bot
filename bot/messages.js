@@ -73,9 +73,11 @@ const pendingSellMessage = async (bot, user, order) => {
   }
 };
 
-const pendingBuyMessage = async (bot, user) => {
+const pendingBuyMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Publicada la oferta en el canal ${process.env.CHANNEL}.\n\nEspera que alguien tome tu compra.`);
+    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando:`);
+    await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
   } catch (error) {
     console.log(error);
   }
@@ -227,7 +229,7 @@ const onGoingTakeBuyMessage = async (bot, sellerUser, buyerUser, order) => {
 const doneTakeBuyMessage = async (bot, orderUser, sellerUser) => {
   try {
     await bot.telegram.sendMessage(sellerUser.tg_id, `Confirmaste el pago FIAT del comprador @${orderUser.username} y has vendido exitosamente tus sats\n⚡️🍊⚡️`);
-    await bot.telegram.sendMessage(orderUser.tg_id, `Tu compra de sats ha sido completada exitosamente con @${sellerUser.username} tras confirmar tu pago FIAT y ya he pagado tu invoice,  que disfrutes tus sats\n⚡️🍊⚡️`);
+    await bot.telegram.sendMessage(orderUser.tg_id, `Tu compra de sats ha sido completada exitosamente con @${sellerUser.username} tras confirmar tu pago fiat y ya he pagado tu invoice,  que disfrutes tus sats\n⚡️🍊⚡️`);
   } catch (error) {
     console.log(error);
   }

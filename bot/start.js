@@ -27,9 +27,9 @@ const start = () => {
   const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
     await attemptPendingPayments(bot);
   });
-  const cancelOrderJob = schedule.scheduleJob(`*/10 * * * *`, async () => {
-    await cancelOrders(bot);
-  });
+  // const cancelOrderJob = schedule.scheduleJob(`*/10 * * * *`, async () => {
+  //   await cancelOrders(bot);
+  // });
 
   bot.start(async (ctx) => {
     try {
@@ -90,7 +90,7 @@ const start = () => {
         return;
       }
 
-      const { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice } = buyOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
 
       const order = await createOrder(ctx, {
         type: 'buy',
@@ -99,13 +99,12 @@ const start = () => {
         fiatAmount,
         fiatCode,
         paymentMethod,
-        buyerInvoice: lnInvoice || '',
         status: 'PENDING',
       });
 
       if (!!order) {
         await messages.publishBuyOrderMessage(ctx, bot, order);
-        await messages.pendingBuyMessage(bot, user);
+        await messages.pendingBuyMessage(bot, user, order);
       }
     } catch (error) {
       console.log(error);

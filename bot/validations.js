@@ -79,16 +79,11 @@ const validateSellOrder = async (ctx, bot, user) => {
 const validateBuyOrder = async (ctx, bot, user) => {
   const paramsArray = ctx.update.message.text.split(' ');
   const params = paramsArray.filter(el => el != '');
-  if (params.length !== 6) {
+  if (params.length !== 5) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [_, amount, fiatAmount, fiatCode, paymentMethod, lnInvoice] = params;
-  
-  if (!lnInvoice) {
-    await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
-    return false;
-  }
+  let [_, amount, fiatAmount, fiatCode, paymentMethod] = params;
 
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
@@ -116,20 +111,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false
   };
 
-  try {
-    if (!(await validateInvoice(bot, user, lnInvoice))) return false;
-
-    const order = await Order.findOne({ buyer_invoice: lnInvoice });
-    if (order) {
-      await messages.repeatedInvoiceMessage(bot, user);
-      return false;
-    }
-
-    return { amount, fiatAmount, fiatCode, paymentMethod, lnInvoice };
-  } catch (error) {
-    console.log(error);
-    await messages.invalidInvoice(bot, user);
-  }
+  return { amount, fiatAmount, fiatCode, paymentMethod };
 };
 
 const validateInvoice = async (bot, user, lnInvoice) => {
