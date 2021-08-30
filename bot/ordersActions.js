@@ -1,6 +1,5 @@
 const ObjectId = require('mongoose').Types.ObjectId;
 const { Order } = require('../models');
-const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const messages = require('./messages');
 
 const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
