@@ -8,6 +8,7 @@ const { isIso4217 } = require('../util');
 const validateUser = async (ctx, start) => {
   const tgUser = ctx.update.message.from;
   let user = await User.findOne({ tg_id: tgUser.id });
+
   if (!user && start) {
     user = new User({
       tg_id: tgUser.id,
@@ -311,6 +312,7 @@ const validateSeller = async (bot, user) => {
   };
 
   const order = await Order.findOne(where);
+
   if (!!order) {
     await messages.orderOnfiatSentStatusMessages(bot, user);
     return false;

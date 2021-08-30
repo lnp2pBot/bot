@@ -1,5 +1,5 @@
 const sinon = require("sinon");
-const expect = require("chai").expect;
+const { expect } = require("chai");
 const lightning = require('lightning');
 const { parsePaymentRequest } = require("invoices");
 const { createHodlInvoiceResponse } = require("./lightningResponse");
