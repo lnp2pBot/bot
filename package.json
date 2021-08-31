@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node ./app",
     "dev": "nodemon ./app",
-    "test": "mocha --exit --recursive --timeout 10000 tests/"
+    "test": "mocha --exit tests/"
   },
   "license": "MIT",
   "dependencies": {
