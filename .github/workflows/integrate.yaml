@@ -1,0 +1,16 @@
+name: integracion continua con node.js
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci_to_main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 10
+      - run: npm ci
+      - run: npm test
