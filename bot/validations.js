@@ -1,4 +1,5 @@
 const { parsePaymentRequest } = require('invoices');
+const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217 } = require('../util');
@@ -176,6 +177,11 @@ const validateTakeSell = async (ctx, bot, user) => {
     return false;
   }
   const [_, orderId, lnInvoice] = takeSellParams;
+
+  if (!validateObjectId(bot, user, orderId)) {
+    return false;
+  }
+
   if (!lnInvoice) {
     await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
     return false;
@@ -213,15 +219,6 @@ const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
     return false;
   }
   return true;
-};
-
-const validateTakeBuy = async (ctx, bot, user) => {
-  const takeBuyParams = ctx.update.message.text.split(' ');
-  if (takeBuyParams.length !== 2) {
-    await messages.takeBuyCorrectFormatMessage(bot, user);
-    return false;
-  }
-  return takeBuyParams[1];
 };
 
 const validateTakeBuyOrder = async (bot, user, order) => {
@@ -333,6 +330,16 @@ const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
   return params.slice(1);
 };
 
+const validateObjectId = async (bot, user, id) => {
+  if (!ObjectId.isValid(id)) {
+    await messages.notValidIdMessage(bot, user);
+    return false;
+  }
+  return true;
+};
+
+
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -341,11 +348,11 @@ module.exports = {
   validateInvoice,
   validateTakeSell,
   validateTakeSellOrder,
-  validateTakeBuy,
   validateTakeBuyOrder,
   validateReleaseOrder,
   validateDisputeOrder,
   validateFiatSentOrder,
   validateSeller,
   validateParams,
+  validateObjectId,
 };

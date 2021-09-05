@@ -16,6 +16,7 @@ const {
   validateFiatSentOrder,
   validateSeller,
   validateParams,
+  validateObjectId,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
@@ -171,7 +172,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
@@ -206,7 +207,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateReleaseOrder(bot, user, orderId);
 
       if (!order) return;
@@ -226,7 +227,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateDisputeOrder(bot, user, orderId);
 
       if (!order) return;
@@ -269,7 +270,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
@@ -305,7 +306,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
@@ -342,9 +343,9 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
 
       const order = await ordersActions.getOrder(bot, user, orderId);
-
       if (!order) return;
 
       if (!!order.secret) {
@@ -380,7 +381,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return; 
@@ -416,7 +417,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateFiatSentOrder(bot, user, orderId);
 
       if (!order) return;
@@ -441,7 +442,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
@@ -506,7 +507,7 @@ const initialize = (botToken, options) => {
       const params = await validateParams(ctx, bot, adminUser, 2, '<username>');
 
       if (!params) return;
-
+      if (!(await validateObjectId(bot, user, params[0]))) return;
       const user = await User.findOne({ username: params[0] });
 
       if (!user) {
