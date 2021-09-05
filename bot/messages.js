@@ -489,6 +489,14 @@ const errorParsingInvoiceMessage = async (bot, user) => {
   }
 };
 
+const notValidIdMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Id no válida`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -536,4 +544,5 @@ module.exports = {
   userBannedMessage,
   notFoundUserMessage,
   errorParsingInvoiceMessage,
+  notValidIdMessage,
 };
