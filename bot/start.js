@@ -17,6 +17,7 @@ const {
   validateSeller,
   validateParams,
   validateObjectId,
+  validateInvoice,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
@@ -28,9 +29,9 @@ const initialize = (botToken, options) => {
   const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
     await attemptPendingPayments(bot);
   });
-  // const cancelOrderJob = schedule.scheduleJob(`*/10 * * * *`, async () => {
-  //   await cancelOrders(bot);
-  // });
+  const cancelOrderJob = schedule.scheduleJob(`*/5 * * * *`, async () => {
+    await cancelOrders(bot);
+  });
 
   bot.start(async (ctx) => {
     try {
@@ -86,11 +87,7 @@ const initialize = (botToken, options) => {
       if (!user) return;
 
       const buyOrderParams = await validateBuyOrder(ctx, bot, user);
-      if (!buyOrderParams) {
-        await messages.invalidDataMessage(bot, user);
-
-        return;
-      }
+      if (!buyOrderParams) return;
 
       const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
 
@@ -518,6 +515,33 @@ const initialize = (botToken, options) => {
       await messages.userBannedMessage(bot, adminUser);
     } catch (error) {
       console.log(error);
+    }
+  });
+
+  // Only buyers can use this command
+  bot.command('addinvoice', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+      const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '<order_id> <lightning_invoice>');
+
+      if (!orderId) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      if (!(await validateInvoice(bot, user, lnInvoice))) return;
+      const order = await Order.findOne({ _id: orderId });
+
+      if (!order) return;
+
+      order.buyer_invoice = lnInvoice;
+      await order.save();
+      // We sent messages to both parties
+      await messages.addInvoiceMessage(bot, user);
+
+    } catch (error) {
+      console.log(error);
+      const user = await validateUser(ctx, false);
+      await messages.genericErrorMessage(bot, user);
     }
   });
 

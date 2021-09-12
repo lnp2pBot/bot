@@ -3,12 +3,12 @@ const { User, Order } = require('../models');
 const { plural } = require('../util');
 
 const cancelOrders = async (bot) => {
-    const time = new Date();
-    time.setSeconds(time.getSeconds() - parseInt(process.env.ORDER_EXPIRATION_WINDOW));
-    // We get the expired orders where the seller never sent sats
+    const holdInvoiceTime = new Date();
+    holdInvoiceTime.setSeconds(holdInvoiceTime.getSeconds() - parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW));
+    // We get the orders where the seller didn't pay the hold invoice before expired
     const waitingPaymentOrders = await Order.find({
         status: 'WAITING_PAYMENT',
-        taken_at: { $lte: time },
+        taken_at: { $lte: holdInvoiceTime },
     });
     for (const order of waitingPaymentOrders) {
         order.status = 'EXPIRED';
@@ -25,8 +25,10 @@ const cancelOrders = async (bot) => {
     // In this case we use another time field, `invoice_held_at` is the time when the
     // seller sent the money to the hold invoice, this is an important moment cause
     // we don't want to have a CLTV timeout
+    const orderTime = new Date();
+    orderTime.setSeconds(orderTime.getSeconds() - parseInt(process.env.ORDER_EXPIRATION_WINDOW));
     const activeOrders = await Order.find({
-        invoice_held_at: { $lte: time },
+        invoice_held_at: { $lte: orderTime },
         $or: [{
             status: 'ACTIVE',
             status: 'FIAT_SENT',

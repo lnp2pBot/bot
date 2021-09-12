@@ -2,7 +2,7 @@ const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
 
-const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, buyerInvoice, status }) => {
+const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, status }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
@@ -21,7 +21,6 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
         fiat_amount: fiatAmount,
         fiat_code: fiatCode,
         payment_method: paymentMethod,
-        buyer_invoice: buyerInvoice,
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,
       });
@@ -41,7 +40,6 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
         fiat_amount: fiatAmount,
         fiat_code: fiatCode,
         payment_method: paymentMethod,
-        buyer_invoice: buyerInvoice,
         status,
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,

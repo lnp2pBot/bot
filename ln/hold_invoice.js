@@ -8,13 +8,16 @@ const createHoldInvoice = async ({ description, amount }) => {
     const sha256 = buffer => createHash('sha256').update(buffer).digest('hex');
     // We create a random secret
     const secret = randomSecret();
+    const expiresAt = new Date();
+    expiresAt.setSeconds(expiresAt.getSeconds() + parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW));
 
     const hash = sha256(secret);
     const { request, id } = await lightning.createHodlInvoice({
       lnd,
       description,
       id: hash,
-      tokens: amount
+      tokens: amount,
+      expires_at: expiresAt,
     });
 
     // We sent back the response hash (id) to be used on testing
