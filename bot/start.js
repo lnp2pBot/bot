@@ -1,7 +1,7 @@
 const { Telegraf } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
-const { createOrder, getOrder } = require('./ordersActions');
+const ordersActions = require('./ordersActions');
 const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
 const {
   validateSellOrder,
@@ -16,12 +16,13 @@ const {
   validateFiatSentOrder,
   validateSeller,
   validateParams,
+  validateObjectId,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
 
-const start = () => {
-  const bot = new Telegraf(process.env.BOT_TOKEN);
+const initialize = (botToken, options) => {
+  const bot = new Telegraf(botToken, options);
 
   // We schedule pending payments job
   const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
@@ -48,6 +49,7 @@ const start = () => {
   bot.command('sell', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
+
       if (!user) return;
       // Sellers with orders in status = FIAT_SENT, have to solve the order
       const isOnFiatSentStatus = await validateSeller(bot, user);
@@ -55,10 +57,10 @@ const start = () => {
       if (!isOnFiatSentStatus) return;
 
       const sellOrderParams = await validateSellOrder(ctx, bot, user);
-      if (!sellOrderParams) return;
 
+      if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
-      const order = await createOrder(ctx, {
+      const order = await ordersActions.createOrder(ctx, {
         type: 'sell',
         amount,
         seller: user,
@@ -92,7 +94,7 @@ const start = () => {
 
       const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
 
-      const order = await createOrder(ctx, {
+      const order = await ordersActions.createOrder(ctx, {
         type: 'buy',
         amount,
         buyer: user,
@@ -169,7 +171,7 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
       if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
@@ -204,7 +206,7 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateReleaseOrder(bot, user, orderId);
 
       if (!order) return;
@@ -224,7 +226,7 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateDisputeOrder(bot, user, orderId);
 
       if (!order) return;
@@ -267,8 +269,8 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
-      const order = await getOrder(bot, user, orderId);
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
 
@@ -303,8 +305,8 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
-      const order = await getOrder(bot, user, orderId);
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
 
@@ -340,9 +342,9 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
 
-      const order = await getOrder(bot, user, orderId);
-
+      const order = await ordersActions.getOrder(bot, user, orderId);
       if (!order) return;
 
       if (!!order.secret) {
@@ -378,8 +380,8 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
-      const order = await getOrder(bot, user, orderId);
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return; 
 
@@ -414,7 +416,7 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateFiatSentOrder(bot, user, orderId);
 
       if (!order) return;
@@ -439,8 +441,8 @@ const start = () => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
 
       if (!orderId) return;
-
-      const order = await getOrder(bot, user, orderId);
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await ordersActions.getOrder(bot, user, orderId);
 
       if (!order) return;
 
@@ -504,7 +506,7 @@ const start = () => {
       const params = await validateParams(ctx, bot, adminUser, 2, '<username>');
 
       if (!params) return;
-
+      if (!(await validateObjectId(bot, user, params[0]))) return;
       const user = await User.findOne({ username: params[0] });
 
       if (!user) {
@@ -519,6 +521,12 @@ const start = () => {
     }
   });
 
+  return bot;
+};
+
+const start = (botToken) => {
+  const bot = initialize(botToken);
+
   bot.launch();
 
   // Enable graceful stop
@@ -526,4 +534,4 @@ const start = () => {
   process.once('SIGTERM', () => bot.stop('SIGTERM'));
 };
 
-module.exports = start;
+module.exports = { initialize, start };

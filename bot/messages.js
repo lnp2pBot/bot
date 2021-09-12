@@ -295,8 +295,11 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
     const publishMessage2 = `/takebuy ${order._id}`;
 
     // Mensaje al canal
-    order.tg_channel_message1 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage)).message_id;
-    order.tg_channel_message2 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2)).message_id;
+    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
+    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2);
+    // Mensaje al canal
+    order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
+    order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     // Mensaje al grupo origen en caso de haber
     if (ctx.message.chat.type != 'private') {
@@ -314,10 +317,11 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
     const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @${ctx.botInfo.username} una lightning invoice con monto = ${order.amount} con el comando 👇`;
     const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
-
+    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
+    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2);
     // Mensaje al canal
-    order.tg_channel_message1 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage)).message_id;
-    order.tg_channel_message2 = (await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2)).message_id;
+    order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
+    order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     // Mensaje al grupo origen en caso de haber
     if (ctx.message.chat.type != 'private') {
@@ -487,6 +491,14 @@ const errorParsingInvoiceMessage = async (bot, user) => {
   }
 };
 
+const notValidIdMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Id no válida`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -534,4 +546,5 @@ module.exports = {
   userBannedMessage,
   notFoundUserMessage,
   errorParsingInvoiceMessage,
+  notValidIdMessage,
 };
