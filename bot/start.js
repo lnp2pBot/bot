@@ -503,13 +503,13 @@ const initialize = (botToken, options) => {
       const params = await validateParams(ctx, bot, adminUser, 2, '<username>');
 
       if (!params) return;
-      if (!(await validateObjectId(bot, user, params[0]))) return;
       const user = await User.findOne({ username: params[0] });
-
       if (!user) {
         await messages.notFoundUserMessage(bot, adminUser);
         return;
       }
+
+      if (!(await validateObjectId(bot, user, params[0]))) return;
       user.banned = true;
       await user.save();
       await messages.userBannedMessage(bot, adminUser);
