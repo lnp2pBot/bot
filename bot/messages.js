@@ -2,17 +2,17 @@ const { plural } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
-    const orderExpiration = parseInt(ORDER_EXPIRATION_WINDOW) / 60.
+    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
     await ctx.reply(`Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
 
 Una vez incializado el Bot en privado es fácil:
 
 1. Publica tu oferda de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.
 2. Espera que otro usuario tome la oferta por medio de /takesell o /takebuy. Tambien puedes tomar las ofertas de otros usuarios con estos comandos!
-3. Tu oferta y calificación estará visible en el canal ${CHANNEL}.
+3. Tu oferta y calificación estará visible en el canal ${process.env.CHANNEL}.
 
 /sell:
-4. Si estas vendiendo el bot publicará la orden en el canal ${CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+4. Si estas vendiendo el bot publicará la orden en el canal ${process.env.CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
 5. Una vez alguien tome tu venta el bot te pedira que pagues un invoice el cual estará retenido por ${orderExpiration} minutos, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
 
 /buy:
