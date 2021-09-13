@@ -530,6 +530,15 @@ const cantTakeOwnOrderMessage = async (bot, user) => {
   }
 };
 
+const notLightningInvoiceMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Por favor envíame una factura lightning primero`);
+    await bot.telegram.sendMessage(user.tg_id, `/addinvoice ${order._id} <lightning_invoice>`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -581,4 +590,5 @@ module.exports = {
   addInvoiceMessage,
   genericErrorMessage,
   cantTakeOwnOrderMessage,
+  notLightningInvoiceMessage,
 };
