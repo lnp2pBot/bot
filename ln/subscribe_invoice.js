@@ -24,11 +24,11 @@ const subscribeInvoice = async (bot, id) => {
         order.save();
       }
       if (invoice.is_confirmed) {
-        console.log(`Invoice with hash: ${id} is being paid!`);
-        const order = await Order.findOne({ hash: invoice.id });
-        order.status = 'PAID_HOLD_INVOICE';
-        await order.save();
         try {
+          console.log(`Invoice with hash: ${id} is being paid!`);
+          const order = await Order.findOne({ hash: invoice.id });
+          order.status = 'PAID_HOLD_INVOICE';
+          await order.save();
           const payment = await payRequest({
             request: order.buyer_invoice,
             amount: order.amount,
