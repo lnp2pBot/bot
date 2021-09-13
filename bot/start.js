@@ -380,11 +380,11 @@ const initialize = (botToken, options) => {
       if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await ordersActions.getOrder(bot, user, orderId);
 
-      if (!order) return; 
+      if (!order) return;
 
-      const creator = await User.findOne({ _id: order.seller_id }); 
+      const creator = await User.findOne({ _id: order.seller_id });
       const buyer = await User.findOne({ _id: order.buyer_id });
-      const seller = await User.findOne({ _id: order.seller_id }); 
+      const seller = await User.findOne({ _id: order.seller_id });
 
       await messages.checkOrderMessage(ctx, order, creator.username, buyer.username, seller.username);
 
@@ -396,8 +396,8 @@ const initialize = (botToken, options) => {
   bot.command('help', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
-      if (!user) return; 
-      
+      if (!user) return;
+
       await messages.helpMessage(ctx);
     } catch (error) {
       console.log(error);
@@ -535,8 +535,7 @@ const initialize = (botToken, options) => {
 
       order.buyer_invoice = lnInvoice;
       await order.save();
-      // We sent messages to both parties
-      await messages.addInvoiceMessage(bot, user);
+      await messages.addInvoiceMessage(bot, user, order);
 
     } catch (error) {
       console.log(error);

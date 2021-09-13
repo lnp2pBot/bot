@@ -21,7 +21,7 @@ Una vez incializado el Bot en privado es fácil:
 
 /takesell:
 8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
-9. Una vez el otro usuario confirme su pago fiat usará el comando /release para liberarte los sats a tu invoice. 
+9. Una vez el otro usuario confirme su pago fiat usará el comando /release para liberarte los sats a tu invoice.
 
 /takebuy:
 9. Si estas tomando una compra, debes pagar el invoice el cual estara retenido mientras el otro usuario realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello.
@@ -353,7 +353,7 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username} 
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username}
 ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}:
 Monto sats: ${order.amount}
 Monto ${order.fiat_code}: ${order.fiat_amount}
@@ -387,9 +387,9 @@ const customMessage = async (bot, user, message) => {
 const checkOrderMessage = async (ctx,order,creator,buyer,seller) => {
   try {
     await ctx.reply(`Orden id: ${order._id}:
-Creator: ${creator} 
-Buyer: ${buyer} 
-Seller: ${seller} 
+Creator: ${creator}
+Buyer: ${buyer}
+Seller: ${seller}
 Monto sats: ${order.amount}
 Monto ${order.fiat_code}: ${order.fiat_amount}
 Método de pago: ${order.payment_method}
@@ -436,7 +436,7 @@ const helpMessage = async (ctx) => {
 /release <order_id> - El vendedor libera los satoshis
 /dispute <order_id> - Abre una disputa entre los participantes
 /cancel <order_id> - Cancela una orden que no ha sido tomada
-/cooperativecancel <order_id> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa`); 
+/cooperativecancel <order_id> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa`);
   } catch (error) {
     console.log(error);
   }
@@ -508,9 +508,10 @@ const notValidIdMessage = async (bot, user) => {
   }
 };
 
-const addInvoiceMessage = async (bot, user) => {
+const addInvoiceMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `He recibido tu invoice, en cuanto el vendedor haga release de los fondos estaré pagándola 🤖`);
+    await bot.telegram.sendMessage(user.tg_id, `🤖 He recibido tu invoice, en cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    await bot.telegram.sendMessage(user.tg_id, `/fiatsent ${order._id}`);
   } catch (error) {
     console.log(error);
   }
