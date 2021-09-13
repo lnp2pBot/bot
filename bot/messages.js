@@ -522,6 +522,14 @@ const genericErrorMessage = async (bot, user) => {
   }
 };
 
+const cantTakeOwnOrderMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `No puedes tomar tu propia orden`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -572,4 +580,5 @@ module.exports = {
   notValidIdMessage,
   addInvoiceMessage,
   genericErrorMessage,
+  cantTakeOwnOrderMessage,
 };

@@ -177,7 +177,21 @@ const validateTakeSell = async (ctx, bot, user) => {
   return {orderId, lnInvoice};
 };
 
+const isOrderCreator = async (user, order) => {
+  if (order.creator_id == user._id) return true;
+
+  return false;
+};
+
 const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
+  if (!order) {
+    await messages.invalidOrderMessage(bot, user);
+    return false;
+  }
+  if (isOrderCreator(user, order)) {
+    await messages.cantTakeOwnOrderMessage(bot, user);
+    return false;
+  }
   const invoice = parsePaymentRequest({ request: lnInvoice });
   const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
   if (!!invoice.tokens && invoice.tokens !== order.amount) {
@@ -186,10 +200,6 @@ const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
   }
   if (new Date(invoice.expires_at) < latestDate) {
     await messages.minimunExpirationTimeInvoiceMessage(bot, user);
-    return false;
-  }
-  if (!order) {
-    await messages.invalidOrderMessage(bot, user);
     return false;
   }
   if (order.type === 'buy') {
@@ -206,6 +216,10 @@ const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
 const validateTakeBuyOrder = async (bot, user, order) => {
   if (!order) {
     await messages.invalidOrderMessage(bot, user);
+    return false;
+  }
+  if (isOrderCreator(user, order)) {
+    await messages.cantTakeOwnOrderMessage(bot, user);
     return false;
   }
   if (order.type === 'sell') {
