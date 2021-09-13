@@ -97,7 +97,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
     return false;
   };
-  
+
   if (isNaN(fiatAmount)) {
     await messages.mustBeANumber(bot, user, 'monto_en_fiat');
     return false;
@@ -177,8 +177,10 @@ const validateTakeSell = async (ctx, bot, user) => {
   return {orderId, lnInvoice};
 };
 
-const isOrderCreator = async (user, order) => {
-  if (order.creator_id == user._id) return true;
+const isOrderCreator = (user, order) => {
+  if (order.creator_id == user._id) {
+    return true
+  };
 
   return false;
 };
