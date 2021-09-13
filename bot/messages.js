@@ -2,25 +2,26 @@ const { plural } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
+    const orderExpiration = parseInt(ORDER_EXPIRATION_WINDOW) / 60.
     await ctx.reply(`Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
 
 Una vez incializado el Bot en privado es fácil:
 
 1. Publica tu oferda de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.
 2. Espera que otro usuario tome la oferta por medio de /takesell o /takebuy. Tambien puedes tomar las ofertas de otros usuarios con estos comandos!
-3. Tu oferta y calificación estará visible en el canal de @testeandoCosas.
+3. Tu oferta y calificación estará visible en el canal ${CHANNEL}.
 
 /sell:
-4. Si estas vendiendo el bot te pedira que pagues un invoice el cual estara retenido por 1 hora mientras alguien toma tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-5. Una vez alguien tome tu venta, le debes contactar y brindarle tus datos de pago para que te pague el monto fiat correspondiente. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
+4. Si estas vendiendo el bot publicará la orden en el canal ${CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+5. Una vez alguien tome tu venta el bot te pedira que pagues un invoice el cual estará retenido por ${orderExpiration} minutos, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
 
 /buy:
-6. Si estas comprando, solo debes publicar la oferta, crear un invoice para recibir los sats y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-7. Una vez alguien tome tu compra, contacta al vendedor para que te de los datos de pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
+6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot con el comando /addinvoice, luego contacta al vendedor para que te de los datos de pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
 
 /takesell:
 8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
-9. Una vez el otro usuario confirme su pago fiat usara el comando /release para liberarte los sats a tu invoice. 
+9. Una vez el otro usuario confirme su pago fiat usará el comando /release para liberarte los sats a tu invoice. 
 
 /takebuy:
 9. Si estas tomando una compra, debes pagar el invoice el cual estara retenido mientras el otro usuario realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello.
@@ -426,11 +427,12 @@ const invalidInvoice = async (bot, user) => {
 
 const helpMessage = async (ctx) => {
   try {
-    await ctx.reply(`/sell <order_id> - Crea una orden de venta
-/buy <order_id> - Crea una orden de compra
+    await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de venta
+/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de compra
 /takebuy <order_id> - Toma una orden de compra
-/takesell <order_id> - Toma una orden de venta
+/takesell <order_id> <lightning_invoice> - Toma una orden de venta
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
+/addinvoice <order_id> <lightning_invoice> - El comprador envía una factura lightning en la que recibirá sats
 /release <order_id> - El vendedor libera los satoshis
 /dispute <order_id> - Abre una disputa entre los participantes
 /cancel <order_id> - Cancela una orden que no ha sido tomada
