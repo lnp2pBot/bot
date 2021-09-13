@@ -226,8 +226,6 @@ const onGoingTakeBuyMessage = async (bot, sellerUser, buyerUser, order) => {
     await bot.telegram.sendMessage(buyerUser.tg_id, `El usuario @${sellerUser.username} ha tomado tu compra y te quiere vender sats. Comunicate con el para que le hagas el pago por fiat y te libere sus sats.`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `Para poder enviarte los satoshis necesito que me envíes una invoice con el siguiente comando 👇`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `/addinvoice ${order._id} <lightning_invoice>`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez me hayas enviado la invoice y hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
   } catch (error) {
     console.log(error);
   }
