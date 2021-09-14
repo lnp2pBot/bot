@@ -500,10 +500,11 @@ const initialize = (botToken, options) => {
 
       if (!adminUser) return;
 
-      const params = await validateParams(ctx, bot, adminUser, 2, '<username>');
+      const [ username ] = await validateParams(ctx, bot, adminUser, 2, '<username>');
 
-      if (!params) return;
-      const user = await User.findOne({ username: params[0] });
+      if (!username) return;
+      
+      const user = await User.findOne({ username });
       if (!user) {
         await messages.notFoundUserMessage(bot, adminUser);
         return;
