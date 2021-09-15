@@ -1,6 +1,8 @@
-// ISO 4217, all ISO currency codes are 3 letters
+const currencies = require('./fiat.json');
+
+// ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
-    if (code.length !== 3) {
+    if (code.length < 3 || code.length > 4) {
         return false;
     }
     alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
@@ -12,6 +14,14 @@ const isIso4217 = (code) => {
     });
 
     return true;
+};
+
+const getCurrency = (code) => {
+  if (!isIso4217(code)) return false;
+  const currency = currencies[code];
+  if (!currency) return false;
+
+  return currency;
 };
 
 const plural = (n) => {
@@ -51,4 +61,4 @@ const parseArguments = (argsString) => {
     return { amount, fiatAmount, fiatCode, paymentMethod };
 };
 
-module.exports = { isIso4217, plural, parseArguments };
+module.exports = { isIso4217, plural, parseArguments, getCurrency };

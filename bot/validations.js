@@ -76,7 +76,12 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false
   };
 
-  return { amount, fiatAmount, fiatCode, paymentMethod };
+  return {
+    amount,
+    fiatAmount,
+    fiatCode: fiatCode.toUpperCase(),
+    paymentMethod,
+  };
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
@@ -113,7 +118,12 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false
   };
 
-  return { amount, fiatAmount, fiatCode, paymentMethod };
+  return {
+    amount,
+    fiatAmount,
+    fiatCode: fiatCode.toUpperCase(),
+    paymentMethod,
+  };
 };
 
 const validateInvoice = async (bot, user, lnInvoice) => {
