@@ -2,7 +2,7 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
-const { isIso4217 } = require('../util');
+const { isIso4217, parseArguments } = require('../util');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -42,13 +42,14 @@ const validateAdmin = async (ctx, bot) => {
 };
 
 const validateSellOrder = async (ctx, bot, user) => {
-  const paramsArray = ctx.update.message.text.split(' ');
-  const params = paramsArray.filter(el => el != '');
-  if (params.length !== 5) {
+
+  const args = parseArguments(ctx.update.message.text);
+  if (!args) {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [_, amount, fiatAmount, fiatCode, paymentMethod] = params;
+  let { amount, fiatAmount, fiatCode, paymentMethod } = args;
+
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
     await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
@@ -79,13 +80,12 @@ const validateSellOrder = async (ctx, bot, user) => {
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
-  const paramsArray = ctx.update.message.text.split(' ');
-  const params = paramsArray.filter(el => el != '');
-  if (params.length !== 5) {
+  const args = parseArguments(ctx.update.message.text);
+  if (!args) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [_, amount, fiatAmount, fiatCode, paymentMethod] = params;
+  let { amount, fiatAmount, fiatCode, paymentMethod } = args;
 
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
@@ -323,6 +323,7 @@ const validateSeller = async (bot, user) => {
 
 const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
   const paramsArray = ctx.update.message.text.split(' ');
+  console.log(paramsArray)
   const params = paramsArray.filter(el => el != '');
   if (params.length != paramNumber) {
     await messages.customMessage(bot, user, `${params[0]} ${errOutputString}`);
