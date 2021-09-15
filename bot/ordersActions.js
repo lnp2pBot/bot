@@ -1,14 +1,20 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
+const { getCurrency } = require('../util');
 
 const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, status }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   try {
+    const currency = getCurrency(fiatCode);
+    let currencyString = `${fiatCode} ${fiatAmount}`;
+    if (!!currency) {
+      currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
+    }
     if (type === 'sell') {
-      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      const description = `${action} ${amount} sats\nPor ${currencyString}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
@@ -28,7 +34,7 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
 
       return order;
     } else {
-      const description = `${action} ${amount} sats\nPor ${fiatCode} ${fiatAmount}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      const description = `${action} ${amount} sats\nPor ${currencyString}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
