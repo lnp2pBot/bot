@@ -545,6 +545,23 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('listorders', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      const orders = await ordersActions.getOrders(bot, user);
+
+      if (!orders) return;
+
+      await messages.listOrdersResponse(bot, user, orders);
+
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   return bot;
 };
 

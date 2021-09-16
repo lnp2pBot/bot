@@ -14,7 +14,7 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
       currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
     }
     if (type === 'sell') {
-      const description = `${action} ${amount} sats\nPor ${currencyString}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      const description = `${action} ${amount} sats\nPor ${currencyString}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
@@ -34,7 +34,7 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
 
       return order;
     } else {
-      const description = `${action} ${amount} sats\nPor ${currencyString}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      const description = `${action} ${amount} sats\nPor ${currencyString}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
@@ -79,7 +79,29 @@ const getOrder = async (bot, user, orderId) => {
   return order;
 };
 
+const getOrders = async (bot, user) => {
+  const where = {
+    $or: [{ seller_id: user._id }, { buyer_id: user._id }],
+    $or: [
+      { status: 'WAITING_PAYMENT' },
+      { status: 'PENDING' },
+      { status: 'ACTIVE' },
+      { status: 'FIAT_SENT' },
+      { status: 'PAID_HOLD_INVOICE' },
+    ],
+  };
+
+  const orders = await Order.find(where);
+  if (orders.length == 0) {
+    await messages.notOrdersMessage(bot, user);
+    return false;
+  }
+
+  return orders;
+};
+
 module.exports = {
   createOrder,
   getOrder,
+  getOrders,
 };
