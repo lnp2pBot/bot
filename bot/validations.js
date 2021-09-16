@@ -333,7 +333,6 @@ const validateSeller = async (bot, user) => {
 
 const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
   const paramsArray = ctx.update.message.text.split(' ');
-  console.log(paramsArray)
   const params = paramsArray.filter(el => el != '');
   if (params.length != paramNumber) {
     await messages.customMessage(bot, user, `${params[0]} ${errOutputString}`);
