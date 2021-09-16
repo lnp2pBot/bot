@@ -431,6 +431,7 @@ const helpMessage = async (ctx) => {
 /takesell <order_id> <lightning_invoice> - Toma una orden de venta
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
 /addinvoice <order_id> <lightning_invoice> - El comprador envía una factura lightning en la que recibirá sats
+/listorders - El usuario puede listar sus órdenes no finalizadas
 /release <order_id> - El vendedor libera los satoshis
 /dispute <order_id> - Abre una disputa entre los participantes
 /cancel <order_id> - Cancela una orden que no ha sido tomada
