@@ -540,6 +540,26 @@ const notLightningInvoiceMessage = async (bot, user, order) => {
   }
 };
 
+const notOrdersMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `No tienes ninguna orden en este momento`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const listOrdersResponse = async (bot, user, orders) => {
+  try {
+    let response = `.             Id          |     Status    |   amount (sats)  |  fiat amt  |  fiat\n`;
+    orders.forEach(order => {
+      response += `${order._id} | ${order.status} | ${order.amount} | ${order.fiat_amount} | ${order.fiat_code}\n`;
+    });
+    await bot.telegram.sendMessage(user.tg_id, response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -592,4 +612,6 @@ module.exports = {
   genericErrorMessage,
   cantTakeOwnOrderMessage,
   notLightningInvoiceMessage,
+  notOrdersMessage,
+  listOrdersResponse,
 };
