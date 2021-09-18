@@ -7,6 +7,7 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
+  const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
   try {
     const currency = getCurrency(fiatCode);
     let currencyString = `${fiatCode} ${fiatAmount}`;
@@ -14,7 +15,10 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
       currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
     }
     if (type === 'sell') {
-      const description = `${action} ${amount} sats\nPor ${currencyString}\nRecibo pago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      description += `Recibo pago por ${paymentMethod}\n`;
+      description += `Tiene ${trades} operaciones exitosas\n`;
+      description += `Volumen de comercio: ${volume} sats`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
@@ -34,7 +38,10 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
 
       return order;
     } else {
-      const description = `${action} ${amount} sats\nPor ${currencyString}\nPago por ${paymentMethod}\nTiene ${trades} operaciones exitosas`;
+      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      description += `Pago por ${paymentMethod}\n`;
+      description += `Tiene ${trades} operaciones exitosas\n`;
+      description += `Volumen de comercio: ${volume} sats`;
       const fee = amount * parseFloat(process.env.FEE);
       const order = new Order({
         description,
