@@ -297,7 +297,9 @@ const repeatedInvoiceMessage = async (bot, user) => {
 
 const publishBuyOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes marcar al bot @${ctx.botInfo.username} el comando 👇`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
+    publishMessage += `#P2PLN\n\n`;
+    publishMessage += `Para tomar esta orden, debes marcar al bot @${ctx.botInfo.username} el comando 👇`;
     const publishMessage2 = `/takebuy ${order._id}`;
 
     // Mensaje al canal
@@ -321,7 +323,9 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
-    const publishMessage = `⚡️🍊⚡️\n${order.description}\n#P2PLN\n\nPara tomar esta orden, debes enviarle a @${ctx.botInfo.username} una lightning invoice con monto = ${order.amount} con el comando 👇`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
+    publishMessage += `#P2PLN\n\n`;
+    publishMessage += `Para tomar esta orden, debes enviarle a @${ctx.botInfo.username} una factura lightning con el comando 👇`;
     const publishMessage2 = `/takesell ${order._id} <lightning_invoice>`;
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2);
