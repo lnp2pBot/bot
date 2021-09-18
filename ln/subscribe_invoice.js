@@ -3,6 +3,7 @@ const { Order, User, PendingPayment } = require('../models');
 const payRequest = require('./pay_request');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
+const { handleReputationItems } = require('../util');
 
 const subscribeInvoice = async (bot, id) => {
   try {
@@ -36,20 +37,14 @@ const subscribeInvoice = async (bot, id) => {
           if (payment.is_confirmed) {
             order.status = 'SUCCESS';
             await order.save();
-            const orderUser = await User.findOne({ _id: order.creator_id });
+            const buyerUser = await User.findOne({ _id: order.buyer_id });
+            const sellerUser = await User.findOne({ _id: order.seller_id });
+            await handleReputationItems(buyerUser, sellerUser, order.amount);
             if (order.type === 'sell') {
-              const buyerUser = await User.findOne({ _id: order.buyer_id });
-              await messages.doneTakeSellMessage(bot, orderUser, buyerUser);
-              buyerUser.trades_completed++;
-              await buyerUser.save();
+              await messages.doneTakeSellMessage(bot, sellerUser, buyerUser);
             } else if (order.type === 'buy') {
-              const sellerUser = await User.findOne({ _id: order.seller_id });
-              await messages.doneTakeBuyMessage(bot, orderUser, sellerUser);
-              sellerUser.trades_completed++;
-              sellerUser.save();
+              await messages.doneTakeBuyMessage(bot, buyerUser, sellerUser);
             }
-            orderUser.trades_completed++;
-            await orderUser.save();
           } else {
             const buyerUser = await User.findOne({ _id: order.buyer_id });
             const message = `El vendedor ha liberado los satoshis pero el pago a tu invoice ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`;
