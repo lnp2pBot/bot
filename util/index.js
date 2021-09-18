@@ -1,4 +1,5 @@
 const currencies = require('./fiat.json');
+const { Order } = require('../models');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
@@ -61,4 +62,25 @@ const parseArguments = (argsString) => {
     return { amount, fiatAmount, fiatCode, paymentMethod };
 };
 
-module.exports = { isIso4217, plural, parseArguments, getCurrency };
+const handleReputationItems = async (buyer, seller, amount) => {
+  try {
+    const yesterday = new Date(Date.now() - 86400000).toISOString();
+    const orders = await Order.find({
+      status: 'SUCCESS',
+      seller_id: buyer._id,
+      buyer_id: seller._id,
+      taken_at: { $gte: yesterday },
+    });
+    if (orders.length > 0) return;
+    buyer.trades_completed++;
+    seller.trades_completed++;
+    buyer.volume_traded += amount;
+    seller.volume_traded += amount;
+    await buyer.save();
+    await seller.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { isIso4217, plural, parseArguments, getCurrency, handleReputationItems };
