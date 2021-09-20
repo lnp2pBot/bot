@@ -3,7 +3,7 @@ const { Order } = require('../models');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
-    if (code.length < 3 || code.length > 4) {
+    if (code.length < 3 || code.length > 5) {
         return false;
     }
     alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');

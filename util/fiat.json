@@ -741,13 +741,13 @@
 	},
 	"MXN": {
 		"symbol": "MX$",
-		"name": "Mexican Peso",
+		"name": "Peso mexicano",
 		"symbol_native": "$",
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "MXN",
-        "emoji": "🇲🇽",
-		"name_plural": "Mexican pesos"
+		"emoji": "🇲🇽",
+		"name_plural": "Pesos mexicanos"
 	},
 	"MYR": {
 		"symbol": "RM",
@@ -856,8 +856,8 @@
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "PEN",
-        "emoji": "🇵🇪",
-		"name_plural": "Peruvian nuevos soles"
+		"emoji": "🇵🇪",
+		"name_plural": "Nuevos soles peruanos"
 	},
 	"PHP": {
 		"symbol": "₱",
@@ -1098,6 +1098,16 @@
 		"code": "UGX",
         "emoji": "",
 		"name_plural": "Ugandan shillings"
+	},
+	"USDVE": {
+		"symbol": "$",
+		"name": "USD en Bs",
+		"symbol_native": "$",
+		"decimal_digits": 2,
+		"rounding": 0,
+		"code": "USDVE",
+		"emoji": "🇺🇸🇻🇪",
+		"name_plural": "USD en Bs"
 	},
 	"UYU": {
 		"symbol": "$U",
