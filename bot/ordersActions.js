@@ -15,11 +15,12 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
       currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
     }
     if (type === 'sell') {
-      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      const fee = amount * parseFloat(process.env.FEE);
+      let description = `${action} ${amount == 0 ? '' : `${amount} `}sats\nPor ${currencyString}\n`;
       description += `Recibo pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
-      description += `Volumen de comercio: ${volume} sats`;
-      const fee = amount * parseFloat(process.env.FEE);
+      description += `Volumen de comercio: ${volume} sats\n`;
+      description += `Tasa: yadio.io`;
       const order = new Order({
         description,
         amount,
@@ -38,11 +39,12 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
 
       return order;
     } else {
-      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      const fee = amount * parseFloat(process.env.FEE);
+      let description = `${action} ${amount == 0 ? '' : `${amount} `}sats\nPor ${currencyString}\n`;
       description += `Pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
-      description += `Volumen de comercio: ${volume} sats`;
-      const fee = amount * parseFloat(process.env.FEE);
+      description += `Volumen de comercio: ${volume} sats\n`;
+      description += `Tasa: yadio.io`;
       const order = new Order({
         description,
         amount,

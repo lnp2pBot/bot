@@ -21,6 +21,7 @@ const {
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
+const { getBtcFiatPrice } = require('../util');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -114,9 +115,11 @@ const initialize = (botToken, options) => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
-      const takeSellParams = await validateTakeSell(ctx, bot, user);
-      if (!takeSellParams) return;
-      const { orderId, lnInvoice } = takeSellParams;
+
+      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
+      // const takeSellParams = await validateTakeSell(ctx, bot, user);
+      // if (!takeSellParams) return;
+      // const { orderId, lnInvoice } = takeSellParams;
 
       if (!orderId) return;
 
