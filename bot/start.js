@@ -2,13 +2,13 @@ const { Telegraf } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const ordersActions = require('./ordersActions');
+const { takebuy } = require('./commands');
 const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
 const {
   validateSellOrder,
   validateUser,
   validateBuyOrder,
   validateTakeSell,
-  validateTakeBuyOrder,
   validateReleaseOrder,
   validateTakeSellOrder,
   validateDisputeOrder,
@@ -159,42 +159,9 @@ const initialize = (botToken, options) => {
 
   bot.command('takebuy', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      // Sellers with orders in status = FIAT_SENT, have to solve the order
-      const isOnFiatSentStatus = await validateSeller(bot, user);
-
-      if (!isOnFiatSentStatus) return;
-
-      const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
-
-      if (!orderId) return;
-      if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await Order.findOne({ _id: orderId });
-      if (!(await validateTakeBuyOrder(bot, user, order))) return;
-
-      const description = `Venta por @${ctx.botInfo.username}`;
-      const amount = Math.floor(order.amount + order.fee);
-      const { request, hash, secret } = await createHoldInvoice({
-        description,
-        amount,
-      });
-      order.hash = hash;
-      order.secret = secret;
-      order.status = 'WAITING_PAYMENT';
-      order.seller_id = user._id;
-      order.taken_at = Date.now();
-      await order.save();
-
-      // We monitor the invoice to know when the seller makes the payment
-      await subscribeInvoice(bot, hash);
-
-      await messages.beginTakeBuyMessage(bot, user, request, order);
+      await takebuy(ctx);
     } catch (error) {
       console.log(error);
-      await messages.invalidDataMessage(bot, user);
     }
   });
 
@@ -560,6 +527,17 @@ const initialize = (botToken, options) => {
 
       await messages.listOrdersResponse(bot, user, orders);
 
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.action('takebuybutton', async (ctx) => {
+    try {
+      const orderId = ctx.update.callback_query.message.text;
+      const tgUser = ctx.update.callback_query.from;
+  
+      await takebuy(ctx, bot, { orderId, tgUser });
     } catch (error) {
       console.log(error);
     }

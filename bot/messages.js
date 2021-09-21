@@ -304,7 +304,13 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
     // Mensaje al canal
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
-    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage2);
+    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
+      reply_markup: {
+        inline_keyboard: [
+          [{text: 'Comprar satoshis', callback_data: 'takebuybutton'}],
+        ],
+      },
+    });
     // Mensaje al canal
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
     order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
