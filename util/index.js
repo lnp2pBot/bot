@@ -1,3 +1,4 @@
+const axios = require('axios');
 const currencies = require('./fiat.json');
 const { Order } = require('../models');
 
@@ -112,4 +113,20 @@ const handleReputationItems = async (buyer, seller, amount) => {
   }
 };
 
-module.exports = { isIso4217, plural, parseArguments, getCurrency, handleReputationItems };
+const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
+  try {
+    const response = await axios.get(`${process.env.FIAT_RATE_EP}/${fiatCode}`);
+    console.log(response.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  isIso4217,
+  plural,
+  parseArguments,
+  getCurrency,
+  handleReputationItems,
+  getBtcFiatPrice,
+};
