@@ -115,8 +115,13 @@ const handleReputationItems = async (buyer, seller, amount) => {
 
 const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
   try {
-    const response = await axios.get(`${process.env.FIAT_RATE_EP}/${fiatCode}`);
-    console.log(response.data);
+    const currency = getCurrency(fiatCode);
+    if (!currency.price) return;
+
+    const response = await axios.get(`${process.env.FIAT_RATE_EP}/${currency.code}`);
+    const sats = (fiatAmount / response.data.btc) * 100000000;
+
+    return parseInt(sats);
   } catch (error) {
     console.log(error);
   }

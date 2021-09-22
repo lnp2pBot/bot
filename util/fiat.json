@@ -7,7 +7,8 @@
 		"rounding": 0,
 		"code": "USD",
         "emoji": "🇺🇸",
-		"name_plural": "US dollars"
+		"name_plural": "US dollars",
+		"price": true
 	},
 	"CAD": {
 		"symbol": "CA$",
@@ -17,7 +18,8 @@
 		"rounding": 0,
 		"code": "CAD",
         "emoji": "🇨🇦",
-		"name_plural": "Canadian dollars"
+		"name_plural": "Canadian dollars",
+		"price": true
 	},
 	"EUR": {
 		"symbol": "€",
@@ -27,7 +29,8 @@
 		"rounding": 0,
 		"code": "EUR",
         "emoji": "🇪🇺",
-		"name_plural": "euros"
+		"name_plural": "euros",
+		"price": true
 	},
 	"AED": {
 		"symbol": "AED",
@@ -37,7 +40,8 @@
 		"rounding": 0,
 		"code": "AED",
         "emoji": "",
-		"name_plural": "UAE dirhams"
+		"name_plural": "UAE dirhams",
+		"price": true
 	},
 	"AFN": {
 		"symbol": "Af",
@@ -77,7 +81,8 @@
 		"rounding": 0,
 		"code": "ARS",
         "emoji": "🇦🇷",
-		"name_plural": "Pesos argentinos"
+		"name_plural": "Pesos argentinos",
+		"price": true
 	},
 	"AUD": {
 		"symbol": "AU$",
@@ -87,7 +92,8 @@
 		"rounding": 0,
 		"code": "AUD",
         "emoji": "",
-		"name_plural": "Australian dollars"
+		"name_plural": "Australian dollars",
+		"price": true
 	},
 	"AZN": {
 		"symbol": "man.",
@@ -97,7 +103,8 @@
 		"rounding": 0,
 		"code": "AZN",
         "emoji": "",
-		"name_plural": "Azerbaijani manats"
+		"name_plural": "Azerbaijani manats",
+		"price": true
 	},
 	"BAM": {
 		"symbol": "KM",
@@ -166,8 +173,9 @@
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "BOB",
-        "emoji": "",
-		"name_plural": "Bolivian bolivianos"
+        "emoji": "🇧🇴",
+		"name_plural": "Bolivianos",
+		"price": true
 	},
 	"BRL": {
 		"symbol": "R$",
@@ -177,7 +185,8 @@
 		"rounding": 0,
 		"code": "BRL",
         "emoji": "🇧🇷",
-		"name_plural": "Brazilian reals"
+		"name_plural": "Brazilian reals",
+		"price": true
 	},
 	"BWP": {
 		"symbol": "BWP",
@@ -197,7 +206,8 @@
 		"rounding": 0,
 		"code": "BYN",
         "emoji": "",
-		"name_plural": "Belarusian rubles"
+		"name_plural": "Belarusian rubles",
+		"price": true
 	},
 	"BZD": {
 		"symbol": "BZ$",
@@ -227,7 +237,8 @@
 		"rounding": 0.05,
 		"code": "CHF",
         "emoji": "",
-		"name_plural": "Swiss francs"
+		"name_plural": "Swiss francs",
+		"price": true
 	},
 	"CLP": {
 		"symbol": "CL$",
@@ -237,7 +248,8 @@
 		"rounding": 0,
 		"code": "CLP",
         "emoji": "🇨🇱",
-		"name_plural": "Pesos chilenos"
+		"name_plural": "Pesos chilenos",
+		"price": true
 	},
 	"CNY": {
 		"symbol": "CN¥",
@@ -247,7 +259,8 @@
 		"rounding": 0,
 		"code": "CNY",
         "emoji": "",
-		"name_plural": "Chinese yuan"
+		"name_plural": "Chinese yuan",
+		"price": true
 	},
 	"COP": {
 		"symbol": "CO$",
@@ -257,7 +270,8 @@
 		"rounding": 0,
 		"code": "COP",
         "emoji": "🇨🇴",
-		"name_plural": "Pesos colombianos"
+		"name_plural": "Pesos colombianos",
+		"price": true
 	},
 	"CRC": {
 		"symbol": "₡",
@@ -266,8 +280,9 @@
 		"decimal_digits": 0,
 		"rounding": 0,
 		"code": "CRC",
-        "emoji": "",
-		"name_plural": "Costa Rican colóns"
+        "emoji": "🇨🇷",
+		"name_plural": "Colones",
+		"price": true
 	},
 	"CUB": {
 		"symbol": "CU$",
@@ -297,7 +312,8 @@
 		"rounding": 0,
 		"code": "CZK",
         "emoji": "",
-		"name_plural": "Czech Republic korunas"
+		"name_plural": "Czech Republic korunas",
+		"price": true
 	},
 	"DJF": {
 		"symbol": "Fdj",
@@ -317,7 +333,8 @@
 		"rounding": 0,
 		"code": "DKK",
         "emoji": "",
-		"name_plural": "Danish kroner"
+		"name_plural": "Danish kroner",
+		"price": true
 	},
 	"DOP": {
 		"symbol": "RD$",
@@ -327,7 +344,8 @@
 		"rounding": 0,
 		"code": "DOP",
         "emoji": "",
-		"name_plural": "Dominican pesos"
+		"name_plural": "Dominican pesos",
+		"price": true
 	},
 	"DZD": {
 		"symbol": "DA",
@@ -387,7 +405,8 @@
 		"rounding": 0,
 		"code": "GBP",
         "emoji": "",
-		"name_plural": "British pounds sterling"
+		"name_plural": "British pounds sterling",
+		"price": true
 	},
 	"GEL": {
 		"symbol": "GEL",
@@ -407,7 +426,8 @@
 		"rounding": 0,
 		"code": "GHS",
         "emoji": "",
-		"name_plural": "Ghanaian cedis"
+		"name_plural": "Ghanaian cedis",
+		"price": true
 	},
 	"GNF": {
 		"symbol": "FG",
@@ -427,7 +447,8 @@
 		"rounding": 0,
 		"code": "GTQ",
         "emoji": "",
-		"name_plural": "Guatemalan quetzals"
+		"name_plural": "Quetzales",
+		"price": true
 	},
 	"HKD": {
 		"symbol": "HK$",
@@ -437,7 +458,8 @@
 		"rounding": 0,
 		"code": "HKD",
         "emoji": "",
-		"name_plural": "Hong Kong dollars"
+		"name_plural": "Hong Kong dollars",
+		"price": true
 	},
 	"HNL": {
 		"symbol": "HNL",
@@ -467,7 +489,8 @@
 		"rounding": 0,
 		"code": "HUF",
         "emoji": "",
-		"name_plural": "Hungarian forints"
+		"name_plural": "Hungarian forints",
+		"price": true
 	},
 	"IDR": {
 		"symbol": "Rp",
@@ -477,7 +500,8 @@
 		"rounding": 0,
 		"code": "IDR",
         "emoji": "",
-		"name_plural": "Indonesian rupiahs"
+		"name_plural": "Indonesian rupiahs",
+		"price": true
 	},
 	"ILS": {
 		"symbol": "₪",
@@ -487,7 +511,8 @@
 		"rounding": 0,
 		"code": "ILS",
         "emoji": "",
-		"name_plural": "Israeli new sheqels"
+		"name_plural": "Israeli new sheqels",
+		"price": true
 	},
 	"INR": {
 		"symbol": "Rs",
@@ -497,7 +522,8 @@
 		"rounding": 0,
 		"code": "INR",
         "emoji": "",
-		"name_plural": "Indian rupees"
+		"name_plural": "Indian rupees",
+		"price": true
 	},
 	"IQD": {
 		"symbol": "IQD",
@@ -537,7 +563,8 @@
 		"rounding": 0,
 		"code": "JMD",
         "emoji": "",
-		"name_plural": "Jamaican dollars"
+		"name_plural": "Jamaican dollars",
+		"price": true
 	},
 	"JOD": {
 		"symbol": "JD",
@@ -557,7 +584,8 @@
 		"rounding": 0,
 		"code": "JPY",
         "emoji": "",
-		"name_plural": "Japanese yen"
+		"name_plural": "Japanese yen",
+		"price": true
 	},
 	"KES": {
 		"symbol": "Ksh",
@@ -567,7 +595,8 @@
 		"rounding": 0,
 		"code": "KES",
         "emoji": "",
-		"name_plural": "Kenyan shillings"
+		"name_plural": "Kenyan shillings",
+		"price": true
 	},
 	"KHR": {
 		"symbol": "KHR",
@@ -597,7 +626,8 @@
 		"rounding": 0,
 		"code": "KRW",
         "emoji": "",
-		"name_plural": "South Korean won"
+		"name_plural": "South Korean won",
+		"price": true
 	},
 	"KWD": {
 		"symbol": "KD",
@@ -617,7 +647,8 @@
 		"rounding": 0,
 		"code": "KZT",
         "emoji": "",
-		"name_plural": "Kazakhstani tenges"
+		"name_plural": "Kazakhstani tenges",
+		"price": true
 	},
 	"LBP": {
 		"symbol": "L.L.",
@@ -747,7 +778,8 @@
 		"rounding": 0,
 		"code": "MXN",
 		"emoji": "🇲🇽",
-		"name_plural": "Pesos mexicanos"
+		"name_plural": "Pesos mexicanos",
+		"price": true
 	},
 	"MYR": {
 		"symbol": "RM",
@@ -757,7 +789,8 @@
 		"rounding": 0,
 		"code": "MYR",
         "emoji": "",
-		"name_plural": "Malaysian ringgits"
+		"name_plural": "Malaysian ringgits",
+		"price": true
 	},
 	"MZN": {
 		"symbol": "MTn",
@@ -777,7 +810,8 @@
 		"rounding": 0,
 		"code": "NAD",
         "emoji": "",
-		"name_plural": "Namibian dollars"
+		"name_plural": "Namibian dollars",
+		"price": true
 	},
 	"NGN": {
 		"symbol": "₦",
@@ -787,7 +821,8 @@
 		"rounding": 0,
 		"code": "NGN",
         "emoji": "",
-		"name_plural": "Nigerian nairas"
+		"name_plural": "Nigerian nairas",
+		"price": true
 	},
 	"NIO": {
 		"symbol": "C$",
@@ -807,7 +842,8 @@
 		"rounding": 0,
 		"code": "NOK",
         "emoji": "",
-		"name_plural": "Norwegian kroner"
+		"name_plural": "Norwegian kroner",
+		"price": true
 	},
 	"NPR": {
 		"symbol": "NPRs",
@@ -827,7 +863,8 @@
 		"rounding": 0,
 		"code": "NZD",
         "emoji": "",
-		"name_plural": "New Zealand dollars"
+		"name_plural": "New Zealand dollars",
+		"price": true
 	},
 	"OMR": {
 		"symbol": "OMR",
@@ -846,8 +883,9 @@
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "PAB",
-        "emoji": "",
-		"name_plural": "Panamanian balboas"
+        "emoji": "🇵🇦",
+		"name_plural": "Balboas",
+		"price": true
 	},
 	"PEN": {
 		"symbol": "S/.",
@@ -857,7 +895,8 @@
 		"rounding": 0,
 		"code": "PEN",
 		"emoji": "🇵🇪",
-		"name_plural": "Nuevos soles peruanos"
+		"name_plural": "Nuevos soles peruanos",
+		"price": true
 	},
 	"PHP": {
 		"symbol": "₱",
@@ -867,7 +906,8 @@
 		"rounding": 0,
 		"code": "PHP",
         "emoji": "",
-		"name_plural": "Philippine pesos"
+		"name_plural": "Philippine pesos",
+		"price": true
 	},
 	"PKR": {
 		"symbol": "PKRs",
@@ -877,7 +917,8 @@
 		"rounding": 0,
 		"code": "PKR",
         "emoji": "",
-		"name_plural": "Pakistani rupees"
+		"name_plural": "Pakistani rupees",
+		"price": true
 	},
 	"PLN": {
 		"symbol": "zł",
@@ -887,7 +928,8 @@
 		"rounding": 0,
 		"code": "PLN",
         "emoji": "",
-		"name_plural": "Polish zlotys"
+		"name_plural": "Polish zlotys",
+		"price": true
 	},
 	"PYG": {
 		"symbol": "₲",
@@ -896,8 +938,9 @@
 		"decimal_digits": 0,
 		"rounding": 0,
 		"code": "PYG",
-        "emoji": "",
-		"name_plural": "Paraguayan guaranis"
+        "emoji": "🇵🇾",
+		"name_plural": "Paraguayan guaranis",
+		"price": true
 	},
 	"QAR": {
 		"symbol": "QR",
@@ -907,7 +950,8 @@
 		"rounding": 0,
 		"code": "QAR",
         "emoji": "",
-		"name_plural": "Qatari rials"
+		"name_plural": "Qatari rials",
+		"price": true
 	},
 	"RON": {
 		"symbol": "RON",
@@ -917,7 +961,8 @@
 		"rounding": 0,
 		"code": "RON",
         "emoji": "",
-		"name_plural": "Romanian lei"
+		"name_plural": "Romanian lei",
+		"price": true
 	},
 	"RSD": {
 		"symbol": "din.",
@@ -936,8 +981,9 @@
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "RUB",
-        "emoji": "",
-		"name_plural": "Russian rubles"
+        "emoji": "🇷🇺",
+		"name_plural": "Russian rubles",
+		"price": true
 	},
 	"RWF": {
 		"symbol": "RWF",
@@ -957,7 +1003,8 @@
 		"rounding": 0,
 		"code": "SAR",
         "emoji": "",
-		"name_plural": "Saudi riyals"
+		"name_plural": "Saudi riyals",
+		"price": true
 	},
 	"SDG": {
 		"symbol": "SDG",
@@ -977,7 +1024,8 @@
 		"rounding": 0,
 		"code": "SEK",
         "emoji": "",
-		"name_plural": "Swedish kronor"
+		"name_plural": "Swedish kronor",
+		"price": true
 	},
 	"SGD": {
 		"symbol": "S$",
@@ -987,7 +1035,8 @@
 		"rounding": 0,
 		"code": "SGD",
         "emoji": "",
-		"name_plural": "Singapore dollars"
+		"name_plural": "Singapore dollars",
+		"price": true
 	},
 	"SOS": {
 		"symbol": "Ssh",
@@ -1047,7 +1096,8 @@
 		"rounding": 0,
 		"code": "TRY",
         "emoji": "",
-		"name_plural": "Turkish Lira"
+		"name_plural": "Turkish Lira",
+		"price": true
 	},
 	"TTD": {
 		"symbol": "TT$",
@@ -1057,7 +1107,8 @@
 		"rounding": 0,
 		"code": "TTD",
         "emoji": "",
-		"name_plural": "Trinidad and Tobago dollars"
+		"name_plural": "Trinidad and Tobago dollars",
+		"price": true
 	},
 	"TWD": {
 		"symbol": "NT$",
@@ -1087,7 +1138,8 @@
 		"rounding": 0,
 		"code": "UAH",
         "emoji": "",
-		"name_plural": "Ukrainian hryvnias"
+		"name_plural": "Ukrainian hryvnias",
+		"price": true
 	},
 	"UGX": {
 		"symbol": "USh",
@@ -1105,9 +1157,10 @@
 		"symbol_native": "$",
 		"decimal_digits": 2,
 		"rounding": 0,
-		"code": "USDVE",
+		"code": "USD",
 		"emoji": "🇺🇸🇻🇪",
-		"name_plural": "USD en Bs"
+		"name_plural": "USD en Bs",
+		"price": true
 	},
 	"UYU": {
 		"symbol": "$U",
@@ -1117,7 +1170,8 @@
 		"rounding": 0,
 		"code": "UYU",
         "emoji": "🇺🇾",
-		"name_plural": "Pesos uruguayos"
+		"name_plural": "Pesos uruguayos",
+		"price": true
 	},
 	"UZS": {
 		"symbol": "UZS",
@@ -1137,7 +1191,8 @@
 		"rounding": 0,
 		"code": "VES",
         "emoji": "🇻🇪",
-		"name_plural": "Bolívares venezolanos"
+		"name_plural": "Bolívares venezolanos",
+		"price": true
 	},
 	"VND": {
 		"symbol": "₫",
@@ -1147,7 +1202,8 @@
 		"rounding": 0,
 		"code": "VND",
         "emoji": "",
-		"name_plural": "Vietnamese dong"
+		"name_plural": "Vietnamese dong",
+		"price": true
 	},
 	"XAF": {
 		"symbol": "FCFA",
@@ -1187,7 +1243,8 @@
 		"rounding": 0,
 		"code": "ZAR",
         "emoji": "",
-		"name_plural": "South African rand"
+		"name_plural": "South African rand",
+		"price": true
 	},
 	"ZMK": {
 		"symbol": "ZK",
