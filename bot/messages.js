@@ -291,8 +291,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 
 const publishBuyOrderMessage = async (ctx, bot, order) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `#P2PLN\n\n`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
     publishMessage += `Para tomar esta orden, toca el botón 👇`;
 
     // Mensaje al canal
@@ -322,8 +321,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `#P2PLN\n\n`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
     publishMessage += `Para tomar esta orden, toca el botón 👇`;
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
