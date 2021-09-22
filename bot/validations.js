@@ -56,7 +56,7 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false;
   };
 
-  if (amount < 100) {
+  if (amount != 0 && amount < 100) {
     await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
     return false;
   };
@@ -98,7 +98,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   };
 
-  if (amount < 100) {
+  if (amount != 0 && amount < 100) {
     await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
     return false;
   };
@@ -162,31 +162,6 @@ const validateInvoice = async (bot, user, lnInvoice) => {
   }
 };
 
-const validateTakeSell = async (ctx, bot, user) => {
-  const takeSellParams = ctx.update.message.text.split(' ');
-  if (takeSellParams.length !== 3) {
-    await messages.takeSellCorrectFormatMessage(bot, user);
-    return false;
-  }
-  const [_, orderId, lnInvoice] = takeSellParams;
-
-  if (!validateObjectId(bot, user, orderId)) {
-    return false;
-  }
-
-  if (!lnInvoice) {
-    await messages.customMessage(bot, user, "Por favor agrega una factura lightning para recibir los sats");
-    return false;
-  }
-  try {
-    if (!(await validateInvoice(bot, user, lnInvoice))) return;
-  } catch (error) {
-    await messages.invalidInvoice(bot, user);
-  }
-
-  return {orderId, lnInvoice};
-};
-
 const isOrderCreator = (user, order) => {
   if (order.creator_id == user._id) {
     return true
@@ -195,23 +170,13 @@ const isOrderCreator = (user, order) => {
   return false;
 };
 
-const validateTakeSellOrder = async (bot, user, lnInvoice, order) => {
+const validateTakeSellOrder = async (bot, user, order) => {
   if (!order) {
     await messages.invalidOrderMessage(bot, user);
     return false;
   }
   if (isOrderCreator(user, order)) {
     await messages.cantTakeOwnOrderMessage(bot, user);
-    return false;
-  }
-  const invoice = parsePaymentRequest({ request: lnInvoice });
-  const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-  if (!!invoice.tokens && invoice.tokens !== order.amount) {
-    await messages.amountMustTheSameInvoiceMessage(bot, user, order.amount);
-    return false;
-  }
-  if (new Date(invoice.expires_at) < latestDate) {
-    await messages.minimunExpirationTimeInvoiceMessage(bot, user);
     return false;
   }
   if (order.type === 'buy') {
@@ -359,7 +324,6 @@ module.exports = {
   validateUser,
   validateAdmin,
   validateInvoice,
-  validateTakeSell,
   validateTakeSellOrder,
   validateTakeBuyOrder,
   validateReleaseOrder,

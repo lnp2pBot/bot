@@ -4,11 +4,7 @@ const OrderSchema = new mongoose.Schema({
   description: { type: String },
   amount: { // amount in satoshis
     type: Number,
-    min: [100, 'Minimum amount is 100 sats'],
-    validate : {
-      validator : Number.isInteger,
-      message   : '{VALUE} is not an integer value'
-    }
+    min: 0,
   },
   fee: { type: Number, min: 0 },
   hash: {

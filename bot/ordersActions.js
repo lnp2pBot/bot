@@ -1,9 +1,9 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency } = require('../util');
+const { getCurrency, getBtcFiatPrice } = require('../util');
 
-const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, status }) => {
+const createOrder = async (ctx, bot, user, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, status }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
@@ -14,12 +14,24 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
     if (!!currency) {
       currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
     }
+    let amountText = `${amount} `;
+    let tasaText = '';
+    if (amount == 0) {
+      if (!currency.price) {
+        await messages.notRateForCurrency(bot, user);
+        return;
+      }
+      amount = await getBtcFiatPrice(fiatCode, fiatAmount);
+      amountText = '';
+      tasaText = '\nTasa: yadio.io';
+    }
     if (type === 'sell') {
-      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      const fee = amount * parseFloat(process.env.FEE);
+      let description = `${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Recibo pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += `Volumen de comercio: ${volume} sats`;
-      const fee = amount * parseFloat(process.env.FEE);
+      description += `${tasaText}`;
       const order = new Order({
         description,
         amount,
@@ -38,11 +50,12 @@ const createOrder = async (ctx, { type, amount, seller, buyer, fiatAmount, fiatC
 
       return order;
     } else {
-      let description = `${action} ${amount} sats\nPor ${currencyString}\n`;
+      const fee = amount * parseFloat(process.env.FEE);
+      let description = `${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += `Volumen de comercio: ${volume} sats`;
-      const fee = amount * parseFloat(process.env.FEE);
+      description += `${tasaText}`;
       const order = new Order({
         description,
         amount,

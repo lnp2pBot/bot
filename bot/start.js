@@ -2,15 +2,12 @@ const { Telegraf } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const ordersActions = require('./ordersActions');
-const { takebuy } = require('./commands');
 const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
 const {
   validateSellOrder,
   validateUser,
   validateBuyOrder,
-  validateTakeSell,
   validateReleaseOrder,
-  validateTakeSellOrder,
   validateDisputeOrder,
   validateAdmin,
   validateFiatSentOrder,
@@ -18,9 +15,12 @@ const {
   validateParams,
   validateObjectId,
   validateInvoice,
+  validateTakeBuyOrder,
+  validateTakeSellOrder,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
+const { getBtcFiatPrice } = require('../util');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -61,7 +61,7 @@ const initialize = (botToken, options) => {
 
       if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
-      const order = await ordersActions.createOrder(ctx, {
+      const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'sell',
         amount,
         seller: user,
@@ -90,8 +90,8 @@ const initialize = (botToken, options) => {
       if (!buyOrderParams) return;
 
       const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
-
-      const order = await ordersActions.createOrder(ctx, {
+      //revisar por que esta creando invoice sin monto
+      const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'buy',
         amount,
         buyer: user,
@@ -110,55 +110,87 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('takesell', async (ctx) => {
+  bot.action('takesell', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-      const takeSellParams = await validateTakeSell(ctx, bot, user);
-      if (!takeSellParams) return;
-      const { orderId, lnInvoice } = takeSellParams;
-
+      const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
+      const tgUser = ctx.update.callback_query.from;
+      if (!tgUser) return;
+      let user = await User.findOne({ tg_id: tgUser.id });
 
-      try {
-        const order = await Order.findOne({ _id: orderId });
-        if (!(await validateTakeSellOrder(bot, user, lnInvoice, order))) return;
-
-        order.status = 'WAITING_PAYMENT';
-        order.buyer_id = user._id;
-        order.buyer_invoice = lnInvoice;
-
-        const seller = await User.findOne({ _id: order.creator_id });
-        // We create a hold invoice
-        const description = `Venta por @${ctx.botInfo.username}`;
-        const amount = Math.floor(order.amount + order.fee);
-        const { request, hash, secret } = await createHoldInvoice({
-          amount,
-          description,
-        });
-        order.hash = hash;
-        order.secret = secret;
-        order.taken_at = Date.now();
-        await order.save();
-        // We monitor the invoice to know when the seller makes the payment
-        await subscribeInvoice(bot, hash);
-        // We send the hold invoice to the seller
-        await messages.invoicePaymentRequestMessage(bot, seller, request);
-        await messages.takeSellWaitingSellerToPayMessage(bot, user, order);
-      } catch (e) {
-        console.log(e);
-        await messages.invalidDataMessage(bot, user);
+      if (!user) {
+        user = await validateUser(ctx, false);
       }
+
+      if (!user) return;
+
+      const order = await Order.findOne({ _id: orderId });
+      if (!(await validateTakeSellOrder(bot, user, order))) return;
+
+      order.status = 'ACTIVE';
+      order.buyer_id = user._id;
+      if (!order.amount) {
+          const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+          const fee = amount * parseFloat(process.env.FEE);
+          order.fee = fee;
+          order.amount = amount;
+      }
+      await order.save();
+      // We delete the messages related to that order from the channel
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);  
+      await messages.notLightningInvoiceMessage(bot, user, order);
     } catch (error) {
       console.log(error);
     }
   });
 
-  bot.command('takebuy', async (ctx) => {
+  bot.action('takebuy', async (ctx) => {
     try {
-      await takebuy(ctx);
+      const orderId = ctx.update.callback_query.message.text;
+      if (!orderId) return;
+      const tgUser = ctx.update.callback_query.from;
+      if (!tgUser) return;
+      let user = await User.findOne({ tg_id: tgUser.id });
+
+      if (!user) {
+        user = await validateUser(ctx, false);
+      }
+
+      if (!user) return;
+
+      // Sellers with orders in status = FIAT_SENT, have to solve the order
+      const isOnFiatSentStatus = await validateSeller(bot, user);
+
+      if (!isOnFiatSentStatus) return;
+
+      if (!orderId) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!(await validateTakeBuyOrder(bot, user, order))) return;
+
+      const description = `Venta por @${ctx.botInfo.username}`;
+      const amount = Math.floor(order.amount + order.fee);
+      const { request, hash, secret } = await createHoldInvoice({
+        description,
+        amount,
+      });
+      order.hash = hash;
+      order.secret = secret;
+      order.status = 'WAITING_PAYMENT';
+      order.seller_id = user._id;
+      order.taken_at = Date.now();
+      await order.save();
+
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
+      // We delete the messages related to that order from the channel
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
+      await messages.beginTakeBuyMessage(bot, user, request, order);
     } catch (error) {
       console.log(error);
+      await messages.invalidDataMessage(bot, user);
     }
   });
 
@@ -389,7 +421,7 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // We sent messages to both parties
-      await messages.fiatSentMessages(bot, user, seller);
+      await messages.fiatSentMessages(bot, user, seller, order);
 
     } catch (error) {
       console.log(error);
@@ -503,8 +535,27 @@ const initialize = (botToken, options) => {
 
       order.buyer_invoice = lnInvoice;
       await order.save();
-      await messages.addInvoiceMessage(bot, user, order);
-
+      if (order.creator_id == order.buyer_id) {
+        await messages.addInvoiceMessage(bot, user, order);
+      } else {
+        const seller = await User.findOne({ _id: order.seller_id });
+        // We create a hold invoice
+        const description = `Venta por @${ctx.botInfo.username}`;
+        const amount = Math.floor(order.amount + order.fee);
+        const { request, hash, secret } = await createHoldInvoice({
+          amount,
+          description,
+        });
+        order.hash = hash;
+        order.secret = secret;
+        order.taken_at = Date.now();
+        await order.save();
+        // We monitor the invoice to know when the seller makes the payment
+        await subscribeInvoice(bot, hash);
+        // We send the hold invoice to the seller
+        await messages.invoicePaymentRequestMessage(bot, seller, request);
+        await messages.takeSellWaitingSellerToPayMessage(bot, user, order);
+      }
     } catch (error) {
       console.log(error);
       const user = await validateUser(ctx, false);
@@ -524,17 +575,6 @@ const initialize = (botToken, options) => {
 
       await messages.listOrdersResponse(bot, user, orders);
 
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  bot.action('takebuybutton', async (ctx) => {
-    try {
-      const orderId = ctx.update.callback_query.message.text;
-      const tgUser = ctx.update.callback_query.from;
-  
-      await takebuy(ctx, bot, { orderId, tgUser });
     } catch (error) {
       console.log(error);
     }
