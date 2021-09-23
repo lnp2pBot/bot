@@ -505,6 +505,7 @@ const initialize = (botToken, options) => {
         order.hash = hash;
         order.secret = secret;
         order.taken_at = Date.now();
+        order.status = 'WAITING_PAYMENT';
         await order.save();
         // We monitor the invoice to know when the seller makes the payment
         await subscribeInvoice(bot, hash);
