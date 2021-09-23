@@ -292,7 +292,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 const publishBuyOrderMessage = async (ctx, bot, order) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
-    publishMessage += `Para tomar esta orden, toca el botón 👇`;
+    publishMessage += `Para tomar esta orden 👇`;
 
     // Mensaje al canal
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
@@ -310,7 +310,13 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
     // Mensaje al grupo origen en caso de haber
     if (ctx.message.chat.type != 'private') {
       order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
-      order.tg_group_message2 = (await ctx.reply(publishMessage2)).message_id;
+      order.tg_group_message2 = (await ctx.reply(order._id, {
+        reply_markup: {
+          inline_keyboard: [
+            [{text: 'Vender satoshis', callback_data: 'takebuy'}],
+          ],
+        },
+      })).message_id;
     }
 
     order.save();
@@ -322,7 +328,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
 const publishSellOrderMessage = async (ctx, bot, order) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
-    publishMessage += `Para tomar esta orden, toca el botón 👇`;
+    publishMessage += `Para tomar esta orden 👇`;
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
       reply_markup: {
@@ -338,7 +344,13 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
     // Mensaje al grupo origen en caso de haber
     if (ctx.message.chat.type != 'private') {
       order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
-      order.tg_group_message2 = (await ctx.reply(publishMessage2)).message_id;
+      order.tg_group_message2 = (await ctx.reply(order._id, {
+        reply_markup: {
+          inline_keyboard: [
+            [{text: 'Comprar satoshis', callback_data: 'takesell'}],
+          ],
+        },
+      })).message_id;
     }
 
     order.save();
