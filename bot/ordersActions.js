@@ -100,24 +100,38 @@ const getOrder = async (bot, user, orderId) => {
 };
 
 const getOrders = async (bot, user) => {
-  const where = {
-    $or: [{ seller_id: user._id }, { buyer_id: user._id }],
-    $or: [
-      { status: 'WAITING_PAYMENT' },
-      { status: 'PENDING' },
-      { status: 'ACTIVE' },
-      { status: 'FIAT_SENT' },
-      { status: 'PAID_HOLD_INVOICE' },
-    ],
-  };
+  try {
+    console.log(user._id)
+    const where = {
+      $and: [
+        {
+          $or: [
+            { buyer_id: user._id },
+            { seller_id: user._id },
+          ],
+        },
+        {
+          $or: [
+            { status: 'WAITING_PAYMENT' },
+            { status: 'PENDING' },
+            { status: 'ACTIVE' },
+            { status: 'FIAT_SENT' },
+            { status: 'PAID_HOLD_INVOICE' },
+          ],
+        },
+      ],
+    };
 
-  const orders = await Order.find(where);
-  if (orders.length == 0) {
-    await messages.notOrdersMessage(bot, user);
-    return false;
+    const orders = await Order.find(where);
+    if (orders.length == 0) {
+      await messages.notOrdersMessage(bot, user);
+      return false;
+    }
+
+    return orders;
+  } catch (error) {
+    console.log(error)
   }
-
-  return orders;
 };
 
 module.exports = {
