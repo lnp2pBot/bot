@@ -1,21 +1,13 @@
 const {
-    validateSellOrder,
-    validateUser,
-    validateBuyOrder,
-    validateReleaseOrder,
-    validateDisputeOrder,
-    validateAdmin,
-    validateFiatSentOrder,
     validateSeller,
-    validateParams,
     validateObjectId,
-    validateInvoice,
     validateTakeBuyOrder,
     validateTakeSellOrder,
   } = require('./validations');
 const { Order, User } = require('../models');
-const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
+const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const messages = require('./messages');
+const { getBtcFiatPrice } = require('../util');
 
 const takebuy = async (ctx, bot) => {
   try {
@@ -26,10 +18,9 @@ const takebuy = async (ctx, bot) => {
     let user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
-        user = await validateUser(ctx, false);
+      await messages.initBotErrorMessage(bot, tgUser.id);
+      return;
     }
-
-    if (!user) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
     const isOnFiatSentStatus = await validateSeller(bot, user);
@@ -66,4 +57,38 @@ const takebuy = async (ctx, bot) => {
   }
 };
 
-module.exports = { takebuy };
+const takesell = async (ctx, bot) => {
+  try {
+    const orderId = ctx.update.callback_query.message.text;
+    if (!orderId) return;
+    const tgUser = ctx.update.callback_query.from;
+    if (!tgUser) return;
+    let user = await User.findOne({ tg_id: tgUser.id });
+
+    if (!user) {
+      await messages.initBotErrorMessage(bot, tgUser.id);
+      return;
+    }
+
+    const order = await Order.findOne({ _id: orderId });
+    if (!(await validateTakeSellOrder(bot, user, order))) return;
+
+    order.status = 'ACTIVE';
+    order.buyer_id = user._id;
+    if (!order.amount) {
+        const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+        const fee = amount * parseFloat(process.env.FEE);
+        order.fee = fee;
+        order.amount = amount;
+    }
+    await order.save();
+    // We delete the messages related to that order from the channel
+    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
+    await messages.notLightningInvoiceMessage(bot, user, order);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = { takebuy, takesell };

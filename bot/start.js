@@ -2,7 +2,7 @@ const { Telegraf } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const ordersActions = require('./ordersActions');
-const { takebuy } = require('./commands');
+const { takebuy, takesell } = require('./commands');
 const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
 const {
   validateSellOrder,
@@ -16,11 +16,9 @@ const {
   validateParams,
   validateObjectId,
   validateInvoice,
-  validateTakeSellOrder,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
-const { getBtcFiatPrice } = require('../util');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -111,38 +109,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.action('takesell', async (ctx) => {
-    try {
-      const orderId = ctx.update.callback_query.message.text;
-      if (!orderId) return;
-      const tgUser = ctx.update.callback_query.from;
-      if (!tgUser) return;
-      let user = await User.findOne({ tg_id: tgUser.id });
-
-      if (!user) {
-        user = await validateUser(ctx, false);
-      }
-
-      if (!user) return;
-
-      const order = await Order.findOne({ _id: orderId });
-      if (!(await validateTakeSellOrder(bot, user, order))) return;
-
-      order.status = 'ACTIVE';
-      order.buyer_id = user._id;
-      if (!order.amount) {
-          const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-          const fee = amount * parseFloat(process.env.FEE);
-          order.fee = fee;
-          order.amount = amount;
-      }
-      await order.save();
-      // We delete the messages related to that order from the channel
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);  
-      await messages.notLightningInvoiceMessage(bot, user, order);
-    } catch (error) {
-      console.log(error);
-    }
+    await takesell(ctx, bot);
   });
 
   bot.action('takebuy', async (ctx) => {
