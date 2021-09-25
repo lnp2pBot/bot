@@ -16,7 +16,6 @@ const {
   validateParams,
   validateObjectId,
   validateInvoice,
-  validateTakeBuyOrder,
   validateTakeSellOrder,
 } = require('./validations');
 const messages = require('./messages');
@@ -483,10 +482,14 @@ const initialize = (botToken, options) => {
       const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '<order_id> <lightning_invoice>');
 
       if (!orderId) return;
+      const invoice = await validateInvoice(bot, user, lnInvoice);
       if (!(await validateObjectId(bot, user, orderId))) return;
-      if (!(await validateInvoice(bot, user, lnInvoice))) return;
+      if (!invoice) return;
       const order = await Order.findOne({ _id: orderId });
-
+      if (invoice.tokens && invoice.tokens != order.amount) {
+        await messages.incorrectAmountInvoiceMessage(bot, user);
+        return;
+      }
       if (!order) return;
 
       order.buyer_invoice = lnInvoice;

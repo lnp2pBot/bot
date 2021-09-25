@@ -588,6 +588,14 @@ const notRateForCurrency = async (bot, user) => {
   }
 };
 
+const incorrectAmountInvoiceMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `La factura tiene un monto incorrecto`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -643,4 +651,5 @@ module.exports = {
   notOrdersMessage,
   listOrdersResponse,
   notRateForCurrency,
+  incorrectAmountInvoiceMessage,
 };

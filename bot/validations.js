@@ -155,7 +155,7 @@ const validateInvoice = async (bot, user, lnInvoice) => {
       return false;
     }
 
-    return true;
+    return invoice;
   } catch (error) {
     await messages.errorParsingInvoiceMessage(bot, user);
     return false;
