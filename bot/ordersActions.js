@@ -101,7 +101,6 @@ const getOrder = async (bot, user, orderId) => {
 
 const getOrders = async (bot, user) => {
   try {
-    console.log(user._id)
     const where = {
       $and: [
         {

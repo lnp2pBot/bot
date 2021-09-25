@@ -8,7 +8,7 @@ const startMessage = async (ctx) => {
 Una vez incializado el Bot en privado es fácil:
 
 1. Publica tu oferda de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.
-2. Espera que otro usuario tome la oferta por medio de /takesell o /takebuy. Tambien puedes tomar las ofertas de otros usuarios con estos comandos!
+2. Espera que otro usuario tome la oferta por medio de los botones "Comprar" ó "Vender". Tambien puedes tomar las ofertas de otros usuarios con estos botones!
 3. Tu oferta y calificación estará visible en el canal ${process.env.CHANNEL}.
 
 /sell:
@@ -19,11 +19,11 @@ Una vez incializado el Bot en privado es fácil:
 6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
 7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot con el comando /addinvoice, luego contacta al vendedor para que te de los datos de pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
 
-Botón takesell:
+Botón Comprar:
 8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
 9. Una vez el otro usuario confirme su pago fiat usará el comando /release para liberarte los sats a tu invoice.
 
-Botón takebuy:
+Botón Vender:
 9. Si estas tomando una compra, debes pagar el invoice el cual estara retenido mientras el otro usuario realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello.
 10. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen sus sats a su invoice.
 
@@ -39,9 +39,9 @@ Botón takebuy:
   }
 };
 
-const initBotErrorMessage = async (ctx) => {
+const initBotErrorMessage = async (bot, tgId) => {
   try {
-    await ctx.reply(`Para usar este Bot primero debes inicializar en privado @${ctx.botInfo.username} el protocolo del bot`);
+    await bot.telegram.sendMessage(tgId, `Para usar este Bot primero debes inicializar el bot con el comando /start`);
   } catch (error) {
     console.log(error);
   }
@@ -185,22 +185,6 @@ const alreadyTakenOrderMessage = async (bot, user) => {
 const invalidDataMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Has enviado datos incorrectos, inténtalo nuevamente.`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const takeSellCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/takesell <order_id> <lightning_invoice>`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const takeBuyCorrectFormatMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `/takebuy <order_id>`);
   } catch (error) {
     console.log(error);
   }
@@ -445,8 +429,6 @@ const helpMessage = async (ctx) => {
   try {
     await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de venta
 /buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de compra
-/takebuy <order_id> - Toma una orden de compra
-/takesell <order_id> <lightning_invoice> - Toma una orden de venta
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
 /addinvoice <order_id> <lightning_invoice> - El comprador envía una factura lightning en la que recibirá sats
 /listorders - El usuario puede listar sus órdenes no finalizadas
@@ -614,8 +596,6 @@ module.exports = {
   alreadyTakenOrderMessage,
   onGoingTakeSellMessage,
   invalidDataMessage,
-  takeBuyCorrectFormatMessage,
-  takeSellCorrectFormatMessage,
   beginTakeBuyMessage,
   notActiveOrderMessage,
   publishSellOrderMessage,
