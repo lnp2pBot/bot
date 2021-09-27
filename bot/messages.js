@@ -1,4 +1,4 @@
-const { plural } = require('../util');
+const { plural, getCurrency } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
@@ -222,7 +222,8 @@ const doneTakeBuyMessage = async (bot, orderUser, sellerUser) => {
 
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero fiat.`);
+    const currency = getCurrency(order.fiat_code);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount}.`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez me hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te haga el pago por fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
@@ -510,7 +511,9 @@ const notValidIdMessage = async (bot, user) => {
 
 const addInvoiceMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤖 He recibido tu factura, en cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    const currency = getCurrency(order.fiat_code);
+    await bot.telegram.sendMessage(user.tg_id, `🤖 He recibido tu factura, ahora debes enviarle al vendedor ${currency.symbol_native} ${order.fiat_amount}`);
+    await bot.telegram.sendMessage(user.tg_id, `🤖 En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
     await bot.telegram.sendMessage(user.tg_id, `/fiatsent ${order._id}`);
   } catch (error) {
     console.log(error);
