@@ -17,7 +17,7 @@ Una vez incializado el Bot en privado es fácil:
 
 /buy:
 6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot con el comando /addinvoice, luego contacta al vendedor para que te de los datos de pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
+7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot con el comando /addinvoice, luego contacta al vendedor para que te de los datos del pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
 
 Botón Comprar:
 8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
@@ -246,7 +246,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
     await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount}.`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez me hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
-    await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te haga el pago por fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe el dinero fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
   } catch (error) {
     console.log(error);
