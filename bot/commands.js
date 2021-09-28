@@ -85,7 +85,7 @@ const takesell = async (ctx, bot) => {
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
-    await messages.notLightningInvoiceMessage(bot, user, order);
+    await messages.beginTakeSellMessage(bot, user, order);
   } catch (error) {
     console.log(error);
   }

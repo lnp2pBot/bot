@@ -162,6 +162,58 @@ const validateInvoice = async (bot, user, lnInvoice) => {
   }
 };
 
+const isValidInvoice = async (lnInvoice) => {
+  try {
+    const invoice = parsePaymentRequest({ request: lnInvoice });
+    const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
+    if (!!invoice.tokens && invoice.tokens < 100) {
+      return {
+        success: false,
+        error: "La factura debe ser mayor o igual a 100 satoshis",
+      };
+    }
+
+    if (new Date(invoice.expires_at) < latestDate) {
+      return {
+        success: false,
+        error: "El tiempo de expiración de la factura es muy corto",
+      };
+    }
+
+    if (invoice.is_expired !== false) {
+      return {
+        success: false,
+        error: "La factura ha expirado",
+      };
+    }
+
+    if (!invoice.destination) {
+      return {
+        success: false,
+        error: "La factura necesita una dirección destino",
+      };
+    }
+
+    if (!invoice.id) {
+      return {
+        success: false,
+        error: "La factura necesita un hash",
+      };
+    }
+
+    return {
+      success: true,
+      error: '',
+      invoice,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "Error parseando la factura",
+    };
+  }
+};
+
 const isOrderCreator = (user, order) => {
   if (order.creator_id == user._id) {
     return true
@@ -332,4 +384,5 @@ module.exports = {
   validateSeller,
   validateParams,
   validateObjectId,
+  isValidInvoice,
 };

@@ -200,12 +200,32 @@ const beginTakeBuyMessage = async (bot, sellerUser, request, order) => {
   }
 };
 
-const onGoingTakeBuyMessage = async (bot, sellerUser, buyerUser, order) => {
+const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyerUser.username} para darle los detalles de metodo de pago fiat que te hará. Una vez confirmes su pago debes liberar los fondos`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, ` @${sellerUser.username} ha tomado tu compra y te quiere vender sats. Escríbele para que le hagas el pago por fiat y te libere sus sats.`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} con el siguiente comando 👇`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `/addinvoice ${order._id} <lightning_invoice>`);
+    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle los detalles de metodo de pago fiat que te hará. Una vez confirmes su pago debes liberar los fondos`);
+    await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra, presiona el botón para continuar 👇`);
+    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+      reply_markup: {
+        inline_keyboard: [
+          [{text: 'Continuar', callback_data: 'addInvoiceBtn'}],
+        ],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const beginTakeSellMessage = async (bot, buyer, order) => {
+  try {
+    await bot.telegram.sendMessage(buyer.tg_id, `Presiona el botón para continuar 👇`);
+    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+      reply_markup: {
+        inline_keyboard: [
+          [{text: 'Continuar', callback_data: 'addInvoiceBtn'}],
+        ],
+      },
+    });
   } catch (error) {
     console.log(error);
   }
@@ -235,7 +255,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
 
 const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una factura al vendedor para que nos envíe tus sats, en cuanto realice el pago los pondremos en contacto`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats, en cuanto realice el pago los pondremos en contacto`);
   } catch (error) {
     console.log(error);
   }
@@ -385,7 +405,7 @@ const customMessage = async (bot, user, message) => {
   }
 };
 
-const checkOrderMessage = async (ctx,order,creator,buyer,seller) => {
+const checkOrderMessage = async (ctx, order, creator, buyer, seller) => {
   try {
     await ctx.reply(`Orden id: ${order._id}:
 Creator: ${creator}
@@ -635,4 +655,5 @@ module.exports = {
   listOrdersResponse,
   notRateForCurrency,
   incorrectAmountInvoiceMessage,
+  beginTakeSellMessage,
 };

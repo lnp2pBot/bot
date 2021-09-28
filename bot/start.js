@@ -1,4 +1,4 @@
-const { Telegraf } = require('telegraf');
+const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const ordersActions = require('./ordersActions');
@@ -19,6 +19,8 @@ const {
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
+const addInvoiceWizard = require('./scenes');
+const { SchemaTypeOptions } = require('mongoose');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -30,6 +32,11 @@ const initialize = (botToken, options) => {
   const cancelOrderJob = schedule.scheduleJob(`*/5 * * * *`, async () => {
     await cancelOrders(bot);
   });
+
+  const stage = new Scenes.Stage([addInvoiceWizard]);
+  bot.use(session());
+
+  bot.use(stage.middleware());
 
   bot.start(async (ctx) => {
     try {
@@ -502,6 +509,20 @@ const initialize = (botToken, options) => {
 
       await messages.listOrdersResponse(bot, user, orders);
 
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.action('addInvoiceBtn', async (ctx) => {
+    try {
+      const orderId = ctx.update.callback_query.message.text;
+      if (!orderId) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!orderId) return;
+      let buyer = await User.findOne({ _id: order.buyer_id });
+      let seller = await User.findOne({ _id: order.seller_id });
+      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     } catch (error) {
       console.log(error);
     }
