@@ -286,11 +286,6 @@ const initialize = (botToken, options) => {
       await messages.customMessage(bot, seller, `El admin ha completado la orden Id: ${order._id}!`);
       // we sent a private message to the buyer
       await messages.customMessage(bot, buyer, `El admin completado la orden Id: ${order._id}!`);
-      // we update this order message in the channel
-      await bot.telegram.editMessageText(process.env.CHANNEL, order.tg_channel_message2, null, `Orden ${order._id} COMPLETADA ✅`);
-      if (order.tg_chat_id < 0) {
-        await bot.telegram.editMessageText(order.tg_chat_id, order.tg_group_message2, null, `Orden ${order._id} COMPLETADA ✅`);
-      }
     } catch (error) {
       console.log(error);
     }
@@ -459,12 +454,18 @@ const initialize = (botToken, options) => {
       const invoice = await validateInvoice(bot, user, lnInvoice);
       if (!(await validateObjectId(bot, user, orderId))) return;
       if (!invoice) return;
-      const order = await Order.findOne({ _id: orderId });
+      const order = await Order.findOne({
+        _id: orderId,
+        buyer_id: user._id,
+      });
+      if (!order) {
+        await messages.notActiveOrderMessage(bot, user);
+        return;
+      };
       if (invoice.tokens && invoice.tokens != order.amount) {
         await messages.incorrectAmountInvoiceMessage(bot, user);
         return;
       }
-      if (!order) return;
 
       order.buyer_invoice = lnInvoice;
       await order.save();
