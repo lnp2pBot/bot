@@ -6,7 +6,7 @@ const { isIso4217, parseArguments } = require('../util');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
-const validateUser = async (ctx, start) => {
+const validateUser = async (ctx, bot, start) => {
   const tgUser = ctx.update.message.from;
   let user = await User.findOne({ tg_id: tgUser.id });
 
