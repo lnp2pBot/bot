@@ -269,7 +269,7 @@ const initialize = (botToken, options) => {
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
 
-      const order = await ordersActions.getOrder(bot, user, orderId);
+      const order = await Order.findOne({_id: orderId});
       if (!order) return;
 
       if (!!order.secret) {
@@ -301,7 +301,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await ordersActions.getOrder(bot, user, orderId);
+      const order = await Order.findOne({_id: orderId});
 
       if (!order) return;
 
