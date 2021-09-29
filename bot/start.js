@@ -468,6 +468,7 @@ const initialize = (botToken, options) => {
 
       order.buyer_invoice = lnInvoice;
       await order.save();
+      await messages.invoiceUpdatedMessage(bot, user);
     } catch (error) {
       console.log(error);
       const user = await validateUser(ctx, bot, false);
