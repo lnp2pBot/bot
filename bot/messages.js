@@ -17,7 +17,7 @@ Una vez incializado el Bot en privado es fácil:
 
 /buy:
 6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot con el comando /addinvoice, luego contacta al vendedor para que te de los datos del pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
+7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot, luego contacta al vendedor para que te de los datos del pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
 
 Botón Comprar:
 8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
@@ -451,7 +451,7 @@ const helpMessage = async (ctx) => {
     await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de venta
 /buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de compra
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
-/addinvoice <order_id> <lightning_invoice> - El comprador envía una factura lightning en la que recibirá sats
+/setinvoice <order_id> <lightning_invoice> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /release <order_id> - El vendedor libera los satoshis
 /dispute <order_id> - Abre una disputa entre los participantes
@@ -559,7 +559,7 @@ const cantTakeOwnOrderMessage = async (bot, user) => {
 const notLightningInvoiceMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Por favor envíame una factura lightning por ${order.amount} sats`);
-    await bot.telegram.sendMessage(user.tg_id, `/addinvoice ${order._id} <lightning_invoice>`);
+    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <lightning_invoice>`);
   } catch (error) {
     console.log(error);
   }

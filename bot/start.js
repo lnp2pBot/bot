@@ -20,7 +20,6 @@ const {
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders } = require('../jobs');
 const addInvoiceWizard = require('./scenes');
-const { SchemaTypeOptions } = require('mongoose');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -443,7 +442,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('addinvoice', async (ctx) => {
+  bot.command('setinvoice', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -469,28 +468,6 @@ const initialize = (botToken, options) => {
 
       order.buyer_invoice = lnInvoice;
       await order.save();
-      if (order.creator_id == order.buyer_id) {
-        await messages.addInvoiceMessage(bot, user, order);
-      } else {
-        const seller = await User.findOne({ _id: order.seller_id });
-        // We create a hold invoice
-        const description = `Venta por @${ctx.botInfo.username}`;
-        const amount = Math.floor(order.amount + order.fee);
-        const { request, hash, secret } = await createHoldInvoice({
-          amount,
-          description,
-        });
-        order.hash = hash;
-        order.secret = secret;
-        order.taken_at = Date.now();
-        order.status = 'WAITING_PAYMENT';
-        await order.save();
-        // We monitor the invoice to know when the seller makes the payment
-        await subscribeInvoice(bot, hash);
-        // We send the hold invoice to the seller
-        await messages.invoicePaymentRequestMessage(bot, seller, request);
-        await messages.takeSellWaitingSellerToPayMessage(bot, user, order);
-      }
     } catch (error) {
       console.log(error);
       const user = await validateUser(ctx, bot, false);
