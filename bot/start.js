@@ -46,7 +46,7 @@ const initialize = (botToken, options) => {
         return;
       }
       messages.startMessage(ctx);
-      await validateUser(ctx, true);
+      await validateUser(ctx, bot, true);
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +54,7 @@ const initialize = (botToken, options) => {
 
   bot.command('sell', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
       // Sellers with orders in status = FIAT_SENT, have to solve the order
@@ -87,7 +87,7 @@ const initialize = (botToken, options) => {
 
   bot.command('buy', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
 
@@ -125,7 +125,7 @@ const initialize = (botToken, options) => {
 
   bot.command('release', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
@@ -144,7 +144,7 @@ const initialize = (botToken, options) => {
 
   bot.command('dispute', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
 
@@ -188,7 +188,7 @@ const initialize = (botToken, options) => {
   // pending orders are the ones that are not taken by another user
   bot.command('cancel', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
@@ -318,7 +318,7 @@ const initialize = (botToken, options) => {
 
   bot.command('help', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
       if (!user) return;
 
       await messages.helpMessage(ctx);
@@ -330,7 +330,7 @@ const initialize = (botToken, options) => {
   // Only buyers can use this command
   bot.command('fiatsent', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
       const [orderId] = await validateParams(ctx, bot, user, 2, '<order_id>');
@@ -354,7 +354,7 @@ const initialize = (botToken, options) => {
 
   bot.command('cooperativecancel', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
 
@@ -445,7 +445,7 @@ const initialize = (botToken, options) => {
   // Only buyers can use this command
   bot.command('addinvoice', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
       const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '<order_id> <lightning_invoice>');
@@ -493,14 +493,14 @@ const initialize = (botToken, options) => {
       }
     } catch (error) {
       console.log(error);
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
       await messages.genericErrorMessage(bot, user);
     }
   });
 
   bot.command('listorders', async (ctx) => {
     try {
-      const user = await validateUser(ctx, false);
+      const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
 
