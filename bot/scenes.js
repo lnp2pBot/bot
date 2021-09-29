@@ -10,7 +10,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
   async (ctx) => {
     const { bot, buyer, order } = ctx.wizard.state;
     await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount}`);
-    // ctx.wizard.state.invoiceData = {};
     return ctx.wizard.next();
   },
   async (ctx) => {
