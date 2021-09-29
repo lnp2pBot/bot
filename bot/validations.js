@@ -209,7 +209,7 @@ const isValidInvoice = async (lnInvoice) => {
   } catch (error) {
     return {
       success: false,
-      error: "Error parseando la factura",
+      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc1...",
     };
   }
 };
