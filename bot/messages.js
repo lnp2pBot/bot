@@ -111,7 +111,7 @@ const buyOrderCorrectFormatMessage = async (bot, user) => {
 
 const minimunAmountInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La invoice debe ser mayor o igual a 100 satoshis`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura debe ser mayor o igual a 100 satoshis`);
   } catch (error) {
     console.log(error);
   }
@@ -119,7 +119,7 @@ const minimunAmountInvoiceMessage = async (bot, user) => {
 
 const amountMustTheSameInvoiceMessage = async (bot, user, amount) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La invoice tener un monto igual a ${amount} sats`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura tener un monto igual a ${amount} sats`);
   } catch (error) {
     console.log(error);
   }
@@ -128,7 +128,7 @@ const amountMustTheSameInvoiceMessage = async (bot, user, amount) => {
 const minimunExpirationTimeInvoiceMessage = async (bot, user) => {
   try {
     const expirationTime = parseInt(INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
-    await bot.telegram.sendMessage(user.tg_id, `El tiempo de expiración de la invoice debe ser de al menos ${expirationTime} minutos`);
+    await bot.telegram.sendMessage(user.tg_id, `El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos`);
   } catch (error) {
     console.log(error);
   }
@@ -136,7 +136,7 @@ const minimunExpirationTimeInvoiceMessage = async (bot, user) => {
 
 const expiredInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La invoice ha expirado`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura ha expirado`);
   } catch (error) {
     console.log(error);
   }
@@ -144,7 +144,7 @@ const expiredInvoiceMessage = async (bot, user) => {
 
 const requiredAddressInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La invoice necesita una dirección destino`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura necesita una dirección destino`);
   } catch (error) {
     console.log(error);
   }
@@ -152,7 +152,7 @@ const requiredAddressInvoiceMessage = async (bot, user) => {
 
 const requiredHashInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La invoice necesita un hash`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura necesita un hash`);
   } catch (error) {
     console.log(error);
   }
@@ -376,6 +376,7 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
     }
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username}
 ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}:
+Status: ${order.status}
 Monto sats: ${order.amount}
 Monto ${order.fiat_code}: ${order.fiat_amount}
 Método de pago: ${order.payment_method}
@@ -408,6 +409,7 @@ const customMessage = async (bot, user, message) => {
 const checkOrderMessage = async (ctx, order, creator, buyer, seller) => {
   try {
     await ctx.reply(`Orden id: ${order._id}:
+Status: ${order.status}
 Creator: ${creator}
 Buyer: ${buyer}
 Seller: ${seller}
@@ -609,6 +611,95 @@ const invoiceUpdatedMessage = async (bot, user) => {
   }
 };
 
+const badStatusOnCancelOrderMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Esta opción solo permite cancelar las ordenes que no han sido tomadas o en las cuales el vendedor ha tardado mucho para pagar la factura`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const successCancelOrderMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: ${order._id}!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const successCancelOrderByAdminMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha cancelado la orden Id: ${order._id}!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const successCompleteOrderMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Has completado la orden Id: ${order._id}!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const successCompleteOrderByAdminMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha completado la orden Id: ${order._id}!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const onlyActiveCooperativeCancelMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Esta opción solo permite cancelar cooperativamente las ordenes activas`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const shouldWaitCooperativeCancelMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Ya has realizado esta operación, debes esperar por tu contraparte`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const okCooperativeCancelMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: ${order._id}!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const initCooperativeCancelMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Has iniciado la cancelación de la orden Id: ${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte quiere cancelar la orden Id: ${order._id}, si estás de acuerdo utiliza el comando 👇`);
+    await bot.telegram.sendMessage(user.tg_id, `/cooperativecancel ${order._id}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoicePaymentFailedMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `El vendedor ha liberado los satoshis pero el pago a tu factura ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -665,4 +756,15 @@ module.exports = {
   incorrectAmountInvoiceMessage,
   beginTakeSellMessage,
   invoiceUpdatedMessage,
+  counterPartyWantsCooperativeCancelMessage,
+  initCooperativeCancelMessage,
+  okCooperativeCancelMessage,
+  shouldWaitCooperativeCancelMessage,
+  onlyActiveCooperativeCancelMessage,
+  successCompleteOrderByAdminMessage,
+  successCompleteOrderMessage,
+  successCancelOrderByAdminMessage,
+  successCancelOrderMessage,
+  badStatusOnCancelOrderMessage,
+  invoicePaymentFailedMessage,
 };

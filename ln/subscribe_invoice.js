@@ -1,4 +1,4 @@
-const { subscribeToInvoice, pay } = require('lightning');
+const { subscribeToInvoice } = require('lightning');
 const { Order, User, PendingPayment } = require('../models');
 const payRequest = require('./pay_request');
 const lnd = require('./connect');
@@ -6,82 +6,62 @@ const messages = require('../bot/messages');
 const { handleReputationItems } = require('../util');
 
 const subscribeInvoice = async (bot, id) => {
-  try {
-    const sub = subscribeToInvoice({ id, lnd });
-    sub.on('invoice_updated', async (invoice) => {
-      if (invoice.is_held) {
-        console.log(`invoice with hash: ${id} is being held!`);
+  const sub = subscribeToInvoice({ id, lnd });
+  sub.on('invoice_updated', async (invoice) => {
+    if (invoice.is_held) {
+      console.log(`invoice with hash: ${id} is being held!`);
+      const order = await Order.findOne({ hash: invoice.id });
+      const buyerUser = await User.findOne({ _id: order.buyer_id });
+      const sellerUser = await User.findOne({ _id: order.seller_id });
+      order.status = 'ACTIVE';
+      await order.save();
+      if (order.type === 'sell') {
+        await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
+      } else if (order.type === 'buy') {
+        await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
+      }
+      order.invoice_held_at = Date.now();
+      order.save();
+    }
+    if (invoice.is_confirmed) {
+      try {
+        console.log(`Invoice with hash: ${id} is being paid!`);
         const order = await Order.findOne({ hash: invoice.id });
-        const buyerUser = await User.findOne({ _id: order.buyer_id });
-        const sellerUser = await User.findOne({ _id: order.seller_id });
-        order.status = 'ACTIVE';
+        order.status = 'PAID_HOLD_INVOICE';
         await order.save();
-        if (order.type === 'sell') {
-          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
-        } else if (order.type === 'buy') {
-          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
-        }
-        order.invoice_held_at = Date.now();
-        order.save();
-      }
-      if (invoice.is_confirmed) {
-        try {
-          console.log(`Invoice with hash: ${id} is being paid!`);
-          const order = await Order.findOne({ hash: invoice.id });
-          order.status = 'PAID_HOLD_INVOICE';
+        const payment = await payRequest({
+          request: order.buyer_invoice,
+          amount: order.amount,
+        });
+        if (payment.is_confirmed) {
+          order.status = 'SUCCESS';
           await order.save();
-          const payment = await payRequest({
-            request: order.buyer_invoice,
+          const buyerUser = await User.findOne({ _id: order.buyer_id });
+          const sellerUser = await User.findOne({ _id: order.seller_id });
+          await handleReputationItems(buyerUser, sellerUser, order.amount);
+          if (order.type === 'sell') {
+            await messages.doneTakeSellMessage(bot, sellerUser, buyerUser);
+          } else if (order.type === 'buy') {
+            await messages.doneTakeBuyMessage(bot, buyerUser, sellerUser);
+          }
+        } else {
+          const buyerUser = await User.findOne({ _id: order.buyer_id });
+          await messages.invoicePaymentFailedMessage(bot, buyerUser);
+          const pp = new PendingPayment({
             amount: order.amount,
+            payment_request: order.buyer_invoice,
+            user_id: buyerUser._id,
+            description: order.description,
+            hash: order.hash,
+            order_id: order._id,
           });
-          if (payment.is_confirmed) {
-            order.status = 'SUCCESS';
-            await order.save();
-            const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const sellerUser = await User.findOne({ _id: order.seller_id });
-            await handleReputationItems(buyerUser, sellerUser, order.amount);
-            if (order.type === 'sell') {
-              await messages.doneTakeSellMessage(bot, sellerUser, buyerUser);
-            } else if (order.type === 'buy') {
-              await messages.doneTakeBuyMessage(bot, buyerUser, sellerUser);
-            }
-          } else {
-            const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const message = `El vendedor ha liberado los satoshis pero el pago a tu invoice ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`;
-            await messages.customMessage(bot, buyerUser, message);
-            const pp = new PendingPayment({
-              amount: order.amount,
-              payment_request: order.buyer_invoice,
-              user_id: buyerUser._id,
-              description: order.description,
-              hash: order.hash,
-              order_id: order._id,
-            });
-            await pp.save();
-          }
-        } catch (error) {
-          if (order.status === 'PAID_HOLD_INVOICE') {
-            const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const message = `El vendedor ha liberado los satoshis pero no he podido pagar tu invoice, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`;
-            await messages.customMessage(bot, buyerUser, message);
-            const pp = new PendingPayment({
-              amount: order.amount,
-              payment_request: order.buyer_invoice,
-              user_id: buyerUser._id,
-              description: order.description,
-              hash: order.hash,
-              order_id: order._id,
-            });
-            await pp.save();
-          }
-          console.log(error)
+          await pp.save();
         }
+      } catch (error) {
+        console.log(error);
       }
-    });
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
+    }
+  });
 };
 
 module.exports = subscribeInvoice;

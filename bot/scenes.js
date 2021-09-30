@@ -2,7 +2,6 @@ const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
 const { getCurrency } = require('../util');
 const messages = require('./messages');
-const { User } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
 const addInvoiceWizard = new Scenes.WizardScene(

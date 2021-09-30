@@ -81,7 +81,7 @@ const createOrder = async (ctx, bot, user, { type, amount, seller, buyer, fiatAm
 
 const getOrder = async (bot, user, orderId) => {
   if (!ObjectId.isValid(orderId)) {
-    await messages.customMessage(bot, user, 'Order Id no válido!');
+    await messages.notValidIdMessage(bot, user);
     return false;
   }
 
