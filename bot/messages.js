@@ -95,7 +95,7 @@ const mustBeIntMessage = async (bot, user, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago>`);
+    await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [es_público]`);
   } catch (error) {
     console.log(error);
   }
@@ -103,7 +103,7 @@ const sellOrderCorrectFormatMessage = async (bot, user) => {
 
 const buyOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago>`);
+    await bot.telegram.sendMessage(user.tg_id, `/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [es_público]`);
   } catch (error) {
     console.log(error);
   }
@@ -450,8 +450,8 @@ const invalidInvoice = async (bot, user) => {
 
 const helpMessage = async (ctx) => {
   try {
-    await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de venta
-/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> - Crea una orden de compra
+    await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [es_público] - Crea una orden de venta
+/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [es_público] - Crea una orden de compra
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
 /setinvoice <order_id> <lightning_invoice> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
 /listorders - El usuario puede listar sus órdenes no finalizadas
@@ -700,6 +700,14 @@ const invoicePaymentFailedMessage = async (bot, user) => {
   }
 };
 
+const isPublicErrorMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Si quieres que tu username sea mostrado en la publicación debes colocar 'y' como último argumento`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -767,4 +775,5 @@ module.exports = {
   successCancelOrderMessage,
   badStatusOnCancelOrderMessage,
   invoicePaymentFailedMessage,
+  isPublicErrorMessage,
 };

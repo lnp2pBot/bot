@@ -2,7 +2,7 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
-const { isIso4217, parseArguments } = require('../util');
+const { isIso4217, parseArguments, parseArgs } = require('../util');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -43,12 +43,18 @@ const validateAdmin = async (ctx, bot) => {
 
 const validateSellOrder = async (ctx, bot, user) => {
 
-  const args = parseArguments(ctx.update.message.text);
-  if (!args) {
+  const args = parseArgs(ctx.update.message.text);
+  if (args.length == 1) {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let { amount, fiatAmount, fiatCode, paymentMethod } = args;
+
+  let [ _, amount, fiatAmount, fiatCode, paymentMethod, isPublic ] = args;
+
+  if (!!isPublic && isPublic != 'y') {
+    await messages.isPublicErrorMessage(bot, user);
+    return false;
+  }
 
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
@@ -81,16 +87,22 @@ const validateSellOrder = async (ctx, bot, user) => {
     fiatAmount,
     fiatCode: fiatCode.toUpperCase(),
     paymentMethod,
+    isPublic,
   };
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
-  const args = parseArguments(ctx.update.message.text);
+  const args = parseArgs(ctx.update.message.text);
   if (!args) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let { amount, fiatAmount, fiatCode, paymentMethod } = args;
+  let [ _, amount, fiatAmount, fiatCode, paymentMethod, isPublic ] = args;
+
+  if (!!isPublic && isPublic != 'y') {
+    await messages.isPublicErrorMessage(bot, user);
+    return false;
+  }
 
   amount = parseInt(amount);
   if (!Number.isInteger(amount)) {
@@ -123,6 +135,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     fiatAmount,
     fiatCode: fiatCode.toUpperCase(),
     paymentMethod,
+    isPublic,
   };
 };
 

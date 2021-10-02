@@ -3,12 +3,23 @@ const { Order } = require('../models');
 const messages = require('./messages');
 const { getCurrency, getBtcFiatPrice } = require('../util');
 
-const createOrder = async (ctx, bot, user, { type, amount, seller, buyer, fiatAmount, fiatCode, paymentMethod, status }) => {
+const createOrder = async (ctx, bot, user, {
+  type,
+  amount,
+  seller,
+  buyer,
+  fiatAmount,
+  fiatCode,
+  paymentMethod,
+  status,
+  isPublic,
+}) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
   try {
+    const username = isPublic == 'y' ? `@${user.username} está ` : ``;
     const currency = getCurrency(fiatCode);
     let currencyString = `${fiatCode} ${fiatAmount}`;
     if (!!currency) {
@@ -27,7 +38,7 @@ const createOrder = async (ctx, bot, user, { type, amount, seller, buyer, fiatAm
     }
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
-      let description = `${action} ${amountText}sats\nPor ${currencyString}\n`;
+      let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Recibo pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += `Volumen de comercio: ${volume} sats`;
@@ -51,7 +62,7 @@ const createOrder = async (ctx, bot, user, { type, amount, seller, buyer, fiatAm
       return order;
     } else {
       const fee = amount * parseFloat(process.env.FEE);
-      let description = `${action} ${amountText}sats\nPor ${currencyString}\n`;
+      let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += `Volumen de comercio: ${volume} sats`;
