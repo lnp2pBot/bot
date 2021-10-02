@@ -64,7 +64,7 @@ const initialize = (botToken, options) => {
       const sellOrderParams = await validateSellOrder(ctx, bot, user);
 
       if (!sellOrderParams) return;
-      const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, isPublic } = sellOrderParams;
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'sell',
         amount,
@@ -73,6 +73,7 @@ const initialize = (botToken, options) => {
         fiatCode,
         paymentMethod,
         status: 'PENDING',
+        isPublic,
       });
 
       if (!!order) {
@@ -93,7 +94,7 @@ const initialize = (botToken, options) => {
       const buyOrderParams = await validateBuyOrder(ctx, bot, user);
       if (!buyOrderParams) return;
 
-      const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, isPublic } = buyOrderParams;
       //revisar por que esta creando invoice sin monto
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'buy',
@@ -103,6 +104,7 @@ const initialize = (botToken, options) => {
         fiatCode,
         paymentMethod,
         status: 'PENDING',
+        isPublic,
       });
 
       if (!!order) {

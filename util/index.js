@@ -33,36 +33,6 @@ const plural = (n) => {
     return 's';
 };
 
-const parseArguments = (argsString) => {
-    let args = [];
-    let amount, fiatAmount, fiatCode, paymentMethod;
-    // We check if we have a param between ""
-    args = argsString.split('"');
-    if (args.length > 1) {
-      args = args.filter(el => el != '');
-      args = args.filter(el => el != ' ');
-      paymentMethod = args[args.length-1];
-    }
-    if (!!paymentMethod) {
-      // We remove the paymentMethod from the string param
-      argsString = argsString.replace(`"${paymentMethod}"`, '');
-      args = argsString.split(' ');
-      args = args.filter(el => el != '');
-      if (args.length != 4) {
-        return false;
-      }
-      [_, amount, fiatAmount, fiatCode] = args;
-    } else {
-      args = argsString.split(' ');
-      args = args.filter(el => el != '');
-      if (args.length != 5) {
-        return false;
-      }
-      [_, amount, fiatAmount, fiatCode, paymentMethod] = args;
-    }
-    return { amount, fiatAmount, fiatCode, paymentMethod };
-};
-
 // This function checks if the current buyer and seller were doing circular operations
 // In order to increase their trades_completed and volume_traded.
 // If we found those trades in the last 24 hours we decrease both variables to both users
@@ -127,11 +97,42 @@ const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
   }
 };
 
+// Convers a string to an array of arguments
+// Source: https://stackoverflow.com/a/39304272
+const parseArgs = (cmdline) => {
+  var re_next_arg = /^\s*((?:(?:"(?:\\.|[^"])*")|(?:'[^']*')|\\.|\S)+)\s*(.*)$/;
+  var next_arg = ['', '', cmdline];
+  var args = [];
+  while (next_arg = re_next_arg.exec(next_arg[2])) {
+      var quoted_arg = next_arg[1];
+      var unquoted_arg = "";
+      while (quoted_arg.length > 0) {
+          if (/^"/.test(quoted_arg)) {
+              var quoted_part = /^"((?:\\.|[^"])*)"(.*)$/.exec(quoted_arg);
+              unquoted_arg += quoted_part[1].replace(/\\(.)/g, "$1");
+              quoted_arg = quoted_part[2];
+          } else if (/^'/.test(quoted_arg)) {
+              var quoted_part = /^'([^']*)'(.*)$/.exec(quoted_arg);
+              unquoted_arg += quoted_part[1];
+              quoted_arg = quoted_part[2];
+          } else if (/^\\/.test(quoted_arg)) {
+              unquoted_arg += quoted_arg[1];
+              quoted_arg = quoted_arg.substring(2);
+          } else {
+              unquoted_arg += quoted_arg[0];
+              quoted_arg = quoted_arg.substring(1);
+          }
+      }
+      args[args.length] = unquoted_arg;
+  }
+  return args;
+}
+
 module.exports = {
   isIso4217,
   plural,
-  parseArguments,
   getCurrency,
   handleReputationItems,
   getBtcFiatPrice,
+  parseArgs,
 };
