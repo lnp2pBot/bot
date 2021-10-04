@@ -49,10 +49,10 @@ const validateSellOrder = async (ctx, bot, user) => {
     return false;
   }
 
-  let [ _, amount, fiatAmount, fiatCode, paymentMethod, isPublic ] = args;
+  let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
 
-  if (!!isPublic && isPublic != 'y') {
-    await messages.isPublicErrorMessage(bot, user);
+  if (!!showUsername && showUsername != 'y') {
+    await messages.showUsernameErrorMessage(bot, user);
     return false;
   }
 
@@ -87,20 +87,20 @@ const validateSellOrder = async (ctx, bot, user) => {
     fiatAmount,
     fiatCode: fiatCode.toUpperCase(),
     paymentMethod,
-    isPublic,
+    showUsername,
   };
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
   const args = parseArgs(ctx.update.message.text);
-  if (!args) {
+  if (args.length == 1) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
-  let [ _, amount, fiatAmount, fiatCode, paymentMethod, isPublic ] = args;
+  let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
 
-  if (!!isPublic && isPublic != 'y') {
-    await messages.isPublicErrorMessage(bot, user);
+  if (!!showUsername && showUsername != 'y') {
+    await messages.showUsernameErrorMessage(bot, user);
     return false;
   }
 
@@ -135,7 +135,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
     fiatAmount,
     fiatCode: fiatCode.toUpperCase(),
     paymentMethod,
-    isPublic,
+    showUsername,
   };
 };
 

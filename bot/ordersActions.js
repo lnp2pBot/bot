@@ -12,14 +12,14 @@ const createOrder = async (ctx, bot, user, {
   fiatCode,
   paymentMethod,
   status,
-  isPublic,
+  showUsername,
 }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
   try {
-    const username = isPublic == 'y' ? `@${user.username} está ` : ``;
+    const username = showUsername == 'y' ? `@${user.username} está ` : ``;
     const currency = getCurrency(fiatCode);
     let currencyString = `${fiatCode} ${fiatAmount}`;
     if (!!currency) {

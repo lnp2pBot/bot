@@ -51,7 +51,7 @@ describe('Telegram bot test', () => {
     userStub.restore();
     orderStub.restore();
     expect(updates.ok).to.be.equal(true);
-    expect(updates.result[0].message.text).to.be.equal('/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [es_público]');
+    expect(updates.result[0].message.text).to.be.equal('/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]');
   });
 
   it('should create a /sell', async () => {
@@ -80,4 +80,23 @@ describe('Telegram bot test', () => {
     expect(updates.result[3].message.text).to.be.equal('Puedes cancelar esta orden antes de que alguien la tome ejecutando:');
   });
 
+  it('should return /buy help', async () => {
+    const client = server.getClient(token, { timeout: 5000 });
+    // We spy on the User findOne called on ValidateUser()
+    const userStub = sinon.stub(User, "findOne");
+    // We spy on the Order findOne called on validateSeller()
+    const orderStub = sinon.stub(Order, "findOne");
+    // We make it to return our data
+    userStub.returns(testUser);
+    orderStub.returns(false);
+    const command = client.makeCommand('/buy');
+    const res = await client.sendCommand(command);
+    expect(res.ok).to.be.equal(true);
+    const updates = await client.getUpdates();
+    // We restore the stubs
+    userStub.restore();
+    orderStub.restore();
+    expect(updates.ok).to.be.equal(true);
+    expect(updates.result[0].message.text).to.be.equal('/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]');
+  });
 });
