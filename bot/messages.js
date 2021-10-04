@@ -708,6 +708,14 @@ const showUsernameErrorMessage = async (bot, user) => {
   }
 };
 
+const successMessage = async (ctx) => {
+  try {
+    await ctx.reply(`¡Operación realizada exitósamente!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -776,4 +784,5 @@ module.exports = {
   badStatusOnCancelOrderMessage,
   invoicePaymentFailedMessage,
   showUsernameErrorMessage,
+  successMessage,
 };

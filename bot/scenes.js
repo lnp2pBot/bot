@@ -14,6 +14,10 @@ const addInvoiceWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       const lnInvoice = ctx.message.text;
+      if (lnInvoice == 'exit') {
+        ctx.reply('Has salido del modo wizard, ya no es necesario que me envies una invoice');
+        return ctx.scene.leave();
+      }
       const res = await isValidInvoice(lnInvoice);
       if (!res.success) {
         ctx.reply(res.error);
