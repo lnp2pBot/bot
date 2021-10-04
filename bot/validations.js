@@ -32,10 +32,10 @@ const validateAdmin = async (ctx, bot) => {
   const tgUser = ctx.update.message.from;
   let user = await User.findOne({ tg_id: tgUser.id });
   if (!user) {
-    await bot.telegram.sendMessage(tgUser.id, 'No puede realizar esta operación');
+    await bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
     return false;
   } else if (!user.admin) {
-    bot.telegram.sendMessage(tgUser.id, 'No puede realizar esta operación');
+    bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
     return false;
   }
   return user;

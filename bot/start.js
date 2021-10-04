@@ -3,7 +3,7 @@ const schedule = require('node-schedule');
 const { Order, User } = require('../models');
 const ordersActions = require('./ordersActions');
 const { takebuy, takesell } = require('./commands');
-const { settleHoldInvoice, createHoldInvoice, cancelHoldInvoice, subscribeInvoice } = require('../ln');
+const { settleHoldInvoice, cancelHoldInvoice, payToBuyer } = require('../ln');
 const {
   validateSellOrder,
   validateUser,
@@ -502,6 +502,31 @@ const initialize = (botToken, options) => {
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     } catch (error) {
       console.log(error);
+    }
+  });
+
+  bot.command('paytobuyer', async (ctx) => {
+    try {
+      const adminUser = await validateAdmin(ctx, bot);
+
+      if (!adminUser) return;
+
+      const [ orderId ] = await validateParams(ctx, bot, adminUser, 2, '<order_id>');
+
+      if (!orderId) return;
+
+      if (!(await validateObjectId(bot, adminUser, orderId))) return;
+      const order = await Order.findOne({
+        _id: orderId,
+      });
+      if (!order) {
+        await messages.notActiveOrderMessage(bot, adminUser);
+        return;
+      };
+
+      await payToBuyer(bot, order);
+    } catch (error) {
+      console.log('xx',error);
     }
   });
 
