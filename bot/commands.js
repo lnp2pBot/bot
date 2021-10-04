@@ -53,7 +53,7 @@ const takebuy = async (ctx, bot) => {
     await messages.beginTakeBuyMessage(bot, user, request, order);
   } catch (error) {
     console.log(error);
-    await messages.invalidDataMessage(bot, user);
+    await messages.invalidDataMessage(ctx);
   }
 };
 
@@ -88,6 +88,7 @@ const takesell = async (ctx, bot) => {
     await messages.beginTakeSellMessage(bot, user, order);
   } catch (error) {
     console.log(error);
+    await messages.invalidDataMessage(ctx);
   }
 };
 

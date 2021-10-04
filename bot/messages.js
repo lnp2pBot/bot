@@ -182,9 +182,9 @@ const alreadyTakenOrderMessage = async (bot, user) => {
   }
 };
 
-const invalidDataMessage = async (bot, user) => {
+const invalidDataMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Has enviado datos incorrectos, inténtalo nuevamente.`);
+    await ctx.reply(`Has enviado datos incorrectos, inténtalo nuevamente.`);
   } catch (error) {
     console.log(error);
   }
