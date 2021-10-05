@@ -123,6 +123,7 @@ const getOrders = async (bot, user) => {
         {
           $or: [
             { status: 'WAITING_PAYMENT' },
+            { status: 'WAITING_BUYER_INVOICE' },
             { status: 'PENDING' },
             { status: 'ACTIVE' },
             { status: 'FIAT_SENT' },

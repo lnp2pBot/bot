@@ -8,14 +8,16 @@ const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
   async (ctx) => {
     const { bot, buyer, order } = ctx.wizard.state;
+    const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
     await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount}`);
+    await bot.telegram.sendMessage(buyer.tg_id, `Si no la envías en ${expirationTime} minutos la orden será cancelada`);
     return ctx.wizard.next();
   },
   async (ctx) => {
     try {
       const lnInvoice = ctx.message.text;
       if (lnInvoice == 'exit') {
-        ctx.reply('Has salido del modo wizard, ya no es necesario que me envies una invoice');
+        ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos, si aún necesitas ingresar una invoice a la orden utiliza el comando /setinvoice');
         return ctx.scene.leave();
       }
       const res = await isValidInvoice(lnInvoice);

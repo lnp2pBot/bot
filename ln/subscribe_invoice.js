@@ -13,7 +13,6 @@ const subscribeInvoice = async (bot, id) => {
       const buyerUser = await User.findOne({ _id: order.buyer_id });
       const sellerUser = await User.findOne({ _id: order.seller_id });
       order.status = 'ACTIVE';
-      await order.save();
       if (order.type === 'sell') {
         await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
       } else if (order.type === 'buy') {
@@ -24,7 +23,7 @@ const subscribeInvoice = async (bot, id) => {
     }
     if (invoice.is_confirmed) {
       console.log(`Invoice with hash: ${id} is being paid!`);
-      const order = await Order.findOne({ hash });
+      const order = await Order.findOne({ hash: id });
       order.status = 'PAID_HOLD_INVOICE';
       await order.save();
       await payToBuyer(bot, order);

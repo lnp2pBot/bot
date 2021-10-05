@@ -3,6 +3,7 @@ const {
     validateObjectId,
     validateTakeBuyOrder,
     validateTakeSellOrder,
+    validateUserWaitingOrder,
   } = require('./validations');
 const { Order, User } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
@@ -21,6 +22,7 @@ const takebuy = async (ctx, bot) => {
       await messages.initBotErrorMessage(bot, tgUser.id);
       return;
     }
+    if (!(await validateUserWaitingOrder(bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
     const isOnFiatSentStatus = await validateSeller(bot, user);
@@ -69,12 +71,14 @@ const takesell = async (ctx, bot) => {
       await messages.initBotErrorMessage(bot, tgUser.id);
       return;
     }
+    if (!(await validateUserWaitingOrder(bot, user))) return;
 
     const order = await Order.findOne({ _id: orderId });
     if (!(await validateTakeSellOrder(bot, user, order))) return;
 
-    order.status = 'ACTIVE';
+    order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
+    order.taken_at = Date.now();
     if (!order.amount) {
         const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
         const fee = amount * parseFloat(process.env.FEE);

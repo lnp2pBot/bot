@@ -716,6 +716,14 @@ const successMessage = async (ctx) => {
   }
 };
 
+const userCantTakeMoreThanOneWaitingOrderMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Lo siento! No puedes tomar otra orden mientras tengas otras esperando por ti`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -785,4 +793,5 @@ module.exports = {
   invoicePaymentFailedMessage,
   showUsernameErrorMessage,
   successMessage,
+  userCantTakeMoreThanOneWaitingOrderMessage,
 };
