@@ -13,25 +13,26 @@ Una vez incializado el Bot en privado es fácil:
 
 /sell:
 4. Si estas vendiendo el bot publicará la orden en el canal ${process.env.CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-5. Una vez alguien tome tu venta el bot te pedira que pagues un invoice el cual estará retenido por ${orderExpiration} minutos, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
+5. Una vez alguien tome tu venta el bot te pedira que pagues una factura lightning el cual estará retenido por ${orderExpiration} minutos, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
 
 /buy:
 6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
-7. Una vez alguien tome tu compra debes crear un invoice para recibir los sats y enviarsela al bot, luego contacta al vendedor para que te de los datos del pago fiat. El usuario luego debe liberar sus fondos usando el comando /release para que te lleguen los sats al invoice.
+7. Una vez alguien tome tu compra debes crear una factura lightning para recibir los sats y enviarsela al bot, luego contacta al vendedor para que te de los datos del pago fiat. El vendedor luego debe liberar los fondos usando el comando /release para que te lleguen los sats a la factura lightning.
 
 Botón Comprar:
-8. Si estas tomando una venta, debes crear un invoice para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
+8. Si estas tomando una venta, debes crear una factura lightning para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat.
 9. Una vez el otro usuario confirme su pago fiat usará el comando /release para liberarte los sats a tu invoice.
 
 Botón Vender:
-9. Si estas tomando una compra, debes pagar el invoice el cual estara retenido mientras el otro usuario realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello.
-10. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen sus sats a su invoice.
+9. Si estas tomando una compra, debes pagar la factura lightning, este pago estará retenido mientras el comprador realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello.
+10. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen los sats al comprador.
 
 /dispute:
 11. Si en algun punto los usuarios no pueden solucionar su transaccion, pueden usar este comando para llamar a los admin a que resuelvan la operacion como intermediarios.
 
 /cancel:
 12. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el este comando
+13. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cooperativecancel
 
 ¡Intercambia seguro y rápido! #P2PLN`);
   } catch (error) {
