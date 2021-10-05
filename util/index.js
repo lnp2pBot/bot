@@ -4,18 +4,18 @@ const { Order } = require('../models');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
-    if (code.length < 3 || code.length > 5) {
-        return false;
+  if (code.length < 3 || code.length > 5) {
+    return false;
+  }
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  code = code.toLowerCase().split('');
+  code.forEach(letter => {
+    if (alphabet.indexOf(letter) === -1) {
+      return false;
     }
-    alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-    code = code.toLowerCase().split('');
-    code.forEach(letter => {
-        if (alphabet.indexOf(letter) === -1) {
-            return false;
-        }
-    });
+  });
 
-    return true;
+  return true;
 };
 
 const getCurrency = (code) => {
