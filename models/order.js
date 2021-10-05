@@ -33,7 +33,8 @@ const OrderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: [
-      'WAITING_PAYMENT',// sell order waiting for user pay hold invoice
+      'WAITING_PAYMENT',// buyer waiting for seller pay hold invoice
+      'WAITING_BUYER_INVOICE',// seller waiting for buyer add invoice where will receive sats
       'PENDING', // order published on CHANNEL but not taken yet
       'ACTIVE', //  order taken
       'FIAT_SENT', // buyer indicates the fiat payment is already done

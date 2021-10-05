@@ -222,7 +222,7 @@ const isValidInvoice = async (lnInvoice) => {
   } catch (error) {
     return {
       success: false,
-      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc1...",
+      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc1,\n\nPara volver al modo donde puedes ingresar comandos solo escribe la palabra: exit",
     };
   }
 };
@@ -381,7 +381,30 @@ const validateObjectId = async (bot, user, id) => {
   return true;
 };
 
-
+const validateUserWaitingOrder = async (bot, user) => {
+  const where = {
+    $and: [
+      {
+        $or: [
+          {seller_id: user._id},
+          {buyer_id: user._id},
+        ],
+      },
+      {
+        $or: [
+          {status: 'WAITING_BUYER_INVOICE'},
+          {status: 'WAITING_PAYMENT'},
+        ],
+      },
+    ],
+  };
+  const orders = await Order.find(where);
+  if (orders.length > 0) {
+    await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+    return false;
+  }
+  return true;
+};
 
 module.exports = {
   validateSellOrder,
@@ -398,4 +421,5 @@ module.exports = {
   validateParams,
   validateObjectId,
   isValidInvoice,
+  validateUserWaitingOrder,
 };

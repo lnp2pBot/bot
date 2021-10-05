@@ -9,7 +9,7 @@ const attemptPendingPayments = async (bot) => {
     for (const pending of pendingPayments) {
         pending.attempts++;
         const order = await Order.findOne({ _id: pending.order_id });
-        if (order.status === 'SUCCESS') {
+        if (order.status == 'SUCCESS') {
             pending.paid = true;
             console.log(`Order id: ${order._id} was already paid`);
             return;
