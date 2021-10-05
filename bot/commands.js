@@ -35,7 +35,14 @@ const takebuy = async (ctx, bot) => {
     if (!(await validateTakeBuyOrder(bot, user, order))) return;
 
     const description = `Venta por @${ctx.botInfo.username}`;
-    const amount = Math.floor(order.amount + order.fee);
+    let amount;
+    if (order.amount == 0) {
+      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+      const fee = amount * parseFloat(process.env.FEE);
+      order.fee = fee;
+      order.amount = amount;
+  }
+    amount = Math.floor(order.amount + order.fee);
     const { request, hash, secret } = await createHoldInvoice({
         description,
         amount,
@@ -79,7 +86,7 @@ const takesell = async (ctx, bot) => {
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
     order.taken_at = Date.now();
-    if (!order.amount) {
+    if (order.amount == 0) {
         const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
         const fee = amount * parseFloat(process.env.FEE);
         order.fee = fee;

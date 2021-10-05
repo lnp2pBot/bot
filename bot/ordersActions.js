@@ -32,7 +32,6 @@ const createOrder = async (ctx, bot, user, {
         await messages.notRateForCurrency(bot, user);
         return;
       }
-      amount = await getBtcFiatPrice(fiatCode, fiatAmount);
       amountText = '';
       tasaText = '\nTasa: yadio.io';
     }
