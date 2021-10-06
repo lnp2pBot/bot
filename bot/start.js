@@ -25,7 +25,7 @@ const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
 
   // We schedule pending payments job
-  const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
+  const pendingPaymentJob = schedule.scheduleJob(`* * * * *`, async () => {
     await attemptPendingPayments(bot);
   });
   const cancelOrderJob = schedule.scheduleJob(`*/5 * * * *`, async () => {

@@ -28,19 +28,14 @@ const payRequest = async ({ request, amount }) => {
         request: order.buyer_invoice,
         amount: order.amount,
       });
+      const buyerUser = await User.findOne({ _id: order.buyer_id });
       if (!!payment.is_confirmed) {
         order.status = 'SUCCESS';
         await order.save();
-        const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         await handleReputationItems(buyerUser, sellerUser, order.amount);
-        if (order.type === 'sell') {
-          await messages.doneTakeSellMessage(bot, sellerUser, buyerUser);
-        } else if (order.type === 'buy') {
-          await messages.doneTakeBuyMessage(bot, buyerUser, sellerUser);
-        }
+        await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
       } else {
-        const buyerUser = await User.findOne({ _id: order.buyer_id });
         await messages.invoicePaymentFailedMessage(bot, buyerUser);
         const pp = new PendingPayment({
           amount: order.amount,

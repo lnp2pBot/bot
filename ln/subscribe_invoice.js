@@ -26,6 +26,9 @@ const subscribeInvoice = async (bot, id) => {
       const order = await Order.findOne({ hash: id });
       order.status = 'PAID_HOLD_INVOICE';
       await order.save();
+      const buyerUser = await User.findOne({ _id: order.buyer_id });
+      const sellerUser = await User.findOne({ _id: order.seller_id });
+      await messages.releasedSatsMessage(bot, sellerUser, buyerUser);
       await payToBuyer(bot, order);
     }
   });
