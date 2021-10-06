@@ -284,13 +284,13 @@
 		"name_plural": "Colones",
 		"price": true
 	},
-	"CUB": {
+	"CUP": {
 		"symbol": "CU$",
 		"name": "Peso cubano",
 		"symbol_native": "$",
 		"decimal_digits": 2,
 		"rounding": 0,
-		"code": "CUB",
+		"code": "CUP",
 		"emoji": "🇨🇺",
 		"name_plural": "Pesos cubanos"
 	},
