@@ -232,15 +232,6 @@ const beginTakeSellMessage = async (bot, buyer, order) => {
   }
 };
 
-const doneTakeBuyMessage = async (bot, orderUser, sellerUser) => {
-  try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `Confirmaste el pago fiat del comprador @${orderUser.username} y has vendido exitosamente tus sats\n⚡️🍊⚡️`);
-    await bot.telegram.sendMessage(orderUser.tg_id, `Tu compra de sats ha sido completada exitosamente con @${sellerUser.username} tras confirmar tu pago fiat y ya he pagado tu factura,  que disfrutes tus sats\n⚡️🍊⚡️`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
@@ -262,10 +253,9 @@ const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
   }
 };
 
-const doneTakeSellMessage = async (bot, orderUser, buyerUser) => {
+const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor @${orderUser.username} nos indicó que recibió tu pago y he pagado tu factura, que disfrutes tus sats\n⚡️🍊⚡️`);
-    await bot.telegram.sendMessage(orderUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de  @${buyerUser.username}\n⚡️🍊⚡️`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de  @${buyerUser.username}\n⚡️🍊⚡️`);
   } catch (error) {
     console.log(error);
   }
@@ -725,6 +715,14 @@ const userCantTakeMoreThanOneWaitingOrderMessage = async (bot, user) => {
   }
 };
 
+const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser) => {
+  try {
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Tu compra de sats ha sido completada exitosamente, @${sellerUser.username} ha confirmado tu pago fiat y ya he pagado tu factura, que disfrutes tus sats\n⚡️🍊⚡️`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -747,8 +745,6 @@ module.exports = {
   notActiveOrderMessage,
   publishSellOrderMessage,
   onGoingTakeBuyMessage,
-  doneTakeBuyMessage,
-  doneTakeSellMessage,
   pendingSellMessage,
   pendingBuyMessage,
   repeatedInvoiceMessage,
@@ -795,4 +791,6 @@ module.exports = {
   showUsernameErrorMessage,
   successMessage,
   userCantTakeMoreThanOneWaitingOrderMessage,
+  buyerReceivedSatsMessage,
+  releasedSatsMessage,
 };
