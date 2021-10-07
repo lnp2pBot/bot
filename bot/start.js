@@ -1,6 +1,6 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
-const { Order, User } = require('../models');
+const { Order, User, PendingPayment } = require('../models');
 const ordersActions = require('./ordersActions');
 const { takebuy, takesell } = require('./commands');
 const { settleHoldInvoice, cancelHoldInvoice, payToBuyer } = require('../ln');
@@ -468,6 +468,16 @@ const initialize = (botToken, options) => {
 
       order.buyer_invoice = lnInvoice;
       await order.save();
+      // We need to check on PendingPayment if we have this payment to be done and update it
+      const pending = await PendingPayment.findOne({
+        order_id: order._id,
+        paid: false,
+        attempts: { $lt: 3 },
+      });
+      if (!!pending) {
+        pending.payment_request = lnInvoice;
+        await pending.save();
+      }
       await messages.invoiceUpdatedMessage(bot, user);
     } catch (error) {
       console.log(error);
