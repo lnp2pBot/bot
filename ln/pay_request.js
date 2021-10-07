@@ -1,6 +1,6 @@
 const { pay } = require('lightning');
 const { parsePaymentRequest } = require('invoices');
-const { Order, User, PendingPayment } = require('../models');
+const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const { handleReputationItems } = require('../util');
 const messages = require('../bot/messages');
