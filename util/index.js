@@ -87,8 +87,12 @@ const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
   try {
     const currency = getCurrency(fiatCode);
     if (!currency.price) return;
-
-    const response = await axios.get(`${process.env.FIAT_RATE_EP}/${currency.code}`);
+    // Before hit the endpoint we make sure the code have only 3 chars
+    const code = currency.code.substring(0, 3);
+    const response = await axios.get(`${process.env.FIAT_RATE_EP}/${code}`);
+    if (!!response.data.error) {
+      return 0;
+    }
     const sats = (fiatAmount / response.data.btc) * 100000000;
 
     return parseInt(sats);

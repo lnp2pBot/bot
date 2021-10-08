@@ -62,7 +62,10 @@ const takebuy = async (ctx, bot) => {
     await messages.beginTakeBuyMessage(bot, user, request, order);
   } catch (error) {
     console.log(error);
-    await messages.invalidDataMessage(ctx);
+    const tgUser = ctx.update.callback_query.from;
+    if (!tgUser) return;
+    let user = await User.findOne({ tg_id: tgUser.id });
+    await messages.invalidDataMessage(bot, user);
   }
 };
 
@@ -86,11 +89,17 @@ const takesell = async (ctx, bot) => {
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
     order.taken_at = Date.now();
+    let amount = 0;
     if (order.amount == 0) {
-        const amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
         const fee = amount * parseFloat(process.env.FEE);
         order.fee = fee;
         order.amount = amount;
+    }
+    // If the price API fails we can't continue with the process
+    if (amount == 0) {
+      await messages.priceApiFailedMessage(bot, user);
+      return;
     }
     await order.save();
     // We delete the messages related to that order from the channel
@@ -99,7 +108,10 @@ const takesell = async (ctx, bot) => {
     await messages.beginTakeSellMessage(bot, user, order);
   } catch (error) {
     console.log(error);
-    await messages.invalidDataMessage(ctx);
+    const tgUser = ctx.update.callback_query.from;
+    if (!tgUser) return;
+    let user = await User.findOne({ tg_id: tgUser.id });
+    await messages.invalidDataMessage(bot, user);
   }
 };
 
