@@ -1,6 +1,7 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User } = require('../models');
+const { getCurrenciesWithPrice } = require('../util');
 const ordersActions = require('./ordersActions');
 const { takebuy, takesell } = require('./commands');
 const { settleHoldInvoice, cancelHoldInvoice, payToBuyer } = require('../ln');
@@ -529,6 +530,21 @@ const initialize = (botToken, options) => {
       await payToBuyer(bot, order);
     } catch (error) {
       console.log('xx',error);
+    }
+  });
+
+  bot.command('listcurrencies', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      const currencies = getCurrenciesWithPrice();
+      console.log(currencies)
+
+      await messages.listCurrenciesResponse(bot, user, currencies);
+    } catch (error) {
+      console.log(error);
     }
   });
 
