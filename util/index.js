@@ -128,6 +128,22 @@ const parseArgs = (cmdline) => {
   return args;
 }
 
+const objectToArray = (object) => {
+  const array = [];
+
+  for (let i in object)
+    array.push(object[i]);
+
+  return array;
+};
+
+const getCurrenciesWithPrice = () => {
+  const currenciesArr = objectToArray(currencies);
+  const withPrice = currenciesArr.filter((currency) => currency.price);
+
+  return withPrice;
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -135,4 +151,5 @@ module.exports = {
   handleReputationItems,
   getBtcFiatPrice,
   parseArgs,
+  getCurrenciesWithPrice,
 };

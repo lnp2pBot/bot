@@ -723,6 +723,18 @@ const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser) => {
   }
 };
 
+const listCurrenciesResponse = async (bot, user, currencies) => {
+  try {
+    let response = `Code |   Name   |\n`;
+    currencies.forEach(currency => {
+      response += `${currency.code} | ${currency.name} | ${currency.emoji}\n`;
+    });
+    await bot.telegram.sendMessage(user.tg_id, response);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -793,4 +805,5 @@ module.exports = {
   userCantTakeMoreThanOneWaitingOrderMessage,
   buyerReceivedSatsMessage,
   releasedSatsMessage,
+  listCurrenciesResponse,
 };
