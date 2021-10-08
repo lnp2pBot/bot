@@ -183,9 +183,9 @@ const alreadyTakenOrderMessage = async (bot, user) => {
   }
 };
 
-const invalidDataMessage = async (ctx) => {
+const invalidDataMessage = async (bot, user) => {
   try {
-    await ctx.reply(`Has enviado datos incorrectos, inténtalo nuevamente.`);
+    await bot.telegram.sendMessage(user.tg_id, `Has enviado datos incorrectos, inténtalo nuevamente.`);
   } catch (error) {
     console.log(error);
   }
@@ -735,6 +735,14 @@ const listCurrenciesResponse = async (bot, user, currencies) => {
   }
 };
 
+const priceApiFailedMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Ha ocurrido un problema obteniendo el precio de esta moneda, por favor intenta más tarde, si el problema persiste contacta a algún administrador`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -806,4 +814,5 @@ module.exports = {
   buyerReceivedSatsMessage,
   releasedSatsMessage,
   listCurrenciesResponse,
+  priceApiFailedMessage,
 };
