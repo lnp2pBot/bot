@@ -252,9 +252,6 @@ const initialize = (botToken, options) => {
       await messages.successCancelOrderByAdminMessage(bot, seller, order);
       // we sent a private message to the buyer
       await messages.successCancelOrderByAdminMessage(bot, buyer, order);
-      // We delete the messages related to that order from the channel
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     } catch (error) {
       console.log(error);
     }
