@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency, getBtcFiatPrice } = require('../util');
+const { getCurrency } = require('../util');
 
 const createOrder = async (ctx, bot, user, {
   type,
