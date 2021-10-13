@@ -89,15 +89,15 @@ const takesell = async (ctx, bot) => {
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
     order.taken_at = Date.now();
-    let amount = 0;
-    if (order.amount == 0) {
+    let amount = order.amount;
+    if (amount == 0) {
         amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
         const fee = amount * parseFloat(process.env.FEE);
         order.fee = fee;
         order.amount = amount;
     }
     // If the price API fails we can't continue with the process
-    if (amount == 0) {
+    if (order.amount == 0) {
       await messages.priceApiFailedMessage(bot, user);
       return;
     }

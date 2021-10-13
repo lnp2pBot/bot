@@ -29,7 +29,7 @@ const initialize = (botToken, options) => {
   const pendingPaymentJob = schedule.scheduleJob(`* * * * *`, async () => {
     await attemptPendingPayments(bot);
   });
-  const cancelOrderJob = schedule.scheduleJob(`*/5 * * * *`, async () => {
+  const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
   });
 
