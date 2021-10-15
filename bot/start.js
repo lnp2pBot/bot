@@ -367,7 +367,7 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
-      if (order.status !== 'ACTIVE') {
+      if (order.status != 'ACTIVE') {
         await messages.onlyActiveCooperativeCancelMessage(bot, user);
         return;
       }

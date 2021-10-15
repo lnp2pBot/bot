@@ -613,6 +613,9 @@ const badStatusOnCancelOrderMessage = async (bot, user) => {
 const successCancelOrderMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: ${order._id}!`);
+    if (order.seller_id == user._id) {
+      await refundCooperativeCancelMessage(bot, user);
+    }
   } catch (error) {
     console.log(error);
   }
@@ -661,6 +664,17 @@ const shouldWaitCooperativeCancelMessage = async (bot, user) => {
 const okCooperativeCancelMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: ${order._id}!`);
+    if (order.seller_id == user._id) {
+      await refundCooperativeCancelMessage(bot, user);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const refundCooperativeCancelMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Has recibido un reembolso por tu pago lightning, no es necesario hacer nada mas`);
   } catch (error) {
     console.log(error);
   }
