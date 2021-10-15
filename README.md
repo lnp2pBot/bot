@@ -1,3 +1,5 @@
+![p2pLNBot](logo.jpg)
+
 # P2PLNBot
 Telegram bot which allows to people to trade using lightning network with other people on telegram, this is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
 
