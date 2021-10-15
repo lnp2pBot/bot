@@ -547,7 +547,6 @@ const initialize = (botToken, options) => {
       if (!user) return;
 
       const currencies = getCurrenciesWithPrice();
-      console.log(currencies)
 
       await messages.listCurrenciesResponse(bot, user, currencies);
     } catch (error) {
