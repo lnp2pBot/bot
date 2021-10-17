@@ -8,6 +8,9 @@ const messages = require('../bot/messages');
 const payRequest = async ({ request, amount }) => {
     try {
       const invoice = parsePaymentRequest({ request });
+      if (!invoice) {
+        return false;
+      }
       // Time to Spend Finding a Route Milliseconds
       const pathfinding_timeout = 120 * 1000;
       const params = {
