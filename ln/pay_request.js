@@ -1,4 +1,4 @@
-const { pay } = require('lightning');
+const { payViaPaymentRequest } = require('lightning');
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
@@ -8,12 +8,15 @@ const messages = require('../bot/messages');
 const payRequest = async ({ request, amount }) => {
     try {
       const invoice = parsePaymentRequest({ request });
+      // Time to Spend Finding a Route Milliseconds
+      const pathfinding_timeout = 120 * 1000;
       const params = {
         lnd,
         request,
+        pathfinding_timeout,
       };
       if (!invoice.tokens) params.tokens = amount;
-      const payment = await pay(params);
+      const payment = await payViaPaymentRequest(params);
 
       return payment;
     } catch (e) {
@@ -29,7 +32,7 @@ const payRequest = async ({ request, amount }) => {
         amount: order.amount,
       });
       const buyerUser = await User.findOne({ _id: order.buyer_id });
-      if (!!payment.is_confirmed) {
+      if (!!payment && !!payment.confirmed_at) {
         order.status = 'SUCCESS';
         await order.save();
         const sellerUser = await User.findOne({ _id: order.seller_id });
