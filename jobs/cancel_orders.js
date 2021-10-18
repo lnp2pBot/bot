@@ -21,8 +21,8 @@ const cancelOrders = async (bot) => {
         console.log(`Order Id: ${order._id} expired!`);
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
+        await cancelHoldInvoice({ hash: order.hash });
         if (status == 'WAITING_PAYMENT') {
-            await cancelHoldInvoice({ hash: order.hash });
             await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El vendedor @${sellerUser.username} no ha pagado la factura correspondiente a la orden Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
             await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor no ha pagado la factura por tu compra Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
             await bot.telegram.sendMessage(sellerUser.tg_id, `No has pagado la factura para vender sats por la orden Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
