@@ -204,7 +204,7 @@ const beginTakeBuyMessage = async (bot, sellerUser, request, order) => {
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
   try {
     await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle los detalles de metodo de pago fiat que te hará. Una vez confirmes su pago debes liberar los fondos`);
-    await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra, presiona el botón para continuar 👇`);
+    await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`);
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
