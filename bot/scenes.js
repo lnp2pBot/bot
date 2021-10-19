@@ -36,6 +36,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       order.buyer_invoice = lnInvoice;
       // If the buyer is the creator, at this moment the seller already paid the hold invoice
       if (order.creator_id == order.buyer_id) {
+        order.status = 'ACTIVE';
         const currency = getCurrency(order.fiat_code);
         await bot.telegram.sendMessage(buyer.tg_id, `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique como enviarle ${currency.symbol_native} ${order.fiat_amount}`);
         await bot.telegram.sendMessage(buyer.tg_id, `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
