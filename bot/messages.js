@@ -223,7 +223,10 @@ const beginTakeSellMessage = async (bot, buyer, order) => {
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: 'Continuar', callback_data: 'addInvoiceBtn'}],
+          [
+            {text: 'Continuar', callback_data: 'addInvoiceBtn'},
+            {text: 'Cancelar', callback_data: 'cancelAddInvoiceBtn'},
+          ],
         ],
       },
     });
@@ -304,7 +307,7 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
     order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     // Mensaje al grupo origen en caso de haber
-    if (ctx.message.chat.type != 'private') {
+    if (!!ctx.message && ctx.message.chat.type != 'private') {
       order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
       order.tg_group_message2 = (await ctx.reply(order._id, {
         reply_markup: {
@@ -338,7 +341,7 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
     order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     // Mensaje al grupo origen en caso de haber
-    if (ctx.message.chat.type != 'private') {
+    if (!!ctx.message && ctx.message.chat.type != 'private') {
       order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
       order.tg_group_message2 = (await ctx.reply(order._id, {
         reply_markup: {
