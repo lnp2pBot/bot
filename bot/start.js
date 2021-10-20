@@ -515,6 +515,23 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.action('cancelAddInvoiceBtn', async (ctx) => {
+    try {
+      const orderId = ctx.update.callback_query.message.text;
+      if (!orderId) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!orderId) return;
+      ctx.deleteMessage();
+      order.buyer_id = null;
+      order.taken_at = null;
+      order.status = 'PENDING';
+      order.save();
+      await messages.publishSellOrderMessage(ctx, bot, order);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   bot.command('paytobuyer', async (ctx) => {
     try {
       const adminUser = await validateAdmin(ctx, bot);
