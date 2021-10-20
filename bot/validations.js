@@ -44,7 +44,7 @@ const validateAdmin = async (ctx, bot) => {
 const validateSellOrder = async (ctx, bot, user) => {
 
   const args = parseArgs(ctx.update.message.text);
-  if (args.length == 1) {
+  if (args.length < 5 ) {
     await messages.sellOrderCorrectFormatMessage(bot, user);
     return false;
   }
@@ -93,7 +93,7 @@ const validateSellOrder = async (ctx, bot, user) => {
 
 const validateBuyOrder = async (ctx, bot, user) => {
   const args = parseArgs(ctx.update.message.text);
-  if (args.length == 1) {
+  if (args.length < 5) {
     await messages.buyOrderCorrectFormatMessage(bot, user);
     return false;
   }
