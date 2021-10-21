@@ -19,18 +19,22 @@ const addInvoiceWizard = new Scenes.WizardScene(
     try {
       const lnInvoice = ctx.message.text;
       if (lnInvoice == 'exit') {
-        ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos, si aún necesitas ingresar una invoice a la orden utiliza el comando /setinvoice');
+        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos, si aún necesitas ingresar una invoice a la orden utiliza el comando /setinvoice');
         return ctx.scene.leave();
       }
       const res = await isValidInvoice(lnInvoice);
       if (!res.success) {
-        ctx.reply(res.error);
+        await ctx.reply(res.error);
         return;
       };
       const { bot, buyer, seller, order } = ctx.wizard.state;
-  
+
+      if (order.status == 'EXPIRED') {
+        await ctx.reply(`¡Esta orden ya expiró!`);
+        return ctx.scene.leave();
+      }
       if (res.invoice.tokens && res.invoice.tokens != order.amount) {
-        ctx.reply('La factura tiene un monto incorrecto');
+        await ctx.reply('La factura tiene un monto incorrecto');
         return;
       }
       order.buyer_invoice = lnInvoice;
