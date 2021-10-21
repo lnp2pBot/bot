@@ -56,7 +56,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         // We monitor the invoice to know when the seller makes the payment
         await subscribeInvoice(bot, hash);
         // We send the hold invoice to the seller
-        await messages.invoicePaymentRequestMessage(bot, seller, request);
+        await messages.invoicePaymentRequestMessage(bot, seller, request, order);
         await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
       }
       await order.save();
