@@ -1,10 +1,16 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User, PendingPayment } = require('../models');
-const { getCurrenciesWithPrice } = require('../util');
+const { getCurrenciesWithPrice, getBtcFiatPrice } = require('../util');
 const ordersActions = require('./ordersActions');
 const { takebuy, takesell } = require('./commands');
-const { settleHoldInvoice, cancelHoldInvoice, payToBuyer } = require('../ln');
+const {
+  settleHoldInvoice,
+  cancelHoldInvoice,
+  payToBuyer,
+  createHoldInvoice,
+  subscribeInvoice,
+} = require('../ln');
 const {
   validateSellOrder,
   validateUser,
@@ -503,10 +509,11 @@ const initialize = (botToken, options) => {
 
   bot.action('addInvoiceBtn', async (ctx) => {
     try {
+      ctx.deleteMessage();
       const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
       const order = await Order.findOne({ _id: orderId });
-      if (!orderId) return;
+      if (!order) return;
       let buyer = await User.findOne({ _id: order.buyer_id });
       let seller = await User.findOne({ _id: order.seller_id });
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
@@ -517,11 +524,11 @@ const initialize = (botToken, options) => {
 
   bot.action('cancelAddInvoiceBtn', async (ctx) => {
     try {
+      ctx.deleteMessage();
       const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
       const order = await Order.findOne({ _id: orderId });
-      if (!orderId) return;
-      ctx.deleteMessage();
+      if (!order) return;
       order.buyer_id = null;
       order.taken_at = null;
       order.status = 'PENDING';
@@ -532,16 +539,61 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.action('continueTakeBuyBtn', async (ctx) => {
+    try {
+      ctx.deleteMessage();
+      const orderId = ctx.update.callback_query.message.text;
+      if (!orderId) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!order) return;
+      const user = await User.findOne({ _id: order.seller_id });
+      const description = `Venta por @${ctx.botInfo.username}`;
+      let amount;
+      if (order.amount == 0) {
+        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+        order.fee = amount * parseFloat(process.env.FEE);
+        order.amount = amount;
+      }
+      amount = Math.floor(order.amount + order.fee);
+      const { request, hash, secret } = await createHoldInvoice({
+        description,
+        amount,
+      });
+      order.hash = hash;
+      order.secret = secret;
+      await order.save();
+
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
+      await messages.showHoldInvoiceMessage(bot, user, request);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.action('cancelTakeBuyBtn', async (ctx) => {
+    try {
+      ctx.deleteMessage();
+      const orderId = ctx.update.callback_query.message.text;
+      if (!orderId) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!order) return;
+      order.seller_id = null;
+      order.taken_at = null;
+      order.status = 'PENDING';
+      order.save();
+      await messages.publishBuyOrderMessage(ctx, bot, order);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   bot.command('paytobuyer', async (ctx) => {
     try {
       const adminUser = await validateAdmin(ctx, bot);
-
       if (!adminUser) return;
-
       const [ orderId ] = await validateParams(ctx, bot, adminUser, 2, '<order_id>');
-
       if (!orderId) return;
-
       if (!(await validateObjectId(bot, adminUser, orderId))) return;
       const order = await Order.findOne({
         _id: orderId,

@@ -6,7 +6,6 @@ const {
     validateUserWaitingOrder,
   } = require('./validations');
 const { Order, User } = require('../models');
-const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const messages = require('./messages');
 const { getBtcFiatPrice } = require('../util');
 
@@ -16,7 +15,7 @@ const takebuy = async (ctx, bot) => {
     if (!orderId) return;
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
-    let user = await User.findOne({ tg_id: tgUser.id });
+    const user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
       await messages.initBotErrorMessage(bot, tgUser.id);
@@ -33,33 +32,16 @@ const takebuy = async (ctx, bot) => {
     if (!(await validateObjectId(bot, user, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
     if (!(await validateTakeBuyOrder(bot, user, order))) return;
-
-    const description = `Venta por @${ctx.botInfo.username}`;
-    let amount;
-    if (order.amount == 0) {
-      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-      const fee = amount * parseFloat(process.env.FEE);
-      order.fee = fee;
-      order.amount = amount;
-  }
-    amount = Math.floor(order.amount + order.fee);
-    const { request, hash, secret } = await createHoldInvoice({
-        description,
-        amount,
-    });
-    order.hash = hash;
-    order.secret = secret;
+    // We change the status to trigger the expiration of this order
+    // if the user don't do anything
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = Date.now();
     await order.save();
-
-    // We monitor the invoice to know when the seller makes the payment
-    await subscribeInvoice(bot, hash);
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
-    await messages.beginTakeBuyMessage(bot, user, request, order);
+    await messages.beginTakeBuyMessage(bot, user, order);
   } catch (error) {
     console.log(error);
     const tgUser = ctx.update.callback_query.from;

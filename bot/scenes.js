@@ -9,7 +9,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
   async (ctx) => {
     const { bot, buyer, order } = ctx.wizard.state;
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount}`);
+    await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis`);
     await bot.telegram.sendMessage(buyer.tg_id, `Si no la envías en ${expirationTime} minutos la orden será cancelada`);
     order.status = 'WAITING_BUYER_INVOICE';
     await order.save();
