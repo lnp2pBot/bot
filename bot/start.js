@@ -514,6 +514,18 @@ const initialize = (botToken, options) => {
       if (!orderId) return;
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
+      let amount = order.amount;
+      if (amount == 0) {
+          amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+          order.fee = amount * parseFloat(process.env.FEE);
+          order.amount = amount;
+      }
+      // If the price API fails we can't continue with the process
+      if (order.amount == 0) {
+        await messages.priceApiFailedMessage(bot, user);
+        return;
+      }
+      await order.save();
       let buyer = await User.findOne({ _id: order.buyer_id });
       let seller = await User.findOne({ _id: order.seller_id });
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
@@ -547,6 +559,7 @@ const initialize = (botToken, options) => {
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
       const user = await User.findOne({ _id: order.seller_id });
+      // We create the hold invoice and show it to the seller
       const description = `Venta por @${ctx.botInfo.username}`;
       let amount;
       if (order.amount == 0) {

@@ -7,7 +7,6 @@ const {
   } = require('./validations');
 const { Order, User } = require('../models');
 const messages = require('./messages');
-const { getBtcFiatPrice } = require('../util');
 
 const takebuy = async (ctx, bot) => {
   try {
@@ -71,18 +70,7 @@ const takesell = async (ctx, bot) => {
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
     order.taken_at = Date.now();
-    let amount = order.amount;
-    if (amount == 0) {
-        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-        const fee = amount * parseFloat(process.env.FEE);
-        order.fee = fee;
-        order.amount = amount;
-    }
-    // If the price API fails we can't continue with the process
-    if (order.amount == 0) {
-      await messages.priceApiFailedMessage(bot, user);
-      return;
-    }
+
     await order.save();
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
