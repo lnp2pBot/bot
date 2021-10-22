@@ -47,7 +47,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await bot.telegram.sendMessage(buyer.tg_id, `/fiatsent ${order._id}`);
       } else {
         // We create a hold invoice
-        const description = `Venta por @${ctx.botInfo.username}`;
+        const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
         const amount = Math.floor(order.amount + order.fee);
         const { request, hash, secret } = await createHoldInvoice({
           amount,

@@ -560,7 +560,7 @@ const initialize = (botToken, options) => {
       if (!order) return;
       const user = await User.findOne({ _id: order.seller_id });
       // We create the hold invoice and show it to the seller
-      const description = `Venta por @${ctx.botInfo.username}`;
+      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
       let amount;
       if (order.amount == 0) {
         amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
