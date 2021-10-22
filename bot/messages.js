@@ -195,7 +195,7 @@ const invalidDataMessage = async (bot, user) => {
 const beginTakeBuyMessage = async (bot, seller, order) => {
   try {
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(seller.tg_id, `Presiona continuar para tomar la compra, si presionas cancelar te desvinculare de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇`);
+    await bot.telegram.sendMessage(seller.tg_id, `Presiona continuar para tomar la compra, si presionas cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇`);
     await bot.telegram.sendMessage(seller.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -213,7 +213,7 @@ const beginTakeBuyMessage = async (bot, seller, order) => {
 
 const showHoldInvoiceMessage = async (bot, seller, request) => {
   try {
-    await bot.telegram.sendMessage(seller.tg_id, `Por favor págale esta factura al bot para comenzar tu venta`);
+    await bot.telegram.sendMessage(seller.tg_id, `Por favor paga esta factura para comenzar tu venta`);
     await bot.telegram.sendMessage(seller.tg_id, `${request}`);
   } catch (error) {
     console.log(error);
