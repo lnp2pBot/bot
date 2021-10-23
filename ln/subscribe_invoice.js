@@ -16,6 +16,7 @@ const subscribeInvoice = async (bot, id) => {
       if (order.type === 'sell') {
         await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
       } else if (order.type === 'buy') {
+        order.status = 'WAITING_BUYER_INVOICE';
         await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
       }
       order.invoice_held_at = Date.now();
