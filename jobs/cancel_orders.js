@@ -28,7 +28,7 @@ const cancelOrders = async (bot) => {
             await bot.telegram.sendMessage(sellerUser.tg_id, `No has pagado la factura para vender sats por la orden Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
         } else {
             await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El comprador @${buyerUser.username} tomó la orden Id: ${order._id} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido cancelada`);
-            await bot.telegram.sendMessage(sellerUser.tg_id, `El comprador no me envió la factura para recibir por tu venta Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
+            await bot.telegram.sendMessage(sellerUser.tg_id, `El comprador no me envió la factura para recibir sats por tu venta Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
             await bot.telegram.sendMessage(buyerUser.tg_id, `No has enviado la factura para recibir sats por la orden Id: ${order._id} y el tiempo ha expirado, la orden ha sido cancelada`);
         }
     }

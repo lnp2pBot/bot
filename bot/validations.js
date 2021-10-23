@@ -14,8 +14,6 @@ const validateUser = async (ctx, bot, start) => {
     user = new User({
       tg_id: tgUser.id,
       username: tgUser.username,
-      first_name: tgUser.first_name,
-      last_name: tgUser.last_name,
     });
     await user.save();
   } else if (!user) {
