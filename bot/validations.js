@@ -23,6 +23,11 @@ const validateUser = async (ctx, bot, start) => {
 
     return false;
   }
+  if (tgUser.username != user.username) {
+    user.username = tgUser.username;
+    await user.save();
+  }
+
   return user;
 };
 

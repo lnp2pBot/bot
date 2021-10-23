@@ -13,4 +13,6 @@ const user = {
     created_at: '2021-07-27T20:39:42.403Z',
 };
 
+user.save = () => {};
+
 module.exports = user;
