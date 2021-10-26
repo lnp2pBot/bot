@@ -2,144 +2,163 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
-const { isIso4217, parseArguments, parseArgs } = require('../util');
+const { isIso4217, parseArgs } = require('../util');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
 const validateUser = async (ctx, bot, start) => {
-  const tgUser = ctx.update.message.from;
-  let user = await User.findOne({ tg_id: tgUser.id });
+  try {
+    const tgUser = ctx.update.message.from;
+    let user = await User.findOne({ tg_id: tgUser.id });
 
-  if (!user && start) {
-    user = new User({
-      tg_id: tgUser.id,
-      username: tgUser.username,
-    });
-    await user.save();
-  } else if (!user) {
-    await messages.initBotErrorMessage(bot, tgUser.id);
-  } else if (user.banned) {
-    await messages.bannedUserErrorMessage(ctx);
+    if (!user && start) {
+      user = new User({
+        tg_id: tgUser.id,
+        username: tgUser.username,
+      });
+      await user.save();
+    } else if (!user) {
+      await messages.initBotErrorMessage(bot, tgUser.id);
+    } else if (user.banned) {
+      await messages.bannedUserErrorMessage(ctx);
 
+      return false;
+    }
+    if (tgUser.username != user.username) {
+      user.username = tgUser.username;
+      await user.save();
+    }
+
+    return user;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  if (tgUser.username != user.username) {
-    user.username = tgUser.username;
-    await user.save();
-  }
-
-  return user;
 };
 
 const validateAdmin = async (ctx, bot) => {
-  const tgUser = ctx.update.message.from;
-  let user = await User.findOne({ tg_id: tgUser.id });
-  if (!user) {
-    await bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
-    return false;
-  } else if (!user.admin) {
-    bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
+  try {
+    const tgUser = ctx.update.message.from;
+    let user = await User.findOne({ tg_id: tgUser.id });
+    if (!user) {
+      await bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
+      return false;
+    } else if (!user.admin) {
+      await bot.telegram.sendMessage(tgUser.id, 'Este usuario no puede realizar esta operación');
+      return false;
+    }
+    return user;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  return user;
 };
 
 const validateSellOrder = async (ctx, bot, user) => {
+  try {
+    const args = parseArgs(ctx.update.message.text);
+    if (args.length < 5 ) {
+      await messages.sellOrderCorrectFormatMessage(bot, user);
+      return false;
+    }
 
-  const args = parseArgs(ctx.update.message.text);
-  if (args.length < 5 ) {
-    await messages.sellOrderCorrectFormatMessage(bot, user);
+    let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
+
+    if (!!showUsername && showUsername != 'y') {
+      await messages.showUsernameErrorMessage(bot, user);
+      return false;
+    }
+
+    amount = parseInt(amount);
+    if (!Number.isInteger(amount)) {
+      await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+      return false;
+    };
+
+    if (amount != 0 && amount < 100) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+      return false;
+    };
+
+    if (isNaN(fiatAmount)) {
+      await messages.mustBeANumber(bot, user, 'monto_en_fiat');
+      return false;
+    }
+
+    if (fiatAmount < 1) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+      return false;
+    };
+
+    if (!isIso4217(fiatCode)) {
+      await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+      return false
+    };
+
+    return {
+      amount,
+      fiatAmount,
+      fiatCode: fiatCode.toUpperCase(),
+      paymentMethod,
+      showUsername,
+    };
+  } catch (error) {
+    console.log(error);
     return false;
   }
-
-  let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
-
-  if (!!showUsername && showUsername != 'y') {
-    await messages.showUsernameErrorMessage(bot, user);
-    return false;
-  }
-
-  amount = parseInt(amount);
-  if (!Number.isInteger(amount)) {
-    await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
-    return false;
-  };
-
-  if (amount != 0 && amount < 100) {
-    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
-    return false;
-  };
-
-  if (isNaN(fiatAmount)) {
-    await messages.mustBeANumber(bot, user, 'monto_en_fiat');
-    return false;
-  }
-
-  if (fiatAmount < 1) {
-    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
-    return false;
-  };
-
-  if (!isIso4217(fiatCode)) {
-    await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
-    return false
-  };
-
-  return {
-    amount,
-    fiatAmount,
-    fiatCode: fiatCode.toUpperCase(),
-    paymentMethod,
-    showUsername,
-  };
 };
 
 const validateBuyOrder = async (ctx, bot, user) => {
-  const args = parseArgs(ctx.update.message.text);
-  if (args.length < 5) {
-    await messages.buyOrderCorrectFormatMessage(bot, user);
+  try {
+    const args = parseArgs(ctx.update.message.text);
+    if (args.length < 5) {
+      await messages.buyOrderCorrectFormatMessage(bot, user);
+      return false;
+    }
+    let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
+
+    if (!!showUsername && showUsername != 'y') {
+      await messages.showUsernameErrorMessage(bot, user);
+      return false;
+    }
+
+    amount = parseInt(amount);
+    if (!Number.isInteger(amount)) {
+      await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+      return false;
+    };
+
+    if (amount != 0 && amount < 100) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+      return false;
+    };
+
+    if (isNaN(fiatAmount)) {
+      await messages.mustBeANumber(bot, user, 'monto_en_fiat');
+      return false;
+    }
+
+    if (fiatAmount < 1) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+      return false;
+    };
+
+    if (!isIso4217(fiatCode)) {
+      await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+      return false
+    };
+
+    return {
+      amount,
+      fiatAmount,
+      fiatCode: fiatCode.toUpperCase(),
+      paymentMethod,
+      showUsername,
+    };
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
-
-  if (!!showUsername && showUsername != 'y') {
-    await messages.showUsernameErrorMessage(bot, user);
-    return false;
-  }
-
-  amount = parseInt(amount);
-  if (!Number.isInteger(amount)) {
-    await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
-    return false;
-  };
-
-  if (amount != 0 && amount < 100) {
-    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
-    return false;
-  };
-
-  if (isNaN(fiatAmount)) {
-    await messages.mustBeANumber(bot, user, 'monto_en_fiat');
-    return false;
-  }
-
-  if (fiatAmount < 1) {
-    await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
-    return false;
-  };
-
-  if (!isIso4217(fiatCode)) {
-    await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
-    return false
-  };
-
-  return {
-    amount,
-    fiatAmount,
-    fiatCode: fiatCode.toUpperCase(),
-    paymentMethod,
-    showUsername,
-  };
 };
 
 const validateInvoice = async (bot, user, lnInvoice) => {
@@ -231,104 +250,125 @@ const isValidInvoice = async (lnInvoice) => {
 };
 
 const isOrderCreator = (user, order) => {
-  if (order.creator_id == user._id) {
-    return true
-  };
-
-  return false;
+  try {
+    return user._id == order.creator_id;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 };
 
 const validateTakeSellOrder = async (bot, user, order) => {
-  if (!order) {
-    await messages.invalidOrderMessage(bot, user);
+  try {
+    if (!order) {
+      await messages.invalidOrderMessage(bot, user);
+      return false;
+    }
+    if (isOrderCreator(user, order)) {
+      await messages.cantTakeOwnOrderMessage(bot, user);
+      return false;
+    }
+    if (order.type === 'buy') {
+      await messages.invalidTypeOrderMessage(bot, user, order.type);
+      return false;
+    }
+    if (order.status !== 'PENDING') {
+      await messages.alreadyTakenOrderMessage(bot, user);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  if (isOrderCreator(user, order)) {
-    await messages.cantTakeOwnOrderMessage(bot, user);
-    return false;
-  }
-  if (order.type === 'buy') {
-    await messages.invalidTypeOrderMessage(bot, user, order.type);
-    return false;
-  }
-  if (order.status !== 'PENDING') {
-    await messages.alreadyTakenOrderMessage(bot, user);
-    return false;
-  }
-  return true;
 };
 
 const validateTakeBuyOrder = async (bot, user, order) => {
-  if (!order) {
-    await messages.invalidOrderMessage(bot, user);
+  try {
+    if (!order) {
+      await messages.invalidOrderMessage(bot, user);
+      return false;
+    }
+    if (isOrderCreator(user, order)) {
+      await messages.cantTakeOwnOrderMessage(bot, user);
+      return false;
+    }
+    if (order.type === 'sell') {
+      await messages.invalidTypeOrderMessage(bot, user, order.type);
+      return false;
+    }
+    if (order.status !== 'PENDING') {
+      await messages.alreadyTakenOrderMessage(bot, user);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  if (isOrderCreator(user, order)) {
-    await messages.cantTakeOwnOrderMessage(bot, user);
-    return false;
-  }
-  if (order.type === 'sell') {
-    await messages.invalidTypeOrderMessage(bot, user, order.type);
-    return false;
-  }
-  if (order.status !== 'PENDING') {
-    await messages.alreadyTakenOrderMessage(bot, user);
-    return false;
-  }
-  return true;
 };
 
 const validateReleaseOrder = async (bot, user, orderId) => {
-  const where = {
-    seller_id: user._id,
-    $or: [
-      {status: 'ACTIVE'},
-      {status: 'FIAT_SENT'},
-    ],
-  };
+  try {
+    const where = {
+      seller_id: user._id,
+      $or: [
+        {status: 'ACTIVE'},
+        {status: 'FIAT_SENT'},
+      ],
+    };
 
-  if (!!orderId) {
-    where._id = orderId;
-  }
-  const order = await Order.findOne(where);
+    if (!!orderId) {
+      where._id = orderId;
+    }
+    const order = await Order.findOne(where);
 
-  if (!order) {
-    await messages.notActiveOrderMessage(bot, user);
+    if (!order) {
+      await messages.notActiveOrderMessage(bot, user);
+      return false;
+    }
+
+    return order;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-
-  return order;
 };
 
 const validateDisputeOrder = async (bot, user, orderId) => {
-  const where = {
-    status: 'ACTIVE',
-    _id: orderId,
-    $or: [
-      {seller_id: user._id},
-      {buyer_id: user._id},
-    ],
-  };
+  try {
+    const where = {
+      status: 'ACTIVE',
+      _id: orderId,
+      $or: [
+        {seller_id: user._id},
+        {buyer_id: user._id},
+      ],
+    };
 
-  const order = await Order.findOne(where);
-  if (!order) {
-    await messages.notActiveOrderMessage(bot, user);
+    const order = await Order.findOne(where);
+    if (!order) {
+      await messages.notActiveOrderMessage(bot, user);
+      return false;
+    }
+
+    return order;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-
-  return order;
 };
 
 const validateFiatSentOrder = async (bot, user, orderId) => {
-  const where = {
-    buyer_id: user._id,
-    status: 'ACTIVE',
-  };
-
-  if (!!orderId) {
-    where._id = orderId;
-  }
   try {
+    const where = {
+      buyer_id: user._id,
+      status: 'ACTIVE',
+    };
+
+    if (!!orderId) {
+      where._id = orderId;
+    }
     const order = await Order.findOne(where);
     if (!order) {
       await messages.notActiveOrderMessage(bot, user);
@@ -349,64 +389,85 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
 
 // If a seller have an order with status FIAT_SENT, return false
 const validateSeller = async (bot, user) => {
-  const where = {
-    seller_id: user._id,
-    status: 'FIAT_SENT',
-  };
+  try {
+    const where = {
+      seller_id: user._id,
+      status: 'FIAT_SENT',
+    };
 
-  const order = await Order.findOne(where);
+    const order = await Order.findOne(where);
 
-  if (!!order) {
-    await messages.orderOnfiatSentStatusMessages(bot, user);
+    if (!!order) {
+      await messages.orderOnfiatSentStatusMessages(bot, user);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-
-  return true;
 };
 
 const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
-  const paramsArray = ctx.update.message.text.split(' ');
-  const params = paramsArray.filter(el => el != '');
-  if (params.length != paramNumber) {
-    await messages.customMessage(bot, user, `${params[0]} ${errOutputString}`);
+  try {
+    const paramsArray = ctx.update.message.text.split(' ');
+    const params = paramsArray.filter(el => el != '');
+    if (params.length != paramNumber) {
+      await messages.customMessage(bot, user, `${params[0]} ${errOutputString}`);
 
-    return [];
+      return [];
+    }
+
+    return params.slice(1);
+  } catch (error) {
+    console.log(error);
+    return false;
   }
-
-  return params.slice(1);
 };
 
 const validateObjectId = async (bot, user, id) => {
-  if (!ObjectId.isValid(id)) {
-    await messages.notValidIdMessage(bot, user);
+  try {
+    if (!ObjectId.isValid(id)) {
+      await messages.notValidIdMessage(bot, user);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  return true;
 };
 
 const validateUserWaitingOrder = async (bot, user) => {
-  const where = {
-    $and: [
-      {
-        $or: [
-          {seller_id: user._id},
-          {buyer_id: user._id},
-        ],
-      },
-      {
-        $or: [
-          {status: 'WAITING_BUYER_INVOICE'},
-          {status: 'WAITING_PAYMENT'},
-        ],
-      },
-    ],
-  };
-  const orders = await Order.find(where);
-  if (orders.length > 0) {
-    await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+  try {
+    const where = {
+      $and: [
+        {
+          $or: [
+            {seller_id: user._id},
+            {buyer_id: user._id},
+          ],
+        },
+        {
+          $or: [
+            {status: 'WAITING_BUYER_INVOICE'},
+            {status: 'WAITING_PAYMENT'},
+          ],
+        },
+      ],
+    };
+    const orders = await Order.find(where);
+    if (orders.length > 0) {
+      await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+      return false;
+    }
+    return true;
+  } catch (error) {
+    console.log(error);
     return false;
   }
-  return true;
 };
 
 module.exports = {

@@ -618,7 +618,7 @@ const initialize = (botToken, options) => {
 
       await payToBuyer(bot, order);
     } catch (error) {
-      console.log('xx',error);
+      console.log(error);
     }
   });
 

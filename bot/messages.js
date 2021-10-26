@@ -724,7 +724,7 @@ const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
 const invoicePaymentFailedMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `El vendedor ha liberado los satoshis pero el pago a tu factura ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
-    await bot.telegram.sendMessage(user.tg_id, `A veces no podemos recibir pagos porque no hay suficiente capacidad de entrada, una solución puede ser generar otra factura desde otra wallet que sí tenga capacidad\n\nSi lo deseas puedes cambiar la factura para recibir los satoshis con el comando 👇`);
+    await bot.telegram.sendMessage(user.tg_id, `Algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar otra factura desde otra wallet que sí tenga capacidad\n\nSi lo deseas puedes enviar una nueva factura para recibir los satoshis con el comando 👇`);
     await bot.telegram.sendMessage(user.tg_id, `/setinvoice <order_id> <lightning_invoice>`);
   } catch (error) {
     console.log(error);
