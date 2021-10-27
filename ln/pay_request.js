@@ -36,10 +36,10 @@ const payRequest = async ({ request, amount }) => {
       });
       console.log('payToBuyer response: ', payment);
       const buyerUser = await User.findOne({ _id: order.buyer_id });
+      const sellerUser = await User.findOne({ _id: order.seller_id });
       if (!!payment && !!payment.confirmed_at) {
         order.status = 'SUCCESS';
         await order.save();
-        const sellerUser = await User.findOne({ _id: order.seller_id });
         await handleReputationItems(buyerUser, sellerUser, order.amount);
         await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
       } else {
