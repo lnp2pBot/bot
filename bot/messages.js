@@ -497,8 +497,8 @@ const bannedUserErrorMessage = async (ctx) => {
 
 const fiatSentMessages = async (bot, buyer, seller, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, `Le hemos avisado al${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
-    await bot.telegram.sendMessage(seller.tg_id, `${buyer.username} me ha indicado que ya te envió el dinero fiat, esperamos que una vez confirmes la recepción del dinero liberes los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
+    await bot.telegram.sendMessage(buyer.tg_id, `Le hemos avisado a @${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
+    await bot.telegram.sendMessage(seller.tg_id, `@${buyer.username} me ha indicado que ya te envió el dinero fiat, esperamos que una vez confirmes la recepción del dinero liberes los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
     await bot.telegram.sendMessage(seller.tg_id, `/release ${order._id}`);
   } catch (error) {
     console.log(error);
