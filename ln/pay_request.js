@@ -34,7 +34,7 @@ const payRequest = async ({ request, amount }) => {
         request: order.buyer_invoice,
         amount: order.amount,
       });
-      console.log(payment);
+      console.log('payToBuyer response: ', payment);
       const buyerUser = await User.findOne({ _id: order.buyer_id });
       if (!!payment && !!payment.confirmed_at) {
         order.status = 'SUCCESS';

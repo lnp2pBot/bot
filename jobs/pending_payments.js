@@ -19,7 +19,7 @@ const attemptPendingPayments = async (bot) => {
                 amount: order.amount,
                 request: order.buyer_invoice,
             });
-            if (!!payment && payment.is_confirmed) {
+            if (!!payment && !!payment.confirmed_at) {
                 order.status = 'SUCCESS';
                 pending.paid = true;
                 await order.save();
