@@ -32,8 +32,8 @@ const attemptPendingPayments = async (bot) => {
                 sellerUser.trades_completed++;
                 sellerUser.save();
                 console.log(`Invoice with hash: ${pending.hash} paid`);
-                await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El usuario @${buyerUser.username} tenía un pago pendiente en su compra de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos`);
-                await bot.telegram.sendMessage(buyerUser.tg_id, `He pagado tu factura lightning por tu compra Id: ${order._id}!\n\nPrueba de pago: ${payment.secret}`);
+                await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El usuario @${buyerUser.username} tenía un pago pendiente en su compra de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos.\n\nPrueba de pago: ${payment.secret}`);
+                await bot.telegram.sendMessage(buyerUser.tg_id, `He pagado la factura lightning por tu compra Id: ${order._id}!\n\nPrueba de pago: ${payment.secret}`);
             } else {
                 const buyerUser = await User.findOne({ _id: order.buyer_id });
                 await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El pago a la invoice de la compra Id: ${order._id} del usuario @${buyerUser.username} ha fallado!\n\nIntento de pago ${pending.attempts}`);
