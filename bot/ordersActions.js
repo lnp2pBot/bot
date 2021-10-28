@@ -90,6 +90,7 @@ const createOrder = async (ctx, bot, user, {
 };
 
 const getOrder = async (bot, user, orderId) => {
+try {
   if (!ObjectId.isValid(orderId)) {
     await messages.notValidIdMessage(bot, user);
     return false;
@@ -107,6 +108,10 @@ const getOrder = async (bot, user, orderId) => {
   }
 
   return order;
+} catch (error) {
+  console.log(error);
+  return false;
+}
 };
 
 const getOrders = async (bot, user) => {
