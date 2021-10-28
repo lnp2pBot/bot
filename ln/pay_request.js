@@ -11,12 +11,9 @@ const payRequest = async ({ request, amount }) => {
     if (!invoice) {
       return false;
     }
-    // Time to Spend Finding a Route Milliseconds
-    const pathfinding_timeout = 120 * 1000;
     const params = {
       lnd,
       request,
-      pathfinding_timeout,
     };
     if (!invoice.tokens) params.tokens = amount;
     const payment = await payViaPaymentRequest(params);
