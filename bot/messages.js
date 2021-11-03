@@ -223,7 +223,7 @@ const showHoldInvoiceMessage = async (bot, seller, request) => {
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
+    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
     await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`);
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
@@ -258,10 +258,10 @@ const beginTakeSellMessage = async (bot, buyer, order) => {
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount}.`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez me hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
     await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
-    await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe el dinero fiat.\n\nUna vez confirmes su pago debes liberar los fondos con el comando:`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.\n\nUna vez confirmes la recepción del dinero debes liberar los fondos con el comando 👇`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `/release ${order._id}`);
   } catch (error) {
     console.log(error);
