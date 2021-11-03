@@ -40,6 +40,11 @@ After a user starts a dispute, both parties will have increased by **1** their o
 ## Incentive to release funds
 A seller that didn't release funds to the buyer can't open or take another order from the bot and probably will be involved in a dispute from the buyer damaging his/her reputation
 
+# Financial Support
+**p2plnbot** is an open source project. We are not a company, we don't do ICOs or dark business, we are just people that wants bring solutions to the people using the best open source money in the world. Our work depends on the financial collaboration of the users.
+
+To financially support further development of **p2plnbot**, please consider support our project sending bitcoin to our own node at [ln.grunch.dev](https://ln.grunch.dev).
+
 # Instalation
 You will need to create an `.env` file on the root dir, you can use a sample env file called `.env.sample` on the root dir, an easy way of doing this is just to copy the sample file to `.env`.
 
