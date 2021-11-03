@@ -512,7 +512,10 @@ const initialize = (botToken, options) => {
       ctx.deleteMessage();
       const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
-      const order = await Order.findOne({ _id: orderId });
+      const order = await Order.findOne({
+        _id: orderId,
+        status: { $ne: 'EXPIRED' },
+      });
       if (!order) return;
       let amount = order.amount;
       if (amount == 0) {

@@ -223,8 +223,7 @@ const showHoldInvoiceMessage = async (bot, seller, request) => {
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount}. Una vez confirmes su pago debes liberar los fondos con el comando release de esta manera 👇`);
-    await bot.telegram.sendMessage(seller.tg_id, `/release ${order._id}`);
+    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
     await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`);
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
@@ -287,7 +286,15 @@ const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
 
 const notActiveOrderMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `No tienes esa orden activa`);
+    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser liberada, asegúrate de que el Id es correcto`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const waitingForBuyerOrderMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats`);
   } catch (error) {
     console.log(error);
   }
@@ -856,4 +863,5 @@ module.exports = {
   listCurrenciesResponse,
   priceApiFailedMessage,
   showHoldInvoiceMessage,
+  waitingForBuyerOrderMessage,
 };

@@ -310,7 +310,17 @@ const validateTakeBuyOrder = async (bot, user, order) => {
 
 const validateReleaseOrder = async (bot, user, orderId) => {
   try {
-    const where = {
+    let where = {
+      seller_id: user._id,
+      status: 'WAITING_BUYER_INVOICE',
+    };
+    let order = await Order.findOne(where);
+    if (!!order) {
+      await messages.waitingForBuyerOrderMessage(bot, user);
+      return false;
+    }
+
+    where = {
       seller_id: user._id,
       $or: [
         {status: 'ACTIVE'},
@@ -321,7 +331,7 @@ const validateReleaseOrder = async (bot, user, orderId) => {
     if (!!orderId) {
       where._id = orderId;
     }
-    const order = await Order.findOne(where);
+    order = await Order.findOne(where);
 
     if (!order) {
       await messages.notActiveOrderMessage(bot, user);
