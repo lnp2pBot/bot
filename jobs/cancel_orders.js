@@ -44,6 +44,7 @@ const cancelOrders = async (bot) => {
             status: 'ACTIVE',
             status: 'FIAT_SENT',
         }],
+        admin_warned: false,
     });
     for (const order of activeOrders) {
         const buyerUser = await User.findOne({ _id: order.buyer_id });
@@ -66,6 +67,8 @@ buyer payment request: ${order.buyer_invoice}
 
 @${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}
 @${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}`);
+        order.admin_warned = true;
+        await order.save();
     }
 };
 
