@@ -53,7 +53,7 @@ const cancelOrders = async (bot) => {
         // Instead of cancel this order we should send this to the admins 
         // and they decide what to do
         await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `Esta orden ha expirado sin haberse completado
-Id: ${order._id}
+Id: #${order._id}
 Tipo de orden: ${order.type}
 Status: ${order.status}
 Vendedor: @${sellerUser.username}
