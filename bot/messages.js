@@ -430,11 +430,11 @@ const customMessage = async (bot, user, message) => {
 
 const checkOrderMessage = async (ctx, order, creator, buyer, seller) => {
   try {
-    await ctx.reply(`Orden id: ${order._id}:
+    await ctx.reply(`Orden id: #${order._id}:
 Status: ${order.status}
 Creator: ${creator}
-Buyer: ${buyer}
-Seller: ${seller}
+Buyer: @${buyer}
+Seller: @${seller}
 Monto sats: ${order.amount}
 Monto ${order.fiat_code}: ${order.fiat_amount}
 Método de pago: ${order.payment_method}
