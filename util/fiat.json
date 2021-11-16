@@ -1151,6 +1151,17 @@
     "emoji": "",
 		"name_plural": "Ugandan shillings"
 	},
+	"USDSV": {
+		"symbol": "$",
+		"name": "USD en El Savador",
+		"symbol_native": "$",
+		"decimal_digits": 2,
+		"rounding": 0,
+		"code": "USDSV",
+		"emoji": "🇺🇸🇸🇻",
+		"name_plural": "USD en El Savador",
+		"price": true
+	},
 	"USDVE": {
 		"symbol": "$",
 		"name": "USD en Bs",

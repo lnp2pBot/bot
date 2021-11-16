@@ -7,14 +7,14 @@ const attemptPendingPayments = async (bot) => {
         attempts: { $lt: 3 },
     });
     for (const pending of pendingPayments) {
-        pending.attempts++;
-        const order = await Order.findOne({ _id: pending.order_id });
-        if (order.status == 'SUCCESS') {
-            pending.paid = true;
-            console.log(`Order id: ${order._id} was already paid`);
-            return;
-        }
         try {
+            pending.attempts++;
+            const order = await Order.findOne({ _id: pending.order_id });
+            if (order.status == 'SUCCESS') {
+                pending.paid = true;
+                console.log(`Order id: ${order._id} was already paid`);
+                return;
+            }
             const payment = await payRequest({
                 amount: order.amount,
                 request: order.buyer_invoice,
