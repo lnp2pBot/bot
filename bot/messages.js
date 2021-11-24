@@ -410,10 +410,10 @@ buyer payment request: ${order.buyer_invoice}
 @${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${counterPartyUser.disputes}`);
     if (initiator === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu orden con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     } else {
       await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu orden con id: ${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
     }
   } catch (error) {
     console.log(error);
@@ -643,7 +643,7 @@ const badStatusOnCancelOrderMessage = async (bot, user) => {
 
 const successCancelOrderMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: ${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: #${order._id}!`);
     if (order.seller_id == user._id) {
       await refundCooperativeCancelMessage(bot, user);
     }
@@ -654,7 +654,7 @@ const successCancelOrderMessage = async (bot, user, order) => {
 
 const successCancelOrderByAdminMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha cancelado la orden Id: ${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha cancelado la orden Id: #${order._id}!`);
   } catch (error) {
     console.log(error);
   }
@@ -662,7 +662,7 @@ const successCancelOrderByAdminMessage = async (bot, user, order) => {
 
 const successCompleteOrderMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Has completado la orden Id: ${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡Has completado la orden Id: #${order._id}!`);
   } catch (error) {
     console.log(error);
   }
@@ -670,7 +670,7 @@ const successCompleteOrderMessage = async (bot, user, order) => {
 
 const successCompleteOrderByAdminMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha completado la orden Id: ${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha completado la orden Id: #${order._id}!`);
   } catch (error) {
     console.log(error);
   }
@@ -694,7 +694,7 @@ const shouldWaitCooperativeCancelMessage = async (bot, user) => {
 
 const okCooperativeCancelMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: ${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: #${order._id}!`);
     if (order.seller_id == user._id) {
       await refundCooperativeCancelMessage(bot, user);
     }
@@ -713,7 +713,7 @@ const refundCooperativeCancelMessage = async (bot, user) => {
 
 const initCooperativeCancelMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Has iniciado la cancelación de la orden Id: ${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
+    await bot.telegram.sendMessage(user.tg_id, `Has iniciado la cancelación de la orden Id: #${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
   } catch (error) {
     console.log(error);
   }
@@ -721,7 +721,7 @@ const initCooperativeCancelMessage = async (bot, user, order) => {
 
 const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte quiere cancelar la orden Id: ${order._id}, si estás de acuerdo utiliza el comando 👇`);
+    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte quiere cancelar la orden Id: #${order._id}, si estás de acuerdo utiliza el comando 👇`);
     await bot.telegram.sendMessage(user.tg_id, `/cooperativecancel ${order._id}`);
   } catch (error) {
     console.log(error);
