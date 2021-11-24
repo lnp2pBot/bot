@@ -1153,13 +1153,13 @@
 	},
 	"USDSV": {
 		"symbol": "$",
-		"name": "USD en El Savador",
+		"name": "USD en El Salvador",
 		"symbol_native": "$",
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "USDSV",
 		"emoji": "🇺🇸🇸🇻",
-		"name_plural": "USD en El Savador",
+		"name_plural": "USD en El Salvador",
 		"price": true
 	},
 	"USDVE": {
