@@ -98,6 +98,10 @@ const mustBeIntMessage = async (bot, user, fieldName) => {
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil.`);
+    await bot.telegram.sendMessage(user.tg_id, `/sell 100 212121 ves "pagomovil o mercantil"`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden que muestre tu username al ser publicada pero no deseas indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats" y el bot hará el cálculo con el precio del libre mercado y 'y' como último parámetro`);
+    await bot.telegram.sendMessage(user.tg_id, `/sell 0 212121 ves "pagomovil o mercantil" y`);
   } catch (error) {
     console.log(error);
   }
@@ -106,6 +110,10 @@ const sellOrderCorrectFormatMessage = async (bot, user) => {
 const buyOrderCorrectFormatMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una compra de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil.`);
+    await bot.telegram.sendMessage(user.tg_id, `/buy 100 212121 ves "pagomovil o mercantil"`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden que muestre tu username al ser publicada pero no deseas indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats" y el bot hará el cálculo con el precio del libre mercado y 'y' como último parámetro`);
+    await bot.telegram.sendMessage(user.tg_id, `/buy 0 212121 ves "pagomovil o mercantil" y`);
   } catch (error) {
     console.log(error);
   }
