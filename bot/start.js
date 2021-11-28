@@ -25,7 +25,7 @@ const {
   validateInvoice,
 } = require('./validations');
 const messages = require('./messages');
-const { attemptPendingPayments, cancelOrders } = require('../jobs');
+const { attemptPendingPayments, cancelOrders, pay2buyer } = require('../jobs');
 const addInvoiceWizard = require('./scenes');
 
 const initialize = (botToken, options) => {
@@ -37,6 +37,9 @@ const initialize = (botToken, options) => {
   });
   const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
+  });
+  const pay2buyerJob = schedule.scheduleJob(`* * * * *`, async () => {
+    await pay2buyer(bot);
   });
 
   const stage = new Scenes.Stage([addInvoiceWizard]);
@@ -455,8 +458,8 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       const invoice = await validateInvoice(bot, user, lnInvoice);
-      if (!(await validateObjectId(bot, user, orderId))) return;
       if (!invoice) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await Order.findOne({
         _id: orderId,
         buyer_id: user._id,
@@ -465,24 +468,39 @@ const initialize = (botToken, options) => {
         await messages.notActiveOrderMessage(bot, user);
         return;
       };
+      if (order.status == 'SUCCESS') {
+        await messages.successCompleteOrderMessage(bot, user, order);
+        return;
+      }
       if (invoice.tokens && invoice.tokens != order.amount) {
         await messages.incorrectAmountInvoiceMessage(bot, user);
         return;
       }
-
       order.buyer_invoice = lnInvoice;
-      await order.save();
-      // We need to check on PendingPayment if we have this payment to be done and update it
-      const pending = await PendingPayment.findOne({
-        order_id: order._id,
-        paid: false,
-        attempts: { $lt: 3 },
-      });
-      if (!!pending) {
-        pending.payment_request = lnInvoice;
-        await pending.save();
+      // When a seller release funds but the buyer didn't get the invoice paid
+      if (order.status == 'PAID_HOLD_INVOICE') {
+        const isPending = await PendingPayment.findOne({
+          order_id: order._id,
+          attempts: { $lt: 3 },
+          paid: false,
+        });
+
+        if (!!isPending) {
+          await messages.invoiceAlreadyUpdatedMessage(bot, user);
+          return;
+        }
+
+        if (!order.paid_hold_buyer_invoice_updated) {
+          order.paid_hold_buyer_invoice_updated = true;
+          await messages.invoiceUpdatedPaymentWillBeSendMessage(bot, user);
+        } else {
+          await messages.invoiceAlreadyUpdatedMessage(bot, user);
+        }
+      } else {
+        await messages.invoiceUpdatedMessage(bot, user);
       }
-      await messages.invoiceUpdatedMessage(bot, user);
+
+      await order.save();
     } catch (error) {
       console.log(error);
       const user = await validateUser(ctx, bot, false);
@@ -619,6 +637,15 @@ const initialize = (botToken, options) => {
         return;
       };
 
+      // We make sure the buyers invoice is not being paid
+      const isPending = await PendingPayment.findOne({
+        order_id: order._id,
+        attempts: { $lt: 3 },
+      });
+
+      if (!!isPending) {
+        return;
+      }
       await payToBuyer(bot, order);
     } catch (error) {
       console.log(error);

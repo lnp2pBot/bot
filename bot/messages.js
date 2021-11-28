@@ -641,6 +641,22 @@ const invoiceUpdatedMessage = async (bot, user) => {
   }
 };
 
+const invoiceUpdatedPaymentWillBeSendMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡La factura ha sido actualizada correctamente y será pagada en los próximos segundos!`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoiceAlreadyUpdatedMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const badStatusOnCancelOrderMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Esta opción solo permite cancelar las ordenes que no han sido tomadas o en las cuales el vendedor ha tardado mucho para pagar la factura`);
@@ -736,11 +752,9 @@ const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
   }
 };
 
-const invoicePaymentFailedMessage = async (bot, user, seller, order) => {
+const invoicePaymentFailedMessage = async (bot, user, seller) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `@${seller.username} ha liberado los satoshis pero el pago a tu factura ha fallado, intentaré pagarla nuevamente dentro de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
-    await bot.telegram.sendMessage(user.tg_id, `Algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar otra factura desde otra wallet que sí tenga capacidad\n\nSi lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇`);
-    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <lightning_invoice>`);
+    await bot.telegram.sendMessage(user.tg_id, `@${seller.username} ha liberado los satoshis pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
   } catch (error) {
     console.log(error);
   }
@@ -872,4 +886,6 @@ module.exports = {
   priceApiFailedMessage,
   showHoldInvoiceMessage,
   waitingForBuyerOrderMessage,
+  invoiceUpdatedPaymentWillBeSendMessage,
+  invoiceAlreadyUpdatedMessage,
 };
