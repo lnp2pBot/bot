@@ -40,7 +40,7 @@ const payToBuyer = async (bot, order) => {
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
     } else {
-      await messages.invoicePaymentFailedMessage(bot, buyerUser, sellerUser, order);
+      await messages.invoicePaymentFailedMessage(bot, buyerUser, sellerUser);
       const pp = new PendingPayment({
         amount: order.amount,
         payment_request: order.buyer_invoice,
