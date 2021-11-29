@@ -17,7 +17,7 @@ const pay2buyer = async (bot) => {
                 attempts: { $lt: 3 },
             });
               
-            if (!!isPending) {
+            if (!!isPending || order.being_paid) {
               return;
             }
             await payToBuyer(bot, order);

@@ -63,6 +63,7 @@ const OrderSchema = new mongoose.Schema({
   tg_group_message2: { type: String },
   admin_warned: { type: Boolean, default: false }, // We set this to true when the bot warns admins the order is about to expire
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
+  being_paid: { type: Boolean, default: false }, // Every time we try to pay a buyer's invoice, we set this to true
 });
 
 module.exports = mongoose.model('Order', OrderSchema);

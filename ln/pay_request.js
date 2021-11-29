@@ -27,10 +27,14 @@ const payRequest = async ({ request, amount }) => {
   
 const payToBuyer = async (bot, order) => {
   try {
+    order.being_paid = true;
+    await order.save();
     const payment = await payRequest({
       request: order.buyer_invoice,
       amount: order.amount,
     });
+    order.being_paid = false;
+    await order.save();
     console.log('payToBuyer response: ', payment);
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     const sellerUser = await User.findOne({ _id: order.seller_id });
