@@ -25,7 +25,7 @@ const {
   validateInvoice,
 } = require('./validations');
 const messages = require('./messages');
-const { attemptPendingPayments, cancelOrders, pay2buyer } = require('../jobs');
+const { attemptPendingPayments, cancelOrders } = require('../jobs');
 const addInvoiceWizard = require('./scenes');
 
 const initialize = (botToken, options) => {
@@ -37,9 +37,6 @@ const initialize = (botToken, options) => {
   });
   const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
-  });
-  const pay2buyerJob = schedule.scheduleJob(`* * * * *`, async () => {
-    await pay2buyer(bot);
   });
 
   const stage = new Scenes.Stage([addInvoiceWizard]);
@@ -482,7 +479,6 @@ const initialize = (botToken, options) => {
         const isPending = await PendingPayment.findOne({
           order_id: order._id,
           attempts: { $lt: 3 },
-          paid: false,
         });
 
         if (!!isPending) {
@@ -492,6 +488,15 @@ const initialize = (botToken, options) => {
 
         if (!order.paid_hold_buyer_invoice_updated) {
           order.paid_hold_buyer_invoice_updated = true;
+          const pp = new PendingPayment({
+            amount: order.amount,
+            payment_request: lnInvoice,
+            user_id: user._id,
+            description: order.description,
+            hash: order.hash,
+            order_id: order._id,
+          });
+          await pp.save();
           await messages.invoiceUpdatedPaymentWillBeSendMessage(bot, user);
         } else {
           await messages.invoiceAlreadyUpdatedMessage(bot, user);
