@@ -345,8 +345,12 @@ const initialize = (botToken, options) => {
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
       const order = await validateFiatSentOrder(bot, user, orderId);
-
       if (!order) return;
+
+      if (order.status == 'PAID_HOLD_INVOICE') {
+        await messages.sellerPaidHoldMessage(bot, user);
+        return;
+      }
 
       order.status = 'FIAT_SENT';
       const seller = await User.findOne({ _id: order.seller_id });
