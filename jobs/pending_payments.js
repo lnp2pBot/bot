@@ -15,14 +15,10 @@ const attemptPendingPayments = async (bot) => {
                 console.log(`Order id: ${order._id} was already paid`);
                 return;
             }
-            order.being_paid = true;
-            await order.save();
             const payment = await payRequest({
                 amount: pending.amount,
                 request: pending.payment_request,
             });
-            order.being_paid = false;
-            order.save();
             const buyerUser = await User.findOne({ _id: order.buyer_id });
             if (!!payment && !!payment.confirmed_at) {
                 order.status = 'SUCCESS';

@@ -479,11 +479,6 @@ const initialize = (botToken, options) => {
       order.buyer_invoice = lnInvoice;
       // When a seller release funds but the buyer didn't get the invoice paid
       if (order.status == 'PAID_HOLD_INVOICE') {
-        // We make sure the invoice is not being paid
-        if (order.being_paid) {
-          await messages.invoiceAlreadyUpdatedMessage(bot, user);
-          return;
-        }
         const isPending = await PendingPayment.findOne({
           order_id: order._id,
           attempts: { $lt: 3 },
@@ -643,9 +638,6 @@ const initialize = (botToken, options) => {
       };
 
       // We make sure the buyers invoice is not being paid
-      if (order.being_paid) {
-        return;
-      }
       const isPending = await PendingPayment.findOne({
         order_id: order._id,
         attempts: { $lt: 3 },
