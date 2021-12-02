@@ -10,6 +10,7 @@ const {
   payToBuyer,
   createHoldInvoice,
   subscribeInvoice,
+  getInfo,
 } = require('../ln');
 const {
   validateSellOrder,
@@ -670,6 +671,20 @@ const initialize = (botToken, options) => {
       const currencies = getCurrenciesWithPrice();
 
       await messages.listCurrenciesResponse(bot, user, currencies);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('info', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      const info = await getInfo();
+
+      await messages.showInfoMessage(bot, user, info);
     } catch (error) {
       console.log(error);
     }

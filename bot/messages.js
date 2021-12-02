@@ -792,6 +792,14 @@ const sellerPaidHoldMessage = async (bot, user) => {
   }
 };
 
+const showInfoMessage = async (bot, user, info) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Node pubkey: ${info.public_key}\nNode uri: ${info.uris[0]}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser) => {
   try {
     await bot.telegram.sendMessage(buyerUser.tg_id, `Tu compra de sats ha sido completada exitosamente, @${sellerUser.username} ha confirmado tu pago fiat y ya he pagado tu factura, que disfrutes tus sats\n⚡️🍊⚡️`);
@@ -897,4 +905,5 @@ module.exports = {
   invoiceUpdatedPaymentWillBeSendMessage,
   invoiceAlreadyUpdatedMessage,
   sellerPaidHoldMessage,
+  showInfoMessage,
 };

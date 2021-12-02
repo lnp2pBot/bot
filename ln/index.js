@@ -2,6 +2,7 @@ const { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice } = require('./h
 const subscribeInvoices = require('./subscribe_invoices');
 const subscribeInvoice = require('./subscribe_invoice');
 const { payRequest, payToBuyer } = require('./pay_request');
+const { getInfo } = require('./info');
 
 module.exports = {
   createHoldInvoice,
@@ -11,4 +12,5 @@ module.exports = {
   cancelHoldInvoice,
   payRequest,
   payToBuyer,
+  getInfo,
 };
