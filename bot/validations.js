@@ -373,7 +373,10 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
   try {
     const where = {
       buyer_id: user._id,
-      status: 'ACTIVE',
+      $or: [
+        {status: 'ACTIVE'},
+        {status: 'PAID_HOLD_INVOICE'},
+      ],
     };
 
     if (!!orderId) {
@@ -382,6 +385,11 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
     const order = await Order.findOne(where);
     if (!order) {
       await messages.notActiveOrderMessage(bot, user);
+      return false;
+    }
+
+    if (order.status == 'PAID_HOLD_INVOICE') {
+      await messages.sellerPaidHoldMessage(bot, user);
       return false;
     }
 

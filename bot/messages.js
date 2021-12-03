@@ -294,7 +294,7 @@ const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
 
 const notActiveOrderMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser liberada, asegúrate de que el Id es correcto`);
+    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser procesada, asegúrate de que el Id es correcto`);
   } catch (error) {
     console.log(error);
   }

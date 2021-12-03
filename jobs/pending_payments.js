@@ -12,6 +12,7 @@ const attemptPendingPayments = async (bot) => {
             pending.attempts++;
             if (order.status == 'SUCCESS') {
                 pending.paid = true;
+                await pending.save();
                 console.log(`Order id: ${order._id} was already paid`);
                 return;
             }
