@@ -246,7 +246,7 @@ const isValidInvoice = async (lnInvoice) => {
   } catch (error) {
     return {
       success: false,
-      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc1,\n\nPara volver al modo donde puedes ingresar comandos solo escribe la palabra: exit",
+      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc1,\n\nPara volver al modo donde puedes ingresar comandos solo escribe la palabra: => exit <=",
     };
   }
 };

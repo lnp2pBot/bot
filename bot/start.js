@@ -533,6 +533,7 @@ const initialize = (botToken, options) => {
   bot.action('addInvoiceBtn', async (ctx) => {
     try {
       ctx.deleteMessage();
+      ctx.scene.leave();
       const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
       const order = await Order.findOne({
@@ -563,6 +564,7 @@ const initialize = (botToken, options) => {
   bot.action('cancelAddInvoiceBtn', async (ctx) => {
     try {
       ctx.deleteMessage();
+      ctx.scene.leave();
       const orderId = ctx.update.callback_query.message.text;
       if (!orderId) return;
       const order = await Order.findOne({ _id: orderId });
