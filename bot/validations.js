@@ -19,6 +19,8 @@ const validateUser = async (ctx, bot, start) => {
       await user.save();
     } else if (!user) {
       await messages.initBotErrorMessage(bot, tgUser.id);
+
+      return false;
     } else if (user.banned) {
       await messages.bannedUserErrorMessage(ctx);
 
