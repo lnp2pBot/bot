@@ -462,23 +462,22 @@ const validateObjectId = async (bot, user, id) => {
 
 const validateUserWaitingOrder = async (bot, user) => {
   try {
-    const where = {
-      $and: [
-        {
-          $or: [
-            {seller_id: user._id},
-            {buyer_id: user._id},
-          ],
-        },
-        {
-          $or: [
-            {status: 'WAITING_BUYER_INVOICE'},
-            {status: 'WAITING_PAYMENT'},
-          ],
-        },
-      ],
+    // If is a seller
+    let where = {
+      seller_id: user._id,
+      status: 'WAITING_PAYMENT',
     };
-    const orders = await Order.find(where);
+    let orders = await Order.find(where);
+    if (orders.length > 0) {
+      await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+      return false;
+    }
+    // If is a buyer
+    where = {
+      buyer_id: user._id,
+      status: 'WAITING_BUYER_INVOICE'
+    };
+    orders = await Order.find(where);
     if (orders.length > 0) {
       await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
       return false;
