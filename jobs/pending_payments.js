@@ -1,4 +1,4 @@
-const { payRequest } = require('../ln');
+const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
 
 const attemptPendingPayments = async (bot) => {
@@ -14,6 +14,11 @@ const attemptPendingPayments = async (bot) => {
                 pending.paid = true;
                 await pending.save();
                 console.log(`Order id: ${order._id} was already paid`);
+                return;
+            }
+            // We check if the payment is on flight we don't do anything
+            const isPending = await isPendingPayment(order.buyer_invoice);
+            if (isPending) {
                 return;
             }
             const payment = await payRequest({
