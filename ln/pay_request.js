@@ -1,4 +1,4 @@
-const { payViaPaymentRequest } = require('lightning');
+const { payViaPaymentRequest, getPayment } = require('lightning');
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
@@ -27,6 +27,11 @@ const payRequest = async ({ request, amount }) => {
   
 const payToBuyer = async (bot, order) => {
   try {
+    // We check if the payment is on flight we don't do anything
+    const isPending = await isPendingPayment(order.buyer_invoice);
+    if (isPending) {
+      return;
+    }
     const payment = await payRequest({
       request: order.buyer_invoice,
       amount: order.amount,
@@ -56,8 +61,20 @@ const payToBuyer = async (bot, order) => {
   }
 };
 
+const isPendingPayment = async (request) => {
+  try {
+    const { id } = parsePaymentRequest({ request });
+    const { is_pending } = await getPayment({ lnd, id });
+
+    return !!is_pending;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
   module.exports = {
     payRequest,
     payToBuyer,
+    isPendingPayment,
   };
   

@@ -11,6 +11,7 @@ const {
   createHoldInvoice,
   subscribeInvoice,
   getInfo,
+  isPendingPayment,
 } = require('../ln');
 const {
   validateSellOrder,
@@ -476,12 +477,14 @@ const initialize = (botToken, options) => {
       order.buyer_invoice = lnInvoice;
       // When a seller release funds but the buyer didn't get the invoice paid
       if (order.status == 'PAID_HOLD_INVOICE') {
-        const isPending = await PendingPayment.findOne({
+        const isScheduled = await PendingPayment.findOne({
           order_id: order._id,
           attempts: { $lt: 3 },
         });
+        // We check if the payment is on flight
+        const isPending = await isPendingPayment(order.buyer_invoice);
 
-        if (!!isPending) {
+        if (!!isScheduled || !!isPending) {
           await messages.invoiceAlreadyUpdatedMessage(bot, user);
           return;
         }
