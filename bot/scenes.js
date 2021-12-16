@@ -1,6 +1,5 @@
 const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
-const { getCurrency } = require('../util');
 const messages = require('./messages');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
@@ -49,10 +48,10 @@ const addInvoiceWizard = new Scenes.WizardScene(
       // If the buyer is the creator, at this moment the seller already paid the hold invoice
       if (order.creator_id == order.buyer_id) {
         order.status = 'ACTIVE';
-        const currency = getCurrency(order.fiat_code);
-        await bot.telegram.sendMessage(buyer.tg_id, `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique como enviarle ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}`);
-        await bot.telegram.sendMessage(buyer.tg_id, `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
-        await bot.telegram.sendMessage(buyer.tg_id, `/fiatsent ${order._id}`);
+        // Message to buyer
+        await messages.addInvoiceMessage(bot, buyer, seller, order);
+        // Message to seller
+        await messages.sendBuyerInfo2SellerMessage(bot, seller, buyer, order);
       } else {
         // We create a hold invoice
         const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
