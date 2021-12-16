@@ -51,7 +51,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         // Message to buyer
         await messages.addInvoiceMessage(bot, buyer, seller, order);
         // Message to seller
-        await messages.sendBuyerInfo2SellerMessage(bot, seller, buyer, order);
+        await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
       } else {
         // We create a hold invoice
         const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
