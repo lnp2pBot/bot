@@ -203,7 +203,7 @@ const invalidDataMessage = async (bot, user) => {
 const beginTakeBuyMessage = async (bot, seller, order) => {
   try {
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(seller.tg_id, `Presiona continuar para tomar la compra, si presionas cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇`);
+    await bot.telegram.sendMessage(seller.tg_id, `🤖 Presiona continuar para tomar la compra, si presionas cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇`);
     await bot.telegram.sendMessage(seller.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -231,8 +231,8 @@ const showHoldInvoiceMessage = async (bot, seller, request) => {
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(seller.tg_id, `¡Pago recibido!\n\nPonte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
-    await bot.telegram.sendMessage(buyer.tg_id, `Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`);
+    await bot.telegram.sendMessage(seller.tg_id, `🤖 ¡Pago recibido!\n\nAhora necesitamos que el comprador me envíe una factura para enviarle los satoshis, luego de que el comprador me indique su factura los pondré en contacto`);
+    await bot.telegram.sendMessage(buyer.tg_id, `🤖 Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`);
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -244,6 +244,7 @@ const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
     console.log(error);
   }
 };
+
 
 const beginTakeSellMessage = async (bot, buyer, order) => {
   try {
@@ -512,8 +513,8 @@ const bannedUserErrorMessage = async (ctx) => {
 
 const fiatSentMessages = async (bot, buyer, seller, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, `Le hemos avisado a @${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
-    await bot.telegram.sendMessage(seller.tg_id, `@${buyer.username} me ha indicado que ya te envió el dinero fiat, esperamos que una vez confirmes la recepción del dinero liberes los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
+    await bot.telegram.sendMessage(buyer.tg_id, `🤖 Le avisé a @${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
+    await bot.telegram.sendMessage(seller.tg_id, `🤖 @${buyer.username} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
     await bot.telegram.sendMessage(seller.tg_id, `/release ${order._id}`);
   } catch (error) {
     console.log(error);
@@ -523,7 +524,7 @@ const fiatSentMessages = async (bot, buyer, seller, order) => {
 
 const orderOnfiatSentStatusMessages = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)`);
+    await bot.telegram.sendMessage(user.tg_id, `🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)`);
   } catch (error) {
     console.log(error);
   }
@@ -561,12 +562,21 @@ const notValidIdMessage = async (bot, user) => {
   }
 };
 
-const addInvoiceMessage = async (bot, user, order) => {
+const addInvoiceMessage = async (bot, buyer, seller, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(user.tg_id, `🤖 He recibido tu factura, ahora debes enviarle al vendedor ${currency.symbol_native} ${order.fiat_amount}`);
-    await bot.telegram.sendMessage(user.tg_id, `🤖 En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
-    await bot.telegram.sendMessage(user.tg_id, `/fiatsent ${order._id}`);
+    await bot.telegram.sendMessage(buyer.tg_id, `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique como enviarle ${currency.symbol_native} ${order.fiat_amount}`);
+    await bot.telegram.sendMessage(buyer.tg_id, `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    await bot.telegram.sendMessage(buyer.tg_id, `/fiatsent ${order._id}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order) => {
+  try {
+    const currency = getCurrency(order.fiat_code);
+    await bot.telegram.sendMessage(seller.tg_id, `🤖 Ponte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
   } catch (error) {
     console.log(error);
   }
@@ -906,4 +916,5 @@ module.exports = {
   invoiceAlreadyUpdatedMessage,
   sellerPaidHoldMessage,
   showInfoMessage,
+  sendBuyerInfo2SellerMessage,
 };
