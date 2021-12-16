@@ -266,7 +266,7 @@ const validateTakeSellOrder = async (bot, user, order) => {
       await messages.invalidOrderMessage(bot, user);
       return false;
     }
-    if (isOrderCreator(user, order)) {
+    if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
       await messages.cantTakeOwnOrderMessage(bot, user);
       return false;
     }
@@ -291,7 +291,7 @@ const validateTakeBuyOrder = async (bot, user, order) => {
       await messages.invalidOrderMessage(bot, user);
       return false;
     }
-    if (isOrderCreator(user, order)) {
+    if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
       await messages.cantTakeOwnOrderMessage(bot, user);
       return false;
     }
