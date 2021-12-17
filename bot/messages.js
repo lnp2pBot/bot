@@ -286,7 +286,8 @@ const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
 
 const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de  @${buyerUser.username}\n⚡️🍊⚡️`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUser.username}\n⚡️🍊⚡️`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `🕐 @${sellerUser.username} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online`);
   } catch (error) {
     console.log(error);
   }
