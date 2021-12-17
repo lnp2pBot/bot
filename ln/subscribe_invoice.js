@@ -35,7 +35,7 @@ const subscribeInvoice = async (bot, id) => {
       }
     });
   } catch (error) {
-    console.log(error);
+    console.log('subscribeInvoice catch: ', error);
     return false;
   }
 };

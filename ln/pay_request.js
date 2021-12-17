@@ -57,7 +57,7 @@ const payToBuyer = async (bot, order) => {
       await pp.save();
     }
   } catch (error) {
-    console.log(error);
+    console.log('payToBuyer catch:', error);
   }
 };
 
