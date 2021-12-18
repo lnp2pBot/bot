@@ -78,7 +78,7 @@ const initialize = (botToken, options) => {
       const sellOrderParams = await validateSellOrder(ctx, bot, user);
 
       if (!sellOrderParams) return;
-      const { amount, fiatAmount, fiatCode, paymentMethod, showUsername } = sellOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'sell',
         amount,
@@ -87,7 +87,7 @@ const initialize = (botToken, options) => {
         fiatCode,
         paymentMethod,
         status: 'PENDING',
-        showUsername,
+        priceMargin,
       });
 
       if (!!order) {
@@ -108,7 +108,7 @@ const initialize = (botToken, options) => {
       const buyOrderParams = await validateBuyOrder(ctx, bot, user);
       if (!buyOrderParams) return;
 
-      const { amount, fiatAmount, fiatCode, paymentMethod, showUsername } = buyOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = buyOrderParams;
       //revisar por que esta creando invoice sin monto
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'buy',
@@ -118,7 +118,7 @@ const initialize = (botToken, options) => {
         fiatCode,
         paymentMethod,
         status: 'PENDING',
-        showUsername,
+        priceMargin,
       });
 
       if (!!order) {
@@ -607,6 +607,40 @@ const initialize = (botToken, options) => {
       const info = await getInfo();
 
       await messages.showInfoMessage(bot, user, info);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('showusername', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      let [ show ] = await validateParams(ctx, bot, user, 2, 'yes/no');
+      if (!show) return;
+      show = show == 'yes' ? true : false;
+      user.show_username = show;
+      await user.save();
+      messages.updateUserSettingsMessage(bot, user, 'showusername', show);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('showvolume', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      let [ show ] = await validateParams(ctx, bot, user, 2, 'yes/no');
+      if (!show) return;
+      show = show == 'yes' ? true : false;
+      user.show_volume_traded = show;
+      await user.save();
+      messages.updateUserSettingsMessage(bot, user, 'showvolume', show);
     } catch (error) {
       console.log(error);
     }

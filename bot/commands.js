@@ -108,6 +108,9 @@ const addInvoice = async (ctx, bot, order) => {
     let amount = order.amount;
     if (amount == 0) {
         amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+        const marginPercent = order.price_margin / 100;
+        amount = amount - (amount * marginPercent);
+        amount = Math.floor(amount);
         order.fee = amount * parseFloat(process.env.FEE);
         order.amount = amount;
     }
@@ -144,8 +147,13 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     }
     order.taken_at = null;
     order.status = 'PENDING';
-    if (order.price_from_api)
+    if (order.price_from_api) {
       order.amount = 0;
+      order.fee = 0;
+      order.hash = null;
+      order.secret = null;
+    }
+
     if (order.type == 'buy') {
       order.seller_id = null;
       await messages.publishBuyOrderMessage(bot, order);
@@ -179,6 +187,9 @@ const showHoldInvoice = async (ctx, bot, order) => {
     let amount;
     if (order.amount == 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+      const marginPercent = order.price_margin / 100;
+      amount = amount - (amount * marginPercent);
+      amount = Math.floor(amount);
       order.fee = amount * parseFloat(process.env.FEE);
       order.amount = amount;
     }
@@ -216,8 +227,14 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     }
     order.taken_at = null;
     order.status = 'PENDING';
-    if (order.price_from_api)
+
+    if (order.price_from_api) {
       order.amount = 0;
+      order.fee = 0;
+      order.hash = null;
+      order.secret = null;
+    }
+
     if (order.type == 'buy') {
       order.seller_id = null;
       await messages.publishBuyOrderMessage(bot, order);

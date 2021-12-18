@@ -64,12 +64,13 @@ const validateSellOrder = async (ctx, bot, user) => {
       return false;
     }
 
-    let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
+    let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
 
-    if (!!showUsername && showUsername != 'y') {
-      await messages.showUsernameErrorMessage(bot, user);
+    priceMargin = parseInt(priceMargin);
+    if (!!priceMargin && !Number.isInteger(priceMargin)) {
+      await messages.mustBeIntMessage(bot, user, 'margen_de_precio');
       return false;
-    }
+    };
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
@@ -102,7 +103,7 @@ const validateSellOrder = async (ctx, bot, user) => {
       fiatAmount,
       fiatCode: fiatCode.toUpperCase(),
       paymentMethod,
-      showUsername,
+      priceMargin,
     };
   } catch (error) {
     console.log(error);
@@ -117,12 +118,13 @@ const validateBuyOrder = async (ctx, bot, user) => {
       await messages.buyOrderCorrectFormatMessage(bot, user);
       return false;
     }
-    let [ _, amount, fiatAmount, fiatCode, paymentMethod, showUsername ] = args;
+    let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
 
-    if (!!showUsername && showUsername != 'y') {
-      await messages.showUsernameErrorMessage(bot, user);
+    priceMargin = parseInt(priceMargin);
+    if (!!priceMargin && !Number.isInteger(priceMargin)) {
+      await messages.mustBeIntMessage(bot, user, 'margen_de_precio');
       return false;
-    }
+    };
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
@@ -155,7 +157,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
       fiatAmount,
       fiatCode: fiatCode.toUpperCase(),
       paymentMethod,
-      showUsername,
+      priceMargin,
     };
   } catch (error) {
     console.log(error);

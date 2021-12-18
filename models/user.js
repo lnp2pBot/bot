@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema({
   volume_traded: { type: Number, min: 0, default: 0 },
   admin: { type: Boolean, default: false },
   banned: { type: Boolean, default: false },
+  show_username: { type: Boolean, default: false },
+  show_volume_traded: { type: Boolean, default: false },
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },
 });
