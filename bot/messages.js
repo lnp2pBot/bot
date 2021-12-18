@@ -34,7 +34,7 @@ Botón Vender:
 12. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el este comando
 13. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cooperativecancel
 
-¡Intercambia seguro y rápido! #P2PLN`);
+¡Intercambia seguro y rápido!`);
   } catch (error) {
     console.log(error);
   }
@@ -89,7 +89,7 @@ const pendingBuyMessage = async (bot, user, order) => {
 
 const mustBeIntMessage = async (bot, user, fieldName) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser entero positivo`);
+    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un número entero`);
   } catch (error) {
     console.log(error);
   }
@@ -97,11 +97,11 @@ const mustBeIntMessage = async (bot, user, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]`);
+    await bot.telegram.sendMessage(user.tg_id, `/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [margen_de_precio]`);
     await bot.telegram.sendMessage(user.tg_id, `Para crear una venta de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil.`);
     await bot.telegram.sendMessage(user.tg_id, `/sell 100 212121 ves "pagomovil o mercantil"`);
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden que muestre tu username al ser publicada pero no deseas indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats" y el bot hará el cálculo con el precio del libre mercado y 'y' como último parámetro`);
-    await bot.telegram.sendMessage(user.tg_id, `/sell 0 212121 ves "pagomovil o mercantil" y`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta con un margen de ganancia del 3% sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y '3' como último parámetro`);
+    await bot.telegram.sendMessage(user.tg_id, `/sell 0 212121 ves "pagomovil o transferencia" 3`);
   } catch (error) {
     console.log(error);
   }
@@ -109,11 +109,11 @@ const sellOrderCorrectFormatMessage = async (bot, user) => {
 
 const buyOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [mostrar_username]`);
+    await bot.telegram.sendMessage(user.tg_id, `/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [margen_de_precio]`);
     await bot.telegram.sendMessage(user.tg_id, `Para crear una compra de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil.`);
     await bot.telegram.sendMessage(user.tg_id, `/buy 100 212121 ves "pagomovil o mercantil"`);
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden que muestre tu username al ser publicada pero no deseas indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats" y el bot hará el cálculo con el precio del libre mercado y 'y' como último parámetro`);
-    await bot.telegram.sendMessage(user.tg_id, `/buy 0 212121 ves "pagomovil o mercantil" y`);
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden de compra con un margen de ganancia del 3% sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y '-3' como último parámetro`);
+    await bot.telegram.sendMessage(user.tg_id, `/buy 0 212121 ves "pagomovil o transferencia" -3`);
   } catch (error) {
     console.log(error);
   }
@@ -327,7 +327,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
 
 const publishBuyOrderMessage = async (bot, order) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `Para tomar esta orden 👇`;
 
     // Mensaje al canal
@@ -351,7 +351,7 @@ const publishBuyOrderMessage = async (bot, order) => {
 
 const publishSellOrderMessage = async (bot, order) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `Para tomar esta orden 👇`;
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
@@ -814,6 +814,14 @@ const priceApiFailedMessage = async (bot, user) => {
   }
 };
 
+const updateUserSettingsMessage = async (bot, user, field, newState) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Ha modificado el campo ${field} a ${newState}`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -893,4 +901,5 @@ module.exports = {
   sellerPaidHoldMessage,
   showInfoMessage,
   sendBuyerInfo2SellerMessage,
+  updateUserSettingsMessage,
 };

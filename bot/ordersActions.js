@@ -12,14 +12,16 @@ const createOrder = async (ctx, bot, user, {
   fiatCode,
   paymentMethod,
   status,
-  showUsername,
+  priceMargin,
 }) => {
   amount = parseInt(amount);
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
   try {
-    const username = showUsername == 'y' ? `@${user.username} está ` : ``;
+    const username = user.show_username ? `@${user.username} está ` : ``;
+    const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
+    const priceMarginText = !!priceMargin ? `Margen de precio: ${priceMargin}%\n` : ``;
     const currency = getCurrency(fiatCode);
     let currencyString = `${fiatCode} ${fiatAmount}`;
     if (!!currency) {
@@ -35,15 +37,16 @@ const createOrder = async (ctx, bot, user, {
         return;
       }
       amountText = '';
-      tasaText = '\nTasa: yadio.io';
+      tasaText = 'Tasa: yadio.io\n';
     }
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
       let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Recibo pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
-      description += `Volumen de comercio: ${volume} sats`;
-      description += `${tasaText}`;
+      description += volumeTraded;
+      description += priceMarginText;
+      description += tasaText;
       const order = new Order({
         description,
         amount,
@@ -58,6 +61,7 @@ const createOrder = async (ctx, bot, user, {
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,
         price_from_api: priceFromAPI,
+        price_margin: priceMargin || 0,
       });
       await order.save();
 
@@ -67,8 +71,9 @@ const createOrder = async (ctx, bot, user, {
       let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
       description += `Pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
-      description += `Volumen de comercio: ${volume} sats`;
-      description += `${tasaText}`;
+      description += volumeTraded;
+      description += priceMarginText;
+      description += tasaText;
       const order = new Order({
         description,
         amount,
@@ -83,6 +88,7 @@ const createOrder = async (ctx, bot, user, {
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,
         price_from_api: priceFromAPI,
+        price_margin: priceMargin || 0,
       });
       await order.save();
 
