@@ -816,7 +816,7 @@ const priceApiFailedMessage = async (bot, user) => {
 
 const updateUserSettingsMessage = async (bot, user, field, newState) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Ha modificado el campo ${field} a ${newState}`);
+    await bot.telegram.sendMessage(user.tg_id, `He modificado el campo ${field} a ${newState}`);
   } catch (error) {
     console.log(error);
   }
