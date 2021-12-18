@@ -208,8 +208,8 @@ const beginTakeBuyMessage = async (bot, seller, order) => {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: 'Continuar', callback_data: 'continueTakeBuyBtn'},
-            {text: 'Cancelar', callback_data: 'cancelTakeBuyBtn'},
+            {text: 'Continuar', callback_data: 'showHoldInvoiceBtn'},
+            {text: 'Cancelar', callback_data: 'cancelShowHoldInvoiceBtn'},
           ],
         ],
       },
@@ -325,7 +325,7 @@ const repeatedInvoiceMessage = async (bot, user) => {
   }
 };
 
-const publishBuyOrderMessage = async (ctx, bot, order) => {
+const publishBuyOrderMessage = async (bot, order) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
     publishMessage += `Para tomar esta orden 👇`;
@@ -343,25 +343,13 @@ const publishBuyOrderMessage = async (ctx, bot, order) => {
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
     order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
-    // Mensaje al grupo origen en caso de haber
-    if (!!ctx.message && ctx.message.chat.type != 'private') {
-      order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
-      order.tg_group_message2 = (await ctx.reply(order._id, {
-        reply_markup: {
-          inline_keyboard: [
-            [{text: 'Vender satoshis', callback_data: 'takebuy'}],
-          ],
-        },
-      })).message_id;
-    }
-
-    order.save();
+    await order.save();
   } catch (error) {
     console.log(error);
   }
 };
 
-const publishSellOrderMessage = async (ctx, bot, order) => {
+const publishSellOrderMessage = async (bot, order) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n\n`;
     publishMessage += `Para tomar esta orden 👇`;
@@ -377,19 +365,7 @@ const publishSellOrderMessage = async (ctx, bot, order) => {
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
     order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
-    // Mensaje al grupo origen en caso de haber
-    if (!!ctx.message && ctx.message.chat.type != 'private') {
-      order.tg_group_message1 = (await ctx.reply(publishMessage, { reply_to_message_id: order.tg_order_message })).message_id;
-      order.tg_group_message2 = (await ctx.reply(order._id, {
-        reply_markup: {
-          inline_keyboard: [
-            [{text: 'Comprar satoshis', callback_data: 'takesell'}],
-          ],
-        },
-      })).message_id;
-    }
-
-    order.save();
+    await order.save();
   } catch (error) {
     console.log(error);
   }

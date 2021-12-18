@@ -27,7 +27,9 @@ const createOrder = async (ctx, bot, user, {
     }
     let amountText = `${amount} `;
     let tasaText = '';
+    let priceFromAPI = false;
     if (amount == 0) {
+      priceFromAPI = true;
       if (!currency.price) {
         await messages.notRateForCurrency(bot, user);
         return;
@@ -55,6 +57,7 @@ const createOrder = async (ctx, bot, user, {
         payment_method: paymentMethod,
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,
+        price_from_api: priceFromAPI,
       });
       await order.save();
 
@@ -79,6 +82,7 @@ const createOrder = async (ctx, bot, user, {
         status,
         tg_chat_id: ctx.message.chat.id,
         tg_order_message: ctx.message.message_id,
+        price_from_api: priceFromAPI,
       });
       await order.save();
 

@@ -1,6 +1,7 @@
 const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
 const messages = require('./messages');
+const { Order } = require('../models');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 
 const addInvoiceWizard = new Scenes.WizardScene(
@@ -34,12 +35,19 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply(res.error);
         return;
       };
-      const { bot, buyer, seller, order } = ctx.wizard.state;
-
+      let { bot, buyer, seller, order } = ctx.wizard.state;
+      // We get an updated order from the DB
+      order = await Order.findOne({ _id: order._id });
       if (order.status == 'EXPIRED') {
         await ctx.reply(`¡Esta orden ya expiró!`);
         return ctx.scene.leave();
       }
+
+      if (order.status != 'WAITING_BUYER_INVOICE') {
+        await ctx.reply(`¡Ya no puedes agregar una factura para esta orden!`);
+        return ctx.scene.leave();
+      }
+
       if (res.invoice.tokens && res.invoice.tokens != order.amount) {
         await ctx.reply('La factura tiene un monto incorrecto');
         return;

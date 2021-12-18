@@ -1,15 +1,20 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
 const { Order, User, PendingPayment } = require('../models');
-const { getCurrenciesWithPrice, getBtcFiatPrice } = require('../util');
+const { getCurrenciesWithPrice } = require('../util');
 const ordersActions = require('./ordersActions');
-const { takebuy, takesell } = require('./commands');
+const {
+  takebuy,
+  takesell,
+  cancelAddInvoice,
+  addInvoice,
+  cancelShowHoldInvoice,
+  showHoldInvoice,
+} = require('./commands');
 const {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
-  createHoldInvoice,
-  subscribeInvoice,
   getInfo,
   isPendingPayment,
 } = require('../ln');
@@ -86,7 +91,7 @@ const initialize = (botToken, options) => {
       });
 
       if (!!order) {
-        await messages.publishSellOrderMessage(ctx, bot, order);
+        await messages.publishSellOrderMessage(bot, order);
         await messages.pendingSellMessage(bot, user, order);
       }
     } catch (error) {
@@ -117,7 +122,7 @@ const initialize = (botToken, options) => {
       });
 
       if (!!order) {
-        await messages.publishBuyOrderMessage(ctx, bot, order);
+        await messages.publishBuyOrderMessage(bot, order);
         await messages.pendingBuyMessage(bot, user, order);
       }
     } catch (error) {
@@ -534,102 +539,19 @@ const initialize = (botToken, options) => {
   });
 
   bot.action('addInvoiceBtn', async (ctx) => {
-    try {
-      ctx.deleteMessage();
-      ctx.scene.leave();
-      const orderId = ctx.update.callback_query.message.text;
-      if (!orderId) return;
-      const order = await Order.findOne({
-        _id: orderId,
-        status: { $ne: 'EXPIRED' },
-      });
-      if (!order) return;
-      let amount = order.amount;
-      if (amount == 0) {
-          amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-          order.fee = amount * parseFloat(process.env.FEE);
-          order.amount = amount;
-      }
-      // If the price API fails we can't continue with the process
-      if (order.amount == 0) {
-        await messages.priceApiFailedMessage(bot, user);
-        return;
-      }
-      await order.save();
-      let buyer = await User.findOne({ _id: order.buyer_id });
-      let seller = await User.findOne({ _id: order.seller_id });
-      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
-    } catch (error) {
-      console.log(error);
-    }
+    await addInvoice(ctx, bot);
   });
 
   bot.action('cancelAddInvoiceBtn', async (ctx) => {
-    try {
-      ctx.deleteMessage();
-      ctx.scene.leave();
-      const orderId = ctx.update.callback_query.message.text;
-      if (!orderId) return;
-      const order = await Order.findOne({ _id: orderId });
-      if (!order) return;
-      order.buyer_id = null;
-      order.taken_at = null;
-      order.status = 'PENDING';
-      order.save();
-      await messages.publishSellOrderMessage(ctx, bot, order);
-    } catch (error) {
-      console.log(error);
-    }
+    await cancelAddInvoice(ctx, bot);
   });
 
-  bot.action('continueTakeBuyBtn', async (ctx) => {
-    try {
-      ctx.deleteMessage();
-      const orderId = ctx.update.callback_query.message.text;
-      if (!orderId) return;
-      const order = await Order.findOne({ _id: orderId });
-      if (!order) return;
-      const user = await User.findOne({ _id: order.seller_id });
-      // We create the hold invoice and show it to the seller
-      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
-      let amount;
-      if (order.amount == 0) {
-        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-        order.fee = amount * parseFloat(process.env.FEE);
-        order.amount = amount;
-      }
-      amount = Math.floor(order.amount + order.fee);
-      const { request, hash, secret } = await createHoldInvoice({
-        description,
-        amount,
-      });
-      order.hash = hash;
-      order.secret = secret;
-      await order.save();
-
-      // We monitor the invoice to know when the seller makes the payment
-      await subscribeInvoice(bot, hash);
-      await messages.showHoldInvoiceMessage(bot, user, request);
-    } catch (error) {
-      console.log(error);
-    }
+  bot.action('showHoldInvoiceBtn', async (ctx) => {
+    await showHoldInvoice(ctx, bot);
   });
 
-  bot.action('cancelTakeBuyBtn', async (ctx) => {
-    try {
-      ctx.deleteMessage();
-      const orderId = ctx.update.callback_query.message.text;
-      if (!orderId) return;
-      const order = await Order.findOne({ _id: orderId });
-      if (!order) return;
-      order.seller_id = null;
-      order.taken_at = null;
-      order.status = 'PENDING';
-      order.save();
-      await messages.publishBuyOrderMessage(ctx, bot, order);
-    } catch (error) {
-      console.log(error);
-    }
+  bot.action('cancelShowHoldInvoiceBtn', async (ctx) => {
+    await cancelShowHoldInvoice(ctx, bot);
   });
 
   bot.command('paytobuyer', async (ctx) => {
