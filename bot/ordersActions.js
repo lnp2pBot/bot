@@ -21,7 +21,8 @@ const createOrder = async (ctx, bot, user, {
   try {
     const username = user.show_username ? `@${user.username} está ` : ``;
     const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
-    const priceMarginText = !!priceMargin ? `Margen de precio: ${priceMargin}%\n` : ``;
+    priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
+    const priceMarginText = !!priceMargin ? `Cantidad final sats: n - (${priceMargin}%)\n` : ``;
     const currency = getCurrency(fiatCode);
     let currencyString = `${fiatCode} ${fiatAmount}`;
     if (!!currency) {
@@ -37,7 +38,7 @@ const createOrder = async (ctx, bot, user, {
         return;
       }
       amountText = '';
-      tasaText = 'Tasa: yadio.io\n';
+      tasaText = 'Tasa: yadio.io (n)\n';
     }
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
@@ -45,8 +46,8 @@ const createOrder = async (ctx, bot, user, {
       description += `Recibo pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += volumeTraded;
-      description += priceMarginText;
       description += tasaText;
+      description += priceMarginText;
       const order = new Order({
         description,
         amount,
@@ -72,8 +73,8 @@ const createOrder = async (ctx, bot, user, {
       description += `Pago por ${paymentMethod}\n`;
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += volumeTraded;
-      description += priceMarginText;
       description += tasaText;
+      description += priceMarginText;
       const order = new Order({
         description,
         amount,
