@@ -58,8 +58,10 @@ Tipo de orden: ${order.type}
 Status: ${order.status}
 Vendedor: @${sellerUser.username}
 Comprador: @${buyerUser.username}
-Monto sats: ${order.amount}
-Monto fiat: ${order.fiat_code} ${order.fiat_amount}
+Monto (sats): ${order.amount}
+Fee (sats): ${order.fee}
+Routing Fee (sats): ${order.routing_fee}
+Monto (fiat): ${order.fiat_code} ${order.fiat_amount}
 Método de pago: ${order.payment_method}
 seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}

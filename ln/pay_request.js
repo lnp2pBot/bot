@@ -41,6 +41,7 @@ const payToBuyer = async (bot, order) => {
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (!!payment && !!payment.confirmed_at) {
       order.status = 'SUCCESS';
+      order.routing_fee = payment.fee;
       await order.save();
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
@@ -68,7 +69,7 @@ const isPendingPayment = async (request) => {
 
     return !!is_pending;
   } catch (error) {
-    console.log(error);
+    console.log('isPendingPayment catch error: ',error);
   }
 }
 
