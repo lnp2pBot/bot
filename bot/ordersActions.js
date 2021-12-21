@@ -38,7 +38,7 @@ const createOrder = async (ctx, bot, user, {
         return;
       }
       amountText = '';
-      tasaText = `Tasa: yadio.io ${priceMarginText}\n`;
+      tasaText = `Tasa: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     }
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
