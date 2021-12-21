@@ -28,6 +28,7 @@ const attemptPendingPayments = async (bot) => {
             const buyerUser = await User.findOne({ _id: order.buyer_id });
             if (!!payment && !!payment.confirmed_at) {
                 order.status = 'SUCCESS';
+                order.routing_fee = payment.fee;
                 pending.paid = true;
                 // We add a new completed trade for the buyer
                 buyerUser.trades_completed++;
@@ -48,7 +49,7 @@ const attemptPendingPayments = async (bot) => {
                 await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El pago a la invoice de la compra Id: #${order._id} del usuario @${buyerUser.username} ha fallado!\n\nIntento de pago ${pending.attempts}`);
             }
         } catch (error) {
-            console.log(error);
+            console.log('attemptPendingPayments catch error:', error);
         } finally {
             await order.save();
             await pending.save();

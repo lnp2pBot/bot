@@ -384,8 +384,10 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El ${type} @${initiatorUser.username}
 ha iniciado una disputa con @${counterPartyUser.username} en la orden id: ${order._id}:
 Status: ${order.status}
-Monto sats: ${order.amount}
-Monto ${order.fiat_code}: ${order.fiat_amount}
+Monto (sats): ${order.amount}
+Fee (sats): ${order.fee}
+Routing Fee (sats): ${order.routing_fee}
+Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}
 Método de pago: ${order.payment_method}
 seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}
@@ -420,8 +422,10 @@ Status: ${order.status}
 Creator: ${creator}
 Buyer: @${buyer}
 Seller: @${seller}
-Monto sats: ${order.amount}
-Monto ${order.fiat_code}: ${order.fiat_amount}
+Monto (sats): ${order.amount}
+Fee (sats): ${order.fee}
+Routing Fee (sats): ${order.routing_fee}
+Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}
 Método de pago: ${order.payment_method}
 seller invoice hash: ${order.hash}
 seller invoice secret: ${order.secret}
