@@ -784,7 +784,14 @@ const sellerPaidHoldMessage = async (bot, user) => {
 
 const showInfoMessage = async (bot, user, info) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Node pubkey: ${info.public_key}\nNode uri: ${info.uris[0]}`);
+    const status = !!info.public_key;
+    const statusEmoji = status ? '🟢' : '🔴';
+    let fee = (process.env.FEE * 100).toString();
+    fee = fee.replace('.', '\\.');
+    await bot.telegram.sendMessage(user.tg_id, `*Node status*: ${statusEmoji}\n*Bot fee*: ${fee}%`, { parse_mode: "MarkdownV2" });
+    if (status) {
+      await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
+    }
   } catch (error) {
     console.log(error);
   }
