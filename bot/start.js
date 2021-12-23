@@ -45,7 +45,7 @@ const initialize = (botToken, options) => {
   const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
   });
-  const deleteOrdersJob = schedule.scheduleJob(`15 * * * *`, async () => {
+  const deleteOrdersJob = schedule.scheduleJob(`25 * * * *`, async () => {
     await deleteOrders(bot);
   });
 
