@@ -32,7 +32,7 @@ const {
   validateInvoice,
 } = require('./validations');
 const messages = require('./messages');
-const { attemptPendingPayments, cancelOrders } = require('../jobs');
+const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
 const addInvoiceWizard = require('./scenes');
 
 const initialize = (botToken, options) => {
@@ -44,6 +44,9 @@ const initialize = (botToken, options) => {
   });
   const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
+  });
+  const deleteOrdersJob = schedule.scheduleJob(`15 * * * *`, async () => {
+    await deleteOrders(bot);
   });
 
   const stage = new Scenes.Stage([addInvoiceWizard]);
