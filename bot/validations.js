@@ -68,7 +68,7 @@ const validateSellOrder = async (ctx, bot, user) => {
 
     priceMargin = parseInt(priceMargin);
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(bot, user, 'margen_de_precio');
+      await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
       return false;
     };
 
@@ -122,7 +122,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
 
     priceMargin = parseInt(priceMargin);
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(bot, user, 'margen_de_precio');
+      await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
       return false;
     };
 
