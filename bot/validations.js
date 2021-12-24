@@ -317,6 +317,7 @@ const validateReleaseOrder = async (bot, user, orderId) => {
     let where = {
       seller_id: user._id,
       status: 'WAITING_BUYER_INVOICE',
+      _id: orderId,
     };
     let order = await Order.findOne(where);
     if (!!order) {
