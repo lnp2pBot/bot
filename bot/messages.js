@@ -747,9 +747,9 @@ const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
   }
 };
 
-const invoicePaymentFailedMessage = async (bot, user, seller) => {
+const invoicePaymentFailedMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `@${seller.username} ha liberado los satoshis pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
+    await bot.telegram.sendMessage(user.tg_id, `⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
   } catch (error) {
     console.log(error);
   }
