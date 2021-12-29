@@ -1,10 +1,12 @@
 const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
+const messages = require('../bot/messages');
 
 const attemptPendingPayments = async (bot) => {
     const pendingPayments = await PendingPayment.find({
         paid: false,
         attempts: { $lt: 3 },
+        is_invoice_expired: false,
     });
     for (const pending of pendingPayments) {
         const order = await Order.findOne({ _id: pending.order_id });
@@ -26,6 +28,13 @@ const attemptPendingPayments = async (bot) => {
                 request: pending.payment_request,
             });
             const buyerUser = await User.findOne({ _id: order.buyer_id });
+            // If the buyer's invoice is expired we let it know and don't try to pay again
+            if (!!payment && payment.is_expired) {
+                pending.is_invoice_expired = true;
+                await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order);
+                return;
+            }
+
             if (!!payment && !!payment.confirmed_at) {
                 order.status = 'SUCCESS';
                 order.routing_fee = payment.fee;

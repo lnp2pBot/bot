@@ -152,6 +152,15 @@ const expiredInvoiceMessage = async (bot, user) => {
   }
 };
 
+const expiredInvoiceOnPendingMessage = async (bot, user, order) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `La factura ha expirado\nSi lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇`);
+    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <lightning_invoice>`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const requiredAddressInvoiceMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `La factura necesita una dirección destino`);
@@ -918,4 +927,5 @@ module.exports = {
   showInfoMessage,
   sendBuyerInfo2SellerMessage,
   updateUserSettingsMessage,
+  expiredInvoiceOnPendingMessage,
 };

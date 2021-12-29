@@ -11,6 +11,11 @@ const payRequest = async ({ request, amount }) => {
     if (!invoice) {
       return false;
     }
+    // If the invoice is expired we return is_expired = true
+    if (invoice.is_expired) {
+      return invoice;
+    }
+
     const params = {
       lnd,
       request,
@@ -37,12 +42,18 @@ const payToBuyer = async (bot, order) => {
       amount: order.amount,
     });
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    // If the buyer's invoice is expired we let it know and don't try to pay again
+    if (!!payment && payment.is_expired) {
+      await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order);
+      return;
+    }
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (!!payment && !!payment.confirmed_at) {
       console.log(`Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
       await order.save();
+      // TODO: We need to fix this, the seller should get reputation just after release
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
     } else {
