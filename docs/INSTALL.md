@@ -1,7 +1,6 @@
-# P2PLNBot
+# Installation
 
-## The following document is intended to provide the necessary information to prepare the work environment for the development of the bot by providing the technical and physical characterist
-ics of each element.
+## The following document is intended to provide the necessary information to prepare the work environment for the development of the bot by providing the technical and physical characteristics of each element.
 
 1. Purpose.
 2. Target
@@ -296,4 +295,3 @@ A request for payment will be sent to the seller and will be displayed in the `b
 17) Finally, the buyer will be notified that the transaction has been successfully completed.
 
 ![compra_exiosa](compra_exiosa.jpg)
-

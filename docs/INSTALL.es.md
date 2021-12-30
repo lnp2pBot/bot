@@ -1,7 +1,6 @@
-# P2PLNBot
+# Instalación
 
-## El siguiente documento tiene como próposito brindar la información necesaria para poder preparar el ambiente de trabajo para el desarrolo del bot brindando las características técnicas y 
-físicas de cada elemento.
+## El siguiente documento tiene como próposito brindar la información necesaria para poder preparar el ambiente de trabajo para el desarrolo del bot brindando las características técnicas y físicas de cada elemento. 
 
 1. Próposito.
 2. Objetivo.
@@ -297,72 +296,4 @@ Llegará una solicitud de pago al vendedor que se verá en el `bot.`
 
 ![compra_exiosa](compra_exiosa.jpg)
 
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
-A
 
