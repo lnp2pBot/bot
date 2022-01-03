@@ -83,3 +83,4 @@ $ npm start
 ```
 $ npm test
 ```
+[Here](docs/INSTALL.md#installation) we have a detailed guide for installation and first steps using the bot.

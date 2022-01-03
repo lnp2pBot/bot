@@ -1,19 +1,20 @@
 # Instalación
 
-## El siguiente documento tiene como próposito brindar la información necesaria para poder preparar el ambiente de trabajo para el desarrolo del bot brindando las características técnicas y físicas de cada elemento. 
+**El siguiente documento tiene como próposito brindar la información necesaria para poder preparar el ambiente de trabajo para el desarrolo del bot brindando las características técnicas y físicas de cada elemento.**
 
-1. Próposito.
-2. Objetivo.
-3. Alcance.
-4. Requerimientos técnicos.
-5. Preparar el ambiente de trabajo. 
-* Docker.
-* MongoDB.
-* P2plnbot.
-* Conectar con un nodo Lightning.
+## Tabla de contenido
+- [Próposito](#proposito)
+- [Objetivo](#objetivo)
+- [Alcance](#alcance)
+- [Requerimientos técnicos](#requerimientos-tecnicos)
+- [Preparar el ambiente de trabajo](#preparar-el-ambiente-de-trabajo)
+- [Docker](#docker)
+- [MongoDB](#mongodb)
+- [P2plnbot](#p2plnbot)
+- [Conectar con el nodo Lightning](#conectar-con-el-nodo-lightning)
 
 
-## Propósito.
+## Proposito.
 
 Permitir a las personas comerciar usando la red _Lightning_ con otras personas en Telegram. El bot _p2plnbot_ está desarrollado en nodejs y se conecta con un nodo LND (Lightning Network Daem
 on) es una implementación completa de un nodo Lightning Network. 
@@ -28,7 +29,7 @@ l vendedor cuando cada parte está de acuerdo con ello y justo después de ese m
 
 Llegar a todos los usuarios que requieran adquirir satoshis de Bitcoin sin custodia por medio de un bot en Telegram.
 
-## Requerimientos técnicos. 
+## Requerimientos tecnicos. 
 
 1) Computadora con acceso a internet. 
 2) Sistema de gestión de nodos [Polar.](https://lightningpolar.com/)
@@ -145,7 +146,7 @@ $ cp .env-sample .env
 $ vi .env
 ```
 
-## Conectar con el nodo de Lightning. 
+## Conectar con el nodo Lightning. 
 
 • Para conectar con un nodo `lnd`, necesitamos establecer algunas variables:
 
@@ -178,7 +179,7 @@ o de token que es que se colocará en este campo.
 ```
 LND_CERT_BASE64=
 LND_GRPC_HOST='127.0.0.1:10001'
-BOT_TOKEN='1862047833:AAEFx4SSm1sDdiw9vvHzChdtKpC4WuVFRjw'
+BOT_TOKEN=''
 FEE=.001
 DB_USER='mongoadmin'
 DB_PASS='secret'
@@ -188,8 +189,8 @@ DB_NAME='p2plnbot'
 
 INVOICE_EXPIRATION_WINDOW=60000
 HOLD_INVOICE_EXPIRATION_WINDOW=60
-CHANNEL='@testeandomascosas'
-ADMIN_CHANNEL='-1001323811481'
+CHANNEL='@tunuevocanal' # Canal creado por ti, el bot debe ser admin aquí
+ADMIN_CHANNEL='-10*****46' # Canal o grupo donde el bot envía info a admins, el bot debe ser admin
 
 MAX_DISPUTES=8
 ORDER_EXPIRATION_WINDOW=7200
@@ -214,7 +215,7 @@ $ npm test
 
 • Será necesario haber creado ya un bot con `BotFather`, tener otra número para usar con Telegram y haber abierto canales en Polar.
 
-1) Entrar al bot y teclear lo siguiente:
+1) Debe iniciar el bot con esa misma cuanta con el comando:
 
 ```
 /start 
@@ -224,22 +225,15 @@ Mostrará un menú, elegiremos la opción de `/sell` para vender con los requeri
 
 ![telegram](telegram.jpg)
 
-
-2) Debe iniciar el bot con esa misma cuanta con el comando:
-
-```
-/start
-```
-
-3) En el canal se verá la oferta, debe elegir comprar con el otro usuario de Telegram.
+2) En el canal se verá la oferta, debe elegir comprar con el otro usuario de Telegram.
 
 ![oferta](oferta.jpg)
 
-4) Tomar la orden en el canal. Dar clic en Comprar Satoshis.
+3) Tomar la orden en el canal. Dar clic en Comprar Satoshis.
 
 ![tomar_orden](tomar_orden.jpg)
 
-5) Entrar al bot y dar clic en continuar.
+4) Entrar al bot y dar clic en continuar.
 
 ![bot_continuar](bot_continuar.jpg)
 
@@ -247,19 +241,19 @@ Este mensaje es el que se le mostrará.
 
 ![bot_tomar_oferta](bot_tomar_oferta.jpg)
 
-6) Crear factura en Polar con algunos de los usuarios y pegar en Telegram. Elegir `Crear Factura` en la parte de comportamiento.
+5) Crear factura en Polar con algunos de los usuarios y pegar en Telegram. Elegir `Crear Factura` en la parte de comportamiento.
 
 ![crear_factura](crear_factura.jpg)
 
-7) Poner la cantidad de venta. 
+6) Poner la cantidad de venta. 
 
 ![cantidad](cantidad.jpg)
 
-8) Elegir `copiar y Cerrar.`
+7) Elegir `copiar y Cerrar.`
 
 ![copiar_factura](copiar_factura.jpg)
 
-9) Entrar al `bot` y pegar la factura. 
+8) Entrar al `bot` y pegar la factura. 
 
 ![factura](factura.jpg)
 
@@ -267,33 +261,31 @@ Llegará una solicitud de pago al vendedor que se verá en el `bot.`
 
 ![solicitud](solicitud.jpg)
 
-10) Pegar la factura en Polar y pagarla. 
+9) Pegar la factura en Polar y pagarla. 
 
 ![pagar](pagar.jpg)
 
-11) Cuando alguien tome la orden, el `bot` mostrará el siguiente mensaje:
+10) Cuando alguien tome la orden, el `bot` mostrará el siguiente mensaje:
 
 ![solicitud_de_pago](solicitud_de_pago.jpg)
 
-12) En el `bot` para el otro usuario se mostrará lo siguiente:
+11) En el `bot` para el otro usuario se mostrará lo siguiente:
 
 ![tomar_orden_venta](tomar_orden_venta.jpg)
 
-13) El usuario debe liberar los fondos con el comando `/fiatsent`, para ello debe copiar y pegar con el `id`
+12) El usuario debe liberar los fondos con el comando `/fiatsent`, para ello debe copiar y pegar con el `id`
 
 ![fiatsent](fiatsent.jpg)
 
-14) El `bot` indicará que el usuario ya envió el dinero fiat.
+13) El `bot` indicará que el usuario ya envió el dinero fiat.
 
 ![confirmar_envio](confirmar_envio.jpg)
 
 
-15) El usuario debe liberar los fondos con el comando `/release`, para ello debe copiar y pegar con el `id`
+14) El usuario debe liberar los fondos con el comando `/release`, para ello debe copiar y pegar con el `id`
 
 ![release](release.jpg)
 
-17) Finalmente se le avisará al comprador que su operación ha sido completada con éxito.
+15) Finalmente se le avisará al comprador que su operación ha sido completada con éxito.
 
 ![compra_exiosa](compra_exiosa.jpg)
-
-

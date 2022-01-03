@@ -1,16 +1,19 @@
 # Installation
 
-## The following document is intended to provide the necessary information to prepare the work environment for the development of the bot by providing the technical and physical characteristics of each element.
+*Spanish guide version [here](INSTALL.es.md)*
 
-1. Purpose.
-2. Target
-3. Scope.
-4. Technical requirements.
-5. Prepare the work environment. 
-* Docker.
-* MongoDB.
-* P2plnbot.
-* Connect to a Lightning node.
+**The following document is intended to provide the necessary information to prepare the work environment for the development of the bot by providing the technical and physical characteristics of each element.**
+
+## Table of contents
+- [Purpose](#purpose)
+- [Target](#target)
+- [Scope](#scope-of-the-system)
+- [Technical requirements](#technical-requirements)
+- [Prepare the environment](#prepare-the-environment)
+- [Docker](#docker)
+- [MongoDB](#mongodb)
+- [P2plnbot](#p2plnbot)
+- [Connect to the Lightning node](#connect-to-the-lightning-node)
 
 
 ## Purpose.
@@ -178,7 +181,7 @@ upper right corner with a rather small icon in the shape of a pencil. Tap on the
 ```
 LND_CERT_BASE64=
 LND_GRPC_HOST='127.0.0.1:10001'
-BOT_TOKEN='1862047833:AAEFx4SSm1sDdiw9vvHzChdtKpC4WuVFRjw'
+BOT_TOKEN=''
 FEE=.001
 DB_USER='mongoadmin'
 DB_PASS='secret'
@@ -188,8 +191,8 @@ DB_NAME='p2plnbot'
 
 INVOICE_EXPIRATION_WINDOW=60000
 HOLD_INVOICE_EXPIRATION_WINDOW=60
-CHANNEL='@testeandomascosas'
-ADMIN_CHANNEL='-1001323811481'
+CHANNEL='@yournewchannel' # channel created by you, the bot must be admin here
+ADMIN_CHANNEL='-10******46' # Info dumped from the bot @JsonDumpBot
 
 MAX_DISPUTES=8
 ORDER_EXPIRATION_WINDOW=7200
@@ -214,7 +217,7 @@ $ npm test
 
 • It will be necessary to have already created a bot with `BotFather`, to have another number to use with Telegram and to have opened channels in Polar.
 
-1) Enter the bot and type the following:
+1) You must start the bot with the same account with the command:
 
 ```
 /start 
@@ -224,22 +227,15 @@ It will display a menu, we will choose the `/sell` option to sell with the neces
 
 ![telegram](telegram.jpg)
 
-
-2) You must start the bot with the same account with the command:
-
-```
-/start
-```
-
-3) In the channel you will see the offer, you must choose to buy with the other Telegram user.
+2) In the channel you will see the offer, you must choose to buy with the other Telegram user.
 
 ![oferta](oferta.jpg)
 
-4) Take the order in the channel. Click on Buy Satoshis.
+3) Take the order in the channel. Click on Buy Satoshis.
 
 ![tomar_orden](tomar_orden.jpg)
 
-5) Enter the bot and click continue.
+4) Enter the bot and click continue.
 
 ![bot_continuar](bot_continuar.jpg)
 
@@ -247,19 +243,19 @@ This is the message that will be displayed.
 
 ![bot_tomar_oferta](bot_tomar_oferta.jpg)
 
-6) Create invoice in Polar with some of the users and paste in Telegram. Choose `Create Invoice` in the behavior part.
+5) Create invoice in Polar with some of the users and paste in Telegram. Choose `Create Invoice` in the behavior part.
 
 ![crear_factura](crear_factura.jpg)
 
-7) Set the sales quantity.
+6) Set the sales quantity.
 
 ![cantidad](cantidad.jpg)
 
-8) Choose `Copy and Close.`
+7) Choose `Copy and Close.`
 
 ![copiar_factura](copiar_factura.jpg)
 
-9) Enter the `bot` and paste the invoice. 
+8) Enter the `bot` and paste the invoice. 
 
 ![factura](factura.jpg)
 
@@ -267,31 +263,30 @@ A request for payment will be sent to the seller and will be displayed in the `b
 
 ![solicitud](solicitud.jpg)
 
-10) Paste the invoice in Polar and pay it. 
+9) Paste the invoice in Polar and pay it. 
 
 ![pagar](pagar.jpg)
 
-11) When someone takes the order, the `bot` will display the following message:
+10) When someone takes the order, the `bot` will display the following message:
 
 ![solicitud_de_pago](solicitud_de_pago.jpg)
 
-12) The following will be displayed in the `bot` for the other user:
+11) The following will be displayed in the `bot` for the other user:
 
 ![tomar_orden_venta](tomar_orden_venta.jpg)
 
-13) The user must release the funds with the command `/fiatsent`, to do this he must copy and paste with the `id`
+12) The user must release the funds with the command `/fiatsent`, to do this he must copy and paste with the `id`
 
 ![fiatsent](fiatsent.jpg)
 
-14) The `bot` will indicate that the user has already sent the fiat money.
+13) The `bot` will indicate that the user has already sent the fiat money.
 
 ![confirmar_envio](confirmar_envio.jpg)
 
-
-15) The user must release the funds with the `/release` command by copying and pasting with the `id`.
+14) The user must release the funds with the `/release` command by copying and pasting with the `id`.
 
 ![release](release.jpg)
 
-17) Finally, the buyer will be notified that the transaction has been successfully completed.
+15) Finally, the buyer will be notified that the transaction has been successfully completed.
 
 ![compra_exiosa](compra_exiosa.jpg)
