@@ -240,6 +240,32 @@ const initialize = (botToken, options) => {
     }
   });
 
+  // We allow users cancel all pending orders,
+  // pending orders are the ones that are not taken by another user
+  bot.command('cancelall', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+      if (!user) return;
+
+      const orders = await ordersActions.getOrders(bot, user, 'PENDING');
+
+      if (!orders) return;
+
+      for (const order of orders) {
+        order.status = 'CANCELED';
+        order.canceled_by = user._id;
+        await order.save();
+        // We delete the messages related to that order from the channel
+        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
+      }
+      // we sent a private message to the user
+      await messages.successCancelAllOrdersMessage(bot, user);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   bot.command('cancelorder', async (ctx) => {
     try {
       const user = await validateAdmin(ctx, bot);

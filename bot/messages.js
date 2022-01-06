@@ -681,6 +681,14 @@ const successCancelOrderMessage = async (bot, user, order) => {
   }
 };
 
+const successCancelAllOrdersMessage = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado todas tus órdenes publicadas`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const successCancelOrderByAdminMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `¡El admin ha cancelado la orden Id: #${order._id}!`);
@@ -929,4 +937,5 @@ module.exports = {
   sendBuyerInfo2SellerMessage,
   updateUserSettingsMessage,
   expiredInvoiceOnPendingMessage,
+  successCancelAllOrdersMessage,
 };

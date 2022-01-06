@@ -123,7 +123,7 @@ try {
 }
 };
 
-const getOrders = async (bot, user) => {
+const getOrders = async (bot, user, status) => {
   try {
     const where = {
       $and: [
@@ -133,20 +133,24 @@ const getOrders = async (bot, user) => {
             { seller_id: user._id },
           ],
         },
-        {
-          $or: [
-            { status: 'WAITING_PAYMENT' },
-            { status: 'WAITING_BUYER_INVOICE' },
-            { status: 'PENDING' },
-            { status: 'ACTIVE' },
-            { status: 'FIAT_SENT' },
-            { status: 'PAID_HOLD_INVOICE' },
-          ],
-        },
       ],
     };
 
+    if (!!status) {
+      where.$and.push({ status });
+    } else {
+      const $or = [
+        { status: 'WAITING_PAYMENT' },
+        { status: 'WAITING_BUYER_INVOICE' },
+        { status: 'PENDING' },
+        { status: 'ACTIVE' },
+        { status: 'FIAT_SENT' },
+        { status: 'PAID_HOLD_INVOICE' },
+      ];
+      where.$and.push({ $or });
+    }
     const orders = await Order.find(where);
+
     if (orders.length == 0) {
       await messages.notOrdersMessage(bot, user);
       return false;
