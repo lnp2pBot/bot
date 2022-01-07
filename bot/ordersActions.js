@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency } = require('../util');
+const { getCurrency, getBtcExchangePrice } = require('../util');
 
 const createOrder = async (ctx, bot, user, {
   type,
@@ -39,6 +39,9 @@ const createOrder = async (ctx, bot, user, {
       }
       amountText = '';
       tasaText = `Tasa: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
+    } else {
+      const exchangePrice = getBtcExchangePrice(fiatAmount, amount);
+      tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`
     }
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
