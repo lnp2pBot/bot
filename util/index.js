@@ -101,6 +101,18 @@ const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
   }
 };
 
+const getBtcExchangePrice = (fiatAmount, satsAmount) => {
+  try {
+    const satsPerBtc = 1e8;
+    const feeRate = (satsPerBtc * fiatAmount) / satsAmount;
+
+    return feeRate;
+  } catch (error) {
+    console.log(error)
+  }
+};
+
+
 // Convers a string to an array of arguments
 // Source: https://stackoverflow.com/a/39304272
 const parseArgs = (cmdline) => {
@@ -154,6 +166,7 @@ module.exports = {
   getCurrency,
   handleReputationItems,
   getBtcFiatPrice,
+  getBtcExchangePrice,
   parseArgs,
   getCurrenciesWithPrice,
 };
