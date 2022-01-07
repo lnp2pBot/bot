@@ -460,6 +460,13 @@ const mustBeANumber = async (bot, user, fieldName) => {
   }
 };
 
+const invalidLightningAddress = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Direccion lightning no válida`);
+  } catch (error) {
+    console.log(error);
+  }
+};
 const invalidInvoice = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Factura lightning no válida`);
@@ -889,6 +896,7 @@ module.exports = {
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumber,
+  invalidLightningAddress,
   invalidInvoice,
   helpMessage,
   mustBeGreatherEqThan,

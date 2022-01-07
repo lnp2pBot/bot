@@ -164,6 +164,14 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   }
 };
+const validateLightningAddress = async (bot, user, lightningAddress) =>{
+  const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+
+  if(!pattern.test(lightningAddress))
+      return false;
+
+  return true;
+}
 
 const validateInvoice = async (bot, user, lnInvoice) => {
   try {
@@ -506,6 +514,7 @@ module.exports = {
   validateSeller,
   validateParams,
   validateObjectId,
+  validateLightningAddress,
   isValidInvoice,
   validateUserWaitingOrder,
 };

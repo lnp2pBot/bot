@@ -30,6 +30,7 @@ const {
   validateParams,
   validateObjectId,
   validateInvoice,
+  validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
@@ -475,6 +476,28 @@ const initialize = (botToken, options) => {
       user.banned = true;
       await user.save();
       await messages.userBannedMessage(bot, adminUser);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('setLightningAddress', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user)
+          return;
+
+      let [ lightningAddress ] = await validateParams(ctx, bot, user, 2, '<lightningAddress>');
+      if (!lightningAddress) 
+          return;
+      if (!await validateLightningAddress(bot, user, lightningAddress)) 
+          return;
+
+      
+      user.lightningAddress = lightningAddress;
+      await user.save();
+      
     } catch (error) {
       console.log(error);
     }
