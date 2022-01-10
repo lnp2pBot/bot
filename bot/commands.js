@@ -90,37 +90,41 @@ const takesell = async (ctx, bot) => {
   }
 };
 
-const waitPayment = async (bot, buyer, seller, order,buyerInvoice)=>{
-  console.log("invoice: "+buyerInvoice);
-  order.buyer_invoice = buyerInvoice;
-  // If the buyer is the creator, at this moment the seller already paid the hold invoice
-  if (order.creator_id == order.buyer_id) {
-    order.status = 'ACTIVE';
-    // Message to buyer
-    await messages.addInvoiceMessage(bot, buyer, seller, order);
-    // Message to seller
-    await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
-  } else {
-    // We create a hold invoice
-    const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
-    const amount = Math.floor(order.amount + order.fee);
-    const { request, hash, secret } = await createHoldInvoice({
-      amount,
-      description,
-    });
-    order.hash = hash;
-    order.secret = secret;
-    order.taken_at = Date.now();
-    order.status = 'WAITING_PAYMENT';
-    // We monitor the invoice to know when the seller makes the payment
-    await subscribeInvoice(bot, hash);
+const waitPayment = async (bot, buyer, seller, order, buyerInvoice) => {
+  try {
+    order.buyer_invoice = buyerInvoice;
+    // If the buyer is the creator, at this moment the seller already paid the hold invoice
+    if (order.creator_id == order.buyer_id) {
+      order.status = 'ACTIVE';
+      // Message to buyer
+      await messages.addInvoiceMessage(bot, buyer, seller, order);
+      // Message to seller
+      await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
+    } else {
+      // We create a hold invoice
+      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+      const amount = Math.floor(order.amount + order.fee);
+      const { request, hash, secret } = await createHoldInvoice({
+        amount,
+        description,
+      });
+      order.hash = hash;
+      order.secret = secret;
+      order.taken_at = Date.now();
+      order.status = 'WAITING_PAYMENT';
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
 
-    // We send the hold invoice to the seller
-    await messages.invoicePaymentRequestMessage(bot, seller, request, order);
-    await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
+      // We send the hold invoice to the seller
+      await messages.invoicePaymentRequestMessage(bot, seller, request, order);
+      await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
+    }
+    await order.save();
+  } catch (error) {
+    console.log(error);
   }
-  await order.save();
 }
+
 const addInvoice = async (ctx, bot, order) => {
   try {
     ctx.deleteMessage();
@@ -154,16 +158,16 @@ const addInvoice = async (ctx, bot, order) => {
     await order.save();
     const seller = await User.findOne({ _id: order.seller_id });
 
-    if(buyer.lightning_address){
-      let laRes = await resolvLightningAddress(buyer.lightning_address,order.amount*1000);
-      if(!(laRes && laRes.pr)){
-        console.log(`LA ${buyer.lightning_address} not available`);
-        messages.unavalibleLightningAddress(bot,buyer,buyer.lightning_address)
+    if (buyer.lightning_address) {
+      let laRes = await resolvLightningAddress(buyer.lightning_address, order.amount * 1000);
+      if (!!laRes && !laRes.pr) {
+        console.log(`lightning address ${buyer.lightning_address} not available`);
+        messages.unavailableLightningAddress(bot, buyer,buyer.lightning_address);
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
-      }else{
-        await waitPayment(bot, buyer, seller, order,laRes.pr);
+      } else {
+        await waitPayment(bot, buyer, seller, order, laRes.pr);
       }
-    }else{
+    } else {
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     }
   } catch (error) {

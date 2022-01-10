@@ -464,7 +464,7 @@ const invalidLightningAddress = async (bot, user) => {
     console.log(error);
   }
 };
-const unavalibleLightningAddress = async (bot, user,la) => {
+const unavailableLightningAddress = async (bot, user,la) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Direccion lightning ${la} no disponible`);
   } catch (error) {
@@ -908,7 +908,7 @@ module.exports = {
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumber,
-  unavalibleLightningAddress,
+  unavailableLightningAddress,
   invalidLightningAddress,
   invalidInvoice,
   helpMessage,

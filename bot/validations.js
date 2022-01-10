@@ -3,7 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217, parseArgs } = require('../util');
-const { existLigthningAddress } = require("../lnurl/lnurl-pay");
+const { existLightningAddress } = require("../lnurl/lnurl-pay");
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -168,7 +168,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
 const validateLightningAddress = async (lightningAddress) =>{
   const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  return pattern.test(lightningAddress) && existLigthningAddress(lightningAddress);
+  return pattern.test(lightningAddress) && existLightningAddress(lightningAddress);
 }
 
 const validateInvoice = async (bot, user, lnInvoice) => {
@@ -209,7 +209,6 @@ const validateInvoice = async (bot, user, lnInvoice) => {
 
 const isValidInvoice = async (lnInvoice) => {
   try {
-    console.log("invoice: "+lnInvoice);
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
     if (!!invoice.tokens && invoice.tokens < 100) {
