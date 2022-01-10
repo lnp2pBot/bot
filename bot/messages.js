@@ -457,6 +457,20 @@ const mustBeANumber = async (bot, user, fieldName) => {
   }
 };
 
+const invalidLightningAddress = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Direccion lightning no válida`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const unavalibleLightningAddress = async (bot, user,la) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Direccion lightning ${la} no disponible`);
+  } catch (error) {
+    console.log(error);
+  }
+};
 const invalidInvoice = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Factura lightning no válida`);
@@ -473,6 +487,7 @@ const helpMessage = async (ctx) => {
 /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
 /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+/setaddress <address> - Permite al usuario poner una direccion de pago estatica
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
 /fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
@@ -654,6 +669,13 @@ const invoiceUpdatedPaymentWillBeSendMessage = async (bot, user) => {
 const invoiceAlreadyUpdatedMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const successSetAddress = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Direccion de pago guardada con exito`);
   } catch (error) {
     console.log(error);
   }
@@ -886,6 +908,8 @@ module.exports = {
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumber,
+  unavalibleLightningAddress,
+  invalidLightningAddress,
   invalidInvoice,
   helpMessage,
   mustBeGreatherEqThan,
@@ -929,6 +953,7 @@ module.exports = {
   waitingForBuyerOrderMessage,
   invoiceUpdatedPaymentWillBeSendMessage,
   invoiceAlreadyUpdatedMessage,
+  successSetAddress,
   sellerPaidHoldMessage,
   showInfoMessage,
   sendBuyerInfo2SellerMessage,
