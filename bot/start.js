@@ -488,7 +488,7 @@ const initialize = (botToken, options) => {
       if (!user)
           return;
 
-      let [ lightningAddress ] = await validateParams(ctx, bot, user, 2, '<lightningAddress>');
+      let [ lightningAddress ] = await validateParams(ctx, bot, user, 2, '\\<_lightningAddress_\\>');
       if (!lightningAddress) {
           return;
       }
