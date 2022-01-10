@@ -481,7 +481,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('setLightningAddress', async (ctx) => {
+  bot.command('setaddress', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -489,14 +489,17 @@ const initialize = (botToken, options) => {
           return;
 
       let [ lightningAddress ] = await validateParams(ctx, bot, user, 2, '<lightningAddress>');
-      if (!lightningAddress) 
+      if (!lightningAddress) {
           return;
-      if (!await validateLightningAddress(bot, user, lightningAddress)) 
+      }
+      if (!await validateLightningAddress(lightningAddress)) {
+          await messages.invalidLightningAddress(bot,user)
           return;
-
+      }
       
-      user.lightningAddress = lightningAddress;
+      user.lightning_address = lightningAddress;
       await user.save();
+      await messages.successSetAddress(bot, user)
       
     } catch (error) {
       console.log(error);

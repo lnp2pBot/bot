@@ -3,6 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217, parseArgs } = require('../util');
+const { existLigthningAddress } = require("../lnurl/lnurl-pay");
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -164,10 +165,10 @@ const validateBuyOrder = async (ctx, bot, user) => {
     return false;
   }
 };
-const validateLightningAddress = async (bot, user, lightningAddress) =>{
+const validateLightningAddress = async (lightningAddress) =>{
   const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  if(!pattern.test(lightningAddress))
+  if(!pattern.test(lightningAddress) && !existLigthningAddress(lightningAddress))
       return false;
 
   return true;

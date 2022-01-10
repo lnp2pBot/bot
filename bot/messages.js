@@ -483,6 +483,7 @@ const helpMessage = async (ctx) => {
 /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
 /setinvoice <order_id> <lightning_invoice> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+/setaddress <address> - Permite al usuario poner una direccion de pago estatica
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
 /fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
@@ -664,6 +665,13 @@ const invoiceUpdatedPaymentWillBeSendMessage = async (bot, user) => {
 const invoiceAlreadyUpdatedMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const successSetAddress = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Direccion de pago guardada con exito`);
   } catch (error) {
     console.log(error);
   }
@@ -940,6 +948,7 @@ module.exports = {
   waitingForBuyerOrderMessage,
   invoiceUpdatedPaymentWillBeSendMessage,
   invoiceAlreadyUpdatedMessage,
+  successSetAddress,
   sellerPaidHoldMessage,
   showInfoMessage,
   sendBuyerInfo2SellerMessage,

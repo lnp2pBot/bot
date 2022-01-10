@@ -4,7 +4,7 @@ const axios = require('axios').default;
 //	pr: String, // bech32-serialized lightning invoice
 //	routes: [], // an empty array
 //}
-const resolvLigthningAddress = async ({address,amount}) =>{
+const resolvLightningAddress = async (address,amount) =>{
     const [user,domain] = address.split("@");
     const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
@@ -20,12 +20,16 @@ const resolvLigthningAddress = async ({address,amount}) =>{
     }
     return (await axios.get(`${lnAddressRes.callback}${"?"}amount=${amount}`)).data;
 };
-const existLigthningAddress = async ({address}) => {
+const existLigthningAddress = async (address) => {
     const [user,domain] = address.split("@");
     const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
     try{
-        const lnAddressRes = (await axios.get(lnAddressQuery));
+        const lnAddressRes = (await axios.get(lnAddressQuery)).data;
+        if(lnAddressRes.tag != "payRequest"){
+            console.log("invalid response");
+            return false;
+        }
 
         return true;
     }catch(error){
@@ -36,6 +40,6 @@ const existLigthningAddress = async ({address}) => {
 
 
 module.exports = {
-    resolvLigthningAddress,
+    resolvLightningAddress,
     existLigthningAddress
 }
