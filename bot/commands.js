@@ -156,7 +156,7 @@ const addInvoice = async (ctx, bot, order) => {
 
     if(buyer.lightning_address){
       let laRes = await resolvLightningAddress(buyer.lightning_address,order.amount*1000);
-      if(laRes){
+      if(!(laRes && laRes.pr)){
         console.log(`LA ${buyer.lightning_address} not available`);
         messages.unavalibleLightningAddress(bot,buyer,buyer.lightning_address)
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
