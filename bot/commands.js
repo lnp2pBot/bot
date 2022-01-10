@@ -175,6 +175,50 @@ const addInvoice = async (ctx, bot, order) => {
   }
 };
 
+const rateUser = async (ctx, bot, rating, orderId) => {
+  try {
+    ctx.deleteMessage();
+    ctx.scene.leave();
+    if (!orderId) return;
+    const order = await Order.findOne({ _id: orderId });
+
+    if (!order) return;
+    const buyer = await User.findOne({ _id: order.buyer_id });
+    const seller = await User.findOne({ _id: order.buyer_id });
+
+    // User can only rate other after a successful exchange
+    if (order.status != 'SUCCESS') {
+      await messages.invalidDataMessage(bot, buyer);
+      return;
+    }
+    let targetUser = buyer;
+    if (ctx.from.id == buyer) {
+      targetUser = seller;
+    }
+
+    // TODO: After creation of `addUserReviewWizard` the review
+    // will be added inside the wizard
+    targetUser.reviews.push({
+      rating: rating,
+      review: '',
+    })
+
+    const totalReviews = targetUser.reviews.length;
+    const oldRating = targetUser.total_rating;
+    const lastRating = targetUser.reviews[totalReviews - 1].rating;
+    // newRating is an average of all the ratings given to the user.
+    // Its formula is based on the iterative method to compute mean,
+    // as in:
+    // https://math.stackexchange.com/questions/2148877/iterative-calculation-of-mean-and-standard-deviation
+    const newRating = oldRating + ((lastRating - oldRating) / totalReviews);
+    targetUser.total_rating = newRating || 0;
+
+    await targetUser.save()
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 const cancelAddInvoice = async (ctx, bot, order) => {
   try {
     if (!!ctx) {
@@ -299,6 +343,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 module.exports = {
   takebuy,
   takesell,
+  rateUser,
   cancelAddInvoice,
   waitPayment,
   addInvoice,

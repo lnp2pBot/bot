@@ -299,6 +299,22 @@ const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
   }
 };
 
+const rateUserMessage = async (bot, caller, order) => {
+  try {
+    const starButtons = []
+    for (let num = 5; num > 0; num--) {
+      starButtons.push([{text: '⭐'.repeat(num), callback_data: `showStarBtn(${num},${order._id})`}])
+    }
+    await bot.telegram.sendMessage(caller.tg_id, `Califica a tu contraparte:`, {
+      reply_markup: {
+        inline_keyboard: starButtons,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const notActiveOrderMessage = async (bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser procesada, asegúrate de que el Id es correcto`);
@@ -947,6 +963,7 @@ module.exports = {
   userCantTakeMoreThanOneWaitingOrderMessage,
   buyerReceivedSatsMessage,
   releasedSatsMessage,
+  rateUserMessage,
   listCurrenciesResponse,
   priceApiFailedMessage,
   showHoldInvoiceMessage,

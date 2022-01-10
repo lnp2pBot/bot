@@ -6,6 +6,7 @@ const ordersActions = require('./ordersActions');
 const {
   takebuy,
   takesell,
+  rateUser,
   cancelAddInvoice,
   addInvoice,
   cancelShowHoldInvoice,
@@ -607,6 +608,10 @@ const initialize = (botToken, options) => {
 
   bot.action('cancelShowHoldInvoiceBtn', async (ctx) => {
     await cancelShowHoldInvoice(ctx, bot);
+  });
+
+  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async (ctx) => {
+    await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
   });
 
   bot.command('paytobuyer', async (ctx) => {
