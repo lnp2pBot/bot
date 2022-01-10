@@ -484,7 +484,7 @@ const helpMessage = async (ctx) => {
     await ctx.reply(`/sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
 /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
 /info - Muestra información sobre el bot
-/showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
+/showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
 /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
 /setaddress <_lightning address_> - Permite al comprador indicar una dirección de pago estática (lightning address)
