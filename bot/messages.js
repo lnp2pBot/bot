@@ -487,7 +487,7 @@ const helpMessage = async (ctx) => {
 /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
 /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
-/setaddress <address> - Permite al comprador indicar una dirección de pago estática
+/setaddress <address> - Permite al comprador indicar una dirección de pago estática (lightning address)
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
 /fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
