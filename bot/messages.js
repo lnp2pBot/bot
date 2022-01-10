@@ -94,11 +94,11 @@ const mustBeIntMessage = async (bot, user, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/sell <monto en sats> <monto en fiat> <codigo fiat> <método de pago> [prima/descuento]`);
+    await bot.telegram.sendMessage(user.tg_id, "/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]", { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(user.tg_id, `Para crear una venta de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil, debes omitir los <> y los [].`);
-    await bot.telegram.sendMessage(user.tg_id, `/sell 100 212121 ves "pagomovil o mercantil"`);
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta con un incremento en el precio del 3% sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y '3' como último parámetro`);
-    await bot.telegram.sendMessage(user.tg_id, `/sell 0 212121 ves "pagomovil o transferencia" 3`);
+    await bot.telegram.sendMessage(user.tg_id, '/sell *100* *212121* *ves* "*pagomovil o mercantil*"', { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta con un incremento en el precio del 3% (prima) sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro`);
+    await bot.telegram.sendMessage(user.tg_id, "/sell *0* *212121* *ves* '*pagomovil o transferencia*' *3*", { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -106,11 +106,11 @@ const sellOrderCorrectFormatMessage = async (bot, user) => {
 
 const buyOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `/buy <monto en sats> <monto en fiat> <codigo fiat> <método de pago> [prima/descuento]`);
+    await bot.telegram.sendMessage(user.tg_id, "/buy \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]", { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(user.tg_id, `Para crear una compra de 100 satoshis por 212121 bolívares (VES) e indicamos que el método de pago fiat es pagomovil o transferencia del banco mercantil, debes omitir los <> y los [].`);
-    await bot.telegram.sendMessage(user.tg_id, `/buy 100 212121 ves "pagomovil o mercantil"`);
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una orden de compra con descuento en el precio del 2% sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y '-2' como último parámetro`);
-    await bot.telegram.sendMessage(user.tg_id, `/buy 0 212121 ves "pagomovil o transferencia" -2`);
+    await bot.telegram.sendMessage(user.tg_id, '/buy *100* *212121* *ves* "*pagomovil o mercantil*"', { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, "Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \\(cero\\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\\-2` como último parámetro", { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, '/buy *0* *212121* *ves* "*pagomovil o transferencia*" *\\-2*', { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -152,7 +152,7 @@ const expiredInvoiceMessage = async (bot, user) => {
 const expiredInvoiceOnPendingMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `La factura ha expirado\nSi lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇`);
-    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <lightning_invoice>`);
+    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <_factura lightning_>`, { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -415,7 +415,7 @@ buyer payment request: ${order.buyer_invoice}
 
 const customMessage = async (bot, user, message) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await bot.telegram.sendMessage(user.tg_id, message, { parse_mode: "MarkdownV2"});
   } catch (error) {
     console.log(error);
   }
@@ -467,20 +467,20 @@ const invalidInvoice = async (bot, user) => {
 
 const helpMessage = async (ctx) => {
   try {
-    await ctx.reply(`/sell <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [prima_o_descuento] - Crea una orden de venta
-/buy <monto_en_sats> <monto_en_fiat> <codigo_fiat> <método_de_pago> [prima_o_descuento] - Crea una orden de compra
+    await ctx.reply(`/sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
+/buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
 /info - Muestra información sobre el bot
 /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
-/setinvoice <order_id> <lightning_invoice> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+/setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
-/fiatsent <order_id> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
-/release <order_id> - El vendedor libera los satoshis
-/dispute <order_id> - Abre una disputa entre los participantes
-/cancel <order_id> - Cancela una orden que no ha sido tomada
-/cooperativecancel <order_id> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa
-/help - Mensaje de ayuda`);
+/fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
+/release <_order id_> - El vendedor libera los satoshis
+/dispute <_order id_> - Abre una disputa entre los participantes
+/cancel <_order id_> - Cancela una orden que no ha sido tomada
+/cooperativecancel <_order id_> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa
+/help - Mensaje de ayuda`, { parse_mode: 'Markdown' });
   } catch (error) {
     console.log(error);
   }
@@ -593,7 +593,7 @@ const cantTakeOwnOrderMessage = async (bot, user) => {
 const notLightningInvoiceMessage = async (bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `Por favor envíame una factura lightning por ${order.amount} sats`);
-    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <lightning_invoice>`);
+    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <_lightning_invoice_>`);
   } catch (error) {
     console.log(error);
   }

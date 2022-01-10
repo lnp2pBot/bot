@@ -51,7 +51,7 @@ describe('Telegram bot test', () => {
     userStub.restore();
     orderStub.restore();
     expect(updates.ok).to.be.equal(true);
-    expect(updates.result[0].message.text).to.be.equal('/sell <monto en sats> <monto en fiat> <codigo fiat> <método de pago> [prima/descuento]');
+    expect(updates.result[0].message.text).to.be.equal("/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_codigo fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]");
   });
 
   it('should create a /sell', async () => {
@@ -97,6 +97,6 @@ describe('Telegram bot test', () => {
     userStub.restore();
     orderStub.restore();
     expect(updates.ok).to.be.equal(true);
-    expect(updates.result[0].message.text).to.be.equal('/buy <monto en sats> <monto en fiat> <codigo fiat> <método de pago> [prima/descuento]');
+    expect(updates.result[0].message.text).to.be.equal("/buy \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_codigo fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]");
   });
 });
