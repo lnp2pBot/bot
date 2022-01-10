@@ -154,7 +154,7 @@ const addInvoice = async (ctx, bot, order) => {
     const seller = await User.findOne({ _id: order.seller_id });
 
     if(buyer.lightning_address){
-      await waitPayment(bot, buyer, seller, order,(await resolvLightningAddress(buyer.lightning_address)).pr);
+      await waitPayment(bot, buyer, seller, order,(await resolvLightningAddress(buyer.lightning_address,order.amount)).pr);
     }else{
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     }
