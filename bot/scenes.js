@@ -24,10 +24,10 @@ const addInvoiceWizard = new Scenes.WizardScene(
   },
   async (ctx) => {
     try {
-      if (ctx.message === undefined && order.buyer_invoice === undefined) {
+      if (ctx.message === undefined) {
         return ctx.scene.leave();
       }
-      const lnInvoice = ctx.message.text || order.buyer_invoice;
+      const lnInvoice = ctx.message.text;
       if (lnInvoice == 'exit') {
         await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos, si aún necesitas ingresar una invoice a la orden utiliza el comando /setinvoice');
         return ctx.scene.leave();

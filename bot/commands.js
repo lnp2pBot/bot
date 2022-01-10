@@ -91,6 +91,7 @@ const takesell = async (ctx, bot) => {
 };
 
 const waitPayment = async (bot, buyer, seller, order,buyerInvoice)=>{
+  console.log("invoice: "+buyerInvoice);
   order.buyer_invoice = buyerInvoice;
   // If the buyer is the creator, at this moment the seller already paid the hold invoice
   if (order.creator_id == order.buyer_id) {
@@ -147,14 +148,21 @@ const addInvoice = async (ctx, bot, order) => {
     }
     // If the price API fails we can't continue with the process
     if (order.amount == 0) {
-      await messages.priceApiFailedMessage(bot, user);
+      await messages.priceApiFailedMessage(bot, buyer);
       return;
     }
     await order.save();
     const seller = await User.findOne({ _id: order.seller_id });
 
     if(buyer.lightning_address){
-      await waitPayment(bot, buyer, seller, order,(await resolvLightningAddress(buyer.lightning_address,order.amount)).pr);
+      let laRes = await resolvLightningAddress(buyer.lightning_address,order.amount*1000);
+      if(laRes){
+        console.log(`LA ${buyer.lightning_address} not available`);
+        messages.unavalibleLightningAddress(bot,buyer,buyer.lightning_address)
+        ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+      }else{
+        await waitPayment(bot, buyer, seller, order,laRes.pr);
+      }
     }else{
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     }

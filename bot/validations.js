@@ -168,10 +168,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
 const validateLightningAddress = async (lightningAddress) =>{
   const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  if(!pattern.test(lightningAddress) && !existLigthningAddress(lightningAddress))
-      return false;
-
-  return true;
+  return pattern.test(lightningAddress) && existLigthningAddress(lightningAddress);
 }
 
 const validateInvoice = async (bot, user, lnInvoice) => {
@@ -212,6 +209,7 @@ const validateInvoice = async (bot, user, lnInvoice) => {
 
 const isValidInvoice = async (lnInvoice) => {
   try {
+    console.log("invoice: "+lnInvoice);
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
     if (!!invoice.tokens && invoice.tokens < 100) {
