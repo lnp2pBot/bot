@@ -2,8 +2,8 @@ const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
 const messages = require('./messages');
 const { Order } = require('../models');
-const { createHoldInvoice, subscribeInvoice } = require('../ln');
-const {resolvLigthningAddress} = require("../lnurl/lnurl-pay");
+const { waitPayment } = require("./commands")
+
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
@@ -11,12 +11,9 @@ const addInvoiceWizard = new Scenes.WizardScene(
     try {
       const { bot, buyer, order } = ctx.wizard.state;
       const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-      if(!buyer.lightningAddress){
-        await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis`);
-        await bot.telegram.sendMessage(buyer.tg_id, `Si no la envías en ${expirationTime} minutos la orden será cancelada`);
-      }else{
-        order.buyer_invoice = (await resolvLigthningAddress(buyer.lightningAddress,order.amount)).pr;
-      }
+      await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis`);
+      await bot.telegram.sendMessage(buyer.tg_id, `Si no la envías en ${expirationTime} minutos la orden será cancelada`);
+      
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();
       return ctx.wizard.next();
@@ -57,33 +54,8 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply('La factura tiene un monto incorrecto');
         return;
       }
-      order.buyer_invoice = lnInvoice;
-      // If the buyer is the creator, at this moment the seller already paid the hold invoice
-      if (order.creator_id == order.buyer_id) {
-        order.status = 'ACTIVE';
-        // Message to buyer
-        await messages.addInvoiceMessage(bot, buyer, seller, order);
-        // Message to seller
-        await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
-      } else {
-        // We create a hold invoice
-        const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
-        const amount = Math.floor(order.amount + order.fee);
-        const { request, hash, secret } = await createHoldInvoice({
-          amount,
-          description,
-        });
-        order.hash = hash;
-        order.secret = secret;
-        order.taken_at = Date.now();
-        order.status = 'WAITING_PAYMENT';
-        // We monitor the invoice to know when the seller makes the payment
-        await subscribeInvoice(bot, hash);
-        // We send the hold invoice to the seller
-        await messages.invoicePaymentRequestMessage(bot, seller, request, order);
-        await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
-      }
-      await order.save();
+      await waitPayment(bot, buyer, seller, order,lnInvoice)
+
       return ctx.scene.leave();
     } catch (error) {
       console.log(error);

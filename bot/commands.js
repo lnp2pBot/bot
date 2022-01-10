@@ -12,6 +12,7 @@ const {
 const { Order, User } = require('../models');
 const messages = require('./messages');
 const { getBtcFiatPrice } = require('../util');
+const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
 
 const takebuy = async (ctx, bot) => {
   try {
@@ -89,6 +90,36 @@ const takesell = async (ctx, bot) => {
   }
 };
 
+const waitPayment = async (bot, buyer, seller, order,buyerInvoice)=>{
+  order.buyer_invoice = buyerInvoice;
+  // If the buyer is the creator, at this moment the seller already paid the hold invoice
+  if (order.creator_id == order.buyer_id) {
+    order.status = 'ACTIVE';
+    // Message to buyer
+    await messages.addInvoiceMessage(bot, buyer, seller, order);
+    // Message to seller
+    await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
+  } else {
+    // We create a hold invoice
+    const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+    const amount = Math.floor(order.amount + order.fee);
+    const { request, hash, secret } = await createHoldInvoice({
+      amount,
+      description,
+    });
+    order.hash = hash;
+    order.secret = secret;
+    order.taken_at = Date.now();
+    order.status = 'WAITING_PAYMENT';
+    // We monitor the invoice to know when the seller makes the payment
+    await subscribeInvoice(bot, hash);
+
+    // We send the hold invoice to the seller
+    await messages.invoicePaymentRequestMessage(bot, seller, request, order);
+    await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
+  }
+  await order.save();
+}
 const addInvoice = async (ctx, bot, order) => {
   try {
     ctx.deleteMessage();
@@ -121,7 +152,12 @@ const addInvoice = async (ctx, bot, order) => {
     }
     await order.save();
     const seller = await User.findOne({ _id: order.seller_id });
-    ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+
+    if(buyer.lightning_address){
+      await waitPayment(bot, buyer, seller, order,(await resolvLightningAddress(buyer.lightning_address)).pr);
+    }else{
+      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -252,6 +288,7 @@ module.exports = {
   takebuy,
   takesell,
   cancelAddInvoice,
+  waitPayment,
   addInvoice,
   cancelShowHoldInvoice,
   showHoldInvoice,
