@@ -54,7 +54,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply('La factura tiene un monto incorrecto');
         return;
       }
-      await waitPayment(bot, buyer, seller, order,lnInvoice)
+      await waitPayment(ctx, bot, buyer, seller, order, lnInvoice)
 
       return ctx.scene.leave();
     } catch (error) {

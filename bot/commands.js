@@ -90,7 +90,7 @@ const takesell = async (ctx, bot) => {
   }
 };
 
-const waitPayment = async (bot, buyer, seller, order, buyerInvoice) => {
+const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
     order.buyer_invoice = buyerInvoice;
     // If the buyer is the creator, at this moment the seller already paid the hold invoice
@@ -165,7 +165,7 @@ const addInvoice = async (ctx, bot, order) => {
         messages.unavailableLightningAddress(bot, buyer,buyer.lightning_address);
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
       } else {
-        await waitPayment(bot, buyer, seller, order, laRes.pr);
+        await waitPayment(ctx, bot, buyer, seller, order, laRes.pr);
       }
     } else {
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
