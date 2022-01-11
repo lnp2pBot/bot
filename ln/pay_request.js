@@ -56,6 +56,10 @@ const payToBuyer = async (bot, order) => {
       // TODO: We need to fix this, the seller should get reputation just after release
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
+      Promise.all([
+        messages.rateUserMessage(bot, buyerUser, order),
+        messages.rateUserMessage(bot, sellerUser, order),
+      ]);
     } else {
       await messages.invoicePaymentFailedMessage(bot, buyerUser);
       const pp = new PendingPayment({
