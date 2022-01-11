@@ -487,7 +487,7 @@ const helpMessage = async (ctx) => {
 /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor
 /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
 /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
-/setaddress <_lightning address_> - Permite al comprador indicar una dirección de pago estática (lightning address)
+/setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
 /listorders - El usuario puede listar sus órdenes no finalizadas
 /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
 /fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
@@ -875,6 +875,14 @@ const updateUserSettingsMessage = async (bot, user, field, newState) => {
   }
 };
 
+const disableLightningAddress = async (bot, user) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, `Lightning address desactivada`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -960,4 +968,5 @@ module.exports = {
   updateUserSettingsMessage,
   expiredInvoiceOnPendingMessage,
   successCancelAllOrdersMessage,
+  disableLightningAddress,
 };
