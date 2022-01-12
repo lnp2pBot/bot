@@ -204,7 +204,14 @@ const rateUser = async (ctx, bot, rating, orderId) => {
       rating: rating,
       review: '',
     })
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+const saveUserReview = async (targetUser, review) => {
+  try {
+    targetUser.reviews.push(review)
     const totalReviews = targetUser.reviews.length;
     const oldRating = targetUser.total_rating;
     const lastRating = targetUser.reviews[totalReviews - 1].rating;
@@ -346,6 +353,7 @@ module.exports = {
   takebuy,
   takesell,
   rateUser,
+  saveUserReview,
   cancelAddInvoice,
   waitPayment,
   addInvoice,
