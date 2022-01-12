@@ -179,6 +179,8 @@ const rateUser = async (ctx, bot, rating, orderId) => {
   try {
     ctx.deleteMessage();
     ctx.scene.leave();
+    const callerId = ctx.from.id;
+
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
 
@@ -192,7 +194,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
       return;
     }
     let targetUser = buyer;
-    if (ctx.from.id == buyer) {
+    if (callerId == buyer.tg_id) {
       targetUser = seller;
     }
 
@@ -217,7 +219,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const cancelAddInvoice = async (ctx, bot, order) => {
   try {
