@@ -198,8 +198,6 @@ const rateUser = async (ctx, bot, rating, orderId) => {
       targetUser = seller;
     }
 
-    // TODO: After creation of `addUserReviewWizard` the review
-    // will be added inside the wizard
     ctx.scene.enter('ADD_USER_REVIEW_WIZARD_SCENE_ID', { bot, callerId, targetUser, rating });
   } catch (error) {
     console.log(error);
