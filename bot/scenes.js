@@ -100,19 +100,17 @@ const addUserReviewWizard = new Scenes.WizardScene(
         return;
       }
 
+      ctx.deleteMessage();
       if (comment == 'exit') {
         const exitMessage = await ctx.reply(
-          'Saliendo del modo wizard, ahora podras escribir comandos.\nSolo sera guardado el puntaje ingresado.'
+          'Saliendo del modo wizard, ahora podras escribir comandos.\nSolo fue guardado el puntaje ingresado.'
         );
-        ctx.scene.session.prev_message_id.push(exitMessage.message_id);
       } else {
         response.review = comment;
       }
 
       await saveUserReview(targetUser, response);
-  
-      ctx.deleteMessage();
-
+      
       const sceneMessages = ctx.scene.session.prev_message_id;
       if (Array.isArray(sceneMessages) && sceneMessages.length > 0) {
         sceneMessages.forEach((message) => ctx.deleteMessage(message));
