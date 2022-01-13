@@ -179,6 +179,8 @@ const rateUser = async (ctx, bot, rating, orderId) => {
   try {
     ctx.deleteMessage();
     ctx.scene.leave();
+    const callerId = ctx.from.id;
+
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
 
@@ -192,17 +194,19 @@ const rateUser = async (ctx, bot, rating, orderId) => {
       return;
     }
     let targetUser = buyer;
-    if (ctx.from.id == buyer) {
+    if (callerId == buyer.tg_id) {
       targetUser = seller;
     }
 
-    // TODO: After creation of `addUserReviewWizard` the review
-    // will be added inside the wizard
-    targetUser.reviews.push({
-      rating: rating,
-      review: '',
-    })
+    ctx.scene.enter('ADD_USER_REVIEW_WIZARD_SCENE_ID', { bot, callerId, targetUser, rating });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+const saveUserReview = async (targetUser, review) => {
+  try {
+    targetUser.reviews.push(review)
     const totalReviews = targetUser.reviews.length;
     const oldRating = targetUser.total_rating;
     const lastRating = targetUser.reviews[totalReviews - 1].rating;
@@ -217,7 +221,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const cancelAddInvoice = async (ctx, bot, order) => {
   try {
@@ -344,6 +348,7 @@ module.exports = {
   takebuy,
   takesell,
   rateUser,
+  saveUserReview,
   cancelAddInvoice,
   waitPayment,
   addInvoice,
