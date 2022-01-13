@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency, getBtcExchangePrice } = require('../util');
+const { getCurrency, getBtcExchangePrice, getEmojiRate } = require('../util');
 
 const createOrder = async (ctx, bot, user, {
   type,
@@ -18,6 +18,7 @@ const createOrder = async (ctx, bot, user, {
   const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
+  const totalRating = type == 'sell' ? seller.total_rating : buyer.total_rating;
   try {
     const username = user.show_username ? `@${user.username} está ` : ``;
     const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
@@ -30,6 +31,7 @@ const createOrder = async (ctx, bot, user, {
     }
     let amountText = `${amount} `;
     let tasaText = '';
+    let rateText = '';
     let priceFromAPI = false;
     if (amount == 0) {
       priceFromAPI = true;
@@ -43,6 +45,12 @@ const createOrder = async (ctx, bot, user, {
       const exchangePrice = getBtcExchangePrice(fiatAmount, amount);
       tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`
     }
+
+    if (!!totalRating) {
+      const stars = getEmojiRate(totalRating);
+      rateText = `${totalRating} ${stars}\n`;
+    }
+
     if (type === 'sell') {
       const fee = amount * parseFloat(process.env.FEE);
       let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
@@ -50,6 +58,7 @@ const createOrder = async (ctx, bot, user, {
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += volumeTraded;
       description += tasaText;
+      description += rateText;
       const order = new Order({
         description,
         amount,
@@ -76,6 +85,7 @@ const createOrder = async (ctx, bot, user, {
       description += `Tiene ${trades} operaciones exitosas\n`;
       description += volumeTraded;
       description += tasaText;
+      description += rateText;
       const order = new Order({
         description,
         amount,

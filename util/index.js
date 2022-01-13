@@ -160,6 +160,16 @@ const getCurrenciesWithPrice = () => {
   return withPrice;
 };
 
+const getEmojiRate = (rate) => {
+  const star = '⭐';
+  const roundedRate = Math.round(rate);
+  const output = [];
+  for (let i = 0; i < roundedRate; i++)
+    output.push(star);
+
+  return output.join('');
+}
+
 module.exports = {
   isIso4217,
   plural,
@@ -169,4 +179,5 @@ module.exports = {
   getBtcExchangePrice,
   parseArgs,
   getCurrenciesWithPrice,
+  getEmojiRate,
 };
