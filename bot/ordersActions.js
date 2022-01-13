@@ -19,6 +19,7 @@ const createOrder = async (ctx, bot, user, {
   const trades = type == 'sell' ? seller.trades_completed : buyer.trades_completed;
   const volume = type == 'sell' ? seller.volume_traded : buyer.volume_traded;
   const totalRating = type == 'sell' ? seller.total_rating : buyer.total_rating;
+  const totalReviews = type == 'sell' ? seller.reviews.length : buyer.reviews.length;
   try {
     const username = user.show_username ? `@${user.username} está ` : ``;
     const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
@@ -48,7 +49,7 @@ const createOrder = async (ctx, bot, user, {
 
     if (!!totalRating) {
       const stars = getEmojiRate(totalRating);
-      rateText = `${totalRating} ${stars}\n`;
+      rateText = `${totalRating} ${stars} (${totalReviews})\n`;
     }
 
     if (type === 'sell') {
