@@ -444,7 +444,7 @@ const initialize = (botToken, options) => {
 
         order.status = 'CANCELED';
         // We sent a private message to the users
-        await messages.successCancelOrderMessage(bot, initiatorUser, order);
+        await messages.successCancelOrderMessage(bot, initiatorUser, order, true);
         await messages.okCooperativeCancelMessage(bot, counterPartyUser, order);
       } else {
         await messages.initCooperativeCancelMessage(bot, initiatorUser, order);

@@ -705,10 +705,10 @@ const badStatusOnCancelOrderMessage = async (bot, user) => {
   }
 };
 
-const successCancelOrderMessage = async (bot, user, order) => {
+const successCancelOrderMessage = async (bot, user, order, sendRefundMessage) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: #${order._id}!`);
-    if (order.seller_id == user._id) {
+    if (order.seller_id == user._id && !!sendRefundMessage) {
       await refundCooperativeCancelMessage(bot, user);
     }
   } catch (error) {
