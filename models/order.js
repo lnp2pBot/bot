@@ -7,7 +7,7 @@ const OrderSchema = new mongoose.Schema({
     min: 0,
   },
   fee: { type: Number, min: 0 },
-  routing_fee: { type: Number, min: 0 },
+  routing_fee: { type: Number, min: 0, default: 0 },
   hash: {
     type: String,
     index: {
