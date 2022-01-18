@@ -1,10 +1,19 @@
 require('dotenv').config();
 const { start } = require('./bot');
 const mongoConnect = require('./db_connect');
+const { resubscribeInvoices } = require('./ln');
 
-process.on('unhandledRejection', e => { console.log (e); });
+(async () => {
+    process.on('unhandledRejection', e => { console.log (e); });
 
-process.on('uncaughtException', e => { console.log (e); });
+    process.on('uncaughtException', e => { console.log (e); });
 
-mongoConnect();
-start(process.env.BOT_TOKEN);
+    mongoose = mongoConnect();
+    mongoose.connection
+    .once('open', async () => {
+        console.log('Connected to Mongo instance.');
+        const bot = start(process.env.BOT_TOKEN);
+        await resubscribeInvoices(bot);
+    })
+    .on('error', error => console.log('Error connecting to Mongo:', error))
+})();

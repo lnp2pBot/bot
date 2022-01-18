@@ -722,9 +722,13 @@ const start = (botToken) => {
 
   bot.launch();
 
+  console.log('Bot launched.');
+
   // Enable graceful stop
   process.once('SIGINT', () => bot.stop('SIGINT'));
   process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+  return bot;
 };
 
 module.exports = { initialize, start };

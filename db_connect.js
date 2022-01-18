@@ -12,9 +12,7 @@ const connect = () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   });
-  mongoose.connection
-    .once('open', () => console.log('Connected to Mongo instance.'))
-    .on('error', error => console.log('Error connecting to Mongo:', error));
+  return mongoose
 };
 
 module.exports = connect;
