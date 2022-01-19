@@ -186,7 +186,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
 
     if (!order) return;
     const buyer = await User.findOne({ _id: order.buyer_id });
-    const seller = await User.findOne({ _id: order.buyer_id });
+    const seller = await User.findOne({ _id: order.seller_id });
 
     // User can only rate other after a successful exchange
     if (order.status != 'SUCCESS') {
