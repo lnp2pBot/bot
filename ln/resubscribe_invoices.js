@@ -14,16 +14,17 @@ const resubscribeInvoices = async (bot) => {
     if (Array.isArray(unconfirmedInvoices) && unconfirmedInvoices.length > 0) {
         const heldInvoices = unconfirmedInvoices.filter(isHeld);
         for (const invoice of heldInvoices) {
-            const orderInDB = Order.findById(invoice.id);
+            const orderInDB = await Order.findOne({ hash: invoice.id });
             if(!!orderInDB) {
-                await subscribeInvoice(bot, invoice.id);
-                invoicesReSubscribed++;
+              console.log(`Re-subscribing: invoice with hash ${invoice.id} is being held!`);
+              await subscribeInvoice(bot, invoice.id, true);
+              invoicesReSubscribed++;
             } 
         };
     }
     console.log(`Invoices resubscribed: ${invoicesReSubscribed}`);
   } catch (error) {
-    console.log(`resuscribeInvoice catch: ${error}`);
+    console.log(`ResuscribeInvoice catch: ${error}`);
     return false;
   }
 };
