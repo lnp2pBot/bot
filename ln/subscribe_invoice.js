@@ -4,11 +4,11 @@ const { payToBuyer } = require('./pay_request');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
 
-const subscribeInvoice = async (bot, id) => {
+const subscribeInvoice = async (bot, id, resub) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async (invoice) => {
-      if (invoice.is_held) {
+      if (invoice.is_held && !resub) {
         console.log(`invoice with hash: ${id} is being held!`);
         const order = await Order.findOne({ hash: invoice.id });
         const buyerUser = await User.findOne({ _id: order.buyer_id });
