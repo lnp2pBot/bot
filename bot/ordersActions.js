@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency, getBtcExchangePrice, getEmojiRate } = require('../util');
+const { getCurrency, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
 
 const createOrder = async (ctx, bot, user, {
   type,
@@ -49,7 +49,8 @@ const createOrder = async (ctx, bot, user, {
 
     if (!!totalRating) {
       const stars = getEmojiRate(totalRating);
-      rateText = `${totalRating} ${stars} (${totalReviews})\n`;
+      const roundedRating = decimalRound(totalRating, -1);
+      rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
     }
 
     if (type === 'sell') {
