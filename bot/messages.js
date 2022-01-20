@@ -284,7 +284,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
 
 const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats, en cuanto realice el pago los pondremos en contacto`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden #${order._id}, en cuanto realice el pago los pondremos en contacto`);
   } catch (error) {
     console.log(error);
   }
