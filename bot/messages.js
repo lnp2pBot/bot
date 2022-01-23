@@ -1,3 +1,4 @@
+const { TelegramError } = require('telegraf');
 const { plural, getCurrency } = require('../util');
 
 const startMessage = async (ctx) => {
@@ -41,7 +42,10 @@ const initBotErrorMessage = async (bot, tgId) => {
   try {
     await bot.telegram.sendMessage(tgId, `Para usar este Bot primero debes inicializar el bot con el comando /start`);
   } catch (error) {
-    console.log(error);
+    // Ignore TelegramError - Forbidden request
+    if (!(error instanceof TelegramError && error.response.error_code == 403)) {
+      console.log(error);
+    }
   }
 };
 
