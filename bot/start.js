@@ -87,7 +87,6 @@ const initialize = (botToken, options) => {
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'sell',
         amount,
-        seller: user,
         fiatAmount,
         fiatCode,
         paymentMethod,
@@ -118,7 +117,6 @@ const initialize = (botToken, options) => {
       const order = await ordersActions.createOrder(ctx, bot, user, {
         type: 'buy',
         amount,
-        buyer: user,
         fiatAmount,
         fiatCode,
         paymentMethod,
