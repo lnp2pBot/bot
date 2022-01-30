@@ -51,7 +51,7 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  const stage = new Scenes.Stage([addInvoiceWizard, addUserReviewWizard]);
+  const stage = new Scenes.Stage([addInvoiceWizard]);
   bot.use(session());
 
   bot.use(stage.middleware());
