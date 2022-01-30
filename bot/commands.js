@@ -198,7 +198,8 @@ const rateUser = async (ctx, bot, rating, orderId) => {
       targetUser = seller;
     }
 
-    ctx.scene.enter('ADD_USER_REVIEW_WIZARD_SCENE_ID', { bot, callerId, targetUser, rating });
+    const response = { rating };
+    await saveUserReview(targetUser, response);
   } catch (error) {
     console.log(error);
   }

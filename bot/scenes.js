@@ -1,6 +1,5 @@
 const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
-const messages = require('./messages');
 const { Order } = require('../models');
 const { waitPayment, saveUserReview } = require("./commands")
 
@@ -63,67 +62,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
   },
 );
 
-const addUserReviewWizard = new Scenes.WizardScene(
-  'ADD_USER_REVIEW_WIZARD_SCENE_ID',
-  async (ctx) => {
-    try {
-      const { bot, callerId } = ctx.wizard.state;
-      const message = await bot.telegram.sendMessage(callerId,
-        'Tienes 140 caracteres extras para ponderar a tu contraparte:'
-      );
-      ctx.scene.session.prev_message_id = [message.message_id];
-      return ctx.wizard.next()
-    } catch (error) {
-      console.log(error)
-      return ctx.reply('Ha ocurrido un error, por favor contacta al administrador');
-    }
-  },
-  async (ctx) => {
-    try {
-      const { targetUser, rating } = ctx.wizard.state;
-      let response = {
-        rating: rating,
-      };
-
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
-
-      const comment = ctx.message.text;
-      if (comment.length > 140) {
-        ctx.deleteMessage()
-        const warning = await ctx.reply(
-          'Por favor, mantenga su comentario dentro de la cantidad de caracteres solicitada. Puede editarlo a continuación:'
-        );
-        const commentTooLong = await ctx.reply(`${comment}`);
-        ctx.scene.session.prev_message_id.push(warning.message_id, commentTooLong.message_id);
-        return;
-      }
-
-      ctx.deleteMessage();
-      if (comment == 'exit') {
-        const exitMessage = await ctx.reply(
-          'Saliendo del modo wizard, ahora podras escribir comandos.\nSolo fue guardado el puntaje ingresado.'
-        );
-      } else {
-        response.review = comment;
-      }
-
-      await saveUserReview(targetUser, response);
-      
-      const sceneMessages = ctx.scene.session.prev_message_id;
-      if (Array.isArray(sceneMessages) && sceneMessages.length > 0) {
-        sceneMessages.forEach((message) => ctx.deleteMessage(message));
-      }
-
-      return ctx.scene.leave();
-    } catch (error) {
-      console.log(error);
-    }
-  },
-);
-
 module.exports = {
   addInvoiceWizard,
-  addUserReviewWizard,
 };
