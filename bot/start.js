@@ -35,7 +35,7 @@ const {
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
-const { addInvoiceWizard, addFiatAmountWizard } = require('./scenes');
+const { addInvoiceWizard, addFiatAmountWizard, communityWizard } = require('./scenes');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -51,7 +51,7 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  const stage = new Scenes.Stage([addInvoiceWizard, addFiatAmountWizard]);
+  const stage = new Scenes.Stage([addInvoiceWizard, addFiatAmountWizard, communityWizard]);
   bot.use(session());
 
   bot.use(stage.middleware());
@@ -620,6 +620,14 @@ const initialize = (botToken, options) => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
   });
 
+  bot.action('onechannel', async (ctx) => {
+    console.log('eligio un canal');
+  });
+
+  bot.action('twochannels', async (ctx) => {
+    console.log('eligio dos canales');
+  });
+  
   bot.command('paytobuyer', async (ctx) => {
     try {
       const adminUser = await validateAdmin(ctx, bot);
@@ -707,6 +715,18 @@ const initialize = (botToken, options) => {
       user.show_volume_traded = show;
       await user.save();
       messages.updateUserSettingsMessage(bot, user, 'showvolume', show);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('community', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
     } catch (error) {
       console.log(error);
     }

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 const UserReviewSchema = new mongoose.Schema({
   rating: { type: Number, min: 0, max: 5, default: 0 },
-  review: { type: String, trim: true, maxlength: 140 },
   reviewed_at: { type: Date, default: Date.now },
 })
 

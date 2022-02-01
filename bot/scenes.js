@@ -1,9 +1,7 @@
-const { Scenes } = require('telegraf');
+const { Scenes, Extra, Markup } = require('telegraf')
 const { isValidInvoice } = require('./validations');
-const { Order } = require('../models');
-const { waitPayment, addInvoice, showHoldInvoice } = require("./commands")
-const { getCurrency } = require('../util');
-
+const { Order, Community, User } = require('../models');
+const { waitPayment } = require("./commands")
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
@@ -61,9 +59,183 @@ const addInvoiceWizard = new Scenes.WizardScene(
       return ctx.scene.leave();
     } catch (error) {
       console.log(error);
+      ctx.scene.leave();
     }
   },
 );
+
+const communityWizard = new Scenes.WizardScene(
+  'COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+      const message = await ctx.reply(
+        'Ingresa el nombre de tu comunidad:',
+      );
+      ctx.wizard.state.community = {};
+      ctx.wizard.state.prev_message_id = [message.message_id];
+  
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+  
+      const name = ctx.message.text;
+      if (name == 'exit') {
+        await ctx.reply('Saliendo del modo wizard, ahora podrás escribir comandos.');
+        return ctx.scene.leave();
+      }
+
+      if (name.length > 20) {
+        ctx.deleteMessage();
+        const warning = await ctx.reply(
+          'El nombre debe tener un máximo de 20 caracteres. Puede editarlo a continuación:'
+        );
+        const nameTooLong = await ctx.reply(`${name}`);
+        ctx.wizard.state.prev_message_id.push(warning.message_id, nameTooLong.message_id);
+  
+        return;
+      }
+      ctx.wizard.state.community.name = name;
+      const reply = `Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como ` +
+      `tú deben ser administradores del grupo:` +
+      `\n\nP. ej: @MiComunidad`;
+      await ctx.reply(reply);
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      const { bot, user } = ctx.wizard.state;
+      const groupId = ctx.message.text;
+      if (groupId == 'exit') {
+        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        return ctx.scene.leave();
+      }
+      await isGroupAdmin(groupId, user, bot.telegram);
+      ctx.wizard.state.community.groupId = groupId;
+      ctx.wizard.state.community.creator_id = user._id;
+      const reply = `Las ofertas en tu comunidad deben publicarse en un canal de telegram, ` +
+      `si me indicas un canal tanto las compras como las ventas se publicarán en ese canal, ` +
+      `si me indicas dos canales se publicaran las compras en uno y las ventas en el otro, ` +
+      `tanto el bot como tú deben ser administradores de ambos canales.` +
+      `\n\nPuedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa ` +
+      `dos nombres separados por un espacio.` +
+      `\n\nP. ej: @MiComunidadCompras @MiComunidadVentas`;
+      await ctx.reply(reply);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      ctx.reply(error.toString());
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      const { bot, user, community } = ctx.wizard.state;
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+      if (ctx.message.text == 'exit') {
+        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        return ctx.scene.leave();
+      }
+      const chan = ctx.message.text.split(" ");
+      if (chan.length > 0 && chan.length < 3) {
+        for (let i = 0; i < chan.length; i++) {
+          await isGroupAdmin(chan[i], user, bot.telegram);
+          community[`channel${i+1}`] = chan[i];
+        }
+      } else {
+        await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
+      }
+      ctx.wizard.state.community = community;
+      await ctx.reply('Ahora ingresa los username de los usuarios que se encargan de resolver disputas, cada username separado por un espacio en blanco');
+
+      return ctx.wizard.next();
+    } catch (error) {
+      ctx.reply(error.toString());
+      console.log(error);
+    }
+  },
+  async (ctx) => {
+    try {
+      const { community } = ctx.wizard.state;
+      community.solvers = [];
+      const groupId = ctx.message.text;
+      if (groupId == 'exit') {
+        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        return ctx.scene.leave();
+      }
+      const usernames = ctx.message.text.split(" ");
+      if (usernames.length > 0 && usernames.length < 10) {
+        for (let i = 0; i < usernames.length; i++) {
+          const user = await User.findOne({ username: usernames[i] });
+          if (!!user) {
+            community.solvers.push(user._id.toString());
+          }
+        }
+      } else {
+        await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
+      }
+      ctx.wizard.state.community.solvers = community.solvers;
+      await ctx.reply('Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal');
+
+      return ctx.wizard.next();
+    } catch (error) {
+      ctx.reply(error.toString());
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      const { bot, user, community } = ctx.wizard.state;
+      const chan = ctx.message.text;
+      if (chan == 'exit') {
+        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        return ctx.scene.leave();
+      }
+      await isGroupAdmin(chan, user, bot.telegram);
+      community.channel3 = chan;
+
+      const newCommunity = new Community(community);
+      await newCommunity.save();
+      await ctx.reply('Felicidades! has creado tu comunidad');
+      return ctx.scene.leave();
+    } catch (error) {
+      ctx.reply(error.toString());
+      ctx.scene.leave();
+    }
+  },
+);
+
+const isGroupAdmin = async (groupId, user, telegram) => {
+  try {
+    const member = await telegram.getChatMember(groupId, parseInt(user.tg_id));
+    if (member && (member.status === 'creator' || member.status === 'administrator')) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.log(error);
+    if (!!error.response && error.response.error_code == 400) {
+      throw new Error('No tienes permisos de administrador en este grupo o canal');
+    }
+  }
+};
 
 const addFiatAmountWizard = new Scenes.WizardScene(
   'ADD_FIAT_AMOUNT_WIZARD_SCENE_ID',
@@ -123,5 +295,6 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
 module.exports = {
   addInvoiceWizard,
+  communityWizard,
   addFiatAmountWizard,
 };
