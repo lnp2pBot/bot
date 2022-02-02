@@ -89,9 +89,9 @@ const buildDescription = ({
     const totalRating = user.total_rating;
     const totalReviews = user.reviews.length;
     const username = user.show_username ? `@${user.username} está ` : ``;
-    const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
+    const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats` : ``;
     priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
-    const priceMarginText = !!priceMargin ? `${priceMargin}%\n` : ``;
+    const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
     let currencyString = `${fiatCode} ${fiatAmount}`;
   
     if (!!currency) {
