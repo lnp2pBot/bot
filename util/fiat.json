@@ -292,7 +292,8 @@
 		"rounding": 0,
 		"code": "CUP",
 		"emoji": "🇨🇺",
-		"name_plural": "Pesos cubanos"
+		"name_plural": "Pesos cubanos",
+		"price": true
 	},
 	"CVE": {
 		"symbol": "CV$",
