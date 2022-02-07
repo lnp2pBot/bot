@@ -279,29 +279,34 @@ const showHoldInvoice = async (ctx, bot, order) => {
       await messages.invalidDataMessage(bot, user);
       return;
     }
-    // We create the hold invoice and show it to the seller
-    const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
-    let amount;
-    if (order.amount == 0) {
-      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-      const marginPercent = order.price_margin / 100;
-      amount = amount - (amount * marginPercent);
-      amount = Math.floor(amount);
-      order.fee = amount * parseFloat(process.env.FEE);
-      order.amount = amount;
-    }
-    amount = Math.floor(order.amount + order.fee);
-    const { request, hash, secret } = await createHoldInvoice({
-      description,
-      amount,
-    });
-    order.hash = hash;
-    order.secret = secret;
-    await order.save();
 
-    // We monitor the invoice to know when the seller makes the payment
-    await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(bot, user, request);
+    if(order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: user })
+    } else {
+      // We create the hold invoice and show it to the seller
+      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+      let amount;
+      if (order.amount == 0) {
+        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+        const marginPercent = order.price_margin / 100;
+        amount = amount - (amount * marginPercent);
+        amount = Math.floor(amount);
+        order.fee = amount * parseFloat(process.env.FEE);
+        order.amount = amount;
+      }
+      amount = Math.floor(order.amount + order.fee);
+      const { request, hash, secret } = await createHoldInvoice({
+        description,
+        amount,
+      });
+      order.hash = hash;
+      order.secret = secret;
+      await order.save();
+
+      // We monitor the invoice to know when the seller makes the payment
+      await subscribeInvoice(bot, hash);
+      await messages.showHoldInvoiceMessage(bot, user, request);
+    }
   } catch (error) {
     console.log(error);
   }
