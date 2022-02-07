@@ -133,24 +133,45 @@ const validateBuyOrder = async (ctx, bot, user) => {
       return false;
     };
 
+    // for ranges like 100--2, the result will be [100, 0, 2]
+    fiatAmount = fiatAmount.split('-');
+    fiatAmount = fiatAmount.map(Number);
+
+    if (fiatAmount.length == 2 && amount) {
+      await messages.invalidRangeWithAmount(bot, user);
+      return false;
+    };
+
+    // ranges like [100, 0, 2] (originate from ranges like 100--2)
+    // will make this conditional fail
+    if (fiatAmount.length > 2) {
+      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat')
+      return false;
+    };
+
     if (amount != 0 && amount < 100) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
       return false;
     };
 
-    if (isNaN(fiatAmount)) {
-      await messages.mustBeANumber(bot, user, 'monto_en_fiat');
+    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])){
+      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
       return false;
-    }
+    };
 
-    if (fiatAmount < 1) {
+    if (fiatAmount.some(isNaN)) {
+      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
+      return false;
+    };
+
+    if (fiatAmount.some((x) => x < 1)) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
       return false;
     };
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
-      return false
+      return false;
     };
 
     return {
