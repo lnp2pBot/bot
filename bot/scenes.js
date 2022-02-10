@@ -1,7 +1,8 @@
 const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
 const { Order } = require('../models');
-const { waitPayment, saveUserReview } = require("./commands")
+const { waitPayment, saveUserReview, showHoldInvoice } = require("./commands")
+const { getCurrency } = require('../util');
 
 
 const addInvoiceWizard = new Scenes.WizardScene(
@@ -62,6 +63,56 @@ const addInvoiceWizard = new Scenes.WizardScene(
   },
 );
 
+const addFiatAmountWizard = new Scenes.WizardScene(
+  'ADD_FIAT_AMOUNT_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      const { bot, order, caller } = ctx.wizard.state;
+      let message = `Ingrese la cantidad de fiat que desea obtener.\n`;
+      message += `Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:`
+      await bot.telegram.sendMessage(caller.tg_id, message);
+      return ctx.wizard.next()
+    } catch (error) {
+      console.log(error);
+      return ctx.reply('Ha ocurrido un error, por favor contacta al administrador');
+    }
+  },
+  async (ctx) => {
+    try {
+      const { bot, order } = ctx.wizard.state;
+      const warningMessage = `Ingrese una número entre ${order.min_amount} y ${order.max_amount}`;
+
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const fiatAmount = parseInt(ctx.message.text);
+      if (!Number.isInteger(fiatAmount)) {
+        await ctx.reply(warningMessage);
+        return;
+      }
+
+      if (fiatAmount < order.min_amount || fiatAmount > order.max_amount) {
+        await ctx.reply(warningMessage);
+        return;
+      }
+
+      order.fiat_amount = fiatAmount;
+
+      const currency = getCurrency(order.fiat_code);
+
+      ctx.reply(`Cantidad elegida: ${currency.symbol_native} ${fiatAmount} .`)
+      
+      await showHoldInvoice(ctx, bot, order);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+)
+
 module.exports = {
   addInvoiceWizard,
+  addFiatAmountWizard,
 };

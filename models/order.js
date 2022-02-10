@@ -6,6 +6,14 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     min: 0,
   },
+  max_amount: { // max amount in fiat
+    type: Number,
+    min: 0,
+  },
+  min_amount: { // min amount in fiat
+    type: Number,
+    min: 0,
+  },
   fee: { type: Number, min: 0 },
   routing_fee: { type: Number, min: 0, default: 0 },
   hash: {

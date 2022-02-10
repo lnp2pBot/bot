@@ -23,13 +23,15 @@ const createOrder = async (ctx, bot, user, {
       return;
     }
 
+    const fiatAmountData = getFiatAmountData(fiatAmount);
+
     const baseOrderData = {
+      ...fiatAmountData,
       amount,
       fee,
       creator_id: user._id,
       type,
       status,
-      fiat_amount: fiatAmount,
       fiat_code: fiatCode,
       payment_method: paymentMethod,
       tg_chat_id: ctx.message.chat.id,
@@ -70,6 +72,18 @@ const createOrder = async (ctx, bot, user, {
   }
 };
 
+const getFiatAmountData = (fiatAmount) => {
+  let response = {};
+  if (fiatAmount.length == 2) {
+    response.min_amount = fiatAmount[0];
+    response.max_amount = fiatAmount[1];
+  } else {
+    response.fiat_amount = fiatAmount[0];
+  }
+
+  return response
+};
+
 const buildDescription = ({
   user,
   type,
@@ -91,11 +105,18 @@ const buildDescription = ({
     const username = user.show_username ? `@${user.username} está ` : ``;
     const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
     priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
-    const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
-    let currencyString = `${fiatCode} ${fiatAmount}`;
+    const priceMarginText = !!priceMargin ? `${priceMargin}%\n` : ``;
+    let fiatAmountString;
+    
+    if (fiatAmount.length == 2) { 
+      fiatAmountString = `${fiatAmount[0]}-${fiatAmount[1]}`;
+    } else {
+      fiatAmountString = `${fiatAmount}`;
+    }
+    let currencyString = `${fiatCode} ${fiatAmountString}`;
   
     if (!!currency) {
-      currencyString = `${fiatAmount} ${currency.name_plural} ${currency.emoji}`;
+      currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
     }
     
     let amountText = `${amount} `;
@@ -104,7 +125,7 @@ const buildDescription = ({
       amountText = '';
       tasaText = `Tasa: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
-      const exchangePrice = getBtcExchangePrice(fiatAmount, amount);
+      const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
       tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`
     }
   

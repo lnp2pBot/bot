@@ -35,7 +35,7 @@ const {
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
-const { addInvoiceWizard,  addUserReviewWizard } = require('./scenes');
+const { addInvoiceWizard, addFiatAmountWizard } = require('./scenes');
 
 const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
@@ -51,7 +51,7 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  const stage = new Scenes.Stage([addInvoiceWizard]);
+  const stage = new Scenes.Stage([addInvoiceWizard, addFiatAmountWizard]);
   bot.use(session());
 
   bot.use(stage.middleware());

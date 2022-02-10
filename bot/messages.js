@@ -469,9 +469,12 @@ const mustBeValidCurrency = async (bot, user, fieldName) => {
   }
 };
 
-const mustBeANumber = async (bot, user, fieldName) => {
+const mustBeANumberOrRange = async (bot, user, fieldName) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un número`);
+    const invalidFiatAmountMessage = (
+      `${fieldName} debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>.`
+    );
+    await bot.telegram.sendMessage(user.tg_id, invalidFiatAmountMessage);
   } catch (error) {
     console.log(error);
   }
@@ -903,6 +906,16 @@ const disableLightningAddress = async (bot, user) => {
   }
 };
 
+const invalidRangeWithAmount = async (bot, user) => {
+  try {
+    let rangeWithAmountMessage = `Los rangos solo estan habilitados para tasas flotantes.`
+    rangeWithAmountMessage += `\nUtilice rangos o bien especifique la cantidad de sats, pero no ambas.`;
+    await bot.telegram.sendMessage(user.tg_id, rangeWithAmountMessage);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -935,7 +948,7 @@ module.exports = {
   nonHandleErrorMessage,
   checkOrderMessage,
   mustBeValidCurrency,
-  mustBeANumber,
+  mustBeANumberOrRange,
   unavailableLightningAddress,
   invalidLightningAddress,
   invalidInvoice,
@@ -990,4 +1003,5 @@ module.exports = {
   expiredInvoiceOnPendingMessage,
   successCancelAllOrdersMessage,
   disableLightningAddress,
+  invalidRangeWithAmount
 };
