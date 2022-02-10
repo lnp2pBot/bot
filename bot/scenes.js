@@ -1,7 +1,7 @@
 const { Scenes } = require('telegraf');
 const { isValidInvoice } = require('./validations');
 const { Order } = require('../models');
-const { waitPayment, saveUserReview, showHoldInvoice } = require("./commands")
+const { waitPayment, addInvoice, showHoldInvoice } = require("./commands")
 const { getCurrency } = require('../util');
 
 
@@ -68,7 +68,10 @@ const addFiatAmountWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       const { bot, order, caller } = ctx.wizard.state;
-      let message = `Ingrese la cantidad de fiat que desea obtener.\n`;
+      const action = order.type == 'buy' ? `vender` : `comprar`;
+      const currency = getCurrency(order.fiat_code);
+      const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+      let message = `Ingrese la cantidad de ${symbol} que desea ${action}.\n`;
       message += `Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:`
       await bot.telegram.sendMessage(caller.tg_id, message);
       return ctx.wizard.next()
@@ -103,7 +106,11 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
       ctx.reply(`Cantidad elegida: ${currency.symbol_native} ${fiatAmount} .`)
       
-      await showHoldInvoice(ctx, bot, order);
+      if (order.type == 'sell') {
+        await addInvoice(ctx, bot, order);
+      } else {
+        await showHoldInvoice(ctx, bot, order);
+      }
 
       return ctx.scene.leave();
     } catch (error) {
