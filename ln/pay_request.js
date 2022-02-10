@@ -60,7 +60,7 @@ const payToBuyer = async (bot, order) => {
         newMaxAmount = order.max_amount - order.fiat_amount;
       }
       
-      if (newMaxAmount > order.min_amount) {
+      if (newMaxAmount >= order.min_amount) {
         const orderData = {
           type: order.type,
           amount: 0,
@@ -85,9 +85,6 @@ const payToBuyer = async (bot, order) => {
         };
 
         newOrderPayload = {orderData, orderCtx};
-        
-        order.max_amount = undefined;
-        order.min_amount = undefined;
       }
 
       await order.save();
@@ -110,8 +107,13 @@ const payToBuyer = async (bot, order) => {
         const newOrder = await ordersActions.createOrder(orderCtx, bot, user, orderData);
   
         if (!!newOrder) {
-          await messages.publishBuyOrderMessage(bot, newOrder);
-          await messages.pendingBuyMessage(bot, user, newOrder);
+          if (order.type === 'sell') {
+            await messages.publishSellOrderMessage(bot, newOrder);
+            await messages.pendingSellMessage(bot, user, newOrder);
+          } else {
+            await messages.publishBuyOrderMessage(bot, newOrder);
+            await messages.pendingBuyMessage(bot, user, newOrder);
+          }
         }
       }
     } else {

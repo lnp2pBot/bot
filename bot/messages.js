@@ -649,7 +649,11 @@ const listOrdersResponse = async (bot, user, orders) => {
   try {
     let response = `.             Id          |     Status    |   amount (sats)  |  fiat amt  |  fiat\n`;
     orders.forEach(order => {
-      response += `${order._id} | ${order.status} | ${order.amount} | ${order.fiat_amount} | ${order.fiat_code}\n`;
+      let fiatAmount = '-';
+      let amount = '-';
+      if (typeof order.fiat_amount != 'undefined') fiatAmount = order.fiat_amount;
+      if (typeof order.amount != 'undefined') amount = order.amount;
+      response += `${order._id} | ${order.status} | ${amount} | ${fiatAmount} | ${order.fiat_code}\n`;
     });
     await bot.telegram.sendMessage(user.tg_id, response);
   } catch (error) {

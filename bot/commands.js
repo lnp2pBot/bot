@@ -135,12 +135,19 @@ const addInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
-    const buyer = await User.findOne({ _id: order.buyer_id });
+
     // Buyers only can take orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
-      await messages.invalidDataMessage(bot, buyer);
       return;
     }
+
+    const buyer = await User.findOne({ _id: order.buyer_id });
+
+    if(order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: buyer });
+      return;
+    }
+
     let amount = order.amount;
     if (amount == 0) {
         amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
@@ -150,6 +157,7 @@ const addInvoice = async (ctx, bot, order) => {
         order.fee = amount * parseFloat(process.env.FEE);
         order.amount = amount;
     }
+
     // If the price API fails we can't continue with the process
     if (order.amount == 0) {
       await messages.priceApiFailedMessage(bot, buyer);
@@ -244,6 +252,9 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     }
     order.taken_at = null;
     order.status = 'PENDING';
+    if (!!order.min_amount && !!order.max_amount) {
+      order.fiat_amount = undefined;
+    }
     if (order.price_from_api) {
       order.amount = 0;
       order.fee = 0;
@@ -281,32 +292,33 @@ const showHoldInvoice = async (ctx, bot, order) => {
     }
 
     if(order.fiat_amount === undefined) {
-      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: user })
-    } else {
-      // We create the hold invoice and show it to the seller
-      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
-      let amount;
-      if (order.amount == 0) {
-        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-        const marginPercent = order.price_margin / 100;
-        amount = amount - (amount * marginPercent);
-        amount = Math.floor(amount);
-        order.fee = amount * parseFloat(process.env.FEE);
-        order.amount = amount;
-      }
-      amount = Math.floor(order.amount + order.fee);
-      const { request, hash, secret } = await createHoldInvoice({
-        description,
-        amount,
-      });
-      order.hash = hash;
-      order.secret = secret;
-      await order.save();
-
-      // We monitor the invoice to know when the seller makes the payment
-      await subscribeInvoice(bot, hash);
-      await messages.showHoldInvoiceMessage(bot, user, request);
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: user });
+      return;
     }
+
+    // We create the hold invoice and show it to the seller
+    const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+    let amount;
+    if (order.amount == 0) {
+      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+      const marginPercent = order.price_margin / 100;
+      amount = amount - (amount * marginPercent);
+      amount = Math.floor(amount);
+      order.fee = amount * parseFloat(process.env.FEE);
+      order.amount = amount;
+    }
+    amount = Math.floor(order.amount + order.fee);
+    const { request, hash, secret } = await createHoldInvoice({
+      description,
+      amount,
+    });
+    order.hash = hash;
+    order.secret = secret;
+    await order.save();
+
+    // We monitor the invoice to know when the seller makes the payment
+    await subscribeInvoice(bot, hash);
+    await messages.showHoldInvoiceMessage(bot, user, request);
   } catch (error) {
     console.log(error);
   }
@@ -329,6 +341,10 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     }
     order.taken_at = null;
     order.status = 'PENDING';
+
+    if (!!order.min_amount && !!order.max_amount) {
+      order.fiat_amount = undefined;
+    }
 
     if (order.price_from_api) {
       order.amount = 0;
