@@ -11,6 +11,7 @@ const createOrder = async (ctx, bot, user, {
   paymentMethod,
   status,
   priceMargin,
+  range_parent_id,
 }) => {
   try {
     amount = parseInt(amount);
@@ -48,7 +49,8 @@ const createOrder = async (ctx, bot, user, {
         priceMargin,
         priceFromAPI,
         currency
-      })
+      }),
+      range_parent_id,
     };
 
     let order;
@@ -213,8 +215,52 @@ const getOrders = async (bot, user, status) => {
   }
 };
 
+const getNewRangeOrderPayload = async (order) => {
+  try {
+    let newOrderPayload = undefined;
+    let newMaxAmount = 0;
+
+    if (order.max_amount !== undefined) {
+      newMaxAmount = order.max_amount - order.fiat_amount;
+    }
+
+    if (newMaxAmount >= order.min_amount) {
+      const orderData = {
+        type: order.type,
+        amount: 0,
+        // drop newMaxAmount if it is equal to min_amount and create a
+        // not range order.
+        // Set preserves insertion order, so min_amount will be always
+        // before newMaxAmount
+        fiatAmount: [...new Set([order.min_amount, newMaxAmount])],
+        fiatCode: order.fiat_code,
+        paymentMethod: order.payment_method,
+        status: 'PENDING',
+        priceMargin: order.price_margin,
+        range_parent_id: order._id,
+      };
+
+      const orderCtx = {
+        message: {
+          chat: {
+            id: order.tg_chat_id,
+          },
+          message_id: order.tg_order_message,
+        }
+      };
+
+      newOrderPayload = { orderData, orderCtx };
+
+      return newOrderPayload;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   createOrder,
   getOrder,
   getOrders,
+  getNewRangeOrderPayload,
 };

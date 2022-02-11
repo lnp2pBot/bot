@@ -2,6 +2,7 @@ const { initialize, start } = require("./start");
 const {
   createOrder,
   getOrder,
+  getNewRangeOrderPayload,
 } =require("./ordersActions");
 const {
   validateSellOrder,
@@ -85,4 +86,5 @@ module.exports = {
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
+  getNewRangeOrderPayload,
 };
