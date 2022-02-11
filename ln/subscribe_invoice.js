@@ -3,6 +3,7 @@ const { Order, User } = require('../models');
 const { payToBuyer } = require('./pay_request');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
+const ordersActions = require('../bot/ordersActions');
 
 const subscribeInvoice = async (bot, id, resub) => {
   try {
@@ -31,6 +32,31 @@ const subscribeInvoice = async (bot, id, resub) => {
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         await messages.releasedSatsMessage(bot, sellerUser, buyerUser);
+        // If this is a range order, probably we need to created a new child range order
+        const newOrderPayload = await ordersActions.getNewRangeOrderPayload(order);
+        if (!!newOrderPayload) {
+          let user;
+          if (order.type === 'sell') {
+            user = sellerUser;
+          } else {
+            user = buyerUser;
+          }
+          const { orderCtx, orderData } = newOrderPayload;
+          const newOrder = await ordersActions.createOrder(orderCtx, bot, user, orderData);
+
+          if (!!newOrder) {
+            if (order.type === 'sell') {
+              await messages.publishSellOrderMessage(bot, newOrder);
+              await messages.pendingSellMessage(bot, user, newOrder);
+            } else {
+              await messages.publishBuyOrderMessage(bot, newOrder);
+              await messages.pendingBuyMessage(bot, user, newOrder);
+            }
+          }
+        }
+        // The seller get reputation after release
+        await messages.rateUserMessage(bot, sellerUser, order);
+        // We proceed to pay to buyer
         await payToBuyer(bot, order);
       }
     });
