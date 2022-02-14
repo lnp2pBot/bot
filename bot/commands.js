@@ -285,6 +285,8 @@ const showHoldInvoice = async (ctx, bot, order) => {
       if (!order) return;
     }
     const user = await User.findOne({ _id: order.seller_id });
+    if (!user) return;
+
     // Sellers only can take orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
       await messages.invalidDataMessage(bot, user);
