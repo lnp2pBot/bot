@@ -49,10 +49,6 @@ const takebuy = async (ctx, bot) => {
     await messages.beginTakeBuyMessage(bot, user, order);
   } catch (error) {
     console.log(error);
-    const tgUser = ctx.update.callback_query.from;
-    if (!tgUser) return;
-    let user = await User.findOne({ tg_id: tgUser.id });
-    await messages.invalidDataMessage(bot, user);
   }
 };
 
@@ -83,10 +79,6 @@ const takesell = async (ctx, bot) => {
     await messages.beginTakeSellMessage(bot, user, order);
   } catch (error) {
     console.log(error);
-    const tgUser = ctx.update.callback_query.from;
-    if (!tgUser) return;
-    let user = await User.findOne({ tg_id: tgUser.id });
-    await messages.invalidDataMessage(bot, user);
   }
 };
 
@@ -197,7 +189,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
     const seller = await User.findOne({ _id: order.seller_id });
 
     // User can only rate other after a successful exchange
-    if (order.status != 'SUCCESS') {
+    if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
       await messages.invalidDataMessage(bot, buyer);
       return;
     }
