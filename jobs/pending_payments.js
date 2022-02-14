@@ -49,6 +49,7 @@ const attemptPendingPayments = async (bot) => {
                 console.log(`Invoice with hash: ${pending.hash} paid`);
                 await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El usuario @${buyerUser.username} tenía un pago pendiente en su compra Id: #${order._id} de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos.\n\nPrueba de pago: ${payment.secret}`);
                 await bot.telegram.sendMessage(buyerUser.tg_id, `He pagado la factura lightning por tu compra Id: #${order._id}!\n\nPrueba de pago: ${payment.secret}`);
+                await messages.rateUserMessage(bot, buyerUser, order);
             } else {
                 if (pending.attempts == 3) {
                     order.paid_hold_buyer_invoice_updated = false;
