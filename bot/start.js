@@ -217,7 +217,7 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
-      if (order.status !== 'PENDING' && order.status !== 'WAITING_PAYMENT') {
+      if (order.status !== 'PENDING') {
         await messages.badStatusOnCancelOrderMessage(bot, user);
         return;
       }
