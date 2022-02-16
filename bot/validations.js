@@ -95,8 +95,8 @@ const validateSellOrder = async (ctx, bot, user) => {
       return false;
     };
 
-    if (amount != 0 && amount < 100) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+    if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
     };
 
@@ -170,8 +170,8 @@ const validateBuyOrder = async (ctx, bot, user) => {
       return false;
     };
 
-    if (amount != 0 && amount < 100) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', 100);
+    if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
+      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
     };
 
@@ -217,7 +217,7 @@ const validateInvoice = async (bot, user, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-    if (!!invoice.tokens && invoice.tokens < 100) {
+    if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
       await messages.minimunAmountInvoiceMessage(bot, user);
       return false;
     }
@@ -253,10 +253,10 @@ const isValidInvoice = async (lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
-    if (!!invoice.tokens && invoice.tokens < 100) {
+    if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
       return {
         success: false,
-        error: "La factura debe ser mayor o igual a 100 satoshis",
+        error: `La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis`,
       };
     }
 

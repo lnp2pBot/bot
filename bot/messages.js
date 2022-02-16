@@ -126,7 +126,7 @@ const buyOrderCorrectFormatMessage = async (bot, user) => {
 
 const minimunAmountInvoiceMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura debe ser mayor o igual a 100 satoshis`);
+    await bot.telegram.sendMessage(user.tg_id, `La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis`);
   } catch (error) {
     console.log(error);
   }
