@@ -4,7 +4,7 @@ const PendingPaymentSchema = new mongoose.Schema({
   description: { type: String },
   amount: { // amount in satoshis
     type: Number,
-    min: [100, 'Minimum amount is 100 sats'],
+    min: [1, 'Minimum amount is 1 sat'],
     validate : {
       validator : Number.isInteger,
       message   : '{VALUE} is not an integer value'
