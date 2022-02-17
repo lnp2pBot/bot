@@ -1,7 +1,8 @@
-const { Scenes, Extra, Markup } = require('telegraf')
+const { Scenes } = require('telegraf')
 const { isValidInvoice } = require('./validations');
 const { Order, Community, User } = require('../models');
-const { waitPayment } = require("./commands")
+const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
+const { getCurrency } = require('../util');
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
