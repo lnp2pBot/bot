@@ -207,7 +207,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
 
 const saveUserReview = async (targetUser, review) => {
   try {
-    targetUser.reviews.push(review)
+    targetUser.reviews.push(review);
     const totalReviews = targetUser.reviews.length;
     const oldRating = targetUser.total_rating;
     const lastRating = targetUser.reviews[totalReviews - 1].rating;
