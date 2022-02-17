@@ -163,7 +163,9 @@ const communityWizard = new Scenes.WizardScene(
         await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
       }
       ctx.wizard.state.community = community;
-      await ctx.reply('Ahora ingresa los username de los usuarios que se encargan de resolver disputas, cada username separado por un espacio en blanco');
+      const reply = `Ahora ingresa los username de los usuarios que se encargan de resolver disputas, ` +
+      `cada username separado por un espacio en blanco`;
+      await ctx.reply('');
 
       return ctx.wizard.next();
     } catch (error) {
@@ -192,7 +194,9 @@ const communityWizard = new Scenes.WizardScene(
         await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
       }
       ctx.wizard.state.community.solvers = community.solvers;
-      await ctx.reply('Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal');
+      const reply = `Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar ` +
+      `cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal`;
+      await ctx.reply(reply);
 
       return ctx.wizard.next();
     } catch (error) {
