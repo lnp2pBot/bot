@@ -447,19 +447,22 @@ const customMessage = async (bot, user, message) => {
 
 const checkOrderMessage = async (ctx, order, creator, buyer, seller) => {
   try {
-    await ctx.reply(`Orden id: #${order._id}:
-Status: ${order.status}
-Creator: ${creator}
-Buyer: @${buyer}
-Seller: @${seller}
-Monto (sats): ${order.amount}
-Fee (sats): ${order.fee}
-Routing Fee (sats): ${order.routing_fee}
-Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}
-Método de pago: ${order.payment_method}
-seller invoice hash: ${order.hash}
-seller invoice secret: ${order.secret}
-buyer payment request: ${order.buyer_invoice}`);
+    const message = `Orden id: #${order._id}:\n` +
+    `Status: ${order.status}\n` +
+    `Creator: ${creator}\n` +
+    `Buyer: @${buyer}\n` +
+    `Seller: @${seller}\n` +
+    `Monto (sats): ${order.amount}\n` +
+    `Fee (sats): ${order.fee}\n` +
+    `Routing Fee (sats): ${order.routing_fee || 0}\n` +
+    `Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}\n` +
+    `Método de pago: ${order.payment_method}\n` +
+    `Created at: ${order.created_at}\n` +
+    `Taken at: ${order.taken_at || ''}\n` +
+    `seller invoice hash: ${order.hash || ''}\n` +
+    `seller invoice secret: ${order.secret || ''}\n` +
+    `buyer payment request: ${order.buyer_invoice || ''}`;
+    await ctx.reply(message);
   } catch (error) {
     console.log(error);
   }
