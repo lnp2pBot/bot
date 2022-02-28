@@ -408,8 +408,8 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
-      if (order.status != 'ACTIVE') {
-        await messages.onlyActiveCooperativeCancelMessage(bot, user);
+      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT')) {
+        await messages.cantCooperativeCancelMessage(bot, user);
         return;
       }
       let initiatorUser, counterPartyUser, initiator, counterParty;

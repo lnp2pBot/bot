@@ -766,9 +766,9 @@ const successCompleteOrderByAdminMessage = async (bot, user, order) => {
   }
 };
 
-const onlyActiveCooperativeCancelMessage = async (bot, user) => {
+const cantCooperativeCancelMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta opción solo permite cancelar cooperativamente las ordenes activas`);
+    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser cancelada cooperativamente`);
   } catch (error) {
     console.log(error);
   }
@@ -987,7 +987,7 @@ module.exports = {
   initCooperativeCancelMessage,
   okCooperativeCancelMessage,
   shouldWaitCooperativeCancelMessage,
-  onlyActiveCooperativeCancelMessage,
+  cantCooperativeCancelMessage,
   successCompleteOrderByAdminMessage,
   successCompleteOrderMessage,
   successCancelOrderByAdminMessage,
