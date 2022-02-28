@@ -51,17 +51,13 @@ Al conversar con el bot [@lnp2pbot](https://t.me/lnp2pbot) encontrarás un botó
 
 Escribes `/buy <monto en sats> <monto en fiat> <código fiat> <método de pago> [prima/descuento]` sin los carácteres especiales
 
-Ej. `/buy 100000 50 usd "banco xyz"`
-(Compro cien mil sats a cincuenta dólares pago por banco xyz)
+Ej. `/buy 100000 50 usd "banco xyz"` **Compro cien mil sats a cincuenta dólares pago por banco xyz**
 
-Ej. `/buy 0 50 ves "banco xyz"`
-(Compro cincuenta bolívares en sats -en este caso el bot hará el cálculo a la tasa de mercado- pago por banco xyz)
+Ej. `/buy 0 50 ves "banco xyz"` **Compro cincuenta bolívares en sats -en este caso el bot hará el cálculo a la tasa de mercado- pago por banco xyz**
 
-Ej. `/buy 0 10-100 pen "pago móvil"`
-(Compro de 10 a 100 nuevos soles -en este caso el vendedor elegirá que monto venderte en ese rango- pago por pago móvil)
+Ej. `/buy 0 10-100 pen "pago móvil"` **Compro de 10 a 100 nuevos soles -en este caso el vendedor elegirá que monto venderte en ese rango- pago por pago móvil**
 
-Ej. `/buy 0 100 eur -3 "pago móvil"`
-(Compro 100 euros descontando 3% -en este caso el bot hará el cálculo a la tasa de mercado descontando o incrementando el porcentaje que elijas- pago por pago móvil)
+Ej. `/buy 0 100 eur -3 "pago móvil"` **Compro 100 euros descontando 3% -en este caso el bot hará el cálculo a la tasa de mercado descontando o incrementando el porcentaje que elijas- pago por pago móvil**
 
 De haber alguna variable no compatible el bot te lo indicará durante el proceso de creación de orden. Al completarla, la misma se publicará automáticamente en el canal de intercambio y será visible por un período de 23 horas.
 

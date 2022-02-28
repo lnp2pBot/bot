@@ -75,6 +75,7 @@ $ git clone https://github.com/grunch/p2plnbot.git
 $ cd p2plnbot
 $ npm install
 ```
+[Here](docs/INSTALL.md#installation) we have a detailed guide for installation and first steps using the bot.
 # Running it
 ```
 $ npm start
@@ -83,4 +84,5 @@ $ npm start
 ```
 $ npm test
 ```
-[Here](docs/INSTALL.md#installation) we have a detailed guide for installation and first steps using the bot.
+# FAQ
+You can read the [frequently asked questions](docs/FAQ.es.md)
