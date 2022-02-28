@@ -36,7 +36,7 @@ Reach all users who require to acquire Bitcoin satoshis without custody through 
 1) Computer with internet access. 
 2) Node Management System [Polar.](https://lightningpolar.com/)
 
-![polar](polar.jpg)
+![polar](images/polar.jpg)
 
 
 3) [Docker](https://www.docker.com/): deployment automation of applications as portable, self-contained containers that can be run in the cloud or locally.
@@ -159,7 +159,7 @@ $ vi .env
 
 * If you are using Polar you get the data as shown in the following image:
 
-![polarVariables](polarVariables.jpg)
+![polarVariables](images/polarVariables.jpg)
 
 
 **LND_GRPC_HOST:** IP address or the domain name from the LND node and the port separated by a colon, e.g: `192.168.0.2:10009.`
@@ -172,7 +172,7 @@ upper right corner with a rather small icon in the shape of a pencil. Tap on the
 
 **ADMIN_CHANNEL:** This data will be the ID of your channel, to get it write a message in your channel, forward it to the bot `@JsonDumpBot` and it will show you a JSON with the channel ID. 
 
-![telegram_bot](telegram_bot.jpg)
+![telegram_bot](images/telegram_bot.jpg)
 
 * More information [aquí.](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35)
 
@@ -225,68 +225,68 @@ $ npm test
 
 It will display a menu, we will choose the `/sell` option to sell with the necessary requirements.
 
-![telegram](telegram.jpg)
+![telegram](images/telegram.jpg)
 
 2) In the channel you will see the offer, you must choose to buy with the other Telegram user.
 
-![oferta](oferta.jpg)
+![oferta](images/oferta.jpg)
 
 3) Take the order in the channel. Click on Buy Satoshis.
 
-![tomar_orden](tomar_orden.jpg)
+![tomar_orden](images/tomar_orden.jpg)
 
 4) Enter the bot and click continue.
 
-![bot_continuar](bot_continuar.jpg)
+![bot_continuar](images/bot_continuar.jpg)
 
 This is the message that will be displayed.
 
-![bot_tomar_oferta](bot_tomar_oferta.jpg)
+![bot_tomar_oferta](images/bot_tomar_oferta.jpg)
 
 5) Create invoice in Polar with some of the users and paste in Telegram. Choose `Create Invoice` in the behavior part.
 
-![crear_factura](crear_factura.jpg)
+![crear_factura](images/crear_factura.jpg)
 
 6) Set the sales quantity.
 
-![cantidad](cantidad.jpg)
+![cantidad](images/cantidad.jpg)
 
 7) Choose `Copy and Close.`
 
-![copiar_factura](copiar_factura.jpg)
+![copiar_factura](images/copiar_factura.jpg)
 
 8) Enter the `bot` and paste the invoice. 
 
-![factura](factura.jpg)
+![factura](images/factura.jpg)
 
 A request for payment will be sent to the seller and will be displayed in the `bot.`.
 
-![solicitud](solicitud.jpg)
+![solicitud](images/solicitud.jpg)
 
 9) Paste the invoice in Polar and pay it. 
 
-![pagar](pagar.jpg)
+![pagar](images/pagar.jpg)
 
 10) When someone takes the order, the `bot` will display the following message:
 
-![solicitud_de_pago](solicitud_de_pago.jpg)
+![solicitud_de_pago](images/solicitud_de_pago.jpg)
 
 11) The following will be displayed in the `bot` for the other user:
 
-![tomar_orden_venta](tomar_orden_venta.jpg)
+![tomar_orden_venta](images/tomar_orden_venta.jpg)
 
 12) The user must release the funds with the command `/fiatsent`, to do this he must copy and paste with the `id`
 
-![fiatsent](fiatsent.jpg)
+![fiatsent](images/fiatsent.jpg)
 
 13) The `bot` will indicate that the user has already sent the fiat money.
 
-![confirmar_envio](confirmar_envio.jpg)
+![confirmar_envio](images/confirmar_envio.jpg)
 
 14) The user must release the funds with the `/release` command by copying and pasting with the `id`.
 
-![release](release.jpg)
+![release](images/release.jpg)
 
 15) Finally, the buyer will be notified that the transaction has been successfully completed.
 
-![compra_exiosa](compra_exiosa.jpg)
+![compra_exiosa](images/compra_exiosa.jpg)
