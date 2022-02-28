@@ -99,6 +99,7 @@ const buildDescription = ({
 }) => {
   try {
     const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
+    const hashtag = `#${type.toUpperCase()}${currency.code}\n`;
     const paymentAction = type == 'sell' ? 'Recibo pago' : 'Pago';
     const trades = user.trades_completed;
     const volume = user.volume_traded;
@@ -142,6 +143,7 @@ const buildDescription = ({
     description += `${paymentAction} por ${paymentMethod}\n`;
     description += `Tiene ${trades} operaciones exitosas\n`;
     description += volumeTraded;
+    description += hashtag;
     description += tasaText;
     description += rateText;
   
