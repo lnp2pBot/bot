@@ -1196,9 +1196,9 @@
 		"name_plural": "Uzbekistan som"
 	},
 	"VES": {
-		"symbol": "Bs.S.",
+		"symbol": "Bs.",
 		"name": "Bolívar",
-		"symbol_native": "Bs.S.",
+		"symbol_native": "Bs.",
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "VES",
