@@ -108,7 +108,7 @@ const buildDescription = ({
     const username = user.show_username ? `@${user.username} está ` : ``;
     const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
     priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
-    const priceMarginText = !!priceMargin ? `${priceMargin}%\n` : ``;
+    const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
     let fiatAmountString;
     
     if (fiatAmount.length == 2) { 
@@ -129,7 +129,7 @@ const buildDescription = ({
       tasaText = `Tasa: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
-      tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`
+      tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`;
     }
   
     let rateText = '';
