@@ -157,7 +157,7 @@ const communityWizard = new Scenes.WizardScene(
       if (chan.length > 0 && chan.length < 3) {
         for (let i = 0; i < chan.length; i++) {
           await isGroupAdmin(chan[i], user, bot.telegram);
-          community[`channel${i+1}`] = chan[i];
+          community.order_channels.push(chan[i]);
         }
       } else {
         await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
@@ -213,7 +213,7 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       await isGroupAdmin(chan, user, bot.telegram);
-      community.channel3 = chan;
+      community.dispute_channel = chan;
 
       const newCommunity = new Community(community);
       await newCommunity.save();
