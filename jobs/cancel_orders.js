@@ -16,24 +16,13 @@ const cancelOrders = async (bot) => {
         taken_at: { $lte: holdInvoiceTime },
     });
     for (const order of waitingPaymentOrders) {
-        console.log(`Order Id: ${order._id} expired, republishing to the channel`);
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         await cancelHoldInvoice({ hash: order.hash });
         if (order.status == 'WAITING_PAYMENT') {
             await cancelShowHoldInvoice(null, bot, order);
-            await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El vendedor @${sellerUser.username} no ha pagado la factura correspondiente a la orden Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            await bot.telegram.sendMessage(sellerUser.tg_id, `No has pagado la factura para vender sats por la orden Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            if (order.buyer_id != order.creator_id) {
-                await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor no ha pagado la factura por tu compra Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            }
         } else {
             await cancelAddInvoice(null, bot, order);
-            await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El comprador @${buyerUser.username} tomó la orden Id: #${order._id} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            await bot.telegram.sendMessage(buyerUser.tg_id, `No has enviado la factura para recibir sats por la orden Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            if (order.seller_id != order.creator_id) {
-                await bot.telegram.sendMessage(sellerUser.tg_id, `El comprador no me envió la factura para recibir sats por tu venta Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-            }
         }
     }
     // We get the expired order where the seller sent the sats but never released the order
