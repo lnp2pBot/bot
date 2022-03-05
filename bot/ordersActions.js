@@ -99,7 +99,7 @@ const buildDescription = ({
 }) => {
   try {
     const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
-    const hashtag = `#${type.toUpperCase()}${currency.code}\n`;
+    const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
     const paymentAction = type == 'sell' ? 'Recibo pago' : 'Pago';
     const trades = user.trades_completed;
     const volume = user.volume_traded;

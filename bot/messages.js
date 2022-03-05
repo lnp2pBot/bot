@@ -70,8 +70,10 @@ const invoicePaymentRequestMessage = async (bot, user, request, order) => {
 
 const pendingSellMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Publicada la oferta en el canal ${process.env.CHANNEL}\n\nEspera que alguien tome tu venta, si la orden no es tomada en 23 horas será borrada del canal.`);
-    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando:`);
+    let message = `Publicada la oferta en el canal ${process.env.CHANNEL}\n\n`;
+    message += `Espera que alguien tome tu venta, si la orden no es tomada en 23 horas será borrada del canal.\n\n`;
+    message += `Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇`;
+    await bot.telegram.sendMessage(user.tg_id, message);
     await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
   } catch (error) {
     console.log(error);
@@ -80,8 +82,10 @@ const pendingSellMessage = async (bot, user, order) => {
 
 const pendingBuyMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Publicada la oferta en el canal ${process.env.CHANNEL}.\n\nEspera que alguien tome tu compra, si la orden no es tomada en 23 horas será borrada del canal.`);
-    await bot.telegram.sendMessage(user.tg_id, `Puedes cancelar esta orden antes de que alguien la tome ejecutando:`);
+    let message = `Publicada la oferta en el canal ${process.env.CHANNEL}.\n\n`;
+    message += `Espera que alguien tome tu compra, si la orden no es tomada en 23 horas será borrada del canal.\n\n`;
+    message += `Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇`;
+    await bot.telegram.sendMessage(user.tg_id, message);
     await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
   } catch (error) {
     console.log(error);
@@ -98,13 +102,14 @@ const mustBeIntMessage = async (bot, user, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, "/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]", { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].`);
-    await bot.telegram.sendMessage(user.tg_id, '/sell *1000* *2* *ves* "*pago móvil*"', { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta con un incremento en el precio del 3% (prima) sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro`);
-    await bot.telegram.sendMessage(user.tg_id, `/sell *0* *2* *ves* "*pago móvil*" *3*`, { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.`);
-    await bot.telegram.sendMessage(user.tg_id, `/sell *0* *100\\-500* *ves* "*pago móvil*" *3*`, { parse_mode: "MarkdownV2" });
+    let message = '/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]"\n\n';
+    message += 'Para crear una venta de 1000 satoshis por 2 bolívares \\(VES\\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \\<\\> y los \\[\\]\\.\n\n';
+    message += '/sell *1000* *2* *ves* "*pago móvil*"\n\n';
+    message += 'Para crear una venta con un incremento en el precio del 3% \\(prima\\) sin indicar el monto en satoshis, solo debes poner 0 \\(cero\\) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro\n\n';
+    message += '/sell *0* *2* *ves* "*pago móvil*" *3*\n\n';
+    message += 'Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\\.\n\n';
+    message += '/sell *0* *100\\-500* *ves* "*pago móvil*" *3*';
+    await bot.telegram.sendMessage(user.tg_id, message, { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -112,13 +117,14 @@ const sellOrderCorrectFormatMessage = async (bot, user) => {
 
 const buyOrderCorrectFormatMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, "/buy \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]", { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una compra de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].`);
-    await bot.telegram.sendMessage(user.tg_id, '/buy *1000* *2* *ves* "*pago móvil*"', { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, "Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \\(cero\\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\\-2` como último parámetro", { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, '/buy *0* *2* *ves* "*pago móvil*" *\\-2*', { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(user.tg_id, `Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.`);
-    await bot.telegram.sendMessage(user.tg_id, `/buy *0* *100\\-500* *ves* "*pago móvil*" *\\-2*`, { parse_mode: "MarkdownV2" });
+    let message = '/buy \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]\n\n';
+    message += 'Para crear una compra de 1000 satoshis por 2 bolívares \\(VES\\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \\<\\> y los \\[\\]\\.\n\n';
+    message += '/buy *1000* *2* *ves* "*pago móvil*"\n\n';
+    message += 'Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \\(cero\\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\\-2` como último parámetro\n\n';
+    message += '/buy *0* *2* *ves* "*pago móvil*" *\\-2*\n\n';
+    message += 'Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\\.\n\n';
+    message += '/buy *0* *100\\-500* *ves* "*pago móvil*" *\\-2*';
+    await bot.telegram.sendMessage(user.tg_id, message, { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -281,8 +287,9 @@ const beginTakeSellMessage = async (bot, buyer, order) => {
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    let message = `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.\n\n`;
+    message += `Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇`;
+    await bot.telegram.sendMessage(buyerUser.tg_id, message);
     await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
     await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.\n\nUna vez confirmes la recepción del dinero debes liberar los fondos`);
   } catch (error) {
@@ -602,8 +609,9 @@ const addInvoiceMessage = async (bot, buyer, seller, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
     const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    await bot.telegram.sendMessage(buyer.tg_id, `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique como enviarle ${symbol} ${order.fiat_amount}`);
-    await bot.telegram.sendMessage(buyer.tg_id, `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`);
+    let message = `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique como enviarle ${symbol} ${order.fiat_amount}\n\n`;
+    message += `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`;
+    await bot.telegram.sendMessage(buyer.tg_id, message);
     await bot.telegram.sendMessage(buyer.tg_id, `/fiatsent ${order._id}`);
   } catch (error) {
     console.log(error);

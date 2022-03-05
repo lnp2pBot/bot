@@ -70,7 +70,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(s|S)ell/, async (ctx) => {
+  bot.hears(/sell$/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -103,7 +103,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(b|B)uy/, async (ctx) => {
+  bot.hears(/buy/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -141,7 +141,7 @@ const initialize = (botToken, options) => {
     await takebuy(ctx, bot);
   });
 
-  bot.hears(/(r|R)elease/, async (ctx) => {
+  bot.hears(/release/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -160,7 +160,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(d|D)ispute/, async (ctx) => {
+  bot.hears(/dispute/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -204,7 +204,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.hears(/(c|C)ancel/, async (ctx) => {
+  bot.hears(/cancel/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -242,7 +242,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.hears(/(c|C)ancelall/, async (ctx) => {
+  bot.hears(/cancelall/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -359,7 +359,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(h|H)elp/, async (ctx) => {
+  bot.hears(/help/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -371,7 +371,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.hears(/(f|F)iatsent/, async (ctx) => {
+  bot.hears(/fiatsent/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -394,7 +394,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(c|C)ooperativecancel/, async (ctx) => {
+  bot.hears(/cooperativecancel/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -480,7 +480,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(s|S)etaddress/, async (ctx) => {
+  bot.hears(/setaddress/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -514,7 +514,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.hears(/(s|S)etinvoice/, async (ctx) => {
+  bot.hears(/setinvoice/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -583,7 +583,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/(l|L)istorders/, async (ctx) => {
+  bot.hears(/listorders/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
