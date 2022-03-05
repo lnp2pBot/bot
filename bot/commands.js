@@ -242,26 +242,36 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       await messages.invalidDataMessage(bot, user);
       return;
     }
-    order.taken_at = null;
-    order.status = 'PENDING';
-    if (!!order.min_amount && !!order.max_amount) {
-      order.fiat_amount = undefined;
+    if (order.creator_id == order.buyer_id) {
+      await bot.telegram.sendMessage(user.tg_id, `No has enviado la factura para recibir sats por la orden Id: #${order._id}, la orden ha sido eliminada`);
+      const sellerUser = await User.findOne({ _id: order.seller_id });
+      await bot.telegram.sendMessage(sellerUser.tg_id, `El comprador no me envió la factura para recibir sats por tu venta Id: #${order._id}, tus sats han sido devueltos`);
+      await order.remove();
+    } else { // Re-publish order
+      console.log(`Order Id: ${order._id} expired, republishing to the channel`);
+      await bot.telegram.sendMessage(user.tg_id, `No has enviado la factura para recibir sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+      order.taken_at = null;
+      order.status = 'PENDING';
+      if (!!order.min_amount && !!order.max_amount) {
+        order.fiat_amount = undefined;
+      }
+      if (order.price_from_api) {
+        order.amount = 0;
+        order.fee = 0;
+        order.hash = null;
+        order.secret = null;
+      }
+  
+      if (order.type == 'buy') {
+        order.seller_id = null;
+        await messages.publishBuyOrderMessage(bot, order);
+      } else {
+        order.buyer_id = null;
+        await messages.publishSellOrderMessage(bot, order);
+      }
+      await order.save();
+      await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El comprador @${user.username} tomó la orden Id: #${order._id} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente`);
     }
-    if (order.price_from_api) {
-      order.amount = 0;
-      order.fee = 0;
-      order.hash = null;
-      order.secret = null;
-    }
-
-    if (order.type == 'buy') {
-      order.seller_id = null;
-      await messages.publishBuyOrderMessage(bot, order);
-    } else {
-      order.buyer_id = null;
-      await messages.publishSellOrderMessage(bot, order);
-    }
-    await order.save();
   } catch (error) {
     console.log(error);
   }
@@ -333,28 +343,39 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       await messages.invalidDataMessage(bot, user);
       return;
     }
-    order.taken_at = null;
-    order.status = 'PENDING';
 
-    if (!!order.min_amount && !!order.max_amount) {
-      order.fiat_amount = undefined;
+    if (order.creator_id == order.seller_id) {
+      await bot.telegram.sendMessage(user.tg_id, `No has pagado la factura para vender sats en la orden Id: #${order._id}, la orden ha sido eliminada`);
+      const buyerUser = await User.findOne({ _id: order.buyer_id });
+      await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor no pagó la factura por tu compra Id: #${order._id}, la operación ha sido cancelada`);
+      await order.remove();
+    } else { // Re-publish order
+      console.log(`Order Id: ${order._id} expired, republishing to the channel`);
+      await bot.telegram.sendMessage(user.tg_id, `No has pagado la factura para vender sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+      order.taken_at = null;
+      order.status = 'PENDING';
+  
+      if (!!order.min_amount && !!order.max_amount) {
+        order.fiat_amount = undefined;
+      }
+  
+      if (order.price_from_api) {
+        order.amount = 0;
+        order.fee = 0;
+        order.hash = null;
+        order.secret = null;
+      }
+  
+      if (order.type == 'buy') {
+        order.seller_id = null;
+        await messages.publishBuyOrderMessage(bot, order);
+      } else {
+        order.buyer_id = null;
+        await messages.publishSellOrderMessage(bot, order);
+      }
+      await order.save();
+      await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El vendedor @${user.username} no ha pagado la factura correspondiente a la orden Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
     }
-
-    if (order.price_from_api) {
-      order.amount = 0;
-      order.fee = 0;
-      order.hash = null;
-      order.secret = null;
-    }
-
-    if (order.type == 'buy') {
-      order.seller_id = null;
-      await messages.publishBuyOrderMessage(bot, order);
-    } else {
-      order.buyer_id = null;
-      await messages.publishSellOrderMessage(bot, order);
-    }
-    await order.save();
   } catch (error) {
     console.log(error);
   }
