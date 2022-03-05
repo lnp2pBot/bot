@@ -202,6 +202,39 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('cancelorder', async (ctx) => {
+    try {
+      const user = await validateAdmin(ctx, bot);
+      if (!user) return;
+
+      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+
+      if (!orderId) return;
+      if (!(await validateObjectId(bot, user, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
+
+      if (!order) return;
+
+      if (!!order.hash) {
+        await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      order.status = 'CANCELED_BY_ADMIN';
+      order.canceled_by = user._id;
+      const buyer = await User.findOne({ _id: order.buyer_id });
+      const seller = await User.findOne({ _id: order.seller_id });
+      await order.save();
+      // we sent a private message to the admin
+      await messages.successCancelOrderMessage(bot, user, order);
+      // we sent a private message to the seller
+      await messages.successCancelOrderByAdminMessage(bot, seller, order);
+      // we sent a private message to the buyer
+      await messages.successCancelOrderByAdminMessage(bot, buyer, order);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
   bot.hears(/cancel/i, async (ctx) => {
@@ -265,40 +298,6 @@ const initialize = (botToken, options) => {
       console.log(error);
     }
   });
-
-  bot.command('cancelorder', async (ctx) => {
-    try {
-      const user = await validateAdmin(ctx, bot);
-      if (!user) return;
-
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
-
-      if (!orderId) return;
-      if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await Order.findOne({ _id: orderId });
-
-      if (!order) return;
-
-      if (!!order.hash) {
-        await cancelHoldInvoice({ hash: order.hash });
-      }
-
-      order.status = 'CANCELED_BY_ADMIN';
-      order.canceled_by = user._id;
-      const buyer = await User.findOne({ _id: order.buyer_id });
-      const seller = await User.findOne({ _id: order.seller_id });
-      await order.save();
-      // we sent a private message to the admin
-      await messages.successCancelOrderMessage(bot, user, order);
-      // we sent a private message to the seller
-      await messages.successCancelOrderByAdminMessage(bot, seller, order);
-      // we sent a private message to the buyer
-      await messages.successCancelOrderByAdminMessage(bot, buyer, order);
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
 
   bot.command('settleorder', async (ctx) => {
     try {
