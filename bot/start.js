@@ -70,7 +70,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/sell$/i, async (ctx) => {
+  bot.hears(/sell/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -658,7 +658,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/listcurrencies$/i, async (ctx) => {
+  bot.hears(/listcurrencies/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -686,7 +686,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/showusername$/i, async (ctx) => {
+  bot.hears(/showusername/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -703,7 +703,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/showvolume$/i, async (ctx) => {
+  bot.hears(/showvolume/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -720,7 +720,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/community$/i, async (ctx) => {
+  bot.hears(/community/i, async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
