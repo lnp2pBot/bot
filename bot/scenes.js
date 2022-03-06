@@ -154,18 +154,37 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       const chan = ctx.message.text.split(" ");
-      if (chan.length > 0 && chan.length < 3) {
-        for (let i = 0; i < chan.length; i++) {
-          await isGroupAdmin(chan[i], user, bot.telegram);
-          community.order_channels.push(chan[i]);
-        }
-      } else {
-        await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
+      if (chan.length > 2) {
+        ctx.reply('Debes ingresar uno o dos canales');
+        return;
       }
+      community.order_channels = [];
+      if (chan.length == 1) {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        const channel = {
+          name: chan[0],
+          type: 'mixed',
+        };
+        community.order_channels.push(channel);
+      } else {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        await isGroupAdmin(chan[1], user, bot.telegram);
+        const channel1 = {
+          name: chan[0],
+          type: 'buy',
+        };
+        const channel2 = {
+          name: chan[1],
+          type: 'sell',
+        };
+        community.order_channels.push(channel1);
+        community.order_channels.push(channel2);
+      }
+
       ctx.wizard.state.community = community;
-      const reply = `Ahora ingresa los username de los usuarios que se encargan de resolver disputas, ` +
-      `cada username separado por un espacio en blanco`;
-      await ctx.reply('');
+      let reply = `Ahora ingresa los username de los usuarios que se encargan de resolver disputas, `;
+      reply += `cada username separado por un espacio en blanco`;
+      await ctx.reply(reply);
 
       return ctx.wizard.next();
     } catch (error) {
@@ -194,8 +213,8 @@ const communityWizard = new Scenes.WizardScene(
         await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
       }
       ctx.wizard.state.community.solvers = community.solvers;
-      const reply = `Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar ` +
-      `cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal`;
+      let reply = `Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar `;
+      reply += `cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal`;
       await ctx.reply(reply);
 
       return ctx.wizard.next();

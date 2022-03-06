@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const OrderChannelSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, required: true },
   type: {
     type: String,
-    enum: { values: ['buy', 'sell', 'mixed'], message: '{VALUE} is not supported' }
-   }
+    enum: ['buy', 'sell', 'mixed'],
+   },
 });
 
 const arrayLimits = (val) => {
