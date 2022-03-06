@@ -733,6 +733,9 @@ const initialize = (botToken, options) => {
 
   bot.on('text', async (ctx) => {
     try {
+      if (ctx.message.chat.type != 'private') {
+        return;
+      }
       const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
