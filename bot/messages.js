@@ -678,7 +678,11 @@ const listOrdersResponse = async (bot, user, orders) => {
 
 const notRateForCurrency = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Yadio.io no tiener tasa de cambio para esta moneda fiat`);
+    let message = `${process.env.FIAT_RATE_NAME} no tiene tasa de cambio para esta moneda fiat\n\n`;
+    message += `Para utilizar esta moneda debes indicar la cantidad de satoshis\n\n`;
+    message += `Si quieres que esta moneda sea incluida en la lista /listcurrencies puedes hacerles una solicitud aquí 👇\n\n`;
+    message += `🌐 https://yadio.io/api.html`;
+    await bot.telegram.sendMessage(user.tg_id, message);
   } catch (error) {
     console.log(error);
   }
