@@ -70,7 +70,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/sell/i, async (ctx) => {
+  bot.command('sell', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -103,7 +103,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/buy/i, async (ctx) => {
+  bot.command('buy', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -141,7 +141,7 @@ const initialize = (botToken, options) => {
     await takebuy(ctx, bot);
   });
 
-  bot.hears(/release/i, async (ctx) => {
+  bot.command('release', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -160,7 +160,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/dispute/i, async (ctx) => {
+  bot.command('dispute', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -237,7 +237,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.hears(/cancel/i, async (ctx) => {
+  bot.command('cancel', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -275,7 +275,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.hears(/cancelall/i, async (ctx) => {
+  bot.command('cancelall', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -358,7 +358,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/help/i, async (ctx) => {
+  bot.command('help', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
       if (!user) return;
@@ -370,7 +370,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.hears(/fiatsent/i, async (ctx) => {
+  bot.command('fiatsent', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -393,7 +393,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/cooperativecancel/i, async (ctx) => {
+  bot.command('cooperativecancel', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -479,7 +479,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/setaddress/i, async (ctx) => {
+  bot.command('setaddress', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -513,7 +513,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.hears(/setinvoice/i, async (ctx) => {
+  bot.command('setinvoice', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -582,7 +582,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/listorders/i, async (ctx) => {
+  bot.command('listorders', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -657,7 +657,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/listcurrencies/i, async (ctx) => {
+  bot.command('listcurrencies', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -685,7 +685,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/showusername/i, async (ctx) => {
+  bot.command('showusername', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -702,7 +702,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/showvolume/i, async (ctx) => {
+  bot.command('showvolume', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
@@ -719,13 +719,34 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.hears(/community/i, async (ctx) => {
+  bot.command('community', async (ctx) => {
     try {
       const user = await validateUser(ctx, bot, false);
 
       if (!user) return;
 
       ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.on('text', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+      let text = ctx.message.text;
+      let message = '';
+      // If the user is trying to enter a command with first letter uppercase
+      if (text[0] == '/' && text[1] == text[1].toUpperCase()) {
+        message += '🤖 Estás intentando ejecutar un comando con la primera letra en mayúscula.\n\n';
+        message += 'Por favor, escribe todo el comando en minúscula.';
+      } else {
+        message += '🤖 No entiendo lo que me dices.\n\n';
+        message += 'Por favor, consulta el comando /help para ver los comandos disponibles.';
+      }
+      ctx.reply(message);
     } catch (error) {
       console.log(error);
     }

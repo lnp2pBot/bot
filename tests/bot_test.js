@@ -70,10 +70,14 @@ describe('Telegram bot test', () => {
     const command = client.makeCommand('/sell 100 1 ves Pagomovil');
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);
+    const updates = await client.getUpdates();
     // We restore the stubs
     userStub.restore();
     orderStub.restore();
     createOrderStub.restore();
+    expect(updates.ok).to.be.equal(true);
+    expect(updates.result.length).to.be.equal(4);
+    expect(updates.result[0].message.chat_id).to.be.equal(process.env.CHANNEL);
   });
 
   it('should return /buy help', async () => {
