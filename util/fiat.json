@@ -48,7 +48,7 @@
 		"rounding": 0,
 		"code": "ARS",
 		"emoji": "🇦🇷",
-		"name_plural": "Pesos argentinos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"AUD": {
@@ -226,7 +226,7 @@
 		"rounding": 0,
 		"code": "CLP",
 		"emoji": "🇨🇱",
-		"name_plural": "Pesos chilenos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"CNY": {
@@ -248,7 +248,7 @@
 		"rounding": 0,
 		"code": "COP",
 		"emoji": "🇨🇴",
-		"name_plural": "Pesos colombianos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"CRC": {
@@ -270,7 +270,7 @@
 		"rounding": 0,
 		"code": "CUP",
 		"emoji": "🇨🇺",
-		"name_plural": "Pesos cubanos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"CVE": {
@@ -323,7 +323,7 @@
 		"rounding": 0,
 		"code": "DOP",
     "emoji": "🇩🇴",
-		"name_plural": "Pesos dominicanos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"DZD": {
@@ -768,7 +768,7 @@
 		"rounding": 0,
 		"code": "MXN",
 		"emoji": "🇲🇽",
-		"name_plural": "Pesos mexicanos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"MYR": {
@@ -896,7 +896,7 @@
 		"rounding": 0,
 		"code": "PHP",
     "emoji": "🇵🇭",
-		"name_plural": "Philippine pesos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"PKR": {
@@ -1182,7 +1182,7 @@
 		"rounding": 0,
 		"code": "UYU",
 		"emoji": "🇺🇾",
-		"name_plural": "Pesos uruguayos",
+		"name_plural": "Pesos",
 		"price": true
 	},
 	"UZS": {
