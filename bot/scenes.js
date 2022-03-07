@@ -267,8 +267,9 @@ const addFiatAmountWizard = new Scenes.WizardScene(
     try {
       const { bot, order, caller } = ctx.wizard.state;
       const currency = getCurrency(order.fiat_code);
-      const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-      let message = `Ingrese la cantidad de ${symbol} que desea transferir.\n`;
+      const action = order.type === 'buy' ? 'recibir' : 'enviar';
+      const currencyName = (!!currency && !!currency.name_plural) ? currency.name_plural : order.fiat_code;
+      let message = `Ingresa la cantidad de ${currencyName} que desea ${action}.\n`;
       message += `Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:`
       await bot.telegram.sendMessage(caller.tg_id, message);
       return ctx.wizard.next()
