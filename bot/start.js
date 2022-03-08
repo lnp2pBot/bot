@@ -471,7 +471,6 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      if (!(await validateObjectId(bot, user, params[0]))) return;
       user.banned = true;
       await user.save();
       await messages.userBannedMessage(bot, adminUser);

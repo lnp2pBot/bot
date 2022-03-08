@@ -71,13 +71,13 @@ const validateSellOrder = async (ctx, bot, user) => {
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
       await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
       return false;
-    };
+    }
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
       await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
       return false;
-    };
+    }
 
     // for ranges like 100--2, the result will be [100, 0, 2]
     fiatAmount = fiatAmount.split('-');
@@ -86,39 +86,39 @@ const validateSellOrder = async (ctx, bot, user) => {
     if (fiatAmount.length == 2 && amount) {
       await messages.invalidRangeWithAmount(bot, user);
       return false;
-    };
+    }
 
     // ranges like [100, 0, 2] (originate from ranges like 100--2)
     // will make this conditional fail
     if (fiatAmount.length > 2) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat')
       return false;
-    };
+    }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
-    };
+    }
 
-    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])){
+    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
       return false;
-    };
+    }
 
     if (fiatAmount.some(isNaN)) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
       return false;
-    };
+    }
 
     if (fiatAmount.some((x) => x < 1)) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
       return false;
-    };
+    }
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
       return false
-    };
+    }
 
     return {
       amount,
@@ -146,13 +146,13 @@ const validateBuyOrder = async (ctx, bot, user) => {
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
       await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
       return false;
-    };
+    }
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
       await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
       return false;
-    };
+    }
 
     // for ranges like 100--2, the result will be [100, 0, 2]
     fiatAmount = fiatAmount.split('-');
@@ -161,39 +161,39 @@ const validateBuyOrder = async (ctx, bot, user) => {
     if (fiatAmount.length == 2 && amount) {
       await messages.invalidRangeWithAmount(bot, user);
       return false;
-    };
+    }
 
     // ranges like [100, 0, 2] (originate from ranges like 100--2)
     // will make this conditional fail
     if (fiatAmount.length > 2) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat')
       return false;
-    };
+    }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
-    };
+    }
 
-    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])){
+    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
       return false;
-    };
+    }
 
     if (fiatAmount.some(isNaN)) {
       await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
       return false;
-    };
+    }
 
     if (fiatAmount.some((x) => x < 1)) {
       await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
       return false;
-    };
+    }
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
       return false;
-    };
+    }
 
     return {
       amount,
