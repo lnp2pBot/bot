@@ -29,8 +29,14 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       const lnInvoice = ctx.message.text;
+      let { bot, buyer, seller, order } = ctx.wizard.state;
       if (lnInvoice == 'exit') {
-        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos, si aún necesitas ingresar una invoice a la orden utiliza el comando /setinvoice');
+        let message = `Has salido del modo wizard, ahora puedes escribir comandos, aún puedes `;
+        message += `ingresar una factura a la orden con el comando /setinvoice indicando Id `;
+        message += `de orden y factura, puedes enviarme una factura con un monto de `;
+        message += `${order.amount} satoshis, pero tambien acepto facturas sin monto:\n\n`;
+        message += `/setinvoice ${order._id} <factura lightning con o sin monto>`;
+        await ctx.reply(message);
         return ctx.scene.leave();
       }
       const res = await isValidInvoice(lnInvoice);
@@ -38,7 +44,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply(res.error);
         return;
       };
-      let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
       if (order.status == 'EXPIRED') {
@@ -55,7 +60,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply('La factura tiene un monto incorrecto');
         return;
       }
-      await waitPayment(ctx, bot, buyer, seller, order, lnInvoice)
+      await waitPayment(ctx, bot, buyer, seller, order, lnInvoice);
 
       return ctx.scene.leave();
     } catch (error) {

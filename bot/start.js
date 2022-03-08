@@ -11,6 +11,7 @@ const {
   addInvoice,
   cancelShowHoldInvoice,
   showHoldInvoice,
+  waitPayment,
 } = require('./commands');
 const {
   settleHoldInvoice,
@@ -570,6 +571,9 @@ const initialize = (botToken, options) => {
         } else {
           await messages.invoiceAlreadyUpdatedMessage(bot, user);
         }
+      } else if (order.status == 'WAITING_BUYER_INVOICE') {
+        const seller = await User.findOne({ _id: order.seller_id });
+        await waitPayment(ctx, bot, user, seller, order, lnInvoice);
       } else {
         await messages.invoiceUpdatedMessage(bot, user);
       }
