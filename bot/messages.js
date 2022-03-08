@@ -729,7 +729,9 @@ const successSetAddress = async (bot, user) => {
 
 const badStatusOnCancelOrderMessage = async (bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta opción solo permite cancelar las ordenes que no han sido tomadas o en las cuales el vendedor ha tardado mucho para pagar la factura`);
+    let message = `Esta opción solo permite cancelar las ordenes que no han sido tomadas, `;
+    message += `si lo deseas puedes intentar una cancelación cooperativa con /cooperativecancel`;
+    await bot.telegram.sendMessage(user.tg_id, message);
   } catch (error) {
     console.log(error);
   }
