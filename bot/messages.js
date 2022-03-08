@@ -941,6 +941,15 @@ const invalidRangeWithAmount = async (bot, user) => {
   }
 }
 
+const tooManyPendingOrdersMessage = async (bot, user) => {
+  try {
+    let message = `Has llegado al máximo de órdenes publicadas simultáneamente`;
+    await bot.telegram.sendMessage(user.tg_id, message);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1028,5 +1037,6 @@ module.exports = {
   expiredInvoiceOnPendingMessage,
   successCancelAllOrdersMessage,
   disableLightningAddress,
-  invalidRangeWithAmount
+  invalidRangeWithAmount,
+  tooManyPendingOrdersMessage,
 };

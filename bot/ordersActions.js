@@ -14,6 +14,13 @@ const createOrder = async (ctx, bot, user, {
   range_parent_id,
 }) => {
   try {
+    const pendingOrders = await Order.count({ status: 'PENDING' });
+    // We don't let users create too PENDING many orders
+    if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
+      await messages.tooManyPendingOrdersMessage(bot, user);
+      return false;
+    }
+    
     amount = parseInt(amount);
     const fee = amount * parseFloat(process.env.FEE);
     const currency = getCurrency(fiatCode);
