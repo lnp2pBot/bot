@@ -537,7 +537,7 @@ const initialize = (botToken, options) => {
         return;
       }
       if (invoice.tokens && invoice.tokens != order.amount) {
-        await messages.incorrectAmountInvoiceMessage(bot, user);
+        await messages.incorrectAmountInvoiceMessage(ctx);
         return;
       }
       order.buyer_invoice = lnInvoice;

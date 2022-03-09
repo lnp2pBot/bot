@@ -3,6 +3,7 @@ const { isValidInvoice } = require('./validations');
 const { Order, Community, User } = require('../models');
 const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
 const { getCurrency } = require('../util');
+const messages = require('./messages');
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
@@ -12,15 +13,14 @@ const addInvoiceWizard = new Scenes.WizardScene(
       const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
       const currency = getCurrency(order.fiat_code);
       const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-      await bot.telegram.sendMessage(buyer.tg_id, `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis equivalente a ${symbol} ${order.fiat_amount}`);
-      await bot.telegram.sendMessage(buyer.tg_id, `Si no la envías en ${expirationTime} minutos la orden será cancelada`);
+      await messages.wizardAddInvoiceInitMessage(bot, buyer, order, symbol, expirationTime);
       
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();
       return ctx.wizard.next();
     } catch (error) {
       console.log(error);
-      return ctx.reply('Ha ocurrido un error, por favor contacta al administrador');
+      await messages.errorMessage(ctx);
     }
   },
   async (ctx) => {
@@ -31,12 +31,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       const lnInvoice = ctx.message.text;
       let { bot, buyer, seller, order } = ctx.wizard.state;
       if (lnInvoice == 'exit') {
-        let message = `Has salido del modo wizard, ahora puedes escribir comandos, aún puedes `;
-        message += `ingresar una factura a la orden con el comando /setinvoice indicando Id `;
-        message += `de orden y factura, puedes enviarme una factura con un monto de `;
-        message += `${order.amount} satoshis, pero tambien acepto facturas sin monto:\n\n`;
-        message += `/setinvoice ${order._id} <factura lightning con o sin monto>`;
-        await ctx.reply(message);
+        await messages.wizardAddInvoiceExitMessage(ctx, order);
         return ctx.scene.leave();
       }
       const res = await isValidInvoice(lnInvoice);
@@ -47,17 +42,17 @@ const addInvoiceWizard = new Scenes.WizardScene(
       // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
       if (order.status == 'EXPIRED') {
-        await ctx.reply(`¡Esta orden ya expiró!`);
+        await messages.orderExpiredMessage(ctx);
         return ctx.scene.leave();
       }
 
       if (order.status != 'WAITING_BUYER_INVOICE') {
-        await ctx.reply(`¡Ya no puedes agregar una factura para esta orden!`);
+        await messages.cantAddInvoiceMessage(ctx);
         return ctx.scene.leave();
       }
 
       if (res.invoice.tokens && res.invoice.tokens != order.amount) {
-        await ctx.reply('La factura tiene un monto incorrecto');
+        await messages.incorrectAmountInvoiceMessage(ctx);
         return;
       }
       await waitPayment(ctx, bot, buyer, seller, order, lnInvoice);
@@ -77,12 +72,10 @@ const communityWizard = new Scenes.WizardScene(
       if (ctx.message === undefined) {
         return ctx.scene.leave();
       }
-      const message = await ctx.reply(
-        'Ingresa el nombre de tu comunidad:',
-      );
+
+      await messages.wizardCommunityEnterNameMessage(ctx);
       ctx.wizard.state.community = {};
-      ctx.wizard.state.prev_message_id = [message.message_id];
-  
+
       return ctx.wizard.next();
     } catch (error) {
       console.log(error);
@@ -97,25 +90,18 @@ const communityWizard = new Scenes.WizardScene(
   
       const name = ctx.message.text;
       if (name == 'exit') {
-        await ctx.reply('Saliendo del modo wizard, ahora podrás escribir comandos.');
+        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-
-      if (name.length > 20) {
+      const nameLength = 20;
+      if (name.length > nameLength) {
         ctx.deleteMessage();
-        const warning = await ctx.reply(
-          'El nombre debe tener un máximo de 20 caracteres. Puede editarlo a continuación:'
-        );
-        const nameTooLong = await ctx.reply(`${name}`);
-        ctx.wizard.state.prev_message_id.push(warning.message_id, nameTooLong.message_id);
-  
+        await messages.wizardCommunityTooLongNameMessage(ctx, nameLength);
         return;
       }
       ctx.wizard.state.community.name = name;
-      const reply = `Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como ` +
-      `tú deben ser administradores del grupo:` +
-      `\n\nP. ej: @MiComunidad`;
-      await ctx.reply(reply);
+      await messages.wizardCommunityEnterGroupMessage(ctx);
+
       return ctx.wizard.next();
     } catch (error) {
       console.log(error);
@@ -126,21 +112,14 @@ const communityWizard = new Scenes.WizardScene(
     try {
       const { bot, user } = ctx.wizard.state;
       if (ctx.message.text == 'exit') {
-        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
       const group = ctx.message.text;
       await isGroupAdmin(group, user, bot.telegram);
       ctx.wizard.state.community.group = group;
       ctx.wizard.state.community.creator_id = user._id;
-      const reply = `Las ofertas en tu comunidad deben publicarse en un canal de telegram, ` +
-      `si me indicas un canal tanto las compras como las ventas se publicarán en ese canal, ` +
-      `si me indicas dos canales se publicaran las compras en uno y las ventas en el otro, ` +
-      `tanto el bot como tú deben ser administradores de ambos canales.\n\n` +
-      `Puedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa ` +
-      `dos nombres separados por un espacio.\n\n` +
-      `P. ej: @MiComunidadCompras @MiComunidadVentas`;
-      await ctx.reply(reply);
+      await messages.wizardCommunityEnterOrderChannelsMessage(ctx);
 
       return ctx.wizard.next();
     } catch (error) {
@@ -155,12 +134,12 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       if (ctx.message.text == 'exit') {
-        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
       const chan = ctx.message.text.split(" ");
       if (chan.length > 2) {
-        ctx.reply('Debes ingresar uno o dos canales');
+        await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
         return;
       }
       community.order_channels = [];
@@ -187,9 +166,7 @@ const communityWizard = new Scenes.WizardScene(
       }
 
       ctx.wizard.state.community = community;
-      let reply = `Ahora ingresa los username de los usuarios que se encargan de resolver disputas, `;
-      reply += `cada username separado por un espacio en blanco`;
-      await ctx.reply(reply);
+      await messages.wizardCommunityEnterSolversMessage(ctx);
 
       return ctx.wizard.next();
     } catch (error) {
@@ -200,7 +177,7 @@ const communityWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       if (ctx.message.text == 'exit') {
-        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
       const { community } = ctx.wizard.state;
@@ -217,12 +194,10 @@ const communityWizard = new Scenes.WizardScene(
           }
         }
       } else {
-        await ctx.reply('Debes ingresar uno o dos nombres separados por un espacio');
+        await messages.wizardCommunityMustEnterNamesSeparatedMessage(ctx);
       }
       ctx.wizard.state.community.solvers = community.solvers;
-      let reply = `Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar `;
-      reply += `cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal`;
-      await ctx.reply(reply);
+      await messages.wizardCommunityEnterSolversChannelMessage(ctx);
 
       return ctx.wizard.next();
     } catch (error) {
@@ -235,7 +210,7 @@ const communityWizard = new Scenes.WizardScene(
       const { bot, user, community } = ctx.wizard.state;
       const chan = ctx.message.text;
       if (chan == 'exit') {
-        await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
+        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
       await isGroupAdmin(chan, user, bot.telegram);
@@ -243,7 +218,8 @@ const communityWizard = new Scenes.WizardScene(
 
       const newCommunity = new Community(community);
       await newCommunity.save();
-      await ctx.reply('Felicidades! has creado tu comunidad');
+      await messages.wizardCommunityCreatedMessage(ctx);
+
       return ctx.scene.leave();
     } catch (error) {
       ctx.reply(error.toString());
@@ -263,7 +239,7 @@ const isGroupAdmin = async (groupId, user, telegram) => {
   } catch (error) {
     console.log(error);
     if (!!error.response && error.response.error_code == 400) {
-      throw new Error('No tienes permisos de administrador en este grupo o canal');
+      throw new Error(messages.wizardCommunityWrongPermission());
     }
   }
 };
@@ -276,19 +252,17 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       const currency = getCurrency(order.fiat_code);
       const action = order.type === 'buy' ? 'recibir' : 'enviar';
       const currencyName = (!!currency && !!currency.name_plural) ? currency.name_plural : order.fiat_code;
-      let message = `Ingresa la cantidad de ${currencyName} que desea ${action}.\n`;
-      message += `Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:`
-      await bot.telegram.sendMessage(caller.tg_id, message);
+      await messages.wizardAddFiatAmountMessage(ctx, currencyName, action, order);
+
       return ctx.wizard.next()
     } catch (error) {
       console.log(error);
-      return ctx.reply('Ha ocurrido un error, por favor contacta al administrador');
+      await messages.errorMessage(ctx);
     }
   },
   async (ctx) => {
     try {
       const { bot, order } = ctx.wizard.state;
-      const warningMessage = `Ingrese una número entre ${order.min_amount} y ${order.max_amount}`;
 
       if (ctx.message === undefined) {
         return ctx.scene.leave();
@@ -296,20 +270,18 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
       const fiatAmount = parseInt(ctx.message.text);
       if (!Number.isInteger(fiatAmount)) {
-        await ctx.reply(warningMessage);
+        await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
         return;
       }
 
       if (fiatAmount < order.min_amount || fiatAmount > order.max_amount) {
-        await ctx.reply(warningMessage);
+        await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
         return;
       }
 
       order.fiat_amount = fiatAmount;
-
       const currency = getCurrency(order.fiat_code);
-
-      ctx.reply(`Cantidad elegida: ${currency.symbol_native} ${fiatAmount} .`)
+      await messages.wizardAddFiatAmountCorrectMessage(ctx, currency, fiatAmount);
       
       if (order.type == 'sell') {
         await addInvoice(ctx, bot, order);

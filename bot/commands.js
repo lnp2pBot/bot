@@ -243,10 +243,14 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       return;
     }
     if (order.creator_id == order.buyer_id) {
-      await bot.telegram.sendMessage(user.tg_id, `No has enviado la factura para recibir sats por la orden Id: #${order._id}, la orden ha sido eliminada`);
       const sellerUser = await User.findOne({ _id: order.seller_id });
-      await bot.telegram.sendMessage(sellerUser.tg_id, `El comprador no me envió la factura para recibir sats por tu venta Id: #${order._id}, tus sats han sido devueltos`);
+      // We use a different var for order because we need to delete the order and
+      // there are users that block the bot and it raises the catch block stopping 
+      // the process
+      const clonedOrder = order;
       await order.remove();
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder);
+      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -269,8 +273,8 @@ const cancelAddInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order);
       }
       await order.save();
-      await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El comprador @${user.username} tomó la orden Id: #${order._id} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-      await bot.telegram.sendMessage(user.tg_id, `No has enviado la factura para recibir sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order);
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order);
     }
   } catch (error) {
     console.log(error);
@@ -345,10 +349,14 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     }
 
     if (order.creator_id == order.seller_id) {
-      await bot.telegram.sendMessage(user.tg_id, `No has pagado la factura para vender sats en la orden Id: #${order._id}, la orden ha sido eliminada`);
       const buyerUser = await User.findOne({ _id: order.buyer_id });
-      await bot.telegram.sendMessage(buyerUser.tg_id, `El vendedor no pagó la factura por tu compra Id: #${order._id}, la operación ha sido cancelada`);
+      // We use a different var for order because we need to delete the order and
+      // there are users that block the bot and it raises the catch block stopping 
+      // the process
+      const clonedOrder = order;
       await order.remove();
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder);
+      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -373,8 +381,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order);
       }
       await order.save();
-      await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `El vendedor @${user.username} no ha pagado la factura correspondiente a la orden Id: #${order._id} y el tiempo ha expirado, la orden ha sido publicada nuevamente`);
-      await bot.telegram.sendMessage(user.tg_id, `No has pagado la factura para vender sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order);
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, order);
     }
   } catch (error) {
     console.log(error);
