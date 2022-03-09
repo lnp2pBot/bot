@@ -1,6 +1,6 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const schedule = require('node-schedule');
-const { Order, User, PendingPayment } = require('../models');
+const { Order, User, PendingPayment, Community } = require('../models');
 const { getCurrenciesWithPrice } = require('../util');
 const ordersActions = require('./ordersActions');
 const {
@@ -729,6 +729,22 @@ const initialize = (botToken, options) => {
       if (!user) return;
 
       ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('listcommunities', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, bot, false);
+
+      if (!user) return;
+
+      const communities = await Community.find({ creator_id: user._id });
+
+      if (!communities) return;
+
+      await messages.listCommunitiesMessage(ctx, communities);
     } catch (error) {
       console.log(error);
     }

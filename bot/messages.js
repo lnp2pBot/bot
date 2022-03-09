@@ -950,6 +950,28 @@ const tooManyPendingOrdersMessage = async (bot, user) => {
   }
 }
 
+const listCommunitiesMessage = async (ctx, communities) => {
+  try {
+    let message = '';
+    communities.forEach(community => {
+      message += `ID: ${community.id}\n`;
+      message += `Nombre: ${community.name}\n`;
+      message += `Grupo: ${community.group}\n`;
+      community.order_channels.forEach(channel => {
+        message += `Canal ${channel.type}: ${channel.name}\n`;
+      });
+      community.solvers.forEach(solver => {
+        message += `solver: ${solver.username}\n`;
+      });
+      message += `Pública: ${community.public ? 'Sí' : 'No'}\n`;
+      message += `Creada: ${community.created_at}\n\n`;
+    });
+    await ctx.reply(message);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1039,4 +1061,5 @@ module.exports = {
   disableLightningAddress,
   invalidRangeWithAmount,
   tooManyPendingOrdersMessage,
+  listCommunitiesMessage,
 };
