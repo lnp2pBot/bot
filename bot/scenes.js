@@ -125,21 +125,21 @@ const communityWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       const { bot, user } = ctx.wizard.state;
-      const groupId = ctx.message.text;
-      if (groupId == 'exit') {
+      if (ctx.message.text == 'exit') {
         await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
         return ctx.scene.leave();
       }
-      await isGroupAdmin(groupId, user, bot.telegram);
-      ctx.wizard.state.community.groupId = groupId;
+      const group = ctx.message.text;
+      await isGroupAdmin(group, user, bot.telegram);
+      ctx.wizard.state.community.group = group;
       ctx.wizard.state.community.creator_id = user._id;
       const reply = `Las ofertas en tu comunidad deben publicarse en un canal de telegram, ` +
       `si me indicas un canal tanto las compras como las ventas se publicarán en ese canal, ` +
       `si me indicas dos canales se publicaran las compras en uno y las ventas en el otro, ` +
-      `tanto el bot como tú deben ser administradores de ambos canales.` +
-      `\n\nPuedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa ` +
-      `dos nombres separados por un espacio.` +
-      `\n\nP. ej: @MiComunidadCompras @MiComunidadVentas`;
+      `tanto el bot como tú deben ser administradores de ambos canales.\n\n` +
+      `Puedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa ` +
+      `dos nombres separados por un espacio.\n\n` +
+      `P. ej: @MiComunidadCompras @MiComunidadVentas`;
       await ctx.reply(reply);
 
       return ctx.wizard.next();
@@ -199,19 +199,21 @@ const communityWizard = new Scenes.WizardScene(
   },
   async (ctx) => {
     try {
-      const { community } = ctx.wizard.state;
-      community.solvers = [];
-      const groupId = ctx.message.text;
-      if (groupId == 'exit') {
+      if (ctx.message.text == 'exit') {
         await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos');
         return ctx.scene.leave();
       }
+      const { community } = ctx.wizard.state;
+      community.solvers = [];
       const usernames = ctx.message.text.split(" ");
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const user = await User.findOne({ username: usernames[i] });
           if (!!user) {
-            community.solvers.push(user._id.toString());
+            community.solvers.push({
+              id: user._id,
+              username: user.username,
+            });
           }
         }
       } else {
