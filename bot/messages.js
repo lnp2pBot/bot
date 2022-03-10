@@ -1153,7 +1153,7 @@ const expiredOrderMessage = async (bot, order, buyerUser, sellerUser) => {
 
 const toBuyerDidntAddInvoiceMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤨 No has enviado la factura para recibir sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+    await bot.telegram.sendMessage(user.tg_id, `🤨 No has enviado la factura para recibir sats por la orden Id: #${order._id}`);
   } catch (error) {
     console.log(error);
   }
@@ -1179,7 +1179,7 @@ const toAdminChannelBuyerDidntAddInvoiceMessage = async (bot, user, order) => {
 
 const toSellerDidntPayInvoiceMessage = async (bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤨 No has pagado la factura para vender sats por la orden Id: #${order._id} y el tiempo ha expirado`);
+    await bot.telegram.sendMessage(user.tg_id, `🤨 No has pagado la factura para vender sats por la orden Id: #${order._id}`);
   } catch (error) {
     console.log(error);
   }
