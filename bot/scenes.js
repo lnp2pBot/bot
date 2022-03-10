@@ -20,7 +20,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } catch (error) {
       console.log(error);
-      await messages.errorMessage(ctx);
     }
   },
   async (ctx) => {
@@ -262,7 +261,6 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       return ctx.wizard.next()
     } catch (error) {
       console.log(error);
-      await messages.errorMessage(ctx);
     }
   },
   async (ctx) => {
