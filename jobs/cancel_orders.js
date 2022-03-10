@@ -1,7 +1,7 @@
 const { cancelHoldInvoice } = require('../ln');
 const { User, Order } = require('../models');
-const { plural } = require('../util');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
+const messages = require('../bot/messages');
 
 const cancelOrders = async (bot) => {
     const holdInvoiceTime = new Date();
@@ -45,23 +45,7 @@ const cancelOrders = async (bot) => {
 
         // Instead of cancel this order we should send this to the admins 
         // and they decide what to do
-        await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, `Esta orden ha expirado sin haberse completado
-Id: #${order._id}
-Tipo de orden: ${order.type}
-Status: ${order.status}
-Vendedor: @${sellerUser.username}
-Comprador: @${buyerUser.username}
-Monto (sats): ${order.amount}
-Fee (sats): ${order.fee}
-Routing Fee (sats): ${order.routing_fee}
-Monto (fiat): ${order.fiat_code} ${order.fiat_amount}
-Método de pago: ${order.payment_method}
-seller invoice hash: ${order.hash}
-seller invoice secret: ${order.secret}
-buyer payment request: ${order.buyer_invoice}
-
-@${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}
-@${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}`);
+        await messages.expiredOrderMessage(bot, order, buyerUser, sellerUser);
         order.admin_warned = true;
         await order.save();
     }
