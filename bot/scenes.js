@@ -30,8 +30,13 @@ const addInvoiceWizard = new Scenes.WizardScene(
       }
       const lnInvoice = ctx.message.text;
       let { bot, buyer, seller, order } = ctx.wizard.state;
+      order = await Order.findOne({ _id: order._id });
       if (lnInvoice == 'exit') {
-        await messages.wizardAddInvoiceExitMessage(ctx, order);
+        if (!!order && order.status == 'WAITING_BUYER_INVOICE') {
+          await messages.wizardAddInvoiceExitMessage(ctx, order);
+        } else {
+          await messages.wizardExitMessage(ctx);
+        }
         return ctx.scene.leave();
       }
       const res = await isValidInvoice(lnInvoice);
@@ -282,7 +287,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       order.fiat_amount = fiatAmount;
       const currency = getCurrency(order.fiat_code);
       await messages.wizardAddFiatAmountCorrectMessage(ctx, currency, fiatAmount);
-      
+
       if (order.type == 'sell') {
         await addInvoice(ctx, bot, order);
       } else {
