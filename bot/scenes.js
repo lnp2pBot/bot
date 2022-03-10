@@ -30,6 +30,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       }
       const lnInvoice = ctx.message.text;
       let { bot, buyer, seller, order } = ctx.wizard.state;
+      // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
       if (lnInvoice == 'exit') {
         if (!!order && order.status == 'WAITING_BUYER_INVOICE') {
@@ -44,8 +45,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         await ctx.reply(res.error);
         return;
       };
-      // We get an updated order from the DB
-      order = await Order.findOne({ _id: order._id });
+
       if (order.status == 'EXPIRED') {
         await messages.orderExpiredMessage(ctx);
         return ctx.scene.leave();
