@@ -48,7 +48,9 @@ const invoicePaymentRequestMessage = async (bot, user, request, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(user.tg_id, `Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.\n\nPor favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos`);
+    let message = `Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.\n\n`;
+    message += `Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos`;
+    await bot.telegram.sendMessage(user.tg_id, message);
     await bot.telegram.sendMessage(user.tg_id, `${request}`);
   } catch (error) {
     console.log(error);

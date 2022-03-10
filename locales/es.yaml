@@ -1,0 +1,45 @@
+start: |
+  Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
+
+  Una vez inicializado el Bot, puedes usar los siguientes comandos:
+
+  1. Publica tu oferta de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.
+
+  2. Espera que otro usuario tome la oferta por medio de los botones "Comprar" ó "Vender". Tambien puedes tomar las ofertas de otros usuarios con estos botones!
+
+  3. Tu oferta y calificación estará visible en el canal ${process.env.CHANNEL}.
+
+  4. Si estas vendiendo el bot publicará la orden en el canal ${process.env.CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+
+  5. Una vez alguien tome tu venta el bot te pedirá que pagues una factura lightning, el pago a esta factura será retenido, la orden expirará en un tiempo máximo de ${orderExpiration} minutos desde el momento que fue tomada, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
+
+  6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+
+  7. Una vez alguien tome tu compra debes crear una factura lightning para recibir los sats y enviarsela al bot, luego contacta al vendedor para que te de los datos del pago fiat. El vendedor luego debe liberar los fondos usando el comando /release para que te lleguen los sats a la factura lightning.
+
+  8. Si estas tomando una venta, debes crear una factura lightning para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat. Una vez el vendedor confirme su pago fiat usará el comando /release para liberarte los sats a tu factura.
+
+  9. Si estas tomando una compra, debes pagar la factura lightning, este pago estará retenido mientras el comprador realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen los sats al comprador.
+
+  10. Si en algun punto los usuarios no pueden solucionar operación, pueden usar este comando para llamar a los admin a que resuelvan la operacion como intermediarios.
+
+  11. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el el comando /cancel.
+
+  12. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cooperativecancel
+
+  ¡Intercambia seguro y rápido!
+initialize: Para usar este Bot primero debes inicializar el bot con el comando /start
+no_handle: 👤 Para usar este bot debes activar tu username de telegram
+invoice_payment_request: |
+  Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.
+  Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
+pending_sell: |
+  Publicada la oferta en el canal ${process.env.CHANNEL}
+  Espera que alguien tome tu venta, si la orden no es tomada en 23 horas será borrada del canal.
+  Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
+cancel_order: /cancel ${order._id}
+pending_buy: |
+  Publicada la oferta en el canal ${process.env.CHANNEL}.
+  Espera que alguien tome tu compra, si la orden no es tomada en 23 horas será borrada del canal.
+  Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
+must_be_int: ${fieldName} debe ser un número entero
