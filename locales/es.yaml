@@ -120,7 +120,7 @@ buyer: comprador
 dispute_started_channel: |
   El ${type} @${initiatorUser.username}
   ha iniciado una disputa con @${counterPartyUser.username} en la orden:
-  ${getDetailedOrder(order)}
+  ${getDetailedOrder(order, buyer, seller)}
   @${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputa${plural(initiatorUser.disputes)}
   @${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${counterPartyUser.disputes}
 you_started_dispute_to_buyer: Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla
@@ -255,7 +255,7 @@ cant_add_invoice: ¡Ya no puedes agregar una factura para esta orden!
 expired_order: |
   Esta orden ha expirado sin haberse completado
 
-  ${getDetailedOrder(order)}
+  ${getDetailedOrder(order, buyer, seller)}
 
   @${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}
   @${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}

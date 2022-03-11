@@ -346,13 +346,10 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
-      const creator = await User.findOne({ _id: order.creator_id });
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
-      const buyerUsername = !!buyer ? buyer.username : '';
-      const sellerUsername = !!seller ? seller.username : '';
 
-      await messages.checkOrderMessage(ctx, order, creator.username, buyerUsername, sellerUsername);
+      await messages.checkOrderMessage(ctx, order, buyer, seller);
 
     } catch (error) {
       console.log(error);

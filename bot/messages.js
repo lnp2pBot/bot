@@ -407,18 +407,29 @@ const publishSellOrderMessage = async (bot, order) => {
   }
 };
 
-const getDetailedOrder = (order) => {
+const getDetailedOrder = (order, buyer, seller) => {
   try {
+    console.log(buyer)
+    const buyerUsername = buyer ? buyer.username : '';
+    const sellerUsername = seller ? seller.username : '';
+    const buyerId = buyer ? buyer._id : '';
+    const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
     let message = `Id: ${order._id}:\n`;
     message += `Status: ${order.status}\n`;
+    message += `Creator: @${creator || ''}\n`;
+    message += `Buyer: @${buyerUsername || ''}\n`;
+    message += `Seller: @${sellerUsername || ''}\n`;
     message += `Monto (sats): ${order.amount}\n`;
     message += `Fee (sats): ${order.fee}\n`;
-    message += `Routing Fee (sats): ${order.routing_fee}\n`;
+    message += `Routing Fee (sats): ${order.routing_fee || 0}\n`;
     message += `Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}\n`;
+    message += `Price margin: ${order.price_margin}\n`;
     message += `Método de pago: ${order.payment_method}\n`;
-    message += `seller invoice hash: ${order.hash}\n`;
-    message += `seller invoice secret: ${order.secret}\n`;
-    message += `buyer payment request: ${order.buyer_invoice}\n`;
+    message += `Created at: ${order.created_at}\n`;
+    message += `Taken at: ${order.taken_at || ''}\n`;
+    message += `seller invoice hash: ${order.hash || ''}\n`;
+    message += `seller invoice secret: ${order.secret || ''}\n`;
+    message += `buyer payment request: ${order.buyer_invoice || ''}\n`;
 
     return message;
   } catch (error) {
@@ -438,9 +449,9 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
     }
     let message = `El ${type} @${initiatorUser.username} `;
     message += `ha iniciado una disputa con @${counterPartyUser.username} en la orden:\n\n`;
-    message += `${getDetailedOrder(order)}\n\n`;
+    message += `${getDetailedOrder(order, buyer, seller)}\n\n`;
     message += `@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputa${plural(initiatorUser.disputes)}\n`;
-    message += `@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${counterPartyUser.disputes}`;
+    message += `@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${plural(counterPartyUser.disputes)}`;
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
 
     if (initiator === 'buyer') {
@@ -463,9 +474,9 @@ const customMessage = async (bot, user, message) => {
   }
 };
 
-const checkOrderMessage = async (ctx, order, creator, buyer, seller) => {
+const checkOrderMessage = async (ctx, order, buyer, seller) => {
   try {
-    let message = getDetailedOrder(order);
+    let message = getDetailedOrder(order, buyer, seller);
     message += `\n\n`;
     await ctx.reply(message);
   } catch (error) {
@@ -1143,7 +1154,7 @@ const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
 const expiredOrderMessage = async (bot, order, buyerUser, sellerUser) => {
   try {
     let message = `Esta orden ha expirado sin haberse completado\n\n`;
-    message += getDetailedOrder(order);
+    message += getDetailedOrder(order, buyerUser, sellerUser);
     message += `\n\n`;
     message += `@${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}\n`;
     message += `@${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}\n`;
