@@ -409,7 +409,7 @@ const publishSellOrderMessage = async (bot, order) => {
 
 const getDetailedOrder = (order) => {
   try {
-    message += `Id: ${order._id}:\n`;
+    let message = `Id: ${order._id}:\n`;
     message += `Status: ${order.status}\n`;
     message += `Monto (sats): ${order.amount}\n`;
     message += `Fee (sats): ${order.fee}\n`;
