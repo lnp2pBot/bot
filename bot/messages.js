@@ -4,30 +4,16 @@ const { plural, getCurrency } = require('../util');
 const startMessage = async (ctx) => {
   try {
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
-    let message = `Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.\n\n`;
-    message += `Una vez inicializado el Bot, puedes usar los siguientes comandos:\n\n`;
-    message += `1. Publica tu oferta de compra o venta por medio de los comandos /buy o /sell y sigue las instrucciones.\n\n`;
-    message += `2. Espera que otro usuario tome la oferta por medio de los botones "Comprar" ó "Vender". Tambien puedes tomar las ofertas de otros usuarios con estos botones!\n\n`;
-    message += `3. Tu oferta y calificación estará visible en el canal ${process.env.CHANNEL}.\n\n`;
-    message += `4. Si estas vendiendo el bot publicará la orden en el canal ${process.env.CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.\n\n`;
-    message += `5. Una vez alguien tome tu venta el bot te pedirá que pagues una factura lightning, el pago a esta factura será retenido, la orden expirará en un tiempo máximo de ${orderExpiration} minutos desde el momento que fue tomada, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release\n\n`;
-    message += `6. Si estas comprando, solo debes publicar la oferta y esperar que otro usuario la tome. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.\n\n`;
-    message += `7. Una vez alguien tome tu compra debes crear una factura lightning para recibir los sats y enviarsela al bot, luego contacta al vendedor para que te de los datos del pago fiat. El vendedor luego debe liberar los fondos usando el comando /release para que te lleguen los sats a la factura lightning.\n\n`;
-    message += `8. Si estas tomando una venta, debes crear una factura lightning para recibir los sats y pedirle al vendedor que te de sus datos de pago fiat. Una vez el vendedor confirme su pago fiat usará el comando /release para liberarte los sats a tu factura.\n\n`;
-    message += `9. Si estas tomando una compra, debes pagar la factura lightning, este pago estará retenido mientras el comprador realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen los sats al comprador.\n\n`;
-    message += `10. Si en algun punto los usuarios no pueden solucionar operación, pueden usar este comando para llamar a los admin a que resuelvan la operacion como intermediarios.\n\n`;
-    message += `11. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el el comando /cancel.\n\n`;
-    message += `12. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cooperativecancel\n\n`;
-    message += `¡Intercambia seguro y rápido!`;
+    let message = ctx.i18n.t('start', { orderExpiration, channel: process.env.CHANNEL });
     await ctx.reply(message);
   } catch (error) {
     console.log(error);
   }
 };
 
-const initBotErrorMessage = async (bot, tgId) => {
+const initBotErrorMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(tgId, `Para usar este Bot primero debes inicializar el bot con el comando /start`);
+    await ctx.reply(ctx.i18n.t('init_bot_error'));
   } catch (error) {
     // Ignore TelegramError - Forbidden request
     if (!(error instanceof TelegramError && error.response.error_code == 403)) {
@@ -38,52 +24,57 @@ const initBotErrorMessage = async (bot, tgId) => {
 
 const nonHandleErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`Para usar este bot debes activar tu username de telegram`);
+    await ctx.reply(ctx.i18n.t('non_handle_error'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoicePaymentRequestMessage = async (bot, user, request, order) => {
+const invoicePaymentRequestMessage = async (ctx, bot, user, request, order) => {
   try {
     const currency = getCurrency(order.fiat_code);
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    let message = `Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.\n\n`;
-    message += `Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos`;
+    let message = ctx.i18n.t('invoice_payment_request', {
+      currency,
+      order,
+      expirationTime,
+    });
     await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, `${request}`);
+    await bot.telegram.sendMessage(user.tg_id, request);
   } catch (error) {
     console.log(error);
   }
 };
 
-const pendingSellMessage = async (bot, user, order) => {
+const pendingSellMessage = async (ctx, bot, user, order) => {
   try {
-    let message = `Publicada la oferta en el canal ${process.env.CHANNEL}\n\n`;
-    message += `Espera que alguien tome tu venta, si la orden no es tomada en 23 horas será borrada del canal.\n\n`;
-    message += `Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇`;
-    await bot.telegram.sendMessage(user.tg_id, message);
+    let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('pending_sell', {
+      channel: process.env.CHANNEL,
+      orderExpirationWindow: Math.round(orderExpirationWindow),
+    }));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { order }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const pendingBuyMessage = async (ctx, bot, user, order) => {
+  try {
+    let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('pending_buy', {
+      channel: process.env.CHANNEL,
+      orderExpirationWindow: Math.round(orderExpirationWindow),
+    }));
     await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
   } catch (error) {
     console.log(error);
   }
 };
 
-const pendingBuyMessage = async (bot, user, order) => {
+const mustBeIntMessage = async (ctx, fieldName) => {
   try {
-    let message = `Publicada la oferta en el canal ${process.env.CHANNEL}.\n\n`;
-    message += `Espera que alguien tome tu compra, si la orden no es tomada en 23 horas será borrada del canal.\n\n`;
-    message += `Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇`;
-    await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const mustBeIntMessage = async (bot, user, fieldName) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un número entero`);
+    await ctx.reply(ctx.i18n.t('must_be_int', { fieldName }));
   } catch (error) {
     console.log(error);
   }
@@ -407,29 +398,18 @@ const publishSellOrderMessage = async (bot, order) => {
   }
 };
 
-const getDetailedOrder = (order, buyer, seller) => {
+const getDetailedOrder = (ctx, order, buyer, seller) => {
   try {
-    console.log(buyer)
     const buyerUsername = buyer ? buyer.username : '';
     const sellerUsername = seller ? seller.username : '';
     const buyerId = buyer ? buyer._id : '';
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
-    let message = `Id: ${order._id}:\n`;
-    message += `Status: ${order.status}\n`;
-    message += `Creator: @${creator || ''}\n`;
-    message += `Buyer: @${buyerUsername || ''}\n`;
-    message += `Seller: @${sellerUsername || ''}\n`;
-    message += `Monto (sats): ${order.amount}\n`;
-    message += `Fee (sats): ${order.fee}\n`;
-    message += `Routing Fee (sats): ${order.routing_fee || 0}\n`;
-    message += `Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}\n`;
-    message += `Price margin: ${order.price_margin}\n`;
-    message += `Método de pago: ${order.payment_method}\n`;
-    message += `Created at: ${order.created_at}\n`;
-    message += `Taken at: ${order.taken_at || ''}\n`;
-    message += `seller invoice hash: ${order.hash || ''}\n`;
-    message += `seller invoice secret: ${order.secret || ''}\n`;
-    message += `buyer payment request: ${order.buyer_invoice || ''}\n`;
+    let message = ctx.i18n.t('order_detail', {
+      order,
+      creator,
+      buyerUsername,
+      sellerUsername,
+    });
 
     return message;
   } catch (error) {
@@ -449,7 +429,7 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
     }
     let message = `El ${type} @${initiatorUser.username} `;
     message += `ha iniciado una disputa con @${counterPartyUser.username} en la orden:\n\n`;
-    message += `${getDetailedOrder(order, buyer, seller)}\n\n`;
+    message += `${getDetailedOrder(ctx, order, buyer, seller)}\n\n`;
     message += `@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputa${plural(initiatorUser.disputes)}\n`;
     message += `@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${plural(counterPartyUser.disputes)}`;
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
@@ -476,7 +456,7 @@ const customMessage = async (bot, user, message) => {
 
 const checkOrderMessage = async (ctx, order, buyer, seller) => {
   try {
-    let message = getDetailedOrder(order, buyer, seller);
+    let message = getDetailedOrder(ctx, order, buyer, seller);
     message += `\n\n`;
     await ctx.reply(message);
   } catch (error) {

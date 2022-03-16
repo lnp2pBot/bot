@@ -23,7 +23,7 @@ const takebuy = async (ctx, bot) => {
     const user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
-      await messages.initBotErrorMessage(bot, tgUser.id);
+      await messages.initBotErrorMessage(ctx);
       return;
     }
     if (!(await validateUserWaitingOrder(bot, user))) return;
@@ -61,7 +61,7 @@ const takesell = async (ctx, bot) => {
     let user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
-      await messages.initBotErrorMessage(bot, tgUser.id);
+      await messages.initBotErrorMessage(ctx);
       return;
     }
     if (!(await validateUserWaitingOrder(bot, user))) return;
@@ -108,7 +108,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await subscribeInvoice(bot, hash);
 
       // We send the hold invoice to the seller
-      await messages.invoicePaymentRequestMessage(bot, seller, request, order);
+      await messages.invoicePaymentRequestMessage(ctx, bot, seller, request, order);
       await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
     }
     await order.save();

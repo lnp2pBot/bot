@@ -47,10 +47,10 @@ const subscribeInvoice = async (bot, id, resub) => {
           if (!!newOrder) {
             if (order.type === 'sell') {
               await messages.publishSellOrderMessage(bot, newOrder);
-              await messages.pendingSellMessage(bot, user, newOrder);
+              await messages.pendingSellMessage(ctx, bot, user, newOrder);
             } else {
               await messages.publishBuyOrderMessage(bot, newOrder);
-              await messages.pendingBuyMessage(bot, user, newOrder);
+              await messages.pendingBuyMessage(ctx, bot, user, newOrder);
             }
           }
         }

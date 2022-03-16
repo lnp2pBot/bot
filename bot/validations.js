@@ -7,7 +7,7 @@ const { existLightningAddress } = require("../lnurl/lnurl-pay");
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
-const validateUser = async (ctx, bot, start) => {
+const validateUser = async (ctx, start) => {
   try {
     const tgUser = ctx.update.message.from;
     let user = await User.findOne({ tg_id: tgUser.id });
@@ -19,7 +19,7 @@ const validateUser = async (ctx, bot, start) => {
       });
       await user.save();
     } else if (!user) {
-      await messages.initBotErrorMessage(bot, tgUser.id);
+      await messages.initBotErrorMessage(ctx);
 
       return false;
     } else if (user.banned) {
@@ -61,21 +61,22 @@ const validateSellOrder = async (ctx, bot, user) => {
   try {
     const args = parseArgs(ctx.update.message.text);
     if (args.length < 5 ) {
-      await messages.sellOrderCorrectFormatMessage(bot, user);
+      await messages.sellOrderCorrectFormatMessage(ctx, user);
       return false;
     }
 
     let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
 
     priceMargin = parseInt(priceMargin);
+    // FIXME: this is not validating well
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
+      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
       return false;
     }
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
-      await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
       return false;
     }
 
@@ -143,14 +144,15 @@ const validateBuyOrder = async (ctx, bot, user) => {
     let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
 
     priceMargin = parseInt(priceMargin);
+    // FIXME: this is not validating well
     if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(bot, user, 'prima_o_descuento');
+      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
       return false;
     }
 
     amount = parseInt(amount);
     if (!Number.isInteger(amount)) {
-      await messages.mustBeIntMessage(bot, user, 'monto_en_sats');
+      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
       return false;
     }
 

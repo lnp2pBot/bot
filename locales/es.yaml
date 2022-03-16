@@ -7,9 +7,9 @@ start: |
 
   2. Espera que otro usuario tome la oferta por medio de los botones "Comprar" ó "Vender". Tambien puedes tomar las ofertas de otros usuarios con estos botones!
 
-  3. Tu oferta y calificación estará visible en el canal ${process.env.CHANNEL}.
+  3. Tu oferta y calificación estará visible en el canal ${channel}.
 
-  4. Si estas vendiendo el bot publicará la orden en el canal ${process.env.CHANNEL} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
+  4. Si estas vendiendo el bot publicará la orden en el canal ${channel} esperando a que alguien tome tu venta. Sin embargo puedes cancelarla antes de que otro usuario la tome con el comando /cancel.
 
   5. Una vez alguien tome tu venta el bot te pedirá que pagues una factura lightning, el pago a esta factura será retenido, la orden expirará en un tiempo máximo de ${orderExpiration} minutos desde el momento que fue tomada, el bot te dirá quién es el comprador para que le brindes tus datos de pago y te envíe el dinero fiat. Luego tu debes liberar los fondos para que le lleguen los sats al invoice del usuario por medio del comando /release
 
@@ -28,19 +28,23 @@ start: |
   12. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cooperativecancel
 
   ¡Intercambia seguro y rápido!
-initialize: Para usar este Bot primero debes inicializar el bot con el comando /start
-no_handle: 👤 Para usar este bot debes activar tu username de telegram
+init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
+non_handle_error: 👤 Para usar este bot debes activar tu username de telegram
 invoice_payment_request: |
   Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.
   Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
 pending_sell: |
-  Publicada la oferta en el canal ${process.env.CHANNEL}
-  Espera que alguien tome tu venta, si la orden no es tomada en 23 horas será borrada del canal.
+  Publicada la oferta en el canal ${channel}
+
+  Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
+
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 cancel_order_cmd: /cancel ${order._id}
 pending_buy: |
-  Publicada la oferta en el canal ${process.env.CHANNEL}.
-  Espera que alguien tome tu compra, si la orden no es tomada en 23 horas será borrada del canal.
+  Publicada la oferta en el canal ${channel}.
+
+  Espera que alguien tome tu compra, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
+
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 must_be_int: ${fieldName} debe ser un número entero
 sell_correct_format: |
@@ -104,14 +108,20 @@ invoice_already_used: Esa factura ya se encuentra usada en el sistema
 to_take_order: Para tomar esta orden 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
-detailed_order: |
+order_detail: |
   Id: ${order._id}:
   Status: ${order.status}
+  Creador: @${creator || ''}
+  Comprador: @${buyerUsername || ''}
+  Vendedor: @${sellerUsername || ''}
   Monto (sats): ${order.amount}
-  Fee (sats): ${order.fee}
+  Bot Fee (sats): ${order.fee}
   Routing Fee (sats): ${order.routing_fee}
   Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}
   Método de pago: ${order.payment_method}
+  Prima/descuento: ${order.price_margin}
+  Creada: ${order.created_at}
+  Tomada: ${order.taken_at || ''}
   seller invoice hash: ${order.hash}
   seller invoice secret: ${order.secret}
   buyer payment request: ${order.buyer_invoice}
