@@ -16,6 +16,7 @@ const validateUser = async (ctx, start) => {
       user = new User({
         tg_id: tgUser.id,
         username: tgUser.username,
+        lang: ctx.i18n.locale(),
       });
       await user.save();
     } else if (!user) {
@@ -366,7 +367,7 @@ const validateTakeBuyOrder = async (ctx, bot, user, order) => {
   }
 };
 
-const validateReleaseOrder = async (bot, user, orderId) => {
+const validateReleaseOrder = async (ctx, user, orderId) => {
   try {
     let where = {
       seller_id: user._id,
@@ -375,7 +376,7 @@ const validateReleaseOrder = async (bot, user, orderId) => {
     };
     let order = await Order.findOne(where);
     if (!!order) {
-      await messages.waitingForBuyerOrderMessage(bot, user);
+      await messages.waitingForBuyerOrderMessage(ctx);
       return false;
     }
 
@@ -393,7 +394,7 @@ const validateReleaseOrder = async (bot, user, orderId) => {
     order = await Order.findOne(where);
 
     if (!order) {
-      await messages.notActiveOrderMessage(bot, user);
+      await messages.notActiveOrderMessage(ctx);
       return false;
     }
 
@@ -404,7 +405,7 @@ const validateReleaseOrder = async (bot, user, orderId) => {
   }
 };
 
-const validateDisputeOrder = async (bot, user, orderId) => {
+const validateDisputeOrder = async (user, orderId) => {
   try {
     const where = {
       status: 'ACTIVE',
@@ -417,7 +418,7 @@ const validateDisputeOrder = async (bot, user, orderId) => {
 
     const order = await Order.findOne(where);
     if (!order) {
-      await messages.notActiveOrderMessage(bot, user);
+      await messages.notActiveOrderMessage(ctx);
       return false;
     }
 
@@ -443,7 +444,7 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
     }
     const order = await Order.findOne(where);
     if (!order) {
-      await messages.notActiveOrderMessage(bot, user);
+      await messages.notActiveOrderMessage(ctx);
       return false;
     }
 

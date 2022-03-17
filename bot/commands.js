@@ -46,7 +46,7 @@ const takebuy = async (ctx, bot) => {
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
-    await messages.beginTakeBuyMessage(bot, user, order);
+    await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);
   }
@@ -76,7 +76,7 @@ const takesell = async (ctx, bot) => {
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
-    await messages.beginTakeSellMessage(bot, user, order);
+    await messages.beginTakeSellMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);
   }
@@ -109,7 +109,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
 
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(ctx, bot, seller, request, order);
-      await messages.takeSellWaitingSellerToPayMessage(bot, buyer, order);
+      await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();
   } catch (error) {
@@ -190,7 +190,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
 
     // User can only rate other after a successful exchange
     if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
-      await messages.invalidDataMessage(bot, buyer);
+      await messages.invalidDataMessage(ctx);
       return;
     }
     let targetUser = buyer;
@@ -239,7 +239,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     const user = await User.findOne({ _id: order.buyer_id });
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
-      await messages.invalidDataMessage(bot, user);
+      await messages.invalidDataMessage(ctx);
       return;
     }
     if (order.creator_id == order.buyer_id) {
@@ -267,10 +267,10 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order);
+        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order);
+        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
       }
       await order.save();
       await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order);
@@ -295,7 +295,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // Sellers only can take orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
-      await messages.invalidDataMessage(bot, user);
+      await messages.invalidDataMessage(ctx);
       return;
     }
 
@@ -326,7 +326,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(bot, user, request);
+    await messages.showHoldInvoiceMessage(ctx, request);
   } catch (error) {
     console.log(error);
   }
@@ -344,7 +344,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     const user = await User.findOne({ _id: order.seller_id });
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
-      await messages.invalidDataMessage(bot, user);
+      await messages.invalidDataMessage(ctx);
       return;
     }
 
@@ -375,10 +375,10 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order);
+        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order);
+        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
       }
       await order.save();
       await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order);

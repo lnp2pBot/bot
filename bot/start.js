@@ -104,7 +104,7 @@ const initialize = (botToken, options) => {
 
       if (!!order) {
         await messages.publishSellOrderMessage(bot, order);
-        await messages.pendingSellMessage(ctx, bot, user, order);
+        await messages.pendingSellMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
       console.log(error);
@@ -133,8 +133,8 @@ const initialize = (botToken, options) => {
       });
 
       if (!!order) {
-        await messages.publishBuyOrderMessage(bot, order);
-        await messages.pendingBuyMessage(ctx, bot, user, order);
+        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
+        await messages.pendingBuyMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
       console.log(error);
@@ -158,7 +158,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await validateReleaseOrder(bot, user, orderId);
+      const order = await validateReleaseOrder(ctx, user, orderId);
 
       if (!order) return;
 
@@ -178,7 +178,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await validateDisputeOrder(bot, user, orderId);
+      const order = await validateDisputeOrder(user, orderId);
 
       if (!order) return;
 
@@ -533,7 +533,7 @@ const initialize = (botToken, options) => {
         buyer_id: user._id,
       });
       if (!order) {
-        await messages.notActiveOrderMessage(bot, user);
+        await messages.notActiveOrderMessage(ctx);
         return;
       };
       if (order.status == 'SUCCESS') {
@@ -645,7 +645,7 @@ const initialize = (botToken, options) => {
         _id: orderId,
       });
       if (!order) {
-        await messages.notActiveOrderMessage(bot, adminUser);
+        await messages.notActiveOrderMessage(ctx);
         return;
       };
 

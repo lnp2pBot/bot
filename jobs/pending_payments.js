@@ -1,3 +1,4 @@
+const { I18n } = require('@grammyjs/i18n');
 const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
 const messages = require('../bot/messages');
@@ -7,6 +8,11 @@ const attemptPendingPayments = async (bot) => {
         paid: false,
         attempts: { $lt: 3 },
         is_invoice_expired: false,
+    });
+    // We need to create a i18n object to create a context
+    const i18n = new I18n({
+        defaultLanguageOnMissing: true,
+        directory: 'locales',
     });
     for (const pending of pendingPayments) {
         const order = await Order.findOne({ _id: pending.order_id });
@@ -49,7 +55,7 @@ const attemptPendingPayments = async (bot) => {
                 console.log(`Invoice with hash: ${pending.hash} paid`);
                 await messages.toAdminChannelPendingPaymentSuccessMessage(bot, buyerUser, order, pending, payment);
                 await messages.toBuyerPendingPaymentSuccessMessage(bot, buyerUser, order, payment);
-                await messages.rateUserMessage(bot, buyerUser, order);
+                await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
             } else {
                 if (pending.attempts == 3) {
                     order.paid_hold_buyer_invoice_updated = false;

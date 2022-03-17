@@ -34,7 +34,7 @@ invoice_payment_request: |
   Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.
   Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
 pending_sell: |
-  Publicada la oferta en el canal ${channel}
+  Posted the offer on the channel ${channel}
 
   Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
 
@@ -48,23 +48,34 @@ pending_buy: |
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 must_be_int: ${fieldName} debe ser un número entero
 sell_correct_format: |
-  /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [_prima/descuento_]
-  Para crear una venta de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].
+  /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+
+  To create a sell order de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+
   /sell *1000* *2* *ves* "*pago móvil*"
-  Para crear una venta con un incremento en el precio del 3% (prima) sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro
+
+  Para crear una venta con un incremento en el precio del 3% \(prima\) sin indicar el monto en satoshis, solo debes poner 0 \(cero\) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro
+
   /sell *0* *2* *ves* "*pago móvil*" *3*
-  Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.
-  /sell *0* *100-500* *ves* "*pago móvil*" *3*'
+
+  Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
+
+  /sell *0* *100\-500* *ves* "*pago móvil*" *3*'
 buy_correct_format: |
-  /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [_prima/descuento_]
-  Para crear una compra de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].
+  /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+
+  To create a buy order de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+
   /buy *1000* *2* *ves* "*pago móvil*
-  Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` (cero) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `-2` como último parámetro
-  /buy *0* *2* *ves* "*pago móvil*" *-2*
-  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.
-  /buy *0* *100-500* *ves* "*pago móvil*" *-2*
-min_invoice_amount: La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis
-amount_must_be_equal: La factura tener un monto igual a ${amount} sats
+
+  Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \(cero\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\-2` como último parámetro
+
+  /buy *0* *2* *ves* "*pago móvil*" *\-2*
+
+  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
+
+  /buy *0* *100\-500* *ves* "*pago móvil*" *\-2*
+min_invoice_amount: La factura debe ser mayor o igual a ${minPaymentAmount} satoshis
 min_expiration_time: El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos
 invoice_expired: La factura ha expirado
 invoice_expired_long: |
@@ -166,7 +177,7 @@ release_order_cmd: /release ${order._id}
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
-error_parsing_invoice: Error parseando la factura
+parse_invoice_error: Error parseando la factura
 invalid_id: Id no válida
 generic_error: ¡Ha ocurrido un error, intenta nuevamente!
 cant_take_own_order: No puedes tomar tu propia orden
@@ -183,7 +194,7 @@ invoice_updated: ¡La factura ha sido actualizada correctamente!
 invoice_updated_and_will_be_paid: ¡La factura ha sido actualizada correctamente y será pagada en los próximos segundos!
 invoice_already_being_paid: Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento
 lightning_address_saved: Dirección lightning guardada con éxito
-error_cancel: |
+cancel_error: |
   Esta opción solo permite cancelar las ordenes que no han sido tomadas,
   si lo deseas puedes intentar una cancelación cooperativa con /cooperativecancel
 cancel_success: "¡Has cancelado la orden Id: #${order._id}!"

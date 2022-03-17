@@ -46,27 +46,27 @@ const invoicePaymentRequestMessage = async (ctx, bot, user, request, order) => {
   }
 };
 
-const pendingSellMessage = async (ctx, bot, user, order) => {
+const pendingSellMessage = async (bot, user, order, i18n) => {
   try {
     let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('pending_sell', {
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_sell', {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { order }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { order }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const pendingBuyMessage = async (ctx, bot, user, order) => {
+const pendingBuyMessage = async (bot, user, order, i18n) => {
   try {
     let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('pending_buy', {
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_buy', {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, `/cancel ${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { order }));
   } catch (error) {
     console.log(error);
   }
@@ -82,6 +82,7 @@ const mustBeIntMessage = async (ctx, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (ctx) => {
   try {
+    console.log(ctx.i18n.locale());
     await ctx.reply(ctx.i18n.t('sell_correct_format'), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
@@ -121,13 +122,10 @@ const expiredInvoiceMessage = async (ctx) => {
   }
 };
 
-// FIXME: We need to pass the context to the function to use the i18n
-const expiredInvoiceOnPendingMessage = async (bot, user, order) => {
+const expiredInvoiceOnPendingMessage = async (bot, user, order, i18n) => {
   try {
-    let message = `La factura ha expirado.\n\n`;
-    message += `Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇`;
-    await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <_factura lightning_>`, { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_expired_long'));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { order }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -173,26 +171,24 @@ const alreadyTakenOrderMessage = async (ctx, bot, user) => {
   }
 };
 
-const invalidDataMessage = async (bot, user) => {
+const invalidDataMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Has enviado datos incorrectos, inténtalo nuevamente.`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('invalid_data'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const beginTakeBuyMessage = async (bot, seller, order) => {
+const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
   try {
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    let message = `🤖 Presiona continuar para tomar la oferta, si presionas cancelar te desvincularé `;
-    message += `de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇`
-    await bot.telegram.sendMessage(seller.tg_id, message);
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('begin_take_buy', { expirationTime }));
     await bot.telegram.sendMessage(seller.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: 'Continuar', callback_data: 'showHoldInvoiceBtn'},
-            {text: 'Cancelar', callback_data: 'cancelShowHoldInvoiceBtn'},
+            {text: ctx.i18n.t('continue'), callback_data: 'showHoldInvoiceBtn'},
+            {text: ctx.i18n.t('cancel'), callback_data: 'cancelShowHoldInvoiceBtn'},
           ],
         ],
       },
@@ -202,28 +198,23 @@ const beginTakeBuyMessage = async (bot, seller, order) => {
   }
 };
 
-const showHoldInvoiceMessage = async (bot, seller, request) => {
+const showHoldInvoiceMessage = async (ctx, request) => {
   try {
-    await bot.telegram.sendMessage(seller.tg_id, `Por favor paga esta factura para comenzar tu venta`);
-    await bot.telegram.sendMessage(seller.tg_id, `${request}`);
+    await ctx.reply(ctx.i18n.t('pay_invoice'));
+    await ctx.reply(request);
   } catch (error) {
     console.log(error);
   }
 };
 
-const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
+const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18n) => {
   try {
-    const currency = getCurrency(order.fiat_code);
-    let messageSeller = `🤖 ¡Pago recibido!\n\n`;
-    messageSeller += `Ahora necesitamos que el comprador me envíe una factura para enviarle los satoshis, `
-    messageSeller += `luego de que el comprador me indique su factura los pondré en contacto`;
-    await bot.telegram.sendMessage(seller.tg_id, messageSeller);
-    let messageBuyer = `🤖 Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇`;
-    await bot.telegram.sendMessage(buyer.tg_id, messageBuyer);
+    await bot.telegram.sendMessage(seller.tg_id, i18n.t('payment_received'));
+    await bot.telegram.sendMessage(buyer.tg_id, i18n.t('someone_took_your_order'));
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: 'Continuar', callback_data: 'addInvoiceBtn'}],
+          [{text: i18n.t('continue'), callback_data: 'addInvoiceBtn'}],
         ],
       },
     });
@@ -233,15 +224,15 @@ const onGoingTakeBuyMessage = async (bot, seller, buyer, order) => {
 };
 
 
-const beginTakeSellMessage = async (bot, buyer, order) => {
+const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, `Has tomado esta venta, presiona el botón para continuar 👇`);
+    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order'));
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: 'Continuar', callback_data: 'addInvoiceBtn'},
-            {text: 'Cancelar', callback_data: 'cancelAddInvoiceBtn'},
+            {text: ctx.i18n.t('continue'), callback_data: 'addInvoiceBtn'},
+            {text: ctx.i18n.t('cancel'), callback_data: 'cancelAddInvoiceBtn'},
           ],
         ],
       },
@@ -251,45 +242,49 @@ const beginTakeSellMessage = async (bot, buyer, order) => {
   }
 };
 
-const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order) => {
+const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) => {
   try {
     const currency = getCurrency(order.fiat_code);
-    let message = `Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como `;
-    message += `enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount} por `
-    message += `${order.payment_method}.\n\n`;
-    message += `Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇`;
-    await bot.telegram.sendMessage(buyerUser.tg_id, message);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `/fiatsent ${order._id}`);
-    await bot.telegram.sendMessage(sellerUser.tg_id, `@${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.\n\nUna vez confirmes la recepción del dinero debes liberar los fondos`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('get_in_touch_with_seller', {
+      sellerUser,
+      currency,
+      order,
+    }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { order }));
+    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('buyer_took_your_order', {
+      order,
+      currency,
+      buyerUser,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const takeSellWaitingSellerToPayMessage = async (bot, buyerUser, order) => {
+const takeSellWaitingSellerToPayMessage = async (ctx, bot, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden #${order._id}, en cuanto realice el pago los pondremos en contacto`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, ctx.i18n.t('waiting_seller_to_pay', { order }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const releasedSatsMessage = async (bot, sellerUser, buyerUser) => {
+const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18n) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, `Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUser.username}\n⚡️🍊⚡️`);
-    await bot.telegram.sendMessage(buyerUser.tg_id, `🕐 @${sellerUser.username} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online`);
+    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('sell_success'));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('funds_released'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const rateUserMessage = async (bot, caller, order) => {
+const rateUserMessage = async (bot, caller, order, i18n) => {
   try {
     const starButtons = []
     for (let num = 5; num > 0; num--) {
       starButtons.push([{text: '⭐'.repeat(num), callback_data: `showStarBtn(${num},${order._id})`}])
     }
-    await bot.telegram.sendMessage(caller.tg_id, `Califica a tu contraparte:`, {
+    await bot.telegram.sendMessage(caller.tg_id, i18n.t('rate_counterpart'), {
       reply_markup: {
         inline_keyboard: starButtons,
       },
@@ -299,49 +294,41 @@ const rateUserMessage = async (bot, caller, order) => {
   }
 };
 
-const notActiveOrderMessage = async (bot, user) => {
+const notActiveOrderMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser procesada, asegúrate de que el Id es correcto`);
+    await ctx.reply(ctx.i18n.t('cant_process_order'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const waitingForBuyerOrderMessage = async (bot, user) => {
+const waitingForBuyerOrderMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats`);
+    await ctx.reply(ctx.i18n.t('cant_release_order'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const notOrderMessage = async (bot, user) => {
+const notOrderMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `No tienes ninguna orden asociada con ese Id`);
+    await ctx.reply(ctx.i18n.t('no_id_related'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const repeatedInvoiceMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `Esa factura ya se encuentra usada en el sistema`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const publishBuyOrderMessage = async (bot, order) => {
+const publishBuyOrderMessage = async (bot, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `Para tomar esta orden 👇`;
+    publishMessage += i18n.t('to_take_order');
 
     // Mensaje al canal
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: 'Vender satoshis', callback_data: 'takebuy'}],
+          [{text: i18n.t('sell_sats'), callback_data: 'takebuy'}],
         ],
       },
     });
@@ -355,15 +342,16 @@ const publishBuyOrderMessage = async (bot, order) => {
   }
 };
 
-const publishSellOrderMessage = async (bot, order) => {
+const publishSellOrderMessage = async (bot, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `Para tomar esta orden 👇`;
+    publishMessage += i18n.t('to_take_order');
+
     const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
     const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: 'Comprar satoshis', callback_data: 'takesell'}],
+          [{text: i18n.t('buy_sats'), callback_data: 'takesell'}],
         ],
       },
     });
@@ -568,9 +556,9 @@ const errorParsingInvoiceMessage = async (ctx) => {
   }
 };
 
-const notValidIdMessage = async (bot, user) => {
+const notValidIdMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Id no válida`);
+    ctx.reply(ctx.i18n.t('invalid_id'));
   } catch (error) {
     console.log(error);
   }
@@ -1254,7 +1242,6 @@ module.exports = {
   onGoingTakeBuyMessage,
   pendingSellMessage,
   pendingBuyMessage,
-  repeatedInvoiceMessage,
   mustBeIntMessage,
   beginDisputeMessage,
   notOrderMessage,

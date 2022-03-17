@@ -160,10 +160,10 @@ const buildDescription = ({
   }
 };
 
-const getOrder = async (bot, user, orderId) => {
+const getOrder = async (ctx, orderId) => {
 try {
   if (!ObjectId.isValid(orderId)) {
-    await messages.notValidIdMessage(bot, user);
+    await messages.notValidIdMessage(ctx);
     return false;
   }
 
@@ -174,7 +174,7 @@ try {
 
   const order = await Order.findOne(where);
   if (!order) {
-    await messages.notOrderMessage(bot, user);
+    await messages.notOrderMessage(ctx);
     return false;
   }
 

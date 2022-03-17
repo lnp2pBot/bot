@@ -81,7 +81,7 @@ invoice_expired: La factura ha expirado
 invoice_expired_long: |
   La factura ha expirado.
   Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
-setinvoice_cmd_order: /setinvoice ${order._id} <_factura lightning_>
+setinvoice_cmd_order: /setinvoice ${order._id} \<_factura lightning_\>
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -108,14 +108,17 @@ get_in_touch_with_buyer: |
   🤖 Ponte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat.
 
   Una vez confirmes la recepción del dinero debes liberar los fondos.
+buyer_took_your_order: |
+  @${buyerUser.username} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.
+
+  Una vez confirmes la recepción del dinero debes liberar los fondos.
 waiting_seller_to_pay: "Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden #${order._id}, en cuanto realice el pago los pondremos en contacto"
-sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUser.username}\n⚡️🍊⚡️
+sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUser.username} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUser.username} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online. 
-rate_counterpart: Califica a tu contraparte
+rate_counterpart: "Califica a tu contraparte:"
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
-invoice_already_used: Esa factura ya se encuentra usada en el sistema
 to_take_order: Para tomar esta orden 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
