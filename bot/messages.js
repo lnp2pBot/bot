@@ -96,39 +96,32 @@ const buyOrderCorrectFormatMessage = async (ctx) => {
   }
 };
 
-const minimunAmountInvoiceMessage = async (bot, user) => {
+const minimunAmountInvoiceMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis`);
+    await ctx.reply(ctx.i18n.t('min_invoice_amount', { minPaymentAmount: process.env.MIN_PAYMENT_AMT}));
   } catch (error) {
     console.log(error);
   }
 };
 
-const amountMustTheSameInvoiceMessage = async (bot, user, amount) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura tener un monto igual a ${amount} sats`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const minimunExpirationTimeInvoiceMessage = async (bot, user) => {
+const minimunExpirationTimeInvoiceMessage = async (ctx) => {
   try {
     const expirationTime = parseInt(INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
-    await bot.telegram.sendMessage(user.tg_id, `El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos`);
+    await ctx.reply(ctx.i18n.t('min_expiration_time', { expirationTime }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const expiredInvoiceMessage = async (bot, user) => {
+const expiredInvoiceMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura ha expirado`);
+    await ctx.reply(ctx.i18n.t('invoice_expired'));
   } catch (error) {
     console.log(error);
   }
 };
 
+// FIXME: We need to pass the context to the function to use the i18n
 const expiredInvoiceOnPendingMessage = async (bot, user, order) => {
   try {
     let message = `La factura ha expirado.\n\n`;
@@ -140,41 +133,41 @@ const expiredInvoiceOnPendingMessage = async (bot, user, order) => {
   }
 };
 
-const requiredAddressInvoiceMessage = async (bot, user) => {
+const requiredAddressInvoiceMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura necesita una dirección destino`);
+    await ctx.reply(ctx.i18n.t('invoice_require_destination'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const requiredHashInvoiceMessage = async (bot, user) => {
+const requiredHashInvoiceMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `La factura necesita un hash`);
+    await ctx.reply(ctx.i18n.t('invoice_require_hash'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invalidOrderMessage = async (bot, user) => {
+const invalidOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Id de orden incorrecto`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_id_invalid'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invalidTypeOrderMessage = async (bot, user, type) => {
+const invalidTypeOrderMessage = async (ctx, bot, user, type) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden es una ${type}`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_invalid_type', { type }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const alreadyTakenOrderMessage = async (bot, user) => {
+const alreadyTakenOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden ya ha sido tomada por otro usuario`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_already_taken'));
   } catch (error) {
     console.log(error);
   }
@@ -567,9 +560,9 @@ const notFoundUserMessage = async (bot, user) => {
   }
 };
 
-const errorParsingInvoiceMessage = async (bot, user) => {
+const errorParsingInvoiceMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Error parseando la factura`);
+    ctx.reply(ctx.i18n.t('parse_invoice_error'));
   } catch (error) {
     console.log(error);
   }
@@ -1245,7 +1238,6 @@ module.exports = {
   sellOrderCorrectFormatMessage,
   buyOrderCorrectFormatMessage,
   minimunAmountInvoiceMessage,
-  amountMustTheSameInvoiceMessage,
   minimunExpirationTimeInvoiceMessage,
   expiredInvoiceMessage,
   requiredAddressInvoiceMessage,

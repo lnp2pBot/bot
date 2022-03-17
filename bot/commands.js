@@ -36,7 +36,7 @@ const takebuy = async (ctx, bot) => {
     if (!orderId) return;
     if (!(await validateObjectId(bot, user, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
-    if (!(await validateTakeBuyOrder(bot, user, order))) return;
+    if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
     // We change the status to trigger the expiration of this order
     // if the user don't do anything
     order.status = 'WAITING_PAYMENT';
@@ -67,7 +67,7 @@ const takesell = async (ctx, bot) => {
     if (!(await validateUserWaitingOrder(bot, user))) return;
 
     const order = await Order.findOne({ _id: orderId });
-    if (!(await validateTakeSellOrder(bot, user, order))) return;
+    if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
     order.taken_at = Date.now();

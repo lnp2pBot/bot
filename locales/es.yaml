@@ -75,8 +75,7 @@ buy_correct_format: |
   Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
 
   /buy *0* *100\-500* *ves* "*pago móvil*" *\-2*
-min_invoice_amount: La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis
-amount_must_be_equal: La factura tener un monto igual a ${amount} sats
+min_invoice_amount: La factura debe ser mayor o igual a ${minPaymentAmount} satoshis
 min_expiration_time: El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos
 invoice_expired: La factura ha expirado
 invoice_expired_long: |
@@ -178,7 +177,7 @@ release_order_cmd: /release ${order._id}
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
-error_parsing_invoice: Error parseando la factura
+parse_invoice_error: Error parseando la factura
 invalid_id: Id no válida
 generic_error: ¡Ha ocurrido un error, intenta nuevamente!
 cant_take_own_order: No puedes tomar tu propia orden
@@ -195,7 +194,7 @@ invoice_updated: ¡La factura ha sido actualizada correctamente!
 invoice_updated_and_will_be_paid: ¡La factura ha sido actualizada correctamente y será pagada en los próximos segundos!
 invoice_already_being_paid: Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento
 lightning_address_saved: Dirección lightning guardada con éxito
-error_cancel: |
+cancel_error: |
   Esta opción solo permite cancelar las ordenes que no han sido tomadas,
   si lo deseas puedes intentar una cancelación cooperativa con /cooperativecancel
 cancel_success: "¡Has cancelado la orden Id: #${order._id}!"

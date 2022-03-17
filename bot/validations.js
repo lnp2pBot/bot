@@ -220,33 +220,33 @@ const validateInvoice = async (bot, user, lnInvoice) => {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
     if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
-      await messages.minimunAmountInvoiceMessage(bot, user);
+      await messages.minimunAmountInvoiceMessage(ctx);
       return false;
     }
 
     if (new Date(invoice.expires_at) < latestDate) {
-      await messages.minimunExpirationTimeInvoiceMessage(bot, user);
+      await messages.minimunExpirationTimeInvoiceMessage(ctx);
       return false;
     }
 
     if (invoice.is_expired !== false) {
-      await messages.expiredInvoiceMessage(bot, user);
+      await messages.expiredInvoiceMessage(ctx);
       return false;
     }
 
     if (!invoice.destination) {
-      await messages.requiredAddressInvoiceMessage(bot, user);
+      await messages.requiredAddressInvoiceMessage(ctx);
       return false;
     }
 
     if (!invoice.id) {
-      await messages.requiredHashInvoiceMessage(bot, user);
+      await messages.requiredHashInvoiceMessage(ctx);
       return false;
     }
 
     return invoice;
   } catch (error) {
-    await messages.errorParsingInvoiceMessage(bot, user);
+    await messages.errorParsingInvoiceMessage(ctx);
     return false;
   }
 };
@@ -312,24 +312,28 @@ const isOrderCreator = (user, order) => {
   }
 };
 
-const validateTakeSellOrder = async (bot, user, order) => {
+const validateTakeSellOrder = async (ctx, bot, user, order) => {
   try {
     if (!order) {
-      await messages.invalidOrderMessage(bot, user);
+      await messages.invalidOrderMessage(ctx, bot, user);
       return false;
     }
+
     if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
       await messages.cantTakeOwnOrderMessage(bot, user);
       return false;
     }
+
     if (order.type === 'buy') {
-      await messages.invalidTypeOrderMessage(bot, user, order.type);
+      await messages.invalidTypeOrderMessage(ctx, bot, user, order.type);
       return false;
     }
+
     if (order.status !== 'PENDING') {
-      await messages.alreadyTakenOrderMessage(bot, user);
+      await messages.alreadyTakenOrderMessage(ctx, bot, user);
       return false;
     }
+
     return true;
   } catch (error) {
     console.log(error);
@@ -337,7 +341,7 @@ const validateTakeSellOrder = async (bot, user, order) => {
   }
 };
 
-const validateTakeBuyOrder = async (bot, user, order) => {
+const validateTakeBuyOrder = async (ctx, bot, user, order) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(bot, user);
@@ -348,11 +352,11 @@ const validateTakeBuyOrder = async (bot, user, order) => {
       return false;
     }
     if (order.type === 'sell') {
-      await messages.invalidTypeOrderMessage(bot, user, order.type);
+      await messages.invalidTypeOrderMessage(ctx, bot, user, order.type);
       return false;
     }
     if (order.status !== 'PENDING') {
-      await messages.alreadyTakenOrderMessage(bot, user);
+      await messages.alreadyTakenOrderMessage(ctx, bot, user);
       return false;
     }
     return true;
