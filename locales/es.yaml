@@ -48,21 +48,33 @@ pending_buy: |
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 must_be_int: ${fieldName} debe ser un número entero
 sell_correct_format: |
-  /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [_prima/descuento_]
-  Para crear una venta de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].
+  /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+
+  Para crear una venta de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+
   /sell *1000* *2* *ves* "*pago móvil*"
-  Para crear una venta con un incremento en el precio del 3% (prima) sin indicar el monto en satoshis, solo debes poner 0 (cero) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro
+
+  Para crear una venta con un incremento en el precio del 3% \(prima\) sin indicar el monto en satoshis, solo debes poner 0 \(cero\) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro
+
   /sell *0* *2* *ves* "*pago móvil*" *3*
-  Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.
-  /sell *0* *100-500* *ves* "*pago móvil*" *3*'
+
+  Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
+
+  /sell *0* *100\-500* *ves* "*pago móvil*" *3*'
 buy_correct_format: |
-  /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [_prima/descuento_]
-  Para crear una compra de 1000 satoshis por 2 bolívares (VES) e indicamos que el método de pago fiat es pago móvil, debes omitir los <> y los [].
+  /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+
+  Para crear una compra de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+
   /buy *1000* *2* *ves* "*pago móvil*
-  Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` (cero) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `-2` como último parámetro
-  /buy *0* *2* *ves* "*pago móvil*" *-2*
-  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión.
-  /buy *0* *100-500* *ves* "*pago móvil*" *-2*
+
+  Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \(cero\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\-2` como último parámetro
+
+  /buy *0* *2* *ves* "*pago móvil*" *\-2*
+
+  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
+
+  /buy *0* *100\-500* *ves* "*pago móvil*" *\-2*
 min_invoice_amount: La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis
 amount_must_be_equal: La factura tener un monto igual a ${amount} sats
 min_expiration_time: El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos

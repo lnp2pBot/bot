@@ -44,7 +44,7 @@ const initialize = (botToken, options) => {
     defaultLanguageOnMissing: true, // implies allowMissing = true
     directory: 'locales',
     useSession: true,
-  })
+  });
 
   const bot = new Telegraf(botToken, options);
 

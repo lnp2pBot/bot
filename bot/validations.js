@@ -138,7 +138,7 @@ const validateBuyOrder = async (ctx, bot, user) => {
   try {
     const args = parseArgs(ctx.update.message.text);
     if (args.length < 5) {
-      await messages.buyOrderCorrectFormatMessage(bot, user);
+      await messages.buyOrderCorrectFormatMessage(ctx);
       return false;
     }
     let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
