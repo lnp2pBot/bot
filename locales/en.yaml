@@ -121,7 +121,7 @@ rate_counterpart: "Califica a tu contraparte:"
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
-to_take_order: Para tomar esta orden 👇
+to_take_order: To take this order 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
@@ -317,3 +317,15 @@ pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
 
   Intento de pago: ${attempts}
+selling: Selling
+buying: Buying
+receive_payment: Receive payment
+pay: Pay
+is: is
+trading_volume: "Trading volume: ${volume} sats"
+satoshis: satoshis
+by: by
+rate: Rate
+has_successful_trades: Has ${trades} successful trades
+price: Price
+for: For

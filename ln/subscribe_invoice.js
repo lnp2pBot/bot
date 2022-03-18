@@ -44,16 +44,16 @@ const subscribeInvoice = async (bot, id, resub) => {
         i18nCtx = i18n.createContext(buyerUser.lang);
         await messages.releasedSatsMessage(bot, sellerUser, buyerUser, i18nCtx);
         // If this is a range order, probably we need to created a new child range order
-        const newOrderPayload = await ordersActions.getNewRangeOrderPayload(order);
-        if (!!newOrderPayload) {
+        const orderData = await ordersActions.getNewRangeOrderPayload(order);
+        if (!!orderData) {
           let user;
           if (order.type === 'sell') {
             user = sellerUser;
           } else {
             user = buyerUser;
           }
-          const { orderCtx, orderData } = newOrderPayload;
-          const newOrder = await ordersActions.createOrder(orderCtx, bot, user, orderData);
+
+          const newOrder = await ordersActions.createOrder(i18nCtx, bot, user, orderData);
 
           if (!!newOrder) {
             // This is the i18n context we need to pass to the message

@@ -274,7 +274,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, ctx.i18n);
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order);
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, ctx.i18n);
     }
   } catch (error) {
     console.log(error);
@@ -382,7 +382,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, ctx.i18n);
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, order);
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, ctx.i18n);
     }
   } catch (error) {
     console.log(error);

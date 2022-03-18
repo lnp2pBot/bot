@@ -92,7 +92,7 @@ const initialize = (botToken, options) => {
 
       if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
-      const order = await ordersActions.createOrder(ctx, bot, user, {
+      const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'sell',
         amount,
         fiatAmount,
@@ -122,7 +122,7 @@ const initialize = (botToken, options) => {
 
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = buyOrderParams;
       //revisar por que esta creando invoice sin monto
-      const order = await ordersActions.createOrder(ctx, bot, user, {
+      const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'buy',
         amount,
         fiatAmount,
@@ -254,7 +254,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await ordersActions.getOrder(bot, user, orderId);
+      const order = await ordersActions.getOrder(ctx, user, orderId);
 
       if (!order) return;
 
@@ -408,7 +408,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await ordersActions.getOrder(bot, user, orderId);
+      const order = await ordersActions.getOrder(ctx, user, orderId);
 
       if (!order) return;
 

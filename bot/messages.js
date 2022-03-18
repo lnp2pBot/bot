@@ -1,5 +1,5 @@
 const { TelegramError } = require('telegraf');
-const { plural, getCurrency } = require('../util');
+const { getCurrency } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
@@ -247,7 +247,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) =
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
     await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('get_in_touch_with_seller', {
       currency,
-      sellerUsername: seller.username,
+      sellerUsername: sellerUser.username,
       fiatAmount: order.fiat_amount,
       paymentMethod: order.payment_method,
     }));
@@ -496,9 +496,9 @@ const bannedUserErrorMessage = async (ctx) => {
 
 const fiatSentMessages = async (ctx, bot, buyer, seller, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('I_told_seller_you_sent_fiat'), { sellerUsername: seller.username });
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('buyer_told_me_that_sent_fiat'), { buyerUsername: buyer.username });
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd'), { orderId: order._id });
+    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('I_told_seller_you_sent_fiat', { sellerUsername: seller.username }));
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('buyer_told_me_that_sent_fiat', { buyerUsername: buyer.username }));
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -617,9 +617,9 @@ const listOrdersResponse = async (bot, user, orders) => {
   }
 };
 
-const notRateForCurrency = async (ctx) => {
+const notRateForCurrency = async (bot, user, i18n) => {
   try {
-    await ctx.reply(ctx.i18n.t('not_rate_for_currency', { fiatRateProvider: process.env.FIAT_RATE_NAME }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('not_rate_for_currency', { fiatRateProvider: process.env.FIAT_RATE_NAME }));
   } catch (error) {
     console.log(error);
   }
@@ -840,7 +840,7 @@ const priceApiFailedMessage = async (ctx, bot, user) => {
 
 const updateUserSettingsMessage = async (ctx, field, newState) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('update_user_setting', {
+    await ctx.reply(ctx.i18n.t('update_user_setting', {
       field,
       newState,
     }));
@@ -865,9 +865,9 @@ const invalidRangeWithAmount = async (ctx) => {
   }
 };
 
-const tooManyPendingOrdersMessage = async (ctx) => {
+const tooManyPendingOrdersMessage = async (bot, user, i18n) => {
   try {
-    await ctx.reply(ctx.i18n.t('too_many_pending_orders'));
+    bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('too_many_pending_orders'));
   } catch (error) {
     console.log(error);
   }

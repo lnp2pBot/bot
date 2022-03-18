@@ -3,7 +3,7 @@ const { Order } = require('../models');
 const messages = require('./messages');
 const { getCurrency, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
 
-const createOrder = async (ctx, bot, user, {
+const createOrder = async (i18n, bot, user, {
   type,
   amount,
   fiatAmount,
@@ -12,12 +12,14 @@ const createOrder = async (ctx, bot, user, {
   status,
   priceMargin,
   range_parent_id,
+  tgChatId,
+  tgOrderMessage,
 }) => {
   try {
     const pendingOrders = await Order.count({ status: 'PENDING' });
     // We don't let users create too PENDING many orders
     if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
-      await messages.tooManyPendingOrdersMessage(ctx);
+      await messages.tooManyPendingOrdersMessage(bot, user, i18n);
       return false;
     }
     
@@ -27,7 +29,7 @@ const createOrder = async (ctx, bot, user, {
     const priceFromAPI = !amount;
 
     if (priceFromAPI && !currency.price) {
-      await messages.notRateForCurrency(ctx);
+      await messages.notRateForCurrency(bot, user, i18n);
       return;
     }
 
@@ -42,11 +44,11 @@ const createOrder = async (ctx, bot, user, {
       status,
       fiat_code: fiatCode,
       payment_method: paymentMethod,
-      tg_chat_id: ctx.message.chat.id,
-      tg_order_message: ctx.message.message_id,
+      tg_chat_id: tgChatId,
+      tg_order_message: tgOrderMessage,
       price_from_api: priceFromAPI,
       price_margin: priceMargin || 0,
-      description: buildDescription({
+      description: buildDescription(i18n, {
         user,
         type,
         amount,
@@ -93,7 +95,7 @@ const getFiatAmountData = (fiatAmount) => {
   return response
 };
 
-const buildDescription = ({
+const buildDescription = (i18n, {
   user,
   type,
   amount,
@@ -105,15 +107,15 @@ const buildDescription = ({
   currency,
 }) => {
   try {
-    const action = type == 'sell' ? 'Vendiendo' : 'Comprando';
+    const action = type == 'sell' ? i18n.t('selling') : i18n.t('buying');
     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
-    const paymentAction = type == 'sell' ? 'Recibo pago' : 'Pago';
+    const paymentAction = type == 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
     const trades = user.trades_completed;
     const volume = user.volume_traded;
     const totalRating = user.total_rating;
     const totalReviews = user.reviews.length;
-    const username = user.show_username ? `@${user.username} está ` : ``;
-    const volumeTraded = user.show_volume_traded ? `Volumen de comercio: ${volume} sats\n` : ``;
+    const username = user.show_username ? `@${user.username} ` + i18n.t('is') + ` ` : ``;
+    const volumeTraded = user.show_volume_traded ? i18n.t('trading_volume', {volume}) + `\n` : ``;
     priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
     const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
     let fiatAmountString;
@@ -133,10 +135,10 @@ const buildDescription = ({
     let tasaText = '';
     if (priceFromAPI) {
       amountText = '';
-      tasaText = `Tasa: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
+      tasaText = i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
-      tasaText = `Precio: ${exchangePrice.toFixed(2)}\n`;
+      tasaText = i18n.t('price') + `: ${exchangePrice.toFixed(2)}\n`;
     }
   
     let rateText = '';
@@ -146,9 +148,10 @@ const buildDescription = ({
       rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
     }
   
-    let description = `${username}${action} ${amountText}sats\nPor ${currencyString}\n`;
-    description += `${paymentAction} por ${paymentMethod}\n`;
-    description += `Tiene ${trades} operaciones exitosas\n`;
+    let description = `${username}${action} ${amountText}sats\n`;
+    description += i18n.t('for') + ` ${currencyString}\n`;
+    description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
+    description += i18n.t('has_successful_trades', {trades}) + `\n`;
     description += volumeTraded;
     description += hashtag;
     description += tasaText;
@@ -160,7 +163,7 @@ const buildDescription = ({
   }
 };
 
-const getOrder = async (ctx, orderId) => {
+const getOrder = async (ctx, user, orderId) => {
 try {
   if (!ObjectId.isValid(orderId)) {
     await messages.notValidIdMessage(ctx);
@@ -247,20 +250,11 @@ const getNewRangeOrderPayload = async (order) => {
         status: 'PENDING',
         priceMargin: order.price_margin,
         range_parent_id: order._id,
+        tgChatId: order.tg_chat_id,
+        tgOrderMessage: order.tg_order_message,
       };
 
-      const orderCtx = {
-        message: {
-          chat: {
-            id: order.tg_chat_id,
-          },
-          message_id: order.tg_order_message,
-        }
-      };
-
-      newOrderPayload = { orderData, orderCtx };
-
-      return newOrderPayload;
+      return orderData;
     }
   } catch (error) {
     console.log(error);
