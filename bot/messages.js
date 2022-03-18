@@ -53,7 +53,7 @@ const pendingSellMessage = async (bot, user, order, i18n) => {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { order }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -66,7 +66,7 @@ const pendingBuyMessage = async (bot, user, order, i18n) => {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { order }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -265,7 +265,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) =
 
 const takeSellWaitingSellerToPayMessage = async (ctx, bot, buyerUser, order) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, ctx.i18n.t('waiting_seller_to_pay', { order }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
