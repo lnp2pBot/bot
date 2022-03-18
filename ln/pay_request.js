@@ -1,5 +1,6 @@
 const { payViaPaymentRequest, getPayment } = require('lightning');
 const { parsePaymentRequest } = require('invoices');
+const { I18n } = require('@grammyjs/i18n');
 const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const { handleReputationItems } = require('../util');
@@ -42,9 +43,15 @@ const payToBuyer = async (bot, order) => {
       amount: order.amount,
     });
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    // This is the i18n context we need to pass
+    const i18n = new I18n({
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
     // If the buyer's invoice is expired we let it know and don't try to pay again
+    const i18nCtx = i18n.createContext(buyerUser.lang);
     if (!!payment && payment.is_expired) {
-      await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order);
+      await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order, i18nCtx);
       return;
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
@@ -55,10 +62,10 @@ const payToBuyer = async (bot, order) => {
       
       await order.save();
       await handleReputationItems(buyerUser, sellerUser, order.amount);
-      await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser);
-      await messages.rateUserMessage(bot, buyerUser, order);
+      await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser, i18nCtx);
+      await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
-      await messages.invoicePaymentFailedMessage(bot, buyerUser);
+      await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
       const pp = new PendingPayment({
         amount: order.amount,
         payment_request: order.buyer_invoice,

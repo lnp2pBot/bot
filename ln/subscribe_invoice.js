@@ -1,4 +1,5 @@
 const { subscribeToInvoice } = require('lightning');
+const { I18n } = require('@grammyjs/i18n');
 const { Order, User } = require('../models');
 const { payToBuyer } = require('./pay_request');
 const lnd = require('./connect');
@@ -9,17 +10,25 @@ const subscribeInvoice = async (bot, id, resub) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async (invoice) => {
+      // We need to create a i18n object to create a context
+      const i18n = new I18n({
+        defaultLanguageOnMissing: true,
+        directory: 'locales',
+      });
+      let i18nCtx;
       if (invoice.is_held && !resub) {
         console.log(`invoice with hash: ${id} is being held!`);
         const order = await Order.findOne({ hash: invoice.id });
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         order.status = 'ACTIVE';
+        // This is the i18n context we need to pass to the message
+        i18nCtx = i18n.createContext(buyerUser.lang);
         if (order.type === 'sell') {
-          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order);
+          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order, i18nCtx);
         } else if (order.type === 'buy') {
           order.status = 'WAITING_BUYER_INVOICE';
-          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order);
+          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order, i18nCtx);
         }
         order.invoice_held_at = Date.now();
         order.save();
@@ -31,7 +40,9 @@ const subscribeInvoice = async (bot, id, resub) => {
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        await messages.releasedSatsMessage(bot, sellerUser, buyerUser);
+        // This is the i18n context we need to pass to the message
+        i18nCtx = i18n.createContext(buyerUser.lang);
+        await messages.releasedSatsMessage(bot, sellerUser, buyerUser, i18nCtx);
         // If this is a range order, probably we need to created a new child range order
         const newOrderPayload = await ordersActions.getNewRangeOrderPayload(order);
         if (!!newOrderPayload) {
@@ -45,17 +56,21 @@ const subscribeInvoice = async (bot, id, resub) => {
           const newOrder = await ordersActions.createOrder(orderCtx, bot, user, orderData);
 
           if (!!newOrder) {
+            // This is the i18n context we need to pass to the message
+            const i18nCtx = i18n.createContext(user.lang);
             if (order.type === 'sell') {
-              await messages.publishSellOrderMessage(bot, newOrder);
-              await messages.pendingSellMessage(bot, user, newOrder);
+              await messages.publishSellOrderMessage(bot, newOrder, i18nCtx);
+              await messages.pendingSellMessage(bot, user, newOrder, i18nCtx);
             } else {
-              await messages.publishBuyOrderMessage(bot, newOrder);
-              await messages.pendingBuyMessage(bot, user, newOrder);
+              await messages.publishBuyOrderMessage(bot, newOrder, i18nCtx);
+              await messages.pendingBuyMessage(bot, user, newOrder, i18nCtx);
             }
           }
         }
+        // This is the i18n context we need to pass to the message
+        i18nCtx = i18n.createContext(sellerUser.lang);
         // The seller get reputation after release
-        await messages.rateUserMessage(bot, sellerUser, order);
+        await messages.rateUserMessage(bot, sellerUser, order, i18nCtx);
         // We proceed to pay to buyer
         await payToBuyer(bot, order);
       }

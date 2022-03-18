@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
   username: { type: String },
   first_name: { type: String },
   last_name: { type: String },
-  lang: { type: String, default: 'ESP' },
+  lang: { type: String, default: 'en' },
   trades_completed: { type: Number, min: 0, default: 0 },
   total_rating: { type: Number, min: 0, max: 5, default: 0 },
   reviews: [UserReviewSchema],

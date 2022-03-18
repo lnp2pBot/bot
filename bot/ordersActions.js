@@ -17,7 +17,7 @@ const createOrder = async (ctx, bot, user, {
     const pendingOrders = await Order.count({ status: 'PENDING' });
     // We don't let users create too PENDING many orders
     if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
-      await messages.tooManyPendingOrdersMessage(bot, user);
+      await messages.tooManyPendingOrdersMessage(ctx);
       return false;
     }
     
@@ -27,7 +27,7 @@ const createOrder = async (ctx, bot, user, {
     const priceFromAPI = !amount;
 
     if (priceFromAPI && !currency.price) {
-      await messages.notRateForCurrency(bot, user);
+      await messages.notRateForCurrency(ctx);
       return;
     }
 
@@ -160,10 +160,10 @@ const buildDescription = ({
   }
 };
 
-const getOrder = async (bot, user, orderId) => {
+const getOrder = async (ctx, orderId) => {
 try {
   if (!ObjectId.isValid(orderId)) {
-    await messages.notValidIdMessage(bot, user);
+    await messages.notValidIdMessage(ctx);
     return false;
   }
 
@@ -174,7 +174,7 @@ try {
 
   const order = await Order.findOne(where);
   if (!order) {
-    await messages.notOrderMessage(bot, user);
+    await messages.notOrderMessage(ctx);
     return false;
   }
 
@@ -185,7 +185,7 @@ try {
 }
 };
 
-const getOrders = async (bot, user, status) => {
+const getOrders = async (ctx, user, status) => {
   try {
     const where = {
       $and: [
@@ -214,7 +214,7 @@ const getOrders = async (bot, user, status) => {
     const orders = await Order.find(where);
 
     if (orders.length == 0) {
-      await messages.notOrdersMessage(bot, user);
+      await messages.notOrdersMessage(ctx);
       return false;
     }
 
