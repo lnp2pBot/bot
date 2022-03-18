@@ -308,15 +308,15 @@ pending_payment_failed_to_admin: |
   Платеж по счету-фактуре на покупку с идентификатором #${orderId} пользователя @${username} не выполнен!
 
   Попытка оплаты: ${attempts}
-selling: Vendiendo
-buying: Comprando
-receive_payment: Recibo pago
-pay: Pago
-is: está
-trading_volume: "Volumen de comercio: ${volume} sats"
-satoshis: satoshis
-by: por
-rate: Tasa
+selling: Продаю
+buying: Покупаю
+receive_payment: Получаю платеж
+pay: Оплачиваю
+is: есть
+trading_volume: "Обьем торгов: ${volume} сатс"
+satoshis: сатоши
+by: для
+rate: комиссия
 has_successful_trades: Tiene ${trades} operaciones exitosas
-price: Precio
-for: Por
+price: цена
+for: для
