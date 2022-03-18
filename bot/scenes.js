@@ -13,7 +13,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
       const currency = getCurrency(order.fiat_code);
       const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-      await messages.wizardAddInvoiceInitMessage(bot, buyer, order, symbol, expirationTime);
+      await messages.wizardAddInvoiceInitMessage(ctx, order, symbol, expirationTime);
       
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();

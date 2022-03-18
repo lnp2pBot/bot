@@ -34,12 +34,12 @@ invoice_payment_request: |
   Alguien quiere comprarte sats por ${currency.symbol_native} ${order.fiat_amount}.
   Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
 pending_sell: |
-  Posted the offer on the channel ${channel}
+  Publicada la oferta en el canal ${channel}
 
   Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
-cancel_order_cmd: /cancel ${order._id}
+cancel_order_cmd: /cancel ${orderId}
 pending_buy: |
   Publicada la oferta en el canal ${channel}.
 
@@ -47,10 +47,12 @@ pending_buy: |
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 must_be_int: ${fieldName} debe ser un número entero
+sats_amount: monto en sats
+fiat_amount: monto en fiat
 sell_correct_format: |
   /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
 
-  To create a sell order de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+  Para crear una venta de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
   /sell *1000* *2* *ves* "*pago móvil*"
 
@@ -64,7 +66,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
 
-  To create a buy order de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
+  Para crear una compra de 1000 satoshis por 2 bolívares \(VES\) e indicamos que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
   /buy *1000* *2* *ves* "*pago móvil*
 
@@ -81,7 +83,7 @@ invoice_expired: La factura ha expirado
 invoice_expired_long: |
   La factura ha expirado.
   Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
-setinvoice_cmd_order: /setinvoice ${order._id} <_factura lightning_>
+setinvoice_cmd_order: /setinvoice ${orderId} <factura lightning>
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -100,22 +102,25 @@ payment_received: |
 someone_took_your_order: 🤖 Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇
 you_took_someone_order: 🤖 Has tomado esta venta, presiona el botón para continuar 👇
 get_in_touch_with_seller: |
-  Ponte en contacto con el usuario @${sellerUser.username} para que te de detalle de como enviarle el dinero, debes enviarle ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}.
+  Ponte en contacto con el usuario @${sellerUsername} para que te de detalle de como enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
 
   Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
-fiatsent_order_cmd: /fiatsent ${order._id}
+fiatsent_order_cmd: /fiatsent ${orderId}
 get_in_touch_with_buyer: |
-  🤖 Ponte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat.
+  🤖 Ponte en contacto con @${buyerUsername} para darle la información sobre cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
 
   Una vez confirmes la recepción del dinero debes liberar los fondos.
-waiting_seller_to_pay: "Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden #${order._id}, en cuanto realice el pago los pondremos en contacto"
-sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUser.username}\n⚡️🍊⚡️
-funds_released: 🕐 @${sellerUser.username} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online. 
-rate_counterpart: Califica a tu contraparte
+buyer_took_your_order: |
+  @${buyerUsername} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency} ${fiatAmount} por ${paymentMethod}.
+
+  Una vez confirmes la recepción del dinero debes liberar los fondos.
+waiting_seller_to_pay: "Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden #${orderId}, en cuanto realice el pago los pondremos en contacto"
+sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUsername} ⚡️🍊⚡️
+funds_released: 🕐 @${sellerUsername} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online. 
+rate_counterpart: "Califica a tu contraparte:"
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
-invoice_already_used: Esa factura ya se encuentra usada en el sistema
 to_take_order: Para tomar esta orden 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
@@ -141,18 +146,19 @@ buyer: comprador
 dispute_started_channel: |
   El ${type} @${initiatorUser.username}
   ha iniciado una disputa con @${counterPartyUser.username} en la orden:
-  ${getDetailedOrder(order, buyer, seller)}
-  @${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputa${plural(initiatorUser.disputes)}
-  @${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${counterPartyUser.disputes}
+
+  ${detailedOrder}
+
+  @${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputas
+  @${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputas
 you_started_dispute_to_buyer: Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla
-buyer_started_dispute_to_seller: "El comprador ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla"
+buyer_started_dispute_to_seller: "El comprador ha iniciado una disputa por tu orden con id: #${orderId}, nos comunicaremos contigo y tu contraparte para resolverla"
 you_started_dispute_to_seller: Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla
-seller_started_dispute_to_buyer: "El vendedor ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla"
-must_be_valid_currency: "${fieldName} debe ser un código de moneda válido, ejemplo: USD, EUR"
-must_be_number_or_range: "${fieldName} debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>."
+seller_started_dispute_to_buyer: "El vendedor ha iniciado una disputa por tu orden con id: #${orderId}, nos comunicaremos contigo y tu contraparte para resolverla"
+must_be_valid_currency: "codigo_fiat debe ser un código de moneda válido, ejemplo: USD, EUR"
+must_be_number_or_range: "monto_en_fiat debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>."
 invalid_lightning_address: Dirección lightning no válida
 unavailable_lightning_address: Dirección lightning ${la} no disponible
-invalid_invoice: Factura lightning no válida
 help: |
   /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
   /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
@@ -171,50 +177,50 @@ help: |
   /help - Mensaje de ayuda
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
-I_told_seller_you_sent_fiat: 🤖 Le avisé a @${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
-buyer_told_me_that_sent_fiat: buyer_🤖 @${buyer.username} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
-release_order_cmd: /release ${order._id}
+I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
+buyer_told_me_that_sent_fiat: buyer_🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
+release_order_cmd: /release ${orderId}
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
 parse_invoice_error: Error parseando la factura
 invalid_id: Id no válida
-generic_error: ¡Ha ocurrido un error, intenta nuevamente!
 cant_take_own_order: No puedes tomar tu propia orden
-send_me_a_ln_invoice: Por favor envíame una factura lightning por ${order.amount} sats
+send_me_a_ln_invoice: Por favor envíame una factura lightning por ${amount} sats
 you_have_no_orders: No tienes ninguna orden en este momento
 not_rate_for_currency: |
-  ${process.env.FIAT_RATE_NAME} no tiene tasa de cambio para esta moneda fiat
+  ${fiatRateProvider} no tiene tasa de cambio para esta moneda fiat
   Para utilizar esta moneda debes indicar la cantidad de satoshis
   Si quieres que esta moneda sea incluida en la lista /listcurrencies puedes hacerles una solicitud aquí 👇
 
   🌐 https://yadio.io/api.html
 invoice_with_incorrect_amount: La factura tiene un monto incorrecto
-invoice_updated: ¡La factura ha sido actualizada correctamente!
+invoice_updated: 📝 ¡La factura ha sido actualizada correctamente!
 invoice_updated_and_will_be_paid: ¡La factura ha sido actualizada correctamente y será pagada en los próximos segundos!
 invoice_already_being_paid: Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento
 lightning_address_saved: Dirección lightning guardada con éxito
 cancel_error: |
   Esta opción solo permite cancelar las ordenes que no han sido tomadas,
   si lo deseas puedes intentar una cancelación cooperativa con /cooperativecancel
-cancel_success: "¡Has cancelado la orden Id: #${order._id}!"
+cancel_success: "¡Has cancelado la orden Id: #${orderId}!"
 cancelall_success: ¡Has cancelado todas tus órdenes publicadas!
-order_cancelled_by_admin: "¡El admin ha cancelado la orden Id: #${order._id}!"
-order_completed: "¡Has completado la orden Id: #${order._id}!"
-order_completed_by_admin: "¡El admin ha completado la orden Id: #${order._id}!"
+order_cancelled_by_admin: "¡El admin ha cancelado la orden Id: #${orderId}!"
+order_completed: "¡Has completado la orden Id: #${orderId}!"
+order_completed_by_admin: "¡El admin ha completado la orden Id: #${orderId}!"
 cant_be_coopcancelled: Esta orden no puede ser cancelada cooperativamente
 have_to_wait_for_counterpart: Ya has realizado esta operación, debes esperar por tu contraparte
-ok_cooperativecancel: "Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: #${order._id}"
+ok_cooperativecancel: "Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: #${orderId}"
 refund_cooperativecancel: Has recibido un reembolso por tu pago lightning, no es necesario hacer nada mas
-init_cooperativecancel: "Has iniciado la cancelación de la orden Id: #${order._id}, tu contraparte también debe indicarme que desea cancelar la orden"
-counterparty_wants_cooperativecancel: "Tu contraparte quiere cancelar la orden Id: #${order._id}, si estás de acuerdo utiliza el comando 👇"
-cooperativecancel_order_cmd: /cooperativecancel ${order._id}
-invoice_payment_failed: ⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online
-showusername_error: Si quieres que tu username sea mostrado en la publicación debes colocar 'y' como último argumento
-success: ¡Operación realizada exitósamente!
+init_cooperativecancel: "Has iniciado la cancelación de la orden Id: #${orderId}, tu contraparte también debe indicarme que desea cancelar la orden"
+counterparty_wants_cooperativecancel: "Tu contraparte quiere cancelar la orden Id: #${orderId}, si estás de acuerdo utiliza el comando 👇"
+cooperativecancel_order_cmd: /cooperativecancel ${orderId}
+invoice_payment_failed: ⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${pendingPaymentWindow} minutos, asegúrate que tu nodo/wallet esté online
 cant_take_more_orders: ¡Lo siento! No puedes tomar otra orden mientras tengas otras esperando por ti
 seller_released: El vendedor ya liberó los satoshis, debes esperar por el pago de tu factura
-your_purchase_is_completed: Tu compra de sats ha sido completada exitosamente, @${sellerUser.username} ha confirmado tu pago fiat y ya he pagado tu factura, que disfrutes tus sats\n⚡️🍊⚡️
+your_purchase_is_completed: |
+  Tu compra de sats ha sido completada exitosamente, @${sellerUsername} ha confirmado tu pago fiat y ya he pagado tu factura, que disfrutes tus sats.
+
+  ⚡️🍊⚡️
 problem_getting_price: Ha ocurrido un problema obteniendo el precio de esta moneda, por favor intenta más tarde, si el problema persiste contacta a algún administrador
 update_user_setting: He modificado el campo ${field} a ${newState}
 lightning_address_disabled: Lightning address desactivada
@@ -232,19 +238,21 @@ created: Creada
 yes: Sí
 no: No
 wizard_add_invoice_init: |
-  Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis equivalente a ${symbol} ${order.fiat_amount}
+  Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
 
   Si no la envías en ${expirationTime} minutos la orden será cancelada
 wizard_add_invoice_exit: |
   Has salido del modo wizard, ahora puedes escribir comandos, aún puedes
   ingresar una factura a la orden con el comando /setinvoice indicando Id
   de orden y factura, puedes enviarme una factura con un monto de
-  ${order.amount} satoshis, pero tambien acepto facturas sin monto:
+  ${amount} satoshis, pero tambien acepto facturas sin monto:
+
+  /setinvoice ${orderId} <factura lightning con o sin monto>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
 wizard_community_enter_group: |
-  Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como
-  tú deben ser administradores del grupo:
+  Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como tú deben ser administradores del grupo:
+
   P. ej: @MiComunidad
 wizard_community_enter_order_channels: |
     Las ofertas en tu comunidad deben publicarse en un canal de telegram,
@@ -266,39 +274,39 @@ wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_exit: Has salido del modo wizard, ahora puedes escribir comandos.
 wizard_add_fiat_amount: |
-  Ingresa la cantidad de ${currencyName} que desea ${action}.
+  Ingresa la cantidad de ${currency} que desea ${action}.
 
-  Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:
-wizard_add_fiat_wrong_amount: Monto incorrecto, ingrese un número entre ${order.min_amount} y ${order.max_amount}
-wizard_add_fiat_correct_amount: "Cantidad elegida: ${currency.symbol_native} ${fiatAmount}."
+  Recuerde que debe estar entre ${minAmount} y ${maxAmount}:
+wizard_add_fiat_wrong_amount: Monto incorrecto, ingrese un número entre ${minAmount} y ${maxAmount}
+wizard_add_fiat_correct_amount: "Cantidad elegida: ${currency} ${fiatAmount}."
 order_expired: ¡Esta orden ya expiró!
 cant_add_invoice: ¡Ya no puedes agregar una factura para esta orden!
 expired_order: |
   Esta orden ha expirado sin haberse completado
 
-  ${getDetailedOrder(order, buyer, seller)}
+  ${detailedOrder}
 
-  @${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}
-  @${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}
-didnt_add_invoice: "🤨 No has enviado la factura para recibir sats por la orden Id: #${order._id}"
-buyer_havent_add_invoice: "😔 El comprador no me envió la factura para recibir sats por tu venta Id: #${order._id}, tus sats han sido devueltos"
+  @${sellerUser.username} tiene ${sellerUser.disputes} disputas
+  @${buyerUser.username} tiene ${buyerUser.disputes} disputas
+didnt_add_invoice: "🤨 No has enviado la factura para recibir sats por la orden Id: #${orderId}"
+buyer_havent_add_invoice: "😔 El comprador no me envió la factura para recibir sats por tu venta Id: #${orderId}, tus sats han sido devueltos"
 buyer_havent_add_invoice_to_admin_channel: |
-  El comprador @${user.username} tomó la orden Id: #${order._id} pero no ha ingresado
+  El comprador @${username} tomó la orden Id: #${orderId} pero no ha ingresado
   la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente.
-havent_paid_invoice: "🤨 No has pagado la factura para vender sats por la orden Id: #${order._id}"
-seller_havent_paid_invoice: "😔 El vendedor no pagó la factura por tu compra Id: #${order._id}, la operación ha sido cancelada"
+havent_paid_invoice: "🤨 No has pagado la factura para vender sats por la orden Id: #${orderId}"
+seller_havent_paid_invoice: "😔 El vendedor no pagó la factura por tu compra Id: #${orderId}, la operación ha sido cancelada"
 seller_havent_add_invoice_to_admin_channel: |
-  El vendedor @${user.username} no ha pagado la factura correspondiente a la orden Id: #${order._id}
+  El vendedor @${username} no ha pagado la factura correspondiente a la orden Id: #${orderId}
   y el tiempo ha expirado, la orden ha sido publicada nuevamente
-user_cant_do: 🤨 Este usuario no puede realizar esta operación
+user_cant_do: 🤨 No puedes realizar esta operación
 pending_payment_success_to_admin: |
-  El usuario @${user.username} tenía un pago pendiente en su compra Id: #${order._id} de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos.
+  El usuario @${username} tenía un pago pendiente en su compra Id: #${orderId} de ${amount} satoshis, el pago se realizó luego de ${attempts} intentos.
 
-  Prueba de pago: ${payment.secret}
+  Prueba de pago: ${paymentSecret}
 pending_payment_success: |
-  ¡He pagado la factura lightning por tu compra Id: #${order._id}!
+  ¡He pagado la factura lightning por ${amount} satoshis, Id de orden: #${orderId}!
 
-  Prueba de pago: ${payment.secret}
+  Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
   He intentado pagar tu factura un total de 4 veces y todas han fallado,
   algunas veces los usuarios de lightning network no pueden recibir pagos
@@ -306,6 +314,6 @@ pending_payment_failed: |
   solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad
   Si lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 pending_payment_failed_to_admin: |
-  El pago a la invoice de la compra Id: #${order._id} del usuario @${user.username} ha fallado!
+  El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
 
-  Intento de pago: ${pending.attempts}
+  Intento de pago: ${attempts}

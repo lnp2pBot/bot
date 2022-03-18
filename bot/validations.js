@@ -40,15 +40,15 @@ const validateUser = async (ctx, start) => {
   }
 };
 
-const validateAdmin = async (ctx, bot) => {
+const validateAdmin = async (ctx) => {
   try {
     const tgUser = ctx.update.message.from;
     let user = await User.findOne({ tg_id: tgUser.id });
     if (!user) {
-      await messages.userCantDoMessage(bot, user);
+      await messages.userCantDoMessage(ctx);
       return false;
     } else if (!user.admin) {
-      await messages.userCantDoMessage(bot, user);
+      await messages.userCantDoMessage(ctx);
       return false;
     }
     return user;
@@ -86,39 +86,39 @@ const validateSellOrder = async (ctx, bot, user) => {
     fiatAmount = fiatAmount.map(Number);
 
     if (fiatAmount.length == 2 && amount) {
-      await messages.invalidRangeWithAmount(bot, user);
+      await messages.invalidRangeWithAmount(ctx);
       return false;
     }
 
     // ranges like [100, 0, 2] (originate from ranges like 100--2)
     // will make this conditional fail
     if (fiatAmount.length > 2) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat')
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
+      await messages.mustBeGreatherEqThan(ctx, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
     }
 
     if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (fiatAmount.some(isNaN)) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (fiatAmount.some((x) => x < 1)) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
 
     if (!isIso4217(fiatCode)) {
-      await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+      await messages.mustBeValidCurrency(ctx);
       return false
     }
 
@@ -162,39 +162,39 @@ const validateBuyOrder = async (ctx, bot, user) => {
     fiatAmount = fiatAmount.map(Number);
 
     if (fiatAmount.length == 2 && amount) {
-      await messages.invalidRangeWithAmount(bot, user);
+      await messages.invalidRangeWithAmount(ctx);
       return false;
     }
 
     // ranges like [100, 0, 2] (originate from ranges like 100--2)
     // will make this conditional fail
     if (fiatAmount.length > 2) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat')
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
+      await messages.mustBeGreatherEqThan(ctx, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
       return false;
     }
 
     if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (fiatAmount.some(isNaN)) {
-      await messages.mustBeANumberOrRange(bot, user, 'monto_en_fiat');
+      await messages.mustBeANumberOrRange(ctx);
       return false;
     }
 
     if (fiatAmount.some((x) => x < 1)) {
-      await messages.mustBeGreatherEqThan(bot, user, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
 
     if (!isIso4217(fiatCode)) {
-      await messages.mustBeValidCurrency(bot, user, 'codigo_fiat');
+      await messages.mustBeValidCurrency(ctx);
       return false;
     }
 
@@ -321,7 +321,7 @@ const validateTakeSellOrder = async (ctx, bot, user, order) => {
     }
 
     if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
-      await messages.cantTakeOwnOrderMessage(bot, user);
+      await messages.cantTakeOwnOrderMessage(ctx);
       return false;
     }
 
@@ -349,7 +349,7 @@ const validateTakeBuyOrder = async (ctx, bot, user, order) => {
       return false;
     }
     if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
-      await messages.cantTakeOwnOrderMessage(bot, user);
+      await messages.cantTakeOwnOrderMessage(ctx);
       return false;
     }
     if (order.type === 'sell') {
@@ -405,7 +405,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
   }
 };
 
-const validateDisputeOrder = async (user, orderId) => {
+const validateDisputeOrder = async (ctx, user, orderId) => {
   try {
     const where = {
       status: 'ACTIVE',
@@ -429,7 +429,7 @@ const validateDisputeOrder = async (user, orderId) => {
   }
 };
 
-const validateFiatSentOrder = async (bot, user, orderId) => {
+const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
   try {
     const where = {
       buyer_id: user._id,
@@ -449,7 +449,7 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
     }
 
     if (order.status == 'PAID_HOLD_INVOICE') {
-      await messages.sellerPaidHoldMessage(bot, user);
+      await messages.sellerPaidHoldMessage(ctx, bot, user);
       return false;
     }
 
@@ -466,7 +466,7 @@ const validateFiatSentOrder = async (bot, user, orderId) => {
 };
 
 // If a seller have an order with status FIAT_SENT, return false
-const validateSeller = async (bot, user) => {
+const validateSeller = async (ctx, bot, user) => {
   try {
     const where = {
       seller_id: user._id,
@@ -476,7 +476,7 @@ const validateSeller = async (bot, user) => {
     const order = await Order.findOne(where);
 
     if (!!order) {
-      await messages.orderOnfiatSentStatusMessages(bot, user);
+      await messages.orderOnfiatSentStatusMessages(ctx, bot, user);
       return false;
     }
 
@@ -518,7 +518,7 @@ const validateObjectId = async (bot, user, id) => {
   }
 };
 
-const validateUserWaitingOrder = async (bot, user) => {
+const validateUserWaitingOrder = async (ctx, bot, user) => {
   try {
     // If is a seller
     let where = {
@@ -527,7 +527,7 @@ const validateUserWaitingOrder = async (bot, user) => {
     };
     let orders = await Order.find(where);
     if (orders.length > 0) {
-      await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+      await messages.userCantTakeMoreThanOneWaitingOrderMessage(ctx, bot, user);
       return false;
     }
     // If is a buyer
@@ -537,7 +537,7 @@ const validateUserWaitingOrder = async (bot, user) => {
     };
     orders = await Order.find(where);
     if (orders.length > 0) {
-      await messages.userCantTakeMoreThanOneWaitingOrderMessage(bot, user);
+      await messages.userCantTakeMoreThanOneWaitingOrderMessage(ctx, bot, user);
       return false;
     }
     return true;

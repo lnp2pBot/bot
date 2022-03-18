@@ -84,7 +84,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
       // Sellers with orders in status = FIAT_SENT, have to solve the order
-      const isOnFiatSentStatus = await validateSeller(bot, user);
+      const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
 
       if (!isOnFiatSentStatus) return;
 
@@ -103,7 +103,7 @@ const initialize = (botToken, options) => {
       });
 
       if (!!order) {
-        await messages.publishSellOrderMessage(bot, order);
+        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
         await messages.pendingSellMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
@@ -178,7 +178,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await validateDisputeOrder(user, orderId);
+      const order = await validateDisputeOrder(ctx, user, orderId);
 
       if (!order) return;
 
@@ -204,7 +204,7 @@ const initialize = (botToken, options) => {
       }
       await buyer.save();
       await seller.save();
-      await messages.beginDisputeMessage(bot, buyer, seller, order, initiator);
+      await messages.beginDisputeMessage(bot, buyer, seller, order, initiator, ctx.i18n);
     } catch (error) {
       console.log(error);
     }
@@ -212,7 +212,7 @@ const initialize = (botToken, options) => {
 
   bot.command('cancelorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx, bot);
+      const user = await validateAdmin(ctx);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
@@ -233,11 +233,11 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCancelOrderMessage(bot, user, order);
+      await messages.successCancelOrderMessage(ctx, bot, user, order);
       // we sent a private message to the seller
-      await messages.successCancelOrderByAdminMessage(bot, seller, order);
+      await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
-      await messages.successCancelOrderByAdminMessage(bot, buyer, order);
+      await messages.successCancelOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
       console.log(error);
     }
@@ -259,7 +259,7 @@ const initialize = (botToken, options) => {
       if (!order) return;
 
       if (order.status !== 'PENDING') {
-        await messages.badStatusOnCancelOrderMessage(bot, user);
+        await messages.badStatusOnCancelOrderMessage(ctx);
         return;
       }
 
@@ -272,7 +272,7 @@ const initialize = (botToken, options) => {
       order.canceled_by = user._id;
       await order.save();
       // we sent a private message to the user
-      await messages.successCancelOrderMessage(bot, user, order);
+      await messages.successCancelOrderMessage(ctx, bot, user, order);
       // We delete the messages related to that order from the channel
       await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
       await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
@@ -288,7 +288,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const orders = await ordersActions.getOrders(bot, user, 'PENDING');
+      const orders = await ordersActions.getOrders(ctx, user, 'PENDING');
 
       if (!orders) return;
 
@@ -301,7 +301,7 @@ const initialize = (botToken, options) => {
         await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
       }
       // we sent a private message to the user
-      await messages.successCancelAllOrdersMessage(bot, user);
+      await messages.successCancelAllOrdersMessage(ctx);
     } catch (error) {
       console.log(error);
     }
@@ -309,7 +309,7 @@ const initialize = (botToken, options) => {
 
   bot.command('settleorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx, bot);
+      const user = await validateAdmin(ctx);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
@@ -329,11 +329,11 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCompleteOrderMessage(bot, user, order);
+      await messages.successCompleteOrderMessage(ctx, order);
       // we sent a private message to the seller
-      await messages.successCompleteOrderByAdminMessage(bot, seller, order);
+      await messages.successCompleteOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
-      await messages.successCompleteOrderByAdminMessage(bot, buyer, order);
+      await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
       console.log(error);
     }
@@ -342,7 +342,7 @@ const initialize = (botToken, options) => {
 
   bot.command('checkorder', async (ctx) => {
     try {
-      const user = await validateAdmin(ctx, bot);
+      const user = await validateAdmin(ctx);
       if (!user) return;
 
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
@@ -384,14 +384,14 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(bot, user, orderId))) return;
-      const order = await validateFiatSentOrder(bot, user, orderId);
+      const order = await validateFiatSentOrder(ctx, bot, user, orderId);
       if (!order) return;
 
       order.status = 'FIAT_SENT';
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // We sent messages to both parties
-      await messages.fiatSentMessages(bot, user, seller, order);
+      await messages.fiatSentMessages(ctx, bot, user, seller, order);
 
     } catch (error) {
       console.log(error);
@@ -413,25 +413,24 @@ const initialize = (botToken, options) => {
       if (!order) return;
 
       if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT')) {
-        await messages.cantCooperativeCancelMessage(bot, user);
+        await messages.cantCooperativeCancelMessage(ctx);
         return;
       }
-      let initiatorUser, counterPartyUser, initiator, counterParty;
+      let counterPartyUser, initiator, counterParty;
 
-      if (user._id == order.buyer_id) {
-        initiatorUser = user;
+      const initiatorUser = user;
+      if (initiatorUser._id == order.buyer_id) {
         counterPartyUser = await User.findOne({ _id: order.seller_id });
         initiator = 'buyer';
         counterParty = 'seller';
       } else {
         counterPartyUser = await User.findOne({ _id: order.buyer_id });
-        initiatorUser = user;
         initiator = 'seller';
         counterParty = 'buyer';
       }
 
       if (order[`${initiator}_cooperativecancel`]) {
-        await messages.shouldWaitCooperativeCancelMessage(bot, initiatorUser);
+        await messages.shouldWaitCooperativeCancelMessage(ctx, bot, initiatorUser);
         return;
       }
 
@@ -446,11 +445,11 @@ const initialize = (botToken, options) => {
 
         order.status = 'CANCELED';
         // We sent a private message to the users
-        await messages.successCancelOrderMessage(bot, initiatorUser, order, true);
-        await messages.okCooperativeCancelMessage(bot, counterPartyUser, order);
+        await messages.successCancelOrderMessage(ctx, bot, initiatorUser, order, true);
+        await messages.okCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
       } else {
-        await messages.initCooperativeCancelMessage(bot, initiatorUser, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(bot, counterPartyUser, order);
+        await messages.initCooperativeCancelMessage(ctx, order);
+        await messages.counterPartyWantsCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
       }
       await order.save();
 
@@ -461,7 +460,7 @@ const initialize = (botToken, options) => {
 
   bot.command('ban', async (ctx) => {
     try {
-      const adminUser = await validateAdmin(ctx, bot);
+      const adminUser = await validateAdmin(ctx);
 
       if (!adminUser) return;
 
@@ -471,13 +470,13 @@ const initialize = (botToken, options) => {
       
       const user = await User.findOne({ username });
       if (!user) {
-        await messages.notFoundUserMessage(bot, adminUser);
+        await messages.notFoundUserMessage(ctx);
         return;
       }
 
       user.banned = true;
       await user.save();
-      await messages.userBannedMessage(bot, adminUser);
+      await messages.userBannedMessage(ctx);
     } catch (error) {
       console.log(error);
     }
@@ -498,18 +497,18 @@ const initialize = (botToken, options) => {
       if (lightningAddress == 'off') {
         user.lightning_address = null;
         await user.save();
-        await messages.disableLightningAddress(bot, user)
+        await messages.disableLightningAddress(ctx);
         return;
       }
 
       if (!await validateLightningAddress(lightningAddress)) {
-        await messages.invalidLightningAddress(bot, user)
+        await messages.invalidLightningAddress(ctx);
         return;
       }
       
       user.lightning_address = lightningAddress;
       await user.save();
-      await messages.successSetAddress(bot, user)
+      await messages.successSetAddress(ctx);
       
     } catch (error) {
       console.log(error);
@@ -537,7 +536,7 @@ const initialize = (botToken, options) => {
         return;
       };
       if (order.status == 'SUCCESS') {
-        await messages.successCompleteOrderMessage(bot, user, order);
+        await messages.successCompleteOrderMessage(ctx, order);
         return;
       }
       if (invoice.tokens && invoice.tokens != order.amount) {
@@ -555,7 +554,7 @@ const initialize = (botToken, options) => {
         const isPending = await isPendingPayment(order.buyer_invoice);
 
         if (!!isScheduled || !!isPending) {
-          await messages.invoiceAlreadyUpdatedMessage(bot, user);
+          await messages.invoiceAlreadyUpdatedMessage(ctx);
           return;
         }
 
@@ -570,22 +569,20 @@ const initialize = (botToken, options) => {
             order_id: order._id,
           });
           await pp.save();
-          await messages.invoiceUpdatedPaymentWillBeSendMessage(bot, user);
+          await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
         } else {
-          await messages.invoiceAlreadyUpdatedMessage(bot, user);
+          await messages.invoiceAlreadyUpdatedMessage(ctx);
         }
       } else if (order.status == 'WAITING_BUYER_INVOICE') {
         const seller = await User.findOne({ _id: order.seller_id });
         await waitPayment(ctx, bot, user, seller, order, lnInvoice);
       } else {
-        await messages.invoiceUpdatedMessage(bot, user);
+        await messages.invoiceUpdatedMessage(ctx);
       }
 
       await order.save();
     } catch (error) {
       console.log(error);
-      const user = await validateUser(ctx, false);
-      await messages.genericErrorMessage(bot, user);
     }
   });
 
@@ -595,7 +592,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      const orders = await ordersActions.getOrders(bot, user);
+      const orders = await ordersActions.getOrders(ctx, user);
 
       if (!orders) return;
 
@@ -636,7 +633,7 @@ const initialize = (botToken, options) => {
   
   bot.command('paytobuyer', async (ctx) => {
     try {
-      const adminUser = await validateAdmin(ctx, bot);
+      const adminUser = await validateAdmin(ctx);
       if (!adminUser) return;
       const [ orderId ] = await validateParams(ctx, bot, adminUser, 2, '\\<_order id_\\>');
       if (!orderId) return;
@@ -672,7 +669,7 @@ const initialize = (botToken, options) => {
 
       const currencies = getCurrenciesWithPrice();
 
-      await messages.listCurrenciesResponse(bot, user, currencies);
+      await messages.listCurrenciesResponse(ctx, currencies);
     } catch (error) {
       console.log(error);
     }
@@ -703,7 +700,7 @@ const initialize = (botToken, options) => {
       show = show == 'yes' ? true : false;
       user.show_username = show;
       await user.save();
-      messages.updateUserSettingsMessage(bot, user, 'showusername', show);
+      messages.updateUserSettingsMessage(ctx, 'showusername', show);
     } catch (error) {
       console.log(error);
     }
@@ -720,7 +717,7 @@ const initialize = (botToken, options) => {
       show = show == 'yes' ? true : false;
       user.show_volume_traded = show;
       await user.save();
-      messages.updateUserSettingsMessage(bot, user, 'showvolume', show);
+      messages.updateUserSettingsMessage(ctx, 'showvolume', show);
     } catch (error) {
       console.log(error);
     }

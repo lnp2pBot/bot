@@ -82,7 +82,6 @@ const mustBeIntMessage = async (ctx, fieldName) => {
 
 const sellOrderCorrectFormatMessage = async (ctx) => {
   try {
-    console.log(ctx.i18n.locale());
     await ctx.reply(ctx.i18n.t('sell_correct_format'), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
@@ -125,7 +124,7 @@ const expiredInvoiceMessage = async (ctx) => {
 const expiredInvoiceOnPendingMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_expired_long'));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { order }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -171,7 +170,7 @@ const alreadyTakenOrderMessage = async (ctx, bot, user) => {
   }
 };
 
-const invalidDataMessage = async (ctx) => {
+const invalidDataMessage = async (ctx, bot, user) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('invalid_data'));
   } catch (error) {
@@ -244,17 +243,20 @@ const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
 
 const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) => {
   try {
-    const currency = getCurrency(order.fiat_code);
+    let currency = getCurrency(order.fiat_code);
+    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
     await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('get_in_touch_with_seller', {
-      sellerUser,
       currency,
-      order,
+      sellerUsername: seller.username,
+      fiatAmount: order.fiat_amount,
+      paymentMethod: order.payment_method,
     }));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { order }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { orderId: order._id }));
     await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('buyer_took_your_order', {
-      order,
+      fiatAmount: order.fiat_amount,
+      paymentMethod: order.payment_method,
       currency,
-      buyerUser,
+      buyerUsername: buyerUser.username,
     }));
   } catch (error) {
     console.log(error);
@@ -271,8 +273,8 @@ const takeSellWaitingSellerToPayMessage = async (ctx, bot, buyerUser, order) => 
 
 const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18n) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('sell_success'));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('funds_released'));
+    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('sell_success', { buyerUsername: buyerUser.username }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('funds_released', { sellerUsername: sellerUser.username }));
   } catch (error) {
     console.log(error);
   }
@@ -365,13 +367,13 @@ const publishSellOrderMessage = async (bot, order, i18n) => {
   }
 };
 
-const getDetailedOrder = (ctx, order, buyer, seller) => {
+const getDetailedOrder = (i18n, order, buyer, seller) => {
   try {
     const buyerUsername = buyer ? buyer.username : '';
     const sellerUsername = seller ? seller.username : '';
     const buyerId = buyer ? buyer._id : '';
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
-    let message = ctx.i18n.t('order_detail', {
+    let message = i18n.t('order_detail', {
       order,
       creator,
       buyerUsername,
@@ -384,29 +386,31 @@ const getDetailedOrder = (ctx, order, buyer, seller) => {
   }
 };
 
-const beginDisputeMessage = async (bot, buyer, seller, order, initiator) => {
+const beginDisputeMessage = async (bot, buyer, seller, order, initiator, i18n) => {
   try {
-
-    const type = initiator === 'seller' ? 'vendedor' : 'comprador';
+    const type = initiator === 'seller' ? i18n.t('seller') : i18n.t('buyer');
     let initiatorUser = buyer;
     let counterPartyUser = seller;
     if (initiator === 'seller') {
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
-    let message = `El ${type} @${initiatorUser.username} `;
-    message += `ha iniciado una disputa con @${counterPartyUser.username} en la orden:\n\n`;
-    message += `${getDetailedOrder(ctx, order, buyer, seller)}\n\n`;
-    message += `@${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputa${plural(initiatorUser.disputes)}\n`;
-    message += `@${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputa${plural(counterPartyUser.disputes)}`;
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    let detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('dispute_started_channel', {
+      order,
+      initiator,
+      initiatorUser,
+      counterPartyUser,
+      detailedOrder,
+      type,
+    }));
 
     if (initiator === 'buyer') {
-      await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El comprador ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(initiatorUser.tg_id, i18n.t('you_started_dispute_to_buyer'));
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, i18n.t('buyer_started_dispute_to_seller', { orderId: order._id }));
     } else {
-      await bot.telegram.sendMessage(initiatorUser.tg_id, `Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla`);
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, `El vendedor ha iniciado una disputa por tu orden con id: #${order._id}, nos comunicaremos contigo y tu contraparte para resolverla`);
+      await bot.telegram.sendMessage(initiatorUser.tg_id, i18n.t('you_started_dispute_to_seller'));
+      await bot.telegram.sendMessage(counterPartyUser.tg_id, i18n.t('seller_started_dispute_to_buyer', { orderId: order._id }));
     }
   } catch (error) {
     console.log(error);
@@ -423,7 +427,7 @@ const customMessage = async (bot, user, message) => {
 
 const checkOrderMessage = async (ctx, order, buyer, seller) => {
   try {
-    let message = getDetailedOrder(ctx, order, buyer, seller);
+    let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
     message += `\n\n`;
     await ctx.reply(message);
   } catch (error) {
@@ -431,44 +435,33 @@ const checkOrderMessage = async (ctx, order, buyer, seller) => {
   }
 };
 
-const mustBeValidCurrency = async (bot, user, fieldName) => {
+const mustBeValidCurrency = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser un código de moneda válido, ejemplo: USD, EUR`);
+    await ctx.reply(ctx.i18n.t('must_be_valid_currency'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const mustBeANumberOrRange = async (bot, user, fieldName) => {
+const mustBeANumberOrRange = async (ctx) => {
   try {
-    const invalidFiatAmountMessage = (
-      `${fieldName} debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>.`
-    );
-    await bot.telegram.sendMessage(user.tg_id, invalidFiatAmountMessage);
+    await ctx.reply(ctx.i18n.t('must_be_number_or_range'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invalidLightningAddress = async (bot, user) => {
+const invalidLightningAddress = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Dirección lightning no válida`);
+    await ctx.reply(ctx.i18n.t('invalid_lightning_address'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const unavailableLightningAddress = async (bot, user,la) => {
+const unavailableLightningAddress = async (ctx, bot, user,la) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Dirección lightning ${la} no disponible`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const invalidInvoice = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `Factura lightning no válida`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('unavailable_lightning_address', { la }));
   } catch (error) {
     console.log(error);
   }
@@ -476,30 +469,18 @@ const invalidInvoice = async (bot, user) => {
 
 const helpMessage = async (ctx) => {
   try {
-    let message = `/sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta\n`;
-    message += `/buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra\n`;
-    message += `/info - Muestra información sobre el bot\n`;
-    message += `/showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)\n`;
-    message += `/showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)\n`;
-    message += `/setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats\n`;
-    message += `/setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla\n`;
-    message += `/listorders - El usuario puede listar sus órdenes no finalizadas\n`;
-    message += `/listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis\n`;
-    message += `/fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor\n`;
-    message += `/release <_order id_> - El vendedor libera los satoshis\n`;
-    message += `/dispute <_order id_> - Abre una disputa entre los participantes\n`;
-    message += `/cancel <_order id_> - Cancela una orden que no ha sido tomada\n`;
-    message += `/cooperativecancel <_order id_> - Inicia una cancelación cooperativa, ambas partes deben ejecutar este comando para cancelar una orden activa\n`;
-    message += `/help - Mensaje de ayuda`;
-    await ctx.reply(message, { parse_mode: 'Markdown' });
+    await ctx.reply(ctx.i18n.t('help'), { parse_mode: 'Markdown' });
   } catch (error) {
     console.log(error);
   }
 };
 
-const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
+const mustBeGreatherEqThan = async (ctx, fieldName, qty) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `${fieldName} debe ser mayor o igual que ${qty}`);
+    await ctx.reply(ctx.i18n.t('must_be_gt_or_eq', {
+      fieldName,
+      qty,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -507,42 +488,42 @@ const mustBeGreatherEqThan = async (bot, user, fieldName, qty) => {
 
 const bannedUserErrorMessage = async (ctx) => {
   try {
-    await ctx.reply(`¡Has sido baneado!`);
+    await ctx.reply(ctx.i18n.t('you_have_been_banned'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const fiatSentMessages = async (bot, buyer, seller, order) => {
+const fiatSentMessages = async (ctx, bot, buyer, seller, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, `🤖 Le avisé a @${seller.username} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos`);
-    await bot.telegram.sendMessage(seller.tg_id, `🤖 @${buyer.username} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden`);
-    await bot.telegram.sendMessage(seller.tg_id, `/release ${order._id}`);
+    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('I_told_seller_you_sent_fiat'), { sellerUsername: seller.username });
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('buyer_told_me_that_sent_fiat'), { buyerUsername: buyer.username });
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd'), { orderId: order._id });
   } catch (error) {
     console.log(error);
   }
 };
 
 
-const orderOnfiatSentStatusMessages = async (bot, user) => {
+const orderOnfiatSentStatusMessages = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('you_have_orders_waiting'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const userBannedMessage = async (bot, user) => {
+const userBannedMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Usuario baneado!`);
+    await ctx.reply(ctx.i18n.t('user_banned'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const notFoundUserMessage = async (bot, user) => {
+const notFoundUserMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Usuario no encontrado en base de datos!`);
+    await ctx.reply(ctx.i18n.t('user_not_found'));
   } catch (error) {
     console.log(error);
   }
@@ -550,7 +531,7 @@ const notFoundUserMessage = async (bot, user) => {
 
 const errorParsingInvoiceMessage = async (ctx) => {
   try {
-    ctx.reply(ctx.i18n.t('parse_invoice_error'));
+    await ctx.reply(ctx.i18n.t('parse_invoice_error'));
   } catch (error) {
     console.log(error);
   }
@@ -558,63 +539,63 @@ const errorParsingInvoiceMessage = async (ctx) => {
 
 const notValidIdMessage = async (ctx) => {
   try {
-    ctx.reply(ctx.i18n.t('invalid_id'));
+    await ctx.reply(ctx.i18n.t('invalid_id'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const addInvoiceMessage = async (bot, buyer, seller, order) => {
+const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
   try {
-    const currency = getCurrency(order.fiat_code);
-    const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    let message = `🤖 He recibido tu factura, ponte en contacto con @${seller.username} para que te indique `;
-    message += `como enviarle ${symbol} ${order.fiat_amount}\n\n`;
-    message += `En cuanto hayas enviado el dinero fiat hazmelo saber con el comando 👇`;
-    await bot.telegram.sendMessage(buyer.tg_id, message);
-    await bot.telegram.sendMessage(buyer.tg_id, `/fiatsent ${order._id}`);
+    let currency = getCurrency(order.fiat_code);
+    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('get_in_touch_with_seller', {
+      currency,
+      sellerUsername: seller.username,
+      fiatAmount: order.fiat_amount,
+      paymentMethod: order.payment_method,
+    }));
+    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order) => {
+const sendBuyerInfo2SellerMessage = async (ctx, bot, buyer, seller, order) => {
   try {
-    const currency = getCurrency(order.fiat_code);
-    await bot.telegram.sendMessage(seller.tg_id, `🤖 Ponte en contacto con @${buyer.username} para darle la información sobre cómo enviarte ${currency.symbol_native} ${order.fiat_amount} por ${order.payment_method}. NO liberes los fondos hasta que no verifiques que @${buyer.username} te envió el dinero fiat`);
+    let currency = getCurrency(order.fiat_code);
+    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('get_in_touch_with_buyer', {
+      currency,
+      buyerUsername: buyer.username,
+      fiatAmount: order.fiat_amount,
+      paymentMethod: order.payment_method,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const genericErrorMessage = async (bot, user) => {
+const cantTakeOwnOrderMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Ha ocurrido un error, intenta nuevamente!`);
+    await ctx.reply(ctx.i18n.t('cant_take_own_order'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const cantTakeOwnOrderMessage = async (bot, user) => {
+const notLightningInvoiceMessage = async (ctx, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `No puedes tomar tu propia orden`);
+    await ctx.reply(ctx.i18n.t('send_me_a_ln_invoice', { amount: order.amount }));
+    await ctx.reply(ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const notLightningInvoiceMessage = async (bot, user, order) => {
+const notOrdersMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Por favor envíame una factura lightning por ${order.amount} sats`);
-    await bot.telegram.sendMessage(user.tg_id, `/setinvoice ${order._id} <_lightning_invoice_>`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const notOrdersMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `No tienes ninguna orden en este momento`);
+    await ctx.reply(ctx.i18n.t('you_have_no_orders'));
   } catch (error) {
     console.log(error);
   }
@@ -636,13 +617,9 @@ const listOrdersResponse = async (bot, user, orders) => {
   }
 };
 
-const notRateForCurrency = async (bot, user) => {
+const notRateForCurrency = async (ctx) => {
   try {
-    let message = `${process.env.FIAT_RATE_NAME} no tiene tasa de cambio para esta moneda fiat\n\n`;
-    message += `Para utilizar esta moneda debes indicar la cantidad de satoshis\n\n`;
-    message += `Si quieres que esta moneda sea incluida en la lista /listcurrencies puedes hacerles una solicitud aquí 👇\n\n`;
-    message += `🌐 https://yadio.io/api.html`;
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await ctx.reply(ctx.i18n.t('not_rate_for_currency', { fiatRateProvider: process.env.FIAT_RATE_NAME }));
   } catch (error) {
     console.log(error);
   }
@@ -650,183 +627,167 @@ const notRateForCurrency = async (bot, user) => {
 
 const incorrectAmountInvoiceMessage = async (ctx) => {
   try {
-    await ctx.reply(`La factura tiene un monto incorrecto`);
+    await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoiceUpdatedMessage = async (bot, user) => {
+const invoiceUpdatedMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡La factura ha sido actualizada correctamente!`);
+    await ctx.reply(ctx.i18n.t('invoice_updated'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoiceUpdatedPaymentWillBeSendMessage = async (bot, user) => {
+const invoiceUpdatedPaymentWillBeSendMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡La factura ha sido actualizada correctamente y será pagada en los próximos segundos!`);
+    await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoiceAlreadyUpdatedMessage = async (bot, user) => {
+const invoiceAlreadyUpdatedMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Ya has enviado una factura para esta orden y estoy intentando pagarla en este momento`);
+    await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
   } catch (error) {
     console.log(error);
   }
 };
-const successSetAddress = async (bot, user) => {
+const successSetAddress = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Dirección lightning guardada con éxito`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const badStatusOnCancelOrderMessage = async (bot, user) => {
-  try {
-    let message = `Esta opción solo permite cancelar las ordenes que no han sido tomadas, `;
-    message += `si lo deseas puedes intentar una cancelación cooperativa con /cooperativecancel`;
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await ctx.reply(ctx.i18n.t('lightning_address_saved'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const successCancelOrderMessage = async (bot, user, order, sendRefundMessage) => {
+const badStatusOnCancelOrderMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado la orden Id: #${order._id}!`);
+    await ctx.reply(ctx.i18n.t('cancel_error'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const successCancelOrderMessage = async (ctx, bot, user, order, sendRefundMessage) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_success', { orderId: order._id }));
     if (order.seller_id == user._id && !!sendRefundMessage) {
-      await refundCooperativeCancelMessage(bot, user);
+      await refundCooperativeCancelMessage(ctx, bot, user);
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-const successCancelAllOrdersMessage = async (bot, user) => {
+const successCancelAllOrdersMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Has cancelado todas tus órdenes publicadas!`);
+    await ctx.reply(ctx.i18n.t('cancelall_success'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const successCancelOrderByAdminMessage = async (bot, user, order) => {
+const successCancelOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha cancelado la orden Id: #${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_success', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const successCompleteOrderMessage = async (bot, user, order) => {
+const successCompleteOrderMessage = async (ctx, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Has completado la orden Id: #${order._id}!`);
+    await ctx.reply(ctx.i18n.t('order_completed', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const successCompleteOrderByAdminMessage = async (bot, user, order) => {
+const successCompleteOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `¡El admin ha completado la orden Id: #${order._id}!`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_completed_by_admin', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const cantCooperativeCancelMessage = async (bot, user) => {
+const cantCooperativeCancelMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Esta orden no puede ser cancelada cooperativamente`);
+    await ctx.reply(ctx.i18n.t('cant_be_coopcancelled'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const shouldWaitCooperativeCancelMessage = async (bot, user) => {
+const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Ya has realizado esta operación, debes esperar por tu contraparte`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('have_to_wait_for_counterpart'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const okCooperativeCancelMessage = async (bot, user, order) => {
+const okCooperativeCancelMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: #${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('ok_cooperativecancel', { orderId: order._id }));
     if (order.seller_id == user._id) {
-      await refundCooperativeCancelMessage(bot, user);
+      await refundCooperativeCancelMessage(ctx, bot, user);
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-const refundCooperativeCancelMessage = async (bot, user) => {
+const refundCooperativeCancelMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Has recibido un reembolso por tu pago lightning, no es necesario hacer nada mas`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('refund_cooperativecancel'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const initCooperativeCancelMessage = async (bot, user, order) => {
+const initCooperativeCancelMessage = async (ctx, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Has iniciado la cancelación de la orden Id: #${order._id}, tu contraparte también debe indicarme que desea cancelar la orden`);
+    await ctx.reply(ctx.i18n.t('init_cooperativecancel', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const counterPartyWantsCooperativeCancelMessage = async (bot, user, order) => {
+const counterPartyWantsCooperativeCancelMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Tu contraparte quiere cancelar la orden Id: #${order._id}, si estás de acuerdo utiliza el comando 👇`);
-    await bot.telegram.sendMessage(user.tg_id, `/cooperativecancel ${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cooperativecancel_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invoicePaymentFailedMessage = async (bot, user) => {
+const invoicePaymentFailedMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${process.env.PENDING_PAYMENT_WINDOW} minutos, asegúrate que tu nodo/wallet esté online`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_payment_failed', {
+      pendingPaymentWindow: process.env.PENDING_PAYMENT_WINDOW,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const showUsernameErrorMessage = async (bot, user) => {
+const userCantTakeMoreThanOneWaitingOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Si quieres que tu username sea mostrado en la publicación debes colocar 'y' como último argumento`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cant_take_more_orders'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const successMessage = async (ctx) => {
+const sellerPaidHoldMessage = async (ctx, bot, user) => {
   try {
-    await ctx.reply(`¡Operación realizada exitósamente!`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const userCantTakeMoreThanOneWaitingOrderMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `¡Lo siento! No puedes tomar otra orden mientras tengas otras esperando por ti`);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const sellerPaidHoldMessage = async (bot, user) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, `El vendedor ya liberó los satoshis, debes esperar por el pago de tu factura`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('seller_released'));
   } catch (error) {
     console.log(error);
   }
@@ -847,64 +808,66 @@ const showInfoMessage = async (bot, user, info) => {
   }
 };
 
-const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser) => {
+const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser, i18n) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, `Tu compra de sats ha sido completada exitosamente, @${sellerUser.username} ha confirmado tu pago fiat y ya he pagado tu factura, que disfrutes tus sats\n⚡️🍊⚡️`);
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('your_purchase_is_completed', {
+      sellerUsername: sellerUser.username,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const listCurrenciesResponse = async (bot, user, currencies) => {
+const listCurrenciesResponse = async (ctx, currencies) => {
   try {
     let response = `Code |   Name   |\n`;
     currencies.forEach(currency => {
       response += `${currency.code} | ${currency.name} | ${currency.emoji}\n`;
     });
-    await bot.telegram.sendMessage(user.tg_id, response);
+    await ctx.reply(response);
   } catch (error) {
     console.log(error);
   }
 };
 
-const priceApiFailedMessage = async (bot, user) => {
+const priceApiFailedMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Ha ocurrido un problema obteniendo el precio de esta moneda, por favor intenta más tarde, si el problema persiste contacta a algún administrador`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('problem_getting_price'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const updateUserSettingsMessage = async (bot, user, field, newState) => {
+const updateUserSettingsMessage = async (ctx, field, newState) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `He modificado el campo ${field} a ${newState}`);
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('update_user_setting', {
+      field,
+      newState,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const disableLightningAddress = async (bot, user) => {
+const disableLightningAddress = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `Lightning address desactivada`);
+    await ctx.reply(ctx.i18n.t('lightning_address_disabled'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const invalidRangeWithAmount = async (bot, user) => {
+const invalidRangeWithAmount = async (ctx) => {
   try {
-    let rangeWithAmountMessage = `Los rangos solo estan habilitados para tasas flotantes.\n`
-    rangeWithAmountMessage += `Utilice rangos o bien especifique la cantidad de sats, pero no ambas.`;
-    await bot.telegram.sendMessage(user.tg_id, rangeWithAmountMessage);
+    await ctx.reply(ctx.i18n.t('invalid_range_with_amount'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const tooManyPendingOrdersMessage = async (bot, user) => {
+const tooManyPendingOrdersMessage = async (ctx) => {
   try {
-    let message = `Has llegado al máximo de órdenes publicadas simultáneamente`;
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await ctx.reply(ctx.i18n.t('too_many_pending_orders'));
   } catch (error) {
     console.log(error);
   }
@@ -915,16 +878,16 @@ const listCommunitiesMessage = async (ctx, communities) => {
     let message = '';
     communities.forEach(community => {
       message += `ID: ${community.id}\n`;
-      message += `Nombre: ${community.name}\n`;
-      message += `Grupo: ${community.group}\n`;
+      message += ctx.i18n.t('name') +`: ${community.name}\n`;
+      message += ctx.i18n.t('group') + `: ${community.group}\n`;
       community.order_channels.forEach(channel => {
-        message += `Canal ${channel.type}: ${channel.name}\n`;
+        message += ctx.i18n.t('channel') + ` ${channel.type}: ${channel.name}\n`;
       });
       community.solvers.forEach(solver => {
-        message += `solver: ${solver.username}\n`;
+        message += ctx.i18n.t('solver') + `: ${solver.username}\n`;
       });
-      message += `Pública: ${community.public ? 'Sí' : 'No'}\n`;
-      message += `Creada: ${community.created_at}\n\n`;
+      message += ctx.i18n.t('published') + `: ${community.public ? ctx.i18n.t('yes') : ctx.i18n.t('no')}\n`;
+      message += ctx.i18n.t('created') + `: ${community.created_at}\n\n`;
     });
     await ctx.reply(message);
   } catch (error) {
@@ -932,12 +895,14 @@ const listCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-const wizardAddInvoiceInitMessage = async (bot, user, order, symbol, expirationTime) => {
+const wizardAddInvoiceInitMessage = async (ctx, order, currency, expirationTime) => {
   try {
-    let message = `Para poder enviarte los satoshis necesito que me envíes una factura con monto ${order.amount} satoshis equivalente a ${symbol} ${order.fiat_amount}\n\n`;
-    message += `Si no la envías en ${expirationTime} minutos la orden será cancelada`;
-
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await ctx.reply(ctx.i18n.t('wizard_add_invoice_init', {
+      expirationTime,
+      satsAmount: order.amount,
+      currency,
+      fiatAmount: order.fiat_amount,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -945,13 +910,10 @@ const wizardAddInvoiceInitMessage = async (bot, user, order, symbol, expirationT
 
 const wizardAddInvoiceExitMessage = async (ctx, order) => {
   try {
-    let message = `Has salido del modo wizard, ahora puedes escribir comandos, aún puedes `;
-    message += `ingresar una factura a la orden con el comando /setinvoice indicando Id `;
-    message += `de orden y factura, puedes enviarme una factura con un monto de `;
-    message += `${order.amount} satoshis, pero tambien acepto facturas sin monto:\n\n`;
-    message += `/setinvoice ${order._id} <factura lightning con o sin monto>`;
-
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_add_invoice_exit', {
+      amount: order.amount,
+      orderId: order._id,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -959,7 +921,7 @@ const wizardAddInvoiceExitMessage = async (ctx, order) => {
 
 const wizardCommunityEnterNameMessage = async (ctx) => {
   try {
-    await ctx.reply('Ingresa el nombre de tu comunidad:');
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
   } catch (error) {
     console.log(error);
   }
@@ -967,7 +929,7 @@ const wizardCommunityEnterNameMessage = async (ctx) => {
 
 const wizardExitMessage = async (ctx) => {
   try {
-    await ctx.reply('Has salido del modo wizard, ahora puedes escribir comandos.');
+    await ctx.reply(ctx.i18n.t('wizard_exit'));
   } catch (error) {
     console.log(error);
   }
@@ -975,7 +937,7 @@ const wizardExitMessage = async (ctx) => {
 
 const orderExpiredMessage = async (ctx) => {
   try {
-    await ctx.reply(`¡Esta orden ya expiró!`);
+    await ctx.reply(ctx.i18n.t('order_expired'));
   } catch (error) {
     console.log(error);
   }
@@ -983,7 +945,7 @@ const orderExpiredMessage = async (ctx) => {
 
 const cantAddInvoiceMessage = async (ctx) => {
   try {
-    await ctx.reply(`¡Ya no puedes agregar una factura para esta orden!`);
+    await ctx.reply(ctx.i18n.t('cant_add_invoice'));
   } catch (error) {
     console.log(error);
   }
@@ -991,7 +953,7 @@ const cantAddInvoiceMessage = async (ctx) => {
 
 const wizardCommunityTooLongNameMessage = async (ctx, length) => {
   try {
-    await ctx.reply(`El nombre debe tener un máximo de ${length} caracteres.`);
+    await ctx.reply(ctx.i18n.t('wizard_community_too_long_name', { length }));
   } catch (error) {
     console.log(error);
   }
@@ -999,10 +961,7 @@ const wizardCommunityTooLongNameMessage = async (ctx, length) => {
 
 const wizardCommunityEnterGroupMessage = async (ctx) => {
   try {
-    let message = `Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como `;
-    message += `tú deben ser administradores del grupo:\n\n`;
-    message += `P. ej: @MiComunidad`;
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
   } catch (error) {
     console.log(error);
   }
@@ -1010,14 +969,7 @@ const wizardCommunityEnterGroupMessage = async (ctx) => {
 
 const wizardCommunityEnterOrderChannelsMessage = async (ctx) => {
   try {
-    let message = `Las ofertas en tu comunidad deben publicarse en un canal de telegram, `;
-    message += `si me indicas un canal tanto las compras como las ventas se publicarán en ese canal, `;
-    message += `si me indicas dos canales se publicaran las compras en uno y las ventas en el otro, `;
-    message += `tanto el bot como tú deben ser administradores de ambos canales.\n\n`;
-    message += `Puedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa `;
-    message += `dos nombres separados por un espacio.\n\n`;
-    message += `P. ej: @MiComunidadCompras @MiComunidadVentas`;
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_order_channels'));
   } catch (error) {
     console.log(error);
   }
@@ -1025,7 +977,7 @@ const wizardCommunityEnterOrderChannelsMessage = async (ctx) => {
 
 const wizardCommunityOneOrTwoChannelsMessage = async (ctx) => {
   try {
-    await ctx.reply(`Debes ingresar uno o dos canales`);
+    await ctx.reply(ctx.i18n.t('wizard_community_one_or_two_channels'));
   } catch (error) {
     console.log(error);
   }
@@ -1033,9 +985,7 @@ const wizardCommunityOneOrTwoChannelsMessage = async (ctx) => {
 
 const wizardCommunityEnterSolversMessage = async (ctx) => {
   try {
-    let message = `Ahora ingresa los username de los usuarios que se encargan de resolver disputas, `;
-    message += `cada username separado por un espacio en blanco`;
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers'));
   } catch (error) {
     console.log(error);
   }
@@ -1043,7 +993,7 @@ const wizardCommunityEnterSolversMessage = async (ctx) => {
 
 const wizardCommunityMustEnterNamesSeparatedMessage = async (ctx) => {
   try {
-    await ctx.reply(`Debes ingresar uno o dos nombres separados por un espacio`);
+    await ctx.reply(ctx.i18n.t('wizard_community_must_enter_names'));
   } catch (error) {
     console.log(error);
   }
@@ -1051,9 +1001,7 @@ const wizardCommunityMustEnterNamesSeparatedMessage = async (ctx) => {
 
 const wizardCommunityEnterSolversChannelMessage = async (ctx) => {
   try {
-    let message = `Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar `;
-    message += `cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal`;
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers_channel'));
   } catch (error) {
     console.log(error);
   }
@@ -1061,22 +1009,25 @@ const wizardCommunityEnterSolversChannelMessage = async (ctx) => {
 
 const wizardCommunityCreatedMessage = async (ctx) => {
   try {
-    await ctx.reply(`¡Felicidades has creado tu comunidad!`);
+    await ctx.reply(ctx.i18n.t('wizard_community_success'));
   } catch (error) {
     console.log(error);
   }
 };
 
 const wizardCommunityWrongPermission = () => {
-  return `No tienes permisos de administrador en este grupo o canal`;
+  return `You are not admin on this group or channel.`;
 };
 
-const wizardAddFiatAmountMessage = async (ctx, currencyName, action, order) => {
+const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
   try {
-    let message = `Ingresa la cantidad de ${currencyName} que desea ${action}.\n`;
-    message += `Recuerde que debe estar entre ${order.min_amount} y ${order.max_amount}:`;
-
-    await ctx.reply(message);
+    await ctx.reply(ctx.i18n.t('wizard_add_fiat_amount', {
+      action,
+      currency,
+      fiatAmount: order.fiat_amount,
+      minAmount: order.min_amount,
+      maxAmount: order.max_amount,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -1084,7 +1035,10 @@ const wizardAddFiatAmountMessage = async (ctx, currencyName, action, order) => {
 
 const wizardAddFiatAmountWrongAmountMessage = async (ctx, order) => {
   try {
-    await ctx.reply(`Monto incorrecto, ingrese un número entre ${order.min_amount} y ${order.max_amount}`);
+    await ctx.reply(ctx.i18n.t('wizard_add_fiat_wrong_amount', {
+      minAmount: order.min_amount,
+      maxAmount: order.max_amount,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -1092,128 +1046,132 @@ const wizardAddFiatAmountWrongAmountMessage = async (ctx, order) => {
 
 const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
   try {
-    await ctx.reply(`Cantidad elegida: ${currency.symbol_native} ${fiatAmount}.`);
+    await ctx.reply(ctx.i18n.t('wizard_add_fiat_correct_amount', {
+      currency: currency.symbol_native,
+      fiatAmount,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const expiredOrderMessage = async (bot, order, buyerUser, sellerUser) => {
+const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
   try {
-    let message = `Esta orden ha expirado sin haberse completado\n\n`;
-    message += getDetailedOrder(order, buyerUser, sellerUser);
-    message += `\n\n`;
-    message += `@${sellerUser.username} tiene ${sellerUser.disputes} disputa${plural(sellerUser.disputes)}\n`;
-    message += `@${buyerUser.username} tiene ${buyerUser.disputes} disputa${plural(buyerUser.disputes)}\n`;
-
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    const detailedOrder = getDetailedOrder(order, buyerUser, sellerUser);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('expired_order', {
+      detailedOrder,
+      buyerUser,
+      sellerUser,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toBuyerDidntAddInvoiceMessage = async (bot, user, order) => {
+const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤨 No has enviado la factura para recibir sats por la orden Id: #${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('didnt_add_invoice', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toSellerBuyerDidntAddInvoiceMessage = async (bot, user, order) => {
+const toSellerBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `😔 El comprador no me envió la factura para recibir sats por tu venta Id: #${order._id}, tus sats han sido devueltos`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('buyer_havent_add_invoice', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toAdminChannelBuyerDidntAddInvoiceMessage = async (bot, user, order) => {
+const toAdminChannelBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    let message = `El comprador @${user.username} tomó la orden Id: #${order._id} pero no ha ingresado `;
-    message += `la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente`;
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('buyer_havent_add_invoice_to_admin_channel', {
+      orderId: order._id,
+      username: user.username,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toSellerDidntPayInvoiceMessage = async (bot, user, order) => {
+const toSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤨 No has pagado la factura para vender sats por la orden Id: #${order._id}`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('havent_paid_invoice', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toBuyerSellerDidntPayInvoiceMessage = async (bot, user, order) => {
+const toBuyerSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `😔 El vendedor no pagó la factura por tu compra Id: #${order._id}, la operación ha sido cancelada`);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('seller_havent_paid_invoice', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toAdminChannelSellerDidntPayInvoiceMessage = async (bot, user, order) => {
+const toAdminChannelSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    let message = `El vendedor @${user.username} no ha pagado la factura correspondiente a la orden Id: #${order._id} `;
-    message += `y el tiempo ha expirado, la orden ha sido publicada nuevamente`;
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('seller_havent_add_invoice_to_admin_channel', {
+      orderId: order._id,
+      username: user.username,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const userCantDoMessage = async (bot, user) => {
+const userCantDoMessage = async (ctx) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, `🤨 Este usuario no puede realizar esta operación`);
+    await ctx.reply(ctx.i18n.t('user_cant_do'));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toAdminChannelPendingPaymentSuccessMessage = async (bot, user, order, pending, payment) => {
+const toAdminChannelPendingPaymentSuccessMessage = async (bot, user, order, pending, payment, i18n) => {
   try {
-    let message = `El usuario @${user.username} tenía un pago pendiente en su compra Id: #${order._id} `;
-    message += `de ${order.amount} satoshis, el pago se realizó luego de ${pending.attempts} intentos.\n\n`;
-    message += `Prueba de pago: ${payment.secret}`;
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('pending_payment_success_to_admin', {
+      orderId: order._id,
+      username: user.username,
+      attempts: pending.attempts,
+      amount: order.amount,
+      paymentSecret: payment.secret,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment) => {
+const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i18n) => {
   try {
-    let message = `¡He pagado la factura lightning por tu compra Id: #${order._id}!\n\n`;
-    message += `Prueba de pago: ${payment.secret}`;
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_success', {
+      orderId: order._id,
+      amount: order.amount,
+      paymentSecret: payment.secret,
+    }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toBuyerPendingPaymentFailedMessage = async (bot, user, order) => {
+const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
-    let message = `He intentado pagar tu factura un total de 4 veces y todas han fallado, `;
-    message += `algunas veces los usuarios de lightning network no pueden recibir pagos `;
-    message += `porque no hay suficiente capacidad de entrada en su wallet/nodo, una `;
-    message += `solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad\n\n`;
-    message += `Si lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇\n\n`;
-    message += `/setinvoice ${order._id} <lightning_invoice>`;
-
-    await bot.telegram.sendMessage(user.tg_id, message);
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed'));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
 };
 
-const toAdminChannelPendingPaymentFailedMessage = async (bot, user, order) => {
+const toAdminChannelPendingPaymentFailedMessage = async (bot, user, order, pending, i18n) => {
   try {
-    let message = `El pago a la invoice de la compra Id: #${order._id} del usuario `;
-    message += `@${user.username} ha fallado!\n\n`;
-    message += `Intento de pago: ${pending.attempts}`;
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, message);
+    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('pending_payment_failed_to_admin', {
+      attempts: pending.attempts,
+      orderId: order._id,
+      username: user.username,
+    }));
   } catch (error) {
     console.log(error);
   }
@@ -1252,7 +1210,6 @@ module.exports = {
   mustBeANumberOrRange,
   unavailableLightningAddress,
   invalidLightningAddress,
-  invalidInvoice,
   helpMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,
@@ -1264,7 +1221,6 @@ module.exports = {
   errorParsingInvoiceMessage,
   notValidIdMessage,
   addInvoiceMessage,
-  genericErrorMessage,
   cantTakeOwnOrderMessage,
   notLightningInvoiceMessage,
   notOrdersMessage,
@@ -1284,8 +1240,6 @@ module.exports = {
   successCancelOrderMessage,
   badStatusOnCancelOrderMessage,
   invoicePaymentFailedMessage,
-  showUsernameErrorMessage,
-  successMessage,
   userCantTakeMoreThanOneWaitingOrderMessage,
   buyerReceivedSatsMessage,
   releasedSatsMessage,

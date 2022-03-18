@@ -26,10 +26,10 @@ const takebuy = async (ctx, bot) => {
       await messages.initBotErrorMessage(ctx);
       return;
     }
-    if (!(await validateUserWaitingOrder(bot, user))) return;
+    if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(bot, user);
+    const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
 
     if (!isOnFiatSentStatus) return;
 
@@ -64,7 +64,7 @@ const takesell = async (ctx, bot) => {
       await messages.initBotErrorMessage(ctx);
       return;
     }
-    if (!(await validateUserWaitingOrder(bot, user))) return;
+    if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     const order = await Order.findOne({ _id: orderId });
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
@@ -89,9 +89,9 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
     if (order.creator_id == order.buyer_id) {
       order.status = 'ACTIVE';
       // Message to buyer
-      await messages.addInvoiceMessage(bot, buyer, seller, order);
+      await messages.addInvoiceMessage(ctx, bot, buyer, seller, order);
       // Message to seller
-      await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order);
+      await messages.sendBuyerInfo2SellerMessage(ctx, bot, buyer, seller, order);
     } else {
       // We create a hold invoice
       const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
@@ -152,7 +152,7 @@ const addInvoice = async (ctx, bot, order) => {
 
     // If the price API fails we can't continue with the process
     if (order.amount == 0) {
-      await messages.priceApiFailedMessage(bot, buyer);
+      await messages.priceApiFailedMessage(ctx, bot, buyer);
       return;
     }
     await order.save();
@@ -162,7 +162,7 @@ const addInvoice = async (ctx, bot, order) => {
       let laRes = await resolvLightningAddress(buyer.lightning_address, order.amount * 1000);
       if (!!laRes && !laRes.pr) {
         console.log(`lightning address ${buyer.lightning_address} not available`);
-        messages.unavailableLightningAddress(bot, buyer,buyer.lightning_address);
+        messages.unavailableLightningAddress(ctx, bot, buyer, buyer.lightning_address);
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
       } else {
         await waitPayment(ctx, bot, buyer, seller, order, laRes.pr);
@@ -190,7 +190,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
 
     // User can only rate other after a successful exchange
     if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
-      await messages.invalidDataMessage(ctx);
+      await messages.invalidDataMessage(ctx, bot, user);
       return;
     }
     let targetUser = buyer;
@@ -239,7 +239,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     const user = await User.findOne({ _id: order.buyer_id });
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
-      await messages.invalidDataMessage(ctx);
+      await messages.invalidDataMessage(ctx, bot, user);
       return;
     }
     if (order.creator_id == order.buyer_id) {
@@ -249,8 +249,8 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder);
-      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder);
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, ctx.i18n);
+      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, ctx.i18n);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -273,7 +273,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order, ctx.i18n);
       }
       await order.save();
-      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order);
+      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, ctx.i18n);
       await messages.toBuyerDidntAddInvoiceMessage(bot, user, order);
     }
   } catch (error) {
@@ -295,7 +295,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // Sellers only can take orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
-      await messages.invalidDataMessage(ctx);
+      await messages.invalidDataMessage(ctx, bot, user);
       return;
     }
 
@@ -344,7 +344,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     const user = await User.findOne({ _id: order.seller_id });
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
-      await messages.invalidDataMessage(ctx);
+      await messages.invalidDataMessage(ctx, bot, user);
       return;
     }
 
@@ -355,8 +355,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder);
-      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder);
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, ctx.i18n);
+      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, ctx.i18n);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -381,7 +381,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order, ctx.i18n);
       }
       await order.save();
-      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order);
+      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, ctx.i18n);
       await messages.toSellerDidntPayInvoiceMessage(bot, user, order);
     }
   } catch (error) {
