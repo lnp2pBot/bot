@@ -121,7 +121,7 @@ rate_counterpart: "Califica a tu contraparte:"
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
-to_take_order: To take this order 👇
+to_take_order: Para tomar esta orden 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
@@ -178,7 +178,7 @@ help: |
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
 I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
-buyer_told_me_that_sent_fiat: buyer_🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
+buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
 release_order_cmd: /release ${orderId}
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
@@ -308,10 +308,8 @@ pending_payment_success: |
 
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
-  He intentado pagar tu factura un total de 4 veces y todas han fallado,
-  algunas veces los usuarios de lightning network no pueden recibir pagos
-  porque no hay suficiente capacidad de entrada en su wallet/nodo, una
-  solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad
+  🤖 He intentado pagar tu factura un total de 4 veces y todas han fallado, algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad.
+
   Si lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
