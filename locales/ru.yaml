@@ -317,6 +317,6 @@ trading_volume: "Обьем торгов: ${volume} сатс"
 satoshis: сатоши
 by: через
 rate: Обменный курс
-has_successful_trades: Имею ${trades} успешных сделок
+has_successful_trades: Провел ${trades} успешных сделок
 price: цена
 for: за
