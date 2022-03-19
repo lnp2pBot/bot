@@ -323,11 +323,10 @@ const notOrderMessage = async (ctx) => {
 const publishBuyOrderMessage = async (bot, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += i18n.t('to_take_order');
+    publishMessage += `:${order._id}:`;
 
     // Mensaje al canal
-    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
-    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
+    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{text: i18n.t('sell_sats'), callback_data: 'takebuy'}],
@@ -336,7 +335,6 @@ const publishBuyOrderMessage = async (bot, order, i18n) => {
     });
     // Mensaje al canal
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
-    order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     await order.save();
   } catch (error) {
@@ -347,10 +345,9 @@ const publishBuyOrderMessage = async (bot, order, i18n) => {
 const publishSellOrderMessage = async (bot, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += i18n.t('to_take_order');
+    publishMessage += `:${order._id}:`;
 
-    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage);
-    const message2 = await bot.telegram.sendMessage(process.env.CHANNEL, order._id, {
+    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{text: i18n.t('buy_sats'), callback_data: 'takesell'}],
@@ -359,7 +356,6 @@ const publishSellOrderMessage = async (bot, order, i18n) => {
     });
     // Mensaje al canal
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
-    order.tg_channel_message2 = message2 && message2.message_id ? message2.message_id : null;
 
     await order.save();
   } catch (error) {

@@ -11,13 +11,14 @@ const {
   } = require('../ln');
 const { Order, User } = require('../models');
 const messages = require('./messages');
-const { getBtcFiatPrice } = require('../util');
+const { getBtcFiatPrice, extractId } = require('../util');
 const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
 
 const takebuy = async (ctx, bot) => {
   try {
-    const orderId = ctx.update.callback_query.message.text;
-    if (!orderId) return;
+    const text = ctx.update.callback_query.message.text;
+    if (!text) return;
+
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
     const user = await User.findOne({ tg_id: tgUser.id });
@@ -32,7 +33,7 @@ const takebuy = async (ctx, bot) => {
     const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
 
     if (!isOnFiatSentStatus) return;
-
+    const orderId = extractId(text);
     if (!orderId) return;
     if (!(await validateObjectId(bot, user, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
@@ -45,7 +46,6 @@ const takebuy = async (ctx, bot) => {
     await order.save();
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);
@@ -54,8 +54,8 @@ const takebuy = async (ctx, bot) => {
 
 const takesell = async (ctx, bot) => {
   try {
-    const orderId = ctx.update.callback_query.message.text;
-    if (!orderId) return;
+    const text = ctx.update.callback_query.message.text;
+    if (!text) return;
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
     let user = await User.findOne({ tg_id: tgUser.id });
@@ -65,7 +65,8 @@ const takesell = async (ctx, bot) => {
       return;
     }
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
-
+    const orderId = extractId(text);
+    if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
@@ -75,7 +76,6 @@ const takesell = async (ctx, bot) => {
     await order.save();
     // We delete the messages related to that order from the channel
     await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     await messages.beginTakeSellMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);

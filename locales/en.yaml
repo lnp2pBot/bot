@@ -121,7 +121,6 @@ rate_counterpart: "Califica a tu contraparte:"
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
-to_take_order: Para tomar esta orden 👇
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |

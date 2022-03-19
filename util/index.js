@@ -190,6 +190,12 @@ const decimalRound = (value, exp) => {
   return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
 
+const extractId = (text) => {
+  const matches = text.match(/:([a-f0-9]{24}):$/);
+
+  return matches[1];
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -201,4 +207,5 @@ module.exports = {
   getCurrenciesWithPrice,
   getEmojiRate,
   decimalRound,
+  extractId,
 };

@@ -275,7 +275,6 @@ const initialize = (botToken, options) => {
       await messages.successCancelOrderMessage(ctx, bot, user, order);
       // We delete the messages related to that order from the channel
       await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
     } catch (error) {
       console.log(error);
     }
@@ -298,7 +297,6 @@ const initialize = (botToken, options) => {
         await order.save();
         // We delete the messages related to that order from the channel
         await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
-        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message2);
       }
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
