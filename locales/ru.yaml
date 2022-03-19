@@ -310,7 +310,7 @@ pending_payment_failed_to_admin: |
   Попытка оплаты: ${attempts}
 selling: продаю
 buying: покупаю
-receive_payment: получaю платеж
+receive_payment: Получaю платеж
 pay: оплачиваю
 is: Я
 trading_volume: "Объем торгов: ${volume} сатоши"
