@@ -580,9 +580,9 @@ const sendBuyerInfo2SellerMessage = async (ctx, bot, buyer, seller, order) => {
   }
 };
 
-const cantTakeOwnOrderMessage = async (ctx) => {
+const cantTakeOwnOrderMessage = async (ctx, bot, user) => {
   try {
-    await ctx.reply(ctx.i18n.t('cant_take_own_order'));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cant_take_own_order'));
   } catch (error) {
     console.log(error);
   }
