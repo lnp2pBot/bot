@@ -241,10 +241,7 @@ wizard_add_invoice_init: |
 
   Si no la envías en ${expirationTime} minutos la orden será cancelada
 wizard_add_invoice_exit: |
-  Has salido del modo wizard, ahora puedes escribir comandos, aún puedes
-  ingresar una factura a la orden con el comando /setinvoice indicando Id
-  de orden y factura, puedes enviarme una factura con un monto de
-  ${amount} satoshis, pero tambien acepto facturas sin monto:
+  Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
   /setinvoice ${orderId} <factura lightning con o sin monto>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
@@ -326,3 +323,4 @@ rate: Rate
 has_successful_trades: Has ${trades} successful trades
 price: Price
 for: For
+generic_error: Ha ocurrido un error

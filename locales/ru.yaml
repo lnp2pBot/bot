@@ -107,7 +107,7 @@ get_in_touch_with_buyer: |
 
   После того, как деньги поступили, вы должны разблокировать сатоши командой /release.
 buyer_took_your_order: |
-  @${buyerUsername} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency} ${fiatAmount} por ${paymentMethod}.
+  @${buyerUsername} принял Вашу заявку на продажу сатоши. Напишите ему инструкции, как Вам отправить ${currency} ${fiatAmount} через ${paymentMethod}.
 
   Una vez confirmes la recepción del dinero debes liberar los fondos.
 waiting_seller_to_pay: "Я отправил продавцу запрос, чтобы он отправил нам ваши сатоши согласно заявке #${orderId}. Как только он совершит платеж, я свяжу его с вами напрямую"
@@ -307,15 +307,16 @@ pending_payment_failed_to_admin: |
   Платеж по счету-фактуре на покупку с идентификатором #${orderId} пользователя @${username} не выполнен!
 
   Попытка оплаты: ${attempts}
-selling: Vendiendo
-buying: Comprando
-receive_payment: Recibo pago
-pay: Pago
-is: está
-trading_volume: "Volumen de comercio: ${volume} sats"
-satoshis: satoshis
-by: por
-rate: Tasa
-has_successful_trades: Tiene ${trades} operaciones exitosas
-price: Precio
-for: Por
+selling: продаю
+buying: покупаю
+receive_payment: Получаю платеж
+pay: Оплачиваю
+is: Я
+trading_volume: "Обьем торгов: ${volume} сатс"
+satoshis: сатоши
+by: через
+rate: Обменный курс
+has_successful_trades: Провел ${trades} успешных сделок
+price: цена
+for: за
+generic_error: Ha ocurrido un error
