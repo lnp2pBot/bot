@@ -178,6 +178,14 @@ const invalidDataMessage = async (ctx, bot, user) => {
   }
 };
 
+const genericErrorMessage = async (bot, user, i18n) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('generic_error'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
   try {
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
@@ -1287,4 +1295,5 @@ module.exports = {
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
   toAdminChannelPendingPaymentFailedMessage,
+  genericErrorMessage,
 };

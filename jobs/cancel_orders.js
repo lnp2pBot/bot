@@ -6,6 +6,11 @@ const messages = require('../bot/messages');
 
 const cancelOrders = async (bot) => {
     try {
+        // We need to create a i18n object to create a context
+        const i18n = new I18n({
+            defaultLanguageOnMissing: true,
+            directory: 'locales',
+        });
         const holdInvoiceTime = new Date();
         holdInvoiceTime.setSeconds(holdInvoiceTime.getSeconds() - parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW));
         // We get the orders where the seller didn't pay the hold invoice before expired
@@ -38,11 +43,6 @@ const cancelOrders = async (bot) => {
                 status: 'FIAT_SENT',
             }],
             admin_warned: false,
-        });
-        // We need to create a i18n object to create a context
-        const i18n = new I18n({
-            defaultLanguageOnMissing: true,
-            directory: 'locales',
         });
         for (const order of activeOrders) {
             const buyerUser = await User.findOne({ _id: order.buyer_id });

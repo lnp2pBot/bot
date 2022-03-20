@@ -1,3 +1,4 @@
+const { I18n } = require('@grammyjs/i18n');
 const {
     validateSeller,
     validateObjectId,
@@ -188,14 +189,15 @@ const rateUser = async (ctx, bot, rating, orderId) => {
     const buyer = await User.findOne({ _id: order.buyer_id });
     const seller = await User.findOne({ _id: order.seller_id });
 
-    // User can only rate other after a successful exchange
-    if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
-      await messages.invalidDataMessage(ctx, bot, user);
-      return;
-    }
     let targetUser = buyer;
     if (callerId == buyer.tg_id) {
       targetUser = seller;
+    }
+
+    // User can only rate other after a successful exchange
+    if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
+      await messages.invalidDataMessage(ctx, bot, targetUser);
+      return;
     }
 
     const response = { rating };
@@ -236,10 +238,16 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
+    // We need to create a i18n object to create a context
+    const i18n = new I18n({
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
     const user = await User.findOne({ _id: order.buyer_id });
+    const i18nCtx = i18n.createContext(user.lang);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
-      await messages.invalidDataMessage(ctx, bot, user);
+      await messages.genericErrorMessage(bot, user, i18nCtx);
       return;
     }
     if (order.creator_id == order.buyer_id) {
@@ -249,8 +257,8 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, ctx.i18n);
-      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, ctx.i18n);
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, i18nCtx);
+      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtx);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -267,14 +275,14 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
+        await messages.publishBuyOrderMessage(bot, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
+        await messages.publishSellOrderMessage(bot, order, i18nCtx);
       }
       await order.save();
-      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, ctx.i18n);
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, ctx.i18n);
+      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
     }
   } catch (error) {
     console.log(error);
