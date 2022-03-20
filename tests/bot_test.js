@@ -76,7 +76,7 @@ describe('Telegram bot test', () => {
     orderStub.restore();
     createOrderStub.restore();
     expect(updates.ok).to.be.equal(true);
-    expect(updates.result.length).to.be.equal(4);
+    expect(updates.result.length).to.be.equal(3);
     expect(updates.result[0].message.chat_id).to.be.equal(process.env.CHANNEL);
   });
 
