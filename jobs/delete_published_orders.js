@@ -11,9 +11,11 @@ const deleteOrders = async (bot) => {
         });
         for (const order of pendingOrders) {
             console.log(`Pending order Id: ${order._id} expired after ${process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW} seconds, deleting it from database and channel`);
-            // We delete the messages related to that order from the channel
+            const tgChannelMessage1 = order.tg_channel_message1;
+            // We remove the order from the database first, then we remove the message from the channel
             await order.remove();
-            await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+            // We delete the messages related to that order from the channel
+            await bot.telegram.deleteMessage(process.env.CHANNEL, tgChannelMessage1);
         }
     } catch (error) {
         console.log('deleteOrders catch error: ', error);
