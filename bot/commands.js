@@ -298,6 +298,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
+
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
 
@@ -349,10 +350,16 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
+    // We need to create a i18n object to create a context
+    const i18n = new I18n({
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
     const user = await User.findOne({ _id: order.seller_id });
+    const i18nCtx = i18n.createContext(user.lang);
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
-      await messages.invalidDataMessage(ctx, bot, user);
+      await messages.genericErrorMessage(bot, user, i18nCtx);
       return;
     }
 
@@ -363,8 +370,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, ctx.i18n);
-      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, ctx.i18n);
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, i18nCtx);
+      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, i18nCtx);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
@@ -383,14 +390,14 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
+        await messages.publishBuyOrderMessage(bot, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
+        await messages.publishSellOrderMessage(bot, order, i18nCtx);
       }
       await order.save();
-      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, ctx.i18n);
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, ctx.i18n);
+      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
     }
   } catch (error) {
     console.log(error);
