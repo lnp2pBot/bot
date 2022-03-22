@@ -324,3 +324,4 @@ has_successful_trades: Has ${trades} successful trades
 price: Price
 for: For
 generic_error: Ha ocurrido un error
+sats: sats
