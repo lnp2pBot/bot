@@ -541,9 +541,9 @@ const errorParsingInvoiceMessage = async (ctx) => {
   }
 };
 
-const notValidIdMessage = async (ctx) => {
+const notValidIdMessage = async (ctx, bot, user) => {
   try {
-    await ctx.reply(ctx.i18n.t('invalid_id'));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('invalid_id'));
   } catch (error) {
     console.log(error);
   }

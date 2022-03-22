@@ -503,10 +503,10 @@ const validateParams = async (ctx, bot, user, paramNumber, errOutputString) => {
   }
 };
 
-const validateObjectId = async (bot, user, id) => {
+const validateObjectId = async (ctx, bot, user, id) => {
   try {
     if (!ObjectId.isValid(id)) {
-      await messages.notValidIdMessage(bot, user);
+      await messages.notValidIdMessage(ctx, bot, user);
       return false;
     }
 

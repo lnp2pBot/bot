@@ -163,10 +163,10 @@ const buildDescription = (i18n, {
   }
 };
 
-const getOrder = async (ctx, user, orderId) => {
+const getOrder = async (ctx, bot, user, orderId) => {
 try {
   if (!ObjectId.isValid(orderId)) {
-    await messages.notValidIdMessage(ctx);
+    await messages.notValidIdMessage(ctx, bot, user);
     return false;
   }
 

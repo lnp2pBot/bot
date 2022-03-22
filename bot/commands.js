@@ -36,7 +36,7 @@ const takebuy = async (ctx, bot) => {
     if (!isOnFiatSentStatus) return;
     const orderId = extractId(text);
     if (!orderId) return;
-    if (!(await validateObjectId(bot, user, orderId))) return;
+    if (!(await validateObjectId(ctx, bot, user, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
     // We change the status to trigger the expiration of this order
