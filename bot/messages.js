@@ -11,9 +11,9 @@ const startMessage = async (ctx) => {
   }
 };
 
-const initBotErrorMessage = async (ctx) => {
+const initBotErrorMessage = async (ctx, bot, user) => {
   try {
-    await ctx.reply(ctx.i18n.t('init_bot_error'));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('init_bot_error'));
   } catch (error) {
     // Ignore TelegramError - Forbidden request
     if (!(error instanceof TelegramError && error.response.error_code == 403)) {

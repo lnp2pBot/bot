@@ -20,7 +20,6 @@ const validateUser = async (ctx, start) => {
       });
       await user.save();
     } else if (!user) {
-      await messages.initBotErrorMessage(ctx);
 
       return false;
     } else if (user.banned) {

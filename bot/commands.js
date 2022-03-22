@@ -25,7 +25,7 @@ const takebuy = async (ctx, bot) => {
     const user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
-      await messages.initBotErrorMessage(ctx);
+      await messages.initBotErrorMessage(ctx, bot, user);
       return;
     }
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
@@ -62,7 +62,7 @@ const takesell = async (ctx, bot) => {
     let user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user) {
-      await messages.initBotErrorMessage(ctx);
+      await messages.initBotErrorMessage(ctx, bot, user);
       return;
     }
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
