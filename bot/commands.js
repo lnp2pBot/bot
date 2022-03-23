@@ -109,6 +109,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await subscribeInvoice(bot, hash);
 
       // We send the hold invoice to the seller
+      // FIXME: We need to use the context from the seller
       await messages.invoicePaymentRequestMessage(ctx, bot, seller, request, order);
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }

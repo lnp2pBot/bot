@@ -287,7 +287,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const orders = await ordersActions.getOrders(ctx, bot, user, 'PENDING');
+      const orders = await ordersActions.getOrders(ctx, user, 'PENDING');
 
       if (!orders) return;
 
@@ -590,7 +590,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      const orders = await ordersActions.getOrders(ctx, bot, user);
+      const orders = await ordersActions.getOrders(ctx, user);
 
       if (!orders) return;
 
