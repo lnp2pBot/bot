@@ -38,6 +38,7 @@ const attemptPendingPayments = async (bot) => {
             // If the buyer's invoice is expired we let it know and don't try to pay again
             if (!!payment && payment.is_expired) {
                 pending.is_invoice_expired = true;
+                order.paid_hold_buyer_invoice_updated = false;
                 await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order, i18nCtx);
                 return;
             }
