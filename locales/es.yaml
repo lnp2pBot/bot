@@ -124,7 +124,7 @@ no_id_related: No tienes ninguna orden asociada con ese Id
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
-  Id: ${order._id}:
+  Id: #${order._id}
   Status: ${order.status}
   Creador: @${creator || ''}
   Comprador: @${buyerUsername || ''}
