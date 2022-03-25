@@ -547,6 +547,7 @@ const initialize = (botToken, options) => {
         const isScheduled = await PendingPayment.findOne({
           order_id: order._id,
           attempts: { $lt: 3 },
+          is_invoice_expired: false,
         });
         // We check if the payment is on flight
         const isPending = await isPendingPayment(order.buyer_invoice);
