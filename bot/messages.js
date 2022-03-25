@@ -1061,7 +1061,7 @@ const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
 
 const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
   try {
-    const detailedOrder = getDetailedOrder(order, buyerUser, sellerUser);
+    const detailedOrder = getDetailedOrder(i18n, order, buyerUser, sellerUser);
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('expired_order', {
       detailedOrder,
       buyerUser,
