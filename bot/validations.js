@@ -215,7 +215,7 @@ const validateLightningAddress = async (lightningAddress) =>{
   return pattern.test(lightningAddress) && existLightningAddress(lightningAddress);
 }
 
-const validateInvoice = async (bot, user, lnInvoice) => {
+const validateInvoice = async (ctx, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
@@ -246,7 +246,7 @@ const validateInvoice = async (bot, user, lnInvoice) => {
 
     return invoice;
   } catch (error) {
-    await messages.errorParsingInvoiceMessage(ctx);
+    console.log(error);
     return false;
   }
 };

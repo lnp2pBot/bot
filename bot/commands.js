@@ -24,10 +24,11 @@ const takebuy = async (ctx, bot) => {
     if (!tgUser) return;
     const user = await User.findOne({ tg_id: tgUser.id });
 
+    // If user didn't initialize the bot we can't do anything
     if (!user) {
-      await messages.initBotErrorMessage(ctx, bot, user);
       return;
     }
+
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
@@ -60,11 +61,11 @@ const takesell = async (ctx, bot) => {
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
     let user = await User.findOne({ tg_id: tgUser.id });
-
+    // If user didn't initialize the bot we can't do anything
     if (!user) {
-      await messages.initBotErrorMessage(ctx, bot, user);
       return;
     }
+
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
     const orderId = extractId(text);
     if (!orderId) return;

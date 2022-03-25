@@ -522,7 +522,7 @@ const initialize = (botToken, options) => {
       const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '\\<_order id_\\> \\<_lightning invoice_\\>');
 
       if (!orderId) return;
-      const invoice = await validateInvoice(bot, user, lnInvoice);
+      const invoice = await validateInvoice(ctx, lnInvoice);
       if (!invoice) return;
       if (!(await validateObjectId(ctx, bot, user, orderId))) return;
       const order = await Order.findOne({
