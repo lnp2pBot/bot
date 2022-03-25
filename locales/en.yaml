@@ -311,17 +311,17 @@ pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
 
   Intento de pago: ${attempts}
-selling: Selling
-buying: Buying
-receive_payment: Receive payment
-pay: Pay
-is: is
-trading_volume: "Trading volume: ${volume} sats"
+selling: Vendiendo
+buying: Comprando
+receive_payment: Recibo pago
+pay: Pago
+is: está
+trading_volume: "Volumen de comercio: ${volume} sats"
 satoshis: satoshis
-by: by
-rate: Rate
-has_successful_trades: Has ${trades} successful trades
-price: Price
-for: For
+by: por
+rate: Tasa
+has_successful_trades: Tiene ${trades} operaciones exitosas
+price: Precio
+for: Por
 generic_error: Ha ocurrido un error
 sats: sats
