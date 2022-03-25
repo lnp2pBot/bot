@@ -88,7 +88,8 @@ const isPendingPayment = async (request) => {
 
     return !!is_pending;
   } catch (error) {
-    console.log('isPendingPayment catch error: ',error);
+    console.log('isPendingPayment catch error: ', error);
+    return false;
   }
 }
 
