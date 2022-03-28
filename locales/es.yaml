@@ -74,7 +74,7 @@ buy_correct_format: |
 
   /buy *0* *2* *ves* "*pago móvil*" *\-2*
 
-  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
+  Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión *-*\.
 
   /buy *0* *100\-500* *ves* "*pago móvil*" *\-2*
 min_invoice_amount: La factura debe ser mayor o igual a ${minPaymentAmount} satoshis
