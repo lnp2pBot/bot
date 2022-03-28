@@ -697,7 +697,7 @@ const successCancelAllOrdersMessage = async (ctx) => {
 
 const successCancelOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_success', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_cancelled_by_admin', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -714,14 +714,6 @@ const successCompleteOrderMessage = async (ctx, order) => {
 const successCompleteOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_completed_by_admin', { orderId: order._id }));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const cantCooperativeCancelMessage = async (ctx) => {
-  try {
-    await ctx.reply(ctx.i18n.t('cant_be_coopcancelled'));
   } catch (error) {
     console.log(error);
   }
@@ -765,7 +757,7 @@ const initCooperativeCancelMessage = async (ctx, order) => {
 const counterPartyWantsCooperativeCancelMessage = async (ctx, bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cooperativecancel_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -1237,7 +1229,6 @@ module.exports = {
   initCooperativeCancelMessage,
   okCooperativeCancelMessage,
   shouldWaitCooperativeCancelMessage,
-  cantCooperativeCancelMessage,
   successCompleteOrderByAdminMessage,
   successCompleteOrderMessage,
   successCancelOrderByAdminMessage,

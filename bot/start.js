@@ -258,23 +258,65 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
-      if (order.status !== 'PENDING') {
+      if (order.status == 'PENDING') {
+        // If we already have a holdInvoice we cancel it and return the money
+        if (!!order.hash) {
+          await cancelHoldInvoice({ hash: order.hash });
+        }
+
+        order.status = 'CANCELED';
+        order.canceled_by = user._id;
+        await order.save();
+        // we sent a private message to the user
+        await messages.successCancelOrderMessage(ctx, bot, user, order);
+        // We delete the messages related to that order from the channel
+        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+
+        return;
+      }
+
+      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT')) {
         await messages.badStatusOnCancelOrderMessage(ctx);
         return;
       }
 
-      // If we already have a holdInvoice we cancel it and return the money
-      if (!!order.hash) {
-        await cancelHoldInvoice({ hash: order.hash });
+      // If the order is active we start a cooperative cancellation
+      let counterPartyUser, initiator, counterParty;
+
+      const initiatorUser = user;
+      if (initiatorUser._id == order.buyer_id) {
+        counterPartyUser = await User.findOne({ _id: order.seller_id });
+        initiator = 'buyer';
+        counterParty = 'seller';
+      } else {
+        counterPartyUser = await User.findOne({ _id: order.buyer_id });
+        initiator = 'seller';
+        counterParty = 'buyer';
       }
 
-      order.status = 'CANCELED';
-      order.canceled_by = user._id;
+      if (order[`${initiator}_cooperativecancel`]) {
+        await messages.shouldWaitCooperativeCancelMessage(ctx, bot, initiatorUser);
+        return;
+      }
+
+      order[`${initiator}_cooperativecancel`] = true;
+
+      // If the counter party already requested a cooperative cancel order
+      if (order[`${counterParty}_cooperativecancel`]) {
+        // If we already have a holdInvoice we cancel it and return the money
+        if (!!order.hash) {
+          await cancelHoldInvoice({ hash: order.hash });
+        }
+
+        order.status = 'CANCELED';
+        // We sent a private message to the users
+        await messages.successCancelOrderMessage(ctx, bot, initiatorUser, order, true);
+        await messages.okCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
+      } else {
+        await messages.initCooperativeCancelMessage(ctx, order);
+        await messages.counterPartyWantsCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
+      }
       await order.save();
-      // we sent a private message to the user
-      await messages.successCancelOrderMessage(ctx, bot, user, order);
-      // We delete the messages related to that order from the channel
-      await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
     } catch (error) {
       console.log(error);
     }
@@ -390,66 +432,6 @@ const initialize = (botToken, options) => {
       await order.save();
       // We sent messages to both parties
       await messages.fiatSentMessages(ctx, bot, user, seller, order);
-
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  bot.command('cooperativecancel', async (ctx) => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
-
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
-      const order = await ordersActions.getOrder(ctx, bot, user, orderId);
-
-      if (!order) return;
-
-      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT')) {
-        await messages.cantCooperativeCancelMessage(ctx);
-        return;
-      }
-      let counterPartyUser, initiator, counterParty;
-
-      const initiatorUser = user;
-      if (initiatorUser._id == order.buyer_id) {
-        counterPartyUser = await User.findOne({ _id: order.seller_id });
-        initiator = 'buyer';
-        counterParty = 'seller';
-      } else {
-        counterPartyUser = await User.findOne({ _id: order.buyer_id });
-        initiator = 'seller';
-        counterParty = 'buyer';
-      }
-
-      if (order[`${initiator}_cooperativecancel`]) {
-        await messages.shouldWaitCooperativeCancelMessage(ctx, bot, initiatorUser);
-        return;
-      }
-
-      order[`${initiator}_cooperativecancel`] = true;
-
-      // If the counter party already requested a cooperative cancel order
-      if (order[`${counterParty}_cooperativecancel`]) {
-        // If we already have a holdInvoice we cancel it and return the money
-        if (!!order.hash) {
-          await cancelHoldInvoice({ hash: order.hash });
-        }
-
-        order.status = 'CANCELED';
-        // We sent a private message to the users
-        await messages.successCancelOrderMessage(ctx, bot, initiatorUser, order, true);
-        await messages.okCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
-      } else {
-        await messages.initCooperativeCancelMessage(ctx, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
-      }
-      await order.save();
 
     } catch (error) {
       console.log(error);
