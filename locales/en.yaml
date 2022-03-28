@@ -51,13 +51,13 @@ must_be_int: ${fieldName} must be a number
 sats_amount: sats amount
 fiat_amount: fiat amount
 sell_correct_format: |
-   /sell \<_sats_amount_\> \<_fiat_amount_\> \<_fiat_code_\> \<_payment_method_\> \[_prime/discount_\]
+   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
 
-   In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is  through transfer or ATM deposit you have to omit both \<\> y los \[\]\
+   In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
 
-   /sell *1000* *2* *USD* "*payment method*"
+   /sell *1000* *2* *USD* "*transfer or ATM deposit*"
 
-   In order to create a sale with a surplus in the price of 3% you need to add the \(prima\) command indicating 0 for the fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
+   In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
 
    /sell *0* *2* *USD* "*payment method*" *3*
 
@@ -65,11 +65,11 @@ sell_correct_format: |
 
    /sell *0* *100\-500* *USD* "*payment method*" *3*
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_Fiat code_\> \<_payment method_\> \[_prime/discount_\]
+  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
 
-  In order to create and order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is transfer you must not include \<\or \[\]\
+  In order to create and order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 
-  /buy *1000* *2* *USD* "*online transfer*
+  /buy *1000* *2* *USD* "*online transfer*"
 
   If you do not want to establish a fixed amount of satoshis and you want to buy with a price under market value you can place a buy order establishing a certain discount, such rate is the percentage that will be substracted of market price when your order is published\. You need to specify 0 at the \<_sats amount_\> field, the bot will calculate te price\. If you want to buy with a 2% discount on price market, you should write \-2 as the last parameter
 
@@ -285,7 +285,7 @@ buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the
 buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has ben republished."
 havent_paid_invoice: "🤨 You have not paid the invoice so as to sell sats for the Order Id: #${orderId}"
 seller_havent_paid_invoice: "😔 Seller has not paid the invoice for your purchase Id: #${orderId}, the operation was canceled."
-seller_havent_add_invoice_to_admin_channel: "Seller @${username} has not paid the invoice of order Id: #${orderId} time lapse ended adn the order has been published again."
+seller_havent_add_invoice_to_admin_channel: "Seller @${username} has not paid the invoice of order Id: #${orderId} time lapse ended and the order has been published again."
 user_cant_do: 🤨 you cannot make this operation
 pending_payment_success_to_admin: |
   User @${username} had a pending invoice, they payment for buying order Id: #${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
