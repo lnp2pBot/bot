@@ -116,7 +116,7 @@ buyer_took_your_order: |
 
   Once you verify you have received the full amount you have to release the sats 
 waiting_seller_to_pay: "I have sent a payment request to the seller so he sends your sats for the  #${orderId}, as soon as payment is made i will put you both in touch"
-sell_success: Your sats have been sold, ${buyerUsername} has made his payment. @⚡️🍊⚡️
+sell_success: Your sats have been sold, @${buyerUsername} has made his payment ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} already released the satoshis, expect your invoice to be paid any time, remember your wallet needs to be online to receive through lighntning network. 
 rate_counterpart: "Please qualify your counterparty:"
 cant_process_order: This order cannot be processed, please check the Id is correct. 
@@ -152,15 +152,15 @@ dispute_started_channel: |
   @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
   @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
 you_started_dispute_to_buyer: You have started a dispute for your buy order, we will get in touch with you and your counterpart to sort it out.
-buyer_started_dispute_to_seller: "Buyer has filed a claim for you  #${orderId} order, we will get in touch with you and your counterpart so as to sort out the dispute. 
+buyer_started_dispute_to_seller: "Buyer has filed a claim for your #${orderId} order, we will get in touch with you and your counterpart so as to sort out the dispute."
 you_started_dispute_to_seller: You have started a dispute for your sell order, we will get in touch with you and your counterpart to sort it out.
-seller_started_dispute_to_buyer: "Seller has filed a claim for you  #${orderId} order, we will get in touch with yuo and your conerterpart so as to sort out the dispute"
+seller_started_dispute_to_buyer: "Seller has filed a claim for you #${orderId} order, we will get in touch with yuo and your conerterpart so as to sort out the dispute"
 must_be_valid_currency: "Fiat_code must be a valid code for example: USD, EUR"
 must_be_number_or_range: "Fiat_ampunt must be a number or numeric range in the  <mínimum>-<máximum> format"
 invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Unavailable lightning adress ${la}
 help: |
-  /sell /sell \<_sats_amount_\> \<_fiat_amount_\> \<_fiat_code_\> \<_payment_method_\> \[_prime/discount_\] - Creates a Sell order
+  /sell /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\] - Creates a Sell order
   /buy \<_sats amount_\> \<_fiat amount_\> \<_Fiat code_\> \<_payment method_\> \[_prime/discount_\] - Creates a Purchase Order
   /info - Shows additional info about the BOT
   /showusername - Toggles off the display of the username in each new order created. Default value is se to no (false)
@@ -213,7 +213,7 @@ invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your
 cant_take_more_orders: ¡I am ction on your side
 seller_released: Seller has already released the satoshis, you must wait for your invoice to be paid.
 your_purchase_is_completed: |
-   Your satoshis purchase has been successful,@${sellerUsername} has confirmed your FIAT payment and I have paid your invoice, enjoy sound money!.
+  Your satoshis purchase has been successful,@${sellerUsername} has confirmed your FIAT payment and I have paid your invoice, enjoy sound money!.
 
   ⚡️🍊⚡️
 problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an adminsitrator.
@@ -282,14 +282,10 @@ expired_order: |
   @${buyerUser.username} has ${buyerUser.disputes} disputes
 didnt_add_invoice: "🤨 You have not send and invoice so as to receive sats for the Id Order: #${orderId}"
 buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the sats for your Id Order: #${orderId}, your sats where sent back to you"
-buyer_havent_add_invoice_to_admin_channel: |
-  Buyer @${username} took the orderId: #${orderId} but has not sent 
-  the invoice where to receive sats, time has expired, the order has ben republished. 
+buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has ben republished."
 havent_paid_invoice: "🤨 You have not paid the invoice so as to sell sats for the Order Id: #${orderId}"
-seller_havent_paid_invoice: "😔 Seller has not paid the invoice for your purchase Id: #${orderId}, the operation was canceled. "
-seller_havent_add_invoice_to_admin_channel: |
-  Seller  @${username} has not paid the invoice of order Id: #${orderId}
-  time lapse ended adn the order has been published again.
+seller_havent_paid_invoice: "😔 Seller has not paid the invoice for your purchase Id: #${orderId}, the operation was canceled."
+seller_havent_add_invoice_to_admin_channel: "Seller @${username} has not paid the invoice of order Id: #${orderId} time lapse ended adn the order has been published again."
 user_cant_do: 🤨 you cannot make this operation
 pending_payment_success_to_admin: |
   User @${username} had a pending invoice, they payment for buying order Id: #${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
