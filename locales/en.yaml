@@ -206,13 +206,11 @@ cancelall_success: ¡Has cancelado todas tus órdenes publicadas!
 order_cancelled_by_admin: "¡El admin ha cancelado la orden Id: #${orderId}!"
 order_completed: "¡Has completado la orden Id: #${orderId}!"
 order_completed_by_admin: "¡El admin ha completado la orden Id: #${orderId}!"
-cant_be_coopcancelled: Esta orden no puede ser cancelada cooperativamente
 have_to_wait_for_counterpart: Ya has realizado esta operación, debes esperar por tu contraparte
 ok_cooperativecancel: "Tu contraparte ha estado de acuerdo y ha sido cancelada la orden Id: #${orderId}"
 refund_cooperativecancel: Has recibido un reembolso por tu pago lightning, no es necesario hacer nada mas
 init_cooperativecancel: "Has iniciado la cancelación de la orden Id: #${orderId}, tu contraparte también debe indicarme que desea cancelar la orden"
 counterparty_wants_cooperativecancel: "Tu contraparte quiere cancelar la orden Id: #${orderId}, si estás de acuerdo utiliza el comando 👇"
-cooperativecancel_order_cmd: /cooperativecancel ${orderId}
 invoice_payment_failed: ⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${pendingPaymentWindow} minutos, asegúrate que tu nodo/wallet esté online
 cant_take_more_orders: ¡Lo siento! No puedes tomar otra orden mientras tengas otras esperando por ti
 seller_released: El vendedor ya liberó los satoshis, debes esperar por el pago de tu factura
