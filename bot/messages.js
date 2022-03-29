@@ -40,7 +40,7 @@ const invoicePaymentRequestMessage = async (ctx, bot, user, request, order) => {
       expirationTime,
     });
     await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, request);
+    await bot.telegram.sendMessage(user.tg_id, "`" + request + "`", { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
