@@ -29,6 +29,12 @@ const takebuy = async (ctx, bot) => {
       return;
     }
 
+    // We check if the user has the same username that we have
+    if (tgUser.username != user.username) {
+      user.username = tgUser.username;
+      await user.save();
+    }
+
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
@@ -64,6 +70,11 @@ const takesell = async (ctx, bot) => {
     // If user didn't initialize the bot we can't do anything
     if (!user) {
       return;
+    }
+    // We check if the user has the same username that we have
+    if (tgUser.username != user.username) {
+      user.username = tgUser.username;
+      await user.save();
     }
 
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
