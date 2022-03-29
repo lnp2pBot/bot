@@ -39,7 +39,7 @@ pending_sell: |
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
   
   You can cancel this order before another user picks it up by executting the command 👇
-cancel_order_cmd: /cancel ${orderId} 👇
+cancel_order_cmd: /cancel ${orderId}
 
 pending_buy: |
   You offeer to buy sats is active in the ${channel} channel.
