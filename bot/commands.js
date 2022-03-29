@@ -257,6 +257,9 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       directory: 'locales',
     });
     const user = await User.findOne({ _id: order.buyer_id });
+
+    if (!user) return;
+
     const i18nCtx = i18n.createContext(user.lang);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
@@ -369,6 +372,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       directory: 'locales',
     });
     const user = await User.findOne({ _id: order.seller_id });
+    if (!user) return;
     const i18nCtx = i18n.createContext(user.lang);
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
