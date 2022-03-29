@@ -114,7 +114,7 @@ get_in_touch_with_buyer: |
 
   Once you confirm receeption of the money you must unlock the sats.
 buyer_took_your_order: |
-  @${buyerUsername} has taken your oorder and wants to buy your sats. Get in touch and tell him how to send you  ${currency} ${fiatAmount} through ${paymentMethod}.
+  @${buyerUsername} has taken your order and wants to buy your sats. Get in touch and tell him how to send you  ${currency} ${fiatAmount} through ${paymentMethod}.
 
   Once you verify you have received the full amount you have to release the sats 
 waiting_seller_to_pay: "I have sent a payment request to the seller so he sends your sats for the  #${orderId}, as soon as payment is made i will put you both in touch"
@@ -179,7 +179,7 @@ help: |
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: ¡You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent FIAT money once the seller confirms the money was received, the sats should be sent to you.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, pelase release funds. You will not be able to create another order until you release funds.
+buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, please release funds. You will not be able to create another order until you release funds.
 release_order_cmd: |
   `/release ${orderId}`
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven´t released the sats ye. You will not be able to create new orders until you release such funds. 
@@ -216,7 +216,7 @@ invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your
 cant_take_more_orders: ¡I am ction on your side
 seller_released: Seller has already released the satoshis, you must wait for your invoice to be paid.
 your_purchase_is_completed: |
-  Your satoshis purchase has been successful,@${sellerUsername} has confirmed your FIAT payment and I have paid your invoice, enjoy sound money!.
+  Your satoshis purchase has been completed successful, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
 
   ⚡️🍊⚡️
 problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an adminsitrator.
