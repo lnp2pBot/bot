@@ -208,7 +208,7 @@ const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
 const showHoldInvoiceMessage = async (ctx, request) => {
   try {
     await ctx.reply(ctx.i18n.t('pay_invoice'));
-    await ctx.reply(request);
+    await ctx.reply("`" + request + "`", { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
