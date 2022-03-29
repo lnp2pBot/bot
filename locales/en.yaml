@@ -153,11 +153,11 @@ dispute_started_channel: |
 
   @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
   @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
-you_started_dispute_to_buyer: You have started a dispute for your buy order, we will get in touch with you and your counterpart to sort it out.
-buyer_started_dispute_to_seller: "Buyer has filed a claim for your #${orderId} order, we will get in touch with you and your counterpart so as to sort out the dispute."
-you_started_dispute_to_seller: You have started a dispute for your sell order, we will get in touch with you and your counterpart to sort it out.
-seller_started_dispute_to_buyer: "Seller has filed a claim for you #${orderId} order, we will get in touch with yuo and your conerterpart so as to sort out the dispute"
-must_be_valid_currency: "Fiat_code must be a valid code for example: USD, EUR"
+you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will get in touch with you and your counterpart to sort it out.
+buyer_started_dispute_to_seller: "🥴 Buyer has filed a claim for your #${orderId} order, we will get in touch with you and your counterpart so as to sort out the dispute."
+you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will get in touch with you and your counterpart to sort it out.
+seller_started_dispute_to_buyer: "🥴 Seller has filed a claim for you #${orderId} order, we will get in touch with yuo and your conerterpart so as to sort out the dispute"
+must_be_valid_currency: "Fiat_code must be a valid code for example: USD, EUR, you can see a complete list executing /listcurrencies"
 must_be_number_or_range: "Fiat_ampunt must be a number or numeric range in the  <mínimum>-<máximum> format"
 invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Unavailable lightning adress ${la}
@@ -207,16 +207,16 @@ cancelall_success: ¡You have cancelled all your published orders!
 order_cancelled_by_admin: "¡Admin has cancelled the order Id: #${orderId}!"
 order_completed: "¡You have completed the order Id: #${orderId}!"
 order_completed_by_admin: "¡Admin has completed the order Id: #${orderId}!"
-have_to_wait_for_counterpart: You have already made this operation, you must wait for the other party to take action
-ok_cooperativecancel: "Counterparty agreed and the order Id: #${orderId} has been cancelled"
-refund_cooperativecancel: You have received a refund of your lightning payment, there is no further action to make 
-init_cooperativecancel: "You have started the cancelation of the order Id: #${orderId}, your counterparty must agree on cancellation too."
-counterparty_wants_cooperativecancel: "Your counterparty wants to cancell order Id: #${orderId}, If you agree on such cancellation please exEcute the follwing command 👇"
+have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
+ok_cooperativecancel: "👍 Counterparty agreed and the order Id: #${orderId} has been cancelled"
+refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make 
+init_cooperativecancel: "🕒 You have started the cancelation of the order Id: #${orderId}, your counterparty must agree on cancellation too."
+counterparty_wants_cooperativecancel: "😳 Your counterparty wants to cancell order Id: #${orderId}, If you agree on such cancellation please exEcute the follwing command 👇"
 invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try 3 more times in ${pendingPaymentWindow} minute windows, please check your node/wallet is online
-cant_take_more_orders: ¡I am ction on your side
-seller_released: Seller has already released the satoshis, you must wait for your invoice to be paid.
+cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
+seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
 your_purchase_is_completed: |
-  Your satoshis purchase has been completed successful, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
+  🪙 Your satoshis purchase has been completed successful, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
 
   ⚡️🍊⚡️
 problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an adminsitrator.
