@@ -39,8 +39,8 @@ pending_sell: |
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
   
   You can cancel this order before another user picks it up by executting the command 👇
-cancel_order_cmd: /cancel ${orderId}
-
+cancel_order_cmd: |
+  `/cancel ${orderId}`
 pending_buy: |
   You offeer to buy sats is active in the ${channel} channel.
 
@@ -51,48 +51,49 @@ must_be_int: ${fieldName} must be a number
 sats_amount: sats amount
 fiat_amount: fiat amount
 sell_correct_format: |
-   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
+  `/sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]`
 
-   In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
+  In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
 
-   /sell *1000* *2* *USD* "*transfer or ATM deposit*"
+  `/sell *1000* *2* *USD* "*transfer or ATM deposit*"`
 
-   In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
+  In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
 
-   /sell *0* *2* *USD* "*payment method*" *3*
+  `/sell *0* *2* *USD* "*payment method*" *3*`
 
-   In order to create a sell by range, instead of indicating a fixed fiat amount you can indicate a miminum and maximum amount to transact separated by a hyphen *\-*
+  In order to create a sell by range, instead of indicating a fixed fiat amount you can indicate a miminum and maximum amount to transact separated by a hyphen *\-*
 
-   /sell *0* *100\-500* *USD* "*payment method*" *3*
+  `/sell *0* *100\-500* *USD* "*payment method*" *3*`
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
+  `/buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]`
 
   In order to create and order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 
-  /buy *1000* *2* *USD* "*online transfer*"
+  `/buy *1000* *2* *USD* "*online transfer*"`
 
   If you do not want to establish a fixed amount of satoshis and you want to buy with a price under market value you can place a buy order establishing a certain discount, such rate is the percentage that will be substracted of market price when your order is published\. You need to specify 0 at the \<_sats amount_\> field, the bot will calculate te price\. If you want to buy with a 2% discount on price market, you should write \-2 as the last parameter
 
-  /buy *0* *2* *USD* "*payment method*" *\-2*
+  `/buy *0* *2* *USD* "*payment method*" *\-2*`
 
   If you want to create purchase order by range instead of indicating a fixed Fiat amount, you can set the minimum and maximum to transact separated by a hyphen *\-*
 
-  /buy *0* *100\-500* *USD* "*payment method*" *\-2*
+  `/buy *0* *100\-500* *USD* "*payment method*" *\-2*`
 min_invoice_amount: invoice needs to be equal or higher that ${minPaymentAmount} satoshis
 min_expiration_time: Time expiration for the invoice shold be of at least ${expirationTime} minutes
 invoice_expired: Invoice has expired
 invoice_expired_long: |
   Invoice has expired
   You can use the following command to send me a new invoice so as to receive the satoshis 👇
-setinvoice_cmd_order: /setinvoice ${orderId} <Lightning Invoice>
+setinvoice_cmd_order: |
+  `/setinvoice ${orderId} `<Lightning Invoice>
 invoice_require_destination: Invoice needs a receiver adress
-invoice_require_hash: Invoice needs a hash  ////// qué tipo de hash?//////
+invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
 order_invalid_type: This ${type} order is invalid
 order_already_taken: This order has already been taken by another user.
 invalid_data: You have sent invalid data, try again.
 begin_take_buy: |
-  🤖 Press CONTINUE to take the offer, if you press CANCEL you will be released from the order and iit will be republished. You have ${expirationTime} minutes before this order expires. 👇
+  🤖 Press Continue to take the offer, if you press Cancel you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue
 cancel: Cancel
 pay_invoice: Please pay this invoice to start the buying process
@@ -106,7 +107,8 @@ get_in_touch_with_seller: |
   Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the moneyyou must send ${currency} ${fiatAmount} using ${paymentMethod}.
 
   Once you send the money, please let me know with the command 👇
-fiatsent_order_cmd: /fiatsent ${orderId}
+fiatsent_order_cmd: |
+  `/fiatsent ${orderId}`
 get_in_touch_with_buyer: |
   🤖 Get in touch with  @${buyerUsername} so as to give information on how to send you${currency} ${fiatAmount} through ${paymentMethod}. Do not unlock /////sats///// until you verify that the buyer paid you the fiat.
 
@@ -178,7 +180,8 @@ must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: ¡You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent FIAT money once the seller confirms the money was received, the sats should be sent to you.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, pelase release funds. You will not be able to create another order until you release funds.
-release_order_cmd: /release ${orderId}
+release_order_cmd: |
+  `/release ${orderId}`
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven´t released the sats ye. You will not be able to create new orders until you release such funds. 
 user_banned: ¡Banned user!
 user_not_found: ¡User was not found in the database!
@@ -239,7 +242,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   You have exit the wizard mode, you can know write down the commands, you can still add an invoice to the order with the comand  /setinvoice indicating Order ID and Invoice, you can send me an invoice for ${amount} satoshis, but I will also accept invoices with no amount:
 
-  /setinvoice ${orderId} <lightning invice with or withou amount>
+  `/setinvoice ${orderId} `<lightning invice with or withou amount>
 wizard_community_enter_name: Pick a name for your community
 wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
 wizard_community_enter_group: |

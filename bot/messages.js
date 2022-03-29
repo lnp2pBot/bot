@@ -53,7 +53,7 @@ const pendingSellMessage = async (bot, user, order, i18n) => {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -66,7 +66,7 @@ const pendingBuyMessage = async (bot, user, order, i18n) => {
       channel: process.env.CHANNEL,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -124,7 +124,7 @@ const expiredInvoiceMessage = async (ctx) => {
 const expiredInvoiceOnPendingMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_expired_long'));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -259,7 +259,7 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) =
       fiatAmount: order.fiat_amount,
       paymentMethod: order.payment_method,
     }));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('buyer_took_your_order', {
       fiatAmount: order.fiat_amount,
       paymentMethod: order.payment_method,
@@ -502,7 +502,7 @@ const fiatSentMessages = async (ctx, bot, buyer, seller, order) => {
   try {
     await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('I_told_seller_you_sent_fiat', { sellerUsername: seller.username }));
     await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('buyer_told_me_that_sent_fiat', { buyerUsername: buyer.username }));
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd', { orderId: order._id }), { parse_mode: 'Markdown' });
   } catch (error) {
     console.log(error);
   }
@@ -559,7 +559,7 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
       fiatAmount: order.fiat_amount,
       paymentMethod: order.payment_method,
     }));
-    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -591,7 +591,7 @@ const cantTakeOwnOrderMessage = async (ctx, bot, user) => {
 const notLightningInvoiceMessage = async (ctx, order) => {
   try {
     await ctx.reply(ctx.i18n.t('send_me_a_ln_invoice', { amount: order.amount }));
-    await ctx.reply(ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }));
+    await ctx.reply(ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
@@ -757,7 +757,7 @@ const initCooperativeCancelMessage = async (ctx, order) => {
 const counterPartyWantsCooperativeCancelMessage = async (ctx, bot, user, order) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }

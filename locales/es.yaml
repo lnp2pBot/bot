@@ -39,7 +39,8 @@ pending_sell: |
   Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
-cancel_order_cmd: /cancel ${orderId}
+cancel_order_cmd: |
+  `/cancel ${orderId}`
 pending_buy: |
   Publicada la oferta en el canal ${channel}.
 
@@ -50,40 +51,41 @@ must_be_int: ${fieldName} debe ser un número entero
 sats_amount: monto en sats
 fiat_amount: monto en fiat
 sell_correct_format: |
-  /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+  `/sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]`
 
   Para crear una venta de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
-  /sell *1000* *2* *ves* "*pago móvil*"
+  `/sell *1000* *2* *ves* "*pago móvil*"`
 
   Para crear una venta con un incremento en el precio del 3% \(prima\) sin indicar el monto en satoshis, solo debes poner 0 \(cero\) en el campo "monto en sats", el bot hará el cálculo con el precio del libre mercado y 3 es la prima e irá como último parámetro
 
-  /sell *0* *2* *ves* "*pago móvil*" *3*
+  `/sell *0* *2* *ves* "*pago móvil*" *3*`
 
   Para crear una venta por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión\.
 
-  /sell *0* *100\-500* *ves* "*pago móvil*" *3*'
+  `/sell *0* *100\-500* *ves* "*pago móvil*" *3*'`
 buy_correct_format: |
-  /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+  `/buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]`
 
   Para crear una compra de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
-  /buy *1000* *2* *ves* "*pago móvil*
+  `/buy *1000* *2* *ves* "*pago móvil*`
 
   Si no deseas indicar el monto en satoshis y además quieres comprar a un precio menor al precio del mercado puedes crear una orden de compra con descuento, el descuento es un porcentaje que se le restará al precio del mercado, para esto solo debes poner `0` \(cero\) en el campo `monto en sats`, el bot hará el cálculo con el precio del libre mercado, por ejemplo si quieres comprar con un 2% de descuento debes colocar `\-2` como último parámetro
 
-  /buy *0* *2* *ves* "*pago móvil*" *\-2*
+  `/buy *0* *2* *ves* "*pago móvil*" *\-2*`
 
   Para crear una compra por rango, en lugar de indicar un monto fiat fijo, puedes indicar un monto mínimo y un monto máximo a operar separados por un guión *-*\.
 
-  /buy *0* *100\-500* *ves* "*pago móvil*" *\-2*
+  `/buy *0* *100\-500* *ves* "*pago móvil*" *\-2*`
 min_invoice_amount: La factura debe ser mayor o igual a ${minPaymentAmount} satoshis
 min_expiration_time: El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos
 invoice_expired: La factura ha expirado
 invoice_expired_long: |
   La factura ha expirado.
   Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
-setinvoice_cmd_order: /setinvoice ${orderId} <factura lightning>
+setinvoice_cmd_order: |
+  `/setinvoice ${orderId} `<factura lightning>
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -91,7 +93,7 @@ order_invalid_type: Esta orden es una ${type}
 order_already_taken: Esta orden ya ha sido tomada por otro usuario
 invalid_data: Has enviado datos incorrectos, inténtalo nuevamente.
 begin_take_buy: |
-  🤖 Presiona continuar para tomar la oferta, si presionas cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
+  🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
 continue: Continuar
 cancel: Cancelar
 pay_invoice: Por favor paga esta factura para comenzar tu venta
@@ -105,7 +107,8 @@ get_in_touch_with_seller: |
   Ponte en contacto con el usuario @${sellerUsername} para que te de detalle de como enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
 
   Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
-fiatsent_order_cmd: /fiatsent ${orderId}
+fiatsent_order_cmd: |
+  `/fiatsent ${orderId}`
 get_in_touch_with_buyer: |
   🤖 Ponte en contacto con @${buyerUsername} para darle la información sobre cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
 
@@ -177,7 +180,8 @@ must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
 I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
-release_order_cmd: /release ${orderId}
+release_order_cmd: |
+  `/release ${orderId}`
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
@@ -238,7 +242,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
-  /setinvoice ${orderId} <factura lightning con o sin monto>
+  `/setinvoice ${orderId} `<factura lightning con o sin monto>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
 wizard_community_enter_group: |
