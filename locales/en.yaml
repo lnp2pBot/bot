@@ -55,29 +55,29 @@ sell_correct_format: |
 
   In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
 
-  `/sell *1000* *2* *USD* "*transfer or ATM deposit*"`
+  `/sell 1000 2 USD "transfer or ATM deposit"`
 
   In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
 
-  `/sell *0* *2* *USD* "*payment method*" *3*`
+  `/sell 0 2 USD "payment method" 3`
 
   In order to create a sell by range, instead of indicating a fixed fiat amount you can indicate a miminum and maximum amount to transact separated by a hyphen *\-*
 
-  `/sell *0* *100\-500* *USD* "*payment method*" *3*`
+  `/sell 0 100\-500 USD "payment method" 3`
 buy_correct_format: |
   `/buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]`
 
   In order to create and order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 
-  `/buy *1000* *2* *USD* "*online transfer*"`
+  `/buy 1000 2 USD "online transfer"`
 
   If you do not want to establish a fixed amount of satoshis and you want to buy with a price under market value you can place a buy order establishing a certain discount, such rate is the percentage that will be substracted of market price when your order is published\. You need to specify 0 at the \<_sats amount_\> field, the bot will calculate te price\. If you want to buy with a 2% discount on price market, you should write \-2 as the last parameter
 
-  `/buy *0* *2* *USD* "*payment method*" *\-2*`
+  `/buy 0 2 USD "payment method" \-2`
 
   If you want to create purchase order by range instead of indicating a fixed Fiat amount, you can set the minimum and maximum to transact separated by a hyphen *\-*
 
-  `/buy *0* *100\-500* *USD* "*payment method*" *\-2*`
+  `/buy 0 100\-500 USD "payment method" \-2`
 min_invoice_amount: invoice needs to be equal or higher that ${minPaymentAmount} satoshis
 min_expiration_time: Time expiration for the invoice shold be of at least ${expirationTime} minutes
 invoice_expired: Invoice has expired
