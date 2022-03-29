@@ -100,7 +100,7 @@ pay_invoice: Por favor paga esta factura para comenzar tu venta
 payment_received: |
   🤖 ¡Pago recibido!
 
-  Ahora necesitamos que el comprador me envíe una factura para enviarle los satoshis, luego de que el comprador me indique su factura los pondré en contacto.
+  Ahora necesito que el comprador me envíe una factura para enviarle los satoshis, luego de que lo haga los pondré en contacto.
 someone_took_your_order: 🤖 Alguien ha tomado tu compra y ya me envió tus sats, presiona el botón para continuar 👇
 you_took_someone_order: 🤖 Has tomado esta venta, presiona el botón para continuar 👇
 get_in_touch_with_seller: |
@@ -236,7 +236,7 @@ created: Creada
 yes: Sí
 no: No
 wizard_add_invoice_init: |
-  Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
+  🤖 Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
 
   Si no la envías en ${expirationTime} minutos la orden será cancelada
 wizard_add_invoice_exit: |
@@ -250,19 +250,15 @@ wizard_community_enter_group: |
 
   P. ej: @MiComunidad
 wizard_community_enter_order_channels: |
-    Las ofertas en tu comunidad deben publicarse en un canal de telegram,
-    si me indicas un canal tanto las compras como las ventas se publicarán en ese canal,
-    si me indicas dos canales se publicaran las compras en uno y las ventas en el otro,
-    tanto el bot como tú deben ser administradores de ambos canales.
+    Las ofertas en tu comunidad deben publicarse en un canal de telegram, si me indicas un canal tanto las compras como las ventas se publicarán en ese canal.
 
-    Puedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa
-    dos nombres separados por un espacio.
+    Si me indicas dos canales se publicaran las compras en uno y las ventas en el otro, tanto el bot como tú deben ser administradores de ambos canales.
+
+    Puedes ingresar el nombre de un canal o si deseas utilizar dos canales ingresa dos nombres separados por un espacio.
     
     P. ej: @MiComunidadCompras @MiComunidadVentas
 wizard_community_one_or_two_channels: Debes ingresar uno o dos canales
-wizard_community_enter_solvers: |
-  Ahora ingresa los username de los usuarios que se encargan de resolver disputas,
-  cada username separado por un espacio en blanco.
+wizard_community_enter_solvers: Ahora ingresa los username de los usuarios que se encargan de resolver disputas, cada username separado por un espacio en blanco.
 wizard_community_must_enter_names: Debes ingresar uno o dos nombres separados por un espacio
 wizard_community_enter_solvers_channel: Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal
 wizard_community_success: ¡Felicidades has creado tu comunidad!

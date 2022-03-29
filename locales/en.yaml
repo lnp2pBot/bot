@@ -100,7 +100,7 @@ pay_invoice: Please pay this invoice to start the buying process
 payment_received: |
   🤖 ¡Payment received!
 
-     Now we need that the buyer sends an invoice so we can send satoshis to his wallet. as soon as the buyer sends his invoice I will put you both in touch.
+     Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
 Someone_took_your_order: 🤖 Somebody took your order and already sent me the sats, press the button to 👇
 you_took_someone_order: 🤖 You took this selling order, press the button to Continue 👇
 get_in_touch_with_seller: |
@@ -236,7 +236,7 @@ created: Created
 yes: Yes
 no: No
 wizard_add_invoice_init: |
-  I need you to send me and invoice for  ${satsAmount} satoshis that are worth ${currency} ${fiatAmount} so I can send you the money.
+  🤖 I need you to send me and invoice for  ${satsAmount} satoshis that are worth ${currency} ${fiatAmount} so I can send you the money.
 
   If you do not send the invoice within ${expirationTime} minutes the order will be cancelled
 wizard_add_invoice_exit: |
@@ -250,19 +250,15 @@ wizard_community_enter_group: |
 
   i.e: @MyCommunity
 wizard_community_enter_order_channels: |
-    All orders of your community must be published in a telegram channel
-    if you indicate me only one channel bothe Buy and Sell orders will be published there
-    if you indicate two channels Buy orders will be place in one and Sell orders in the other
-    Both you and the Bot must be adminsitrators in bothe channels
+    All orders of your community must be published in a telegram channel if you indicate me only one channel bothe Buy and Sell orders will be published there.
 
-    Please indicate the name of the channel or in case you want to use two chanels,
-    indicate bothe names separated by a space.
+    If you indicate two channels Buy orders will be place in one and Sell orders in the other. Both you and the Bot must be adminsitrators in both channels.
+
+    Please indicate the name of the channel or in case you want to use two chanels, indicate bothe names separated by a space.
 
     i.e : @MyCommunitySell  @MyCommunityBuy
 wizard_community_one_or_two_channels: You must indicate either one or two channels
-wizard_community_enter_solvers: |
-  Now please write down the names of the users that will sort out disputes,
-  each of them separated by a space.
+wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
 wizard_community_must_enter_names: You must add at least one name, or two separated by a space
 wizard_community_enter_solvers_channel: Now please indicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
 wizard_community_success: ¡Congratulatins, you have created your community!
