@@ -258,35 +258,35 @@ const isValidInvoice = async (lnInvoice) => {
     if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
       return {
         success: false,
-        error: `La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis`,
+        error: "invoice_must_be_larger_error",
       };
     }
 
     if (new Date(invoice.expires_at) < latestDate) {
       return {
         success: false,
-        error: "El tiempo de expiración de la factura es muy corto",
+        error: "invoice_expity_too_short_error",
       };
     }
 
     if (invoice.is_expired !== false) {
       return {
         success: false,
-        error: "La factura ha expirado",
+        error: "invoice_has_expired_error",
       };
     }
 
     if (!invoice.destination) {
       return {
         success: false,
-        error: "La factura necesita una dirección destino",
+        error: "invoice_has_wrong_destination_error",
       };
     }
 
     if (!invoice.id) {
       return {
         success: false,
-        error: "La factura necesita un hash",
+        error: "invoice_needs_hash_error",
       };
     }
 
@@ -298,7 +298,7 @@ const isValidInvoice = async (lnInvoice) => {
   } catch (error) {
     return {
       success: false,
-      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc,\n\nPara volver al modo donde puedes ingresar comandos solo escribe la palabra: => exit <=",
+      error: "invoice_invalid_error",
     };
   }
 };
