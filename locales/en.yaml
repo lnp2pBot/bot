@@ -29,10 +29,11 @@ start: |
 
   ¡Make a quick and safe transaction!
 init_bot_error: to use this Bot you need to first initialize the boot with the command /start
-non_handle_error: 👤 To use this bot you need to activate your Telegram Username
+non_handle_error: 👤 To use this bot you need to activate your Telegram Username, to activate it open the hamburger menu on the top left and select settings -> edit profile -> username
 invoice_payment_request: |
   Somebody wants to buy you sats for ${currency.symbol_native} ${order.fiat_amount}.
-  Please pay this invoice to start up your selling process. The invoice will expir
+
+  Please pay this invoice to start up your selling process, this invoice will expire in ${expirationTime} minutes
 pending_sell: |
   your offer has been published in the ${channel} channel
   
@@ -110,7 +111,7 @@ get_in_touch_with_seller: |
 fiatsent_order_cmd: |
   `/fiatsent ${orderId}`
 get_in_touch_with_buyer: |
-  🤖 Get in touch with  @${buyerUsername} so as to give information on how to send you${currency} ${fiatAmount} through ${paymentMethod}. Do not unlock /////sats///// until you verify that the buyer paid you the fiat.
+  🤖 Get in touch with  @${buyerUsername} so as to give information on how to send you${currency} ${fiatAmount} through ${paymentMethod}. Do not release those sats until you verify that the buyer paid you the fiat.
 
   Once you confirm receeption of the money you must unlock the sats.
 buyer_took_your_order: |

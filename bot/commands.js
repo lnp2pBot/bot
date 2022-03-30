@@ -98,13 +98,19 @@ const takesell = async (ctx, bot) => {
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
     order.buyer_invoice = buyerInvoice;
+    // We need to create a i18n object to create a context for the message to the seller
+    const i18n = new I18n({
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
+    const i18nCtx = i18n.createContext(seller.lang);
     // If the buyer is the creator, at this moment the seller already paid the hold invoice
     if (order.creator_id == order.buyer_id) {
       order.status = 'ACTIVE';
       // Message to buyer
       await messages.addInvoiceMessage(ctx, bot, buyer, seller, order);
       // Message to seller
-      await messages.sendBuyerInfo2SellerMessage(ctx, bot, buyer, seller, order);
+      await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order, i18nCtx);
     } else {
       // We create a hold invoice
       const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
@@ -121,8 +127,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await subscribeInvoice(bot, hash);
 
       // We send the hold invoice to the seller
-      // FIXME: We need to use the context from the seller
-      await messages.invoicePaymentRequestMessage(ctx, bot, seller, request, order);
+      await messages.invoicePaymentRequestMessage(bot, seller, request, order, i18nCtx);
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();

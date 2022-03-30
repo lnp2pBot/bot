@@ -30,11 +30,11 @@ const nonHandleErrorMessage = async (ctx) => {
   }
 };
 
-const invoicePaymentRequestMessage = async (ctx, bot, user, request, order) => {
+const invoicePaymentRequestMessage = async (bot, user, request, order, i18n) => {
   try {
     const currency = getCurrency(order.fiat_code);
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    let message = ctx.i18n.t('invoice_payment_request', {
+    let message = i18n.t('invoice_payment_request', {
       currency,
       order,
       expirationTime,
@@ -214,14 +214,14 @@ const showHoldInvoiceMessage = async (ctx, request) => {
   }
 };
 
-const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18n) => {
+const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nSeller) => {
   try {
-    await bot.telegram.sendMessage(seller.tg_id, i18n.t('payment_received'));
-    await bot.telegram.sendMessage(buyer.tg_id, i18n.t('someone_took_your_order'));
+    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('payment_received'));
+    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order'));
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: i18n.t('continue'), callback_data: 'addInvoiceBtn'}],
+          [{text: i18nBuyer.t('continue'), callback_data: 'addInvoiceBtn'}],
         ],
       },
     });
@@ -249,18 +249,21 @@ const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   }
 };
 
-const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18n) => {
+const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18nBuyer, i18nSeller) => {
   try {
     let currency = getCurrency(order.fiat_code);
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('get_in_touch_with_seller', {
-      currency,
-      sellerUsername: sellerUser.username,
-      fiatAmount: order.fiat_amount,
-      paymentMethod: order.payment_method,
-    }));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
-    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('buyer_took_your_order', {
+    await bot.telegram.sendMessage(
+      buyerUser.tg_id,
+      i18nBuyer.t('get_in_touch_with_seller', {
+        currency,
+        sellerUsername: sellerUser.username,
+        fiatAmount: order.fiat_amount,
+        paymentMethod: order.payment_method,
+      }),
+    );
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(sellerUser.tg_id, i18nSeller.t('buyer_took_your_order', {
       fiatAmount: order.fiat_amount,
       paymentMethod: order.payment_method,
       currency,
@@ -279,10 +282,10 @@ const takeSellWaitingSellerToPayMessage = async (ctx, bot, buyerUser, order) => 
   }
 };
 
-const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18n) => {
+const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18nBuyer, i18nSeller) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, i18n.t('sell_success', { buyerUsername: buyerUser.username }));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('funds_released', { sellerUsername: sellerUser.username }));
+    await bot.telegram.sendMessage(sellerUser.tg_id, i18nSeller.t('sell_success', { buyerUsername: buyerUser.username }));
+    await bot.telegram.sendMessage(buyerUser.tg_id, i18nBuyer.t('funds_released', { sellerUsername: sellerUser.username }));
   } catch (error) {
     console.log(error);
   }
@@ -498,11 +501,11 @@ const bannedUserErrorMessage = async (ctx) => {
   }
 };
 
-const fiatSentMessages = async (ctx, bot, buyer, seller, order) => {
+const fiatSentMessages = async (bot, buyer, seller, order, i18nBuyer, i18nSeller) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('I_told_seller_you_sent_fiat', { sellerUsername: seller.username }));
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('buyer_told_me_that_sent_fiat', { buyerUsername: buyer.username }));
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('release_order_cmd', { orderId: order._id }), { parse_mode: 'Markdown' });
+    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('I_told_seller_you_sent_fiat', { sellerUsername: seller.username }));
+    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('buyer_told_me_that_sent_fiat', { buyerUsername: buyer.username }));
+    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('release_order_cmd', { orderId: order._id }), { parse_mode: 'Markdown' });
   } catch (error) {
     console.log(error);
   }
@@ -553,28 +556,34 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
   try {
     let currency = getCurrency(order.fiat_code);
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('get_in_touch_with_seller', {
-      currency,
-      sellerUsername: seller.username,
-      fiatAmount: order.fiat_amount,
-      paymentMethod: order.payment_method,
-    }));
+    await bot.telegram.sendMessage(
+      buyer.tg_id,
+      ctx.i18n.t('get_in_touch_with_seller', {
+        currency,
+        sellerUsername: seller.username,
+        fiatAmount: order.fiat_amount,
+        paymentMethod: order.payment_method,
+      }),
+    );
     await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
 };
 
-const sendBuyerInfo2SellerMessage = async (ctx, bot, buyer, seller, order) => {
+const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
   try {
     let currency = getCurrency(order.fiat_code);
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('get_in_touch_with_buyer', {
-      currency,
-      buyerUsername: buyer.username,
-      fiatAmount: order.fiat_amount,
-      paymentMethod: order.payment_method,
-    }));
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      i18n.t('get_in_touch_with_buyer', {
+        currency,
+        buyerUsername: buyer.username,
+        fiatAmount: order.fiat_amount,
+        paymentMethod: order.payment_method,
+      }),
+    );
   } catch (error) {
     console.log(error);
   }

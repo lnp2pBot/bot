@@ -23,12 +23,13 @@ const subscribeInvoice = async (bot, id, resub) => {
         const sellerUser = await User.findOne({ _id: order.seller_id });
         order.status = 'ACTIVE';
         // This is the i18n context we need to pass to the message
-        i18nCtx = i18n.createContext(buyerUser.lang);
+        i18nCtxBuyer = i18n.createContext(buyerUser.lang);
+        i18nCtxSeller = i18n.createContext(sellerUser.lang);
         if (order.type === 'sell') {
-          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order, i18nCtx);
+          await messages.onGoingTakeSellMessage(bot, sellerUser, buyerUser, order, i18nCtxBuyer, i18nCtxSeller);
         } else if (order.type === 'buy') {
           order.status = 'WAITING_BUYER_INVOICE';
-          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order, i18nCtx);
+          await messages.onGoingTakeBuyMessage(bot, sellerUser, buyerUser, order, i18nCtxBuyer, i18nCtxSeller);
         }
         order.invoice_held_at = Date.now();
         order.save();
@@ -40,9 +41,10 @@ const subscribeInvoice = async (bot, id, resub) => {
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        // This is the i18n context we need to pass to the message
-        i18nCtx = i18n.createContext(buyerUser.lang);
-        await messages.releasedSatsMessage(bot, sellerUser, buyerUser, i18nCtx);
+        // We need two i18n contexts to send messages to each user
+        i18nCtxBuyer = i18n.createContext(buyerUser.lang);
+        i18nCtxSeller = i18n.createContext(sellerUser.lang);
+        await messages.releasedSatsMessage(bot, sellerUser, buyerUser, i18nCtxBuyer, i18nCtxSeller);
         // If this is a range order, probably we need to created a new child range order
         const orderData = await ordersActions.getNewRangeOrderPayload(order);
         if (!!orderData) {

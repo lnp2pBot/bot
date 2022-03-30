@@ -431,7 +431,10 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // We sent messages to both parties
-      await messages.fiatSentMessages(ctx, bot, user, seller, order);
+      // We need to create i18n context for each user
+      i18nCtxBuyer = i18n.createContext(user.lang);
+      i18nCtxSeller = i18n.createContext(seller.lang);
+      await messages.fiatSentMessages(bot, user, seller, order, i18nCtxBuyer, i18nCtxSeller);
 
     } catch (error) {
       console.log(error);
