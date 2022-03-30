@@ -212,7 +212,7 @@ have_to_wait_for_counterpart: 🕒 You have already made this operation, you mus
 ok_cooperativecancel: "👍 Counterparty agreed and the order Id: #${orderId} has been cancelled"
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make 
 init_cooperativecancel: "🕒 You have started the cancelation of the order Id: #${orderId}, your counterparty must agree on cancellation too."
-counterparty_wants_cooperativecancel: "😳 Your counterparty wants to cancell order Id: #${orderId}, If you agree on such cancellation please exEcute the follwing command 👇"
+counterparty_wants_cooperativecancel: "😳 Your counterparty wants to cancel order Id: #${orderId}, If you agree on such cancellation please exEcute the follwing command 👇"
 invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try 3 more times in ${pendingPaymentWindow} minute windows, please check your node/wallet is online
 cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
 seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
