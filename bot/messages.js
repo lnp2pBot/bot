@@ -736,20 +736,20 @@ const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
   }
 };
 
-const okCooperativeCancelMessage = async (ctx, bot, user, order) => {
+const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('ok_cooperativecancel', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('ok_cooperativecancel', { orderId: order._id }));
     if (order.seller_id == user._id) {
-      await refundCooperativeCancelMessage(ctx, bot, user);
+      await refundCooperativeCancelMessage(bot, user, i18n);
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-const refundCooperativeCancelMessage = async (ctx, bot, user) => {
+const refundCooperativeCancelMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('refund_cooperativecancel'));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('refund_cooperativecancel'));
   } catch (error) {
     console.log(error);
   }
@@ -763,10 +763,10 @@ const initCooperativeCancelMessage = async (ctx, order) => {
   }
 };
 
-const counterPartyWantsCooperativeCancelMessage = async (ctx, bot, user, order) => {
+const counterPartyWantsCooperativeCancelMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }

@@ -301,6 +301,7 @@ const initialize = (botToken, options) => {
 
       order[`${initiator}_cooperativecancel`] = true;
 
+      const i18nCtx = i18n.createContext(counterPartyUser.lang);
       // If the counter party already requested a cooperative cancel order
       if (order[`${counterParty}_cooperativecancel`]) {
         // If we already have a holdInvoice we cancel it and return the money
@@ -311,10 +312,10 @@ const initialize = (botToken, options) => {
         order.status = 'CANCELED';
         // We sent a private message to the users
         await messages.successCancelOrderMessage(ctx, bot, initiatorUser, order, true);
-        await messages.okCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
+        await messages.okCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtx);
       } else {
         await messages.initCooperativeCancelMessage(ctx, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(ctx, bot, counterPartyUser, order);
+        await messages.counterPartyWantsCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtx);
       }
       await order.save();
     } catch (error) {

@@ -101,8 +101,8 @@ pay_invoice: Please pay this invoice to start the buying process
 payment_received: |
   🤖 ¡Payment received!
 
-     Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
-Someone_took_your_order: 🤖 Somebody took your order and already sent me the sats, press the button to 👇
+  Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
+someone_took_your_order: 🤖 Someone took your order and already sent me the sats, press the button to 👇
 you_took_someone_order: 🤖 You took this selling order, press the button to Continue 👇
 get_in_touch_with_seller: |
   Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the moneyyou must send ${currency} ${fiatAmount} using ${paymentMethod}.
@@ -179,7 +179,7 @@ help: |
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: ¡You have been banned!
-I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent FIAT money once the seller confirms the money was received, the sats should be sent to you.
+I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent fiat money once the seller confirms the money was received, the sats should be sent to you.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, please release funds. You will not be able to create another order until you release funds.
 release_order_cmd: |
   `/release ${orderId}`
@@ -237,7 +237,7 @@ created: Created
 yes: Yes
 no: No
 wizard_add_invoice_init: |
-  🤖 I need you to send me and invoice for  ${satsAmount} satoshis that are worth ${currency} ${fiatAmount} so I can send you the money.
+  🤖 I need you to send me and invoice for ${satsAmount} satoshis that are worth ${currency} ${fiatAmount} so I can send you the money.
 
   If you do not send the invoice within ${expirationTime} minutes the order will be cancelled
 wizard_add_invoice_exit: |
