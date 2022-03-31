@@ -872,7 +872,7 @@ const invalidRangeWithAmount = async (ctx) => {
 
 const tooManyPendingOrdersMessage = async (bot, user, i18n) => {
   try {
-    bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('too_many_pending_orders'));
+    bot.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
   } catch (error) {
     console.log(error);
   }

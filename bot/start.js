@@ -88,7 +88,7 @@ const initialize = (botToken, options) => {
 
       if (!isOnFiatSentStatus) return;
 
-      const sellOrderParams = await validateSellOrder(ctx, bot, user);
+      const sellOrderParams = await validateSellOrder(ctx);
 
       if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
