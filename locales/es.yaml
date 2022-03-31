@@ -86,7 +86,7 @@ invoice_expired_long: |
   La factura ha expirado.
   Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 setinvoice_cmd_order: |
-  `/setinvoice ${orderId} `<factura lightning>
+  `/setinvoice ${orderId} `\<factura lightning\>
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -243,7 +243,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
-  `/setinvoice ${orderId} `<factura lightning con o sin monto>
+  `/setinvoice ${orderId} `\<factura lightning con o sin monto\>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
 wizard_community_enter_group: |

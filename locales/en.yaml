@@ -86,7 +86,7 @@ invoice_expired_long: |
   Invoice has expired
   You can use the following command to send me a new invoice so as to receive the satoshis 👇
 setinvoice_cmd_order: |
-  `/setinvoice ${orderId} `<Lightning Invoice>
+  `/setinvoice ${orderId} `\<Lightning Invoice\>
 invoice_require_destination: Invoice needs a receiver adress
 invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
@@ -243,7 +243,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   You have exit the wizard mode, you can know write down the commands, you can still add an invoice to the order with the comand  /setinvoice indicating Order ID and Invoice, you can send me an invoice for ${amount} satoshis, but I will also accept invoices with no amount:
 
-  `/setinvoice ${orderId} `<lightning invice with or withou amount>
+  `/setinvoice ${orderId} `\<lightning invice with or without amount\>
 wizard_community_enter_name: Pick a name for your community
 wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
 wizard_community_enter_group: |
