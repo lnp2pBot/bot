@@ -51,8 +51,10 @@ const subscribeInvoice = async (bot, id, resub) => {
           let user;
           if (order.type === 'sell') {
             user = sellerUser;
+            i18nCtx = i18nCtxSeller;
           } else {
             user = buyerUser;
+            i18nCtx = i18nCtxBuyer;
           }
 
           const newOrder = await ordersActions.createOrder(i18nCtx, bot, user, orderData);
@@ -69,10 +71,8 @@ const subscribeInvoice = async (bot, id, resub) => {
             }
           }
         }
-        // This is the i18n context we need to pass to the message
-        i18nCtx = i18n.createContext(sellerUser.lang);
         // The seller get reputation after release
-        await messages.rateUserMessage(bot, sellerUser, order, i18nCtx);
+        await messages.rateUserMessage(bot, sellerUser, order, i18nCtxSeller);
         // We proceed to pay to buyer
         await payToBuyer(bot, order);
       }
