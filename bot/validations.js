@@ -57,11 +57,11 @@ const validateAdmin = async (ctx) => {
   }
 };
 
-const validateSellOrder = async (ctx, bot, user) => {
+const validateSellOrder = async (ctx) => {
   try {
     const args = parseArgs(ctx.update.message.text);
     if (args.length < 5 ) {
-      await messages.sellOrderCorrectFormatMessage(ctx, user);
+      await messages.sellOrderCorrectFormatMessage(ctx);
       return false;
     }
 
@@ -134,7 +134,7 @@ const validateSellOrder = async (ctx, bot, user) => {
   }
 };
 
-const validateBuyOrder = async (ctx, bot, user) => {
+const validateBuyOrder = async (ctx) => {
   try {
     const args = parseArgs(ctx.update.message.text);
     if (args.length < 5) {
