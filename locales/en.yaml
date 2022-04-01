@@ -317,5 +317,5 @@ price: Price
 for: For
 generic_error: Ha ocurrido un error
 sats: sats
-no_capital_letters: Please, no capital letters
-unknown_command: I do not understand. Please use /help to see the list of available commands
+no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
+unknown_command: 😕 I do not understand. Please use /help to see the list of available commands

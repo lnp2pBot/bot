@@ -317,5 +317,5 @@ price: Precio
 for: Por
 generic_error: Ha ocurrido un error
 sats: sats
-no_capital_letters: Estás intentando ejecutar un comando con la primera letra en mayúscula. Por favor, escribe todo el comando en minúscula.
-unknown_command: No entiendo lo que me dices. Por favor, consulta el comando /help para ver los comandos disponibles.
+no_capital_letters: 🤖 Estás intentando ejecutar un comando con la primera letra en mayúscula. Por favor, escribe todo el comando en minúscula.
+unknown_command: 😕 No entiendo lo que me dices. Por favor, consulta el comando /help para ver los comandos disponibles.
