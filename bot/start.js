@@ -745,12 +745,12 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
       let text = ctx.message.text;
-      let message = '';
+      let message;
       // If the user is trying to enter a command with first letter uppercase
       if (text[0] == '/' && text[1] == text[1].toUpperCase()) {
-        message += ctx.i18n.t('no_capital_letters');
+        message = ctx.i18n.t('no_capital_letters');
       } else {
-        message += ctx.i18n.t('unknown_command');
+        message = ctx.i18n.t('unknown_command');
       }
       ctx.reply(message);
     } catch (error) {
