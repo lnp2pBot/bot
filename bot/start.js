@@ -18,7 +18,6 @@ const {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
-  getInfo,
   isPendingPayment,
 } = require('../ln');
 const {
@@ -666,9 +665,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      const info = await getInfo();
-
-      await messages.showInfoMessage(bot, user, info);
+      await messages.showInfoMessage(bot, user);
     } catch (error) {
       console.log(error);
     }
