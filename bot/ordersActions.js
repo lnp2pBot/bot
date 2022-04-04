@@ -24,7 +24,7 @@ const createOrder = async (i18n, bot, user, {
     }
     
     amount = parseInt(amount);
-    const fee = amount * parseFloat(process.env.FEE);
+    const fee = Math.round(amount * parseFloat(process.env.FEE));
     const currency = getCurrency(fiatCode);
     const priceFromAPI = !amount;
 
