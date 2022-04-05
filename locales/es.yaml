@@ -128,22 +128,37 @@ no_id_related: No tienes ninguna orden asociada con ese Id
 sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
-  Id: #${order._id}
-  Status: ${order.status}
+  Id: `${order._id}`
+
+  Status: ${status}
+
   Creador: @${creator || ''}
+
   Comprador: @${buyerUsername || ''}
+
   Vendedor: @${sellerUsername || ''}
-  Monto (sats): ${order.amount}
-  Bot Fee (sats): ${order.fee}
-  Routing Fee (sats): ${order.routing_fee}
-  Monto (fiat) ${order.fiat_code}: ${order.fiat_amount}
+
+  Monto \\(sats\\): ${order.amount}
+
+  Bot Fee \\(sats\\): ${order.fee}
+
+  Routing Fee \\(sats\\): ${order.routing_fee}
+
+  Monto \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
+
   Método de pago: ${order.payment_method}
+
   Prima/descuento: ${order.price_margin}
-  Creada: ${order.created_at}
-  Tomada: ${order.taken_at || ''}
-  seller invoice hash: ${order.hash}
-  seller invoice secret: ${order.secret}
-  buyer payment request: ${order.buyer_invoice}
+
+  Creada: ${createdAt}
+
+  Tomada: ${takenAt || ''}
+
+  seller invoice hash: `${order.hash || ''}`
+
+  seller invoice secret: `${order.secret || ''}`
+
+  buyer payment request: `${order.buyer_invoice || ''}`
 seller: vendedor
 buyer: comprador
 dispute_started_channel: |

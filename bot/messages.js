@@ -379,13 +379,22 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
     const buyerUsername = buyer ? buyer.username : '';
     const sellerUsername = seller ? seller.username : '';
     const buyerId = buyer ? buyer._id : '';
+    let createdAt = order.created_at.toISOString();
+    let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
+    createdAt = createdAt.replace(/(?=[.-])/g, '\\');
+    takenAt = takenAt.replace(/(?=[.-])/g, '\\');
+    const status = order.status.replace(/(?=[_])/g, '\\');
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
     let message = i18n.t('order_detail', {
       order,
       creator,
       buyerUsername,
       sellerUsername,
-    });
+      createdAt,
+      takenAt,
+      status,
+      },
+    );
 
     return message;
   } catch (error) {
@@ -403,14 +412,18 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator, i18n) =
       counterPartyUser = buyer;
     }
     let detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('dispute_started_channel', {
-      order,
-      initiator,
-      initiatorUser,
-      counterPartyUser,
-      detailedOrder,
-      type,
-    }));
+    await bot.telegram.sendMessage(
+      process.env.ADMIN_CHANNEL,
+      i18n.t('dispute_started_channel', {
+        order,
+        initiator,
+        initiatorUser,
+        counterPartyUser,
+        detailedOrder,
+        type,
+      }),
+      { parse_mode: 'MarkdownV2' },
+    );
 
     if (initiator === 'buyer') {
       await bot.telegram.sendMessage(initiatorUser.tg_id, i18n.t('you_started_dispute_to_buyer'));
@@ -436,7 +449,7 @@ const checkOrderMessage = async (ctx, order, buyer, seller) => {
   try {
     let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
     message += `\n\n`;
-    await ctx.reply(message);
+    await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
     console.log(error);
   }
@@ -1063,11 +1076,15 @@ const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
 const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
   try {
     const detailedOrder = getDetailedOrder(i18n, order, buyerUser, sellerUser);
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('expired_order', {
-      detailedOrder,
-      buyerUser,
-      sellerUser,
-    }));
+    await bot.telegram.sendMessage(
+      process.env.ADMIN_CHANNEL,
+      i18n.t('expired_order', {
+        detailedOrder,
+        buyerUser,
+        sellerUser,
+      }),
+      { parse_mode: 'MarkdownV2' },
+    );
   } catch (error) {
     console.log(error);
   }
@@ -1164,7 +1181,11 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
 const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed'));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('setinvoice_cmd_order', { orderId: order._id }),
+      { parse_mode: "MarkdownV2" },
+    );
   } catch (error) {
     console.log(error);
   }

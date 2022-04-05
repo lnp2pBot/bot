@@ -128,22 +128,37 @@ no_id_related: You do not have any order associated with this Id.
 sell_sats: Sell satoshis
 buy_sats: Buy satoshis
 order_detail: |
-  Id: ${order._id}:
-  Status: ${order.status}
+  Id: `${order._id}`
+
+  Status: ${status}
+
   Creator: @${creator || ''}
+
   Buyer: @${buyerUsername || ''}
+
   Seller: @${sellerUsername || ''}
-  Order Amount (sats): ${order.amount}
-  Bot Fee (sats): ${order.fee}
-  Routing Fee (sats): ${order.routing_fee}
-  Fiat Amount (fiat) ${order.fiat_code}: ${order.fiat_amount}
+
+  Order Amount \\(sats\\): ${order.amount}
+
+  Bot Fee \\(sats\\): ${order.fee}
+
+  Routing Fee \\(sats\\): ${order.routing_fee}
+
+  Fiat Amount \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
+
   Order payment method: ${order.payment_method}
+
   Prime/discount: ${order.price_margin}
-  Created: ${order.created_at}
-  Taken: ${order.taken_at || ''}
-  seller invoice hash: ${order.hash}
-  seller invoice secret: ${order.secret}
-  buyer payment request: ${order.buyer_invoice}
+
+  Created: ${createdAt}
+
+  Taken: ${takenAt || ''}
+
+  seller invoice hash: `${order.hash || ''}`
+
+  seller invoice secret: `${order.secret || ''}`
+
+  buyer payment request: `${order.buyer_invoice || ''}`
 seller: seller
 buyer: buyer
 dispute_started_channel: |

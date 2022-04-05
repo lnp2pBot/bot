@@ -165,7 +165,7 @@ const addInvoice = async (ctx, bot, order) => {
         const marginPercent = order.price_margin / 100;
         amount = amount - (amount * marginPercent);
         amount = Math.floor(amount);
-        order.fee = amount * parseFloat(process.env.FEE);
+        order.fee = Math.round(amount * parseFloat(process.env.FEE));
         order.amount = amount;
     }
 
@@ -342,7 +342,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
       const marginPercent = order.price_margin / 100;
       amount = amount - (amount * marginPercent);
       amount = Math.floor(amount);
-      order.fee = amount * parseFloat(process.env.FEE);
+      order.fee = Math.round(amount * parseFloat(process.env.FEE));
       order.amount = amount;
     }
     amount = Math.floor(order.amount + order.fee);
