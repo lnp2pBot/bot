@@ -453,7 +453,7 @@ const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
     }
 
     if (!order.buyer_invoice) {
-      await messages.notLightningInvoiceMessage(bot, user, order);
+      await messages.notLightningInvoiceMessage(ctx, order);
       return false;
     }
 
