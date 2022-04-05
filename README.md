@@ -58,6 +58,9 @@ You will need to have [mongo](https://www.mongodb.com) installed and fill the mo
 ## Telegram
 You will need a telegram bot api key (`BOT_TOKEN`), find out more about it [here](https://core.telegram.org/bots/).
 
+## Tor service or another proxy
+You can route the bot API via Tor service or another proxy if you specify 'SOCKS_PROXY_HOST' parameter in .env. For Ubuntu see [this](https://www.linuxuprising.com/2018/10/how-to-install-and-use-tor-as-proxy-in.html) 
+
 ## Lightning Network
 You will need a lightning network node, for this bot we use [LND](https://github.com/lightningnetwork/lnd/).
 

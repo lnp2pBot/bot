@@ -758,8 +758,8 @@ const initialize = (botToken, options) => {
   return bot;
 };
 
-const start = (botToken) => {
-  const bot = initialize(botToken);
+const start = (botToken, options) => {
+  const bot = initialize(botToken, options);
 
   bot.launch();
 
