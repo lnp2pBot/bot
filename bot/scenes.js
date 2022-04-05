@@ -9,7 +9,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
   async (ctx) => {
     try {
-      const { bot, buyer, order } = ctx.wizard.state;
+      const { order } = ctx.wizard.state;
       const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
       const currency = getCurrency(order.fiat_code);
       const symbol = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
@@ -31,6 +31,11 @@ const addInvoiceWizard = new Scenes.WizardScene(
       let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
+      if (!order) {
+        await ctx.reply(ctx.i18n.t('generic_error'));
+        return ctx.scene.leave();
+      };
+
       if (lnInvoice == 'exit') {
         if (!!order && order.status == 'WAITING_BUYER_INVOICE') {
           await messages.wizardAddInvoiceExitMessage(ctx, order);
