@@ -31,7 +31,7 @@ start: |
 init_bot_error: Чтобы пользоваться Ботом сначала нужно его инициализировать командой /start
 non_handle_error: 👤 Для пользования этим ботом нужно активировать имя пользователя в Телеграм
 invoice_payment_request: |
-  Кто-то хочет купить ваши сатоши за ${currency.symbol_native} ${order.fiat_amount}.
+  Кто-то хочет купить ваши ${order.amount} сатоши за ${currency.symbol_native} ${order.fiat_amount}.
   Пожалуйста, оплатите этот счет, чтобы начать продажу. Срок действия этого счета истекает через ${expirationTime} минут
 pending_sell: |
   Разместил заявку в канале ${channel}
@@ -124,22 +124,37 @@ no_id_related: У вас нет заказа, связанного с этим �
 sell_sats: Продать сатоши
 buy_sats: Купить сатоши
 order_detail: |
-  Id: #${order._id}
-  Статус: ${order.status}
+  Id: `${order._id}`
+
+  Статус: ${status}
+
   Создатель: @${creator || ''}
+
   Покупатель: @${buyerUsername || ''}
+
   Продавец: @${sellerUsername || ''}
-  Сумма (сатоши): ${order.amount}
-  Комиссия Бота (sats): ${order.fee}
-  Комиссия Сети (sats): ${order.routing_fee}
-  Сумма (фиат) ${order.fiat_code}: ${order.fiat_amount}
+
+  Сумма \\(сатоши\\): ${order.amount}
+
+  Комиссия Бота \\(sats\\): ${fee}
+
+  Комиссия Сети \\(sats\\): ${order.routing_fee}
+
+  Сумма \\(фиат\\) ${order.fiat_code}: ${order.fiat_amount}
+
   Метод оплаты: ${order.payment_method}
+
   Премия/дисконт: ${order.price_margin}
-  Создана: ${order.created_at}
-  Исполнена: ${order.taken_at || ''}
-  seller invoice hash: ${order.hash}
-  seller invoice secret: ${order.secret}
-  buyer payment request: ${order.buyer_invoice}
+
+  Создана: ${createdAt}
+
+  Исполнена: ${takenAt || ''}
+
+  seller invoice hash: `${order.hash || ''}`
+
+  seller invoice secret: `${order.secret || ''}`
+
+  buyer payment request: `${order.buyer_invoice || ''}`
 seller: продавец
 buyer: покупатель
 dispute_started_channel: |
