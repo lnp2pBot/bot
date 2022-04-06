@@ -376,14 +376,14 @@ const publishSellOrderMessage = async (bot, order, i18n) => {
 
 const getDetailedOrder = (i18n, order, buyer, seller) => {
   try {
-    const buyerUsername = buyer ? buyer.username : '';
-    const sellerUsername = seller ? seller.username : '';
+    const buyerUsername = buyer ? buyer.username.replace(/_/g, '\\_') : '';
+    const sellerUsername = seller ? seller.username.replace(/_/g, '\\_') : '';
     const buyerId = buyer ? buyer._id : '';
     let createdAt = order.created_at.toISOString();
     let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
     createdAt = createdAt.replace(/(?=[.-])/g, '\\');
     takenAt = takenAt.replace(/(?=[.-])/g, '\\');
-    const status = order.status.replace(/(?=[_])/g, '\\');
+    const status = order.status.replace(/_/g, '\\_');
     const fee = !!order.fee ? parseInt(order.fee) : '';
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
     let message = i18n.t('order_detail', {
@@ -631,15 +631,16 @@ const notOrdersMessage = async (ctx) => {
 
 const listOrdersResponse = async (bot, user, orders) => {
   try {
-    let response = `.             Id          |     Status    |   amount (sats)  |  fiat amt  |  fiat\n`;
+    let response = "             Id          \\|     Status    \\|   sats amount  \\|  fiat amt  \\|  fiat\n";
     orders.forEach(order => {
-      let fiatAmount = '-';
-      let amount = '-';
+      let fiatAmount = '\\-';
+      let amount = '\\-';
+      const status = order.status.replace(/_/g, '\\_');
       if (typeof order.fiat_amount != 'undefined') fiatAmount = order.fiat_amount;
       if (typeof order.amount != 'undefined') amount = order.amount;
-      response += `${order._id} | ${order.status} | ${amount} | ${fiatAmount} | ${order.fiat_code}\n`;
+      response += "`" + order._id + "` \\| " + status + " \\| " + amount + " \\| " + fiatAmount + " \\| " + order.fiat_code + "\n";
     });
-    await bot.telegram.sendMessage(user.tg_id, response);
+    await bot.telegram.sendMessage(user.tg_id, response, { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
   }
