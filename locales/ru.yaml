@@ -124,22 +124,37 @@ no_id_related: У вас нет заказа, связанного с этим �
 sell_sats: Продать сатоши
 buy_sats: Купить сатоши
 order_detail: |
-  Id: #${order._id}
-  Статус: ${order.status}
+  Id: `${order._id}`
+
+  Статус: ${status}
+
   Создатель: @${creator || ''}
+
   Покупатель: @${buyerUsername || ''}
+
   Продавец: @${sellerUsername || ''}
-  Сумма (сатоши): ${order.amount}
-  Комиссия Бота (sats): ${order.fee}
-  Комиссия Сети (sats): ${order.routing_fee}
-  Сумма (фиат) ${order.fiat_code}: ${order.fiat_amount}
+
+  Сумма \\(сатоши\\): ${order.amount}
+
+  Комиссия Бота \\(sats\\): ${fee}
+
+  Комиссия Сети \\(sats\\): ${order.routing_fee}
+
+  Сумма \\(фиат\\) ${order.fiat_code}: ${order.fiat_amount}
+
   Метод оплаты: ${order.payment_method}
+
   Премия/дисконт: ${order.price_margin}
-  Создана: ${order.created_at}
-  Исполнена: ${order.taken_at || ''}
-  seller invoice hash: ${order.hash}
-  seller invoice secret: ${order.secret}
-  buyer payment request: ${order.buyer_invoice}
+
+  Создана: ${createdAt}
+
+  Исполнена: ${takenAt || ''}
+
+  seller invoice hash: `${order.hash || ''}`
+
+  seller invoice secret: `${order.secret || ''}`
+
+  buyer payment request: `${order.buyer_invoice || ''}`
 seller: продавец
 buyer: покупатель
 dispute_started_channel: |

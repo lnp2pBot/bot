@@ -140,7 +140,7 @@ order_detail: |
 
   Monto \\(sats\\): ${order.amount}
 
-  Bot Fee \\(sats\\): ${order.fee}
+  Bot Fee \\(sats\\): ${fee}
 
   Routing Fee \\(sats\\): ${order.routing_fee}
 

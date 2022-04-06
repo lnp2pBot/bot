@@ -384,6 +384,7 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
     createdAt = createdAt.replace(/(?=[.-])/g, '\\');
     takenAt = takenAt.replace(/(?=[.-])/g, '\\');
     const status = order.status.replace(/(?=[_])/g, '\\');
+    const fee = !!order.fee ? parseInt(order.fee) : '';
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
     let message = i18n.t('order_detail', {
       order,
@@ -393,6 +394,7 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
       createdAt,
       takenAt,
       status,
+      fee,
       },
     );
 
