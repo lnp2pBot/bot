@@ -31,7 +31,7 @@ start: |
 init_bot_error: to use this Bot you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot you need to activate your Telegram Username, to activate it open the hamburger menu on the top left and select settings -> edit profile -> username
 invoice_payment_request: |
-  Somebody wants to buy you ${order.amount} sats for ${currency.symbol_native} ${order.fiat_amount}.
+  Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
 
   Please pay this invoice to start up your selling process, this invoice will expire in ${expirationTime} minutes
 pending_sell: |
@@ -97,9 +97,9 @@ begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue
 cancel: Cancel
-pay_invoice: Please pay this invoice to start the buying process
+pay_invoice: Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation.
 payment_received: |
-  🤖 Payment received!
+  🤑 Payment received!
 
   Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
 someone_took_your_order: |
@@ -228,7 +228,7 @@ invoice_updated_and_will_be_paid: Invoices has been correctly updated and will b
 invoice_already_being_paid: You have alreday send an invoice for this order and I am trying to pay it in this very rightmoment. 
 lightning_address_saved: Lightning adress has been saved
 cancel_error: This order cannot be cancelled at this moment
-cancel_success: "You have cancelled order Id: #${orderId}!"
+cancel_success: "You have cancelled the order Id: #${orderId}!"
 cancelall_success: You have cancelled all your published orders!
 order_cancelled_by_admin: "Admin has cancelled the order Id: #${orderId}!"
 order_completed: "You have completed the order Id: #${orderId}!"
@@ -305,6 +305,18 @@ expired_order: |
 
   @${sellerUser.username} has ${sellerUser.disputes} disputes
   @${buyerUser.username} has ${buyerUser.disputes} disputes
+expired_order_to_buyer: |
+  🚨🚨🚨 This order is about to expire and must be completed or canceled immediately, if you haven't sent the fiat money yet you can still cancel with the /cancel command.
+
+  If you sent the fiat money but the seller refuses to release the sats, you can open a dispute with the /dispute command. The hold invoice that the seller paid has an expiration time and you must resolve this order before it expires or you risk losing your money.
+
+  If you need help you can write to the group @lnp2pbotHelp
+expired_order_to_seller: |
+  🚨🚨🚨 This order is about to expire and must be completed or canceled immediately, if you have not received the fiat money yet you can still cancel with the /cancel command.
+
+  If you received the fiat money please release the funds with the /release command otherwise you are under the risk of the buyer opening a dispute which will affect your reputation.
+
+  If you need help you can write to the group @lnp2pbotHelp
 didnt_add_invoice: "🤨 You have not send the invoice to receive sats for the Order Id: #${orderId}"
 buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the sats for your Id Order: #${orderId}, your sats were sent back to you"
 buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished."

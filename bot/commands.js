@@ -362,7 +362,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(ctx, request);
+    await messages.showHoldInvoiceMessage(ctx, request, amount, order.fiat_code, order.fiat_amount);
   } catch (error) {
     console.log(error);
   }

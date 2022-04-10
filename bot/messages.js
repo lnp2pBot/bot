@@ -32,7 +32,8 @@ const nonHandleErrorMessage = async (ctx) => {
 
 const invoicePaymentRequestMessage = async (bot, user, request, order, i18n) => {
   try {
-    const currency = getCurrency(order.fiat_code);
+    let currency = getCurrency(order.fiat_code);
+    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
     const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
     let message = i18n.t('invoice_payment_request', {
       currency,
@@ -205,9 +206,15 @@ const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
   }
 };
 
-const showHoldInvoiceMessage = async (ctx, request) => {
+const showHoldInvoiceMessage = async (ctx, request, amount, fiatCode, fiatAmount) => {
   try {
-    await ctx.reply(ctx.i18n.t('pay_invoice'));
+    let currency = getCurrency(fiatCode);
+    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : fiatCode;
+    await ctx.reply(ctx.i18n.t('pay_invoice', {
+      amount,
+      fiatAmount,
+      currency,
+    }));
     await ctx.reply("`" + request + "`", { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
@@ -1087,6 +1094,22 @@ const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
   }
 };
 
+const toBuyerExpiredOrderMessage = async (bot, user, i18n) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_buyer'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_seller'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('didnt_add_invoice', { orderId: order._id }));
@@ -1315,4 +1338,6 @@ module.exports = {
   toAdminChannelPendingPaymentFailedMessage,
   genericErrorMessage,
   refundCooperativeCancelMessage,
+  toBuyerExpiredOrderMessage,
+  toSellerExpiredOrderMessage,
 };
