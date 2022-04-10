@@ -34,14 +34,14 @@ invoice_payment_request: |
   Кто-то хочет купить ваши ${order.amount} сатоши за ${currency.symbol_native} ${order.fiat_amount}.
   Пожалуйста, оплатите этот счет, чтобы начать продажу. Срок действия этого счета истекает через ${expirationTime} минут
 pending_sell: |
-  Разместил заявку в канале ${channel}
+  📝 Разместил заявку в канале ${channel}
 
   Подождите, пока кто-нибудь примет вашу заявку на продажу. Если заявка не будет принята в течение ${orderExpirationWindow} часов, она будет удалена из канала автоматически. 
   
   Вы можете отменить эту заявку до того, как ее примет кто-то другой, командой 👇
 cancel_order_cmd: /cancel ${orderId}
 pending_buy: |
-  Разместил заявку в канале ${channel}.
+  📝 Разместил заявку в канале ${channel}.
 
   Подождите, пока кто-нибудь примет вашу заявку на покупку. Если заявка не будет принята в течение ${orderExpirationWindow} часов, она будет удалена из канала автоматически. 
 
@@ -99,8 +99,18 @@ payment_received: |
   🤖 Платеж получен!
 
   Теперь нам нужно, чтобы покупатель отправил мне счет для отправки сатоши. После того, как покупатель укажет свой счет, я свяжу вас с ним напрямую.
-someone_took_your_order: 🤖 Кто-то принял вашу покупку и уже прислал мне ваши сатоши. Нажмите кнопку, чтобы продолжить 👇
-you_took_someone_order: 🤖 Вы приняли эту продажу. Нажмите кнопку, чтобы продолжить 👇
+someone_took_your_order: |
+  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
+you_took_someone_order: |
+  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 6 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |
   🤖 Свяжитесь с пользователем @${sellerUsername}, чтобы договориться, как отправить деньги. Вы должны заплатить ему ${currency} ${fiatAmount} через ${paymentMethod}.
 

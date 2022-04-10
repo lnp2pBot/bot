@@ -217,7 +217,7 @@ const showHoldInvoiceMessage = async (ctx, request) => {
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nSeller) => {
   try {
     await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('payment_received'));
-    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order'));
+    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order'), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -233,7 +233,7 @@ const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nS
 
 const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order'));
+    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order'), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
