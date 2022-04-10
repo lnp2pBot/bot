@@ -47,10 +47,14 @@ const cancelOrders = async (bot) => {
         for (const order of activeOrders) {
             const buyerUser = await User.findOne({ _id: order.buyer_id });
             const sellerUser = await User.findOne({ _id: order.seller_id });
-            const i18nCtx = i18n.createContext(buyerUser.lang);
+            const i18nCtxBuyer = i18n.createContext(buyerUser.lang);
+            const i18nCtxSeller = i18n.createContext(sellerUser.lang);
             // Instead of cancel this order we should send this to the admins 
             // and they decide what to do
-            await messages.expiredOrderMessage(bot, order, buyerUser, sellerUser, i18nCtx);
+            await messages.expiredOrderMessage(bot, order, buyerUser, sellerUser, i18nCtxBuyer);
+            // We send messages about the expired order to each party
+            await messages.toBuyerExpiredOrderMessage(bot, buyerUser, i18nCtxBuyer);
+            await messages.toSellerExpiredOrderMessage(bot, sellerUser, i18nCtxSeller);
             order.admin_warned = true;
             await order.save();
         }

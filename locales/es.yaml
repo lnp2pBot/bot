@@ -31,7 +31,7 @@ start: |
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
 non_handle_error: 👤 Para usar este bot debes activar tu username de telegram, para activarlo abre el menú de hamburguesa arriba a la izquierda, selecciona ajustes -> editar perfil -> username
 invoice_payment_request: |
-  Alguien quiere comprarte ${order.amount} sats por ${currency.symbol_native} ${order.fiat_amount}.
+  Alguien quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
   Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
 pending_sell: |
@@ -97,9 +97,9 @@ begin_take_buy: |
   🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
 continue: Continuar
 cancel: Cancelar
-pay_invoice: Por favor paga esta factura para comenzar tu venta
+pay_invoice: Por favor paga esta factura de ${amount} sats equivalente a ${currency} ${fiatAmount} para comenzar la operación.
 payment_received: |
-  🤖 ¡Pago recibido!
+  🤑 ¡Pago recibido!
 
   Ahora necesito que el comprador me envíe una factura para enviarle los satoshis, luego de que lo haga los pondré en contacto.
 someone_took_your_order: |
@@ -305,6 +305,18 @@ expired_order: |
 
   @${sellerUser.username} tiene ${sellerUser.disputes} disputas
   @${buyerUser.username} tiene ${buyerUser.disputes} disputas
+expired_order_to_buyer: |
+  🚨🚨🚨 Esta orden está por expirar y debe ser completada o cancelada inmediátamente, si aún no has enviado el dinero fiat aún puedes cancelar con el comando /cancel.
+
+  Si enviaste el dinero fiat pero el vendedor se niega a liberar los sats puedes abrir una disputa con el comando /dispute. La factura retenida que pagó el vendedor tiene un tiempo de expiración y debes resolver esta orden antes de que expire o te arriesgas a perder tu dinero.
+
+  Si necesitas ayuda puedes escribir al grupo @lnp2pbotHelp
+expired_order_to_seller: |
+  🚨🚨🚨 Esta orden está por expirar y debe ser completada o cancelada inmediátamente, si aún no has recibido el dinero fiat aún puedes cancelar con el comando /cancel.
+
+  Si recibiste el dinero fiat por favor libera los fondos con el comando /release de lo contrario te arriesgas a que el comprador abra una disputa lo cual afectaría tu reputación.
+
+  Si necesitas ayuda puedes escribir al grupo @lnp2pbotHelp
 didnt_add_invoice: "🤨 No has enviado la factura para recibir sats por la orden Id: #${orderId}"
 buyer_havent_add_invoice: "😔 El comprador no me envió la factura para recibir sats por tu venta Id: #${orderId}, tus sats han sido devueltos"
 buyer_havent_add_invoice_to_admin_channel: "El comprador @${username} tomó la orden Id: #${orderId} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente."
