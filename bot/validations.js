@@ -407,7 +407,10 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
 const validateDisputeOrder = async (ctx, user, orderId) => {
   try {
     const where = {
-      status: 'ACTIVE',
+      $or: [
+        {status: 'ACTIVE'},
+        {status: 'FIAT_SENT'},
+      ],
       _id: orderId,
       $or: [
         {seller_id: user._id},
