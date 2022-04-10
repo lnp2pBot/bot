@@ -119,7 +119,7 @@ buyer_took_your_order: |
 
   Once you verify you have received the full amount you have to release the sats 
 waiting_seller_to_pay: "I have sent a payment request to the seller so he sends your sats for the  #${orderId}, as soon as payment is made i will put you both in touch"
-sell_success: Your sats have been sold, @${buyerUsername} has made his payment ⚡️🍊⚡️
+sell_success: Your sale of sats has been completed after confirming payment from @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} already released the satoshis, expect your invoice to be paid any time, remember your wallet needs to be online to receive through lighntning network. 
 rate_counterpart: "Please qualify your counterparty:"
 cant_process_order: This order cannot be processed, please check the Id is correct. 
