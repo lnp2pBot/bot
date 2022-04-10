@@ -35,7 +35,7 @@ invoice_payment_request: |
 
   Please pay this invoice to start up your selling process, this invoice will expire in ${expirationTime} minutes
 pending_sell: |
-  your offer has been published in the ${channel} channel
+  📝 Your offer has been published in the ${channel} channel
   
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
   
@@ -43,7 +43,7 @@ pending_sell: |
 cancel_order_cmd: |
   `/cancel ${orderId}`
 pending_buy: |
-  You offeer to buy sats is active in the ${channel} channel.
+  📝 You offer to buy sats is active in the ${channel} channel.
 
   You need to wait until another user picks up the order, Espera que alguien tome tu compra, this order will expire in ${orderExpirationWindow} hours.
 
@@ -102,8 +102,18 @@ payment_received: |
   🤖 Payment received!
 
   Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
-someone_took_your_order: 🤖 Someone took your order and already sent me the sats, press the button to 👇
-you_took_someone_order: 🤖 You took this selling order, press the button to Continue 👇
+someone_took_your_order: |
+  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
+you_took_someone_order: |
+  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |
   Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the moneyyou must send ${currency} ${fiatAmount} using ${paymentMethod}.
 
