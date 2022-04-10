@@ -701,12 +701,9 @@ const badStatusOnCancelOrderMessage = async (ctx) => {
   }
 };
 
-const successCancelOrderMessage = async (ctx, bot, user, order, sendRefundMessage) => {
+const successCancelOrderMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cancel_success', { orderId: order._id }));
-    if (order.seller_id == user._id && !!sendRefundMessage) {
-      await refundCooperativeCancelMessage(ctx, bot, user);
-    }
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_success', { orderId: order._id }));
   } catch (error) {
     console.log(error);
   }
@@ -755,9 +752,6 @@ const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
 const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('ok_cooperativecancel', { orderId: order._id }));
-    if (order.seller_id == user._id) {
-      await refundCooperativeCancelMessage(bot, user, i18n);
-    }
   } catch (error) {
     console.log(error);
   }
@@ -1320,4 +1314,5 @@ module.exports = {
   toBuyerPendingPaymentFailedMessage,
   toAdminChannelPendingPaymentFailedMessage,
   genericErrorMessage,
+  refundCooperativeCancelMessage,
 };

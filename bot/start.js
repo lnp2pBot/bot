@@ -232,7 +232,7 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCancelOrderMessage(ctx, bot, user, order);
+      await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
       // we sent a private message to the seller
       await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
@@ -267,14 +267,14 @@ const initialize = (botToken, options) => {
         order.canceled_by = user._id;
         await order.save();
         // we sent a private message to the user
-        await messages.successCancelOrderMessage(ctx, bot, user, order);
+        await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
         // We delete the messages related to that order from the channel
         await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
 
         return;
       }
 
-      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT')) {
+      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT' || order.status == 'DISPUTE')) {
         await messages.badStatusOnCancelOrderMessage(ctx);
         return;
       }
@@ -300,7 +300,7 @@ const initialize = (botToken, options) => {
 
       order[`${initiator}_cooperativecancel`] = true;
 
-      const i18nCtx = i18n.createContext(counterPartyUser.lang);
+      const i18nCtxCP = i18n.createContext(counterPartyUser.lang);
       // If the counter party already requested a cooperative cancel order
       if (order[`${counterParty}_cooperativecancel`]) {
         // If we already have a holdInvoice we cancel it and return the money
@@ -309,12 +309,19 @@ const initialize = (botToken, options) => {
         }
 
         order.status = 'CANCELED';
+        let seller = initiatorUser;
+        let i18nCtxSeller = ctx.i18n;
+        if (order.seller_id == counterPartyUser._id) {
+          seller = counterPartyUser;
+          i18nCtxSeller = i18nCtxCP;
+        }
         // We sent a private message to the users
-        await messages.successCancelOrderMessage(ctx, bot, initiatorUser, order, true);
-        await messages.okCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtx);
+        await messages.successCancelOrderMessage(bot, initiatorUser, order, ctx.i18n);
+        await messages.refundCooperativeCancelMessage(bot, seller, i18nCtxSeller);
+        await messages.okCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtxCP);
       } else {
         await messages.initCooperativeCancelMessage(ctx, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtx);
+        await messages.counterPartyWantsCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtxCP);
       }
       await order.save();
     } catch (error) {
