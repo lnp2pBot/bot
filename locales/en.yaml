@@ -27,15 +27,15 @@ start: |
 
   12. If your order has been taken and you want to cancel, you can proceed with a cooperative cancellation if bth parties agree. you both should use /cancel command.
 
-  ¡Make a quick and safe transaction!
+  Make a quick and safe transaction!
 init_bot_error: to use this Bot you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot you need to activate your Telegram Username, to activate it open the hamburger menu on the top left and select settings -> edit profile -> username
 invoice_payment_request: |
-  Somebody wants to buy you ${order.amount} sats for ${currency.symbol_native} ${order.fiat_amount}.
+  Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
 
   Please pay this invoice to start up your selling process, this invoice will expire in ${expirationTime} minutes
 pending_sell: |
-  your offer has been published in the ${channel} channel
+  📝 Your offer has been published in the ${channel} channel
   
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
   
@@ -43,7 +43,7 @@ pending_sell: |
 cancel_order_cmd: |
   `/cancel ${orderId}`
 pending_buy: |
-  You offeer to buy sats is active in the ${channel} channel.
+  📝 You offer to buy sats is active in the ${channel} channel.
 
   You need to wait until another user picks up the order, Espera que alguien tome tu compra, this order will expire in ${orderExpirationWindow} hours.
 
@@ -97,13 +97,23 @@ begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue
 cancel: Cancel
-pay_invoice: Please pay this invoice to start the buying process
+pay_invoice: Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation.
 payment_received: |
-  🤖 ¡Payment received!
+  🤑 Payment received!
 
   Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
-someone_took_your_order: 🤖 Someone took your order and already sent me the sats, press the button to 👇
-you_took_someone_order: 🤖 You took this selling order, press the button to Continue 👇
+someone_took_your_order: |
+  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
+you_took_someone_order: |
+  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+
+  If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |
   Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the moneyyou must send ${currency} ${fiatAmount} using ${paymentMethod}.
 
@@ -119,7 +129,7 @@ buyer_took_your_order: |
 
   Once you verify you have received the full amount you have to release the sats 
 waiting_seller_to_pay: "I have sent a payment request to the seller so he sends your sats for the  #${orderId}, as soon as payment is made i will put you both in touch"
-sell_success: Your sats have been sold, @${buyerUsername} has made his payment ⚡️🍊⚡️
+sell_success: Your sale of sats has been completed after confirming payment from @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} already released the satoshis, expect your invoice to be paid any time, remember your wallet needs to be online to receive through lighntning network. 
 rate_counterpart: "Please qualify your counterparty:"
 cant_process_order: This order cannot be processed, please check the Id is correct. 
@@ -169,10 +179,10 @@ dispute_started_channel: |
 
   @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
   @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
-you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will get in touch with you and your counterpart to sort it out.
-buyer_started_dispute_to_seller: "🥴 Buyer has filed a claim for your #${orderId} order, we will get in touch with you and your counterpart so as to sort out the dispute."
-you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will get in touch with you and your counterpart to sort it out.
-seller_started_dispute_to_buyer: "🥴 Seller has filed a claim for you #${orderId} order, we will get in touch with yuo and your conerterpart so as to sort out the dispute"
+you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will get in touch with you and your counterparty to sort it out.
+buyer_started_dispute_to_seller: "🥴 The buyer has initiated a dispute for your order with Id: #${orderId}, we will contact you and your counterparty to resolve it."
+you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will get in touch with you and your counterparty to sort it out.
+seller_started_dispute_to_buyer: "🥴 The Seller has initiated a dispute for your order with Id: #${orderId}, we will contact you and your counterparty to resolve it."
 must_be_valid_currency: "Fiat_code must be a valid code for example: USD, EUR, you can see a complete list executing /listcurrencies"
 must_be_number_or_range: "Fiat_ampunt must be a number or numeric range in the  <mínimum>-<máximum> format"
 invalid_lightning_address: Invalid lightning adress
@@ -193,14 +203,14 @@ help: |
   /cancel <_order id_> - Cancel an order that has not benn taken yet
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
-you_have_been_banned: ¡You have been banned!
+you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent fiat money once the seller confirms the money was received, the sats should be sent to you.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, please release funds. You will not be able to create another order until you release funds.
 release_order_cmd: |
   `/release ${orderId}`
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven´t released the sats ye. You will not be able to create new orders until you release such funds. 
-user_banned: ¡Banned user!
-user_not_found: ¡User was not found in the database!
+user_banned: Banned user!
+user_not_found: User was not found in the database!
 parse_invoice_error: Error parsing invoice
 invalid_id: Invalid Id 
 cant_take_own_order: You cannot take your own order. 
@@ -213,16 +223,16 @@ not_rate_for_currency: |
 
   🌐 https://yadio.io/api.html
 invoice_with_incorrect_amount: the amount stated in the invoice is incorrect
-invoice_updated: 📝 ¡Invoice has been correctly updated!
-invoice_updated_and_will_be_paid: ¡Invoices has been correctly updated and will be paid in the next few seconds!
+invoice_updated: 📝 Invoice has been correctly updated!
+invoice_updated_and_will_be_paid: Invoices has been correctly updated and will be paid in the next few seconds!
 invoice_already_being_paid: You have alreday send an invoice for this order and I am trying to pay it in this very rightmoment. 
 lightning_address_saved: Lightning adress has been saved
 cancel_error: This order cannot be cancelled at this moment
-cancel_success: "¡You have successfuly cancelled Id: #${orderId}!"
-cancelall_success: ¡You have cancelled all your published orders!
-order_cancelled_by_admin: "¡Admin has cancelled the order Id: #${orderId}!"
-order_completed: "¡You have completed the order Id: #${orderId}!"
-order_completed_by_admin: "¡Admin has completed the order Id: #${orderId}!"
+cancel_success: "You have cancelled the order Id: #${orderId}!"
+cancelall_success: You have cancelled all your published orders!
+order_cancelled_by_admin: "Admin has cancelled the order Id: #${orderId}!"
+order_completed: "You have completed the order Id: #${orderId}!"
+order_completed_by_admin: "Admin has completed the order Id: #${orderId}!"
 have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
 ok_cooperativecancel: "👍 Counterparty agreed and the order Id: #${orderId} has been cancelled"
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make 
@@ -277,7 +287,7 @@ wizard_community_one_or_two_channels: You must indicate either one or two channe
 wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
 wizard_community_must_enter_names: You must add at least one name, or two separated by a space
 wizard_community_enter_solvers_channel: Now please indicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
-wizard_community_success: ¡Congratulatins, you have created your community!
+wizard_community_success: Congratulatins, you have created your community!
 wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
 wizard_exit: You have exit wizard mode, you can now write commands
 wizard_add_fiat_amount: |
@@ -286,8 +296,8 @@ wizard_add_fiat_amount: |
   Remember it must be between ${minAmount} and ${maxAmount}:
 wizard_add_fiat_wrong_amount: Invalid amount, input must be between ${minAmount} and ${maxAmount}
 wizard_add_fiat_correct_amount: "Amount: ${currency} ${fiatAmount}."
-order_expired: ¡This order has expired!
-cant_add_invoice: ¡You can no  longer add an invoice to this order!
+order_expired: This order has expired!
+cant_add_invoice: You can no  longer add an invoice to this order!
 expired_order: |
   This order has expired without completion
 
@@ -295,9 +305,21 @@ expired_order: |
 
   @${sellerUser.username} has ${sellerUser.disputes} disputes
   @${buyerUser.username} has ${buyerUser.disputes} disputes
-didnt_add_invoice: "🤨 You have not send and invoice so as to receive sats for the Id Order: #${orderId}"
-buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the sats for your Id Order: #${orderId}, your sats where sent back to you"
-buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has ben republished."
+expired_order_to_buyer: |
+  🚨🚨🚨 This order is about to expire and must be completed or canceled immediately, if you haven't sent the fiat money yet you can still cancel with the /cancel command.
+
+  If you sent the fiat money but the seller refuses to release the sats, you can open a dispute with the /dispute command. The hold invoice that the seller paid has an expiration time and you must resolve this order before it expires or you risk losing your money.
+
+  If you need help you can write to the group @lnp2pbotHelp
+expired_order_to_seller: |
+  🚨🚨🚨 This order is about to expire and must be completed or canceled immediately, if you have not received the fiat money yet you can still cancel with the /cancel command.
+
+  If you received the fiat money please release the funds with the /release command otherwise you are under the risk of the buyer opening a dispute which will affect your reputation.
+
+  If you need help you can write to the group @lnp2pbotHelp
+didnt_add_invoice: "🤨 You have not send the invoice to receive sats for the Order Id: #${orderId}"
+buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the sats for your Id Order: #${orderId}, your sats were sent back to you"
+buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished."
 havent_paid_invoice: "🤨 You have not paid the invoice so as to sell sats for the Order Id: #${orderId}"
 seller_havent_paid_invoice: "😔 Seller has not paid the invoice for your purchase Id: #${orderId}, the operation was canceled."
 seller_havent_add_invoice_to_admin_channel: "Seller @${username} has not paid the invoice of order Id: #${orderId} time lapse ended and the order has been published again."
@@ -307,7 +329,7 @@ pending_payment_success_to_admin: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_success: |
-  ¡I have paid the lightning invoice for ${amount} satoshis, Id de orden: #${orderId}!
+  I have paid the lightning invoice for ${amount} satoshis, Id de orden: #${orderId}!
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |

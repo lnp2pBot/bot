@@ -250,7 +250,9 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       ctx.deleteMessage();
       ctx.scene.leave();
     }
+    let userAction = false;
     if (!order) {
+      userAction = true;
       const orderId = !!ctx && ctx.update.callback_query.message.text;
       if (!orderId) return;
       order = await Order.findOne({ _id: orderId });
@@ -302,8 +304,12 @@ const cancelAddInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order, i18nCtx);
       }
       await order.save();
-      await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+      if (!userAction) {
+        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+      } else {
+        await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
+      }
     }
   } catch (error) {
     console.log(error);
@@ -356,7 +362,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(ctx, request);
+    await messages.showHoldInvoiceMessage(ctx, request, amount, order.fiat_code, order.fiat_amount);
   } catch (error) {
     console.log(error);
   }
@@ -365,7 +371,9 @@ const showHoldInvoice = async (ctx, bot, order) => {
 const cancelShowHoldInvoice = async (ctx, bot, order) => {
   try {
     if (!!ctx) ctx.deleteMessage();
+    let userAction = false;
     if (!order) {
+      userAction = true;
       const orderId = !!ctx && ctx.update.callback_query.message.text;
       if (!orderId) return;
       order = await Order.findOne({ _id: orderId });
@@ -418,8 +426,12 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
         await messages.publishSellOrderMessage(bot, order, i18nCtx);
       }
       await order.save();
-      await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+      if (!userAction) {
+        await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+      } else {
+        await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
+      }
     }
   } catch (error) {
     console.log(error);
