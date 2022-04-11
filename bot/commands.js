@@ -281,7 +281,8 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       const clonedOrder = order;
       await order.remove();
       await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, i18nCtx);
-      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtx);
+      const i18nCtxSeller = i18n.createContext(sellerUser.lang);
+      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtxSeller);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
       order.taken_at = null;
