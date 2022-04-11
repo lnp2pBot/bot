@@ -334,3 +334,9 @@ generic_error: Ha ocurrido un error
 sats: sats
 no_capital_letters: 🤖 Estás intentando ejecutar un comando con la primera letra en mayúscula. Por favor, escribe todo el comando en minúscula.
 unknown_command: 😕 No entiendo lo que me dices. Por favor, consulta el comando /help para ver los comandos disponibles.
+invoice_invalid_error: Error parseando la factura, recuerda que solo debes indicarme la factura lightning. Para volver al modo donde puedes ingresar comandos solo escribe la palabra => exit <=
+invoice_expity_too_short_error: El tiempo de expiración de la factura es muy corto
+invoice_has_expired_error: La factura ha expirado
+invoice_has_wrong_destination_error: La factura necesita una dirección destino
+invoice_needs_hash_error: La factura necesita un hash
+invoice_must_be_larger_error: La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis

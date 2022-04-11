@@ -334,3 +334,9 @@ generic_error: Ha ocurrido un error
 sats: sats
 no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
 unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
+invoice_invalid_error: Lightning Invoice unrecognized. Type => exit <= to try again
+invoice_expity_too_short_error: Invoice expiry is too short
+invoice_has_expired_error: Invoice has expired
+invoice_has_wrong_destination_error: Invoice has wrong destination
+invoice_needs_hash_error: Invoice omits hash
+invoice_must_be_larger_error: Invoice must be for at least ${process.env.MIN_PAYMENT_AMT} sats
