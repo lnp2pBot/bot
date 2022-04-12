@@ -52,7 +52,7 @@ must_be_int: ${fieldName} must be a number
 sats_amount: sats amount
 fiat_amount: fiat amount
 sell_correct_format: |
-  `/sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]`
+  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
 
   In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
 
@@ -66,7 +66,7 @@ sell_correct_format: |
 
   `/sell 0 100\-500 USD "payment method" 3`
 buy_correct_format: |
-  `/buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]`
+  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
 
   In order to create and order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 
