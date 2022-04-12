@@ -89,3 +89,7 @@ $ npm test
 ```
 # FAQ
 You can read the [frequently asked questions](docs/FAQ.es.md)
+
+# Contribute
+
+See [contributing guide](CONTRIBUTING.md).
