@@ -196,6 +196,11 @@ const extractId = (text) => {
   return matches[1];
 };
 
+// Clean strings that are going to be rendered with markdown
+const sanitizeMD = (text) => {
+  return text.replace(/(?=[(){}\[\]\-_#.`=+])/g, '\\');
+}
+
 module.exports = {
   isIso4217,
   plural,
@@ -208,4 +213,5 @@ module.exports = {
   getEmojiRate,
   decimalRound,
   extractId,
+  sanitizeMD,
 };

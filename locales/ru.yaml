@@ -152,7 +152,7 @@ order_detail: |
 
   Сумма \\(фиат\\) ${order.fiat_code}: ${order.fiat_amount}
 
-  Метод оплаты: ${order.payment_method}
+  Метод оплаты: ${paymentMethod}
 
   Премия/дисконт: ${order.price_margin}
 

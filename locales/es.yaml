@@ -156,7 +156,7 @@ order_detail: |
 
   Monto \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
 
-  Método de pago: ${order.payment_method}
+  Método de pago: ${paymentMethod}
 
   Prima/descuento: ${order.price_margin}
 

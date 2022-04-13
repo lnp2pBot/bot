@@ -121,6 +121,8 @@ const validateSellOrder = async (ctx) => {
       return false
     }
 
+    paymentMethod = paymentMethod.replace(/[&\/\\#,+~%.'":*?<>{}]/g, '');
+
     return {
       amount,
       fiatAmount,
@@ -196,6 +198,8 @@ const validateBuyOrder = async (ctx) => {
       await messages.mustBeValidCurrency(ctx);
       return false;
     }
+
+    paymentMethod = paymentMethod.replace(/[&\/\\#,+~%.'":*?<>{}]/g, '');
 
     return {
       amount,

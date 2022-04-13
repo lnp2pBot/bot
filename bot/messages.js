@@ -1,5 +1,5 @@
 const { TelegramError } = require('telegraf');
-const { getCurrency } = require('../util');
+const { getCurrency, sanitizeMD } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
@@ -383,14 +383,15 @@ const publishSellOrderMessage = async (bot, order, i18n) => {
 
 const getDetailedOrder = (i18n, order, buyer, seller) => {
   try {
-    const buyerUsername = buyer ? buyer.username.replace(/_/g, '\\_') : '';
-    const sellerUsername = seller ? seller.username.replace(/_/g, '\\_') : '';
+    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
+    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
     const buyerId = buyer ? buyer._id : '';
+    const paymentMethod = sanitizeMD(order.payment_method);
     let createdAt = order.created_at.toISOString();
     let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
-    createdAt = createdAt.replace(/(?=[.-])/g, '\\');
-    takenAt = takenAt.replace(/(?=[.-])/g, '\\');
-    const status = order.status.replace(/_/g, '\\_');
+    createdAt = sanitizeMD(createdAt);
+    takenAt = sanitizeMD(takenAt);
+    const status = sanitizeMD(order.status);
     const fee = !!order.fee ? parseInt(order.fee) : '';
     const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
     let message = i18n.t('order_detail', {
@@ -402,6 +403,7 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
       takenAt,
       status,
       fee,
+      paymentMethod,
       },
     );
 
