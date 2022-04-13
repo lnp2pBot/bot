@@ -156,7 +156,7 @@ order_detail: |
 
   Fiat Amount \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
 
-  Order payment method: ${order.payment_method}
+  Order payment method: ${paymentMethod}
 
   Prime/discount: ${order.price_margin}
 
