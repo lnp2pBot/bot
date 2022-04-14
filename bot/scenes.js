@@ -44,9 +44,8 @@ const addInvoiceWizard = new Scenes.WizardScene(
         }
         return ctx.scene.leave();
       }
-      const res = await isValidInvoice(lnInvoice);
+      const res = await isValidInvoice(ctx, lnInvoice);
       if (!res.success) {
-        await ctx.reply(res.error);
         return;
       };
 
