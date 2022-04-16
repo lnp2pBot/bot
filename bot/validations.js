@@ -255,54 +255,53 @@ const validateInvoice = async (ctx, lnInvoice) => {
   }
 };
 
-const isValidInvoice = async (lnInvoice) => {
+const isValidInvoice = async (ctx, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
     if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
+      await messages.invoiceMustBeLargerMessage(ctx);
       return {
         success: false,
-        error: `La factura debe ser mayor o igual a ${process.env.MIN_PAYMENT_AMT} satoshis`,
       };
     }
 
     if (new Date(invoice.expires_at) < latestDate) {
+      await messages.invoiceExpityTooShortMessage(ctx);
       return {
         success: false,
-        error: "El tiempo de expiración de la factura es muy corto",
       };
     }
 
     if (invoice.is_expired !== false) {
+      await messages.invoiceHasExpiredMessage(ctx);
       return {
         success: false,
-        error: "La factura ha expirado",
       };
     }
 
     if (!invoice.destination) {
+      await messages.invoiceHasWrongDestinationMessage(ctx);
       return {
         success: false,
-        error: "La factura necesita una dirección destino",
       };
     }
 
     if (!invoice.id) {
+      await messages.requiredHashInvoiceMessage(ctx);
       return {
         success: false,
-        error: "La factura necesita un hash",
       };
     }
 
     return {
       success: true,
-      error: '',
       invoice,
     };
   } catch (error) {
+    await messages.invoiceInvalidMessage(ctx);
     return {
       success: false,
-      error: "Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc,\n\nPara volver al modo donde puedes ingresar comandos solo escribe la palabra: => exit <=",
     };
   }
 };

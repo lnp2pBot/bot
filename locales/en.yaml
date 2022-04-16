@@ -105,13 +105,13 @@ payment_received: |
 someone_took_your_order: |
   🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
 
   If you agree with the above, press the button to continue 👇
 you_took_someone_order: |
   🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again \.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
 
   If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |
@@ -337,7 +337,7 @@ pending_payment_failed: |
 
   If you wish to send me a new invoice to receive the satoshis, please use the following command. 👇
 pending_payment_failed_to_admin: |
-  Payment of the invoice for the Buy order #${orderId} del usuario @${username} has failed.
+  Payment of the invoice for the Buy order #${orderId} of user @${username} has failed.
 
   Payment attempts: ${attempts}
 selling: Selling
@@ -356,3 +356,11 @@ generic_error: Ha ocurrido un error
 sats: sats
 no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
 unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
+invoice_invalid_error: |
+  Error parsing the invoice. Please copy-paste a lightning invoice starting with 'lnbc'.
+  
+  If you want to abort and return to the command entering mode just type => exit <=
+invoice_expity_too_short_error: Invoice expiry is too short
+invoice_has_expired_error: Invoice has expired
+invoice_has_wrong_destination_error: Invoice has wrong destination
+invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
