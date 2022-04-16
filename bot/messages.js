@@ -139,9 +139,49 @@ const requiredAddressInvoiceMessage = async (ctx) => {
   }
 };
 
+const invoiceMustBeLargerMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('invoice_must_be_larger_error', { minInvoice: process.env.MIN_PAYMENT_AMT }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoiceExpityTooShortMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('invoice_expity_too_short_error'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoiceHasExpiredMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('invoice_has_expired_error'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoiceHasWrongDestinationMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('invoice_has_wrong_destination_error'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const requiredHashInvoiceMessage = async (ctx) => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_require_hash'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const invoiceInvalidMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('invoice_invalid_error'));
   } catch (error) {
     console.log(error);
   }
@@ -1235,6 +1275,11 @@ module.exports = {
   minimunExpirationTimeInvoiceMessage,
   expiredInvoiceMessage,
   requiredAddressInvoiceMessage,
+  invoiceMustBeLargerMessage,
+  invoiceExpityTooShortMessage,
+  invoiceHasExpiredMessage,
+  invoiceHasWrongDestinationMessage,
+  invoiceInvalidMessage,
   requiredHashInvoiceMessage,
   publishBuyOrderMessage,
   invalidOrderMessage,
