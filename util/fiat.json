@@ -730,6 +730,17 @@
     "emoji": "",
 		"name_plural": "Macedonian denari"
 	},
+	"MLC": {
+		"symbol": "MLC",
+		"name": "Mercado de libre conversión",
+		"symbol_native": "$",
+		"decimal_digits": 2,
+		"rounding": 0,
+		"code": "MLC",
+		"emoji": "🇨🇺",
+		"name_plural": "MLC",
+		"price": false
+	},
 	"MMK": {
 		"symbol": "MMK",
 		"name": "Myanma Kyat",
