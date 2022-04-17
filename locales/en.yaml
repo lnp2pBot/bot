@@ -360,7 +360,7 @@ invoice_invalid_error: |
   Error parsing the invoice. Please copy-paste a lightning invoice starting with 'lnbc'.
   
   If you want to abort and return to the command entering mode just type => exit <=
-invoice_expity_too_short_error: Invoice expiry is too short
+invoice_expiry_too_short_error: Invoice expiry is too short
 invoice_has_expired_error: Invoice has expired
 invoice_has_wrong_destination_error: Invoice has wrong destination
 invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats

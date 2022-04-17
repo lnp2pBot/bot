@@ -366,7 +366,7 @@ invoice_invalid_error: |
   Ошибка при чтении инвойса Lightning. Ожидаю получить текстовую строку с начальными буквами 'lnbc'.
 
   Если Вы хотите отменить и вернуться в режим ввода команд, напечатайте => exit <=
-invoice_expity_too_short_error: Время истечения счета слишком короткое
+invoice_expiry_too_short_error: Время истечения счета слишком короткое
 invoice_has_expired_error: Счет истек
 invoice_has_wrong_destination_error: Получатель счета неверен
 invoice_must_be_larger_error: Сумма счета должна быть не менее ${minInvoice} сатоши

@@ -267,7 +267,7 @@ const isValidInvoice = async (ctx, lnInvoice) => {
     }
 
     if (new Date(invoice.expires_at) < latestDate) {
-      await messages.invoiceExpityTooShortMessage(ctx);
+      await messages.invoiceExpiryTooShortMessage(ctx);
       return {
         success: false,
       };

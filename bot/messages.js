@@ -147,9 +147,9 @@ const invoiceMustBeLargerMessage = async (ctx) => {
   }
 };
 
-const invoiceExpityTooShortMessage = async (ctx) => {
+const invoiceExpiryTooShortMessage = async (ctx) => {
   try {
-    await ctx.reply(ctx.i18n.t('invoice_expity_too_short_error'));
+    await ctx.reply(ctx.i18n.t('invoice_expiry_too_short_error'));
   } catch (error) {
     console.log(error);
   }
@@ -1276,7 +1276,7 @@ module.exports = {
   expiredInvoiceMessage,
   requiredAddressInvoiceMessage,
   invoiceMustBeLargerMessage,
-  invoiceExpityTooShortMessage,
+  invoiceExpiryTooShortMessage,
   invoiceHasExpiredMessage,
   invoiceHasWrongDestinationMessage,
   invoiceInvalidMessage,

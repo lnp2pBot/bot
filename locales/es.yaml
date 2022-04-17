@@ -360,7 +360,7 @@ invoice_invalid_error: |
   Error parseando la factura, recuerda que solo debes indicarme la factura lightning, debe comenzar por lnbc,
   
   Para volver al modo donde puedes ingresar comandos solo escribe la palabra: => exit <=
-invoice_expity_too_short_error: El tiempo de expiración de la factura es muy corto
+invoice_expiry_too_short_error: El tiempo de expiración de la factura es muy corto
 invoice_has_expired_error: La factura ha expirado
 invoice_has_wrong_destination_error: La factura necesita una dirección destino
 invoice_must_be_larger_error: La factura debe ser mayor o igual a ${minInvoice} satoshis
