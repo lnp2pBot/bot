@@ -739,7 +739,7 @@
 		"code": "MLC",
 		"emoji": "🇨🇺",
 		"name_plural": "MLC",
-		"price": false
+		"price": true
 	},
 	"MMK": {
 		"symbol": "MMK",
