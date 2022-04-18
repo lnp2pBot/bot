@@ -54,7 +54,7 @@ fiat_amount: fiat amount
 sell_correct_format: |
   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_prime/discount_\]
 
-  In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must to omit both \<\> and \[\]\.
+  In order to create a sell order of 1000 satoshis for 2 Us dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must avoid \<\> and \[\]\.
 
   `/sell 1000 2 USD "transfer or ATM deposit"`
 
@@ -105,13 +105,13 @@ payment_received: |
 someone_took_your_order: |
   🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${orderExpiration} minutes, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
 
   If you agree with the above, press the button to continue 👇
 you_took_someone_order: |
   🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than 3 hours, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${orderExpiration} minutes, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
 
   If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |

@@ -105,13 +105,13 @@ payment_received: |
 someone_took_your_order: |
   🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a 3 horas, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
+  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a {orderExpiration} minutos, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |
   🤖 Has tomado esta venta, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a 3 horas, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
+  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a {orderExpiration} minutos, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 get_in_touch_with_seller: |
