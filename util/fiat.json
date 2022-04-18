@@ -732,7 +732,7 @@
 	},
 	"MLC": {
 		"symbol": "MLC",
-		"name": "Mercado de libre conversión",
+		"name": "Moneda Libremente Convertible",
 		"symbol_native": "$",
 		"decimal_digits": 2,
 		"rounding": 0,
