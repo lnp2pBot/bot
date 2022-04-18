@@ -103,19 +103,19 @@ payment_received: |
 
   Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
 someone_took_your_order: |
-  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${orderExpiration} minutes, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\\.*
 
   If you agree with the above, press the button to continue 👇
 you_took_someone_order: |
-  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\.
+  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\\.
 
-  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${orderExpiration} minutes, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\.*
+  *If for any reason your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk and I will not be able to force the seller to send the sats again\\.*
 
   If you agree with the above, press the button to continue 👇
 get_in_touch_with_seller: |
-  Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the moneyyou must send ${currency} ${fiatAmount} using ${paymentMethod}.
+  Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the money you must send ${currency} ${fiatAmount} using ${paymentMethod}.
 
   Once you send the money, please let me know with the command 👇
 fiatsent_order_cmd: |
@@ -364,3 +364,5 @@ invoice_expiry_too_short_error: Invoice expiry is too short
 invoice_has_expired_error: Invoice has expired
 invoice_has_wrong_destination_error: Invoice has wrong destination
 invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
+hours: hours
+minutes: minutes

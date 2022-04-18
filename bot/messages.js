@@ -1,5 +1,5 @@
 const { TelegramError } = require('telegraf');
-const { getCurrency, sanitizeMD } = require('../util');
+const { getCurrency, sanitizeMD, secondsToTime } = require('../util');
 
 const startMessage = async (ctx) => {
   try {
@@ -264,8 +264,11 @@ const showHoldInvoiceMessage = async (ctx, request, amount, fiatCode, fiatAmount
 const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nSeller) => {
   try {
     await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('payment_received'));
-    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order', {orderExpiration}), { parse_mode: "MarkdownV2" });
+    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
+    const time = secondsToTime(orderExpiration);
+    let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
+    expirationTime += (time.minutes > 0) ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
+    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order', {expirationTime}), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -281,8 +284,11 @@ const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nS
 
 const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   try {
-    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order', {orderExpiration}), { parse_mode: "MarkdownV2" });
+    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
+    const time = secondsToTime(orderExpiration);
+    let expirationTime = time.hours + ' ' + ctx.i18n.t('hours');
+    expirationTime += (time.minutes > 0) ? ' ' + time.minutes + ' ' + ctx.i18n.t('minutes') : '';
+    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order', {expirationTime}), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -979,7 +985,9 @@ const wizardAddInvoiceExitMessage = async (ctx, order) => {
     await ctx.reply(ctx.i18n.t('wizard_add_invoice_exit', {
       amount: order.amount,
       orderId: order._id,
-    }));
+    }),
+    { parse_mode: "MarkdownV2" },
+    );
   } catch (error) {
     console.log(error);
   }

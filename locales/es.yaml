@@ -103,15 +103,15 @@ payment_received: |
 
   Ahora necesito que el comprador me envíe una factura para enviarle los satoshis, luego de que lo haga los pondré en contacto.
 someone_took_your_order: |
-  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\.
+  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\\.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${orderExpiration} minutos, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
+  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\\.*
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |
-  🤖 Has tomado esta venta, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\.
+  🤖 Has tomado esta venta, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\\.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${orderExpiration} minutos, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\.*
+  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\\.*
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 get_in_touch_with_seller: |
@@ -364,3 +364,5 @@ invoice_expiry_too_short_error: El tiempo de expiración de la factura es muy co
 invoice_has_expired_error: La factura ha expirado
 invoice_has_wrong_destination_error: La factura necesita una dirección destino
 invoice_must_be_larger_error: La factura debe ser mayor o igual a ${minInvoice} satoshis
+hours: horas
+minutes: minutos

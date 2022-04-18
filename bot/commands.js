@@ -428,8 +428,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       if (!userAction) {
-        await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
         await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
       } else {
         await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
       }

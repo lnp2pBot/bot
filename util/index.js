@@ -201,6 +201,18 @@ const sanitizeMD = (text) => {
   return text.replace(/(?=[(){}\[\]\-_#.`=+])/g, '\\');
 }
 
+const secondsToTime = (secs) => {
+    const hours = Math.floor(secs / (60 * 60));
+
+    const divisor = secs % (60 * 60);
+    const minutes = Math.floor(divisor / 60);
+
+    return {
+      hours,
+      minutes,
+  };
+}
+
 module.exports = {
   isIso4217,
   plural,
@@ -214,4 +226,5 @@ module.exports = {
   decimalRound,
   extractId,
   sanitizeMD,
+  secondsToTime,
 };
