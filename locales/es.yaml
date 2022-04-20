@@ -158,7 +158,7 @@ order_detail: |
 
   Método de pago: ${paymentMethod}
 
-  Prima/descuento: ${order.price_margin}
+  Prima/descuento: ${priceMargin}
 
   Creada: ${createdAt}
 
@@ -310,13 +310,13 @@ expired_order_to_buyer: |
 
   Si enviaste el dinero fiat pero el vendedor se niega a liberar los sats puedes abrir una disputa con el comando /dispute. La factura retenida que pagó el vendedor tiene un tiempo de expiración y debes resolver esta orden antes de que expire o te arriesgas a perder tu dinero.
 
-  Si necesitas ayuda puedes escribir al grupo @lnp2pbotHelp
+  Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 expired_order_to_seller: |
   🚨🚨🚨 Esta orden está por expirar y debe ser completada o cancelada inmediátamente, si aún no has recibido el dinero fiat aún puedes cancelar con el comando /cancel.
 
   Si recibiste el dinero fiat por favor libera los fondos con el comando /release de lo contrario te arriesgas a que el comprador abra una disputa lo cual afectaría tu reputación.
 
-  Si necesitas ayuda puedes escribir al grupo @lnp2pbotHelp
+  Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 didnt_add_invoice: "🤨 No has enviado la factura para recibir sats por la orden Id: #${orderId}"
 buyer_havent_add_invoice: "😔 El comprador no me envió la factura para recibir sats por tu venta Id: #${orderId}, tus sats han sido devueltos"
 buyer_havent_add_invoice_to_admin_channel: "El comprador @${username} tomó la orden Id: #${orderId} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente."

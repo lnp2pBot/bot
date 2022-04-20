@@ -158,7 +158,7 @@ order_detail: |
 
   Order payment method: ${paymentMethod}
 
-  Prime/discount: ${order.price_margin}
+  Premium/discount: ${priceMargin}
 
   Created: ${createdAt}
 
@@ -215,7 +215,7 @@ parse_invoice_error: Error parsing invoice
 invalid_id: Invalid Id 
 cant_take_own_order: You cannot take your own order. 
 send_me_a_ln_invoice: Please send me a lightning network for ${amount} sats
-you_have_no_orders: You have no active order so far
+you_have_no_orders: You don't have active orders
 not_rate_for_currency: |
  ${fiatRateProvider} Theres is no exchange rate for this FIAT, 
   if you want to use this FIAT you must indicate how many satoshis you want
@@ -310,13 +310,13 @@ expired_order_to_buyer: |
 
   If you sent the fiat money but the seller refuses to release the sats, you can open a dispute with the /dispute command. The hold invoice that the seller paid has an expiration time and you must resolve this order before it expires or you risk losing your money.
 
-  If you need help you can write to the group @lnp2pbotHelp
+  If you need help you can write to the group ${helpGroup}
 expired_order_to_seller: |
   🚨🚨🚨 This order is about to expire and must be completed or canceled immediately, if you have not received the fiat money yet you can still cancel with the /cancel command.
 
   If you received the fiat money please release the funds with the /release command otherwise you are under the risk of the buyer opening a dispute which will affect your reputation.
 
-  If you need help you can write to the group @lnp2pbotHelp
+  If you need help you can write to the group ${helpGroup}
 didnt_add_invoice: "🤨 You have not send the invoice to receive sats for the Order Id: #${orderId}"
 buyer_havent_add_invoice: "😔 Buyer has not send me the invoice to receive the sats for your Id Order: #${orderId}, your sats were sent back to you"
 buyer_havent_add_invoice_to_admin_channel: "Buyer @${username} took the orderId: #${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished."

@@ -435,6 +435,7 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
     const sellerUsername = seller ? sanitizeMD(seller.username) : '';
     const buyerId = buyer ? buyer._id : '';
     const paymentMethod = sanitizeMD(order.payment_method);
+    const priceMargin = sanitizeMD(order.price_margin.toString());
     let createdAt = order.created_at.toISOString();
     let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
     createdAt = sanitizeMD(createdAt);
@@ -452,6 +453,7 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
       status,
       fee,
       paymentMethod,
+      priceMargin
       },
     );
 
@@ -1148,7 +1150,7 @@ const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
 
 const toBuyerExpiredOrderMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_buyer'));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_buyer', {helpGroup: process.env.HELP_GROUP}));
   } catch (error) {
     console.log(error);
   }
@@ -1156,7 +1158,7 @@ const toBuyerExpiredOrderMessage = async (bot, user, i18n) => {
 
 const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_seller'));
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_seller', {helpGroup: process.env.HELP_GROUP}));
   } catch (error) {
     console.log(error);
   }
