@@ -153,7 +153,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -173,7 +173,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -214,7 +214,7 @@ const initialize = (botToken, options) => {
       const user = await validateAdmin(ctx);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -249,7 +249,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -359,7 +359,7 @@ const initialize = (botToken, options) => {
       const user = await validateAdmin(ctx);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -392,7 +392,7 @@ const initialize = (botToken, options) => {
       const user = await validateAdmin(ctx);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -427,7 +427,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
-      const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -454,7 +454,7 @@ const initialize = (botToken, options) => {
 
       if (!adminUser) return;
 
-      const [ username ] = await validateParams(ctx, bot, adminUser, 2, '\\<_username_\\>');
+      const [ username ] = await validateParams(ctx, 2, '\\<_username_\\>');
 
       if (!username) return;
       
@@ -479,7 +479,7 @@ const initialize = (botToken, options) => {
       if (!user)
         return;
 
-      let [ lightningAddress ] = await validateParams(ctx, bot, user, 2, '\\<_lightningAddress / off_\\>');
+      let [ lightningAddress ] = await validateParams(ctx, 2, '\\<_lightningAddress / off_\\>');
       if (!lightningAddress) {
         return;
       }
@@ -511,7 +511,7 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
-      const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '\\<_order id_\\> \\<_lightning invoice_\\>');
+      const [orderId, lnInvoice] = await validateParams(ctx, 3, '\\<_order id_\\> \\<_lightning invoice_\\>');
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -626,7 +626,7 @@ const initialize = (botToken, options) => {
     try {
       const adminUser = await validateAdmin(ctx);
       if (!adminUser) return;
-      const [ orderId ] = await validateParams(ctx, bot, adminUser, 2, '\\<_order id_\\>');
+      const [ orderId ] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({
@@ -684,7 +684,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      let [ show ] = await validateParams(ctx, bot, user, 2, '_yes/no_');
+      let [ show ] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show == 'yes' ? true : false;
       user.show_username = show;
@@ -701,7 +701,7 @@ const initialize = (botToken, options) => {
 
       if (!user) return;
 
-      let [ show ] = await validateParams(ctx, bot, user, 2, '_yes/no_');
+      let [ show ] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show == 'yes' ? true : false;
       user.show_volume_traded = show;

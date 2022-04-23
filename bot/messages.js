@@ -498,9 +498,9 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator, i18n) =
   }
 };
 
-const customMessage = async (bot, user, message) => {
+const customMessage = async (ctx, message) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, message, { parse_mode: "MarkdownV2"});
+    await ctx.reply(message, { parse_mode: "MarkdownV2"});
   } catch (error) {
     console.log(error);
   }
