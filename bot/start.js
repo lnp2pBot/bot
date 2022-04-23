@@ -156,7 +156,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await validateReleaseOrder(ctx, user, orderId);
 
       if (!order) return;
@@ -176,7 +176,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await validateDisputeOrder(ctx, user, orderId);
 
       if (!order) return;
@@ -217,7 +217,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
 
       if (!order) return;
@@ -252,8 +252,8 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
-      const order = await ordersActions.getOrder(ctx, bot, user, orderId);
+      if (!(await validateObjectId(ctx, orderId))) return;
+      const order = await ordersActions.getOrder(ctx, user, orderId);
 
       if (!order) return;
 
@@ -362,7 +362,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
 
       const order = await Order.findOne({_id: orderId});
       if (!order) return;
@@ -395,7 +395,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({_id: orderId});
 
       if (!order) return;
@@ -430,7 +430,7 @@ const initialize = (botToken, options) => {
       const [orderId] = await validateParams(ctx, bot, user, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await validateFiatSentOrder(ctx, bot, user, orderId);
       if (!order) return;
 
@@ -514,9 +514,9 @@ const initialize = (botToken, options) => {
       const [orderId, lnInvoice] = await validateParams(ctx, bot, user, 3, '\\<_order id_\\> \\<_lightning invoice_\\>');
 
       if (!orderId) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const invoice = await validateInvoice(ctx, lnInvoice);
       if (!invoice) return;
-      if (!(await validateObjectId(ctx, bot, user, orderId))) return;
       const order = await Order.findOne({
         _id: orderId,
         buyer_id: user._id,
@@ -628,7 +628,7 @@ const initialize = (botToken, options) => {
       if (!adminUser) return;
       const [ orderId ] = await validateParams(ctx, bot, adminUser, 2, '\\<_order id_\\>');
       if (!orderId) return;
-      if (!(await validateObjectId(ctx, bot, adminUser, orderId))) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({
         _id: orderId,
       });
@@ -724,7 +724,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('listcommunities', async (ctx) => {
+  bot.command('mycommunities', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
 
