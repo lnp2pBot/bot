@@ -201,6 +201,7 @@ help: |
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
   /cancel <_order id_> - Cancel an order that has not benn taken yet
+  /cancelall - Cancels all posted and untaken orders
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
