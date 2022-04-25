@@ -1185,6 +1185,17 @@
 		"name_plural": "USD en Bs",
 		"price": true
 	},
+	"USDUY": {
+		"symbol": "$",
+		"name": "USD en Uruguay",
+		"symbol_native": "$",
+		"decimal_digits": 2,
+		"rounding": 0,
+		"code": "USDUY",
+		"emoji": "🇺🇸🇺🇾",
+		"name_plural": "USD en Uruguay",
+		"price": true
+	},
 	"UYU": {
 		"symbol": "$U",
 		"name": "Peso uruguayo",
