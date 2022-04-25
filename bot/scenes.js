@@ -256,7 +256,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
   'ADD_FIAT_AMOUNT_WIZARD_SCENE_ID',
   async (ctx) => {
     try {
-      const { bot, order, caller } = ctx.wizard.state;
+      const { order } = ctx.wizard.state;
       const currency = getCurrency(order.fiat_code);
       const action = order.type === 'buy' ? 'recibir' : 'enviar';
       const currencyName = (!!currency && !!currency.name_plural) ? currency.name_plural : order.fiat_code;
@@ -301,10 +301,103 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       console.log(error);
     }
   }
-)
+);
+
+const updateNameCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityEnterNameMessage(ctx);
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const name = ctx.message.text;
+      if (name == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+      const nameLength = 20;
+      if (name.length > nameLength) {
+        ctx.deleteMessage();
+        await messages.wizardCommunityTooLongNameMessage(ctx, nameLength);
+        return;
+      }
+      const { id, user } = ctx.wizard.state;
+      const community = await Community.findOne({ id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      community.name = name;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const updateGroupCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      await messages.wizardCommunityEnterGroupMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const name = ctx.message.text;
+      if (name == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+      const nameLength = 20;
+      if (name.length > nameLength) {
+        ctx.deleteMessage();
+        await messages.wizardCommunityTooLongNameMessage(ctx, nameLength);
+        return;
+      }
+      const { id } = ctx.wizard.state;
+      await Community.findOneAndUpdate({ _id: id }, { name });
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
 
 module.exports = {
   addInvoiceWizard,
   communityWizard,
   addFiatAmountWizard,
+  updateNameCommunityWizard,
+  updateGroupCommunityWizard,
 };

@@ -951,7 +951,7 @@ const listCommunitiesMessage = async (ctx, communities) => {
   try {
     let message = '';
     communities.forEach(community => {
-      message += `ID: ${community.id}\n`;
+      message += `ID: #${community.id}\n`;
       message += ctx.i18n.t('name') +`: ${community.name}\n`;
       message += ctx.i18n.t('group') + `: ${community.group}\n`;
       community.order_channels.forEach(channel => {
@@ -1277,6 +1277,57 @@ const toAdminChannelPendingPaymentFailedMessage = async (bot, user, order, pendi
   }
 };
 
+const communitiesUpdatedOkMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('community_updated'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateCommunityMessage = async (ctx, id) => {
+  try {
+    await ctx.reply("Selecciona lo que quieres modificar:", {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}`},
+            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
+          ],
+        ],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const showUserCommunitiesMessage = async (ctx, communities) => {
+  try {
+    const buttons = communities.map(c => {
+      return {
+        text: c.name,
+        callback_data: `updateCommunity_${c._id}`,
+      }
+    })
+    await ctx.reply("Selecciona la comunidad que quieres editar:", {
+      reply_markup: {
+        inline_keyboard: [ buttons ],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const operationSuccessfulMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1399,4 +1450,8 @@ module.exports = {
   refundCooperativeCancelMessage,
   toBuyerExpiredOrderMessage,
   toSellerExpiredOrderMessage,
+  communitiesUpdatedOkMessage,
+  updateCommunityMessage,
+  showUserCommunitiesMessage,
+  operationSuccessfulMessage,
 };
