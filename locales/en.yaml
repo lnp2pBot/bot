@@ -83,8 +83,7 @@ min_invoice_amount: invoice needs to be equal or higher that ${minPaymentAmount}
 min_expiration_time: Time expiration for the invoice shold be of at least ${expirationTime} minutes
 invoice_expired: Invoice has expired
 invoice_expired_long: |
-  Invoice has expired
-  You can use the following command to send me a new invoice so as to receive the satoshis 👇
+  Invoice has expired. You can use the following command to send me a new invoice so as to receive the satoshis 👇
 setinvoice_cmd_order: |
   `/setinvoice ${orderId} `\\<Lightning Invoice\\>
 invoice_require_destination: Invoice needs a receiver adress
@@ -201,7 +200,7 @@ help: |
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
   /cancel <_order id_> - Cancel an order that has not benn taken yet
-  /cancelall - Cancels all posted and untaken orders
+  /cancelall - Cancel all posted and untaken orders
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
@@ -273,7 +272,7 @@ wizard_add_invoice_exit: |
 wizard_community_enter_name: Pick a name for your community
 wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
 wizard_community_enter_group: |
-  Pick an ID or a name for the group, you must be the adminsitrator of the group, as well as tehe Bot:
+  Pick an ID or a name for the group, you must be the adminsitrator of the group, as well as the Bot:
 
   i.e: @MyCommunity
 wizard_community_enter_order_channels: |
@@ -367,3 +366,4 @@ invoice_has_wrong_destination_error: Invoice has wrong destination
 invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
 hours: hours
 minutes: minutes
+community_updated: Community successfully updated

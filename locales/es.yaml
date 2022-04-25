@@ -83,8 +83,7 @@ min_invoice_amount: La factura debe ser mayor o igual a ${minPaymentAmount} sato
 min_expiration_time: El tiempo de expiración de la factura debe ser de al menos ${expirationTime} minutos
 invoice_expired: La factura ha expirado
 invoice_expired_long: |
-  La factura ha expirado.
-  Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
+  La factura ha expirado. Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 setinvoice_cmd_order: |
   `/setinvoice ${orderId} `\\<factura lightning\\>
 invoice_require_destination: La factura necesita una dirección destino
@@ -367,3 +366,4 @@ invoice_has_wrong_destination_error: La factura necesita una dirección destino
 invoice_must_be_larger_error: La factura debe ser mayor o igual a ${minInvoice} satoshis
 hours: horas
 minutes: minutos
+community_updated: Comunidad modificada correctamente
