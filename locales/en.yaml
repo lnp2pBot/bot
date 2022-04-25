@@ -367,3 +367,4 @@ invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
 hours: hours
 minutes: minutes
 community_updated: Community successfully updated
+operation_successful: Operation successful!

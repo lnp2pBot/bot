@@ -367,3 +367,4 @@ invoice_must_be_larger_error: La factura debe ser mayor o igual a ${minInvoice} 
 hours: horas
 minutes: minutos
 community_updated: Comunidad modificada correctamente
+operation_successful: ¡Operación exitosa!
