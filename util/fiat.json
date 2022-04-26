@@ -977,13 +977,13 @@
 	},
 	"RUB": {
 		"symbol": "RUB",
-		"name": "руб",
-		"symbol_native": "₽.",
+		"name": "руб.",
+		"symbol_native": "₽",
 		"decimal_digits": 2,
 		"rounding": 0,
 		"code": "RUB",
 		"emoji": "🇷🇺",
-		"name_plural": "руб",
+		"name_plural": "руб.",
 		"price": true
 	},
 	"RWF": {
