@@ -257,7 +257,6 @@ const addFiatAmountWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       const { bot, order, caller } = ctx.wizard.state;
-      const currency = getCurrency(order.fiat_code);
       const action = ctx.i18n.t('wizard_add_fiat_' + order.type);
       const currencyName = order.fiat_code;
       await messages.wizardAddFiatAmountMessage(ctx, currencyName, action, order);
