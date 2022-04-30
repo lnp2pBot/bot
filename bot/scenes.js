@@ -332,7 +332,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
         return;
       }
       const { id, user } = ctx.wizard.state;
-      const community = await Community.findOne({ id, creator_id: user._id });
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
         console.log('not found');
         return ctx.scene.leave();
@@ -371,19 +371,20 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      const name = ctx.message.text;
-      if (name == 'exit') {
+      const group = ctx.message.text;
+      if (group == 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-      const nameLength = 20;
-      if (name.length > nameLength) {
-        ctx.deleteMessage();
-        await messages.wizardCommunityTooLongNameMessage(ctx, nameLength);
-        return;
+      const { id, user } = ctx.wizard.state;
+      await isGroupAdmin(group, user, bot.telegram);
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
       }
-      const { id } = ctx.wizard.state;
-      await Community.findOneAndUpdate({ _id: id }, { name });
+      community.group = group;
+      await community.save();
       await messages.operationSuccessfulMessage(ctx);
 
       return ctx.scene.leave();

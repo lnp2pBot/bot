@@ -368,3 +368,5 @@ hours: часов
 minutes: минут
 community_updated: Community successfully updated
 operation_successful: Operation successfully!
+select_community: Select the community you want to modify
+what_modify: What do you want to modify?

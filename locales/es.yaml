@@ -368,3 +368,5 @@ hours: horas
 minutes: minutos
 community_updated: Comunidad modificada correctamente
 operation_successful: ¡Operación exitosa!
+select_community: Selecciona la comunidad que quieres modificar
+what_modify: ¿Que quieres modificar?
