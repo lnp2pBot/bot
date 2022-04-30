@@ -1,7 +1,12 @@
-![p2pLNBot](logo.jpg)
+![p2pLNBot](logo-600.png)
 
 # P2PLNBot
 Telegram bot which allows to people to trade using lightning network with other people on telegram, this is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
+
+## Try it out!
+Wherever you are you can start using the [bot](https://t.me/lnp2pbot), just need to have a telegram account with a username and `/start` the bot.
+
+---
 
 **p2plnbot** is being developed on nodejs and connects with an LND node, we wanted that the telegram bot be able to receive lightning payments without being custodial, after some thinking we decided to use hold invoices for it, the bot only settle seller invoices when each party is ok with it and right after that moment the bot pays the buyer's invoice.
 

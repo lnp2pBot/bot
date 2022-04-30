@@ -383,10 +383,9 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
     }
 
     where = {
-      seller_id: user._id,
-      $or: [
-        {status: 'ACTIVE'},
-        {status: 'FIAT_SENT'},
+      $and: [
+        { seller_id: user._id },
+        { $or: [{status: 'ACTIVE'}, {status: 'FIAT_SENT'}] },
       ],
     };
 
@@ -410,18 +409,15 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
 const validateDisputeOrder = async (ctx, user, orderId) => {
   try {
     const where = {
-      $or: [
-        {status: 'ACTIVE'},
-        {status: 'FIAT_SENT'},
-      ],
-      _id: orderId,
-      $or: [
-        {seller_id: user._id},
-        {buyer_id: user._id},
+      $and: [
+        { _id: orderId },
+        { $or: [{status: 'ACTIVE'}, {status: 'FIAT_SENT'}] },
+        { $or: [{seller_id: user._id}, {buyer_id: user._id}] },
       ],
     };
 
     const order = await Order.findOne(where);
+
     if (!order) {
       await messages.notActiveOrderMessage(ctx);
       return false;
@@ -437,10 +433,9 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
 const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
   try {
     const where = {
-      buyer_id: user._id,
-      $or: [
-        {status: 'ACTIVE'},
-        {status: 'PAID_HOLD_INVOICE'},
+      $and: [
+        { buyer_id: user._id },
+        { $or: [ {status: 'ACTIVE'}, {status: 'PAID_HOLD_INVOICE'}] },
       ],
     };
 
