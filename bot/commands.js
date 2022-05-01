@@ -10,7 +10,7 @@ const {
     createHoldInvoice,
     subscribeInvoice,
   } = require('../ln');
-const { Order, User } = require('../models');
+const { Order, User, Community } = require('../models');
 const messages = require('./messages');
 const { getBtcFiatPrice, extractId } = require('../util');
 const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
@@ -439,6 +439,40 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
   }
 };
 
+const updateCommunity = async (ctx, id, field, bot) => {
+  try {
+    const tgUser = ctx.update.callback_query.from;
+    if (!tgUser) return;
+    const user = await User.findOne({ tg_id: tgUser.id });
+
+    // If user didn't initialize the bot we can't do anything
+    if (!user) {
+      return;
+    }
+
+    // We check if the user has the same username that we have
+    if (tgUser.username != user.username) {
+      user.username = tgUser.username;
+      await user.save();
+    }
+
+    if (!user) return;
+    if (!id) return;
+    if (!(await validateObjectId(ctx, id))) return;
+    if (field == 'name') {
+      ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+    } else if (field == 'group') {
+      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+    } else if (field == 'channels') {
+      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+    } else if (field == 'solvers') {
+      ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   takebuy,
   takesell,
@@ -449,4 +483,5 @@ module.exports = {
   addInvoice,
   cancelShowHoldInvoice,
   showHoldInvoice,
+  updateCommunity,
 };

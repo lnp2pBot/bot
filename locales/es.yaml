@@ -367,3 +367,8 @@ invoice_must_be_larger_error: La factura debe ser mayor o igual a ${minInvoice} 
 hours: horas
 minutes: minutos
 community_updated: Comunidad modificada correctamente
+operation_successful: ¡Operación exitosa!
+select_community: Selecciona la comunidad que quieres modificar
+what_modify: ¿Que quieres modificar?
+channels: Canales
+dispute_solvers: Solucionadores de disputas

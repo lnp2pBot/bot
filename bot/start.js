@@ -13,6 +13,7 @@ const {
   cancelShowHoldInvoice,
   showHoldInvoice,
   waitPayment,
+  updateCommunity,
 } = require('./commands');
 const {
   settleHoldInvoice,
@@ -36,7 +37,15 @@ const {
 } = require('./validations');
 const messages = require('./messages');
 const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
-const { addInvoiceWizard, addFiatAmountWizard, communityWizard } = require('./scenes');
+const {
+  addInvoiceWizard,
+  addFiatAmountWizard,
+  communityWizard,
+  updateNameCommunityWizard,
+  updateGroupCommunityWizard,
+  updateChannelsCommunityWizard,
+  updateSolversCommunityWizard,
+} = require('./scenes');
 
 const initialize = (botToken, options) => {
   const i18n = new I18n({
@@ -58,7 +67,15 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  const stage = new Scenes.Stage([addInvoiceWizard, addFiatAmountWizard, communityWizard]);
+  const stage = new Scenes.Stage([
+    addInvoiceWizard,
+    addFiatAmountWizard,
+    communityWizard,
+    updateNameCommunityWizard,
+    updateGroupCommunityWizard,
+    updateChannelsCommunityWizard,
+    updateSolversCommunityWizard,
+  ]);
   bot.use(session());
   bot.use(i18n.middleware());
   bot.use(stage.middleware());
@@ -621,7 +638,27 @@ const initialize = (botToken, options) => {
   bot.action('twochannels', async (ctx) => {
     console.log('eligio dos canales');
   });
-  
+
+  bot.action(/^updateCommunity_([0-9a-f]{24})$/, async (ctx) => {
+    await messages.updateCommunityMessage(ctx, ctx.match[1]);
+  });
+
+  bot.action(/^editNameBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'name');
+  });
+
+  bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'group', bot);
+  });
+
+  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'channels', bot);
+  });
+
+  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
+  });
+
   bot.command('paytobuyer', async (ctx) => {
     try {
       const adminUser = await validateAdmin(ctx);
@@ -727,14 +764,11 @@ const initialize = (botToken, options) => {
   bot.command('mycommunities', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
-
       if (!user) return;
 
       const communities = await Community.find({ creator_id: user._id });
 
-      if (!communities) return;
-
-      await messages.listCommunitiesMessage(ctx, communities);
+      await messages.showUserCommunitiesMessage(ctx, communities);
     } catch (error) {
       console.log(error);
     }

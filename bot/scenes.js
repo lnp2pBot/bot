@@ -256,7 +256,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
   'ADD_FIAT_AMOUNT_WIZARD_SCENE_ID',
   async (ctx) => {
     try {
-      const { bot, order, caller } = ctx.wizard.state;
+      const { order } = ctx.wizard.state;
       const currency = getCurrency(order.fiat_code);
       const action = order.type === 'buy' ? 'recibir' : 'enviar';
       const currencyName = (!!currency && !!currency.name_plural) ? currency.name_plural : order.fiat_code;
@@ -301,10 +301,229 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       console.log(error);
     }
   }
-)
+);
+
+const updateNameCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityEnterNameMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const name = ctx.message.text;
+      if (name == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+      const nameLength = 20;
+      if (name.length > nameLength) {
+        ctx.deleteMessage();
+        await messages.wizardCommunityTooLongNameMessage(ctx, nameLength);
+        return;
+      }
+      const { id, user } = ctx.wizard.state;
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      community.name = name;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const updateGroupCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityEnterGroupMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const group = ctx.message.text;
+      if (group == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+      const { id, bot, user } = ctx.wizard.state;
+      await isGroupAdmin(group, user, bot.telegram);
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      community.group = group;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const updateChannelsCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      if (ctx.message.text == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+
+      }
+      const chan = ctx.message.text.split(" ");
+      if (chan.length > 2) {
+        await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
+        return;
+      }
+
+      const { id, bot, user } = ctx.wizard.state;
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      const orderChannels = [];
+      if (chan.length == 1) {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        const channel = {
+          name: chan[0],
+          type: 'mixed',
+        };
+        orderChannels.push(channel);
+      } else {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        await isGroupAdmin(chan[1], user, bot.telegram);
+        const channel1 = {
+          name: chan[0],
+          type: 'buy',
+        };
+        const channel2 = {
+          name: chan[1],
+          type: 'sell',
+        };
+        orderChannels.push(channel1);
+        orderChannels.push(channel2);
+      }
+      community.order_channels = orderChannels;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const updateSolversCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityEnterSolversMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      if (ctx.message.text == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+
+      }
+      const solvers = [];
+      const usernames = ctx.message.text.split(" ");
+      if (usernames.length > 0 && usernames.length < 10) {
+        for (let i = 0; i < usernames.length; i++) {
+          const user = await User.findOne({ username: usernames[i] });
+          if (!!user) {
+            solvers.push({
+              id: user._id,
+              username: user.username,
+            });
+          }
+        }
+      } else {
+        await messages.wizardCommunityMustEnterNamesSeparatedMessage(ctx);
+      }
+
+      const { id, user } = ctx.wizard.state;
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      community.solvers = solvers;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
 
 module.exports = {
   addInvoiceWizard,
   communityWizard,
   addFiatAmountWizard,
+  updateNameCommunityWizard,
+  updateGroupCommunityWizard,
+  updateChannelsCommunityWizard,
+  updateSolversCommunityWizard,
 };

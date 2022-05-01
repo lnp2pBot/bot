@@ -367,3 +367,8 @@ invoice_must_be_larger_error: Сума рахунку повинна бути н
 hours: годин
 minutes: хвилин
 community_updated: Спільнота успішно оновлена
+operation_successful: Operation successfully!
+select_community: Select the community you want to modify
+what_modify: What do you want to modify?
+channels: Channels
+dispute_solvers: Dispute solvers
