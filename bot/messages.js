@@ -1294,6 +1294,10 @@ const updateCommunityMessage = async (ctx, id) => {
             {text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}`},
             {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
           ],
+          [
+            {text: ctx.i18n.t('channels'), callback_data: `editChannelsBtn_${id}`},
+            {text: ctx.i18n.t('dispute_solvers'), callback_data: `editSolversBtn_${id}`},
+          ],
         ],
       },
     });

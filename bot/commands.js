@@ -439,7 +439,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
   }
 };
 
-const updateCommunity = async (ctx, id, field) => {
+const updateCommunity = async (ctx, id, field, bot) => {
   try {
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
@@ -463,6 +463,10 @@ const updateCommunity = async (ctx, id, field) => {
       ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     } else if (field == 'group') {
       ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+    } else if (field == 'channels') {
+      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+    } else if (field == 'solvers') {
+      ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     }
   } catch (error) {
     console.log(error);

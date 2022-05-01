@@ -308,6 +308,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
   async (ctx) => {
     try {
       await messages.wizardCommunityEnterNameMessage(ctx);
+
       return ctx.wizard.next();
     } catch (error) {
       console.log(error);
@@ -353,10 +354,6 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
   'UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID',
   async (ctx) => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
-
       await messages.wizardCommunityEnterGroupMessage(ctx);
 
       return ctx.wizard.next();
@@ -376,7 +373,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-      const { id, user } = ctx.wizard.state;
+      const { id, bot, user } = ctx.wizard.state;
       await isGroupAdmin(group, user, bot.telegram);
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
@@ -395,10 +392,138 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
   },
 );
 
+const updateChannelsCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      if (ctx.message.text == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+
+      }
+      const chan = ctx.message.text.split(" ");
+      if (chan.length > 2) {
+        await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
+        return;
+      }
+
+      const { id, bot, user } = ctx.wizard.state;
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      const orderChannels = [];
+      if (chan.length == 1) {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        const channel = {
+          name: chan[0],
+          type: 'mixed',
+        };
+        orderChannels.push(channel);
+      } else {
+        await isGroupAdmin(chan[0], user, bot.telegram);
+        await isGroupAdmin(chan[1], user, bot.telegram);
+        const channel1 = {
+          name: chan[0],
+          type: 'buy',
+        };
+        const channel2 = {
+          name: chan[1],
+          type: 'sell',
+        };
+        orderChannels.push(channel1);
+        orderChannels.push(channel2);
+      }
+      community.order_channels = orderChannels;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const updateSolversCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      await messages.wizardCommunityEnterSolversMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      if (ctx.message.text == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+
+      }
+      const solvers = [];
+      const usernames = ctx.message.text.split(" ");
+      if (usernames.length > 0 && usernames.length < 10) {
+        for (let i = 0; i < usernames.length; i++) {
+          const user = await User.findOne({ username: usernames[i] });
+          if (!!user) {
+            solvers.push({
+              id: user._id,
+              username: user.username,
+            });
+          }
+        }
+      } else {
+        await messages.wizardCommunityMustEnterNamesSeparatedMessage(ctx);
+      }
+
+      const { id, user } = ctx.wizard.state;
+      const community = await Community.findOne({ _id: id, creator_id: user._id });
+      if (!community) {
+        console.log('not found');
+        return ctx.scene.leave();
+      }
+      community.solvers = solvers;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
 module.exports = {
   addInvoiceWizard,
   communityWizard,
   addFiatAmountWizard,
   updateNameCommunityWizard,
   updateGroupCommunityWizard,
+  updateChannelsCommunityWizard,
+  updateSolversCommunityWizard,
 };

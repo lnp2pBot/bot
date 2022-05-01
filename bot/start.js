@@ -43,6 +43,8 @@ const {
   communityWizard,
   updateNameCommunityWizard,
   updateGroupCommunityWizard,
+  updateChannelsCommunityWizard,
+  updateSolversCommunityWizard,
 } = require('./scenes');
 
 const initialize = (botToken, options) => {
@@ -71,6 +73,8 @@ const initialize = (botToken, options) => {
     communityWizard,
     updateNameCommunityWizard,
     updateGroupCommunityWizard,
+    updateChannelsCommunityWizard,
+    updateSolversCommunityWizard,
   ]);
   bot.use(session());
   bot.use(i18n.middleware());
@@ -644,7 +648,15 @@ const initialize = (botToken, options) => {
   });
 
   bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async (ctx) => {
-    await updateCommunity(ctx, ctx.match[1], 'group');
+    await updateCommunity(ctx, ctx.match[1], 'group', bot);
+  });
+
+  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'channels', bot);
+  });
+
+  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
   });
 
   bot.command('paytobuyer', async (ctx) => {
