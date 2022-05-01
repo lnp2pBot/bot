@@ -1,6 +1,6 @@
 const axios = require('axios');
 const currencies = require('./fiat.json');
-const { Order } = require('../models');
+const { Order, Community } = require('../models');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
@@ -213,6 +213,61 @@ const secondsToTime = (secs) => {
   };
 }
 
+const isGroupAdmin = async (groupId, user, telegram) => {
+  try {
+    const member = await telegram.getChatMember(groupId, parseInt(user.tg_id));
+    if (member && (member.status === 'creator' || member.status === 'administrator')) {
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.log(error);
+    if (!!error.response && error.response.error_code == 400) {
+      throw new Error(messages.wizardCommunityWrongPermission());
+    }
+  }
+};
+
+const deleteOrderFromChannel = async (order, telegram) => {
+  try {
+    let channel = process.env.CHANNEL;
+    if (!!order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community.order_channels.length == 1) {
+        channel = community.order_channels[0].name;
+      } else {
+        community.order_channels.forEach(async (channel) => {
+          if (channel.type == order.type) {
+            channel = channel.name;
+          }
+        });
+      }
+    }
+    await telegram.deleteMessage(channel, order.tg_channel_message1);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getOrderChannel = async (order) => {
+  let channel = process.env.CHANNEL;
+  if (!!order.community_id) {
+    const community = await Community.findOne({ _id: order.community_id });
+    if (community.order_channels.length == 1) {
+      channel = community.order_channels[0].name;
+    } else {
+      community.order_channels.forEach(async (c) => {
+        if (c.type == order.type) {
+          channel = c.name;
+        }
+      });
+    }
+  }
+
+  return channel;
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -227,4 +282,7 @@ module.exports = {
   extractId,
   sanitizeMD,
   secondsToTime,
+  isGroupAdmin,
+  deleteOrderFromChannel,
+  getOrderChannel,
 };

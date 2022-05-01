@@ -2,7 +2,7 @@ const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
 const { Order, User, PendingPayment, Community } = require('../models');
-const { getCurrenciesWithPrice } = require('../util');
+const { getCurrenciesWithPrice, isGroupAdmin } = require('../util');
 const ordersActions = require('./ordersActions');
 const {
   takebuy,
@@ -108,6 +108,19 @@ const initialize = (botToken, options) => {
 
       if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
+      let communityId = null;
+      // If this message came from a group
+      // We check if the there is a community for it
+      if (ctx.message.chat.type != 'private') {
+        const community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        if (!community) {
+          ctx.deleteMessage();
+          return;
+        }
+        communityId = community._id;
+      } else if (!!user.community_id) {
+        communityId = user.community_id;
+      }
       const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'sell',
         amount,
@@ -116,11 +129,11 @@ const initialize = (botToken, options) => {
         paymentMethod,
         status: 'PENDING',
         priceMargin,
+        community_id: communityId,
       });
 
       if (!!order) {
-        await messages.publishSellOrderMessage(bot, order, ctx.i18n);
-        await messages.pendingSellMessage(bot, user, order, ctx.i18n);
+        await messages.publishSellOrderMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
       console.log(error);
@@ -137,7 +150,19 @@ const initialize = (botToken, options) => {
       if (!buyOrderParams) return;
 
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = buyOrderParams;
-      //revisar por que esta creando invoice sin monto
+      let communityId = null;
+      // If this message came from a group
+      // We check if the there is a community for it
+      if (ctx.message.chat.type != 'private') {
+        const community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        if (!community) {
+          ctx.deleteMessage();
+          return;
+        }
+        communityId = community._id;
+      } else if (!!user.community_id) {
+        communityId = user.community_id;
+      }
       const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'buy',
         amount,
@@ -146,11 +171,11 @@ const initialize = (botToken, options) => {
         paymentMethod,
         status: 'PENDING',
         priceMargin,
+        community_id: communityId,
       });
 
       if (!!order) {
-        await messages.publishBuyOrderMessage(bot, order, ctx.i18n);
-        await messages.pendingBuyMessage(bot, user, order, ctx.i18n);
+        await messages.publishBuyOrderMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
       console.log(error);

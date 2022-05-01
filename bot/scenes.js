@@ -2,7 +2,7 @@ const { Scenes } = require('telegraf')
 const { isValidInvoice } = require('./validations');
 const { Order, Community, User } = require('../models');
 const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
-const { getCurrency } = require('../util');
+const { getCurrency, isGroupAdmin } = require('../util');
 const messages = require('./messages');
 
 const addInvoiceWizard = new Scenes.WizardScene(
@@ -235,22 +235,6 @@ const communityWizard = new Scenes.WizardScene(
     }
   },
 );
-
-const isGroupAdmin = async (groupId, user, telegram) => {
-  try {
-    const member = await telegram.getChatMember(groupId, parseInt(user.tg_id));
-    if (member && (member.status === 'creator' || member.status === 'administrator')) {
-      return true;
-    }
-
-    return false;
-  } catch (error) {
-    console.log(error);
-    if (!!error.response && error.response.error_code == 400) {
-      throw new Error(messages.wizardCommunityWrongPermission());
-    }
-  }
-};
 
 const addFiatAmountWizard = new Scenes.WizardScene(
   'ADD_FIAT_AMOUNT_WIZARD_SCENE_ID',

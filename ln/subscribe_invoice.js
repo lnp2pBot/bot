@@ -63,11 +63,9 @@ const subscribeInvoice = async (bot, id, resub) => {
             // This is the i18n context we need to pass to the message
             const i18nCtx = i18n.createContext(user.lang);
             if (order.type === 'sell') {
-              await messages.publishSellOrderMessage(bot, newOrder, i18nCtx);
-              await messages.pendingSellMessage(bot, user, newOrder, i18nCtx);
+              await messages.publishSellOrderMessage(bot, user, newOrder, i18nCtx);
             } else {
-              await messages.publishBuyOrderMessage(bot, newOrder, i18nCtx);
-              await messages.pendingBuyMessage(bot, user, newOrder, i18nCtx);
+              await messages.publishBuyOrderMessage(bot, user, newOrder, i18nCtx);
             }
           }
         }
