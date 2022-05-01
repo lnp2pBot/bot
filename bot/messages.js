@@ -1338,6 +1338,22 @@ const operationSuccessfulMessage = async (ctx) => {
   }
 };
 
+const noDefaultCommunityMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('no_default_community'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const communityNotFoundMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('community_not_found'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1464,4 +1480,6 @@ module.exports = {
   updateCommunityMessage,
   showUserCommunitiesMessage,
   operationSuccessfulMessage,
+  noDefaultCommunityMessage,
+  communityNotFoundMessage,
 };

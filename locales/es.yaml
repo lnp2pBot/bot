@@ -372,3 +372,5 @@ select_community: Selecciona la comunidad que quieres modificar
 what_modify: ¿Que quieres modificar?
 channels: Canales
 dispute_solvers: Solucionadores de disputas
+no_default_community: Ya no tienes comunidad por defecto
+community_not_found: Comunidad no encontrada

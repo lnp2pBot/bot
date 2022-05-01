@@ -774,6 +774,40 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('setcomm', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user)
+        return;
+
+      let [ groupName ] = await validateParams(ctx, 2, '\\<_@communityGroupName / off_\\>');
+      if (!groupName) {
+        return;
+      }
+
+      if (groupName == 'off') {
+        user.default_community = null;
+        await user.save();
+        await messages.noDefaultCommunityMessage(ctx);
+        return;
+      }
+
+      const community = await Community.findOne({ group: groupName });
+      if (!community) {
+        await messages.communityNotFoundMessage(ctx);
+        return;
+      }
+
+      user.community_id = community._id;
+      await user.save();
+
+      await messages.operationSuccessfulMessage(ctx);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
   bot.on('text', async (ctx) => {
     try {
       if (ctx.message.chat.type != 'private') {
