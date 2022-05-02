@@ -1046,6 +1046,14 @@ const wizardCommunityTooLongNameMessage = async (ctx, length) => {
   }
 };
 
+const wizardCommunityEnterCurrencyMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const wizardCommunityEnterGroupMessage = async (ctx) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
@@ -1303,10 +1311,13 @@ const updateCommunityMessage = async (ctx, id) => {
         inline_keyboard: [
           [
             {text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}`},
-            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
+            {text: ctx.i18n.t('currencies'), callback_data: `editCurrenciesBtn_${id}`},
           ],
           [
+            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
             {text: ctx.i18n.t('channels'), callback_data: `editChannelsBtn_${id}`},
+          ],
+          [
             {text: ctx.i18n.t('dispute_solvers'), callback_data: `editSolversBtn_${id}`},
           ],
         ],
@@ -1460,6 +1471,7 @@ module.exports = {
   wizardCommunityEnterNameMessage,
   wizardExitMessage,
   wizardCommunityTooLongNameMessage,
+  wizardCommunityEnterCurrencyMessage,
   wizardCommunityEnterGroupMessage,
   wizardCommunityEnterOrderChannelsMessage,
   wizardCommunityOneOrTwoChannelsMessage,

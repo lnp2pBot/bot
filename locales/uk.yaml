@@ -271,6 +271,7 @@ wizard_add_invoice_exit: |
   `/setinvoice ${orderId} `\\<счет фактура lightning\\>
 wizard_community_enter_name: Введіть назву Вашої спільноти
 wizard_community_too_long_name: Ім'я має містити не більше ${length} символів.
+wizard_community_enter_currency: Enter the code of the fiat currency(ies) with which users can operate in this community, if there is more than one you must enter each code separated by a blank space.
 wizard_community_enter_group: |
   Введіть ідентифікатор або назву групи спільноти. Як Бот, так і Ви повинні бути адміністраторами групи:
 
@@ -374,3 +375,4 @@ channels: Channels
 dispute_solvers: Dispute solvers
 no_default_community: You no longer have a community by default
 community_not_found: Community not found
+currencies: Currencies
