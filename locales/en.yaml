@@ -290,7 +290,7 @@ wizard_community_enter_solvers_channel: Now please indicate the id or name of th
 wizard_community_success: Congratulatins, you have created your community!
 wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
 wizard_exit: You have exit wizard mode, you can now write commands
-wizard_add_fiat_buy: recieve
+wizard_add_fiat_buy: receive
 wizard_add_fiat_sell: pay
 wizard_add_fiat_amount: |
   Please indicate the amount of ${currency} that you want to ${action}.
