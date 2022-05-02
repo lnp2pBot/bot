@@ -2,7 +2,7 @@ const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
 const { Order, User, PendingPayment, Community } = require('../models');
-const { getCurrenciesWithPrice, isGroupAdmin } = require('../util');
+const { getCurrenciesWithPrice } = require('../util');
 const ordersActions = require('./ordersActions');
 const {
   takebuy,
@@ -42,6 +42,7 @@ const {
   addFiatAmountWizard,
   communityWizard,
   updateNameCommunityWizard,
+  updateCurrenciesCommunityWizard,
   updateGroupCommunityWizard,
   updateChannelsCommunityWizard,
   updateSolversCommunityWizard,
@@ -72,6 +73,7 @@ const initialize = (botToken, options) => {
     addFiatAmountWizard,
     communityWizard,
     updateNameCommunityWizard,
+    updateCurrenciesCommunityWizard,
     updateGroupCommunityWizard,
     updateChannelsCommunityWizard,
     updateSolversCommunityWizard,
@@ -311,7 +313,7 @@ const initialize = (botToken, options) => {
         // we sent a private message to the user
         await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
         // We delete the messages related to that order from the channel
-        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+        await deleteOrderFromChannel(order, bot.telegram);
 
         return;
       }
@@ -387,7 +389,7 @@ const initialize = (botToken, options) => {
         order.canceled_by = user._id;
         await order.save();
         // We delete the messages related to that order from the channel
-        await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+        await deleteOrderFromChannel(order, bot.telegram);
       }
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
@@ -672,6 +674,10 @@ const initialize = (botToken, options) => {
     await updateCommunity(ctx, ctx.match[1], 'name');
   });
 
+  bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await updateCommunity(ctx, ctx.match[1], 'currencies');
+  });
+
   bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async (ctx) => {
     await updateCommunity(ctx, ctx.match[1], 'group', bot);
   });
@@ -786,7 +792,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('mycommunities', async (ctx) => {
+  bot.command('mycomms', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -794,40 +800,6 @@ const initialize = (botToken, options) => {
       const communities = await Community.find({ creator_id: user._id });
 
       await messages.showUserCommunitiesMessage(ctx, communities);
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  bot.command('setcomm', async (ctx) => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user)
-        return;
-
-      let [ groupName ] = await validateParams(ctx, 2, '\\<_@communityGroupName / off_\\>');
-      if (!groupName) {
-        return;
-      }
-
-      if (groupName == 'off') {
-        user.default_community = null;
-        await user.save();
-        await messages.noDefaultCommunityMessage(ctx);
-        return;
-      }
-
-      const community = await Community.findOne({ group: groupName });
-      if (!community) {
-        await messages.communityNotFoundMessage(ctx);
-        return;
-      }
-
-      user.community_id = community._id;
-      await user.save();
-
-      await messages.operationSuccessfulMessage(ctx);
     } catch (error) {
       console.log(error);
     }

@@ -12,7 +12,7 @@ const {
   } = require('../ln');
 const { Order, User, Community } = require('../models');
 const messages = require('./messages');
-const { getBtcFiatPrice, extractId } = require('../util');
+const { getBtcFiatPrice, extractId, deleteOrderFromChannel } = require('../util');
 const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
 
 const takebuy = async (ctx, bot) => {
@@ -53,7 +53,7 @@ const takebuy = async (ctx, bot) => {
     order.taken_at = Date.now();
     await order.save();
     // We delete the messages related to that order from the channel
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+    await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);
@@ -88,7 +88,7 @@ const takesell = async (ctx, bot) => {
 
     await order.save();
     // We delete the messages related to that order from the channel
-    await bot.telegram.deleteMessage(process.env.CHANNEL, order.tg_channel_message1);
+    await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeSellMessage(ctx, bot, user, order);
   } catch (error) {
     console.log(error);
@@ -461,6 +461,8 @@ const updateCommunity = async (ctx, id, field, bot) => {
     if (!(await validateObjectId(ctx, id))) return;
     if (field == 'name') {
       ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+    } else if (field == 'currencies') {
+      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     } else if (field == 'group') {
       ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
     } else if (field == 'channels') {
