@@ -121,8 +121,8 @@ const initialize = (botToken, options) => {
           return;
         }
         communityId = community._id;
-      } else if (!!user.community_id) {
-        communityId = user.community_id;
+      } else if (!!user.default_community_id) {
+        communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
       }
       // If the user is in a community, we need to check if the currency is supported
@@ -140,7 +140,6 @@ const initialize = (botToken, options) => {
         priceMargin,
         community_id: communityId,
       });
-
       if (!!order) {
         await messages.publishSellOrderMessage(bot, user, order, ctx.i18n);
       }
@@ -170,8 +169,8 @@ const initialize = (botToken, options) => {
           return;
         }
         communityId = community._id;
-      } else if (!!user.community_id) {
-        communityId = user.community_id;
+      } else if (!!user.default_community_id) {
+        communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
       }
       // If the user is in a community, we need to check if the currency is supported
@@ -832,7 +831,7 @@ const initialize = (botToken, options) => {
       }
 
       if (groupName == 'off') {
-        user.default_community = null;
+        user.default_community_id = null;
         await user.save();
         await messages.noDefaultCommunityMessage(ctx);
         return;
@@ -844,7 +843,7 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      user.community_id = community._id;
+      user.default_community_id = community._id;
       await user.save();
 
       await messages.operationSuccessfulMessage(ctx);
