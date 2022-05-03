@@ -22,6 +22,7 @@ const UserSchema = new mongoose.Schema({
   lightning_address: { type: String },
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },
+  default_community_id: { type: String },
 });
 
 module.exports = mongoose.model('User', UserSchema);

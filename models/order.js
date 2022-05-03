@@ -67,14 +67,12 @@ const OrderSchema = new mongoose.Schema({
   tg_chat_id: { type: String },
   tg_order_message: { type: String },
   tg_channel_message1: { type: String },
-  tg_channel_message2: { type: String },
-  tg_group_message1: { type: String },
-  tg_group_message2: { type: String },
   range_parent_id: { type: String }, // If the order have a parent we save the Id
   price_from_api: { type: Boolean },
   price_margin: { type: Number, default: 0 },
   admin_warned: { type: Boolean, default: false }, // We set this to true when the bot warns admins the order is about to expire
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
+  community_id: { type: String },
 });
 
 module.exports = mongoose.model('Order', OrderSchema);

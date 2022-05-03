@@ -14,6 +14,7 @@ const createOrder = async (i18n, bot, user, {
   range_parent_id,
   tgChatId,
   tgOrderMessage,
+  community_id,
 }) => {
   try {
     const pendingOrders = await Order.count({ status: 'PENDING' });
@@ -60,6 +61,7 @@ const createOrder = async (i18n, bot, user, {
         currency
       }),
       range_parent_id,
+      community_id,
     };
 
     let order;

@@ -1,5 +1,10 @@
 const { TelegramError } = require('telegraf');
-const { getCurrency, sanitizeMD, secondsToTime } = require('../util');
+const {
+  getCurrency,
+  sanitizeMD,
+  secondsToTime,
+  getOrderChannel,
+} = require('../util');
 
 const startMessage = async (ctx) => {
   try {
@@ -47,11 +52,11 @@ const invoicePaymentRequestMessage = async (bot, user, request, order, i18n) => 
   }
 };
 
-const pendingSellMessage = async (bot, user, order, i18n) => {
+const pendingSellMessage = async (bot, user, order, channel, i18n) => {
   try {
     let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_sell', {
-      channel: process.env.CHANNEL,
+      channel,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
     await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
@@ -60,11 +65,11 @@ const pendingSellMessage = async (bot, user, order, i18n) => {
   }
 };
 
-const pendingBuyMessage = async (bot, user, order, i18n) => {
+const pendingBuyMessage = async (bot, user, order, channel, i18n) => {
   try {
     let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_buy', {
-      channel: process.env.CHANNEL,
+      channel,
       orderExpirationWindow: Math.round(orderExpirationWindow),
     }));
     await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
@@ -386,44 +391,50 @@ const notOrderMessage = async (ctx) => {
   }
 };
 
-const publishBuyOrderMessage = async (bot, order, i18n) => {
+const publishBuyOrderMessage = async (bot, user, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
 
-    // Mensaje al canal
-    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage, {
+    const channel = await getOrderChannel(order);
+    // We send the message to the channel
+    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{text: i18n.t('sell_sats'), callback_data: 'takebuy'}],
         ],
       },
     });
-    // Mensaje al canal
+    // We save the id of the message in the order
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
+    // Message to user let know the order was published
+    await pendingBuyMessage(bot, user, order, channel, i18n);
   } catch (error) {
     console.log(error);
   }
 };
 
-const publishSellOrderMessage = async (bot, order, i18n) => {
+const publishSellOrderMessage = async (bot, user, order, i18n) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
-
-    const message1 = await bot.telegram.sendMessage(process.env.CHANNEL, publishMessage, {
+    const channel = await getOrderChannel(order);
+    // We send the message to the channel
+    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{text: i18n.t('buy_sats'), callback_data: 'takesell'}],
         ],
       },
     });
-    // Mensaje al canal
+    // We save the id of the message in the order
     order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
+    // Message to user let know the order was published
+    await pendingSellMessage(bot, user, order, channel, i18n);
   } catch (error) {
     console.log(error);
   }
@@ -1035,6 +1046,14 @@ const wizardCommunityTooLongNameMessage = async (ctx, length) => {
   }
 };
 
+const wizardCommunityEnterCurrencyMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const wizardCommunityEnterGroupMessage = async (ctx) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
@@ -1292,10 +1311,13 @@ const updateCommunityMessage = async (ctx, id) => {
         inline_keyboard: [
           [
             {text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}`},
-            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
+            {text: ctx.i18n.t('currencies'), callback_data: `editCurrenciesBtn_${id}`},
           ],
           [
+            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
             {text: ctx.i18n.t('channels'), callback_data: `editChannelsBtn_${id}`},
+          ],
+          [
             {text: ctx.i18n.t('dispute_solvers'), callback_data: `editSolversBtn_${id}`},
           ],
         ],
@@ -1333,6 +1355,31 @@ const showUserCommunitiesMessage = async (ctx, communities) => {
 const operationSuccessfulMessage = async (ctx) => {
   try {
     await ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const noDefaultCommunityMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('no_default_community'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const communityNotFoundMessage = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('community_not_found'));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const currencyNotSupportedMessage = async (ctx, currencies) => {
+  try {
+    currencies = currencies.join(', ');
+    await ctx.reply(ctx.i18n.t('currency_not_supported', { currencies }));
   } catch (error) {
     console.log(error);
   }
@@ -1433,6 +1480,7 @@ module.exports = {
   wizardCommunityEnterNameMessage,
   wizardExitMessage,
   wizardCommunityTooLongNameMessage,
+  wizardCommunityEnterCurrencyMessage,
   wizardCommunityEnterGroupMessage,
   wizardCommunityEnterOrderChannelsMessage,
   wizardCommunityOneOrTwoChannelsMessage,
@@ -1464,4 +1512,7 @@ module.exports = {
   updateCommunityMessage,
   showUserCommunitiesMessage,
   operationSuccessfulMessage,
+  noDefaultCommunityMessage,
+  communityNotFoundMessage,
+  currencyNotSupportedMessage,
 };

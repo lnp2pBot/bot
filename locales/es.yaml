@@ -271,6 +271,7 @@ wizard_add_invoice_exit: |
   `/setinvoice ${orderId} `\\<factura lightning con o sin monto\\>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
+wizard_community_enter_currency: Ingresa el código de la(s) moneda(s) fiat con las que los usuarios podrán operar en esta comunidad, si hay más de una debes ingresar cada código separado por un espacio en blanco.
 wizard_community_enter_group: |
   Ingresa el id o el nombre del grupo de la comunidad, tanto el bot como tú deben ser administradores del grupo:
 
@@ -372,3 +373,7 @@ select_community: Selecciona la comunidad que quieres modificar
 what_modify: ¿Que quieres modificar?
 channels: Canales
 dispute_solvers: Solucionadores de disputas
+no_default_community: Ya no tienes comunidad por defecto
+community_not_found: Comunidad no encontrada
+currencies: Monedas
+currency_not_supported: Esta moneda no puede ser utilizada en esta comunidad, solo está permitido usar [${currencies}]
