@@ -376,3 +376,4 @@ dispute_solvers: Solucionadores de disputas
 no_default_community: Ya no tienes comunidad por defecto
 community_not_found: Comunidad no encontrada
 currencies: Monedas
+currency_not_supported: Esta moneda no puede ser utilizada en esta comunidad, solo está permitido usar [${currencies}]

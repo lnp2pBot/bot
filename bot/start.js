@@ -111,10 +111,11 @@ const initialize = (botToken, options) => {
       if (!sellOrderParams) return;
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
       let communityId = null;
+      let community = null;
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
-        const community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        community = await Community.findOne({ group: '@' + ctx.message.chat.username });
         if (!community) {
           ctx.deleteMessage();
           return;
@@ -122,6 +123,12 @@ const initialize = (botToken, options) => {
         communityId = community._id;
       } else if (!!user.community_id) {
         communityId = user.community_id;
+        community = await Community.findOne({ _id: communityId });
+      }
+      // If the user is in a community, we need to check if the currency is supported
+      if (!!community && !community.currencies.includes(fiatCode)) {
+        await messages.currencyNotSupportedMessage(ctx, community.currencies);
+        return;
       }
       const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'sell',
@@ -153,10 +160,11 @@ const initialize = (botToken, options) => {
 
       const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = buyOrderParams;
       let communityId = null;
+      let community = null;
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
-        const community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        community = await Community.findOne({ group: '@' + ctx.message.chat.username });
         if (!community) {
           ctx.deleteMessage();
           return;
@@ -164,6 +172,12 @@ const initialize = (botToken, options) => {
         communityId = community._id;
       } else if (!!user.community_id) {
         communityId = user.community_id;
+        community = await Community.findOne({ _id: communityId });
+      }
+      // If the user is in a community, we need to check if the currency is supported
+      if (!!community && !community.currencies.includes(fiatCode)) {
+        await messages.currencyNotSupportedMessage(ctx, community.currencies);
+        return;
       }
       const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
         type: 'buy',
@@ -800,6 +814,40 @@ const initialize = (botToken, options) => {
       const communities = await Community.find({ creator_id: user._id });
 
       await messages.showUserCommunitiesMessage(ctx, communities);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  bot.command('setcomm', async (ctx) => {
+    try {
+      const user = await validateUser(ctx, false);
+
+      if (!user)
+        return;
+
+      let [ groupName ] = await validateParams(ctx, 2, '\\<_@communityGroupName / off_\\>');
+      if (!groupName) {
+        return;
+      }
+
+      if (groupName == 'off') {
+        user.default_community = null;
+        await user.save();
+        await messages.noDefaultCommunityMessage(ctx);
+        return;
+      }
+
+      const community = await Community.findOne({ group: groupName });
+      if (!community) {
+        await messages.communityNotFoundMessage(ctx);
+        return;
+      }
+
+      user.community_id = community._id;
+      await user.save();
+
+      await messages.operationSuccessfulMessage(ctx);
     } catch (error) {
       console.log(error);
     }

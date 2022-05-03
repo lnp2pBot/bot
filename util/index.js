@@ -237,11 +237,11 @@ const deleteOrderFromChannel = async (order, telegram) => {
       if (community.order_channels.length == 1) {
         channel = community.order_channels[0].name;
       } else {
-        community.order_channels.forEach(async (channel) => {
-          if (channel.type == order.type) {
-            channel = channel.name;
+        for await (c of community.order_channels) {
+          if (c.type == order.type) {
+            channel = c.name;
           }
-        });
+        }
       }
     }
     await telegram.deleteMessage(channel, order.tg_channel_message1);

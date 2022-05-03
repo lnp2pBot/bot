@@ -1376,6 +1376,15 @@ const communityNotFoundMessage = async (ctx) => {
   }
 };
 
+const currencyNotSupportedMessage = async (ctx, currencies) => {
+  try {
+    currencies = currencies.join(', ');
+    await ctx.reply(ctx.i18n.t('currency_not_supported', { currencies }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1505,4 +1514,5 @@ module.exports = {
   operationSuccessfulMessage,
   noDefaultCommunityMessage,
   communityNotFoundMessage,
+  currencyNotSupportedMessage,
 };

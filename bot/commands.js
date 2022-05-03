@@ -273,8 +273,8 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       await messages.genericErrorMessage(bot, user, i18nCtx);
       return;
     }
+    const sellerUser = await User.findOne({ _id: order.seller_id });
     if (order.creator_id == order.buyer_id) {
-      const sellerUser = await User.findOne({ _id: order.seller_id });
       // We use a different var for order because we need to delete the order and
       // there are users that block the bot and it raises the catch block stopping 
       // the process
@@ -299,10 +299,10 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order, i18nCtx);
+        await messages.publishBuyOrderMessage(bot, user, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order, i18nCtx);
+        await messages.publishSellOrderMessage(bot, sellerUser, order, i18nCtx);
       }
       await order.save();
       if (!userAction) {
@@ -394,8 +394,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       return;
     }
 
+    const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id == order.seller_id) {
-      const buyerUser = await User.findOne({ _id: order.buyer_id });
       // We use a different var for order because we need to delete the order and
       // there are users that block the bot and it raises the catch block stopping 
       // the process
@@ -421,10 +421,10 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 
       if (order.type == 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, order, i18nCtx);
+        await messages.publishBuyOrderMessage(bot, buyerUser, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, order, i18nCtx);
+        await messages.publishSellOrderMessage(bot, user, order, i18nCtx);
       }
       await order.save();
       if (!userAction) {

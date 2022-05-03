@@ -67,9 +67,6 @@ const OrderSchema = new mongoose.Schema({
   tg_chat_id: { type: String },
   tg_order_message: { type: String },
   tg_channel_message1: { type: String },
-  tg_channel_message2: { type: String },
-  tg_group_message1: { type: String },
-  tg_group_message2: { type: String },
   range_parent_id: { type: String }, // If the order have a parent we save the Id
   price_from_api: { type: Boolean },
   price_margin: { type: Number, default: 0 },
