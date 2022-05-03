@@ -12,7 +12,7 @@ const deleteOrders = async (bot) => {
         });
         for (const order of pendingOrders) {
             console.log(`Pending order Id: ${order._id} expired after ${process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW} seconds, deleting it from database and channel`);
-            const orderCloned = order;
+            const orderCloned = order.toObject();
             // We remove the order from the database first, then we remove the message from the channel
             await order.remove();
             // We delete the messages related to that order from the channel
