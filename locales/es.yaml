@@ -41,7 +41,7 @@ pending_sell: |
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 cancel_order_cmd: |
-  `/cancel ${orderId}`
+  /cancel ${orderId}
 pending_buy: |
   📝 Publicada la oferta en el canal ${channel}.
 
@@ -85,7 +85,7 @@ invoice_expired: La factura ha expirado
 invoice_expired_long: |
   La factura ha expirado. Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 setinvoice_cmd_order: |
-  `/setinvoice ${orderId} `\\<factura lightning\\>
+  /setinvoice ${orderId} \\<factura lightning\\>
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -118,7 +118,7 @@ get_in_touch_with_seller: |
 
   Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
 fiatsent_order_cmd: |
-  `/fiatsent ${orderId}`
+  /fiatsent ${orderId}
 get_in_touch_with_buyer: |
   🤖 Ponte en contacto con @${buyerUsername} para darle la información sobre cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
 
@@ -207,7 +207,7 @@ you_have_been_banned: ¡Has sido baneado!
 I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
 release_order_cmd: |
-  `/release ${orderId}`
+  /release ${orderId}
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
@@ -268,7 +268,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
-  `/setinvoice ${orderId} `\\<factura lightning con o sin monto\\>
+  /setinvoice ${orderId} \\<factura lightning con o sin monto\\>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
 wizard_community_enter_currency: Ingresa el código de la(s) moneda(s) fiat con las que los usuarios podrán operar en esta comunidad, si hay más de una debes ingresar cada código separado por un espacio en blanco.

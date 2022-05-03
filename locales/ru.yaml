@@ -116,7 +116,7 @@ get_in_touch_with_seller: |
 
   Как только вы отправите фиатные деньги, дайте мне знать с помощью команды 👇
 fiatsent_order_cmd: |
-  `/fiatsent ${orderId}`
+  /fiatsent ${orderId}
 get_in_touch_with_buyer: |
   🤖 Свяжитесь с @${buyerUsername} для информирования его о том, как отправить вам ${currency} ${fiatAmount} через ${paymentMethod}. НЕ разблокируйте счет-фактуру, пока не убедитесь, что @${buyerUsername} прислал вам фиатные деньги.
 
@@ -265,7 +265,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Вы вышли из режима мастера\\. Теперь вы можете вводить команды. Вы все еще можете ввести счет на заявку командой /setinvoice с указанием Id заявки и счета\\. Вы можете отправить мне счет на сумму ${amount} сатоши, но я также принимаю счета без суммы\\.
 
-  `/setinvoice ${orderId} `\\<счет фактура lightning\\>
+  /setinvoice ${orderId} \\<счет фактура lightning\\>
 wizard_community_enter_name: Введите название вашего сообщества
 wizard_community_too_long_name: Имя должно содержать не более ${length} символов.
 wizard_community_enter_currency: Enter the code of the fiat currency(ies) with which users can operate in this community, if there is more than one you must enter each code separated by a blank space.

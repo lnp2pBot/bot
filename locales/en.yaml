@@ -41,7 +41,7 @@ pending_sell: |
   
   You can cancel this order before another user picks it up by executting the command 👇
 cancel_order_cmd: |
-  `/cancel ${orderId}`
+  /cancel ${orderId}
 pending_buy: |
   📝 You offer to buy sats is active in the ${channel} channel.
 
@@ -85,7 +85,7 @@ invoice_expired: Invoice has expired
 invoice_expired_long: |
   Invoice has expired. You can use the following command to send me a new invoice so as to receive the satoshis 👇
 setinvoice_cmd_order: |
-  `/setinvoice ${orderId} `\\<Lightning Invoice\\>
+  /setinvoice ${orderId} \\<Lightning Invoice\\>
 invoice_require_destination: Invoice needs a receiver adress
 invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
@@ -118,7 +118,7 @@ get_in_touch_with_seller: |
 
   Once you send the money, please let me know with the command 👇
 fiatsent_order_cmd: |
-  `/fiatsent ${orderId}`
+  /fiatsent ${orderId}
 get_in_touch_with_buyer: |
   🤖 Get in touch with  @${buyerUsername} so as to give information on how to send you${currency} ${fiatAmount} through ${paymentMethod}. Do not release those sats until you verify that the buyer paid you the fiat.
 
@@ -207,7 +207,7 @@ you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent fiat money once the seller confirms the money was received, the sats should be sent to you.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, please release funds. You will not be able to create another order until you release funds.
 release_order_cmd: |
-  `/release ${orderId}`
+  /release ${orderId}
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven´t released the sats ye. You will not be able to create new orders until you release such funds. 
 user_banned: Banned user!
 user_not_found: User was not found in the database!
