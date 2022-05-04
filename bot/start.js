@@ -2,7 +2,7 @@ const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
 const { Order, User, PendingPayment, Community } = require('../models');
-const { getCurrenciesWithPrice } = require('../util');
+const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
 const {
   takebuy,
