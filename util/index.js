@@ -1,7 +1,6 @@
 const axios = require('axios');
 const currencies = require('./fiat.json');
 const { Order, Community } = require('../models');
-const messages = require('../bot/messages')
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
@@ -203,14 +202,14 @@ const sanitizeMD = (text) => {
 }
 
 const secondsToTime = (secs) => {
-    const hours = Math.floor(secs / (60 * 60));
+  const hours = Math.floor(secs / (60 * 60));
 
-    const divisor = secs % (60 * 60);
-    const minutes = Math.floor(divisor / 60);
+  const divisor = secs % (60 * 60);
+  const minutes = Math.floor(divisor / 60);
 
-    return {
-      hours,
-      minutes,
+  return {
+    hours,
+    minutes,
   };
 }
 
@@ -224,9 +223,7 @@ const isGroupAdmin = async (groupId, user, telegram) => {
     return false;
   } catch (error) {
     console.log(error);
-    if (!!error.response && error.response.error_code == 400) {
-      throw new Error(messages.wizardCommunityWrongPermission());
-    }
+    return false;
   }
 };
 

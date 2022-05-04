@@ -1110,8 +1110,12 @@ const wizardCommunityCreatedMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityWrongPermission = () => {
-  return `You are not admin on this group or channel.`;
+const wizardCommunityWrongPermission = async (ctx) => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_you_are_not_admin'));
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
@@ -1515,4 +1519,5 @@ module.exports = {
   noDefaultCommunityMessage,
   communityNotFoundMessage,
   currencyNotSupportedMessage,
+  wizardCommunityWrongPermission,
 };
