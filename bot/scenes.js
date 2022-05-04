@@ -154,7 +154,7 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       const group = ctx.message.text.trim();
-      if (await isGroupAdmin(group, user, bot.telegram)) {
+      if (!await isGroupAdmin(group, user, bot.telegram)) {
         messages.wizardCommunityWrongPermission(ctx)
         return;
       }
@@ -185,7 +185,7 @@ const communityWizard = new Scenes.WizardScene(
       }
       const orderChannels = [];
       if (chan.length == 1) {
-        if (await isGroupAdmin(chan[0], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[0], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx)
           return;
         }
@@ -195,11 +195,11 @@ const communityWizard = new Scenes.WizardScene(
         };
         orderChannels.push(channel);
       } else {
-        if (await isGroupAdmin(chan[0], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[0], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx);
           return;
         }
-        if (await isGroupAdmin(chan[1], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[1], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx);
           return;
         }
@@ -262,7 +262,7 @@ const communityWizard = new Scenes.WizardScene(
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-      if (await isGroupAdmin(chan, user, bot.telegram)) {
+      if (!await isGroupAdmin(chan, user, bot.telegram)) {
         messages.wizardCommunityWrongPermission(ctx);
         return;
       }
@@ -402,7 +402,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       const { id, bot, user } = ctx.wizard.state;
-      if (await isGroupAdmin(group, user, bot.telegram)) {
+      if (!await isGroupAdmin(group, user, bot.telegram)) {
         messages.wizardCommunityWrongPermission(ctx);
         return;
       }
@@ -508,7 +508,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
       }
       const orderChannels = [];
       if (chan.length == 1) {
-        if (await isGroupAdmin(chan[0], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[0], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx);
           return;
         }
@@ -518,11 +518,11 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
         };
         orderChannels.push(channel);
       } else {
-        if (await isGroupAdmin(chan[0], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[0], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx);
           return;
         }
-        if (await isGroupAdmin(chan[1], user, bot.telegram)) {
+        if (!await isGroupAdmin(chan[1], user, bot.telegram)) {
           messages.wizardCommunityWrongPermission(ctx);
           return;
         }
