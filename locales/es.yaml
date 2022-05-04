@@ -291,7 +291,7 @@ wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_exit: Has salido del modo wizard, ahora puedes escribir comandos.
 wizard_add_fiat_buy: recibir
-wizard_add_fiat_sell: pagar
+wizard_add_fiat_sell: enviar
 wizard_add_fiat_amount: |
   Ingresa la cantidad de ${currency} que desea ${action}.
 
