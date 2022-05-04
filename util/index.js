@@ -1,6 +1,7 @@
 const axios = require('axios');
 const currencies = require('./fiat.json');
 const { Order, Community } = require('../models');
+const messages = require('../bot/messages')
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
