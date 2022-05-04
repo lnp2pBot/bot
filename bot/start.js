@@ -96,6 +96,15 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('version', async (ctx) => {
+    try {
+      const package = require('../package.json')
+      await ctx.reply(package.version);
+    } catch (err) {
+      console.log(error);
+    }
+  })
+
   bot.command('sell', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
