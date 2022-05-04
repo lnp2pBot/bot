@@ -5,6 +5,10 @@ const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
 const { getCurrency, isGroupAdmin } = require('../util');
 const messages = require('./messages');
 
+function itemsFromMessage(str) {
+  return str.split(" ").map(e => e.trim()).filter(e => !!e)
+}
+
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
   async (ctx) => {
@@ -127,8 +131,7 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      let currencies = ctx.message.text.trim().split(" ");
-      currencies = currencies.filter(currency => !!currency);
+      let currencies = itemsFromMessage(ctx.message.text)
       currencies = currencies.map(currency => currency.toUpperCase());
       if (currencies.length > 10) {
         await messages.wizardCommunityEnterCurrencyMessage(ctx);
@@ -175,7 +178,7 @@ const communityWizard = new Scenes.WizardScene(
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-      const chan = ctx.message.text.trim().split(" ");
+      const chan = itemsFromMessage(ctx.message.text)
       if (chan.length > 2) {
         await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
         return;
@@ -228,7 +231,7 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
       const solvers = [];
-      const usernames = ctx.message.text.trim().split(" ");
+      const usernames = itemsFromMessage(ctx.message.text);
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const user = await User.findOne({ username: usernames[i] });
@@ -442,9 +445,8 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
-      
-      let currencies = ctx.message.text.trim().split(" ");
-      currencies = currencies.filter(currency => !!currency);
+
+      let currencies = itemsFromMessage(ctx.message.text)
       currencies = currencies.map(currency => currency.toUpperCase());
       if (currencies.length > 10) {
         await messages.wizardCommunityEnterCurrencyMessage(ctx);
@@ -492,7 +494,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
 
       }
-      const chan = ctx.message.text.trim().split(" ");
+      const chan = itemsFromMessage(ctx.message.text);
       if (chan.length > 2) {
         await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
         return;
@@ -571,7 +573,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
 
       }
       const solvers = [];
-      const usernames = ctx.message.text.trim().split(" ");
+      const usernames = itemsFromMessage(ctx.message.text);
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const user = await User.findOne({ username: usernames[i] });
