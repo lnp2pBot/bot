@@ -214,7 +214,7 @@ const initialize = (botToken, options) => {
     await takebuy(ctx, bot);
   });
 
-  bot.command('release', async (ctx) => {
+  bot.hears(/^\/release\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -233,7 +233,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('dispute', async (ctx) => {
+  bot.hears(/^\/dispute\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -275,7 +275,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('cancelorder', async (ctx) => {
+  bot.hears(/^\/cancelorder\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -310,7 +310,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancel', async (ctx) => {
+  bot.hears(/^\/cancel\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -397,7 +397,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancelall', async (ctx) => {
+  bot.hears(/^\/cancelall\s+$/, async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -420,7 +420,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('settleorder', async (ctx) => {
+  bot.hears(/^\/settleorder\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -453,7 +453,7 @@ const initialize = (botToken, options) => {
   });
 
 
-  bot.command('checkorder', async (ctx) => {
+  bot.hears(/^\/checkorder\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -488,7 +488,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('fiatsent', async (ctx) => {
+  bot.hears(/^\/fiatsent\s+(\w+)$/, async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -514,7 +514,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('ban', async (ctx) => {
+  bot.hears(/^\/ban\s+(\w+)$/, async (ctx) => {
     try {
       const adminUser = await validateAdmin(ctx);
 
