@@ -1110,9 +1110,12 @@ const wizardCommunityCreatedMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityWrongPermission = async (ctx) => {
+const wizardCommunityWrongPermission = async (ctx, user, channel) => {
   try {
-    await ctx.reply(ctx.i18n.t('wizard_community_you_are_not_admin'));
+    await ctx.reply(ctx.i18n.t('wizard_community_you_are_not_admin', {
+      username: user.username,
+      channel,
+    }));
   } catch (error) {
     console.log(error);
   }

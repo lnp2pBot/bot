@@ -290,7 +290,7 @@ wizard_community_must_enter_names: You must add at least one name, or two separa
 wizard_community_enter_solvers_channel: Now please indicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
 wizard_community_success: Congratulatins, you have created your community!
 wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
-wizard_community_you_are_not_admin: You are not admin on this group or channel.
+wizard_community_you_are_not_admin: ${username} is not an admin on ${channel}.
 wizard_exit: You have exit wizard mode, you can now write commands
 wizard_add_fiat_amount: |
   Please indicate the amount of ${currency} that you want to ${action}.
