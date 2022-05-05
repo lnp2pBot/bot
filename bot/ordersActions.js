@@ -254,6 +254,7 @@ const getNewRangeOrderPayload = async (order) => {
         range_parent_id: order._id,
         tgChatId: order.tg_chat_id,
         tgOrderMessage: order.tg_order_message,
+        community_id: order.community_id,
       };
 
       return orderData;
