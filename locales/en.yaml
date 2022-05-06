@@ -199,7 +199,7 @@ help: |
   /fiatsent <_order id_> - Buyer informs that has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
-  /cancel <_order id_> - Cancel an order that has not benn taken yet
+  /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
