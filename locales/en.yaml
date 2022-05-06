@@ -45,7 +45,7 @@ cancel_order_cmd: |
 pending_buy: |
   📝 You offer to buy sats is active in the ${channel} channel.
 
-  You need to wait until another user picks up the order, Espera que alguien tome tu compra, this order will expire in ${orderExpirationWindow} hours.
+  You need to wait until another user picks up the order, this order will expire in ${orderExpirationWindow} hours.
 
   You can cancel this order before another user picks it up by executting the command 👇
 must_be_int: ${fieldName} must be a number
