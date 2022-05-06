@@ -17,7 +17,7 @@ start: |
 
   7. Once someboody takes your buying order you need to create a Lightnng Network invoice and send it to the Bot, after that you need to contact your seller to get your FIAT payment instructions. Once you pay the seller should use the command /release, the BOT will send you the sats to your Lighting Network invoice.
 
-  8. If you are taking a selling order , i.e. you buy, you must create a LN invoice to get your sats and ask the seller to give you the FIAT pament instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
+  8. If you are taking a selling order , i.e. you buy, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
 
   9. If you are taking a buy order, i.e. you sell sats. you must pay the LN invoice. this sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. Once you receive the fiat payment you must release the fund held by the bot, you must use the /release command and sats wiil be automatically sent to the buyer wallet.
 
