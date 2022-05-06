@@ -214,7 +214,7 @@ user_not_found: User was not found in the database!
 parse_invoice_error: Error parsing invoice
 invalid_id: Invalid Id 
 cant_take_own_order: You cannot take your own order. 
-send_me_a_ln_invoice: Please send me a lightning network for ${amount} sats
+send_me_a_ln_invoice: Please send me a lightning network invoice for ${amount} sats
 you_have_no_orders: You don't have active orders
 not_rate_for_currency: |
  ${fiatRateProvider} Theres is no exchange rate for this FIAT, 
