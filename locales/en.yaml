@@ -331,7 +331,7 @@ pending_payment_success_to_admin: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_success: |
-  I have paid the lightning invoice for ${amount} satoshis, Id de orden: #${orderId}!
+  I have paid the lightning invoice for ${amount} satoshis, order Id: #${orderId}!
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
