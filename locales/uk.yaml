@@ -214,7 +214,7 @@ user_not_found: Користувач не знайдений!
 error_parsing_invoice: Помилка аналізу рахунку-фактури.
 invalid_id: Невірний ID.
 cant_take_own_order: Ви не можете взяти своє власне замовлення!
-send_me_a_ln_invoice: Будь ласка, надішліть мені рахунок-фактуру Lightning на ${order.amount} сат.
+send_me_lninvoice: Будь ласка, надішліть мені рахунок-фактуру Lightning на ${order.amount} сат, although to make things easier for you I also accept invoices without amount, I will make the payment of ${amount} sats.
 you_have_no_orders: Наразі у Вас немає заявок.
 not_rate_for_currency: |
   ${fiatRateProvider} для цієї фіатної валюти немає обмінного курсу.
@@ -336,8 +336,6 @@ pending_payment_success: |
   Підтвердження оплати: ${paymentSecret}
 pending_payment_failed: |
   Я намагався оплатити Ваш рахунок в цілому 4 рази, і всі зазнали невдачі, іноді користувачі мережі Lightning не можуть отримувати платежі тому що у Вашому гаманці/вузлі недостатньо вхідної ємності, для вирішення проблеми згенеруйте новий рахунок з іншого гаманця/ноду у якого є ємність.
-
-  Якщо бажаєте, Ви можете надіслати мені новий рахунок для отримання сатоші командою 👇
 pending_payment_failed_to_admin: |
   Платіж за рахунком-фактурою на покупку з ідентифікатором #${orderId} користувача @${username} не виконаний!
 
@@ -378,3 +376,4 @@ no_default_community: You no longer have a community by default
 community_not_found: Community not found
 currencies: Currencies
 currency_not_supported: This currency cannot be used in this community, it is only allowed to use [${currencies}]
+press_to_continue: Press the button to continue

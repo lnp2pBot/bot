@@ -1,7 +1,7 @@
-const { I18n } = require('@grammyjs/i18n');
 const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
 const messages = require('../bot/messages');
+const { getUserI18nContext } = require('../util');
 
 const attemptPendingPayments = async (bot) => {
     const pendingPayments = await PendingPayment.find({
@@ -9,11 +9,7 @@ const attemptPendingPayments = async (bot) => {
         attempts: { $lt: 3 },
         is_invoice_expired: false,
     });
-    // We need to create a i18n object to create a context
-    const i18n = new I18n({
-        defaultLanguageOnMissing: true,
-        directory: 'locales',
-    });
+
     for (const pending of pendingPayments) {
         const order = await Order.findOne({ _id: pending.order_id });
         try {
@@ -34,7 +30,7 @@ const attemptPendingPayments = async (bot) => {
                 request: pending.payment_request,
             });
             const buyerUser = await User.findOne({ _id: order.buyer_id });
-            const i18nCtx = i18n.createContext(buyerUser.lang);
+            const i18nCtx = await getUserI18nContext(buyerUser);
             // If the buyer's invoice is expired we let it know and don't try to pay again
             if (!!payment && payment.is_expired) {
                 pending.is_invoice_expired = true;

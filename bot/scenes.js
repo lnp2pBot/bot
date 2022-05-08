@@ -1,9 +1,10 @@
 const { Scenes } = require('telegraf')
 const { isValidInvoice } = require('./validations');
-const { Order, Community, User } = require('../models');
+const { Order, Community, User, PendingPayment } = require('../models');
 const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
-const { getCurrency, isGroupAdmin } = require('../util');
+const { getCurrency, isGroupAdmin, getUserI18nContext } = require('../util');
 const messages = require('./messages');
+const { isPendingPayment } = require('../ln');
 
 function itemsFromMessage(str) {
   return str.split(" ").map(e => e.trim()).filter(e => !!e)
@@ -68,6 +69,85 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return;
       }
       await waitPayment(ctx, bot, buyer, seller, order, lnInvoice);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      console.log(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+const addInvoicePHIWizard = new Scenes.WizardScene(
+  'ADD_INVOICE_PHI_WIZARD_SCENE_ID',
+  async (ctx) => {
+    try {
+      const { buyer, order } = ctx.wizard.state;
+      const i18nCtx = await getUserI18nContext(buyer);
+      await messages.sendMeAnInvoiceMessage(ctx, order.amount, i18nCtx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async (ctx) => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+      const lnInvoice = ctx.message.text.trim();
+      let { buyer, order } = ctx.wizard.state;
+      // We get an updated order from the DB
+      order = await Order.findOne({ _id: order._id });
+      if (!order) {
+        await ctx.reply(ctx.i18n.t('generic_error'));
+        return ctx.scene.leave();
+      }
+
+      if (lnInvoice == 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+
+      const res = await isValidInvoice(ctx, lnInvoice);
+      if (!res.success) {
+        return;
+      }
+
+      if (!!res.invoice.tokens && res.invoice.tokens != order.amount) {
+        await messages.incorrectAmountInvoiceMessage(ctx);
+        return;
+      }
+
+      const isScheduled = await PendingPayment.findOne({
+        order_id: order._id,
+        attempts: { $lt: 3 },
+        is_invoice_expired: false,
+      });
+      // We check if the payment is on flight
+      const isPending = await isPendingPayment(order.buyer_invoice);
+
+      if (!!isScheduled || !!isPending) {
+        await messages.invoiceAlreadyUpdatedMessage(ctx);
+        return;
+      }
+      // if the payment is not on flight, we create a pending payment
+      if (!order.paid_hold_buyer_invoice_updated) {
+        order.paid_hold_buyer_invoice_updated = true;
+        const pp = new PendingPayment({
+          amount: order.amount,
+          payment_request: lnInvoice,
+          user_id: buyer._id,
+          description: order.description,
+          hash: order.hash,
+          order_id: order._id,
+        });
+        await pp.save();
+        await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
+      } else {
+        await messages.invoiceAlreadyUpdatedMessage(ctx);
+      }
 
       return ctx.scene.leave();
     } catch (error) {
@@ -615,4 +695,5 @@ module.exports = {
   updateGroupCommunityWizard,
   updateChannelsCommunityWizard,
   updateSolversCommunityWizard,
+  addInvoicePHIWizard,
 };
