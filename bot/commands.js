@@ -12,7 +12,12 @@ const {
   } = require('../ln');
 const { Order, User, Community } = require('../models');
 const messages = require('./messages');
-const { getBtcFiatPrice, extractId, deleteOrderFromChannel } = require('../util');
+const {
+  getBtcFiatPrice,
+  extractId,
+  deleteOrderFromChannel,
+  getUserI18nContext,
+} = require('../util');
 const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
 
 const takebuy = async (ctx, bot) => {
@@ -98,12 +103,8 @@ const takesell = async (ctx, bot) => {
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
     order.buyer_invoice = buyerInvoice;
-    // We need to create a i18n object to create a context for the message to the seller
-    const i18n = new I18n({
-      defaultLanguageOnMissing: true,
-      directory: 'locales',
-    });
-    const i18nCtx = i18n.createContext(seller.lang);
+    // We need the i18n context to send the message with the correct language
+    const i18nCtx = await getUserI18nContext(seller);
     // If the buyer is the creator, at this moment the seller already paid the hold invoice
     if (order.creator_id == order.buyer_id) {
       order.status = 'ACTIVE';
@@ -258,16 +259,12 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
-    // We need to create a i18n object to create a context
-    const i18n = new I18n({
-      defaultLanguageOnMissing: true,
-      directory: 'locales',
-    });
+
     const user = await User.findOne({ _id: order.buyer_id });
 
     if (!user) return;
 
-    const i18nCtx = i18n.createContext(user.lang);
+    const i18nCtx = await getUserI18nContext(user);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status != 'WAITING_BUYER_INVOICE') {
       await messages.genericErrorMessage(bot, user, i18nCtx);
@@ -281,7 +278,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       const clonedOrder = order;
       await order.remove();
       await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, i18nCtx);
-      const i18nCtxSeller = i18n.createContext(sellerUser.lang);
+      const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtxSeller);
     } else { // Re-publish order
       console.log(`Order Id: ${order._id} expired, republishing to the channel`);
@@ -380,14 +377,10 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
-    // We need to create a i18n object to create a context
-    const i18n = new I18n({
-      defaultLanguageOnMissing: true,
-      directory: 'locales',
-    });
+
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
-    const i18nCtx = i18n.createContext(user.lang);
+    const i18nCtx = await getUserI18nContext(user);
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status != 'WAITING_PAYMENT') {
       await messages.genericErrorMessage(bot, user, i18nCtx);
@@ -475,6 +468,35 @@ const updateCommunity = async (ctx, id, field, bot) => {
   }
 };
 
+/**
+ *
+ * This triggers a scene asking for a new invoice after a payment to a buyer failed
+ * @param {*} bot
+ * @param {*} order
+ * @returns
+ */
+const addInvoicePHI = async (ctx, bot, orderId) => {
+  try {
+    ctx.deleteMessage();
+    const order = await Order.findOne({ _id: orderId });
+    // orders with status PAID_HOLD_INVOICE are released payments
+    if (order.status != 'PAID_HOLD_INVOICE') {
+      return;
+    }
+
+    const buyer = await User.findOne({ _id: order.buyer_id });
+    if (!buyer) return;
+    if (order.amount == 0) {
+      await messages.genericErrorMessage(bot, buyer, ctx.i18n);
+      return;
+    }
+
+    ctx.scene.enter('ADD_INVOICE_PHI_WIZARD_SCENE_ID', { order, buyer, bot });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   takebuy,
   takesell,
@@ -486,4 +508,5 @@ module.exports = {
   cancelShowHoldInvoice,
   showHoldInvoice,
   updateCommunity,
+  addInvoicePHI,
 };

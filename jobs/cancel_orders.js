@@ -1,16 +1,11 @@
-const { I18n } = require('@grammyjs/i18n');
 const { cancelHoldInvoice } = require('../ln');
 const { User, Order } = require('../models');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
+const { getUserI18nContext } = require('../util');
 
 const cancelOrders = async (bot) => {
     try {
-        // We need to create a i18n object to create a context
-        const i18n = new I18n({
-            defaultLanguageOnMissing: true,
-            directory: 'locales',
-        });
         const holdInvoiceTime = new Date();
         holdInvoiceTime.setSeconds(holdInvoiceTime.getSeconds() - parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW));
         // We get the orders where the seller didn't pay the hold invoice before expired
@@ -47,8 +42,8 @@ const cancelOrders = async (bot) => {
         for (const order of activeOrders) {
             const buyerUser = await User.findOne({ _id: order.buyer_id });
             const sellerUser = await User.findOne({ _id: order.seller_id });
-            const i18nCtxBuyer = i18n.createContext(buyerUser.lang);
-            const i18nCtxSeller = i18n.createContext(sellerUser.lang);
+            const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+            const i18nCtxSeller = await getUserI18nContext(sellerUser);
             // Instead of cancel this order we should send this to the admins 
             // and they decide what to do
             await messages.expiredOrderMessage(bot, order, buyerUser, sellerUser, i18nCtxBuyer);

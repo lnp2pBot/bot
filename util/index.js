@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
 const { Order, Community } = require('../models');
 
@@ -266,6 +267,22 @@ const getOrderChannel = async (order) => {
   return channel;
 };
 
+/**
+ * Returns a i18n context
+ * @param {*} user
+ * @returns i18n context
+ */
+const getUserI18nContext = async (user) => {
+  const language = user.language || 'en';
+  const i18n = new I18n({
+    locale: language,
+    defaultLanguageOnMissing: true,
+    directory: 'locales',
+  });
+
+  return i18n.createContext(user.lang);
+}
+
 module.exports = {
   isIso4217,
   plural,
@@ -283,4 +300,5 @@ module.exports = {
   isGroupAdmin,
   deleteOrderFromChannel,
   getOrderChannel,
+  getUserI18nContext,
 };

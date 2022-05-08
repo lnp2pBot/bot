@@ -684,7 +684,7 @@ const cantTakeOwnOrderMessage = async (ctx, bot, user) => {
 
 const notLightningInvoiceMessage = async (ctx, order) => {
   try {
-    await ctx.reply(ctx.i18n.t('send_me_a_ln_invoice', { amount: order.amount }));
+    await ctx.reply(ctx.i18n.t('send_me_lninvoice', { amount: order.amount }));
     await ctx.reply(ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }), { parse_mode: "MarkdownV2" });
   } catch (error) {
     console.log(error);
@@ -1121,6 +1121,14 @@ const wizardCommunityWrongPermission = async (ctx, user, channel) => {
   }
 };
 
+const sendMeAnInvoiceMessage = async (ctx, amount, i18nCtx) => {
+  try {
+    await ctx.reply(i18nCtx.t('send_me_lninvoice', { amount }));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_fiat_amount', {
@@ -1281,11 +1289,13 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
 const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed'));
-    await bot.telegram.sendMessage(
-      user.tg_id,
-      i18n.t('setinvoice_cmd_order', { orderId: order._id }),
-      { parse_mode: "MarkdownV2" },
-    );
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('press_to_continue'), {
+      reply_markup: {
+        inline_keyboard: [
+          [{text: i18n.t('continue'), callback_data: `addInvoicePHIBtn_${order._id}`}],
+        ],
+      },
+    });
   } catch (error) {
     console.log(error);
   }
@@ -1391,6 +1401,20 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
     console.log(error);
   }
 };
+
+const startAddInvoiceMessage = async (bot, user, orderId, i18nCtx) => {
+  try {
+    await bot.telegram.sendMessage(user.tg_id, 'presiona para continuar', {
+      reply_markup: {
+        inline_keyboard: [
+          [{text: i18nCtx.t('continue'), callback_data: `addInvoicePHIBtn_${orderId}`}],
+        ],
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 module.exports = {
   startMessage,
@@ -1523,4 +1547,6 @@ module.exports = {
   communityNotFoundMessage,
   currencyNotSupportedMessage,
   wizardCommunityWrongPermission,
+  sendMeAnInvoiceMessage,
+  startAddInvoiceMessage,
 };

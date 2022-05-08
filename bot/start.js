@@ -14,6 +14,7 @@ const {
   showHoldInvoice,
   waitPayment,
   updateCommunity,
+  addInvoicePHI,
 } = require('./commands');
 const {
   settleHoldInvoice,
@@ -46,6 +47,7 @@ const {
   updateGroupCommunityWizard,
   updateChannelsCommunityWizard,
   updateSolversCommunityWizard,
+  addInvoicePHIWizard,
 } = require('./scenes');
 
 const initialize = (botToken, options) => {
@@ -77,6 +79,7 @@ const initialize = (botToken, options) => {
     updateGroupCommunityWizard,
     updateChannelsCommunityWizard,
     updateSolversCommunityWizard,
+    addInvoicePHIWizard,
   ]);
   bot.use(session());
   bot.use(i18n.middleware());
@@ -710,6 +713,10 @@ const initialize = (botToken, options) => {
 
   bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async (ctx) => {
     await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
+  });
+
+  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async (ctx) => {
+    await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
   bot.command('paytobuyer', async (ctx) => {
