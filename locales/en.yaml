@@ -335,7 +335,7 @@ pending_payment_success: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
-  🤖 I have tried to pay your invoice 4 times and failed, sometims Lighnintn network userws cannot receive payments because their wallet has not enough balance available in their node. yoy might want to try to generate an invoice from another wallet with enough balance.
+  🤖 I have tried to pay your invoice 4 times and failed, sometimes Lighnintn network users cannot receive payments because their wallet has not enough balance available in their node. yoy might want to try to generate an invoice from another wallet with enough balance.
 
   If you wish to send me a new invoice to receive the satoshis, please use the following command. 👇
 pending_payment_failed_to_admin: |
