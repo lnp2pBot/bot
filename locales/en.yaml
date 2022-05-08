@@ -15,9 +15,9 @@ start: |
 
   6. If you want to buy, you need to publish your order using the /buy command and wait until a seller takes it. You can cancel the order any time using the /cancel command.
 
-  7. Once someboody takes your buying order you need to create a Lightnng Network invoice and send it to the Bot, after that you need to contact your seller to get your FIAT payment instructions. Once you pay the seller should use the command /release, the BOT will send you the sats to your Lighting Network invoice.. El vendedor luego debe liberar los fondos usando el comando /release para que te lleguen los sats a la factura lightning.
+  7. Once someboody takes your buying order you need to create a Lightnng Network invoice and send it to the Bot, after that you need to contact your seller to get your FIAT payment instructions. Once you pay the seller should use the command /release, the BOT will send you the sats to your Lighting Network invoice.
 
-  8. If you are taking a selling order , i.e. you buy, you must create a LN invoice to get your sats and ask the seller to give you the FIAT pament instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
+  8. If you are taking a selling order , i.e. you buy, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
 
   9. If you are taking a buy order, i.e. you sell sats. you must pay the LN invoice. this sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. Once you receive the fiat payment you must release the fund held by the bot, you must use the /release command and sats wiil be automatically sent to the buyer wallet.
 
@@ -45,7 +45,7 @@ cancel_order_cmd: |
 pending_buy: |
   📝 You offer to buy sats is active in the ${channel} channel.
 
-  You need to wait until another user picks up the order, Espera que alguien tome tu compra, this order will expire in ${orderExpirationWindow} hours.
+  You need to wait until another user picks up the order, this order will expire in ${orderExpirationWindow} hours.
 
   You can cancel this order before another user picks it up by executting the command 👇
 must_be_int: ${fieldName} must be a number
@@ -183,7 +183,7 @@ buyer_started_dispute_to_seller: "🥴 The buyer has initiated a dispute for you
 you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will get in touch with you and your counterparty to sort it out.
 seller_started_dispute_to_buyer: "🥴 The Seller has initiated a dispute for your order with Id: #${orderId}, we will contact you and your counterparty to resolve it."
 must_be_valid_currency: "Fiat_code must be a valid code for example: USD, EUR, you can see a complete list executing /listcurrencies"
-must_be_number_or_range: "Fiat_ampunt must be a number or numeric range in the  <mínimum>-<máximum> format"
+must_be_number_or_range: "Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format"
 invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Unavailable lightning adress ${la}
 help: |
@@ -199,7 +199,7 @@ help: |
   /fiatsent <_order id_> - Buyer informs that has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
-  /cancel <_order id_> - Cancel an order that has not benn taken yet
+  /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
@@ -245,7 +245,7 @@ your_purchase_is_completed: |
   🪙 Your satoshis purchase has been completed successful, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
 
   ⚡️🍊⚡️
-problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an adminsitrator.
+problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an administrator.
 update_user_setting: I have modify the field  ${field} to ${newState}
 lightning_address_disabled: Lightning address disabled
 invalid_range_with_amount: |
@@ -268,7 +268,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   You have exit the wizard mode, you can know write down the commands, you can still add an invoice to the order with the comand  /setinvoice indicating Order ID and Invoice, you can send me an invoice for ${amount} satoshis, but I will also accept invoices with no amount:
 
-  `/setinvoice ${orderId} `\\<lightning invice with or without amount\\>
+  `/setinvoice ${orderId} `\\<lightning invoice with or without amount\\>
 wizard_community_enter_name: Pick a name for your community
 wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
 wizard_community_enter_currency: Enter the code of the fiat currency(ies) with which users can operate in this community, if there is more than one you must enter each code separated by a blank space.
@@ -277,18 +277,18 @@ wizard_community_enter_group: |
 
   i.e: @MyCommunity
 wizard_community_enter_order_channels: |
-    All orders of your community must be published in a telegram channel if you indicate me only one channel bothe Buy and Sell orders will be published there.
+    All orders of your community must be published in a telegram channel if you indicate me only one channel both Buy and Sell orders will be published there.
 
     If you indicate two channels Buy orders will be place in one and Sell orders in the other. Both you and the Bot must be adminsitrators in both channels.
 
-    Please indicate the name of the channel or in case you want to use two chanels, indicate bothe names separated by a space.
+    Please indicate the name of the channel or in case you want to use two chanels, indicate both names separated by a space.
 
     i.e : @MyCommunitySell  @MyCommunityBuy
 wizard_community_one_or_two_channels: You must indicate either one or two channels
 wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
 wizard_community_must_enter_names: You must add at least one name, or two separated by a space
 wizard_community_enter_solvers_channel: Now please indicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
-wizard_community_success: Congratulatins, you have created your community!
+wizard_community_success: Congratulations, you have created your community!
 wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
 wizard_community_you_are_not_admin: ${username} is not an admin on ${channel}.
 wizard_exit: You have exit wizard mode, you can now write commands
@@ -331,7 +331,7 @@ pending_payment_success_to_admin: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_success: |
-  I have paid the lightning invoice for ${amount} satoshis, Id de orden: #${orderId}!
+  I have paid the lightning invoice for ${amount} satoshis, order Id: #${orderId}!
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
@@ -352,7 +352,7 @@ rate: Rate
 has_successful_trades: Has ${trades} successful trades
 price: Price
 for: For
-generic_error: Ha ocurrido un error
+generic_error: An error occurred
 sats: sats
 no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
 unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
