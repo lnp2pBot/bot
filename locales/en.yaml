@@ -245,7 +245,7 @@ your_purchase_is_completed: |
   🪙 Your satoshis purchase has been completed successful, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
 
   ⚡️🍊⚡️
-problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an adminsitrator.
+problem_getting_price: There is a problem accessing this coin price, please try later, if the problem persists, please contact an administrator.
 update_user_setting: I have modify the field  ${field} to ${newState}
 lightning_address_disabled: Lightning address disabled
 invalid_range_with_amount: |
