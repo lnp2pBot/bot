@@ -354,7 +354,7 @@ rate: Rate
 has_successful_trades: Has ${trades} successful trades
 price: Price
 for: For
-generic_error: Ha ocurrido un error
+generic_error: An error occurred
 sats: sats
 no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
 unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
