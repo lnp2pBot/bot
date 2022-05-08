@@ -214,7 +214,7 @@ user_not_found: ¡Usuario no encontrado en base de datos!
 parse_invoice_error: Error parseando la factura
 invalid_id: Id no válida
 cant_take_own_order: No puedes tomar tu propia orden
-send_me_a_ln_invoice: Por favor envíame una factura lightning por ${amount} sats xx
+send_me_lninvoice: Por favor envíame una factura lightning por ${amount} sats, aunque para facilitarte las cosas también te acepto facturas sin monto, yo te haré el pago de ${amount} sats.
 you_have_no_orders: No tienes ninguna orden en este momento
 not_rate_for_currency: |
   ${fiatRateProvider} no tiene tasa de cambio para esta moneda fiat
@@ -336,8 +336,6 @@ pending_payment_success: |
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
   🤖 He intentado pagar tu factura un total de 4 veces y todas han fallado, algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad.
-
-  Si lo deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
 pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
 
@@ -378,3 +376,4 @@ no_default_community: Ya no tienes comunidad por defecto
 community_not_found: Comunidad no encontrada
 currencies: Monedas
 currency_not_supported: Esta moneda no puede ser utilizada en esta comunidad, solo está permitido usar [${currencies}]
+press_to_continue: Presiona el botón para continuar

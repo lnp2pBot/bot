@@ -214,7 +214,7 @@ user_not_found: User was not found in the database!
 parse_invoice_error: Error parsing invoice
 invalid_id: Invalid Id 
 cant_take_own_order: You cannot take your own order. 
-send_me_a_ln_invoice: Please send me a lightning network for ${amount} sats
+send_me_lninvoice: Please send me a lightning invoice for ${amount} sats, although to make things easier for you I also accept invoices without amount, I will make the payment of ${amount} sats.
 you_have_no_orders: You don't have active orders
 not_rate_for_currency: |
  ${fiatRateProvider} Theres is no exchange rate for this FIAT, 
@@ -238,7 +238,7 @@ ok_cooperativecancel: "👍 Counterparty agreed and the order Id: #${orderId} ha
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make 
 init_cooperativecancel: "🕒 You have started the cancelation of the order Id: #${orderId}, your counterparty must agree on cancellation too."
 counterparty_wants_cooperativecancel: "😳 Your counterparty wants to cancel order Id: #${orderId}, If you agree on such cancellation please exEcute the follwing command 👇"
-invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try 3 more times in ${pendingPaymentWindow} minute windows, please check your node/wallet is online
+invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try 3 more times in ${pendingPaymentWindow} minutes window, please check your node/wallet is online
 cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
 seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
 your_purchase_is_completed: |
@@ -335,9 +335,7 @@ pending_payment_success: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
-  🤖 I have tried to pay your invoice 4 times and failed, sometims Lighnintn network userws cannot receive payments because their wallet has not enough balance available in their node. yoy might want to try to generate an invoice from another wallet with enough balance.
-
-  If you wish to send me a new invoice to receive the satoshis, please use the following command. 👇
+  🤖 I have tried to pay your invoice 4 times and failed, sometimes Lightning network users can't receive payments because their wallet has not enough inbound capacity or the node is not well connected in the network. You might want to try to generate an invoice from another wallet.
 pending_payment_failed_to_admin: |
   Payment of the invoice for the Buy order #${orderId} of user @${username} has failed.
 
@@ -378,3 +376,4 @@ no_default_community: You no longer have a community by default
 community_not_found: Community not found
 currencies: Currencies
 currency_not_supported: This currency cannot be used in this community, it is only allowed to use [${currencies}]
+press_to_continue: Press the button to continue
