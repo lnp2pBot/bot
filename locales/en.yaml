@@ -277,11 +277,11 @@ wizard_community_enter_group: |
 
   i.e: @MyCommunity
 wizard_community_enter_order_channels: |
-    All orders of your community must be published in a telegram channel if you indicate me only one channel bothe Buy and Sell orders will be published there.
+    All orders of your community must be published in a telegram channel if you indicate me only one channel both Buy and Sell orders will be published there.
 
     If you indicate two channels Buy orders will be place in one and Sell orders in the other. Both you and the Bot must be adminsitrators in both channels.
 
-    Please indicate the name of the channel or in case you want to use two chanels, indicate bothe names separated by a space.
+    Please indicate the name of the channel or in case you want to use two chanels, indicate both names separated by a space.
 
     i.e : @MyCommunitySell  @MyCommunityBuy
 wizard_community_one_or_two_channels: You must indicate either one or two channels
