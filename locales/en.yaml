@@ -377,3 +377,5 @@ community_not_found: Community not found
 currencies: Currencies
 currency_not_supported: This currency cannot be used in this community, it is only allowed to use [${currencies}]
 press_to_continue: Press the button to continue
+receive: receive
+send: send

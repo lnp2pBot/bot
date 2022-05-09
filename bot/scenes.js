@@ -366,7 +366,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
     try {
       const { order } = ctx.wizard.state;
       const currency = getCurrency(order.fiat_code);
-      const action = order.type === 'buy' ? 'recibir' : 'enviar';
+      const action = order.type === 'buy' ? ctx.i18n.t('receive') : ctx.i18n.t('send');
       const currencyName = (!!currency && !!currency.name_plural) ? currency.name_plural : order.fiat_code;
       await messages.wizardAddFiatAmountMessage(ctx, currencyName, action, order);
 
