@@ -102,17 +102,17 @@ payment_received: |
 
   Jetzt muss mir der Käufer eine Rechnung schicken, damit ich die sats an sein Wallet senden kann. Sobald der Käufer die Rechnung schickt, werde ich euch beide kontaktieren.
 someone_took_your_order: |
-  🤖 Jemand hat deine Bestellung entgegengenommen und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird\\.
+  🤖 Jemand hat deine Bestellung entgegengenommen und mir bereits die Sats geschickt\\. Bitte verwende einen FIAT\\-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird\\.
 
   *Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden\\.*
 
-  Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren. 👇
+  Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 you_took_someone_order: |
-  🤖 Wenn du diesen Verkaufsauftrag angenommen hast, verwende bitte einen FIAT-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
+  🤖 Wenn du diesen Verkaufsauftrag angenommen hast, verwende bitte einen FIAT\\-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird\\.
 
   *Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden\\.*
 
-  Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren. 👇
+  Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 get_in_touch_with_seller: |
   Nimm Kontakt mit dem Verkäufer @${sellerUsername} auf, um die Details zu erfahren, wie du ${currency} ${fiatAmount} mit ${paymentMethod} überweisen musst.
 
@@ -217,7 +217,7 @@ cant_take_own_order: Du kannst deinen eigenen Auftrag nicht annehmen.
 send_me_lninvoice: Bitte sende mir ein Lightning-Network Rechnung für ${amount} sats
 you_have_no_orders: Du hast keine aktiven Aufträge
 not_rate_for_currency: |
- ${fiatRateProvider} Es gibt keinen Wechselkurs für diese FIAT-Währung,
+  ${fiatRateProvider} Es gibt keinen Wechselkurs für diese FIAT-Währung,
   Wenn du diese FIAT-Währung verwenden willst, musst du angeben, wie viele Sats du haben möchtest.
   Wenn du diese FIAT-Währung in der Liste haben möchtest, kannst du die Funktion /listcurrencies verwenden, um eine Anfrage zu stellen. 👇****
 
@@ -266,7 +266,7 @@ wizard_add_invoice_init: |
 
   Wenn du die Rechnung nicht innerhalb von ${expirationTime} Minuten abschickst, wird der Auftrag storniert
 wizard_add_invoice_exit: |
-  Du hast den Assistentenmodus verlassen, du kannst die Befehle aufschreiben. Du kannst immer noch eine Rechnung zur Bestellung hinzufügen mit dem Befehl /setinvoice, der die Order-ID und die Rechnung angibt, du kannst mir eine Rechnung über ${Betrag} Sats schicken, aber ich akzeptiere auch Rechnungen ohne Betrag:
+  Du hast den Assistentenmodus verlassen, du kannst die Befehle aufschreiben. Du kannst immer noch eine Rechnung zur Bestellung hinzufügen mit dem Befehl /setinvoice, der die Order\-ID und die Rechnung angibt, du kannst mir eine Rechnung über ${Betrag} Sats schicken, aber ich akzeptiere auch Rechnungen ohne Betrag:
 
   `/setinvoice ${orderId} `\\<Lightning Rechnung mit oder ohne Betrag\\>
 wizard_community_enter_name: Wähle einen Namen für deine Community
