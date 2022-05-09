@@ -199,7 +199,7 @@ const extractId = (text) => {
 
 // Clean strings that are going to be rendered with markdown
 const sanitizeMD = (text) => {
-  return text.replace(/(?=[(){}\[\]\-_#.`=+])/g, '\\');
+  return text.replace(/(?=[|(){}\[\]\-_#.`=+])/g, '\\');
 }
 
 const secondsToTime = (secs) => {
