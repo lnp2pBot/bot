@@ -54,29 +54,29 @@ fiat_amount: fiat Wert
 sell_correct_format: |
   /sell \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\]
 
-  Um einen Verkaufsauftrag von 1000 Sats für 2 Euro \(EUR\) zu erstellen und anzugeben, dass die Zahlung in FIAT durch Überweisung oder Einzahlung am Geldautomaten erfolgt, musst du \<\> und \[\]\ vermeiden.
+  Um einen Verkaufsauftrag von 1000 Sats für 2 Euro \(EUR\) zu erstellen und anzugeben, dass die Zahlung in FIAT durch Überweisung oder Einzahlung am Geldautomaten erfolgt, musst du \<\> und \[\] vermeiden\.
 
   `/sell 1000 2 EUR "Überweisung oder Einzahlung am Geldautomat"`
 
-  Um einen Verkauf mit einem Zuschlag von 3% \(Zuschlag\) zu erstellen, musst du den Parameter 0 verwenden, der den FIAT-Betrag\ angibt. Der Bot berechnet den Verkaufspreis anhand des Bitcoin-Marktpreises und wendet den angegebenen Zuschlag an. Als letzten Parameter musst du 3 (für den gewünschten Zuschlag) hinzufügen
+  Um einen Verkauf mit einem Zuschlag von 3% \(Zuschlag\) zu erstellen, musst du den Parameter 0 verwenden, der den FIAT\-Betrag\ angibt\. Der Bot berechnet den Verkaufspreis anhand des Bitcoin\-Marktpreises und wendet den angegebenen Zuschlag an\. Als letzten Parameter musst du 3 \(für den gewünschten Zuschlag\) hinzufügen
 
   `/sell 0 2 EUR "Zahlungsmethode" 3`
 
-  Um eine Verkaufsspanne zu erstellen, kannst du statt eines festen FIAT-Betrags einen Mindest- und einen Höchstbetrag angeben, die durch einen Bindestrich getrennt sind *\-*
+  Um eine Verkaufsspanne zu erstellen, kannst du statt eines festen FIAT\-Betrags einen Mindest\- und einen Höchstbetrag angeben, die durch einen Bindestrich getrennt sind *\-*
 
   `/sell 0 100\-500 EUR "Zahlungsmethode" 3`
 buy_correct_format: |
   /buy \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\]
 
-  Um eine Bestellung über 1000 Sats für 2 \(EUR\) zu erstellen und anzugeben, dass die Zahlung per Überweisung erfolgt, musst du sowohl \<\> als auch \[\]\ weglassen.
+  Um eine Bestellung über 1000 Sats für 2 \(EUR\) zu erstellen und anzugeben, dass die Zahlung per Überweisung erfolgt, musst du sowohl \<\> als auch \[\] weglassen\.
 
   `/buy 1000 2 EUR "Banküberweisung"`
 
-  Wenn du keine feste Menge an Sats festlegen willst und zu einem Preis unter dem Marktwert kaufen möchtest, kannst du eine Kauforder mit einem bestimmten Rabatt aufgeben. Dieser Rabatt ist der Prozentsatz, der vom Marktpreis abgezogen wird, wenn deine Order veröffentlicht wird. Du musst im Feld \<_Anzahl sats_\> den Wert 0 angeben, dann berechnet der Bot den Preis\. Wenn du mit einem Rabatt von 2% auf den Marktpreis kaufen möchtest, solltest du \-2 als letzten Parameter angeben
+  Wenn du keine feste Menge an Sats festlegen willst und zu einem Preis unter dem Marktwert kaufen möchtest, kannst du eine Kauforder mit einem bestimmten Rabatt aufgeben\. Dieser Rabatt ist der Prozentsatz, der vom Marktpreis abgezogen wird, wenn deine Order veröffentlicht wird\. Du musst im Feld \<_Anzahl sats_\> den Wert 0 angeben, dann berechnet der Bot den Preis\. Wenn du mit einem Rabatt von 2% auf den Marktpreis kaufen möchtest, solltest du \-2 als letzten Parameter angeben
 
   `/buy 0 2 EUR "Bargeld" \-2`
 
-  Wenn du eine Bestellung nach in einem gewissen Bereich erstellen willst, anstatt einen festen FIAT-Betrag anzugeben, kannst du das Minimum und das Maximum für die Transaktion durch einen Bindestrich getrennt angeben *\-*
+  Wenn du eine Bestellung nach in einem gewissen Bereich erstellen willst, anstatt einen festen FIAT\-Betrag anzugeben, kannst du das Minimum und das Maximum für die Transaktion durch einen Bindestrich getrennt angeben *\-*
 
   `/buy 0 100\-500 EUR "Banküberweisung" \-2`
 min_invoice_amount: LN-Rechnung muss gleich oder höher als ${minPaymentAmount} sats sein
