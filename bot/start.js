@@ -845,8 +845,9 @@ const initialize = (botToken, options) => {
         await messages.noDefaultCommunityMessage(ctx);
         return;
       }
-
-      const community = await Community.findOne({ group: groupName });
+      // Allow find communities case insensitive
+      let regex = new RegExp(["^", groupName, "$"].join(""), "i");
+      const community = await Community.findOne({ group: regex });
       if (!community) {
         await messages.communityNotFoundMessage(ctx);
         return;
