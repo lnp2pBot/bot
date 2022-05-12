@@ -1,5 +1,6 @@
 const { Order } = require('../models');
 const { deleteOrderFromChannel } = require('../util');
+const logger = require('../logger');
 
 const deleteOrders = async (bot) => {
     try {
@@ -11,7 +12,7 @@ const deleteOrders = async (bot) => {
             created_at: { $lte: windowTime },
         });
         for (const order of pendingOrders) {
-            console.log(`Pending order Id: ${order._id} expired after ${process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW} seconds, deleting it from database and channel`);
+            logger.info(`Pending order Id: ${order._id} expired after ${process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW} seconds, deleting it from database and channel`);
             const orderCloned = order.toObject();
             // We remove the order from the database first, then we remove the message from the channel
             await order.remove();
@@ -19,7 +20,8 @@ const deleteOrders = async (bot) => {
             await deleteOrderFromChannel(orderCloned, bot.telegram);
         }
     } catch (error) {
-        console.log('deleteOrders catch error: ', error);
+        const message = error.toString();
+        logger.error(`deleteOrders catch error: ${message}`);
     }
 };
 

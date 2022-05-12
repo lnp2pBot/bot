@@ -2,6 +2,7 @@ const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
 const { getCurrency, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
+const logger = require('../logger');
 
 const createOrder = async (i18n, bot, user, {
   type,
@@ -80,8 +81,8 @@ const createOrder = async (i18n, bot, user, {
     await order.save();
 
     return order;
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    logger.error(error);
   }
 };
 
@@ -160,8 +161,8 @@ const buildDescription = (i18n, {
     description += rateText;
   
     return description
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    logger.error(error);
   }
 };
 
@@ -185,7 +186,7 @@ try {
 
   return order;
 } catch (error) {
-  console.log(error);
+  logger.error(error);
   return false;
 }
 };
@@ -225,7 +226,7 @@ const getOrders = async (ctx, user, status) => {
 
     return orders;
   } catch (error) {
-    console.log(error)
+    logger.error(error);
   }
 };
 
@@ -260,7 +261,7 @@ const getNewRangeOrderPayload = async (order) => {
       return orderData;
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 

@@ -4,6 +4,7 @@ const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217, parseArgs } = require('../util');
 const { existLightningAddress } = require("../lnurl/lnurl-pay");
+const logger = require('../logger');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -34,7 +35,7 @@ const validateUser = async (ctx, start) => {
 
     return user;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -52,7 +53,7 @@ const validateAdmin = async (ctx) => {
     }
     return user;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -131,7 +132,7 @@ const validateSellOrder = async (ctx) => {
       priceMargin,
     };
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -209,7 +210,7 @@ const validateBuyOrder = async (ctx) => {
       priceMargin,
     };
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -250,7 +251,7 @@ const validateInvoice = async (ctx, lnInvoice) => {
 
     return invoice;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -310,7 +311,7 @@ const isOrderCreator = (user, order) => {
   try {
     return user._id == order.creator_id;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -339,7 +340,7 @@ const validateTakeSellOrder = async (ctx, bot, user, order) => {
 
     return true;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -364,7 +365,7 @@ const validateTakeBuyOrder = async (ctx, bot, user, order) => {
     }
     return true;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -401,7 +402,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
 
     return order;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -425,7 +426,7 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
 
     return order;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -482,7 +483,7 @@ const validateSeller = async (ctx, bot, user) => {
 
     return true;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -499,7 +500,7 @@ const validateParams = async (ctx, paramNumber, errOutputString) => {
 
     return params.slice(1);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -513,7 +514,7 @@ const validateObjectId = async (ctx, id) => {
 
     return true;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -542,7 +543,7 @@ const validateUserWaitingOrder = async (ctx, bot, user) => {
     }
     return true;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };

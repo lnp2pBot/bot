@@ -4,6 +4,7 @@ const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
+const logger = require('../logger');
 
 const payRequest = async ({ request, amount }) => {
   try {
@@ -24,8 +25,8 @@ const payRequest = async ({ request, amount }) => {
     const payment = await payViaPaymentRequest(params);
 
     return payment;
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    logger.error(error);
     return false;
   }
 };
@@ -50,7 +51,7 @@ const payToBuyer = async (bot, order) => {
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (!!payment && !!payment.confirmed_at) {
-      console.log(`Invoice with hash: ${payment.id} paid`);
+      logger.info(`Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
       
@@ -71,7 +72,7 @@ const payToBuyer = async (bot, order) => {
       await pp.save();
     }
   } catch (error) {
-    console.log('payToBuyer catch:', error);
+    logger.error('payToBuyer catch:', error);
   }
 };
 
@@ -82,7 +83,8 @@ const isPendingPayment = async (request) => {
 
     return !!is_pending;
   } catch (error) {
-    console.log('isPendingPayment catch error: ', error);
+    const message = error.toString();
+    logger.error(`isPendingPayment catch error: ${message}`);
     return false;
   }
 }

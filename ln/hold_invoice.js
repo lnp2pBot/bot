@@ -1,6 +1,7 @@
 const { createHash, randomBytes } = require('crypto');
 const lightning = require('lightning');
 const lnd = require('./connect');
+const logger = require('../logger');
 
 const createHoldInvoice = async ({ description, amount }) => {
   try {
@@ -22,27 +23,24 @@ const createHoldInvoice = async ({ description, amount }) => {
 
     // We sent back the response hash (id) to be used on testing
     return { request, hash: id, secret: secret.toString('hex') };
-  } catch (e) {
-    console.log(e);
-    return e;
+  } catch (error) {
+    logger.error(error);
   }
 };
 
 const settleHoldInvoice = async ({ secret }) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
-  } catch (e) {
-    console.log(e);
-    return e;
+  } catch (error) {
+    logger.error(error);
   }
 };
 
 const cancelHoldInvoice = async ({ hash }) => {
   try {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
-  } catch (e) {
-    console.log(e);
-    return e;
+  } catch (error) {
+    logger.error(error);
   }
 };
 

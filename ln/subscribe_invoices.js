@@ -1,5 +1,6 @@
 const { subscribeToInvoices } = require('lightning');
 const lnd = require('./connect');
+const logger = require('../logger');
 
 const subscribeInvoices = async () => {
   try {
@@ -9,11 +10,10 @@ const subscribeInvoices = async () => {
 
       // Una vez una invoice generada por el nodo haya sido pagada
       // guardamos en base de datos la invoice como pagada
-      console.log('Invoice paid!');
+      logger.info('Invoice paid!');
     });
-  } catch (e) {
-    console.log(e);
-    return e;
+  } catch (error) {
+    logger.error(error);
   }
 };
 

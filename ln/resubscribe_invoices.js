@@ -2,7 +2,7 @@ const { getInvoices } = require('lightning');
 const lnd = require('./connect');
 const subscribeInvoice = require('./subscribe_invoice');
 const { Order } = require('../models');
-
+const logger = require('../logger');
 
 const resubscribeInvoices = async (bot) => {
   try {
@@ -16,15 +16,15 @@ const resubscribeInvoices = async (bot) => {
         for (const invoice of heldInvoices) {
             const orderInDB = await Order.findOne({ hash: invoice.id });
             if(!!orderInDB) {
-              console.log(`Re-subscribing: invoice with hash ${invoice.id} is being held!`);
+              logger.info(`Re-subscribing: invoice with hash ${invoice.id} is being held!`);
               await subscribeInvoice(bot, invoice.id, true);
               invoicesReSubscribed++;
             } 
         };
     }
-    console.log(`Invoices resubscribed: ${invoicesReSubscribed}`);
+    logger.info(`Invoices resubscribed: ${invoicesReSubscribed}`);
   } catch (error) {
-    console.log(`ResuscribeInvoice catch: ${error}`);
+    logger.error(`ResuscribeInvoice catch: ${error}`);
     return false;
   }
 };

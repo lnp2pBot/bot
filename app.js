@@ -21,7 +21,8 @@ const { SocksProxyAgent } = require('socks-proxy-agent');
 				  agent
 				}
 			};
-		}  		
+		}
+
 		const bot = start(process.env.BOT_TOKEN, options);
         await resubscribeInvoices(bot);
     })

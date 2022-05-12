@@ -49,6 +49,7 @@ const {
   updateSolversCommunityWizard,
   addInvoicePHIWizard,
 } = require('./scenes');
+const logger = require('../logger');
 
 const initialize = (botToken, options) => {
   const i18n = new I18n({
@@ -95,16 +96,16 @@ const initialize = (botToken, options) => {
       messages.startMessage(ctx);
       await validateUser(ctx, true);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
   bot.command('version', async (ctx) => {
     try {
-      const package = require('../package.json')
+      const package = require('../package.json');
       await ctx.reply(package.version);
     } catch (err) {
-      console.log(error);
+      logger.error(error);
     }
   })
 
@@ -156,7 +157,7 @@ const initialize = (botToken, options) => {
         await messages.publishSellOrderMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -205,7 +206,7 @@ const initialize = (botToken, options) => {
         await messages.publishBuyOrderMessage(bot, user, order, ctx.i18n);
       }
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -232,7 +233,7 @@ const initialize = (botToken, options) => {
 
       await settleHoldInvoice({ secret: order.secret });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -274,7 +275,7 @@ const initialize = (botToken, options) => {
       await seller.save();
       await messages.beginDisputeMessage(bot, buyer, seller, order, initiator, ctx.i18n);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -307,7 +308,7 @@ const initialize = (botToken, options) => {
       // we sent a private message to the buyer
       await messages.successCancelOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -394,7 +395,7 @@ const initialize = (botToken, options) => {
       }
       await order.save();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -419,7 +420,7 @@ const initialize = (botToken, options) => {
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -451,7 +452,7 @@ const initialize = (botToken, options) => {
       // we sent a private message to the buyer
       await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -475,7 +476,7 @@ const initialize = (botToken, options) => {
       await messages.checkOrderMessage(ctx, order, buyer, seller);
 
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -486,7 +487,7 @@ const initialize = (botToken, options) => {
 
       await messages.helpMessage(ctx);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -513,7 +514,7 @@ const initialize = (botToken, options) => {
       await messages.fiatSentMessages(bot, user, seller, order, i18nCtxBuyer, i18nCtxSeller);
 
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -537,7 +538,7 @@ const initialize = (botToken, options) => {
       await user.save();
       await messages.userBannedMessage(ctx);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -570,7 +571,7 @@ const initialize = (botToken, options) => {
       await messages.successSetAddress(ctx);
       
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -642,7 +643,7 @@ const initialize = (botToken, options) => {
 
       await order.save();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -659,7 +660,7 @@ const initialize = (botToken, options) => {
       await messages.listOrdersResponse(bot, user, orders);
 
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -681,14 +682,6 @@ const initialize = (botToken, options) => {
 
   bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async (ctx) => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
-  });
-
-  bot.action('onechannel', async (ctx) => {
-    console.log('eligio un canal');
-  });
-
-  bot.action('twochannels', async (ctx) => {
-    console.log('eligio dos canales');
   });
 
   bot.action(/^updateCommunity_([0-9a-f]{24})$/, async (ctx) => {
@@ -745,7 +738,7 @@ const initialize = (botToken, options) => {
       }
       await payToBuyer(bot, order);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -759,7 +752,7 @@ const initialize = (botToken, options) => {
 
       await messages.listCurrenciesResponse(ctx, currencies);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -771,7 +764,7 @@ const initialize = (botToken, options) => {
 
       await messages.showInfoMessage(bot, user);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -788,7 +781,7 @@ const initialize = (botToken, options) => {
       await user.save();
       messages.updateUserSettingsMessage(ctx, 'showusername', show);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -805,7 +798,7 @@ const initialize = (botToken, options) => {
       await user.save();
       messages.updateUserSettingsMessage(ctx, 'showvolume', show);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -817,7 +810,7 @@ const initialize = (botToken, options) => {
 
       ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -830,7 +823,7 @@ const initialize = (botToken, options) => {
 
       await messages.showUserCommunitiesMessage(ctx, communities);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -864,7 +857,7 @@ const initialize = (botToken, options) => {
 
       await messages.operationSuccessfulMessage(ctx);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -886,7 +879,7 @@ const initialize = (botToken, options) => {
       }
       ctx.reply(message);
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
@@ -898,7 +891,7 @@ const start = (botToken, options) => {
 
   bot.launch();
 
-  console.log('Bot launched.');
+  logger.notice('Bot launched.');
 
   // Enable graceful stop
   process.once('SIGINT', () => bot.stop('SIGINT'));
