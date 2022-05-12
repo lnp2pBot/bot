@@ -16,12 +16,15 @@ const payRequest = async ({ request, amount }) => {
     if (invoice.is_expired) {
       return invoice;
     }
-
+    // We need to set a max fee amount
+    const maxFee = amount * 0.0015;
     const params = {
       lnd,
       request,
+      max_fee: maxFee,
     };
     if (!invoice.tokens) params.tokens = amount;
+
     const payment = await payViaPaymentRequest(params);
 
     return payment;
