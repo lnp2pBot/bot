@@ -2,6 +2,7 @@ const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
+const logger = require('../logger');
 
 const attemptPendingPayments = async (bot) => {
     const pendingPayments = await PendingPayment.find({
@@ -17,7 +18,7 @@ const attemptPendingPayments = async (bot) => {
             if (order.status == 'SUCCESS') {
                 pending.paid = true;
                 await pending.save();
-                console.log(`Order id: ${order._id} was already paid`);
+                logger.info(`Order id: ${order._id} was already paid`);
                 return;
             }
             // We check if the payment is on flight we don't do anything
@@ -50,7 +51,7 @@ const attemptPendingPayments = async (bot) => {
                 const sellerUser = await User.findOne({ _id: order.seller_id });
                 sellerUser.trades_completed++;
                 sellerUser.save();
-                console.log(`Invoice with hash: ${pending.hash} paid`);
+                logger.info(`Invoice with hash: ${pending.hash} paid`);
                 await messages.toAdminChannelPendingPaymentSuccessMessage(bot, buyerUser, order, pending, payment, i18nCtx);
                 await messages.toBuyerPendingPaymentSuccessMessage(bot, buyerUser, order, payment, i18nCtx);
                 await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
@@ -62,7 +63,8 @@ const attemptPendingPayments = async (bot) => {
                 await messages.toAdminChannelPendingPaymentFailedMessage(bot, buyerUser, order, pending, i18nCtx);
             }
         } catch (error) {
-            console.log('attemptPendingPayments catch error:', error);
+            const message = error.toString();
+            logger.error(`attemptPendingPayments catch error: ${message}`);
         } finally {
             await order.save();
             await pending.save();

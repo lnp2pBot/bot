@@ -2,6 +2,7 @@ const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
 const { Order, Community } = require('../models');
+const logger = require('../logger');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = (code) => {
@@ -80,7 +81,7 @@ const handleReputationItems = async (buyer, seller, amount) => {
     await buyer.save();
     await seller.save();
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -98,7 +99,7 @@ const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
 
     return parseInt(sats);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -109,7 +110,7 @@ const getBtcExchangePrice = (fiatAmount, satsAmount) => {
 
     return feeRate;
   } catch (error) {
-    console.log(error)
+    logger.error(error);
   }
 };
 
@@ -223,7 +224,7 @@ const isGroupAdmin = async (groupId, user, telegram) => {
 
     return false;
   } catch (error) {
-    console.log(error);
+    logger.error(error);
     return false;
   }
 };
@@ -245,7 +246,7 @@ const deleteOrderFromChannel = async (order, telegram) => {
     }
     await telegram.deleteMessage(channel, order.tg_channel_message1);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 

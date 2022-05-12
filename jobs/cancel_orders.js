@@ -3,6 +3,7 @@ const { User, Order } = require('../models');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
+const logger = require('../logger');
 
 const cancelOrders = async (bot) => {
     try {
@@ -54,7 +55,7 @@ const cancelOrders = async (bot) => {
             await order.save();
         }
     } catch (error) {
-        console.log(error);
+        logger.error(error);
     }
 };
 

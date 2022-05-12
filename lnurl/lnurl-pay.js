@@ -1,4 +1,5 @@
 const axios = require('axios').default;
+const logger = require('../logger');
 
 //{
 //	pr: String, // bech32-serialized lightning invoice
@@ -11,12 +12,12 @@ const resolvLightningAddress = async (address, amountMsat) =>{
     const lnAddressRes = (await axios.get(lnAddressQuery)).data;
 
     if (lnAddressRes.tag != "payRequest") {
-        console.log("lnAddress invalid response");
+        logger.info("lnAddress invalid response");
         return false;
     }
 
     if (lnAddressRes.minSendable > amountMsat | lnAddressRes.maxSendable < amountMsat) {
-        console.log("lnAddress invalid amount");
+        logger.info("lnAddress invalid amount");
         return false;
     }
 
@@ -32,13 +33,13 @@ const existLightningAddress = async (address) => {
     try {
         const lnAddressRes = (await axios.get(lnAddressQuery)).data;
         if (lnAddressRes.tag != "payRequest") {
-            console.log("Invalid response from LNURL");
+            logger.info("Invalid response from LNURL");
             return false;
         }
 
         return true;
     } catch(error) {
-        console.log(`The ligthning address ${address} does not exist`);
+        logger.info(`The ligthning address ${address} does not exist`);
         return false;
     }
 };

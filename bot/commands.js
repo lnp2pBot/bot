@@ -19,6 +19,7 @@ const {
   getUserI18nContext,
 } = require('../util');
 const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
+const logger = require('../logger');
 
 const takebuy = async (ctx, bot) => {
   try {
@@ -61,7 +62,7 @@ const takebuy = async (ctx, bot) => {
     await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -96,7 +97,7 @@ const takesell = async (ctx, bot) => {
     await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeSellMessage(ctx, bot, user, order);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -133,7 +134,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
     }
     await order.save();
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 }
 
@@ -181,7 +182,7 @@ const addInvoice = async (ctx, bot, order) => {
     if (buyer.lightning_address) {
       let laRes = await resolvLightningAddress(buyer.lightning_address, order.amount * 1000);
       if (!!laRes && !laRes.pr) {
-        console.log(`lightning address ${buyer.lightning_address} not available`);
+        logger.warn(`lightning address ${buyer.lightning_address} not available`);
         messages.unavailableLightningAddress(ctx, bot, buyer, buyer.lightning_address);
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
       } else {
@@ -191,7 +192,7 @@ const addInvoice = async (ctx, bot, order) => {
       ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -222,7 +223,7 @@ const rateUser = async (ctx, bot, rating, orderId) => {
     const response = { rating };
     await saveUserReview(targetUser, response);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -241,7 +242,7 @@ const saveUserReview = async (targetUser, review) => {
 
     await targetUser.save()
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -281,7 +282,11 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtxSeller);
     } else { // Re-publish order
-      console.log(`Order Id: ${order._id} expired, republishing to the channel`);
+      if (userAction) {
+        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+      } else {
+        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+      }
       order.taken_at = null;
       order.status = 'PENDING';
       if (!!order.min_amount && !!order.max_amount) {
@@ -310,7 +315,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -362,7 +367,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
     await subscribeInvoice(bot, hash);
     await messages.showHoldInvoiceMessage(ctx, request, amount, order.fiat_code, order.fiat_amount);
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -397,7 +402,11 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, i18nCtx);
       await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, i18nCtx);
     } else { // Re-publish order
-      console.log(`Order Id: ${order._id} expired, republishing to the channel`);
+      if (userAction) {
+        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+      } else {
+        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+      }
       order.taken_at = null;
       order.status = 'PENDING';
 
@@ -428,7 +437,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -464,7 +473,7 @@ const updateCommunity = async (ctx, id, field, bot) => {
       ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     }
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 
@@ -493,7 +502,7 @@ const addInvoicePHI = async (ctx, bot, orderId) => {
 
     ctx.scene.enter('ADD_INVOICE_PHI_WIZARD_SCENE_ID', { order, buyer, bot });
   } catch (error) {
-    console.log(error);
+    logger.error(error);
   }
 };
 

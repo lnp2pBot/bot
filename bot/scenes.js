@@ -5,6 +5,7 @@ const { waitPayment, addInvoice, showHoldInvoice } = require("./commands");
 const { getCurrency, isGroupAdmin, getUserI18nContext } = require('../util');
 const messages = require('./messages');
 const { isPendingPayment } = require('../ln');
+const logger = require('../logger');
 
 function itemsFromMessage(str) {
   return str.split(" ").map(e => e.trim()).filter(e => !!e)
@@ -24,7 +25,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       await order.save();
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   },
   async (ctx) => {
@@ -72,7 +73,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -88,7 +89,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   },
   async (ctx) => {
@@ -151,7 +152,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -170,7 +171,7 @@ const communityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -196,7 +197,7 @@ const communityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -222,7 +223,7 @@ const communityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -301,7 +302,7 @@ const communityWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } catch (error) {
       ctx.reply(error.toString());
-      console.log(error);
+      logger.error(error);
     }
   },
   async (ctx) => {
@@ -372,7 +373,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next()
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   },
   async (ctx) => {
@@ -406,7 +407,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   }
 );
@@ -419,7 +420,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -443,8 +444,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
       const { id, user } = ctx.wizard.state;
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
-        console.log('not found');
-        return ctx.scene.leave();
+        new Error('Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID');
       }
       community.name = name;
       await community.save();
@@ -452,7 +452,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -466,7 +466,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -488,8 +488,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
       }
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
-        console.log('not found');
-        return ctx.scene.leave();
+        new Error('Community not found in UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID');
       }
       community.group = group;
       await community.save();
@@ -497,7 +496,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -511,7 +510,7 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -536,8 +535,7 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
       const { id, user } = ctx.wizard.state;
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
-        console.log('not found');
-        return ctx.scene.leave();
+        new Error('Community not found in UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID');
       }
       community.currencies = currencies;
       await community.save();
@@ -545,7 +543,7 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -559,7 +557,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -583,8 +581,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
       const { id, bot, user } = ctx.wizard.state;
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
-        console.log('not found');
-        return ctx.scene.leave();
+        new Error('Community not found in UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID');
       }
       const orderChannels = [];
       if (chan.length == 1) {
@@ -623,7 +620,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -637,7 +634,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
@@ -671,8 +668,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
       const { id, user } = ctx.wizard.state;
       const community = await Community.findOne({ _id: id, creator_id: user._id });
       if (!community) {
-        console.log('not found');
-        return ctx.scene.leave();
+        new Error('Community not found in UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID');
       }
       community.solvers = solvers;
       await community.save();
@@ -680,7 +676,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
 
       return ctx.scene.leave();
     } catch (error) {
-      console.log(error);
+      logger.error(error);
       ctx.scene.leave();
     }
   },
