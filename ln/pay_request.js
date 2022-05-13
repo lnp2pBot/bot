@@ -17,7 +17,7 @@ const payRequest = async ({ request, amount }) => {
       return invoice;
     }
     // We need to set a max fee amount
-    const maxFee = amount * 0.0015;
+    const maxFee = amount * process.env.MAX_ROUTING_FEE;
     const params = {
       lnd,
       request,
