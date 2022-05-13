@@ -608,7 +608,7 @@ const initialize = (botToken, options) => {
       if (order.status == 'PAID_HOLD_INVOICE') {
         const isScheduled = await PendingPayment.findOne({
           order_id: order._id,
-          attempts: { $lt: 3 },
+          attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
           is_invoice_expired: false,
         });
         // We check if the payment is on flight
@@ -730,7 +730,7 @@ const initialize = (botToken, options) => {
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
         order_id: order._id,
-        attempts: { $lt: 3 },
+        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
       });
 
       if (!!isPending) {

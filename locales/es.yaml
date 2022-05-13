@@ -238,7 +238,7 @@ ok_cooperativecancel: "👍 Tu contraparte ha estado de acuerdo y ha sido cancel
 refund_cooperativecancel: 💰 Has recibido un reembolso por tu pago lightning, no es necesario hacer nada mas
 init_cooperativecancel: "🕒 Has iniciado la cancelación de la orden Id: #${orderId}, tu contraparte también debe indicarme que desea cancelar la orden"
 counterparty_wants_cooperativecancel: "😳 Tu contraparte quiere cancelar la orden Id: #${orderId}, si estás de acuerdo utiliza el comando 👇"
-invoice_payment_failed: ⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla 3 veces más en intervalos de ${pendingPaymentWindow} minutos, asegúrate que tu nodo/wallet esté online
+invoice_payment_failed: ⛔ Intenté enviarte el dinero pero el pago a tu factura ha fallado, intentaré pagarla ${attempts} veces más en intervalos de ${pendingPaymentWindow} minutos, asegúrate que tu nodo/wallet esté online
 cant_take_more_orders: ⛔ ¡Lo siento! No puedes tomar otra orden mientras tengas otras esperando por ti
 seller_released: 💸 El vendedor ya liberó los satoshis, debes esperar por el pago de tu factura
 your_purchase_is_completed: |
@@ -335,7 +335,7 @@ pending_payment_success: |
 
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
-  🤖 He intentado pagar tu factura un total de 4 veces y todas han fallado, algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad.
+  🤖 He intentado pagar tu factura un total de ${attempts} veces y todas han fallado, algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad.
 pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: #${orderId} del usuario @${username} ha fallado!
 

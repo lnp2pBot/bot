@@ -238,7 +238,7 @@ ok_cooperativecancel: "👍 Die Gegenpartei hat zugestimmt und der Auftrag mit d
 refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen 
 init_cooperativecancel: "🕒 Du hast mit der Stornierung des Auftrages mit der Id #${orderId} gestartet. Deine Gegenpartei muss der Stornierung ebenfalls zustimmen."
 counterparty_wants_cooperativecancel: "😳 Deine Gegenpartei möchte den Auftrag mit der Id #${orderId} stornieren. Wenn du mit der Stornierung einverstanden bist, führe bitte den folgenden Befehl aus 👇"
-invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner Rechnung ist fehlgeschlagen. Ich werde es noch 3 weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
+invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner Rechnung ist fehlgeschlagen. Ich werde es noch ${attempts} weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
 cant_take_more_orders: ⛔ Sorry! Du kannst keinen weiteren Auftrag annehmen, während andere auf dich warten
 seller_released: 💸 Der Verkäufer hat die Sats bereits freigegeben, du musst warten, bis deine Rechnung bezahlt ist.
 your_purchase_is_completed: |
@@ -335,7 +335,7 @@ pending_payment_success: |
 
   Zahlungsnachweis: ${paymentSecret}
 pending_payment_failed: |
-  🤖 Ich habe 4 Mal versucht, deine LN-Rechnung zu bezahlen und bin gescheitert. Manchmal können Nutzer des Lightning-Netzwerks keine Zahlungen erhalten, weil ihre Wallet nicht genügend Guthaben auf ihrem Node hat. Du solltest versuchen, eine LN-Rechnung von einer anderen Wallet mit genügend Guthaben zu erstellen.
+  🤖 Ich habe ${attempts} Mal versucht, deine LN-Rechnung zu bezahlen und bin gescheitert. Manchmal können Nutzer des Lightning-Netzwerks keine Zahlungen erhalten, weil ihre Wallet nicht genügend Guthaben auf ihrem Node hat. Du solltest versuchen, eine LN-Rechnung von einer anderen Wallet mit genügend Guthaben zu erstellen.
 
   Wenn du mir eine neue LN-Rechnung schicken möchtest, um die Sats zu erhalten, benutze bitte den folgenden Befehl. 👇
 pending_payment_failed_to_admin: |

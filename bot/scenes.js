@@ -123,7 +123,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
 
       const isScheduled = await PendingPayment.findOne({
         order_id: order._id,
-        attempts: { $lt: 3 },
+        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         is_invoice_expired: false,
       });
       // We check if the payment is on flight
@@ -133,8 +133,10 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         await messages.invoiceAlreadyUpdatedMessage(ctx);
         return;
       }
+
       // if the payment is not on flight, we create a pending payment
       if (!order.paid_hold_buyer_invoice_updated) {
+        logger.debug(`Creating pending payment for order ${order._id}`);
         order.paid_hold_buyer_invoice_updated = true;
         const pp = new PendingPayment({
           amount: order.amount,
@@ -144,6 +146,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
           hash: order.hash,
           order_id: order._id,
         });
+        await order.save();
         await pp.save();
         await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
       } else {

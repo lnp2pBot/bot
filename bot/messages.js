@@ -857,6 +857,7 @@ const invoicePaymentFailedMessage = async (bot, user, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_payment_failed', {
       pendingPaymentWindow: process.env.PENDING_PAYMENT_WINDOW,
+      attempts: process.env.PAYMENT_ATTEMPTS,
     }));
   } catch (error) {
     logger.error(error);
@@ -1289,7 +1290,10 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
 
 const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed'));
+    const attempts = parseInt(process.env.PAYMENT_ATTEMPTS) + 1;
+    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed', {
+      attempts,
+    }));
     await bot.telegram.sendMessage(user.tg_id, i18n.t('press_to_continue'), {
       reply_markup: {
         inline_keyboard: [

@@ -7,7 +7,7 @@ const logger = require('../logger');
 const attemptPendingPayments = async (bot) => {
     const pendingPayments = await PendingPayment.find({
         paid: false,
-        attempts: { $lt: 3 },
+        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         is_invoice_expired: false,
     });
 
@@ -56,7 +56,7 @@ const attemptPendingPayments = async (bot) => {
                 await messages.toBuyerPendingPaymentSuccessMessage(bot, buyerUser, order, payment, i18nCtx);
                 await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
             } else {
-                if (pending.attempts == 3) {
+                if (pending.attempts == process.env.PAYMENT_ATTEMPTS) {
                     order.paid_hold_buyer_invoice_updated = false;
                     await messages.toBuyerPendingPaymentFailedMessage(bot, buyerUser, order, i18nCtx);
                 }
