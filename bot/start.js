@@ -109,6 +109,9 @@ const initialize = (botToken, options) => {
     }
   })
 
+  const SearchCommands = require('./commands/search')
+  bot.command('findcomm', SearchCommands.findCommunity)
+
   bot.command('sell', async (ctx) => {
     try {
       const user = await validateUser(ctx, false);
