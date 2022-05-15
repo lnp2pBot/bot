@@ -4,6 +4,7 @@ const schedule = require('node-schedule');
 const { Order, User, PendingPayment, Community } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
+const CommunityModule = require('./modules/community');
 const {
   takebuy,
   takesell,
@@ -109,8 +110,7 @@ const initialize = (botToken, options) => {
     }
   })
 
-  const SearchCommands = require('./commands/search')
-  bot.command('findcomm', SearchCommands.findCommunity)
+  CommunityModule.configure(bot)
 
   bot.command('sell', async (ctx) => {
     try {
