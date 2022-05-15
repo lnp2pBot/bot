@@ -16,7 +16,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "invoices": "^1.2.1",
-    "lightning": "^4.10.7",
+    "lightning": "^5.16.0",
     "mongoose": "^6.0.11",
     "node-schedule": "^2.0.0",
     "socks-proxy-agent": "^6.2.0-beta.0",

@@ -1290,7 +1290,7 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
 
 const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
-    const attempts = parseInt(process.env.PAYMENT_ATTEMPTS) + 1;
+    const attempts = process.env.PAYMENT_ATTEMPTS;
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed', {
       attempts,
     }));
