@@ -18,7 +18,7 @@ const createOrder = async (i18n, bot, user, {
   community_id,
 }) => {
   try {
-    const pendingOrders = await Order.count({ status: 'PENDING' });
+    const pendingOrders = await Order.count({ status: 'PENDING', creator_id: user._id });
     // We don't let users create too PENDING many orders
     if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
       await messages.tooManyPendingOrdersMessage(bot, user, i18n);
