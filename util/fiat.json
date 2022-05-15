@@ -406,7 +406,8 @@
 		"rounding": 0,
 		"code": "GEL",
     "emoji": "",
-		"name_plural": "Georgian laris"
+		"name_plural": "Georgian laris",
+		"price": true
 	},
 	"GHS": {
 		"symbol": "GH₵",
