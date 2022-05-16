@@ -128,7 +128,9 @@ const initialize = (botToken, options) => {
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
-        community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        // Allow find communities case insensitive
+        const regex = new RegExp(["^", '@' + ctx.message.chat.username, "$"].join(""), "i");
+        community = await Community.findOne({ group: regex });
         if (!community) {
           ctx.deleteMessage();
           return;
@@ -176,7 +178,9 @@ const initialize = (botToken, options) => {
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
-        community = await Community.findOne({ group: '@' + ctx.message.chat.username });
+        // Allow find communities case insensitive
+        const regex = new RegExp(["^", '@' + ctx.message.chat.username, "$"].join(""), "i");
+        community = await Community.findOne({ group: regex });
         if (!community) {
           ctx.deleteMessage();
           return;
