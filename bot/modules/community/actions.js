@@ -16,7 +16,7 @@ exports.onCommunityInfo = async ctx => {
     ])
     rows.push([
         { text: 'Volume 24hs', callback_data: `none` },
-        { text: 'unknown', callback_data: `none` }
+        { text: `${volume} sats`, callback_data: `none` }
     ])
     rows.push([
         { text: 'Users', callback_data: `none` },
@@ -40,16 +40,16 @@ exports.onSetCommunity = async ctx => {
     await messages.operationSuccessfulMessage(ctx)
 }
 
-async function getVolume24hs(days, community_id) {
+const getVolume24hs = exports.getVolume24hs = async function getVolume24hs(days, community_id) {
     const now = new Date()
     const yesterday = new Date()
     yesterday.setHours(now.getHours() - days * 24)
-    const rows = await Order.aggregate([{
+    const [row] = await Order.aggregate([{
         $match: {
             status: 'SUCCESS',
             created_at: {
-                $gte: yesterday.toISOString(),
-                $lte: now.toISOString()
+                $gte: yesterday,
+                $lte: now
             },
             community_id
         }
@@ -61,5 +61,6 @@ async function getVolume24hs(days, community_id) {
             fee: { $sum: "$fee" },
         }
     }])
-    return rows
+    if (!row) return 0
+    return row.amount
 }
