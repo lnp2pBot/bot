@@ -6,8 +6,8 @@ exports.onCommunityInfo = async ctx => {
     const commId = ctx.match[1]
     const community = await Community.findById(commId)
     const userCount = await User.count({ default_community_id: commId })
-    const orderCount = await Order.count({ community_id: commId })
-    const volume = await getVolume24hs(1, commId)
+    const orderCount = await getOrdersNDays(1, commId)
+    const volume = await getVolumeNDays(1, commId)
 
     const rows = []
     rows.push([
@@ -40,15 +40,25 @@ exports.onSetCommunity = async ctx => {
     await messages.operationSuccessfulMessage(ctx)
 }
 
-const getVolume24hs = exports.getVolume24hs = async function getVolume24hs(days, community_id) {
-    const now = new Date()
+const getOrdersNDays = async function getOrdersNDays(days, community_id) {
     const yesterday = new Date()
-    yesterday.setHours(now.getHours() - days * 24)
+    yesterday.setHours(yesterday.getHours() - days * 24)
     const filter = {
         status: 'SUCCESS',
         created_at: {
-            $gte: yesterday,
-            $lte: now
+            $gte: yesterday
+        }
+    }
+    if (community_id) filter.community_id = community_id
+    return Order.count(filter)
+}
+const getVolumeNDays = exports.getVolumeNDays = async function getVolumeNDays(days, community_id) {
+    const yesterday = new Date()
+    yesterday.setHours(yesterday.getHours() - days * 24)
+    const filter = {
+        status: 'SUCCESS',
+        created_at: {
+            $gte: yesterday
         }
     }
     if (community_id) filter.community_id = community_id
