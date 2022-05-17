@@ -7,7 +7,7 @@ exports.onCommunityInfo = async ctx => {
     const community = await Community.findById(commId)
     const userCount = await User.count({ default_community_id: commId })
     const orderCount = await Order.count({ community_id: commId })
-    const volume = await getVolume24hs(commId)
+    const volume = await getVolume24hs(1, commId)
 
     const rows = []
     rows.push([
@@ -40,10 +40,10 @@ exports.onSetCommunity = async ctx => {
     await messages.operationSuccessfulMessage(ctx)
 }
 
-async function getVolume24hs(commId) {
+async function getVolume24hs(days, community_id) {
     const now = new Date()
     const yesterday = new Date()
-    yesterday.setHours(now.getHours() - 24)
+    yesterday.setHours(now.getHours() - days * 24)
     const rows = await Order.aggregate([{
         $match: {
             status: 'SUCCESS',
@@ -51,7 +51,7 @@ async function getVolume24hs(commId) {
                 $gte: yesterday.toISOString(),
                 $lte: now.toISOString()
             },
-            community_id: commId
+            community_id
         }
     }, {
         $group: {
