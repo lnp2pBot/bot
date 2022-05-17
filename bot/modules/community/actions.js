@@ -44,15 +44,16 @@ const getVolume24hs = exports.getVolume24hs = async function getVolume24hs(days,
     const now = new Date()
     const yesterday = new Date()
     yesterday.setHours(now.getHours() - days * 24)
-    const [row] = await Order.aggregate([{
-        $match: {
-            status: 'SUCCESS',
-            created_at: {
-                $gte: yesterday,
-                $lte: now
-            },
-            community_id
+    const filter = {
+        status: 'SUCCESS',
+        created_at: {
+            $gte: yesterday,
+            $lte: now
         }
+    }
+    if (community_id) filter.community_id = community_id
+    const [row] = await Order.aggregate([{
+        $match: filter
     }, {
         $group: {
             _id: null,
