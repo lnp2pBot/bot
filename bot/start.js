@@ -5,6 +5,7 @@ const { Order, User, PendingPayment, Community } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
+const OrdersModule = require('./modules/orders');
 const {
   takebuy,
   takesell,
@@ -654,22 +655,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('listorders', async (ctx) => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const orders = await ordersActions.getOrders(ctx, user);
-
-      if (!orders) return;
-
-      await messages.listOrdersResponse(bot, user, orders);
-
-    } catch (error) {
-      logger.error(error);
-    }
-  });
+  OrdersModule.configure(bot)
 
   bot.action('addInvoiceBtn', async (ctx) => {
     await addInvoice(ctx, bot);
