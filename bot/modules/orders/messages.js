@@ -8,7 +8,7 @@ exports.listOrdersResponse = async (orders) => {
     const channel = await getOrderChannel(order);
     let fiatAmount = '\\-';
     let amount = '\\-';
-    const status = order.status.replace(/_/g, ESCAPED_UNDERSCORE);
+    const status = order.status.replace(/\_/g, ESCAPED_UNDERSCORE);
     if (typeof order.fiat_amount !== 'undefined') fiatAmount = order.fiat_amount;
     if (typeof order.amount !== 'undefined') amount = order.amount;
     return `\`${order.id}\` \\| ${status} \\| ${amount} \\| ${fiatAmount} \\| ${order.fiat_code} \\| ${channel}`;
