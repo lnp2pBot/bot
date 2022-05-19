@@ -723,7 +723,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  OrdersModule.configure(bot)
+  OrdersModule.configure(bot);
 
   bot.action('addInvoiceBtn', async ctx => {
     await addInvoice(ctx, bot);
