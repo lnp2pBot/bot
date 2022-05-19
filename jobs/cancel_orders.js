@@ -20,7 +20,7 @@ const cancelOrders = async bot => {
     });
     for (const order of waitingPaymentOrders) {
       await cancelHoldInvoice({ hash: order.hash });
-      if (order.status == 'WAITING_PAYMENT') {
+      if (order.status === 'WAITING_PAYMENT') {
         await cancelShowHoldInvoice(null, bot, order);
       } else {
         await cancelAddInvoice(null, bot, order);
@@ -38,7 +38,7 @@ const cancelOrders = async bot => {
       invoice_held_at: { $lte: orderTime },
       $or: [
         {
-          status: 'ACTIVE',
+          // status: 'ACTIVE',
           status: 'FIAT_SENT',
         },
       ],

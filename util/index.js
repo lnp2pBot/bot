@@ -29,7 +29,7 @@ const getCurrency = code => {
 };
 
 const plural = n => {
-  if (n == 1) {
+  if (n === 1) {
     return '';
   }
   return 's';
@@ -110,7 +110,7 @@ const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
     // Before hit the endpoint we make sure the code have only 3 chars
     const code = currency.code.substring(0, 3);
     const response = await axios.get(`${process.env.FIAT_RATE_EP}/${code}`);
-    if (!!response.data.error) {
+    if (response.data.error) {
       return 0;
     }
     const sats = (fiatAmount / response.data.btc) * 100000000;
@@ -135,19 +135,20 @@ const getBtcExchangePrice = (fiatAmount, satsAmount) => {
 // Convers a string to an array of arguments
 // Source: https://stackoverflow.com/a/39304272
 const parseArgs = cmdline => {
-  var re_next_arg = /^\s*((?:(?:"(?:\\.|[^"])*")|(?:'[^']*')|\\.|\S)+)\s*(.*)$/;
-  var next_arg = ['', '', cmdline];
-  var args = [];
+  const re_next_arg =
+    /^\s*((?:(?:"(?:\\.|[^"])*")|(?:'[^']*')|\\.|\S)+)\s*(.*)$/;
+  let next_arg = ['', '', cmdline];
+  const args = [];
   while ((next_arg = re_next_arg.exec(next_arg[2]))) {
-    var quoted_arg = next_arg[1];
-    var unquoted_arg = '';
+    let quoted_arg = next_arg[1];
+    let unquoted_arg = '';
     while (quoted_arg.length > 0) {
       if (/^"/.test(quoted_arg)) {
-        var quoted_part = /^"((?:\\.|[^"])*)"(.*)$/.exec(quoted_arg);
+        const quoted_part = /^"((?:\\.|[^"])*)"(.*)$/.exec(quoted_arg);
         unquoted_arg += quoted_part[1].replace(/\\(.)/g, '$1');
         quoted_arg = quoted_part[2];
       } else if (/^'/.test(quoted_arg)) {
-        var quoted_part = /^'([^']*)'(.*)$/.exec(quoted_arg);
+        const quoted_part = /^'([^']*)'(.*)$/.exec(quoted_arg);
         unquoted_arg += quoted_part[1];
         quoted_arg = quoted_part[2];
       } else if (/^\\/.test(quoted_arg)) {
@@ -166,7 +167,7 @@ const parseArgs = cmdline => {
 const objectToArray = object => {
   const array = [];
 
-  for (let i in object) array.push(object[i]);
+  for (const i in object) array.push(object[i]);
 
   return array;
 };
@@ -215,7 +216,7 @@ const extractId = text => {
 
 // Clean strings that are going to be rendered with markdown
 const sanitizeMD = text => {
-  return text.replace(/(?=[|(){}\[\]\-_#.`=+])/g, '\\');
+  return text.replace(/(?=[|(){}[\]\-_#.`=+])/g, '\\');
 };
 
 const secondsToTime = secs => {
@@ -250,13 +251,13 @@ const isGroupAdmin = async (groupId, user, telegram) => {
 const deleteOrderFromChannel = async (order, telegram) => {
   try {
     let channel = process.env.CHANNEL;
-    if (!!order.community_id) {
+    if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
-      if (community.order_channels.length == 1) {
+      if (community.order_channels.length === 1) {
         channel = community.order_channels[0].name;
       } else {
-        for await (c of community.order_channels) {
-          if (c.type == order.type) {
+        for await (const c of community.order_channels) {
+          if (c.type === order.type) {
             channel = c.name;
           }
         }
@@ -270,13 +271,13 @@ const deleteOrderFromChannel = async (order, telegram) => {
 
 const getOrderChannel = async order => {
   let channel = process.env.CHANNEL;
-  if (!!order.community_id) {
+  if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
-    if (community.order_channels.length == 1) {
+    if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
       community.order_channels.forEach(async c => {
-        if (c.type == order.type) {
+        if (c.type === order.type) {
           channel = c.name;
         }
       });

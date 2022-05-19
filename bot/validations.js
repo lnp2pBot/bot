@@ -27,7 +27,7 @@ const validateUser = async (ctx, start) => {
 
       return false;
     }
-    if (tgUser.username != user.username) {
+    if (tgUser.username !== user.username) {
       user.username = tgUser.username;
       await user.save();
     }
@@ -42,7 +42,7 @@ const validateUser = async (ctx, start) => {
 const validateAdmin = async ctx => {
   try {
     const tgUser = ctx.update.message.from;
-    let user = await User.findOne({ tg_id: tgUser.id });
+    const user = await User.findOne({ tg_id: tgUser.id });
     if (!user) {
       await messages.userCantDoMessage(ctx);
       return false;
@@ -65,7 +65,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
-    let [_, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     priceMargin = parseInt(priceMargin);
     // FIXME: this is not validating well
@@ -84,7 +84,7 @@ const validateSellOrder = async ctx => {
     fiatAmount = fiatAmount.split('-');
     fiatAmount = fiatAmount.map(Number);
 
-    if (fiatAmount.length == 2 && amount) {
+    if (fiatAmount.length === 2 && amount) {
       await messages.invalidRangeWithAmount(ctx);
       return false;
     }
@@ -96,7 +96,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
-    if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
+    if (amount !== 0 && amount < process.env.MIN_PAYMENT_AMT) {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
@@ -105,7 +105,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
-    if (fiatAmount.length == 2 && fiatAmount[1] <= fiatAmount[0]) {
+    if (fiatAmount.length === 2 && fiatAmount[1] <= fiatAmount[0]) {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
@@ -125,7 +125,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
-    paymentMethod = paymentMethod.replace(/[&\/\\#,+~%.'":*?<>{}]/g, '');
+    paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
     return {
       amount,
@@ -147,7 +147,7 @@ const validateBuyOrder = async ctx => {
       await messages.buyOrderCorrectFormatMessage(ctx);
       return false;
     }
-    let [_, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     priceMargin = parseInt(priceMargin);
     // FIXME: this is not validating well
@@ -166,7 +166,7 @@ const validateBuyOrder = async ctx => {
     fiatAmount = fiatAmount.split('-');
     fiatAmount = fiatAmount.map(Number);
 
-    if (fiatAmount.length == 2 && amount) {
+    if (fiatAmount.length === 2 && amount) {
       await messages.invalidRangeWithAmount(ctx);
       return false;
     }
@@ -178,7 +178,7 @@ const validateBuyOrder = async ctx => {
       return false;
     }
 
-    if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
+    if (amount !== 0 && amount < process.env.MIN_PAYMENT_AMT) {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
@@ -187,7 +187,7 @@ const validateBuyOrder = async ctx => {
       return false;
     }
 
-    if (fiatAmount.length == 2 && fiatAmount[1] <= fiatAmount[0]) {
+    if (fiatAmount.length === 2 && fiatAmount[1] <= fiatAmount[0]) {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
@@ -207,7 +207,7 @@ const validateBuyOrder = async ctx => {
       return false;
     }
 
-    paymentMethod = paymentMethod.replace(/[&\/\\#,+~%.'":*?<>{}]/g, '');
+    paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
     return {
       amount,
@@ -222,7 +222,7 @@ const validateBuyOrder = async ctx => {
   }
 };
 const validateLightningAddress = async lightningAddress => {
-  const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  const pattern = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
 
   return (
     pattern.test(lightningAddress) && existLightningAddress(lightningAddress)
@@ -322,7 +322,7 @@ const isValidInvoice = async (ctx, lnInvoice) => {
 
 const isOrderCreator = (user, order) => {
   try {
-    return user._id == order.creator_id;
+    return user._id === order.creator_id;
   } catch (error) {
     logger.error(error);
     return false;
@@ -336,7 +336,7 @@ const validateTakeSellOrder = async (ctx, bot, user, order) => {
       return false;
     }
 
-    if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
+    if (isOrderCreator(user, order) && process.env.NODE_ENV === 'production') {
       await messages.cantTakeOwnOrderMessage(ctx, bot, user);
       return false;
     }
@@ -364,7 +364,7 @@ const validateTakeBuyOrder = async (ctx, bot, user, order) => {
       await messages.invalidOrderMessage(bot, user);
       return false;
     }
-    if (isOrderCreator(user, order) && process.env.NODE_ENV == 'production') {
+    if (isOrderCreator(user, order) && process.env.NODE_ENV === 'production') {
       await messages.cantTakeOwnOrderMessage(ctx, bot, user);
       return false;
     }
@@ -391,7 +391,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
       _id: orderId,
     };
     let order = await Order.findOne(where);
-    if (!!order) {
+    if (order) {
       await messages.waitingForBuyerOrderMessage(ctx);
       return false;
     }
@@ -403,7 +403,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
       ],
     };
 
-    if (!!orderId) {
+    if (orderId) {
       where._id = orderId;
     }
     order = await Order.findOne(where);
@@ -453,7 +453,7 @@ const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
       ],
     };
 
-    if (!!orderId) {
+    if (orderId) {
       where._id = orderId;
     }
     const order = await Order.findOne(where);
@@ -462,7 +462,7 @@ const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
       return false;
     }
 
-    if (order.status == 'PAID_HOLD_INVOICE') {
+    if (order.status === 'PAID_HOLD_INVOICE') {
       await messages.sellerPaidHoldMessage(ctx, bot, user);
       return false;
     }
@@ -489,7 +489,7 @@ const validateSeller = async (ctx, bot, user) => {
 
     const order = await Order.findOne(where);
 
-    if (!!order) {
+    if (order) {
       await messages.orderOnfiatSentStatusMessages(ctx, bot, user);
       return false;
     }
@@ -504,8 +504,8 @@ const validateSeller = async (ctx, bot, user) => {
 const validateParams = async (ctx, paramNumber, errOutputString) => {
   try {
     const paramsArray = ctx.update.message.text.split(' ');
-    const params = paramsArray.filter(el => el != '');
-    if (params.length != paramNumber) {
+    const params = paramsArray.filter(el => el !== '');
+    if (params.length !== paramNumber) {
       await messages.customMessage(
         ctx,
         `${params[0].toLowerCase()} ${errOutputString}`

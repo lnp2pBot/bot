@@ -54,8 +54,8 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (lnInvoice == 'exit') {
-        if (!!order && order.status == 'WAITING_BUYER_INVOICE') {
+      if (lnInvoice === 'exit') {
+        if (!!order && order.status === 'WAITING_BUYER_INVOICE') {
           await messages.wizardAddInvoiceExitMessage(ctx, order);
         } else {
           await messages.wizardExitMessage(ctx);
@@ -67,17 +67,17 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return;
       }
 
-      if (order.status == 'EXPIRED') {
+      if (order.status === 'EXPIRED') {
         await messages.orderExpiredMessage(ctx);
         return ctx.scene.leave();
       }
 
-      if (order.status != 'WAITING_BUYER_INVOICE') {
+      if (order.status !== 'WAITING_BUYER_INVOICE') {
         await messages.cantAddInvoiceMessage(ctx);
         return ctx.scene.leave();
       }
 
-      if (res.invoice.tokens && res.invoice.tokens != order.amount) {
+      if (res.invoice.tokens && res.invoice.tokens !== order.amount) {
         await messages.incorrectAmountInvoiceMessage(ctx);
         return;
       }
@@ -118,7 +118,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (lnInvoice == 'exit') {
+      if (lnInvoice === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -128,7 +128,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return;
       }
 
-      if (!!res.invoice.tokens && res.invoice.tokens != order.amount) {
+      if (!!res.invoice.tokens && res.invoice.tokens !== order.amount) {
         await messages.incorrectAmountInvoiceMessage(ctx);
         return;
       }
@@ -197,7 +197,7 @@ const communityWizard = new Scenes.WizardScene(
       }
 
       const name = ctx.message.text.trim();
-      if (name == 'exit') {
+      if (name === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -222,7 +222,7 @@ const communityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -245,7 +245,7 @@ const communityWizard = new Scenes.WizardScene(
   async ctx => {
     try {
       const { bot, user } = ctx.wizard.state;
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -270,7 +270,7 @@ const communityWizard = new Scenes.WizardScene(
       if (ctx.message === undefined) {
         return ctx.scene.leave();
       }
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -280,7 +280,7 @@ const communityWizard = new Scenes.WizardScene(
         return;
       }
       const orderChannels = [];
-      if (chan.length == 1) {
+      if (chan.length === 1) {
         if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
           messages.wizardCommunityWrongPermission(ctx, user, chan[0]);
           return;
@@ -322,7 +322,7 @@ const communityWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -331,7 +331,7 @@ const communityWizard = new Scenes.WizardScene(
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const user = await User.findOne({ username: usernames[i] });
-          if (!!user) {
+          if (user) {
             solvers.push({
               id: user._id,
               username: user.username,
@@ -354,7 +354,7 @@ const communityWizard = new Scenes.WizardScene(
     try {
       const { bot, user, community } = ctx.wizard.state;
       const chan = ctx.message.text.trim();
-      if (chan == 'exit') {
+      if (chan === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -427,7 +427,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
         fiatAmount
       );
 
-      if (order.type == 'sell') {
+      if (order.type === 'sell') {
         await addInvoice(ctx, bot, order);
       } else {
         await showHoldInvoice(ctx, bot, order);
@@ -459,7 +459,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
       }
 
       const name = ctx.message.text.trim();
-      if (name == 'exit') {
+      if (name === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -475,7 +475,7 @@ const updateNameCommunityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       if (!community) {
-        new Error(
+        throw new Error(
           'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID'
         );
       }
@@ -510,7 +510,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
       }
 
       const group = ctx.message.text.trim();
-      if (group == 'exit') {
+      if (group === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -524,7 +524,7 @@ const updateGroupCommunityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       if (!community) {
-        new Error(
+        throw new Error(
           'Community not found in UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID'
         );
       }
@@ -558,7 +558,7 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -576,7 +576,7 @@ const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       if (!community) {
-        new Error(
+        throw new Error(
           'Community not found in UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID'
         );
       }
@@ -610,7 +610,7 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -626,12 +626,12 @@ const updateChannelsCommunityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       if (!community) {
-        new Error(
+        throw new Error(
           'Community not found in UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID'
         );
       }
       const orderChannels = [];
-      if (chan.length == 1) {
+      if (chan.length === 1) {
         if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
           messages.wizardCommunityWrongPermission(ctx, user, chan[0]);
           return;
@@ -691,7 +691,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (ctx.message.text.trim() == 'exit') {
+      if (ctx.message.text.trim() === 'exit') {
         await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
@@ -700,7 +700,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const user = await User.findOne({ username: usernames[i] });
-          if (!!user) {
+          if (user) {
             solvers.push({
               id: user._id,
               username: user.username,
@@ -717,7 +717,7 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       if (!community) {
-        new Error(
+        throw new Error(
           'Community not found in UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID'
         );
       }

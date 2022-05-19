@@ -100,8 +100,8 @@ const createOrder = async (
 };
 
 const getFiatAmountData = fiatAmount => {
-  let response = {};
-  if (fiatAmount.length == 2) {
+  const response = {};
+  if (fiatAmount.length === 2) {
     response.min_amount = fiatAmount[0];
     response.max_amount = fiatAmount[1];
   } else {
@@ -126,10 +126,10 @@ const buildDescription = (
   }
 ) => {
   try {
-    const action = type == 'sell' ? i18n.t('selling') : i18n.t('buying');
+    const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
     const paymentAction =
-      type == 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
+      type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
     const trades = user.trades_completed;
     const volume = user.volume_traded;
     const totalRating = user.total_rating;
@@ -142,17 +142,17 @@ const buildDescription = (
       : ``;
     priceMargin =
       !!priceMargin && priceMargin > 0 ? `+${priceMargin}` : priceMargin;
-    const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
+    const priceMarginText = priceMargin ? `${priceMargin}%` : ``;
     let fiatAmountString;
 
-    if (fiatAmount.length == 2) {
+    if (fiatAmount.length === 2) {
       fiatAmountString = `${fiatAmount[0]}-${fiatAmount[1]}`;
     } else {
       fiatAmountString = `${fiatAmount}`;
     }
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
-    if (!!currency) {
+    if (currency) {
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
     }
 
@@ -168,7 +168,7 @@ const buildDescription = (
     }
 
     let rateText = '';
-    if (!!totalRating) {
+    if (totalRating) {
       const stars = getEmojiRate(totalRating);
       const roundedRating = decimalRound(totalRating, -1);
       rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
@@ -225,7 +225,7 @@ const getOrders = async (ctx, user, status) => {
       ],
     };
 
-    if (!!status) {
+    if (status) {
       where.$and.push({ status });
     } else {
       const $or = [
@@ -240,7 +240,7 @@ const getOrders = async (ctx, user, status) => {
     }
     const orders = await Order.find(where);
 
-    if (orders.length == 0) {
+    if (orders.length === 0) {
       await messages.notOrdersMessage(ctx);
       return false;
     }
@@ -253,7 +253,6 @@ const getOrders = async (ctx, user, status) => {
 
 const getNewRangeOrderPayload = async order => {
   try {
-    let newOrderPayload = undefined;
     let newMaxAmount = 0;
 
     if (order.max_amount !== undefined) {
