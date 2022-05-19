@@ -52,7 +52,7 @@ describe('Telegram bot test', () => {
     orderStub.restore();
     expect(updates.ok).to.be.equal(true);
     // TODO: we will check the message with the text from i18n
-    //expect(updates.result[0].message.text).to.be.equal("/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]");
+    // expect(updates.result[0].message.text).to.be.equal("/sell \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]");
   });
 
   it('should create a /sell', async () => {

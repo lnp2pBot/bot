@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // connect to database
-const credentials = !!process.env.DB_USER
+const credentials = process.env.DB_USER
   ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
   : '';
 const MONGO_URI = `mongodb://${credentials}${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;

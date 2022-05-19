@@ -1,17 +1,17 @@
 const axios = require('axios').default;
 const logger = require('../logger');
 
-//{
+// {
 //	pr: String, // bech32-serialized lightning invoice
 //	routes: [], // an empty array
-//}
+// }
 const resolvLightningAddress = async (address, amountMsat) => {
   const [user, domain] = address.split('@');
   const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
   const lnAddressRes = (await axios.get(lnAddressQuery)).data;
 
-  if (lnAddressRes.tag != 'payRequest') {
+  if (lnAddressRes.tag !== 'payRequest') {
     logger.info('lnAddress invalid response');
     return false;
   }
@@ -24,7 +24,7 @@ const resolvLightningAddress = async (address, amountMsat) => {
     return false;
   }
 
-  let res = (
+  const res = (
     await axios.get(`${lnAddressRes.callback}${'?'}amount=${amountMsat}`)
   ).data;
 
@@ -37,7 +37,7 @@ const existLightningAddress = async address => {
 
   try {
     const lnAddressRes = (await axios.get(lnAddressQuery)).data;
-    if (lnAddressRes.tag != 'payRequest') {
+    if (lnAddressRes.tag !== 'payRequest') {
       logger.info('Invalid response from LNURL');
       return false;
     }

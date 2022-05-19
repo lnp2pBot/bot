@@ -18,7 +18,7 @@ const resubscribeInvoices = async bot => {
       const heldInvoices = unconfirmedInvoices.filter(isHeld);
       for (const invoice of heldInvoices) {
         const orderInDB = await Order.findOne({ hash: invoice.id });
-        if (!!orderInDB) {
+        if (orderInDB) {
           logger.info(
             `Re-subscribing: invoice with hash ${invoice.id} is being held!`
           );

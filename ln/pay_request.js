@@ -38,7 +38,7 @@ const payToBuyer = async (bot, order) => {
   try {
     // We check if the payment is on flight we don't do anything
     const isPending = await isPendingPayment(order.buyer_invoice);
-    if (!!isPending) {
+    if (isPending) {
       return;
     }
     const payment = await payRequest({
@@ -92,8 +92,9 @@ const payToBuyer = async (bot, order) => {
 const isPendingPayment = async request => {
   try {
     const { id } = parsePaymentRequest({ request });
+    // eslint-disable-next-line camelcase
     const { is_pending } = await getPayment({ lnd, id });
-
+    // eslint-disable-next-line camelcase
     return !!is_pending;
   } catch (error) {
     const message = error.toString();

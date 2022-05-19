@@ -18,8 +18,8 @@ const subscribeInvoice = async (bot, id, resub) => {
         const sellerUser = await User.findOne({ _id: order.seller_id });
         order.status = 'ACTIVE';
         // This is the i18n context we need to pass to the message
-        i18nCtxBuyer = await getUserI18nContext(buyerUser);
-        i18nCtxSeller = await getUserI18nContext(sellerUser);
+        const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+        const i18nCtxSeller = await getUserI18nContext(sellerUser);
         if (order.type === 'sell') {
           await messages.onGoingTakeSellMessage(
             bot,
@@ -51,8 +51,8 @@ const subscribeInvoice = async (bot, id, resub) => {
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         // We need two i18n contexts to send messages to each user
-        i18nCtxBuyer = await getUserI18nContext(buyerUser);
-        i18nCtxSeller = await getUserI18nContext(sellerUser);
+        const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+        const i18nCtxSeller = await getUserI18nContext(sellerUser);
         await messages.releasedSatsMessage(
           bot,
           sellerUser,
@@ -63,7 +63,7 @@ const subscribeInvoice = async (bot, id, resub) => {
         // If this is a range order, probably we need to created a new child range order
         const orderData = await ordersActions.getNewRangeOrderPayload(order);
         let i18nCtx;
-        if (!!orderData) {
+        if (orderData) {
           let user;
           if (order.type === 'sell') {
             user = sellerUser;
@@ -80,7 +80,7 @@ const subscribeInvoice = async (bot, id, resub) => {
             orderData
           );
 
-          if (!!newOrder) {
+          if (newOrder) {
             if (order.type === 'sell') {
               await messages.publishSellOrderMessage(
                 bot,

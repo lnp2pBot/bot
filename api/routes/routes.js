@@ -27,15 +27,7 @@ router.get('/getCommunities', async (req, res) => {
 router.get('/getOrders', async (req, res) => {
   try {
     const data = await Order.find({ status: 'PENDING' });
-    const {
-      _id,
-      description,
-      amount,
-      fiat_amount,
-      fiat_code,
-      payment_method,
-      price_margin,
-    } = data;
+    const { _id, name, group, created_at, order_channels } = data;
 
     res.status(200).json({
       success: true,

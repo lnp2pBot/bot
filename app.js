@@ -13,12 +13,12 @@ const { SocksProxyAgent } = require('socks-proxy-agent');
     console.log(e);
   });
 
-  mongoose = mongoConnect();
+  const mongoose = mongoConnect();
   mongoose.connection
     .once('open', async () => {
       console.log('Connected to Mongo instance.');
-      var options = null;
-      if (!!process.env.SOCKS_PROXY_HOST) {
+      let options = null;
+      if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
         options = {
           telegram: {
