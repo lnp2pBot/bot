@@ -1,4 +1,4 @@
-const { getOrderChannel } = require('../../../util');
+const { getOrderChannel, sanitizeMD } = require('../../../util');
 
 exports.listOrdersResponse = async orders => {
   const response =
@@ -11,7 +11,9 @@ exports.listOrdersResponse = async orders => {
     if (typeof order.fiat_amount !== 'undefined')
       fiatAmount = order.fiat_amount;
     if (typeof order.amount !== 'undefined') amount = order.amount;
-    return `\`${order.id}\` \\| ${status} \\| ${amount} \\| ${fiatAmount} \\| ${order.fiat_code} \\| ${channel}`;
+    return `\`${order.id}\` \\| ${status} \\| ${amount} \\| ${fiatAmount} \\| ${
+      order.fiat_code
+    } \\| ${sanitizeMD(channel)}`;
   });
   const lines = await Promise.all(tasks);
   const body = lines.join('\n');
