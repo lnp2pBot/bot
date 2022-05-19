@@ -1,6 +1,6 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
-// const schedule = require('node-schedule');
+const schedule = require('node-schedule');
 const { Order, User, PendingPayment, Community } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
@@ -38,11 +38,11 @@ const {
   validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
-// const {
-//   attemptPendingPayments,
-//   cancelOrders,
-//   deleteOrders,
-// } = require('../jobs');
+const {
+  attemptPendingPayments,
+  cancelOrders,
+  deleteOrders,
+} = require('../jobs');
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
@@ -65,19 +65,21 @@ const initialize = (botToken, options) => {
 
   const bot = new Telegraf(botToken, options);
 
-  // // We schedule pending payments job
-  // const pendingPaymentJob = schedule.scheduleJob(
-  //   `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
-  //   async () => {
-  //     await attemptPendingPayments(bot);
-  //   }
-  // );
-  // const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
-  //   await cancelOrders(bot);
-  // });
-  // const deleteOrdersJob = schedule.scheduleJob(`25 * * * *`, async () => {
-  //   await deleteOrders(bot);
-  // });
+  // We schedule pending payments job
+  schedule.scheduleJob(
+    `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
+    async () => {
+      await attemptPendingPayments(bot);
+    }
+  );
+
+  schedule.scheduleJob(`*/2 * * * *`, async () => {
+    await cancelOrders(bot);
+  });
+
+  schedule.scheduleJob(`25 * * * *`, async () => {
+    await deleteOrders(bot);
+  });
 
   const stage = new Scenes.Stage([
     addInvoiceWizard,
