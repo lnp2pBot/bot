@@ -1,30 +1,43 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
+const {
+  getCurrency,
+  getBtcExchangePrice,
+  getEmojiRate,
+  decimalRound,
+} = require('../util');
 const logger = require('../logger');
 
-const createOrder = async (i18n, bot, user, {
-  type,
-  amount,
-  fiatAmount,
-  fiatCode,
-  paymentMethod,
-  status,
-  priceMargin,
-  range_parent_id,
-  tgChatId,
-  tgOrderMessage,
-  community_id,
-}) => {
+const createOrder = async (
+  i18n,
+  bot,
+  user,
+  {
+    type,
+    amount,
+    fiatAmount,
+    fiatCode,
+    paymentMethod,
+    status,
+    priceMargin,
+    range_parent_id,
+    tgChatId,
+    tgOrderMessage,
+    community_id,
+  }
+) => {
   try {
-    const pendingOrders = await Order.count({ status: 'PENDING', creator_id: user._id });
+    const pendingOrders = await Order.count({
+      status: 'PENDING',
+      creator_id: user._id,
+    });
     // We don't let users create too PENDING many orders
     if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
       await messages.tooManyPendingOrdersMessage(bot, user, i18n);
       return false;
     }
-    
+
     amount = parseInt(amount);
     const fee = Math.round(amount * parseFloat(process.env.FEE));
     const currency = getCurrency(fiatCode);
@@ -59,7 +72,7 @@ const createOrder = async (i18n, bot, user, {
         paymentMethod,
         priceMargin,
         priceFromAPI,
-        currency
+        currency,
       }),
       range_parent_id,
       community_id,
@@ -86,7 +99,7 @@ const createOrder = async (i18n, bot, user, {
   }
 };
 
-const getFiatAmountData = (fiatAmount) => {
+const getFiatAmountData = fiatAmount => {
   let response = {};
   if (fiatAmount.length == 2) {
     response.min_amount = fiatAmount[0];
@@ -95,100 +108,111 @@ const getFiatAmountData = (fiatAmount) => {
     response.fiat_amount = fiatAmount[0];
   }
 
-  return response
+  return response;
 };
 
-const buildDescription = (i18n, {
-  user,
-  type,
-  amount,
-  fiatAmount,
-  fiatCode,
-  paymentMethod,
-  priceMargin,
-  priceFromAPI,
-  currency,
-}) => {
+const buildDescription = (
+  i18n,
+  {
+    user,
+    type,
+    amount,
+    fiatAmount,
+    fiatCode,
+    paymentMethod,
+    priceMargin,
+    priceFromAPI,
+    currency,
+  }
+) => {
   try {
     const action = type == 'sell' ? i18n.t('selling') : i18n.t('buying');
     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
-    const paymentAction = type == 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
+    const paymentAction =
+      type == 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
     const trades = user.trades_completed;
     const volume = user.volume_traded;
     const totalRating = user.total_rating;
     const totalReviews = user.reviews.length;
-    const username = user.show_username ? `@${user.username} ` + i18n.t('is') + ` ` : ``;
-    const volumeTraded = user.show_volume_traded ? i18n.t('trading_volume', {volume}) + `\n` : ``;
-    priceMargin = (!!priceMargin && priceMargin > 0) ? `+${priceMargin}` : priceMargin;
+    const username = user.show_username
+      ? `@${user.username} ` + i18n.t('is') + ` `
+      : ``;
+    const volumeTraded = user.show_volume_traded
+      ? i18n.t('trading_volume', { volume }) + `\n`
+      : ``;
+    priceMargin =
+      !!priceMargin && priceMargin > 0 ? `+${priceMargin}` : priceMargin;
     const priceMarginText = !!priceMargin ? `${priceMargin}%` : ``;
     let fiatAmountString;
-    
-    if (fiatAmount.length == 2) { 
+
+    if (fiatAmount.length == 2) {
       fiatAmountString = `${fiatAmount[0]}-${fiatAmount[1]}`;
     } else {
       fiatAmountString = `${fiatAmount}`;
     }
     let currencyString = `${fiatCode} ${fiatAmountString}`;
-  
+
     if (!!currency) {
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
     }
-    
+
     let amountText = `${amount} `;
     let tasaText = '';
     if (priceFromAPI) {
       amountText = '';
-      tasaText = i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
+      tasaText =
+        i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
       tasaText = i18n.t('price') + `: ${exchangePrice.toFixed(2)}\n`;
     }
-  
+
     let rateText = '';
     if (!!totalRating) {
       const stars = getEmojiRate(totalRating);
       const roundedRating = decimalRound(totalRating, -1);
       rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
     }
-  
-    let description = `${username}${action} ${amountText}`+ i18n.t('sats') +`\n`;
+
+    let description =
+      `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
-    description += i18n.t('has_successful_trades', {trades}) + `\n`;
+    description += i18n.t('has_successful_trades', { trades }) + `\n`;
     description += volumeTraded;
     description += hashtag;
     description += tasaText;
     description += rateText;
-  
-    return description
+
+    return description;
   } catch (error) {
     logger.error(error);
   }
 };
 
 const getOrder = async (ctx, user, orderId) => {
-try {
-  if (!ObjectId.isValid(orderId)) {
-    await messages.notValidIdMessage(ctx);
+  try {
+    if (!ObjectId.isValid(orderId)) {
+      await messages.notValidIdMessage(ctx);
+      return false;
+    }
+
+    const where = {
+      _id: orderId,
+      $or: [{ seller_id: user._id }, { buyer_id: user._id }],
+    };
+
+    const order = await Order.findOne(where);
+    if (!order) {
+      await messages.notOrderMessage(ctx);
+      return false;
+    }
+
+    return order;
+  } catch (error) {
+    logger.error(error);
     return false;
   }
-
-  const where = {
-    _id: orderId,
-    $or: [{ seller_id: user._id }, { buyer_id: user._id }],
-  };
-
-  const order = await Order.findOne(where);
-  if (!order) {
-    await messages.notOrderMessage(ctx);
-    return false;
-  }
-
-  return order;
-} catch (error) {
-  logger.error(error);
-  return false;
-}
 };
 
 const getOrders = async (ctx, user, status) => {
@@ -196,10 +220,7 @@ const getOrders = async (ctx, user, status) => {
     const where = {
       $and: [
         {
-          $or: [
-            { buyer_id: user._id },
-            { seller_id: user._id },
-          ],
+          $or: [{ buyer_id: user._id }, { seller_id: user._id }],
         },
       ],
     };
@@ -230,7 +251,7 @@ const getOrders = async (ctx, user, status) => {
   }
 };
 
-const getNewRangeOrderPayload = async (order) => {
+const getNewRangeOrderPayload = async order => {
   try {
     let newOrderPayload = undefined;
     let newMaxAmount = 0;

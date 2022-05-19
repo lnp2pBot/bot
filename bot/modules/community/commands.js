@@ -18,13 +18,13 @@ async function getOrderCountByCommunity() {
 async function findCommunities(currency) {
   const communities = await Community.find({ currencies: currency });
   const orderCount = await getOrderCountByCommunity();
-  return communities.map((comm) => {
+  return communities.map(comm => {
     comm.orders = orderCount[comm.id] || 0;
     return comm;
   });
 }
 
-exports.findCommunity = async (ctx) => {
+exports.findCommunity = async ctx => {
   try {
     const user = await validateUser(ctx, false);
     if (!user) return;
@@ -44,7 +44,7 @@ exports.findCommunity = async (ctx) => {
     const inlineKeyboard = [];
     while (communities.length > 0) {
       const lastTwo = communities.splice(-2);
-      const lineBtn = lastTwo.reverse().map((comm) => ({
+      const lineBtn = lastTwo.reverse().map(comm => ({
         text: `${comm.name}`,
         callback_data: `communityInfo_${comm._id}`,
       }));

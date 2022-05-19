@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UserReviewSchema = new mongoose.Schema({
   rating: { type: Number, min: 0, max: 5, default: 0 },
   reviewed_at: { type: Date, default: Date.now },
-})
+});
 
 const UserSchema = new mongoose.Schema({
   tg_id: { type: String, unique: true },

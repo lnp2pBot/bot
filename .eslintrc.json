@@ -5,11 +5,13 @@
         "node": true
     },
     "extends": [
-        "airbnb-base"
+        "standard",
+        "eslint-config-prettier"
     ],
     "parserOptions": {
         "ecmaVersion": "latest"
     },
     "rules": {
+        "no-underscore-dangle": "off"
     }
 }

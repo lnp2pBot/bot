@@ -33,7 +33,7 @@ const payRequest = async ({ request, amount }) => {
     return false;
   }
 };
-  
+
 const payToBuyer = async (bot, order) => {
   try {
     // We check if the payment is on flight we don't do anything
@@ -49,7 +49,12 @@ const payToBuyer = async (bot, order) => {
     // If the buyer's invoice is expired we let it know and don't try to pay again
     const i18nCtx = await getUserI18nContext(buyerUser);
     if (!!payment && payment.is_expired) {
-      await messages.expiredInvoiceOnPendingMessage(bot, buyerUser, order, i18nCtx);
+      await messages.expiredInvoiceOnPendingMessage(
+        bot,
+        buyerUser,
+        order,
+        i18nCtx
+      );
       return;
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
@@ -57,10 +62,15 @@ const payToBuyer = async (bot, order) => {
       logger.info(`Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
-      
+
       await order.save();
       await handleReputationItems(buyerUser, sellerUser, order.amount);
-      await messages.buyerReceivedSatsMessage(bot, buyerUser, sellerUser, i18nCtx);
+      await messages.buyerReceivedSatsMessage(
+        bot,
+        buyerUser,
+        sellerUser,
+        i18nCtx
+      );
       await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
       await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
@@ -79,7 +89,7 @@ const payToBuyer = async (bot, order) => {
   }
 };
 
-const isPendingPayment = async (request) => {
+const isPendingPayment = async request => {
   try {
     const { id } = parsePaymentRequest({ request });
     const { is_pending } = await getPayment({ lnd, id });
@@ -90,11 +100,10 @@ const isPendingPayment = async (request) => {
     logger.error(`isPendingPayment catch error: ${message}`);
     return false;
   }
-}
+};
 
-  module.exports = {
-    payRequest,
-    payToBuyer,
-    isPendingPayment,
-  };
-  
+module.exports = {
+  payRequest,
+  payToBuyer,
+  isPendingPayment,
+};

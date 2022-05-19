@@ -39,7 +39,11 @@ const {
   validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
-const { attemptPendingPayments, cancelOrders, deleteOrders } = require('../jobs');
+const {
+  attemptPendingPayments,
+  cancelOrders,
+  deleteOrders,
+} = require('../jobs');
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
@@ -63,9 +67,12 @@ const initialize = (botToken, options) => {
   const bot = new Telegraf(botToken, options);
 
   // We schedule pending payments job
-  const pendingPaymentJob = schedule.scheduleJob(`*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`, async () => {
-    await attemptPendingPayments(bot);
-  });
+  const pendingPaymentJob = schedule.scheduleJob(
+    `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
+    async () => {
+      await attemptPendingPayments(bot);
+    }
+  );
   const cancelOrderJob = schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
   });
@@ -88,7 +95,7 @@ const initialize = (botToken, options) => {
   bot.use(i18n.middleware());
   bot.use(stage.middleware());
 
-  bot.start(async (ctx) => {
+  bot.start(async ctx => {
     try {
       const tgUser = ctx.update.message.from;
       if (!tgUser.username) {
@@ -102,18 +109,18 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('version', async (ctx) => {
+  bot.command('version', async ctx => {
     try {
       const package = require('../package.json');
       await ctx.reply(package.version);
     } catch (err) {
       logger.error(error);
     }
-  })
+  });
 
-  CommunityModule.configure(bot)
+  CommunityModule.configure(bot);
 
-  bot.command('sell', async (ctx) => {
+  bot.command('sell', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -126,14 +133,18 @@ const initialize = (botToken, options) => {
       const sellOrderParams = await validateSellOrder(ctx);
 
       if (!sellOrderParams) return;
-      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = sellOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
+        sellOrderParams;
       let communityId = null;
       let community = null;
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
         // Allow find communities case insensitive
-        const regex = new RegExp(["^", '@' + ctx.message.chat.username, "$"].join(""), "i");
+        const regex = new RegExp(
+          ['^', '@' + ctx.message.chat.username, '$'].join(''),
+          'i'
+        );
         community = await Community.findOne({ group: regex });
         if (!community) {
           ctx.deleteMessage();
@@ -167,7 +178,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('buy', async (ctx) => {
+  bot.command('buy', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -176,14 +187,18 @@ const initialize = (botToken, options) => {
       const buyOrderParams = await validateBuyOrder(ctx, bot, user);
       if (!buyOrderParams) return;
 
-      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } = buyOrderParams;
+      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
+        buyOrderParams;
       let communityId = null;
       let community = null;
       // If this message came from a group
       // We check if the there is a community for it
       if (ctx.message.chat.type != 'private') {
         // Allow find communities case insensitive
-        const regex = new RegExp(["^", '@' + ctx.message.chat.username, "$"].join(""), "i");
+        const regex = new RegExp(
+          ['^', '@' + ctx.message.chat.username, '$'].join(''),
+          'i'
+        );
         community = await Community.findOne({ group: regex });
         if (!community) {
           ctx.deleteMessage();
@@ -218,15 +233,15 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.action('takesell', async (ctx) => {
+  bot.action('takesell', async ctx => {
     await takesell(ctx, bot);
   });
 
-  bot.action('takebuy', async (ctx) => {
+  bot.action('takebuy', async ctx => {
     await takebuy(ctx, bot);
   });
 
-  bot.command('release', async (ctx) => {
+  bot.command('release', async ctx => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -245,7 +260,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('dispute', async (ctx) => {
+  bot.command('dispute', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -281,13 +296,20 @@ const initialize = (botToken, options) => {
       }
       await buyer.save();
       await seller.save();
-      await messages.beginDisputeMessage(bot, buyer, seller, order, initiator, ctx.i18n);
+      await messages.beginDisputeMessage(
+        bot,
+        buyer,
+        seller,
+        order,
+        initiator,
+        ctx.i18n
+      );
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('cancelorder', async (ctx) => {
+  bot.command('cancelorder', async ctx => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -322,7 +344,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancel', async (ctx) => {
+  bot.command('cancel', async ctx => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -352,7 +374,13 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      if (!(order.status == 'ACTIVE' || order.status == 'FIAT_SENT' || order.status == 'DISPUTE')) {
+      if (
+        !(
+          order.status == 'ACTIVE' ||
+          order.status == 'FIAT_SENT' ||
+          order.status == 'DISPUTE'
+        )
+      ) {
         await messages.badStatusOnCancelOrderMessage(ctx);
         return;
       }
@@ -372,7 +400,11 @@ const initialize = (botToken, options) => {
       }
 
       if (order[`${initiator}_cooperativecancel`]) {
-        await messages.shouldWaitCooperativeCancelMessage(ctx, bot, initiatorUser);
+        await messages.shouldWaitCooperativeCancelMessage(
+          ctx,
+          bot,
+          initiatorUser
+        );
         return;
       }
 
@@ -394,12 +426,31 @@ const initialize = (botToken, options) => {
           i18nCtxSeller = i18nCtxCP;
         }
         // We sent a private message to the users
-        await messages.successCancelOrderMessage(bot, initiatorUser, order, ctx.i18n);
-        await messages.refundCooperativeCancelMessage(bot, seller, i18nCtxSeller);
-        await messages.okCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtxCP);
+        await messages.successCancelOrderMessage(
+          bot,
+          initiatorUser,
+          order,
+          ctx.i18n
+        );
+        await messages.refundCooperativeCancelMessage(
+          bot,
+          seller,
+          i18nCtxSeller
+        );
+        await messages.okCooperativeCancelMessage(
+          bot,
+          counterPartyUser,
+          order,
+          i18nCtxCP
+        );
       } else {
         await messages.initCooperativeCancelMessage(ctx, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(bot, counterPartyUser, order, i18nCtxCP);
+        await messages.counterPartyWantsCooperativeCancelMessage(
+          bot,
+          counterPartyUser,
+          order,
+          i18nCtxCP
+        );
       }
       await order.save();
     } catch (error) {
@@ -409,7 +460,7 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancelall', async (ctx) => {
+  bot.command('cancelall', async ctx => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -432,7 +483,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('settleorder', async (ctx) => {
+  bot.command('settleorder', async ctx => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -442,7 +493,7 @@ const initialize = (botToken, options) => {
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
 
-      const order = await Order.findOne({_id: orderId});
+      const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
       if (!!order.secret) {
@@ -456,7 +507,12 @@ const initialize = (botToken, options) => {
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);
       // we sent a private message to the seller
-      await messages.successCompleteOrderByAdminMessage(ctx, bot, seller, order);
+      await messages.successCompleteOrderByAdminMessage(
+        ctx,
+        bot,
+        seller,
+        order
+      );
       // we sent a private message to the buyer
       await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
     } catch (error) {
@@ -464,8 +520,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-
-  bot.command('checkorder', async (ctx) => {
+  bot.command('checkorder', async ctx => {
     try {
       const user = await validateAdmin(ctx);
       if (!user) return;
@@ -474,7 +529,7 @@ const initialize = (botToken, options) => {
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await Order.findOne({_id: orderId});
+      const order = await Order.findOne({ _id: orderId });
 
       if (!order) return;
 
@@ -482,13 +537,12 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
 
       await messages.checkOrderMessage(ctx, order, buyer, seller);
-
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('help', async (ctx) => {
+  bot.command('help', async ctx => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -500,7 +554,7 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('fiatsent', async (ctx) => {
+  bot.command('fiatsent', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -519,23 +573,29 @@ const initialize = (botToken, options) => {
       // We need to create i18n context for each user
       i18nCtxBuyer = i18n.createContext(user.lang);
       i18nCtxSeller = i18n.createContext(seller.lang);
-      await messages.fiatSentMessages(bot, user, seller, order, i18nCtxBuyer, i18nCtxSeller);
-
+      await messages.fiatSentMessages(
+        bot,
+        user,
+        seller,
+        order,
+        i18nCtxBuyer,
+        i18nCtxSeller
+      );
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('ban', async (ctx) => {
+  bot.command('ban', async ctx => {
     try {
       const adminUser = await validateAdmin(ctx);
 
       if (!adminUser) return;
 
-      const [ username ] = await validateParams(ctx, 2, '\\<_username_\\>');
+      const [username] = await validateParams(ctx, 2, '\\<_username_\\>');
 
       if (!username) return;
-      
+
       const user = await User.findOne({ username });
       if (!user) {
         await messages.notFoundUserMessage(ctx);
@@ -550,14 +610,17 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('setaddress', async (ctx) => {
+  bot.command('setaddress', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
-      if (!user)
-        return;
+      if (!user) return;
 
-      let [ lightningAddress ] = await validateParams(ctx, 2, '\\<_lightningAddress / off_\\>');
+      let [lightningAddress] = await validateParams(
+        ctx,
+        2,
+        '\\<_lightningAddress / off_\\>'
+      );
       if (!lightningAddress) {
         return;
       }
@@ -569,27 +632,30 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      if (!await validateLightningAddress(lightningAddress)) {
+      if (!(await validateLightningAddress(lightningAddress))) {
         await messages.invalidLightningAddress(ctx);
         return;
       }
-      
+
       user.lightning_address = lightningAddress;
       await user.save();
       await messages.successSetAddress(ctx);
-      
     } catch (error) {
       logger.error(error);
     }
   });
 
   // Only buyers can use this command
-  bot.command('setinvoice', async (ctx) => {
+  bot.command('setinvoice', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
-      const [orderId, lnInvoice] = await validateParams(ctx, 3, '\\<_order id_\\> \\<_lightning invoice_\\>');
+      const [orderId, lnInvoice] = await validateParams(
+        ctx,
+        3,
+        '\\<_order id_\\> \\<_lightning invoice_\\>'
+      );
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -602,7 +668,7 @@ const initialize = (botToken, options) => {
       if (!order) {
         await messages.notActiveOrderMessage(ctx);
         return;
-      };
+      }
       if (order.status == 'SUCCESS') {
         await messages.successCompleteOrderMessage(ctx, order);
         return;
@@ -657,59 +723,59 @@ const initialize = (botToken, options) => {
 
   OrdersModule.configure(bot)
 
-  bot.action('addInvoiceBtn', async (ctx) => {
+  bot.action('addInvoiceBtn', async ctx => {
     await addInvoice(ctx, bot);
   });
 
-  bot.action('cancelAddInvoiceBtn', async (ctx) => {
+  bot.action('cancelAddInvoiceBtn', async ctx => {
     await cancelAddInvoice(ctx, bot);
   });
 
-  bot.action('showHoldInvoiceBtn', async (ctx) => {
+  bot.action('showHoldInvoiceBtn', async ctx => {
     await showHoldInvoice(ctx, bot);
   });
 
-  bot.action('cancelShowHoldInvoiceBtn', async (ctx) => {
+  bot.action('cancelShowHoldInvoiceBtn', async ctx => {
     await cancelShowHoldInvoice(ctx, bot);
   });
 
-  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async (ctx) => {
+  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async ctx => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
   });
 
-  bot.action(/^updateCommunity_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^updateCommunity_([0-9a-f]{24})$/, async ctx => {
     await messages.updateCommunityMessage(ctx, ctx.match[1]);
   });
 
-  bot.action(/^editNameBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^editNameBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'name');
   });
 
-  bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'currencies');
   });
 
-  bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'group', bot);
   });
 
-  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'channels', bot);
   });
 
-  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
   });
 
-  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async (ctx) => {
+  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {
     await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
-  bot.command('paytobuyer', async (ctx) => {
+  bot.command('paytobuyer', async ctx => {
     try {
       const adminUser = await validateAdmin(ctx);
       if (!adminUser) return;
-      const [ orderId ] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({
@@ -718,7 +784,7 @@ const initialize = (botToken, options) => {
       if (!order) {
         await messages.notActiveOrderMessage(ctx);
         return;
-      };
+      }
 
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
@@ -735,7 +801,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('listcurrencies', async (ctx) => {
+  bot.command('listcurrencies', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -749,7 +815,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('info', async (ctx) => {
+  bot.command('info', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -761,13 +827,13 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('showusername', async (ctx) => {
+  bot.command('showusername', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
 
-      let [ show ] = await validateParams(ctx, 2, '_yes/no_');
+      let [show] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show == 'yes' ? true : false;
       user.show_username = show;
@@ -778,13 +844,13 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('showvolume', async (ctx) => {
+  bot.command('showvolume', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
 
-      let [ show ] = await validateParams(ctx, 2, '_yes/no_');
+      let [show] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show == 'yes' ? true : false;
       user.show_volume_traded = show;
@@ -795,7 +861,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('community', async (ctx) => {
+  bot.command('community', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
@@ -807,7 +873,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('mycomms', async (ctx) => {
+  bot.command('mycomms', async ctx => {
     try {
       const user = await validateUser(ctx, false);
       if (!user) return;
@@ -820,14 +886,17 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('setcomm', async (ctx) => {
+  bot.command('setcomm', async ctx => {
     try {
       const user = await validateUser(ctx, false);
 
-      if (!user)
-        return;
+      if (!user) return;
 
-      let [ groupName ] = await validateParams(ctx, 2, '\\<_@communityGroupName / off_\\>');
+      let [groupName] = await validateParams(
+        ctx,
+        2,
+        '\\<_@communityGroupName / off_\\>'
+      );
       if (!groupName) {
         return;
       }
@@ -839,7 +908,7 @@ const initialize = (botToken, options) => {
         return;
       }
       // Allow find communities case insensitive
-      let regex = new RegExp(["^", groupName, "$"].join(""), "i");
+      let regex = new RegExp(['^', groupName, '$'].join(''), 'i');
       const community = await Community.findOne({ group: regex });
       if (!community) {
         await messages.communityNotFoundMessage(ctx);
@@ -855,7 +924,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.on('text', async (ctx) => {
+  bot.on('text', async ctx => {
     try {
       if (ctx.message.chat.type != 'private') {
         return;
