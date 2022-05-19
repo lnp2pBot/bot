@@ -906,38 +906,6 @@ const notOrdersMessage = async ctx => {
   }
 };
 
-const listOrdersResponse = async (bot, user, orders) => {
-  try {
-    let response =
-      '             Id          \\|     Status    \\|   sats amount  \\|  fiat amt  \\|  fiat\n';
-    orders.forEach(order => {
-      let fiatAmount = '\\-';
-      let amount = '\\-';
-      const status = order.status.replace(/_/g, '\\_');
-      if (typeof order.fiat_amount !== 'undefined')
-        fiatAmount = order.fiat_amount;
-      if (typeof order.amount !== 'undefined') amount = order.amount;
-      response +=
-        '`' +
-        order._id +
-        '` \\| ' +
-        status +
-        ' \\| ' +
-        amount +
-        ' \\| ' +
-        fiatAmount +
-        ' \\| ' +
-        order.fiat_code +
-        '\n';
-    });
-    await bot.telegram.sendMessage(user.tg_id, response, {
-      parse_mode: 'MarkdownV2',
-    });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const notRateForCurrency = async (bot, user, i18n) => {
   try {
     await bot.telegram.sendMessage(
@@ -1850,7 +1818,6 @@ module.exports = {
   cantTakeOwnOrderMessage,
   notLightningInvoiceMessage,
   notOrdersMessage,
-  listOrdersResponse,
   notRateForCurrency,
   incorrectAmountInvoiceMessage,
   beginTakeSellMessage,
