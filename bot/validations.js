@@ -3,7 +3,7 @@ const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User } = require('../models');
 const { isIso4217, parseArgs } = require('../util');
-const { existLightningAddress } = require("../lnurl/lnurl-pay");
+const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
 // We look in database if the telegram user exists,
@@ -21,7 +21,6 @@ const validateUser = async (ctx, start) => {
       });
       await user.save();
     } else if (!user) {
-
       return false;
     } else if (user.banned) {
       await messages.bannedUserErrorMessage(ctx);
@@ -40,7 +39,7 @@ const validateUser = async (ctx, start) => {
   }
 };
 
-const validateAdmin = async (ctx) => {
+const validateAdmin = async ctx => {
   try {
     const tgUser = ctx.update.message.from;
     let user = await User.findOne({ tg_id: tgUser.id });
@@ -58,15 +57,15 @@ const validateAdmin = async (ctx) => {
   }
 };
 
-const validateSellOrder = async (ctx) => {
+const validateSellOrder = async ctx => {
   try {
     const args = parseArgs(ctx.update.message.text);
-    if (args.length < 5 ) {
+    if (args.length < 5) {
       await messages.sellOrderCorrectFormatMessage(ctx);
       return false;
     }
 
-    let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
+    let [_, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     priceMargin = parseInt(priceMargin);
     // FIXME: this is not validating well
@@ -98,11 +97,15 @@ const validateSellOrder = async (ctx) => {
     }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
+      await messages.mustBeGreatherEqThan(
+        ctx,
+        'monto_en_sats',
+        process.env.MIN_PAYMENT_AMT
+      );
       return false;
     }
 
-    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
+    if (fiatAmount.length == 2 && fiatAmount[1] <= fiatAmount[0]) {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
@@ -112,14 +115,14 @@ const validateSellOrder = async (ctx) => {
       return false;
     }
 
-    if (fiatAmount.some((x) => x < 1)) {
+    if (fiatAmount.some(x => x < 1)) {
       await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(ctx);
-      return false
+      return false;
     }
 
     paymentMethod = paymentMethod.replace(/[&\/\\#,+~%.'":*?<>{}]/g, '');
@@ -137,14 +140,14 @@ const validateSellOrder = async (ctx) => {
   }
 };
 
-const validateBuyOrder = async (ctx) => {
+const validateBuyOrder = async ctx => {
   try {
     const args = parseArgs(ctx.update.message.text);
     if (args.length < 5) {
       await messages.buyOrderCorrectFormatMessage(ctx);
       return false;
     }
-    let [ _, amount, fiatAmount, fiatCode, paymentMethod, priceMargin ] = args;
+    let [_, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     priceMargin = parseInt(priceMargin);
     // FIXME: this is not validating well
@@ -176,11 +179,15 @@ const validateBuyOrder = async (ctx) => {
     }
 
     if (amount != 0 && amount < process.env.MIN_PAYMENT_AMT) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_sats', process.env.MIN_PAYMENT_AMT);
+      await messages.mustBeGreatherEqThan(
+        ctx,
+        'monto_en_sats',
+        process.env.MIN_PAYMENT_AMT
+      );
       return false;
     }
 
-    if (fiatAmount.length == 2 && (fiatAmount[1] <= fiatAmount[0])) {
+    if (fiatAmount.length == 2 && fiatAmount[1] <= fiatAmount[0]) {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
@@ -190,7 +197,7 @@ const validateBuyOrder = async (ctx) => {
       return false;
     }
 
-    if (fiatAmount.some((x) => x < 1)) {
+    if (fiatAmount.some(x => x < 1)) {
       await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
@@ -214,16 +221,20 @@ const validateBuyOrder = async (ctx) => {
     return false;
   }
 };
-const validateLightningAddress = async (lightningAddress) =>{
+const validateLightningAddress = async lightningAddress => {
   const pattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
-  return pattern.test(lightningAddress) && existLightningAddress(lightningAddress);
-}
+  return (
+    pattern.test(lightningAddress) && existLightningAddress(lightningAddress)
+  );
+};
 
 const validateInvoice = async (ctx, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
-    const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
+    const latestDate = new Date(
+      Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
+    ).toISOString();
     if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
       await messages.minimunAmountInvoiceMessage(ctx);
       return false;
@@ -259,7 +270,9 @@ const validateInvoice = async (ctx, lnInvoice) => {
 const isValidInvoice = async (ctx, lnInvoice) => {
   try {
     const invoice = parsePaymentRequest({ request: lnInvoice });
-    const latestDate = new Date(Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)).toISOString();
+    const latestDate = new Date(
+      Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
+    ).toISOString();
     if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
       await messages.invoiceMustBeLargerMessage(ctx);
       return {
@@ -386,7 +399,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
     where = {
       $and: [
         { seller_id: user._id },
-        { $or: [{status: 'ACTIVE'}, {status: 'FIAT_SENT'}] },
+        { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
       ],
     };
 
@@ -412,8 +425,8 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
     const where = {
       $and: [
         { _id: orderId },
-        { $or: [{status: 'ACTIVE'}, {status: 'FIAT_SENT'}] },
-        { $or: [{seller_id: user._id}, {buyer_id: user._id}] },
+        { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
+        { $or: [{ seller_id: user._id }, { buyer_id: user._id }] },
       ],
     };
 
@@ -436,7 +449,7 @@ const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
     const where = {
       $and: [
         { buyer_id: user._id },
-        { $or: [ {status: 'ACTIVE'}, {status: 'PAID_HOLD_INVOICE'}] },
+        { $or: [{ status: 'ACTIVE' }, { status: 'PAID_HOLD_INVOICE' }] },
       ],
     };
 
@@ -493,7 +506,10 @@ const validateParams = async (ctx, paramNumber, errOutputString) => {
     const paramsArray = ctx.update.message.text.split(' ');
     const params = paramsArray.filter(el => el != '');
     if (params.length != paramNumber) {
-      await messages.customMessage(ctx, `${params[0].toLowerCase()} ${errOutputString}`);
+      await messages.customMessage(
+        ctx,
+        `${params[0].toLowerCase()} ${errOutputString}`
+      );
 
       return [];
     }
@@ -534,7 +550,7 @@ const validateUserWaitingOrder = async (ctx, bot, user) => {
     // If is a buyer
     where = {
       buyer_id: user._id,
-      status: 'WAITING_BUYER_INVOICE'
+      status: 'WAITING_BUYER_INVOICE',
     };
     orders = await Order.find(where);
     if (orders.length > 0) {

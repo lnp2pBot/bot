@@ -2,13 +2,14 @@ const mongoose = require('mongoose');
 
 const PendingPaymentSchema = new mongoose.Schema({
   description: { type: String },
-  amount: { // amount in satoshis
+  amount: {
+    // amount in satoshis
     type: Number,
     min: [1, 'Minimum amount is 1 sat'],
-    validate : {
-      validator : Number.isInteger,
-      message   : '{VALUE} is not an integer value'
-    }
+    validate: {
+      validator: Number.isInteger,
+      message: '{VALUE} is not an integer value',
+    },
   },
   attempts: { type: Number, min: 0, default: 0 },
   paid: { type: Boolean, default: false },

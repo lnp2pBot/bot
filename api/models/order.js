@@ -2,15 +2,18 @@ const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
   description: { type: String },
-  amount: { // amount in satoshis
+  amount: {
+    // amount in satoshis
     type: Number,
     min: 0,
   },
-  max_amount: { // max amount in fiat
+  max_amount: {
+    // max amount in fiat
     type: Number,
     min: 0,
   },
-  min_amount: { // min amount in fiat
+  min_amount: {
+    // min amount in fiat
     type: Number,
     min: 0,
   },
@@ -42,8 +45,8 @@ const OrderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: [
-      'WAITING_PAYMENT',// buyer waiting for seller pay hold invoice
-      'WAITING_BUYER_INVOICE',// seller waiting for buyer add invoice where will receive sats
+      'WAITING_PAYMENT', // buyer waiting for seller pay hold invoice
+      'WAITING_BUYER_INVOICE', // seller waiting for buyer add invoice where will receive sats
       'PENDING', // order published on CHANNEL but not taken yet
       'ACTIVE', //  order taken
       'FIAT_SENT', // buyer indicates the fiat payment is already done

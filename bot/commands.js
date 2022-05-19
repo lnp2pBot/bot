@@ -1,15 +1,12 @@
 const { I18n } = require('@grammyjs/i18n');
 const {
-    validateSeller,
-    validateObjectId,
-    validateTakeBuyOrder,
-    validateTakeSellOrder,
-    validateUserWaitingOrder,
-  } = require('./validations');
-  const {
-    createHoldInvoice,
-    subscribeInvoice,
-  } = require('../ln');
+  validateSeller,
+  validateObjectId,
+  validateTakeBuyOrder,
+  validateTakeSellOrder,
+  validateUserWaitingOrder,
+} = require('./validations');
+const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const { Order, User, Community } = require('../models');
 const messages = require('./messages');
 const {
@@ -18,7 +15,7 @@ const {
   deleteOrderFromChannel,
   getUserI18nContext,
 } = require('../util');
-const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
+const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
 const takebuy = async (ctx, bot) => {
@@ -112,7 +109,13 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       // Message to buyer
       await messages.addInvoiceMessage(ctx, bot, buyer, seller, order);
       // Message to seller
-      await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order, i18nCtx);
+      await messages.sendBuyerInfo2SellerMessage(
+        bot,
+        buyer,
+        seller,
+        order,
+        i18nCtx
+      );
     } else {
       // We create a hold invoice
       const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
@@ -129,14 +132,20 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await subscribeInvoice(bot, hash);
 
       // We send the hold invoice to the seller
-      await messages.invoicePaymentRequestMessage(bot, seller, request, order, i18nCtx);
+      await messages.invoicePaymentRequestMessage(
+        bot,
+        seller,
+        request,
+        order,
+        i18nCtx
+      );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();
   } catch (error) {
     logger.error(error);
   }
-}
+};
 
 const addInvoice = async (ctx, bot, order) => {
   try {
@@ -156,19 +165,23 @@ const addInvoice = async (ctx, bot, order) => {
 
     const buyer = await User.findOne({ _id: order.buyer_id });
 
-    if(order.fiat_amount === undefined) {
-      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: buyer });
+    if (order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', {
+        bot,
+        order,
+        caller: buyer,
+      });
       return;
     }
 
     let amount = order.amount;
     if (amount == 0) {
-        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-        const marginPercent = order.price_margin / 100;
-        amount = amount - (amount * marginPercent);
-        amount = Math.floor(amount);
-        order.fee = Math.round(amount * parseFloat(process.env.FEE));
-        order.amount = amount;
+      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+      const marginPercent = order.price_margin / 100;
+      amount = amount - amount * marginPercent;
+      amount = Math.floor(amount);
+      order.fee = Math.round(amount * parseFloat(process.env.FEE));
+      order.amount = amount;
     }
 
     // If the price API fails we can't continue with the process
@@ -180,16 +193,36 @@ const addInvoice = async (ctx, bot, order) => {
     const seller = await User.findOne({ _id: order.seller_id });
 
     if (buyer.lightning_address) {
-      let laRes = await resolvLightningAddress(buyer.lightning_address, order.amount * 1000);
+      let laRes = await resolvLightningAddress(
+        buyer.lightning_address,
+        order.amount * 1000
+      );
       if (!!laRes && !laRes.pr) {
-        logger.warn(`lightning address ${buyer.lightning_address} not available`);
-        messages.unavailableLightningAddress(ctx, bot, buyer, buyer.lightning_address);
-        ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+        logger.warn(
+          `lightning address ${buyer.lightning_address} not available`
+        );
+        messages.unavailableLightningAddress(
+          ctx,
+          bot,
+          buyer,
+          buyer.lightning_address
+        );
+        ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
+          order,
+          seller,
+          buyer,
+          bot,
+        });
       } else {
         await waitPayment(ctx, bot, buyer, seller, order, laRes.pr);
       }
     } else {
-      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
+        order,
+        seller,
+        buyer,
+        bot,
+      });
     }
   } catch (error) {
     logger.error(error);
@@ -237,10 +270,10 @@ const saveUserReview = async (targetUser, review) => {
     // Its formula is based on the iterative method to compute mean,
     // as in:
     // https://math.stackexchange.com/questions/2148877/iterative-calculation-of-mean-and-standard-deviation
-    const newRating = oldRating + ((lastRating - oldRating) / totalReviews);
+    const newRating = oldRating + (lastRating - oldRating) / totalReviews;
     targetUser.total_rating = newRating || 0;
 
-    await targetUser.save()
+    await targetUser.save();
   } catch (error) {
     logger.error(error);
   }
@@ -274,18 +307,33 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (order.creator_id == order.buyer_id) {
       // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping 
+      // there are users that block the bot and it raises the catch block stopping
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, i18nCtx);
+      await messages.toBuyerDidntAddInvoiceMessage(
+        bot,
+        user,
+        clonedOrder,
+        i18nCtx
+      );
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
-      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtxSeller);
-    } else { // Re-publish order
+      await messages.toSellerBuyerDidntAddInvoiceMessage(
+        bot,
+        sellerUser,
+        clonedOrder,
+        i18nCtxSeller
+      );
+    } else {
+      // Re-publish order
       if (userAction) {
-        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+        logger.info(
+          `User cancelled Order Id: ${order._id}, republishing to the channel`
+        );
       } else {
-        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+        logger.info(
+          `Order Id: ${order._id} expired, republishing to the channel`
+        );
       }
       order.taken_at = null;
       order.status = 'PENDING';
@@ -308,7 +356,12 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       if (!userAction) {
-        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
         await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
       } else {
         await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
@@ -338,8 +391,12 @@ const showHoldInvoice = async (ctx, bot, order) => {
       return;
     }
 
-    if(order.fiat_amount === undefined) {
-      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: user });
+    if (order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', {
+        bot,
+        order,
+        caller: user,
+      });
       return;
     }
 
@@ -349,7 +406,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
     if (order.amount == 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
       const marginPercent = order.price_margin / 100;
-      amount = amount - (amount * marginPercent);
+      amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
       order.fee = Math.round(amount * parseFloat(process.env.FEE));
       order.amount = amount;
@@ -365,7 +422,13 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(ctx, request, amount, order.fiat_code, order.fiat_amount);
+    await messages.showHoldInvoiceMessage(
+      ctx,
+      request,
+      amount,
+      order.fiat_code,
+      order.fiat_amount
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -395,17 +458,32 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id == order.seller_id) {
       // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping 
+      // there are users that block the bot and it raises the catch block stopping
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, i18nCtx);
-      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, i18nCtx);
-    } else { // Re-publish order
+      await messages.toSellerDidntPayInvoiceMessage(
+        bot,
+        user,
+        clonedOrder,
+        i18nCtx
+      );
+      await messages.toBuyerSellerDidntPayInvoiceMessage(
+        bot,
+        buyerUser,
+        clonedOrder,
+        i18nCtx
+      );
+    } else {
+      // Re-publish order
       if (userAction) {
-        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+        logger.info(
+          `User cancelled Order Id: ${order._id}, republishing to the channel`
+        );
       } else {
-        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+        logger.info(
+          `Order Id: ${order._id} expired, republishing to the channel`
+        );
       }
       order.taken_at = null;
       order.status = 'PENDING';
@@ -430,8 +508,18 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       if (!userAction) {
-        await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
-        await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toSellerDidntPayInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
+        await messages.toAdminChannelSellerDidntPayInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
       } else {
         await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
       }
@@ -464,11 +552,22 @@ const updateCommunity = async (ctx, id, field, bot) => {
     if (field == 'name') {
       ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     } else if (field == 'currencies') {
-      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+      });
     } else if (field == 'group') {
-      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
     } else if (field == 'channels') {
-      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
+      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
     } else if (field == 'solvers') {
       ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     }
