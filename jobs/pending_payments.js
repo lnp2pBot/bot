@@ -15,7 +15,7 @@ const attemptPendingPayments = async bot => {
     const order = await Order.findOne({ _id: pending.order_id });
     try {
       pending.attempts++;
-      if (order.status == 'SUCCESS') {
+      if (order.status === 'SUCCESS') {
         pending.paid = true;
         await pending.save();
         logger.info(`Order id: ${order._id} was already paid`);
@@ -23,7 +23,7 @@ const attemptPendingPayments = async bot => {
       }
       // We check if the payment is on flight we don't do anything
       const isPending = await isPendingPayment(order.buyer_invoice);
-      if (!!isPending) {
+      if (isPending) {
         return;
       }
       const payment = await payRequest({
@@ -74,7 +74,7 @@ const attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts == process.env.PAYMENT_ATTEMPTS) {
+        if (pending.attempts === process.env.PAYMENT_ATTEMPTS) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,

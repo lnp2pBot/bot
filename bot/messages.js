@@ -10,7 +10,7 @@ const logger = require('../logger');
 const startMessage = async ctx => {
   try {
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
-    let message = ctx.i18n.t('start', {
+    const message = ctx.i18n.t('start', {
       orderExpiration,
       channel: process.env.CHANNEL,
     });
@@ -25,7 +25,9 @@ const initBotErrorMessage = async (ctx, bot, user) => {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('init_bot_error'));
   } catch (error) {
     // Ignore TelegramError - Forbidden request
-    if (!(error instanceof TelegramError && error.response.error_code == 403)) {
+    if (
+      !(error instanceof TelegramError && error.response.error_code === 403)
+    ) {
       logger.error(error);
     }
   }
@@ -54,7 +56,7 @@ const invoicePaymentRequestMessage = async (
         : order.fiat_code;
     const expirationTime =
       parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    let message = i18n.t('invoice_payment_request', {
+    const message = i18n.t('invoice_payment_request', {
       currency,
       order,
       expirationTime,
@@ -70,7 +72,7 @@ const invoicePaymentRequestMessage = async (
 
 const pendingSellMessage = async (bot, user, order, channel, i18n) => {
   try {
-    let orderExpirationWindow =
+    const orderExpirationWindow =
       process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
     await bot.telegram.sendMessage(
       user.tg_id,
@@ -91,7 +93,7 @@ const pendingSellMessage = async (bot, user, order, channel, i18n) => {
 
 const pendingBuyMessage = async (bot, user, order, channel, i18n) => {
   try {
-    let orderExpirationWindow =
+    const orderExpirationWindow =
       process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
     await bot.telegram.sendMessage(
       user.tg_id,
@@ -152,7 +154,8 @@ const minimunAmountInvoiceMessage = async ctx => {
 
 const minimunExpirationTimeInvoiceMessage = async ctx => {
   try {
-    const expirationTime = parseInt(INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
+    const expirationTime =
+      parseInt(process.env.INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
     await ctx.reply(ctx.i18n.t('min_expiration_time', { expirationTime }));
   } catch (error) {
     logger.error(error);
@@ -589,14 +592,14 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());
     let createdAt = order.created_at.toISOString();
-    let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
+    let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
     createdAt = sanitizeMD(createdAt);
     takenAt = sanitizeMD(takenAt);
     const status = sanitizeMD(order.status);
-    const fee = !!order.fee ? parseInt(order.fee) : '';
+    const fee = order.fee ? parseInt(order.fee) : '';
     const creator =
-      order.creator_id == buyerId ? buyerUsername : sellerUsername;
-    let message = i18n.t('order_detail', {
+      order.creator_id === buyerId ? buyerUsername : sellerUsername;
+    const message = i18n.t('order_detail', {
       order,
       creator,
       buyerUsername,
@@ -631,7 +634,7 @@ const beginDisputeMessage = async (
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
-    let detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
+    const detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
     await bot.telegram.sendMessage(
       process.env.ADMIN_CHANNEL,
       i18n.t('dispute_started_channel', {
@@ -911,9 +914,9 @@ const listOrdersResponse = async (bot, user, orders) => {
       let fiatAmount = '\\-';
       let amount = '\\-';
       const status = order.status.replace(/_/g, '\\_');
-      if (typeof order.fiat_amount != 'undefined')
+      if (typeof order.fiat_amount !== 'undefined')
         fiatAmount = order.fiat_amount;
-      if (typeof order.amount != 'undefined') amount = order.amount;
+      if (typeof order.amount !== 'undefined') amount = order.amount;
       response +=
         '`' +
         order._id +
@@ -1925,7 +1928,6 @@ module.exports = {
   noDefaultCommunityMessage,
   communityNotFoundMessage,
   currencyNotSupportedMessage,
-  wizardCommunityWrongPermission,
   sendMeAnInvoiceMessage,
   startAddInvoiceMessage,
 };
