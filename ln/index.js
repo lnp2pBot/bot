@@ -1,4 +1,8 @@
-const { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice } = require('./hold_invoice');
+const {
+  createHoldInvoice,
+  settleHoldInvoice,
+  cancelHoldInvoice,
+} = require('./hold_invoice');
 const subscribeInvoices = require('./subscribe_invoices');
 const subscribeInvoice = require('./subscribe_invoice');
 const resubscribeInvoices = require('./resubscribe_invoices');

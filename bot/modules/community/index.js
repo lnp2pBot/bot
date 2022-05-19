@@ -1,7 +1,7 @@
 const actions = require('./actions');
 const commands = require('./commands');
 
-exports.configure = (bot) => {
+exports.configure = bot => {
   bot.command('findcomms', commands.findCommunity);
 
   bot.action(/^communityInfo_([0-9a-f]{24})$/, actions.onCommunityInfo);

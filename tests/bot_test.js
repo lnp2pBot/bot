@@ -1,7 +1,7 @@
 require('dotenv').config();
 const TelegramServer = require('telegram-test-api');
-const sinon = require("sinon");
-const { expect } = require("chai");
+const sinon = require('sinon');
+const { expect } = require('chai');
 const { initialize } = require('../bot');
 const { User, Order } = require('../models');
 const ordersActions = require('../bot/ordersActions');
@@ -37,9 +37,9 @@ describe('Telegram bot test', () => {
   it('should return /sell help', async () => {
     const client = server.getClient(token, { timeout: 5000 });
     // We spy on the User findOne called on ValidateUser()
-    const userStub = sinon.stub(User, "findOne");
+    const userStub = sinon.stub(User, 'findOne');
     // We spy on the Order findOne called on validateSeller()
-    const orderStub = sinon.stub(Order, "findOne");
+    const orderStub = sinon.stub(Order, 'findOne');
     // We make it to return our data
     userStub.returns(testUser);
     orderStub.returns(false);
@@ -58,11 +58,11 @@ describe('Telegram bot test', () => {
   it('should create a /sell', async () => {
     const client = server.getClient(token, { timeout: 5000 });
     // We spy on the User findOne called on ValidateUser()
-    const userStub = sinon.stub(User, "findOne");
+    const userStub = sinon.stub(User, 'findOne');
     // We spy on the Order findOne called on validateSeller()
-    const orderStub = sinon.stub(Order, "findOne");
+    const orderStub = sinon.stub(Order, 'findOne');
     // We spy the createOrder call
-    const createOrderStub = sinon.stub(ordersActions, "createOrder");
+    const createOrderStub = sinon.stub(ordersActions, 'createOrder');
     // We make it to return our data
     userStub.returns(testUser);
     orderStub.returns(false);
@@ -83,9 +83,9 @@ describe('Telegram bot test', () => {
   it('should return /buy help', async () => {
     const client = server.getClient(token, { timeout: 5000 });
     // We spy on the User findOne called on ValidateUser()
-    const userStub = sinon.stub(User, "findOne");
+    const userStub = sinon.stub(User, 'findOne');
     // We spy on the Order findOne called on validateSeller()
-    const orderStub = sinon.stub(Order, "findOne");
+    const orderStub = sinon.stub(Order, 'findOne');
     // We make it to return our data
     userStub.returns(testUser);
     orderStub.returns(false);

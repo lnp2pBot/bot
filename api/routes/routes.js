@@ -7,13 +7,7 @@ const router = express.Router();
 router.get('/getCommunities', async (req, res) => {
   try {
     const data = await Community.find({ public: true });
-    const {
-      _id,
-      name,
-      group,
-      created_at,
-      order_channels,
-    } = data;
+    const { _id, name, group, created_at, order_channels } = data;
 
     res.status(200).json({
       success: true,

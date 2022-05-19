@@ -4,7 +4,8 @@ const order = {
   buyer_cooperativecancel: false,
   seller_cooperativecancel: false,
   _id: '612d451148df8353e387eeff',
-  description: 'Vendiendo 111 sats\n' +
+  description:
+    'Vendiendo 111 sats\n' +
     'Por ves 111\n' +
     'Pago por Pagomovil\n' +
     'Tiene 7 operaciones exitosas',
