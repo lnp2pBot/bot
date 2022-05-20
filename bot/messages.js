@@ -533,7 +533,13 @@ const notOrderMessage = async ctx => {
   }
 };
 
-const publishBuyOrderMessage = async (bot, user, order, i18n) => {
+const publishBuyOrderMessage = async (
+  bot,
+  user,
+  order,
+  i18n,
+  messageToUser
+) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
@@ -552,14 +558,22 @@ const publishBuyOrderMessage = async (bot, user, order, i18n) => {
       message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
-    // Message to user let know the order was published
-    await pendingBuyMessage(bot, user, order, channel, i18n);
+    if (messageToUser) {
+      // Message to user let know the order was published
+      await pendingBuyMessage(bot, user, order, channel, i18n);
+    }
   } catch (error) {
     logger.error(error);
   }
 };
 
-const publishSellOrderMessage = async (bot, user, order, i18n) => {
+const publishSellOrderMessage = async (
+  bot,
+  user,
+  order,
+  i18n,
+  messageToUser
+) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
@@ -577,8 +591,10 @@ const publishSellOrderMessage = async (bot, user, order, i18n) => {
       message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
-    // Message to user let know the order was published
-    await pendingSellMessage(bot, user, order, channel, i18n);
+    if (messageToUser) {
+      // Message to user let know the order was published
+      await pendingSellMessage(bot, user, order, channel, i18n);
+    }
   } catch (error) {
     logger.error(error);
   }

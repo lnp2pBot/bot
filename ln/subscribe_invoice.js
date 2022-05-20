@@ -86,14 +86,16 @@ const subscribeInvoice = async (bot, id, resub) => {
                 bot,
                 user,
                 newOrder,
-                i18nCtx
+                i18nCtx,
+                true
               );
             } else {
               await messages.publishBuyOrderMessage(
                 bot,
                 user,
                 newOrder,
-                i18nCtx
+                i18nCtx,
+                true
               );
             }
           }

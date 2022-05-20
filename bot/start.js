@@ -173,7 +173,13 @@ const initialize = (botToken, options) => {
         community_id: communityId,
       });
       if (order) {
-        await messages.publishSellOrderMessage(bot, user, order, ctx.i18n);
+        await messages.publishSellOrderMessage(
+          bot,
+          user,
+          order,
+          ctx.i18n,
+          true
+        );
       }
     } catch (error) {
       logger.error(error);
@@ -228,7 +234,7 @@ const initialize = (botToken, options) => {
       });
 
       if (order) {
-        await messages.publishBuyOrderMessage(bot, user, order, ctx.i18n);
+        await messages.publishBuyOrderMessage(bot, user, order, ctx.i18n, true);
       }
     } catch (error) {
       logger.error(error);
