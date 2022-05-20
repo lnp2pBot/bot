@@ -1763,25 +1763,6 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
   }
 };
 
-const startAddInvoiceMessage = async (bot, user, orderId, i18nCtx) => {
-  try {
-    await bot.telegram.sendMessage(user.tg_id, 'presiona para continuar', {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: i18nCtx.t('continue'),
-              callback_data: `addInvoicePHIBtn_${orderId}`,
-            },
-          ],
-        ],
-      },
-    });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1912,5 +1893,4 @@ module.exports = {
   communityNotFoundMessage,
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
-  startAddInvoiceMessage,
 };

@@ -74,7 +74,7 @@ const attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === process.env.PAYMENT_ATTEMPTS) {
+        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
