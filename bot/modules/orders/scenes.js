@@ -49,27 +49,27 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
 createOrder.command('exit', ctx => ctx.scene.leave())
 const createOrderSteps = {
     async currency(ctx) {
-        const prompt = await createOrderPrompts.currency(ctx)
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.currency(ctx)
             await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
+        const prompt = await createOrderPrompts.currency(ctx)
         return ctx.wizard.next()
     },
     async fiatAmount(ctx) {
-        const prompt = await createOrderPrompts.fiatAmount(ctx)
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.fiatAmount(ctx)
             await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
+        const prompt = await createOrderPrompts.fiatAmount(ctx)
         return ctx.wizard.next()
     },
     async sats(ctx) {
-        const prompt = await createOrderPrompts.sats(ctx)
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.sats(ctx)
             await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
+        const prompt = await createOrderPrompts.sats(ctx)
         return ctx.wizard.next()
     }
 }
