@@ -399,7 +399,13 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
     where = {
       $and: [
         { seller_id: user._id },
-        { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
+        {
+          $or: [
+            { status: 'ACTIVE' },
+            { status: 'FIAT_SENT' },
+            { status: 'DISPUTE' },
+          ],
+        },
       ],
     };
 
