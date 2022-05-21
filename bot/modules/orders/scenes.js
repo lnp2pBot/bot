@@ -35,14 +35,15 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
     async ctx => {
         try {
             if (ctx.wizard.state.handler) {
-                await ctx.wizard.state.handler(ctx)
+                const ret = await ctx.wizard.state.handler(ctx)
+                if (!ret) return
                 delete ctx.wizard.state.handler
             }
             await ctx.wizard.selectStep(0)
             return ctx.wizard.steps[ctx.wizard.cursor](ctx)
         } catch (err) {
-            //await ctx.reply('ERROR|' + err.message)
-            //return ctx.scene.leave()
+            await ctx.reply('ERROR|' + err.message)
+            return ctx.scene.leave()
         }
     }
 )
@@ -51,7 +52,7 @@ const createOrderSteps = {
     async currency(ctx) {
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.currency(ctx)
-            await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
+            return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await createOrderPrompts.currency(ctx)
         return ctx.wizard.next()
@@ -59,7 +60,7 @@ const createOrderSteps = {
     async fiatAmount(ctx) {
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.fiatAmount(ctx)
-            await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
+            return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await createOrderPrompts.fiatAmount(ctx)
         return ctx.wizard.next()
@@ -67,7 +68,7 @@ const createOrderSteps = {
     async sats(ctx) {
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.sats(ctx)
-            await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
+            return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await createOrderPrompts.sats(ctx)
         return ctx.wizard.next()
@@ -95,9 +96,10 @@ const createOrderPrompts = {
 }
 const createOrderHandlers = {
     async currency(ctx) {
-        if (!ctx.callbackQuery) throw new Error('NotACurrency')
+        if (!ctx.callbackQuery) return
         const currency = ctx.callbackQuery.data
         ctx.wizard.state.currency = currency
+        return true
     },
     async fiatAmount(ctx) {
         const input = ctx.message.text
@@ -107,6 +109,7 @@ const createOrderHandlers = {
         }
         ctx.wizard.state.fiatAmount = parseInt(input)
         await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
+        return true
     },
     async sats(ctx) {
         const input = ctx.message.text
@@ -116,5 +119,6 @@ const createOrderHandlers = {
         }
         ctx.wizard.state.sats = parseInt(input)
         await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
+        return true
     }
 }
