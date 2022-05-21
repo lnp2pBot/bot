@@ -41,8 +41,8 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
             await ctx.wizard.selectStep(0)
             return ctx.wizard.steps[ctx.wizard.cursor](ctx)
         } catch (err) {
-            await ctx.reply('ERROR|' + err.message)
-            return ctx.scene.leave()
+            //await ctx.reply('ERROR|' + err.message)
+            //return ctx.scene.leave()
         }
     }
 )
@@ -95,6 +95,7 @@ const createOrderPrompts = {
 }
 const createOrderHandlers = {
     async currency(ctx) {
+        if (!ctx.callbackQuery) throw new Error('NotACurrency')
         const currency = ctx.callbackQuery.data
         ctx.wizard.state.currency = currency
     },
