@@ -13,8 +13,8 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
     CREATE_ORDER,
     async ctx => {
         try {
-            const { statusMessage, type, currency, fiatAmount, sats } = ctx.wizard.state
-            const statusString = `Creating ${type} order ${sats} sats for ${fiatAmount} ${currency}.`
+            const { statusMessage, type, currency, fiatAmount, sats, method } = ctx.wizard.state
+            const statusString = `Creating ${type} order ${sats} sats for ${fiatAmount} ${currency}.\n${method}`
             if (!statusMessage) {
                 const res = await ctx.reply(statusString)
                 ctx.wizard.state.statusMessage = res
@@ -24,6 +24,7 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
             if (undefined === currency) return createOrderSteps.currency(ctx)
             if (undefined === sats) return createOrderSteps.sats(ctx)
             if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx)
+            if (undefined === method) return createOrderSteps.method(ctx)
 
             await ctx.reply('Wizard completed...')
             return ctx.scene.leave()
@@ -63,6 +64,14 @@ const createOrderSteps = {
             return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await createOrderPrompts.fiatAmount(ctx)
+        return ctx.wizard.next()
+    },
+    async method(ctx) {
+        ctx.wizard.state.handler = async ctx => {
+            await createOrderHandlers.method(ctx)
+            return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
+        }
+        const prompt = await ctx.reply('Especifique el método de pago')
         return ctx.wizard.next()
     },
     async sats(ctx) {
@@ -108,6 +117,13 @@ const createOrderHandlers = {
             return
         }
         ctx.wizard.state.fiatAmount = parseInt(input)
+        await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
+        return true
+    },
+    async method(ctx) {
+        const { text } = ctx.message
+        if (!text) return
+        ctx.wizard.state.method = text
         await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
         return true
     },
