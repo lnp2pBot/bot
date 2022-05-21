@@ -263,6 +263,7 @@ const validateInvoice = async (ctx, lnInvoice) => {
     return invoice;
   } catch (error) {
     logger.error(error);
+    logger.debug(lnInvoice);
     return false;
   }
 };
