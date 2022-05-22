@@ -15,7 +15,8 @@ exports.configure = function configure(bot) {
     }).sort()
     const state = {
       type: 'sell',
-      currencies
+      currencies: ['ARS', 'USD'],
+      currency: 'ARS'
     }
     await ctx.scene.enter(Scenes.CREATE_ORDER, state)
   })

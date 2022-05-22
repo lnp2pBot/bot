@@ -14,7 +14,7 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
     async ctx => {
         try {
             const { statusMessage, type, currency, fiatAmount, sats, method } = ctx.wizard.state
-            const statusString = `Creating ${type} order ${sats} sats for ${fiatAmount} ${currency}.\n${method}`
+            const statusString = `Creating ${type} order ${undefined === sats ? '?' : sats} sats for ${undefined === fiatAmount ? '?' : fiatAmount} ${currency || '?'}.\nMétodo de pago: ${method || '?'}`
             if (!statusMessage) {
                 const res = await ctx.reply(statusString)
                 ctx.wizard.state.statusMessage = res
@@ -22,8 +22,8 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
                 await ctx.telegram.editMessageText(statusMessage.chat.id, statusMessage.message_id, null, statusString)
             }
             if (undefined === currency) return createOrderSteps.currency(ctx)
-            if (undefined === sats) return createOrderSteps.sats(ctx)
             if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx)
+            if (undefined === sats) return createOrderSteps.sats(ctx)
             if (undefined === method) return createOrderSteps.method(ctx)
 
             await ctx.reply('Wizard completed...')
@@ -75,11 +75,11 @@ const createOrderSteps = {
         return ctx.wizard.next()
     },
     async sats(ctx) {
+        const prompt = await createOrderPrompts.sats(ctx)
         ctx.wizard.state.handler = async ctx => {
             await createOrderHandlers.sats(ctx)
             return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
-        const prompt = await createOrderPrompts.sats(ctx)
         return ctx.wizard.next()
     }
 }
@@ -100,7 +100,8 @@ const createOrderPrompts = {
         return ctx.reply('Especifique el monto de ' + currency)
     },
     async sats(ctx) {
-        return ctx.reply('Especifique el monto de satoshis')
+        const button = Markup.button.callback('Market price', 'marketPrice')
+        return ctx.reply('Especifique el monto de satoshis', Markup.inlineKeyboard([button]))
     }
 }
 const createOrderHandlers = {
@@ -128,13 +129,17 @@ const createOrderHandlers = {
         return true
     },
     async sats(ctx) {
+        if (ctx.callbackQuery) {
+            ctx.wizard.state.sats = 0
+            return true
+        }
         const input = ctx.message.text
+        await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
         if (isNaN(input)) {
             await ctx.reply('NaN')
             return
         }
         ctx.wizard.state.sats = parseInt(input)
-        await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
         return true
     }
 }
