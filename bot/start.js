@@ -457,6 +457,14 @@ const initialize = (botToken, options) => {
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
+      // We check if this is a solver, the order must be from the same community
+      if (!user.admin) {
+        if (order.community_id != user.default_community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+      }
+
       if (order.secret) {
         await settleHoldInvoice({ secret: order.secret });
       }
