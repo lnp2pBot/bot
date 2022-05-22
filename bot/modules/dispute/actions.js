@@ -1,4 +1,4 @@
-const { User, Order } = require('../../../models');
+const { User, Order, Dispute } = require('../../../models');
 const messages = require('./messages');
 
 const takeDispute = async (ctx, bot) => {
@@ -10,6 +10,10 @@ const takeDispute = async (ctx, bot) => {
   const buyer = await User.findOne({ _id: order.buyer_id });
   const seller = await User.findOne({ _id: order.seller_id });
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
+  await Dispute.findOneAndUpdate(
+    { order_id: order._id },
+    { solver_id: solver._id, status: 'IN_PROGRESS' }
+  );
   await messages.disputeData(
     bot,
     buyer,

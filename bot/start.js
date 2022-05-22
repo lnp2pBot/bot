@@ -1,7 +1,13 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
-const { Order, User, PendingPayment, Community } = require('../models');
+const {
+  Order,
+  User,
+  PendingPayment,
+  Community,
+  Dispute,
+} = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
@@ -283,6 +289,9 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
       // We check if this is a solver, the order must be from the same community
       if (!user.admin) {
         if (!order.community_id) {
@@ -294,10 +303,22 @@ const initialize = (botToken, options) => {
           await messages.notAuthorized(ctx);
           return;
         }
+
+        // We check if this dispute is from a community we validate that
+        // the solver is running this command
+        if (dispute && dispute.solver_id != user._id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
       }
 
       if (order.hash) {
         await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      if (dispute) {
+        dispute.status = 'FINISHED';
+        await dispute.save();
       }
 
       order.status = 'CANCELED_BY_ADMIN';
@@ -470,6 +491,9 @@ const initialize = (botToken, options) => {
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
       // We check if this is a solver, the order must be from the same community
       if (!user.admin) {
         if (!order.community_id) {
@@ -481,10 +505,22 @@ const initialize = (botToken, options) => {
           await messages.notAuthorized(ctx);
           return;
         }
+
+        // We check if this dispute is from a community we validate that
+        // the solver is running this command
+        if (dispute && dispute.solver_id != user._id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
       }
 
       if (order.secret) {
         await settleHoldInvoice({ secret: order.secret });
+      }
+
+      if (dispute) {
+        dispute.status = 'FINISHED';
+        await dispute.save();
       }
 
       order.status = 'COMPLETED_BY_ADMIN';

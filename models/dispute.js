@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 
 const DisputeSchema = new mongoose.Schema({
-  initiator_id: { type: String, required: true },
+  initiator: { type: String, required: true },
   seller_id: { type: String, required: true },
   buyer_id: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ['WAITING_FOR_SOLVER', 'IN_PROGRESS', 'FINISHED'],
+  },
   community_id: { type: String, default: null },
-  solver_id: { type: String, required: true },
-  solved: { type: Boolean, default: false },
+  order_id: { type: String, default: null },
+  solver_id: { type: String, default: null },
   created_at: { type: Date, default: Date.now },
 });
 
