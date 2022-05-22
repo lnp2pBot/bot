@@ -273,6 +273,9 @@ const getOrderChannel = async order => {
   let channel = process.env.CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
+    if (!community) {
+      return channel;
+    }
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
@@ -347,6 +350,21 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
   }
 };
 
+// We need to know if this user is a dispute solver for this community
+const isDisputeSolver = async (community, user) => {
+  if (!community || !user) {
+    return false;
+  }
+
+  community.sovers.forEach(solver => {
+    if (solver.id == user._id) {
+      return true;
+    }
+  });
+
+  return false;
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -367,4 +385,5 @@ module.exports = {
   getUserI18nContext,
   getDisputeChannel,
   getDetailedOrder,
+  isDisputeSolver,
 };

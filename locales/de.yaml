@@ -325,7 +325,6 @@ buyer_havent_add_invoice_to_admin_channel: 'Käufer @${username} hat den Auftrag
 havent_paid_invoice: '🤨 Du hast die LN-Rechnung nicht bezahlt, um Sats für den Auftrag (${orderId}) zu verkaufen.'
 seller_havent_paid_invoice: '😔 Der Verkäufer hat die LN-Rechnung für deinen Auftrag (${orderId}) nicht bezahlt. Der Vorgang wurde storniert.'
 seller_havent_add_invoice_to_admin_channel: 'Verkäufer @${username} hat die LN-Rechnung des Auftrages (${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht.'
-user_cant_do: 🤨 Du kannst diesen Vorgang nicht durchführen
 pending_payment_success_to_admin: |
   Benutzer @${username} hatte eine ausstehende LN-Rechnung, die Zahlung für die Auftrag: ${orderId} für ${amount} Sats, wurde nach ${attempts} Versuchen endlich ausgeführt.
 
@@ -383,3 +382,4 @@ receive: receive
 send: send
 new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button to take it
 take_dispute: Take dispute
+not_authorized: 🤨 You are not authorized to perform this operation

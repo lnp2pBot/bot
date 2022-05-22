@@ -325,7 +325,6 @@ buyer_havent_add_invoice_to_admin_channel: 'El comprador @${username} tomó la o
 havent_paid_invoice: '🤨 No has pagado la factura para vender sats por la orden Id: ${orderId}'
 seller_havent_paid_invoice: '😔 El vendedor no pagó la factura por tu compra Id: ${orderId}, la operación ha sido cancelada'
 seller_havent_add_invoice_to_admin_channel: 'El vendedor @${username} no ha pagado la factura correspondiente a la orden Id: ${orderId} y el tiempo ha expirado, la orden ha sido publicada nuevamente'
-user_cant_do: 🤨 No puedes realizar esta operación
 pending_payment_success_to_admin: |
   El usuario @${username} tenía un pago pendiente en su compra Id: ${orderId} de ${amount} satoshis, el pago se realizó luego de ${attempts} intentos.
 
@@ -381,3 +380,4 @@ receive: recibir
 send: enviar
 new_dispute: ⚠️⚠️⚠️ Un usuario ha iniciado una disputa, para tomarla toca el botón
 take_dispute: Tomar disputa
+not_authorized: 🤨 No estás autorizado para realizar esta operación

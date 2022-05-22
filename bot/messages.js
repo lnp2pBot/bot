@@ -1477,14 +1477,6 @@ const toAdminChannelSellerDidntPayInvoiceMessage = async (
   }
 };
 
-const userCantDoMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('user_cant_do'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const toAdminChannelPendingPaymentSuccessMessage = async (
   bot,
   user,
@@ -1675,6 +1667,14 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
   }
 };
 
+const notAuthorized = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('not_authorized'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1787,7 +1787,6 @@ module.exports = {
   toSellerDidntPayInvoiceMessage,
   toBuyerSellerDidntPayInvoiceMessage,
   toAdminChannelSellerDidntPayInvoiceMessage,
-  userCantDoMessage,
   toAdminChannelPendingPaymentSuccessMessage,
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
@@ -1804,4 +1803,5 @@ module.exports = {
   communityNotFoundMessage,
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
+  notAuthorized,
 };
