@@ -350,7 +350,7 @@ const initialize = (botToken, options) => {
       let counterPartyUser, initiator, counterParty;
 
       const initiatorUser = user;
-      if (initiatorUser._id === order.buyer_id) {
+      if (initiatorUser._id == order.buyer_id) {
         counterPartyUser = await User.findOne({ _id: order.seller_id });
         initiator = 'buyer';
         counterParty = 'seller';
@@ -382,7 +382,7 @@ const initialize = (botToken, options) => {
         order.status = 'CANCELED';
         let seller = initiatorUser;
         let i18nCtxSeller = ctx.i18n;
-        if (order.seller_id === counterPartyUser._id) {
+        if (order.seller_id == counterPartyUser._id) {
           seller = counterPartyUser;
           i18nCtxSeller = i18nCtxCP;
         }

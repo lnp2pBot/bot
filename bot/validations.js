@@ -323,7 +323,7 @@ const isValidInvoice = async (ctx, lnInvoice) => {
 
 const isOrderCreator = (user, order) => {
   try {
-    return user._id === order.creator_id;
+    return user._id == order.creator_id;
   } catch (error) {
     logger.error(error);
     return false;
