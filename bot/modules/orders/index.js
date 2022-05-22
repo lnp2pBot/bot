@@ -4,7 +4,7 @@ const { validateUser } = require('../../validations');
 const ordersActions = require('../../ordersActions');
 const messages = require('./messages');
 
-exports.configure = function configure(bot) {
+exports.configure = bot => {
   bot.command('listorders', async ctx => {
     try {
       const user = await validateUser(ctx, false);

@@ -36,9 +36,9 @@ invoice_payment_request: |
   Bitte bezahle diese Rechnung, um deinen Verkaufsprozess zu starten. Diese Rechnung läuft in ${expirationTime} Minuten ab
 pending_sell: |
   📝 Dein Angebot wurde im Kanal ${channel} veröffentlicht
-  
+
   Du musst warten, bis ein anderer Nutzer deinen Auftrag auswählt. Sie wird für ${orderExpirationWindow} Stunden im Kanal verfügbar sein
-  
+
   Bevor ein anderer Benutzer dein Angebot annimmt, kannst du diesen mit dem folgenden Befehl stornieren 👇
 cancel_order_cmd: |
   /cancel ${orderId}
@@ -73,7 +73,7 @@ buy_correct_format: |
   `/buy 1000 2 EUR "Banküberweisung"`
 
   Wenn du keine feste Menge an Sats festlegen willst und zu einem Preis unter dem Marktwert kaufen möchtest, kannst du ein Kaufauftrag mit einem bestimmten Rabatt aufgeben\. Dieser Rabatt ist der Prozentsatz, der vom Marktpreis abgezogen wird, wenn dein Auftrag veröffentlicht wird\. Du musst im Feld \<_Anzahl sats_\> den Wert 0 angeben, dann berechnet der Bot den Preis\. Wenn du mit einem Rabatt von 2% auf den Marktpreis kaufen möchtest, solltest du \-2 als letzten Parameter angeben
-  
+
   `/buy 0 2 EUR "Bargeld" \-2`
 
   Wenn du einen Auftrag in einem gewissen Bereich erstellen willst, anstatt einen festen FIAT\-Betrag anzugeben, kannst du das Minimum und das Maximum für die Transaktion durch einen Bindestrich getrennt angeben *\-*
@@ -126,11 +126,11 @@ get_in_touch_with_buyer: |
 buyer_took_your_order: |
   @${buyerUsername} hat deinen Auftrag angenommen und möchte deine Sats kaufen. Nimm Kontakt mit ihm auf und sag ihm, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann.
 
-  Sobald du überprüft hast, dass du den vollen Betrag erhalten hast, musst du die Sats freigeben 
-waiting_seller_to_pay: "Ich habe eine Zahlungsaufforderung an den Verkäufer geschickt, damit er deine Sats für die #${orderId} schickt, sobald die Zahlung erfolgt ist, werde ich euch beide in Kontakt setzen"
+  Sobald du überprüft hast, dass du den vollen Betrag erhalten hast, musst du die Sats freigeben
+waiting_seller_to_pay: 'Ich habe eine Zahlungsaufforderung an den Verkäufer geschickt, damit er deine Sats für die ${orderId} schickt, sobald die Zahlung erfolgt ist, werde ich euch beide in Kontakt setzen'
 sell_success: Dein Verkauf von Sats wurde abgeschlossen, nachdem die Zahlung von @${buyerUsername} bestätigt wurde. ⚡️🍊⚡️
-funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kannst jederzeit mit der Bezahlung deiner Rechnung rechnen, aber denke daran, dass deine Wallet online sein muss, um über das Lightning-Netzwerk zu empfangen. 
-rate_counterpart: "Bitte bewerte deine Gegenpartei:"
+funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kannst jederzeit mit der Bezahlung deiner Rechnung rechnen, aber denke daran, dass deine Wallet online sein muss, um über das Lightning-Netzwerk zu empfangen.
+rate_counterpart: 'Bitte bewerte deine Gegenpartei:'
 cant_process_order: Dieser Auftrag kann nicht bearbeitet werden. Bitte überprüfe, ob die ID korrekt ist.
 cant_release_order: Dieser Auftrag kann nicht freigegeben werden, der Käufer hat keine LN-Rechnung geschickt.
 no_id_related: Du hast keinen Auftrag, der mit dieser Id verbunden ist.
@@ -179,11 +179,11 @@ dispute_started_channel: |
   @${initiatorUser.username} war an ${initiatorUser.disputes} Streitfällen beteiligt
   @${counterPartyUser.username} war an ${counterPartyUser.disputes} Streitfällen beteiligt
 you_started_dispute_to_buyer: 🥴 Du hast einen Streitfall für deinen Kaufauftrag ausgelöst. Wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um das Problem zu lösen.
-buyer_started_dispute_to_seller: "🥴 Der Käufer hat einen Streitfall für deinen Auftrag mit der Id: #${orderId} eröffnet, wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um die Angelegenheit zu klären."
+buyer_started_dispute_to_seller: '🥴 Der Käufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet, wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um die Angelegenheit zu klären.'
 you_started_dispute_to_seller: 🥴 Du hast einen Streitfall für deinen Verkaufsauftrag ausgelöst. Wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um das Problem zu lösen.
-seller_started_dispute_to_buyer: "🥴 Der Verkäufer hat einen Streitfall für deinen Auftrag mit der Id: #${orderId} eröffnet, wir werden uns mit dir und deinem Vertragspartner in Verbindung setzen, um die Angelegenheit zu klären."
-must_be_valid_currency: "Fiat_code muss ein gültiger Code sein, zum Beispiel: USD, EUR, eine vollständige Liste kannst du unter /listcurrencies sehen."
-must_be_number_or_range: "Fiat_amount muss eine Zahl oder ein numerischer Bereich im Format <minimum>-<maximum> sein"
+seller_started_dispute_to_buyer: '🥴 Der Verkäufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet, wir werden uns mit dir und deinem Vertragspartner in Verbindung setzen, um die Angelegenheit zu klären.'
+must_be_valid_currency: 'Fiat_code muss ein gültiger Code sein, zum Beispiel: USD, EUR, eine vollständige Liste kannst du unter /listcurrencies sehen.'
+must_be_number_or_range: 'Fiat_amount muss eine Zahl oder ein numerischer Bereich im Format <minimum>-<maximum> sein'
 invalid_lightning_address: Ungültige Lightning-Adresse
 unavailable_lightning_address: Nicht verfügbare Lightning-Adresse ${la}
 help: |
@@ -212,8 +212,8 @@ you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der
 user_banned: Gesperrter Benutzer!
 user_not_found: Benutzer wurde in der Datenbank nicht gefunden!
 parse_invoice_error: Fehler beim Parsen der Rechnung
-invalid_id: Ungültige Id 
-cant_take_own_order: Du kannst deinen eigenen Auftrag nicht annehmen. 
+invalid_id: Ungültige Id
+cant_take_own_order: Du kannst deinen eigenen Auftrag nicht annehmen.
 send_me_lninvoice: Bitte sende mir ein Lightning-Network Rechnung für ${amount} sats
 you_have_no_orders: Du hast keine aktiven Aufträge
 not_rate_for_currency: |
@@ -225,19 +225,19 @@ not_rate_for_currency: |
 invoice_with_incorrect_amount: Der in der Rechnung angegebene Betrag falsch ist
 invoice_updated: 📝 Die Rechnung wurde korrekt aktualisiert!
 invoice_updated_and_will_be_paid: Die Rechnungen wurden aktualisiert und werden in den nächsten Sekunden bezahlt!
-invoice_already_being_paid: Du hast bereits eine Rechnung für diesen Auftrag geschickt und ich versuche, sie gerade jetzt zu bezahlen. 
+invoice_already_being_paid: Du hast bereits eine Rechnung für diesen Auftrag geschickt und ich versuche, sie gerade jetzt zu bezahlen.
 lightning_address_saved: Lightning-Adresse wurde gespeichert
 cancel_error: Dieser Auftrag kann im Moment nicht storniert werden
-cancel_success: "Du hast den Auftrag mit der Id #${orderId} storniert!"
+cancel_success: 'Du hast den Auftrag mit der Id ${orderId} storniert!'
 cancelall_success: Du hast alle deine veröffentlichten Aufträge storniert!
-order_cancelled_by_admin: "Der Administrator hat den Auftrag mit der ID #${orderId} storniert!"
-order_completed: "Du hast den Auftrag mit der Id #${orderId} erfolgreich ausgeführt!"
-order_completed_by_admin: "Der Administrator hat den Auftrag mit der Id #${orderId} erfolgreich ausgeführt!"
+order_cancelled_by_admin: 'Der Administrator hat den Auftrag mit der ID ${orderId} storniert!'
+order_completed: 'Du hast den Auftrag mit der Id ${orderId} erfolgreich ausgeführt!'
+order_completed_by_admin: 'Der Administrator hat den Auftrag mit der Id ${orderId} erfolgreich ausgeführt!'
 have_to_wait_for_counterpart: 🕒 Du hast diesen Vorgang bereits durchgeführt, du musst warten, bis die andere Partei handelt
-ok_cooperativecancel: "👍 Die Gegenpartei hat zugestimmt und der Auftrag mit der Id #${orderId} wurde storniert"
-refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen 
-init_cooperativecancel: "🕒 Du hast mit der Stornierung des Auftrages mit der Id #${orderId} gestartet. Deine Gegenpartei muss der Stornierung ebenfalls zustimmen."
-counterparty_wants_cooperativecancel: "😳 Deine Gegenpartei möchte den Auftrag mit der Id #${orderId} stornieren. Wenn du mit der Stornierung einverstanden bist, führe bitte den folgenden Befehl aus 👇"
+ok_cooperativecancel: '👍 Die Gegenpartei hat zugestimmt und der Auftrag mit der Id ${orderId} wurde storniert'
+refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen
+init_cooperativecancel: '🕒 Du hast mit der Stornierung des Auftrages mit der Id ${orderId} gestartet. Deine Gegenpartei muss der Stornierung ebenfalls zustimmen.'
+counterparty_wants_cooperativecancel: '😳 Deine Gegenpartei möchte den Auftrag mit der Id ${orderId} stornieren. Wenn du mit der Stornierung einverstanden bist, führe bitte den folgenden Befehl aus 👇'
 invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner Rechnung ist fehlgeschlagen. Ich werde es noch ${attempts} weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
 cant_take_more_orders: ⛔ Sorry! Du kannst keinen weiteren Auftrag annehmen, während andere auf dich warten
 seller_released: 💸 Der Verkäufer hat die Sats bereits freigegeben, du musst warten, bis deine Rechnung bezahlt ist.
@@ -255,7 +255,7 @@ invalid_range_with_amount: |
 too_many_pending_orders: Du hast die maximale Anzahl an Aufträgen erreicht, die gleichzeitig veröffentlicht werden können
 name: Name
 group: Gruppe
-channel: Kanal 
+channel: Kanal
 solver: Streitschlichter
 published: Veröffentlicht
 created: Erstellt
@@ -277,13 +277,13 @@ wizard_community_enter_group: |
 
   z.B.: @MyCommunity
 wizard_community_enter_order_channels: |
-    Alle Aufträge deiner Community müssen in einem Telegrammkanal veröffentlicht werden, wenn du mir nur einen Kanal angibst, werden sowohl Kauf- als auch Verkaufsaufträge dort veröffentlicht.
+  Alle Aufträge deiner Community müssen in einem Telegrammkanal veröffentlicht werden, wenn du mir nur einen Kanal angibst, werden sowohl Kauf- als auch Verkaufsaufträge dort veröffentlicht.
 
-    Wenn du zwei Kanäle angibst, werden Kaufaufträge in einem und Verkaufsaufträge in dem anderen platziert. Sowohl du als auch der Bot müssen in beiden Kanälen Administratoren sein.
+  Wenn du zwei Kanäle angibst, werden Kaufaufträge in einem und Verkaufsaufträge in dem anderen platziert. Sowohl du als auch der Bot müssen in beiden Kanälen Administratoren sein.
 
-    Bitte gib den Namen des Kanals an oder, falls du zwei Kanäle verwenden möchtest, gib beide Namen durch ein Leerzeichen getrennt an.
+  Bitte gib den Namen des Kanals an oder, falls du zwei Kanäle verwenden möchtest, gib beide Namen durch ein Leerzeichen getrennt an.
 
-    z.B.: @MyCommunitySell  @MyCommunityBuy
+  z.B.: @MyCommunitySell  @MyCommunityBuy
 wizard_community_one_or_two_channels: Du musst entweder einen oder zwei Kanäle angeben
 wizard_community_enter_solvers: Schreibe jetzt bitte die Namen der Nutzer/innen auf, die Streitigkeiten schlichten sollen, jeweils getrennt durch ein Leerzeichen.
 wizard_community_must_enter_names: Du musst mindestens einen Namen hinzufügen, oder zwei durch ein Leerzeichen getrennte Namen
@@ -297,7 +297,7 @@ wizard_add_fiat_amount: |
 
   Denke daran, dass er zwischen ${minAmount} und ${maxAmount} liegen muss:
 wizard_add_fiat_wrong_amount: Ungültiger Betrag, die Eingabe muss zwischen ${minAmount} und ${maxAmount} liegen
-wizard_add_fiat_correct_amount: "Betrag: ${currency} ${fiatAmount}."
+wizard_add_fiat_correct_amount: 'Betrag: ${currency} ${fiatAmount}.'
 order_expired: Dieser Auftrag ist abgelaufen!
 cant_add_invoice: Du kannst keine Rechnung mehr zu diesem Auftrag hinzufügen!
 expired_order: |
@@ -319,19 +319,19 @@ expired_order_to_seller: |
   Wenn du das FIAT-Geld erhalten hast, gibst du es bitte mit dem Befehl /release frei. Andernfalls läufst du Gefahr, dass der Käufer einen Streitfall eröffnet, der deinen Ruf beeinträchtigen wird.
 
   Wenn du Hilfe brauchst, kannst du an die Gruppe ${helpGroup} schreiben
-didnt_add_invoice: "🤨 Du hast die LN-Rechnung noch nicht gesendet, um Sats für den Auftrag zu erhalten: #${orderId}"
-buyer_havent_add_invoice: "😔 Der Käufer hat mir die LN-Rechnung für den Erhalt der Sats für deinen Auftrag nicht geschickt: Auftrag #${OrderId}. Deine Sats wurden an dich zurückgeschickt."
-buyer_havent_add_invoice_to_admin_channel: "Käufer @${username} hat den Auftrag #${orderId} angenommen, aber keine LN-Rechnung gesendet. Die Zeit ist abgelaufen, der Auftrag wird neu veröffentlicht."
-havent_paid_invoice: "🤨 Du hast die LN-Rechnung nicht bezahlt, um Sats für den Auftrag (#${orderId}) zu verkaufen."
-seller_havent_paid_invoice: "😔 Der Verkäufer hat die LN-Rechnung für deinen Auftrag (#${orderId}) nicht bezahlt. Der Vorgang wurde storniert."
-seller_havent_add_invoice_to_admin_channel: "Verkäufer @${username} hat die LN-Rechnung des Auftrages (#${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht."
+didnt_add_invoice: '🤨 Du hast die LN-Rechnung noch nicht gesendet, um Sats für den Auftrag zu erhalten: ${orderId}'
+buyer_havent_add_invoice: '😔 Der Käufer hat mir die LN-Rechnung für den Erhalt der Sats für deinen Auftrag nicht geschickt: Auftrag ${orderId}. Deine Sats wurden an dich zurückgeschickt.'
+buyer_havent_add_invoice_to_admin_channel: 'Käufer @${username} hat den Auftrag ${orderId} angenommen, aber keine LN-Rechnung gesendet. Die Zeit ist abgelaufen, der Auftrag wird neu veröffentlicht.'
+havent_paid_invoice: '🤨 Du hast die LN-Rechnung nicht bezahlt, um Sats für den Auftrag (${orderId}) zu verkaufen.'
+seller_havent_paid_invoice: '😔 Der Verkäufer hat die LN-Rechnung für deinen Auftrag (${orderId}) nicht bezahlt. Der Vorgang wurde storniert.'
+seller_havent_add_invoice_to_admin_channel: 'Verkäufer @${username} hat die LN-Rechnung des Auftrages (${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht.'
 user_cant_do: 🤨 Du kannst diesen Vorgang nicht durchführen
 pending_payment_success_to_admin: |
-  Benutzer @${username} hatte eine ausstehende LN-Rechnung, die Zahlung für die Auftrag: #${orderId} für ${amount} Sats, wurde nach ${attempts} Versuchen endlich ausgeführt.
+  Benutzer @${username} hatte eine ausstehende LN-Rechnung, die Zahlung für die Auftrag: ${orderId} für ${amount} Sats, wurde nach ${attempts} Versuchen endlich ausgeführt.
 
   Zahlungsnachweis: ${paymentSecret}
 pending_payment_success: |
-  Ich habe die LN-Rechnung über ${amount} Sats für den Auftrag #${orderId} bezahlt!
+  Ich habe die LN-Rechnung über ${amount} Sats für den Auftrag ${orderId} bezahlt!
 
   Zahlungsnachweis: ${paymentSecret}
 pending_payment_failed: |
@@ -339,7 +339,7 @@ pending_payment_failed: |
 
   Wenn du mir eine neue LN-Rechnung schicken möchtest, um die Sats zu erhalten, benutze bitte den folgenden Befehl. 👇
 pending_payment_failed_to_admin: |
-  Die Bezahlung der LN-Rechnung für den Auftrag #${orderId} des Benutzers @${username} ist fehlgeschlagen.
+  Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
   Zahlungsversuche: ${attempts}
 selling: Verkaufe
@@ -347,7 +347,7 @@ buying: Kaufe
 receive_payment: Zahlung erhalten
 pay: Bezahlen
 is: ist
-trading_volume: "Handelsvolumen: ${Volumen} Sats"
+trading_volume: 'Handelsvolumen: ${Volumen} Sats'
 satoshis: Sats
 by: mit
 rate: Rate
@@ -360,7 +360,7 @@ no_capital_letters: 🤖 Du versuchst, einen Befehl auszuführen, bei dem der er
 unknown_command: 😕 Ich verstehe das nicht. Bitte benutze /help, um die Liste der verfügbaren Befehle zu sehen
 invoice_invalid_error: |
   Fehler beim Parsen der LN-Rechnung. Bitte füge eine Lightning-Netzwerk Rechnung ein, die mit "lnbc" beginnt.
-  
+
   Wenn du abbrechen und in den Befehlseingabemodus zurückkehren willst, tippe einfach => exit <=
 invoice_expiry_too_short_error: Rechnungsablauf ist zu kurz
 invoice_has_expired_error: Die Rechnung ist abgelaufen
@@ -381,3 +381,5 @@ currency_not_supported: Diese Währung kann in dieser Community nicht verwendet 
 press_to_continue: Drücke den Knopf um weiterzufahren
 receive: receive
 send: send
+new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button to take it
+take_dispute: Take dispute

@@ -1,7 +1,7 @@
 const { TelegramError } = require('telegraf');
 const {
   getCurrency,
-  sanitizeMD,
+  getDetailedOrder,
   secondsToTime,
   getOrderChannel,
 } = require('../util');
@@ -594,94 +594,6 @@ const publishSellOrderMessage = async (
     if (messageToUser) {
       // Message to user let know the order was published
       await pendingSellMessage(bot, user, order, channel, i18n);
-    }
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const getDetailedOrder = (i18n, order, buyer, seller) => {
-  try {
-    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
-    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
-    const buyerId = buyer ? buyer._id : '';
-    const paymentMethod = sanitizeMD(order.payment_method);
-    const priceMargin = sanitizeMD(order.price_margin.toString());
-    let createdAt = order.created_at.toISOString();
-    let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
-    createdAt = sanitizeMD(createdAt);
-    takenAt = sanitizeMD(takenAt);
-    const status = sanitizeMD(order.status);
-    const fee = order.fee ? parseInt(order.fee) : '';
-    const creator =
-      order.creator_id === buyerId ? buyerUsername : sellerUsername;
-    const message = i18n.t('order_detail', {
-      order,
-      creator,
-      buyerUsername,
-      sellerUsername,
-      createdAt,
-      takenAt,
-      status,
-      fee,
-      paymentMethod,
-      priceMargin,
-    });
-
-    return message;
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const beginDisputeMessage = async (
-  bot,
-  buyer,
-  seller,
-  order,
-  initiator,
-  i18n
-) => {
-  try {
-    const type = initiator === 'seller' ? i18n.t('seller') : i18n.t('buyer');
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
-    const detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
-    await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
-      i18n.t('dispute_started_channel', {
-        order,
-        initiator,
-        initiatorUser,
-        counterPartyUser,
-        detailedOrder,
-        type,
-      }),
-      { parse_mode: 'MarkdownV2' }
-    );
-
-    if (initiator === 'buyer') {
-      await bot.telegram.sendMessage(
-        initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_buyer')
-      );
-      await bot.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        i18n.t('buyer_started_dispute_to_seller', { orderId: order._id })
-      );
-    } else {
-      await bot.telegram.sendMessage(
-        initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_seller')
-      );
-      await bot.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
-      );
     }
   } catch (error) {
     logger.error(error);
@@ -1792,7 +1704,6 @@ module.exports = {
   pendingSellMessage,
   pendingBuyMessage,
   mustBeIntMessage,
-  beginDisputeMessage,
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
