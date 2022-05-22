@@ -361,6 +361,20 @@ const isDisputeSolver = async (community, user) => {
   return community.solvers.some(solver => solver.id == user._id);
 };
 
+// Return the fee the bot will charge to the seller
+// this fee is a combination from the global bot fee and the community fee
+const getFee = async (amount, communityId) => {
+  const maxFee = Math.round(amount * parseFloat(process.env.MAX_FEE));
+  if (!communityId) return maxFee;
+
+  const botFee = maxFee * parseFloat(process.env.FEE_PERCENT);
+  let communityFee = Math.round(maxFee - botFee);
+  const community = await Community.findOne({ _id: communityId });
+  communityFee = communityFee * (community.fee / 100);
+
+  return botFee + communityFee;
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -382,4 +396,5 @@ module.exports = {
   getDisputeChannel,
   getDetailedOrder,
   isDisputeSolver,
+  getFee,
 };
