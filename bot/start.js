@@ -30,7 +30,6 @@ const {
   validateUser,
   validateBuyOrder,
   validateReleaseOrder,
-  validateDisputeOrder,
   validateAdmin,
   validateFiatSentOrder,
   validateSeller,
