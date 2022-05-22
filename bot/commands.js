@@ -13,6 +13,7 @@ const {
   extractId,
   deleteOrderFromChannel,
   getUserI18nContext,
+  getFee,
 } = require('../util');
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
@@ -179,7 +180,7 @@ const addInvoice = async (ctx, bot, order) => {
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
-      order.fee = Math.round(amount * parseFloat(process.env.FEE));
+      order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
 
@@ -407,7 +408,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
-      order.fee = Math.round(amount * parseFloat(process.env.FEE));
+      order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
     amount = Math.floor(order.amount + order.fee);

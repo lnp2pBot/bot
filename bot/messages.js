@@ -1044,7 +1044,7 @@ const showInfoMessage = async (bot, user, info) => {
   try {
     // const status = !!info.public_key;
     // const statusEmoji = status ? '🟢' : '🔴';
-    let fee = (process.env.FEE * 100).toString();
+    let fee = (process.env.MAX_FEE * 100).toString();
     fee = fee.replace('.', '\\.');
     await bot.telegram.sendMessage(user.tg_id, `*Bot fee*: ${fee}%`, {
       parse_mode: 'MarkdownV2',
