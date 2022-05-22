@@ -1675,6 +1675,14 @@ const notAuthorized = async ctx => {
   }
 };
 
+const needDefaultCommunity = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('need_default_community'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1804,4 +1812,5 @@ module.exports = {
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
   notAuthorized,
+  needDefaultCommunity,
 };

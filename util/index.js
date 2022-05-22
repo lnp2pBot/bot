@@ -358,13 +358,7 @@ const isDisputeSolver = async (community, user) => {
   if (!community || !user) {
     return false;
   }
-  community.solvers.forEach(solver => {
-    if (solver.id == user._id) {
-      return true;
-    }
-  });
-
-  return false;
+  return community.solvers.some(solver => solver.id == user._id);
 };
 
 module.exports = {

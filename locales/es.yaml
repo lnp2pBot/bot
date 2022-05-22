@@ -381,3 +381,4 @@ send: enviar
 new_dispute: ⚠️⚠️⚠️ Un usuario ha iniciado una disputa, para tomarla toca el botón
 take_dispute: Tomar disputa
 not_authorized: 🤨 No estás autorizado para realizar esta operación
+need_default_community: Para realizar esta operación necesitar tener una comunidad por defecto

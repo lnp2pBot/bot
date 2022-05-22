@@ -381,3 +381,4 @@ send: send
 new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button to take it
 take_dispute: Take dispute
 not_authorized: 🤨 You are not authorized to perform this operation
+need_default_community: To perform this operation you need to have a default community
