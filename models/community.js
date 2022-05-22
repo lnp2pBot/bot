@@ -38,6 +38,7 @@ const CommunitySchema = new mongoose.Schema({
   },
   dispute_channel: { type: String }, // Id or public name, channel to send new disputes
   solvers: [usernameIdSchema], // users that are dispute solvers
+  banned_users: [usernameIdSchema], // users that are banned from the community
   public: { type: Boolean, default: true },
   currencies: {
     type: [String],

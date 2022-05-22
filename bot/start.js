@@ -43,6 +43,7 @@ const {
   validateObjectId,
   validateInvoice,
   validateLightningAddress,
+  isBannedFromCommunity,
 } = require('./validations');
 const messages = require('./messages');
 const {
@@ -163,6 +164,11 @@ const initialize = (botToken, options) => {
         communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
       }
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, communityId)) {
+        await messages.bannedUserErrorMessage(ctx);
+        return;
+      }
       // If the user is in a community, we need to check if the currency is supported
       if (!!community && !community.currencies.includes(fiatCode)) {
         await messages.currencyNotSupportedMessage(ctx, community.currencies);
@@ -222,6 +228,11 @@ const initialize = (botToken, options) => {
       } else if (user.default_community_id) {
         communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
+      }
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, communityId)) {
+        await messages.bannedUserErrorMessage(ctx);
+        return;
       }
       // If the user is in a community, we need to check if the currency is supported
       if (!!community && !community.currencies.includes(fiatCode)) {
@@ -625,8 +636,25 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      user.banned = true;
-      await user.save();
+      // We check if this is a solver, we ban the user only in the default community of the solver
+      if (!adminUser.admin) {
+        if (adminUser.default_community_id) {
+          const community = await Community.findOne({
+            _id: user.default_community_id,
+          });
+          community.banned_users.push({
+            id: user._id,
+            username: user.username,
+          });
+          await community.save();
+        } else {
+          await messages.needDefaultCommunity(ctx);
+          return;
+        }
+      } else {
+        user.banned = true;
+        await user.save();
+      }
       await messages.userBannedMessage(ctx);
     } catch (error) {
       logger.error(error);

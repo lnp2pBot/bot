@@ -577,6 +577,19 @@ const validateUserWaitingOrder = async (ctx, bot, user) => {
   }
 };
 
+// We check if the user is banned from the community in the order
+const isBannedFromCommunity = async (user, communityId) => {
+  try {
+    if (!communityId) return false;
+    const community = await Community.findOne({ _id: communityId });
+    if (!community) return false;
+    return community.banned_users.some(buser => buser.id == user._id);
+  } catch (error) {
+    logger.error(error);
+    return false;
+  }
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -594,4 +607,5 @@ module.exports = {
   validateLightningAddress,
   isValidInvoice,
   validateUserWaitingOrder,
+  isBannedFromCommunity,
 };
