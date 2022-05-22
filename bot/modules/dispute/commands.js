@@ -1,4 +1,4 @@
-const { User, Community } = require('../../../models');
+const { User } = require('../../../models');
 const {
   validateUser,
   validateParams,
@@ -9,7 +9,6 @@ const {
 const messages = require('./messages');
 const globalMessages = require('../../messages');
 const logger = require('../../../logger');
-const { isDisputeSolver } = require('../../../util');
 
 const dispute = async (ctx, bot) => {
   try {
