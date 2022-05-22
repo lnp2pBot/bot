@@ -325,7 +325,6 @@ buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} took the orderId:
 havent_paid_invoice: '🤨 You have not paid the invoice so as to sell sats for the Order Id: ${orderId}'
 seller_havent_paid_invoice: '😔 Seller has not paid the invoice for your purchase Id: ${orderId}, the operation was canceled.'
 seller_havent_add_invoice_to_admin_channel: 'Seller @${username} has not paid the invoice of order Id: ${orderId} time lapse ended and the order has been published again.'
-user_cant_do: 🤨 you cannot make this operation
 pending_payment_success_to_admin: |
   User @${username} had a pending invoice, they payment for buying order Id: ${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
 
@@ -381,3 +380,4 @@ receive: receive
 send: send
 new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button to take it
 take_dispute: Take dispute
+not_authorized: 🤨 You are not authorized to perform this operation

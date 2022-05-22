@@ -325,7 +325,6 @@ seller_havent_paid_invoice: '😔 Продавец не оплатил счет 
 seller_havent_add_invoice_to_admin_channel: |
   Продавец @${user.username} не оплатил счет, соответствующий заказу с идентификатором: ${orderId}.
   Время истекло, заказ снова опубликован.
-user_cant_do: 🤨 Этот пользователь не может выполнить эту операцию.
 pending_payment_success_to_admin: |
   У пользователя @${username} был ожидающий платеж по его идентификатору покупки ${orderId} на ${amount} сатоши. Платеж был произведен после ${attempts} попыток.
 
@@ -381,3 +380,4 @@ receive: receive
 send: send
 new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button to take it
 take_dispute: Take dispute
+not_authorized: 🤨 You are not authorized to perform this operation

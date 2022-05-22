@@ -1,8 +1,8 @@
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
-const { Order, User } = require('../models');
-const { isIso4217, parseArgs } = require('../util');
+const { Order, User, Community } = require('../models');
+const { isIso4217, parseArgs, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
@@ -44,12 +44,18 @@ const validateAdmin = async ctx => {
     const tgUser = ctx.update.message.from;
     const user = await User.findOne({ tg_id: tgUser.id });
     if (!user) {
-      await messages.userCantDoMessage(ctx);
-      return false;
-    } else if (!user.admin) {
-      await messages.userCantDoMessage(ctx);
+      await messages.notAuthorized(ctx);
       return false;
     }
+    let community = null;
+    if (user.default_community_id) {
+      community = await Community.findOne({ _id: user.default_community_id });
+    }
+    if (!user.admin || !isDisputeSolver(community, user)) {
+      await messages.notAuthorized(ctx);
+      return false;
+    }
+
     return user;
   } catch (error) {
     logger.error(error);

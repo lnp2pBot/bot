@@ -4,8 +4,10 @@ const {
   validateParams,
   validateObjectId,
   validateDisputeOrder,
+  validateAdmin,
 } = require('../../validations');
 const messages = require('./messages');
+const globalMessages = require('../../messages');
 const logger = require('../../../logger');
 
 const dispute = async (ctx, bot) => {
@@ -53,4 +55,24 @@ const dispute = async (ctx, bot) => {
   }
 };
 
-module.exports = { dispute };
+const deleteDispute = async (ctx, bot) => {
+  try {
+    const admin = await validateAdmin(ctx);
+
+    if (!admin) return;
+
+    let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
+
+    if (!username) return;
+
+    username = username[0] == '@' ? username.slice(1) : username;
+    const user = await User.findOne({ username });
+    user.disputes = user.disputes - 1;
+    await user.save();
+    await globalMessages.operationSuccessfulMessage(ctx);
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+module.exports = { dispute, deleteDispute };
