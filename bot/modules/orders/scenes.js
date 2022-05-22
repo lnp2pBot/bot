@@ -1,4 +1,6 @@
 const { Scenes, Markup } = require('telegraf')
+const ordersActions = require('../../ordersActions');
+const messages = require('../../messages');
 
 const CREATE_ORDER = exports.CREATE_ORDER = 'CREATE_ORDER_WIZARD'
 
@@ -13,19 +15,42 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
     CREATE_ORDER,
     async ctx => {
         try {
-            const { statusMessage, type, currency, fiatAmount, sats, method } = ctx.wizard.state
-            const statusString = `Creating ${type} order ${undefined === sats ? '?' : sats} sats for ${undefined === fiatAmount ? '?' : fiatAmount} ${currency || '?'}.\nMétodo de pago: ${method || '?'}`
+            const { user, community, updateUI, statusMessage, type, currency, fiatAmount, sats, priceMargin, method } = ctx.wizard.state
+            if (!community) throw new Error('CommunityRequired')
+            const statusString = JSON.stringify({
+                community: community.name,
+                type,
+                currency, fiatAmount, sats,
+                priceMargin,
+                method
+            }, null, 2)
             if (!statusMessage) {
                 const res = await ctx.reply(statusString)
                 ctx.wizard.state.statusMessage = res
-            } else {
+            }
+            if (updateUI) {
                 await ctx.telegram.editMessageText(statusMessage.chat.id, statusMessage.message_id, null, statusString)
+                ctx.wizard.state.updateUI = false
             }
             if (undefined === currency) return createOrderSteps.currency(ctx)
             if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx)
             if (undefined === sats) return createOrderSteps.sats(ctx)
+            if (undefined === priceMargin && (fiatAmount === 0 || sats === 0)) return createOrderSteps.priceMargin(ctx)
             if (undefined === method) return createOrderSteps.method(ctx)
 
+            const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
+                type,
+                amount: sats,
+                fiatAmount,
+                fiatCode: currency,
+                paymentMethod: method,
+                status: 'PENDING',
+                priceMargin,
+                community_id: community.id,
+            });
+            if (order) {
+                await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
+            }
             await ctx.reply('Wizard completed...')
             return ctx.scene.leave()
         } catch (err) {
@@ -52,7 +77,10 @@ createOrder.command('exit', ctx => ctx.scene.leave())
 const createOrderSteps = {
     async currency(ctx) {
         ctx.wizard.state.handler = async ctx => {
-            await createOrderHandlers.currency(ctx)
+            if (!ctx.callbackQuery) return
+            const currency = ctx.callbackQuery.data
+            ctx.wizard.state.currency = currency
+            ctx.wizard.state.updateUI = true
             return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await createOrderPrompts.currency(ctx)
@@ -68,10 +96,29 @@ const createOrderSteps = {
     },
     async method(ctx) {
         ctx.wizard.state.handler = async ctx => {
-            await createOrderHandlers.method(ctx)
+            const { text } = ctx.message
+            if (!text) return
+            ctx.wizard.state.method = text
+            ctx.wizard.state.updateUI = true
+            await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
             return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
         }
         const prompt = await ctx.reply('Especifique el método de pago')
+        return ctx.wizard.next()
+    },
+    async priceMargin(ctx) {
+        const prompt = await ctx.reply('Especifique el priceMargin. 0 para no especificar.')
+        ctx.wizard.state.handler = async ctx => {
+            const input = ctx.message.text
+            if (isNaN(input)) {
+                await ctx.reply('NaN')
+                return
+            }
+            ctx.wizard.state.priceMargin = parseInt(input)
+            ctx.wizard.state.updateUI = true
+            await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
+            return await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id)
+        }
         return ctx.wizard.next()
     },
     async sats(ctx) {
@@ -97,7 +144,7 @@ const createOrderPrompts = {
     },
     async fiatAmount(ctx) {
         const { currency } = ctx.wizard.state
-        return ctx.reply('Especifique el monto de ' + currency)
+        return ctx.reply(`Especifique el monto de ${currency}. 0 para no especificar.`)
     },
     async sats(ctx) {
         const button = Markup.button.callback('Market price', 'marketPrice')
@@ -105,32 +152,22 @@ const createOrderPrompts = {
     }
 }
 const createOrderHandlers = {
-    async currency(ctx) {
-        if (!ctx.callbackQuery) return
-        const currency = ctx.callbackQuery.data
-        ctx.wizard.state.currency = currency
-        return true
-    },
     async fiatAmount(ctx) {
-        const input = ctx.message.text
-        if (isNaN(input)) {
+        const inputs = ctx.message.text.split('-').map(Number)
+        const notNumbers = inputs.filter(isNaN)
+        if (notNumbers.length) {
             await ctx.reply('NaN')
             return
         }
-        ctx.wizard.state.fiatAmount = parseInt(input)
-        await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
-        return true
-    },
-    async method(ctx) {
-        const { text } = ctx.message
-        if (!text) return
-        ctx.wizard.state.method = text
+        ctx.wizard.state.fiatAmount = inputs
+        ctx.wizard.state.updateUI = true
         await ctx.telegram.deleteMessage(ctx.message.chat.id, ctx.message.message_id)
         return true
     },
     async sats(ctx) {
         if (ctx.callbackQuery) {
             ctx.wizard.state.sats = 0
+            ctx.wizard.state.updateUI = true
             return true
         }
         const input = ctx.message.text
@@ -140,6 +177,7 @@ const createOrderHandlers = {
             return
         }
         ctx.wizard.state.sats = parseInt(input)
+        ctx.wizard.state.updateUI = true
         return true
     }
 }
