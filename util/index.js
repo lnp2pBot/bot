@@ -355,6 +355,9 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
 
 // We need to know if this user is a dispute solver for this community
 const isDisputeSolver = async (community, user) => {
+  if (!community || !user) {
+    return false;
+  }
   community.solvers.forEach(solver => {
     if (solver.id == user._id) {
       return true;

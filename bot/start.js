@@ -283,6 +283,19 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
+      // We check if this is a solver, the order must be from the same community
+      if (!user.admin) {
+        if (!order.community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
+        if (order.community_id != user.default_community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+      }
+
       if (order.hash) {
         await cancelHoldInvoice({ hash: order.hash });
       }
@@ -459,6 +472,11 @@ const initialize = (botToken, options) => {
 
       // We check if this is a solver, the order must be from the same community
       if (!user.admin) {
+        if (!order.community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
         if (order.community_id != user.default_community_id) {
           await messages.notAuthorized(ctx);
           return;
