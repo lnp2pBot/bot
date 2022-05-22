@@ -6,6 +6,7 @@ const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
 const OrdersModule = require('./modules/orders');
+const DisputeModule = require('./modules/dispute');
 const {
   takebuy,
   takesell,
@@ -268,54 +269,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('dispute', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await validateDisputeOrder(ctx, user, orderId);
-
-      if (!order) return;
-
-      const buyer = await User.findOne({ _id: order.buyer_id });
-      const seller = await User.findOne({ _id: order.seller_id });
-      let initiator = 'seller';
-      if (user._id === order.buyer_id) initiator = 'buyer';
-
-      order[`${initiator}_dispute`] = true;
-      order.status = 'DISPUTE';
-      await order.save();
-      // We increment the number of disputes on both users
-      // If a user disputes is equal to MAX_DISPUTES, we ban the user
-      const buyerDisputes = buyer.disputes + 1;
-      const sellerDisputes = seller.disputes + 1;
-      buyer.disputes = buyerDisputes;
-      seller.disputes = sellerDisputes;
-      if (buyerDisputes >= process.env.MAX_DISPUTES) {
-        buyer.banned = true;
-      }
-      if (sellerDisputes >= process.env.MAX_DISPUTES) {
-        seller.banned = true;
-      }
-      await buyer.save();
-      await seller.save();
-      await messages.beginDisputeMessage(
-        bot,
-        buyer,
-        seller,
-        order,
-        initiator,
-        ctx.i18n
-      );
-    } catch (error) {
-      logger.error(error);
-    }
-  });
+  DisputeModule.configure(bot);
 
   bot.command('cancelorder', async ctx => {
     try {

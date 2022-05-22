@@ -287,6 +287,16 @@ const getOrderChannel = async order => {
   return channel;
 };
 
+const getDisputeChannel = async order => {
+  let channel = process.env.DISPUTE_CHANNEL;
+  if (order.community_id) {
+    const community = await Community.findOne({ _id: order.community_id });
+    channel = community.dispute_channel;
+  }
+
+  return channel;
+};
+
 /**
  * Returns a i18n context
  * @param {*} user
@@ -301,6 +311,40 @@ const getUserI18nContext = async user => {
   });
 
   return i18n.createContext(user.lang);
+};
+
+const getDetailedOrder = (i18n, order, buyer, seller) => {
+  try {
+    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
+    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
+    const buyerId = buyer ? buyer._id : '';
+    const paymentMethod = sanitizeMD(order.payment_method);
+    const priceMargin = sanitizeMD(order.price_margin.toString());
+    let createdAt = order.created_at.toISOString();
+    let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
+    createdAt = sanitizeMD(createdAt);
+    takenAt = sanitizeMD(takenAt);
+    const status = sanitizeMD(order.status);
+    const fee = order.fee ? parseInt(order.fee) : '';
+    const creator =
+      order.creator_id === buyerId ? buyerUsername : sellerUsername;
+    const message = i18n.t('order_detail', {
+      order,
+      creator,
+      buyerUsername,
+      sellerUsername,
+      createdAt,
+      takenAt,
+      status,
+      fee,
+      paymentMethod,
+      priceMargin,
+    });
+
+    return message;
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
 module.exports = {
@@ -321,4 +365,6 @@ module.exports = {
   deleteOrderFromChannel,
   getOrderChannel,
   getUserI18nContext,
+  getDisputeChannel,
+  getDetailedOrder,
 };
