@@ -253,6 +253,9 @@ const deleteOrderFromChannel = async (order, telegram) => {
     let channel = process.env.CHANNEL;
     if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
+      if (!community) {
+        return channel;
+      }
       if (community.order_channels.length === 1) {
         channel = community.order_channels[0].name;
       } else {
@@ -273,6 +276,9 @@ const getOrderChannel = async order => {
   let channel = process.env.CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
+    if (!community) {
+      return channel;
+    }
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
@@ -282,6 +288,16 @@ const getOrderChannel = async order => {
         }
       });
     }
+  }
+
+  return channel;
+};
+
+const getDisputeChannel = async order => {
+  let channel = process.env.DISPUTE_CHANNEL;
+  if (order.community_id) {
+    const community = await Community.findOne({ _id: order.community_id });
+    channel = community.dispute_channel;
   }
 
   return channel;
@@ -303,6 +319,62 @@ const getUserI18nContext = async user => {
   return i18n.createContext(user.lang);
 };
 
+const getDetailedOrder = (i18n, order, buyer, seller) => {
+  try {
+    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
+    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
+    const buyerId = buyer ? buyer._id : '';
+    const paymentMethod = sanitizeMD(order.payment_method);
+    const priceMargin = sanitizeMD(order.price_margin.toString());
+    let createdAt = order.created_at.toISOString();
+    let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
+    createdAt = sanitizeMD(createdAt);
+    takenAt = sanitizeMD(takenAt);
+    const status = sanitizeMD(order.status);
+    const fee = order.fee ? parseInt(order.fee) : '';
+    const creator =
+      order.creator_id === buyerId ? buyerUsername : sellerUsername;
+    const message = i18n.t('order_detail', {
+      order,
+      creator,
+      buyerUsername,
+      sellerUsername,
+      createdAt,
+      takenAt,
+      status,
+      fee,
+      paymentMethod,
+      priceMargin,
+    });
+
+    return message;
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+// We need to know if this user is a dispute solver for this community
+const isDisputeSolver = async (community, user) => {
+  if (!community || !user) {
+    return false;
+  }
+  return community.solvers.some(solver => solver.id == user._id);
+};
+
+// Return the fee the bot will charge to the seller
+// this fee is a combination from the global bot fee and the community fee
+const getFee = async (amount, communityId) => {
+  const maxFee = Math.round(amount * parseFloat(process.env.MAX_FEE));
+  if (!communityId) return maxFee;
+
+  const botFee = maxFee * parseFloat(process.env.FEE_PERCENT);
+  let communityFee = Math.round(maxFee - botFee);
+  const community = await Community.findOne({ _id: communityId });
+  communityFee = communityFee * (community.fee / 100);
+
+  return botFee + communityFee;
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -321,4 +393,8 @@ module.exports = {
   deleteOrderFromChannel,
   getOrderChannel,
   getUserI18nContext,
+  getDisputeChannel,
+  getDetailedOrder,
+  isDisputeSolver,
+  getFee,
 };

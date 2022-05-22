@@ -7,7 +7,7 @@ const messages = require('./messages');
 
 const Scenes = require('./scenes')
 
-exports.configure = function configure(bot) {
+exports.configure = bot => {
   bot.use(Scenes.middleware())
   bot.command('buywizard', async ctx => {
     try {

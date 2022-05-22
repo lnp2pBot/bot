@@ -6,6 +6,7 @@ const {
   getBtcExchangePrice,
   getEmojiRate,
   decimalRound,
+  getFee,
 } = require('../util');
 const logger = require('../logger');
 
@@ -39,7 +40,7 @@ const createOrder = async (
     }
 
     amount = parseInt(amount);
-    const fee = Math.round(amount * parseFloat(process.env.FEE));
+    const fee = await getFee(amount, community_id);
     const currency = getCurrency(fiatCode);
     const priceFromAPI = !amount;
 
@@ -235,6 +236,7 @@ const getOrders = async (ctx, user, status) => {
         { status: 'ACTIVE' },
         { status: 'FIAT_SENT' },
         { status: 'PAID_HOLD_INVOICE' },
+        { status: 'DISPUTE' },
       ];
       where.$and.push({ $or });
     }

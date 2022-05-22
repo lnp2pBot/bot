@@ -1,11 +1,18 @@
 const { Telegraf, Scenes, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
-const { Order, User, PendingPayment, Community } = require('../models');
+const {
+  Order,
+  User,
+  PendingPayment,
+  Community,
+  Dispute,
+} = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
 const OrdersModule = require('./modules/orders');
+const DisputeModule = require('./modules/dispute');
 const {
   takebuy,
   takesell,
@@ -29,7 +36,6 @@ const {
   validateUser,
   validateBuyOrder,
   validateReleaseOrder,
-  validateDisputeOrder,
   validateAdmin,
   validateFiatSentOrder,
   validateSeller,
@@ -37,6 +43,7 @@ const {
   validateObjectId,
   validateInvoice,
   validateLightningAddress,
+  isBannedFromCommunity,
 } = require('./validations');
 const messages = require('./messages');
 const {
@@ -157,6 +164,11 @@ const initialize = (botToken, options) => {
         communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
       }
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, communityId)) {
+        await messages.bannedUserErrorMessage(ctx);
+        return;
+      }
       // If the user is in a community, we need to check if the currency is supported
       if (!!community && !community.currencies.includes(fiatCode)) {
         await messages.currencyNotSupportedMessage(ctx, community.currencies);
@@ -217,6 +229,11 @@ const initialize = (botToken, options) => {
         communityId = user.default_community_id;
         community = await Community.findOne({ _id: communityId });
       }
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, communityId)) {
+        await messages.bannedUserErrorMessage(ctx);
+        return;
+      }
       // If the user is in a community, we need to check if the currency is supported
       if (!!community && !community.currencies.includes(fiatCode)) {
         await messages.currencyNotSupportedMessage(ctx, community.currencies);
@@ -268,54 +285,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('dispute', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await validateDisputeOrder(ctx, user, orderId);
-
-      if (!order) return;
-
-      const buyer = await User.findOne({ _id: order.buyer_id });
-      const seller = await User.findOne({ _id: order.seller_id });
-      let initiator = 'seller';
-      if (user._id === order.buyer_id) initiator = 'buyer';
-
-      order[`${initiator}_dispute`] = true;
-      order.status = 'DISPUTE';
-      await order.save();
-      // We increment the number of disputes on both users
-      // If a user disputes is equal to MAX_DISPUTES, we ban the user
-      const buyerDisputes = buyer.disputes + 1;
-      const sellerDisputes = seller.disputes + 1;
-      buyer.disputes = buyerDisputes;
-      seller.disputes = sellerDisputes;
-      if (buyerDisputes >= process.env.MAX_DISPUTES) {
-        buyer.banned = true;
-      }
-      if (sellerDisputes >= process.env.MAX_DISPUTES) {
-        seller.banned = true;
-      }
-      await buyer.save();
-      await seller.save();
-      await messages.beginDisputeMessage(
-        bot,
-        buyer,
-        seller,
-        order,
-        initiator,
-        ctx.i18n
-      );
-    } catch (error) {
-      logger.error(error);
-    }
-  });
+  DisputeModule.configure(bot);
 
   bot.command('cancelorder', async ctx => {
     try {
@@ -330,8 +300,36 @@ const initialize = (botToken, options) => {
 
       if (!order) return;
 
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
+      // We check if this is a solver, the order must be from the same community
+      if (!user.admin) {
+        if (!order.community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
+        if (order.community_id != user.default_community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
+        // We check if this dispute is from a community we validate that
+        // the solver is running this command
+        if (dispute && dispute.solver_id != user._id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+      }
+
       if (order.hash) {
         await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      if (dispute) {
+        dispute.status = 'FINISHED';
+        await dispute.save();
       }
 
       order.status = 'CANCELED_BY_ADMIN';
@@ -397,7 +395,7 @@ const initialize = (botToken, options) => {
       let counterPartyUser, initiator, counterParty;
 
       const initiatorUser = user;
-      if (initiatorUser._id === order.buyer_id) {
+      if (initiatorUser._id == order.buyer_id) {
         counterPartyUser = await User.findOne({ _id: order.seller_id });
         initiator = 'buyer';
         counterParty = 'seller';
@@ -429,7 +427,7 @@ const initialize = (botToken, options) => {
         order.status = 'CANCELED';
         let seller = initiatorUser;
         let i18nCtxSeller = ctx.i18n;
-        if (order.seller_id === counterPartyUser._id) {
+        if (order.seller_id == counterPartyUser._id) {
           seller = counterPartyUser;
           i18nCtxSeller = i18nCtxCP;
         }
@@ -504,8 +502,36 @@ const initialize = (botToken, options) => {
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
+      // We check if this is a solver, the order must be from the same community
+      if (!user.admin) {
+        if (!order.community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
+        if (order.community_id != user.default_community_id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+
+        // We check if this dispute is from a community we validate that
+        // the solver is running this command
+        if (dispute && dispute.solver_id != user._id) {
+          await messages.notAuthorized(ctx);
+          return;
+        }
+      }
+
       if (order.secret) {
         await settleHoldInvoice({ secret: order.secret });
+      }
+
+      if (dispute) {
+        dispute.status = 'FINISHED';
+        await dispute.save();
       }
 
       order.status = 'COMPLETED_BY_ADMIN';
@@ -610,8 +636,25 @@ const initialize = (botToken, options) => {
         return;
       }
 
-      user.banned = true;
-      await user.save();
+      // We check if this is a solver, we ban the user only in the default community of the solver
+      if (!adminUser.admin) {
+        if (adminUser.default_community_id) {
+          const community = await Community.findOne({
+            _id: user.default_community_id,
+          });
+          community.banned_users.push({
+            id: user._id,
+            username: user.username,
+          });
+          await community.save();
+        } else {
+          await messages.needDefaultCommunity(ctx);
+          return;
+        }
+      } else {
+        user.banned = true;
+        await user.save();
+      }
       await messages.userBannedMessage(ctx);
     } catch (error) {
       logger.error(error);

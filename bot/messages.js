@@ -1,7 +1,7 @@
 const { TelegramError } = require('telegraf');
 const {
   getCurrency,
-  sanitizeMD,
+  getDetailedOrder,
   secondsToTime,
   getOrderChannel,
 } = require('../util');
@@ -600,94 +600,6 @@ const publishSellOrderMessage = async (
   }
 };
 
-const getDetailedOrder = (i18n, order, buyer, seller) => {
-  try {
-    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
-    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
-    const buyerId = buyer ? buyer._id : '';
-    const paymentMethod = sanitizeMD(order.payment_method);
-    const priceMargin = sanitizeMD(order.price_margin.toString());
-    let createdAt = order.created_at.toISOString();
-    let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
-    createdAt = sanitizeMD(createdAt);
-    takenAt = sanitizeMD(takenAt);
-    const status = sanitizeMD(order.status);
-    const fee = order.fee ? parseInt(order.fee) : '';
-    const creator =
-      order.creator_id === buyerId ? buyerUsername : sellerUsername;
-    const message = i18n.t('order_detail', {
-      order,
-      creator,
-      buyerUsername,
-      sellerUsername,
-      createdAt,
-      takenAt,
-      status,
-      fee,
-      paymentMethod,
-      priceMargin,
-    });
-
-    return message;
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const beginDisputeMessage = async (
-  bot,
-  buyer,
-  seller,
-  order,
-  initiator,
-  i18n
-) => {
-  try {
-    const type = initiator === 'seller' ? i18n.t('seller') : i18n.t('buyer');
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
-    const detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
-    await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
-      i18n.t('dispute_started_channel', {
-        order,
-        initiator,
-        initiatorUser,
-        counterPartyUser,
-        detailedOrder,
-        type,
-      }),
-      { parse_mode: 'MarkdownV2' }
-    );
-
-    if (initiator === 'buyer') {
-      await bot.telegram.sendMessage(
-        initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_buyer')
-      );
-      await bot.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        i18n.t('buyer_started_dispute_to_seller', { orderId: order._id })
-      );
-    } else {
-      await bot.telegram.sendMessage(
-        initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_seller')
-      );
-      await bot.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
-      );
-    }
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const customMessage = async (ctx, message) => {
   try {
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
@@ -1132,7 +1044,7 @@ const showInfoMessage = async (bot, user, info) => {
   try {
     // const status = !!info.public_key;
     // const statusEmoji = status ? '🟢' : '🔴';
-    let fee = (process.env.FEE * 100).toString();
+    let fee = (process.env.MAX_FEE * 100).toString();
     fee = fee.replace('.', '\\.');
     await bot.telegram.sendMessage(user.tg_id, `*Bot fee*: ${fee}%`, {
       parse_mode: 'MarkdownV2',
@@ -1565,14 +1477,6 @@ const toAdminChannelSellerDidntPayInvoiceMessage = async (
   }
 };
 
-const userCantDoMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('user_cant_do'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const toAdminChannelPendingPaymentSuccessMessage = async (
   bot,
   user,
@@ -1763,6 +1667,22 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
   }
 };
 
+const notAuthorized = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('not_authorized'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const needDefaultCommunity = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('need_default_community'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1792,7 +1712,6 @@ module.exports = {
   pendingSellMessage,
   pendingBuyMessage,
   mustBeIntMessage,
-  beginDisputeMessage,
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
@@ -1876,7 +1795,6 @@ module.exports = {
   toSellerDidntPayInvoiceMessage,
   toBuyerSellerDidntPayInvoiceMessage,
   toAdminChannelSellerDidntPayInvoiceMessage,
-  userCantDoMessage,
   toAdminChannelPendingPaymentSuccessMessage,
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
@@ -1893,4 +1811,6 @@ module.exports = {
   communityNotFoundMessage,
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
+  notAuthorized,
+  needDefaultCommunity,
 };

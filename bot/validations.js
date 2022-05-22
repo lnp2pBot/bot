@@ -1,8 +1,8 @@
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
-const { Order, User } = require('../models');
-const { isIso4217, parseArgs } = require('../util');
+const { Order, User, Community } = require('../models');
+const { isIso4217, parseArgs, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
@@ -44,12 +44,18 @@ const validateAdmin = async ctx => {
     const tgUser = ctx.update.message.from;
     const user = await User.findOne({ tg_id: tgUser.id });
     if (!user) {
-      await messages.userCantDoMessage(ctx);
-      return false;
-    } else if (!user.admin) {
-      await messages.userCantDoMessage(ctx);
+      await messages.notAuthorized(ctx);
       return false;
     }
+    let community = null;
+    if (user.default_community_id) {
+      community = await Community.findOne({ _id: user.default_community_id });
+    }
+    if (!user.admin && !isDisputeSolver(community, user)) {
+      await messages.notAuthorized(ctx);
+      return false;
+    }
+
     return user;
   } catch (error) {
     logger.error(error);
@@ -263,6 +269,7 @@ const validateInvoice = async (ctx, lnInvoice) => {
     return invoice;
   } catch (error) {
     logger.error(error);
+    logger.debug(lnInvoice);
     return false;
   }
 };
@@ -322,7 +329,7 @@ const isValidInvoice = async (ctx, lnInvoice) => {
 
 const isOrderCreator = (user, order) => {
   try {
-    return user._id === order.creator_id;
+    return user._id == order.creator_id;
   } catch (error) {
     logger.error(error);
     return false;
@@ -399,7 +406,13 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
     where = {
       $and: [
         { seller_id: user._id },
-        { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
+        {
+          $or: [
+            { status: 'ACTIVE' },
+            { status: 'FIAT_SENT' },
+            { status: 'DISPUTE' },
+          ],
+        },
       ],
     };
 
@@ -564,6 +577,19 @@ const validateUserWaitingOrder = async (ctx, bot, user) => {
   }
 };
 
+// We check if the user is banned from the community in the order
+const isBannedFromCommunity = async (user, communityId) => {
+  try {
+    if (!communityId) return false;
+    const community = await Community.findOne({ _id: communityId });
+    if (!community) return false;
+    return community.banned_users.some(buser => buser.id == user._id);
+  } catch (error) {
+    logger.error(error);
+    return false;
+  }
+};
+
 module.exports = {
   validateSellOrder,
   validateBuyOrder,
@@ -581,4 +607,5 @@ module.exports = {
   validateLightningAddress,
   isValidInvoice,
   validateUserWaitingOrder,
+  isBannedFromCommunity,
 };
