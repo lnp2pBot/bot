@@ -72,7 +72,11 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         community_id: community && community.id,
       });
       if (order) {
-        await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
+        const publishFn =
+          type === 'buy'
+            ? messages.publishBuyOrderMessage
+            : messages.publishSellOrderMessage;
+        publishFn(ctx, user, order, ctx.i18n, true);
       }
       await ctx.reply('Wizard completed...');
       return ctx.scene.leave();
@@ -108,7 +112,7 @@ const createOrderSteps = {
     ctx.wizard.state.handler = async ctx => {
       if (!ctx.wizard.state.currencies) {
         ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
-        const currency = getCurrency(ctx.message.text);
+        const currency = getCurrency(ctx.message.text.toUpperCase());
         if (!currency) return;
         ctx.wizard.state.currency = currency.code;
         ctx.wizard.state.updateUI = true;
