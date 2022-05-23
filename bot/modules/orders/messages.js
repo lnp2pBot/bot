@@ -24,3 +24,20 @@ exports.listOrdersResponse = async orders => {
     },
   };
 };
+
+exports.createOrderWizardStatus = state => {
+  const { type, priceMargin } = state;
+  const sats = undefined === state.sats ? '?' : state.sats || 'N';
+  const fiatAmount = undefined === state.fiatAmount ? '?' : state.fiatAmount;
+  const currency = state.currency || '?';
+  const text = [
+    `Orden ${type.toUpperCase()}`,
+    `${sats} sats <=> ${fiatAmount} ${currency}.`,
+    priceMargin && `priceMargin: ${priceMargin}`,
+    `Pago: ${state.method || '?'}`,
+    state.error && `${state.error}`,
+  ]
+    .filter(e => e)
+    .join('\n');
+  return { text };
+};

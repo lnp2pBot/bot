@@ -2,6 +2,7 @@ const { Scenes, Markup } = require('telegraf');
 const { getCurrency } = require('../../../util');
 const ordersActions = require('../../ordersActions');
 const messages = require('../../messages');
+const { createOrderWizardStatus } = require('./messages');
 
 const CREATE_ORDER = (exports.CREATE_ORDER = 'CREATE_ORDER_WIZARD');
 
@@ -17,7 +18,6 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       const {
         user,
         community,
-        updateUI,
         statusMessage,
         type,
         currency,
@@ -26,31 +26,14 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         priceMargin,
         method,
       } = ctx.wizard.state;
-      const statusString = JSON.stringify(
-        {
-          community: community && community.name,
-          type,
-          currency,
-          fiatAmount,
-          sats,
-          priceMargin,
-          method,
-        },
-        null,
-        2
-      );
       if (!statusMessage) {
-        const res = await ctx.reply(statusString);
+        const { text } = createOrderWizardStatus(ctx.wizard.state);
+        const res = await ctx.reply(text);
         ctx.wizard.state.statusMessage = res;
-      }
-      if (updateUI) {
-        await ctx.telegram.editMessageText(
-          statusMessage.chat.id,
-          statusMessage.message_id,
-          null,
-          statusString
-        );
-        ctx.wizard.state.updateUI = false;
+        ctx.wizard.state.updateUI = async () => {
+          const { text } = createOrderWizardStatus(ctx.wizard.state);
+          ctx.telegram.editMessageText(res.chat.id, res.message_id, null, text);
+        };
       }
       if (undefined === currency) return createOrderSteps.currency(ctx);
       if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx);
@@ -78,7 +61,6 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
             : messages.publishSellOrderMessage;
         publishFn(ctx, user, order, ctx.i18n, true);
       }
-      await ctx.reply('Wizard completed...');
       return ctx.scene.leave();
     } catch (err) {
       await ctx.reply('ERROR|' + err.message);
@@ -110,17 +92,22 @@ const createOrderSteps = {
     const deletePrompt = () =>
       ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     ctx.wizard.state.handler = async ctx => {
+      ctx.wizard.state.error = null;
       if (!ctx.wizard.state.currencies) {
         ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
         const currency = getCurrency(ctx.message.text.toUpperCase());
-        if (!currency) return;
+        if (!currency) {
+          ctx.wizard.state.error = 'InvalidCurrency';
+          await ctx.wizard.state.updateUI();
+          return;
+        }
         ctx.wizard.state.currency = currency.code;
-        ctx.wizard.state.updateUI = true;
+        await ctx.wizard.state.updateUI();
       } else {
         if (!ctx.callbackQuery) return;
         const currency = ctx.callbackQuery.data;
         ctx.wizard.state.currency = currency;
-        ctx.wizard.state.updateUI = true;
+        await ctx.wizard.state.updateUI();
       }
       return deletePrompt();
     };
@@ -142,7 +129,7 @@ const createOrderSteps = {
       const { text } = ctx.message;
       if (!text) return;
       ctx.wizard.state.method = text;
-      ctx.wizard.state.updateUI = true;
+      await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message.chat.id,
         ctx.message.message_id
@@ -160,17 +147,19 @@ const createOrderSteps = {
       'Especifique el priceMargin. 0 para no especificar.'
     );
     ctx.wizard.state.handler = async ctx => {
-      const input = ctx.message.text;
-      if (isNaN(input)) {
-        await ctx.reply('NaN');
-        return;
-      }
-      ctx.wizard.state.priceMargin = parseInt(input);
-      ctx.wizard.state.updateUI = true;
+      ctx.wizard.state.error = null;
       await ctx.telegram.deleteMessage(
         ctx.message.chat.id,
         ctx.message.message_id
       );
+      const input = ctx.message.text;
+      if (isNaN(input)) {
+        ctx.wizard.state.error = 'NotANumber';
+        await ctx.wizard.state.updateUI();
+        return;
+      }
+      ctx.wizard.state.priceMargin = parseInt(input);
+      await ctx.wizard.state.updateUI();
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
         prompt.message_id
@@ -181,7 +170,8 @@ const createOrderSteps = {
   async sats(ctx) {
     const prompt = await createOrderPrompts.sats(ctx);
     ctx.wizard.state.handler = async ctx => {
-      await createOrderHandlers.sats(ctx);
+      const ret = await createOrderHandlers.sats(ctx);
+      if (!ret) return;
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
         prompt.message_id
@@ -219,19 +209,22 @@ const createOrderPrompts = {
 };
 const createOrderHandlers = {
   async fiatAmount(ctx) {
+    ctx.wizard.state.error = null;
     const inputs = ctx.message.text.split('-').map(Number);
     const notNumbers = inputs.filter(isNaN);
     if (notNumbers.length) {
-      await ctx.reply('NaN');
+      ctx.wizard.state.error = 'NotANumber';
+      await ctx.wizard.state.updateUI();
       return;
     }
     const zeros = inputs.filter(n => n === 0);
     if (zeros.length) {
-      await ctx.reply('No se permite 0');
+      ctx.wizard.state.error = 'ZeroNotAllowed';
+      await ctx.wizard.state.updateUI();
       return;
     }
     ctx.wizard.state.fiatAmount = inputs;
-    ctx.wizard.state.updateUI = true;
+    await ctx.wizard.state.updateUI();
     await ctx.telegram.deleteMessage(
       ctx.message.chat.id,
       ctx.message.message_id
@@ -241,7 +234,7 @@ const createOrderHandlers = {
   async sats(ctx) {
     if (ctx.callbackQuery) {
       ctx.wizard.state.sats = 0;
-      ctx.wizard.state.updateUI = true;
+      await ctx.wizard.state.updateUI();
       return true;
     }
     const input = ctx.message.text;
@@ -250,11 +243,12 @@ const createOrderHandlers = {
       ctx.message.message_id
     );
     if (isNaN(input)) {
-      await ctx.reply('NaN');
+      ctx.wizard.state.error = 'NotANumber';
+      await ctx.wizard.state.updateUI();
       return;
     }
     ctx.wizard.state.sats = parseInt(input);
-    ctx.wizard.state.updateUI = true;
+    await ctx.wizard.state.updateUI();
     return true;
   },
 };
