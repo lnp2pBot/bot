@@ -58,7 +58,7 @@ exports.sell = async ctx => {
       await messages.currencyNotSupportedMessage(ctx, community.currencies);
       return;
     }
-    const order = await ordersActions.createOrder(ctx.i18n, ctx.bot, user, {
+    const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
       type: 'sell',
       amount,
       fiatAmount,
