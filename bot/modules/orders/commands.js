@@ -145,10 +145,6 @@ async function enterWizard(ctx, user, type) {
     if (comm.currencies.length === 1) {
       state.currency = comm.currencies[0];
     }
-  } else {
-    const json = require('../../../util/fiat.json');
-    const data = Object.entries(json).map(pair => pair[1]);
-    state.currencies = data.map(data => data.code).sort();
   }
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }

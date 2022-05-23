@@ -1,4 +1,5 @@
 const { Scenes, Markup } = require('telegraf');
+const { getCurrency } = require('../../../util');
 const ordersActions = require('../../ordersActions');
 const messages = require('../../messages');
 
@@ -54,8 +55,10 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       if (undefined === currency) return createOrderSteps.currency(ctx);
       if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx);
       if (undefined === sats) return createOrderSteps.sats(ctx);
-      if (undefined === priceMargin && (fiatAmount === 0 || sats === 0))
-        return createOrderSteps.priceMargin(ctx);
+      if (undefined === priceMargin) {
+        if (fiatAmount === 0 || sats === 0)
+          return createOrderSteps.priceMargin(ctx);
+      }
       if (undefined === method) return createOrderSteps.method(ctx);
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
@@ -99,17 +102,24 @@ createOrder.command('exit', ctx => {
 });
 const createOrderSteps = {
   async currency(ctx) {
-    ctx.wizard.state.handler = async ctx => {
-      if (!ctx.callbackQuery) return;
-      const currency = ctx.callbackQuery.data;
-      ctx.wizard.state.currency = currency;
-      ctx.wizard.state.updateUI = true;
-      return await ctx.telegram.deleteMessage(
-        prompt.chat.id,
-        prompt.message_id
-      );
-    };
     const prompt = await createOrderPrompts.currency(ctx);
+    const deletePrompt = () =>
+      ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+    ctx.wizard.state.handler = async ctx => {
+      if (!ctx.wizard.state.currencies) {
+        ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+        const currency = getCurrency(ctx.message.text);
+        if (!currency) return;
+        ctx.wizard.state.currency = currency.code;
+        ctx.wizard.state.updateUI = true;
+      } else {
+        if (!ctx.callbackQuery) return;
+        const currency = ctx.callbackQuery.data;
+        ctx.wizard.state.currency = currency;
+        ctx.wizard.state.updateUI = true;
+      }
+      return deletePrompt();
+    };
     return ctx.wizard.next();
   },
   async fiatAmount(ctx) {
@@ -179,6 +189,7 @@ const createOrderSteps = {
 const createOrderPrompts = {
   async currency(ctx) {
     const { currencies } = ctx.wizard.state;
+    if (!currencies) return ctx.reply('Elija una moneda (3 letras)');
     const buttons = currencies.map(currency =>
       Markup.button.callback(currency, currency)
     );
