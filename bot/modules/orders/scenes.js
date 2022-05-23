@@ -50,6 +50,7 @@ const createOrder = exports.createOrder = new Scenes.WizardScene(
             });
             if (order) {
                 await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
+                await ctx.reply(order.description)
             }
             await ctx.reply('Wizard completed...')
             return ctx.scene.leave()
@@ -144,7 +145,7 @@ const createOrderPrompts = {
     },
     async fiatAmount(ctx) {
         const { currency } = ctx.wizard.state
-        return ctx.reply(`Especifique el monto de ${currency}. 0 para no especificar.`)
+        return ctx.reply(`Especifique el monto de ${currency}.`)
     },
     async sats(ctx) {
         const button = Markup.button.callback('Market price', 'marketPrice')
@@ -157,6 +158,11 @@ const createOrderHandlers = {
         const notNumbers = inputs.filter(isNaN)
         if (notNumbers.length) {
             await ctx.reply('NaN')
+            return
+        }
+        const zeros = inputs.filter(n => n === 0)
+        if (zeros.length) {
+            await ctx.reply('No se permite 0')
             return
         }
         ctx.wizard.state.fiatAmount = inputs
