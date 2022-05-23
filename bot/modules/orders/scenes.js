@@ -70,7 +70,6 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       });
       if (order) {
         await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
-        await ctx.reply(order.description);
       }
       await ctx.reply('Wizard completed...');
       return ctx.scene.leave();
