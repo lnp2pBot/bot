@@ -1,61 +1,35 @@
 // @ts-check
 const logger = require('../../../logger');
 const { Community } = require('../../../models');
-const { validateUser } = require('../../validations');
 const ordersActions = require('../../ordersActions');
+const { auth } = require('../user/middleware');
 const messages = require('./messages');
 
 const Scenes = require('./scenes')
 
 exports.configure = bot => {
   bot.use(Scenes.middleware())
-  bot.command('buywizard', async ctx => {
+  bot.command('buywizard', auth, async (ctx, next) => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return false;
-
-      if (!user.default_community_id) throw new Error('CommunityRequired')
-      const comm = await Community.findById(user.default_community_id)
-      const state = {
-        type: 'buy',
-        currencies: comm.currencies,
-        community: comm,
-        user
-      }
-      if (comm.currencies.length === 1) {
-        state.currency = comm.currencies[0]
-      }
-      await ctx.scene.enter(Scenes.CREATE_ORDER, state)
+      const args = ctx.message.text.split(' ')
+      if (args.length > 1) return next()
+      await enterWizard(ctx, ctx.user, 'buy');
     } catch (err) {
       await ctx.reply('ERROR|' + err.message)
     }
-  })
-  bot.command('sellwizard', async ctx => {
+  }, notImplementedYet)
+  bot.command('sellwizard', auth, async (ctx, next) => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return false;
-
-      if (!user.default_community_id) throw new Error('CommunityRequired')
-      const comm = await Community.findById(user.default_community_id)
-      const state = {
-        type: 'sell',
-        currencies: comm.currencies,
-        communityId: user.default_community_id
-      }
-      if (comm.currencies.length === 1) {
-        state.currency = comm.currencies[0]
-      }
-      await ctx.scene.enter(Scenes.CREATE_ORDER, state)
+      const args = ctx.message.text.split(' ')
+      if (args.length > 1) return next()
+      await enterWizard(ctx, ctx.user, 'sell');
     } catch (err) {
       await ctx.reply('ERROR|' + err.message)
     }
-  })
-  bot.command('listorders', async ctx => {
+  }, notImplementedYet)
+  bot.command('listorders', auth, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return false;
-
-      const orders = await ordersActions.getOrders(ctx, user);
+      const orders = await ordersActions.getOrders(ctx, ctx.user);
       if (!orders) return false;
 
       const { text, extra } = await messages.listOrdersResponse(orders);
@@ -65,3 +39,20 @@ exports.configure = bot => {
     }
   });
 };
+
+const notImplementedYet = ctx => ctx.reply('NotImplementedYet')
+
+async function enterWizard(ctx, user, type) {
+  if (!user.default_community_id) throw new Error('CommunityRequired')
+  const comm = await Community.findById(user.default_community_id);
+  const state = {
+    type,
+    currencies: comm.currencies,
+    community: comm,
+    user
+  };
+  if (comm.currencies.length === 1) {
+    state.currency = comm.currencies[0];
+  }
+  await ctx.scene.enter(Scenes.CREATE_ORDER, state);
+}
