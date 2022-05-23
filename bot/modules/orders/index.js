@@ -11,11 +11,13 @@ exports.configure = bot => {
   bot.use(Scenes.middleware())
 
   bot.command('buy', auth, async (ctx, next) => {
+    if (!ctx.user.default_community_id) return next()
     const args = ctx.message.text.split(' ')
     if (args.length > 1) return next()
     commands.buyWizard(ctx)
   }, commands.buy)
   bot.command('sell', auth, async (ctx, next) => {
+    if (!ctx.user.default_community_id) return next()
     const args = ctx.message.text.split(' ')
     if (args.length > 1) return next()
     commands.sellWizard(ctx)
