@@ -134,16 +134,21 @@ exports.buy = async ctx => {
 };
 
 async function enterWizard(ctx, user, type) {
-  if (!user.default_community_id) throw new Error('CommunityRequired');
-  const comm = await Community.findById(user.default_community_id);
   const state = {
     type,
-    currencies: comm.currencies,
-    community: comm,
     user,
   };
-  if (comm.currencies.length === 1) {
-    state.currency = comm.currencies[0];
+  if (user.default_community_id) {
+    const comm = await Community.findById(user.default_community_id);
+    state.community = comm;
+    state.currencies = comm.currencies;
+    if (comm.currencies.length === 1) {
+      state.currency = comm.currencies[0];
+    }
+  } else {
+    const json = require('../../../util/fiat.json');
+    const data = Object.entries(json).map(pair => pair[1]);
+    state.currencies = data.map(data => data.code).sort();
   }
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }

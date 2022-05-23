@@ -14,7 +14,6 @@ exports.configure = bot => {
     'buy',
     auth,
     async (ctx, next) => {
-      if (!ctx.user.default_community_id) return next();
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
       commands.buyWizard(ctx);
@@ -25,7 +24,6 @@ exports.configure = bot => {
     'sell',
     auth,
     async (ctx, next) => {
-      if (!ctx.user.default_community_id) return next();
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
       commands.sellWizard(ctx);

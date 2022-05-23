@@ -25,10 +25,9 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         priceMargin,
         method,
       } = ctx.wizard.state;
-      if (!community) throw new Error('CommunityRequired');
       const statusString = JSON.stringify(
         {
-          community: community.name,
+          community: community && community.name,
           type,
           currency,
           fiatAmount,
@@ -67,7 +66,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         paymentMethod: method,
         status: 'PENDING',
         priceMargin,
-        community_id: community.id,
+        community_id: community && community.id,
       });
       if (order) {
         await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
@@ -95,7 +94,10 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
     }
   }
 ));
-createOrder.command('exit', ctx => ctx.scene.leave());
+createOrder.command('exit', ctx => {
+  ctx.scene.leave();
+  ctx.reply('Exited wizard.');
+});
 const createOrderSteps = {
   async currency(ctx) {
     ctx.wizard.state.handler = async ctx => {
