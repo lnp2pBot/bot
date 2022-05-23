@@ -5,11 +5,9 @@ const { auth } = require('../user/middleware');
 
 const commands = require('./commands');
 const messages = require('./messages');
-const Scenes = require('./scenes');
+exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
-  bot.use(Scenes.middleware());
-
   bot.command(
     'buy',
     auth,

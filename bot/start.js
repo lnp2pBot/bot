@@ -95,6 +95,7 @@ const initialize = (botToken, options) => {
     updateChannelsCommunityWizard,
     updateSolversCommunityWizard,
     addInvoicePHIWizard,
+    OrdersModule.Scenes.createOrder,
   ]);
   bot.use(session());
   bot.use(i18n.middleware());
