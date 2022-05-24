@@ -57,6 +57,7 @@ const {
   updateChannelsCommunityWizard,
   updateSolversCommunityWizard,
   addInvoicePHIWizard,
+  updateFeeCommunityWizard,
 } = require('./scenes');
 const logger = require('../logger');
 
@@ -95,6 +96,7 @@ const initialize = (botToken, options) => {
     updateChannelsCommunityWizard,
     updateSolversCommunityWizard,
     addInvoicePHIWizard,
+    updateFeeCommunityWizard,
     OrdersModule.Scenes.createOrder,
   ]);
   bot.use(session());
@@ -668,6 +670,10 @@ const initialize = (botToken, options) => {
 
   bot.action(/^editNameBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'name');
+  });
+
+  bot.action(/^editFeeBtn_([0-9a-f]{24})$/, async ctx => {
+    await updateCommunity(ctx, ctx.match[1], 'fee');
   });
 
   bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async ctx => {

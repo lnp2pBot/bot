@@ -370,7 +370,7 @@ operation_successful: Operation successfully!
 select_community: Select the community you want to modify
 what_modify: What do you want to modify?
 channels: Channels
-dispute_solvers: Dispute solvers
+dispute_solvers: Solvers
 no_default_community: You no longer have a community by default
 community_not_found: Community not found
 currencies: Currencies
@@ -390,6 +390,8 @@ enter_currency_amount: Enter the amount of ${currency}.
 enter_premium_discount: Enter the premium or discount to apply to the offer. Premium is a positive number and discount is a negative number, if you don't want the offer to have a premium or discount enter 0.
 enter_payment_method: Enter the payment method
 invalid_currency: Invalid currency
-not_number: Is not a number
+not_number: It must be a number
 not_zero: Cannot be 0 (zero)
 not_negative: Cannot be a negative number
+wizard_community_wrong_percent: The percentage must be between 0 and 100
+fee: Fee

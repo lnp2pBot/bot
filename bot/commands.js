@@ -568,6 +568,11 @@ const updateCommunity = async (ctx, id, field, bot) => {
         bot,
         user,
       });
+    } else if (field === 'fee') {
+      ctx.scene.enter('UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+      });
     } else if (field === 'solvers') {
       ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
     }

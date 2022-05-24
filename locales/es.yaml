@@ -370,7 +370,7 @@ operation_successful: ¡Operación exitosa!
 select_community: Selecciona la comunidad que quieres modificar
 what_modify: ¿Que quieres modificar?
 channels: Canales
-dispute_solvers: Solucionadores de disputas
+dispute_solvers: Solvers
 no_default_community: Ya no tienes comunidad por defecto
 community_not_found: Comunidad no encontrada
 currencies: Monedas
@@ -390,6 +390,9 @@ enter_currency_amount: Especifique el monto de ${currency}.
 enter_premium_discount: Especifique la prima o descuento a aplicar en la oferta. La prima es un número positivo y el descuento es un número negativo, si no desea que la oferta tenga prima o descuento ingrese 0.
 enter_payment_method: Especifique el método de pago
 invalid_currency: Moneda no válida
-not_number: No es un número
+not_number: Debe ser un número
 not_zero: No puede ser 0 (cero)
 not_negative: No puede ser un número negativo
+wizard_community_wrong_percent: El porcentaje debe estar entre 0 y 100
+wizard_community_enter_fee_percent: Ingresa el porcentaje de la comisión
+fee: Tarifa

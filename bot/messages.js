@@ -1285,6 +1285,22 @@ const wizardCommunityEnterSolversChannelMessage = async ctx => {
   }
 };
 
+const wizardCommunityWrongPercentFeeMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_wrong_percent'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const wizardCommunityEnterPercentFeeMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_fee_percent'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const wizardCommunityCreatedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_success'));
@@ -1597,6 +1613,7 @@ const updateCommunityMessage = async (ctx, id) => {
             },
           ],
           [
+            { text: ctx.i18n.t('fee'), callback_data: `editFeeBtn_${id}` },
             {
               text: ctx.i18n.t('dispute_solvers'),
               callback_data: `editSolversBtn_${id}`,
@@ -1678,6 +1695,14 @@ const notAuthorized = async ctx => {
 const needDefaultCommunity = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('need_default_community'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const mustBeANumber = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('not_number'));
   } catch (error) {
     logger.error(error);
   }
@@ -1813,4 +1838,7 @@ module.exports = {
   sendMeAnInvoiceMessage,
   notAuthorized,
   needDefaultCommunity,
+  wizardCommunityWrongPercentFeeMessage,
+  wizardCommunityEnterPercentFeeMessage,
+  mustBeANumber,
 };

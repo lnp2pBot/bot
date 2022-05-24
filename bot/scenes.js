@@ -312,12 +312,32 @@ const communityWizard = new Scenes.WizardScene(
       }
 
       ctx.wizard.state.community.order_channels = orderChannels;
-      await messages.wizardCommunityEnterSolversMessage(ctx);
+      await messages.wizardCommunityEnterPercentFeeMessage(ctx);
 
       return ctx.wizard.next();
     } catch (error) {
       ctx.reply(error.toString());
       logger.error(error);
+    }
+  },
+  async ctx => {
+    try {
+      if (ctx.message.text.trim() === 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+      const percentFee = ctx.message.text.trim();
+      if (percentFee < 0 || percentFee > 100) {
+        await messages.wizardCommunityWrongPercentFeeMessage(ctx);
+        return;
+      }
+      ctx.wizard.state.community.fee = percentFee;
+      await messages.wizardCommunityEnterSolversMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      ctx.reply(error.toString());
+      ctx.scene.leave();
     }
   },
   async ctx => {
@@ -733,6 +753,61 @@ const updateSolversCommunityWizard = new Scenes.WizardScene(
   }
 );
 
+const updateFeeCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID',
+  async ctx => {
+    try {
+      await messages.wizardCommunityEnterPercentFeeMessage(ctx);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+  async ctx => {
+    try {
+      if (ctx.message === undefined) {
+        return ctx.scene.leave();
+      }
+
+      const fee = ctx.message.text.trim();
+      if (fee === 'exit') {
+        await messages.wizardExitMessage(ctx);
+        return ctx.scene.leave();
+      }
+
+      if (isNaN(fee)) {
+        await messages.mustBeANumber(ctx);
+        return;
+      }
+
+      if (fee < 0 || fee > 100) {
+        await messages.wizardCommunityWrongPercentFeeMessage(ctx);
+        return;
+      }
+      const { id, user } = ctx.wizard.state;
+      const community = await Community.findOne({
+        _id: id,
+        creator_id: user._id,
+      });
+      if (!community) {
+        throw new Error(
+          'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID'
+        );
+      }
+      community.fee = fee;
+      await community.save();
+      await messages.operationSuccessfulMessage(ctx);
+
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  }
+);
+
 module.exports = {
   addInvoiceWizard,
   communityWizard,
@@ -743,4 +818,5 @@ module.exports = {
   updateChannelsCommunityWizard,
   updateSolversCommunityWizard,
   addInvoicePHIWizard,
+  updateFeeCommunityWizard,
 };
