@@ -89,10 +89,12 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
     }
   }
 ));
+
 createOrder.command('exit', ctx => {
   ctx.scene.leave();
-  ctx.reply('Exited wizard.');
+  ctx.reply(ctx.i18n.t('wizard_exit'));
 });
+
 const createOrderSteps = {
   async currency(ctx) {
     const prompt = await createOrderPrompts.currency(ctx);
@@ -104,7 +106,7 @@ const createOrderSteps = {
         ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
         const currency = getCurrency(ctx.message.text.toUpperCase());
         if (!currency) {
-          ctx.wizard.state.error = 'InvalidCurrency';
+          ctx.wizard.state.error = ctx.i18n.t('invalid_currency');
           await ctx.wizard.state.updateUI();
           return;
         }
@@ -146,13 +148,11 @@ const createOrderSteps = {
         prompt.message_id
       );
     };
-    const prompt = await ctx.reply('Especifique el método de pago');
+    const prompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
     return ctx.wizard.next();
   },
   async priceMargin(ctx) {
-    const prompt = await ctx.reply(
-      'Especifique el priceMargin. 0 para no especificar.'
-    );
+    const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
       await ctx.telegram.deleteMessage(
@@ -161,7 +161,7 @@ const createOrderSteps = {
       );
       const input = ctx.message.text;
       if (isNaN(input)) {
-        ctx.wizard.state.error = 'NotANumber';
+        ctx.wizard.state.error = ctx.i18n.t('not_number');
         await ctx.wizard.state.updateUI();
         return;
       }
@@ -187,10 +187,11 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
 };
+
 const createOrderPrompts = {
   async currency(ctx) {
     const { currencies } = ctx.wizard.state;
-    if (!currencies) return ctx.reply('Elija una moneda (3 letras)');
+    if (!currencies) return ctx.reply(ctx.i18n.t('enter_currency'));
     const buttons = currencies.map(currency =>
       Markup.button.callback(currency, currency)
     );
@@ -200,42 +201,50 @@ const createOrderPrompts = {
       const chunk = buttons.slice(i, i + chunkSize);
       rows.push(chunk);
     }
-    return ctx.reply('Elija una moneda', Markup.inlineKeyboard(rows));
+    return ctx.reply(
+      ctx.i18n.t('choose_currency'),
+      Markup.inlineKeyboard(rows)
+    );
   },
   async fiatAmount(ctx) {
     const { currency } = ctx.wizard.state;
-    return ctx.reply(`Especifique el monto de ${currency}.`);
+    return ctx.reply(ctx.i18n.t('enter_currency_amount', { currency }));
   },
   async sats(ctx) {
-    const button = Markup.button.callback('Market price', 'marketPrice');
+    const button = Markup.button.callback(
+      ctx.i18n.t('market_price'),
+      'marketPrice'
+    );
     return ctx.reply(
-      'Especifique el monto de satoshis',
+      ctx.i18n.t('enter_sats_amount'),
       Markup.inlineKeyboard([button])
     );
   },
 };
+
 const createOrderHandlers = {
   async fiatAmount(ctx) {
     ctx.wizard.state.error = null;
     const inputs = ctx.message.text.split('-').map(Number);
     const notNumbers = inputs.filter(isNaN);
+    await ctx.telegram.deleteMessage(
+      ctx.message.chat.id,
+      ctx.message.message_id
+    );
     if (notNumbers.length) {
-      ctx.wizard.state.error = 'NotANumber';
+      ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
       return;
     }
     const zeros = inputs.filter(n => n === 0);
     if (zeros.length) {
-      ctx.wizard.state.error = 'ZeroNotAllowed';
+      ctx.wizard.state.error = ctx.i18n.t('not_zero');
       await ctx.wizard.state.updateUI();
       return;
     }
     ctx.wizard.state.fiatAmount = inputs;
     await ctx.wizard.state.updateUI();
-    await ctx.telegram.deleteMessage(
-      ctx.message.chat.id,
-      ctx.message.message_id
-    );
+
     return true;
   },
   async sats(ctx) {
@@ -250,7 +259,12 @@ const createOrderHandlers = {
       ctx.message.message_id
     );
     if (isNaN(input)) {
-      ctx.wizard.state.error = 'NotANumber';
+      ctx.wizard.state.error = ctx.i18n.t('not_number');
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    if (input < 0) {
+      ctx.wizard.state.error = ctx.i18n.t('not_negative');
       await ctx.wizard.state.updateUI();
       return;
     }

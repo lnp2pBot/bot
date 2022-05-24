@@ -382,3 +382,14 @@ new_dispute: ⚠️⚠️⚠️ Un usuario ha iniciado una disputa, para tomarla
 take_dispute: Tomar disputa
 not_authorized: 🤨 No estás autorizado para realizar esta operación
 need_default_community: Para realizar esta operación necesitar tener una comunidad por defecto
+enter_sats_amount: Especifique el monto de satoshis
+market_price: Precio del mercado
+enter_currency: 'Especifique una moneda por su código, ej: USD'
+choose_currency: Elija una moneda
+enter_currency_amount: Especifique el monto de ${currency}.
+enter_premium_discount: Especifique la prima o descuento a aplicar en la oferta. La prima es un número positivo y el descuento es un número negativo, si no desea que la oferta tenga prima o descuento ingrese 0.
+enter_payment_method: Especifique el método de pago
+invalid_currency: Moneda no válida
+not_number: No es un número
+not_zero: No puede ser 0 (cero)
+not_negative: No puede ser un número negativo
