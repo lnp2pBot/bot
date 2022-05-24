@@ -29,16 +29,6 @@ const createOrder = async (
   }
 ) => {
   try {
-    const pendingOrders = await Order.count({
-      status: 'PENDING',
-      creator_id: user._id,
-    });
-    // We don't let users create too PENDING many orders
-    if (pendingOrders >= process.env.MAX_PENDING_ORDERS) {
-      await messages.tooManyPendingOrdersMessage(bot, user, i18n);
-      return false;
-    }
-
     amount = parseInt(amount);
     const fee = await getFee(amount, community_id);
     const currency = getCurrency(fiatCode);

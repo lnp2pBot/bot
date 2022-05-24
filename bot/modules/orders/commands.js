@@ -1,6 +1,6 @@
 // @ts-check
 const logger = require('../../../logger');
-const { Community } = require('../../../models');
+const { Community, Order } = require('../../../models');
 const {
   validateBuyOrder,
   isBannedFromCommunity,
@@ -12,12 +12,16 @@ const ordersActions = require('../../ordersActions');
 
 const Scenes = require('./scenes');
 
-exports.buyWizard = async ctx => enterWizard(ctx, ctx.user, 'buy');
-exports.sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
+const buyWizard = async ctx => enterWizard(ctx, ctx.user, 'buy');
+const sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
 
-exports.sell = async ctx => {
+const sell = async ctx => {
   try {
     const user = ctx.user;
+    if (await isMaxPending(user)) {
+      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+      return;
+    }
     // Sellers with orders in status = FIAT_SENT, have to solve the order
     const isOnFiatSentStatus = await validateSeller(ctx, ctx, user);
 
@@ -75,10 +79,13 @@ exports.sell = async ctx => {
     logger.error(error);
   }
 };
-exports.buy = async ctx => {
+const buy = async ctx => {
   try {
     const user = ctx.user;
-
+    if (await isMaxPending(user)) {
+      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+      return;
+    }
     const buyOrderParams = await validateBuyOrder(ctx);
     if (!buyOrderParams) return;
 
@@ -148,3 +155,17 @@ async function enterWizard(ctx, user, type) {
   }
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }
+
+const isMaxPending = async user => {
+  const pendingOrders = await Order.count({
+    status: 'PENDING',
+    creator_id: user._id,
+  });
+  // We don't let users create too PENDING many orders
+  if (pendingOrders >= parseInt(process.env.MAX_PENDING_ORDERS)) {
+    return true;
+  }
+  return false;
+};
+
+module.exports = { buyWizard, sellWizard, buy, sell, isMaxPending };

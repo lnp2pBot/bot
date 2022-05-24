@@ -5,6 +5,7 @@ const { auth } = require('../user/middleware');
 
 const commands = require('./commands');
 const messages = require('./messages');
+const { tooManyPendingOrdersMessage } = require('../../messages');
 exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
@@ -14,6 +15,10 @@ exports.configure = bot => {
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
+      if (await commands.isMaxPending(ctx.user)) {
+        await tooManyPendingOrdersMessage(ctx, ctx.user, ctx.i18n);
+        return;
+      }
       commands.buyWizard(ctx);
     },
     commands.buy
@@ -24,6 +29,10 @@ exports.configure = bot => {
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
+      if (await commands.isMaxPending(ctx.user)) {
+        await tooManyPendingOrdersMessage(ctx, ctx.user, ctx.i18n);
+        return;
+      }
       commands.sellWizard(ctx);
     },
     commands.sell
