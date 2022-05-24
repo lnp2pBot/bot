@@ -43,7 +43,7 @@ describe('Telegram bot test', () => {
     // We make it to return our data
     userStub.returns(testUser);
     orderStub.returns(false);
-    const command = client.makeCommand('/sell');
+    const command = client.makeCommand('/sell help');
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);
     const updates = await client.getUpdates();
@@ -89,7 +89,7 @@ describe('Telegram bot test', () => {
     // We make it to return our data
     userStub.returns(testUser);
     orderStub.returns(false);
-    const command = client.makeCommand('/buy');
+    const command = client.makeCommand('/buy help');
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);
     const updates = await client.getUpdates();

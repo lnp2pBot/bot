@@ -32,18 +32,14 @@ const {
   isPendingPayment,
 } = require('../ln');
 const {
-  validateSellOrder,
   validateUser,
-  validateBuyOrder,
   validateReleaseOrder,
   validateAdmin,
   validateFiatSentOrder,
-  validateSeller,
   validateParams,
   validateObjectId,
   validateInvoice,
   validateLightningAddress,
-  isBannedFromCommunity,
 } = require('./validations');
 const messages = require('./messages');
 const {
@@ -99,6 +95,7 @@ const initialize = (botToken, options) => {
     updateChannelsCommunityWizard,
     updateSolversCommunityWizard,
     addInvoicePHIWizard,
+    OrdersModule.Scenes.createOrder,
   ]);
   bot.use(session());
   bot.use(i18n.middleware());
@@ -128,135 +125,6 @@ const initialize = (botToken, options) => {
   });
 
   CommunityModule.configure(bot);
-
-  bot.command('sell', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-      // Sellers with orders in status = FIAT_SENT, have to solve the order
-      const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
-
-      if (!isOnFiatSentStatus) return;
-
-      const sellOrderParams = await validateSellOrder(ctx);
-
-      if (!sellOrderParams) return;
-      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-        sellOrderParams;
-      let communityId = null;
-      let community = null;
-      // If this message came from a group
-      // We check if the there is a community for it
-      if (ctx.message.chat.type !== 'private') {
-        // Allow find communities case insensitive
-        const regex = new RegExp(
-          ['^', '@' + ctx.message.chat.username, '$'].join(''),
-          'i'
-        );
-        community = await Community.findOne({ group: regex });
-        if (!community) {
-          ctx.deleteMessage();
-          return;
-        }
-        communityId = community._id;
-      } else if (user.default_community_id) {
-        communityId = user.default_community_id;
-        community = await Community.findOne({ _id: communityId });
-      }
-      // We verify if the user is not banned on this community
-      if (await isBannedFromCommunity(user, communityId)) {
-        await messages.bannedUserErrorMessage(ctx);
-        return;
-      }
-      // If the user is in a community, we need to check if the currency is supported
-      if (!!community && !community.currencies.includes(fiatCode)) {
-        await messages.currencyNotSupportedMessage(ctx, community.currencies);
-        return;
-      }
-      const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
-        type: 'sell',
-        amount,
-        fiatAmount,
-        fiatCode,
-        paymentMethod,
-        status: 'PENDING',
-        priceMargin,
-        community_id: communityId,
-      });
-      if (order) {
-        await messages.publishSellOrderMessage(
-          bot,
-          user,
-          order,
-          ctx.i18n,
-          true
-        );
-      }
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.command('buy', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const buyOrderParams = await validateBuyOrder(ctx, bot, user);
-      if (!buyOrderParams) return;
-
-      const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-        buyOrderParams;
-      let communityId = null;
-      let community = null;
-      // If this message came from a group
-      // We check if the there is a community for it
-      if (ctx.message.chat.type !== 'private') {
-        // Allow find communities case insensitive
-        const regex = new RegExp(
-          ['^', '@' + ctx.message.chat.username, '$'].join(''),
-          'i'
-        );
-        community = await Community.findOne({ group: regex });
-        if (!community) {
-          ctx.deleteMessage();
-          return;
-        }
-        communityId = community._id;
-      } else if (user.default_community_id) {
-        communityId = user.default_community_id;
-        community = await Community.findOne({ _id: communityId });
-      }
-      // We verify if the user is not banned on this community
-      if (await isBannedFromCommunity(user, communityId)) {
-        await messages.bannedUserErrorMessage(ctx);
-        return;
-      }
-      // If the user is in a community, we need to check if the currency is supported
-      if (!!community && !community.currencies.includes(fiatCode)) {
-        await messages.currencyNotSupportedMessage(ctx, community.currencies);
-        return;
-      }
-      const order = await ordersActions.createOrder(ctx.i18n, bot, user, {
-        type: 'buy',
-        amount,
-        fiatAmount,
-        fiatCode,
-        paymentMethod,
-        status: 'PENDING',
-        priceMargin,
-        community_id: communityId,
-      });
-
-      if (order) {
-        await messages.publishBuyOrderMessage(bot, user, order, ctx.i18n, true);
-      }
-    } catch (error) {
-      logger.error(error);
-    }
-  });
 
   bot.action('takesell', async ctx => {
     await takesell(ctx, bot);

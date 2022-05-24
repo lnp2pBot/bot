@@ -24,3 +24,27 @@ exports.listOrdersResponse = async orders => {
     },
   };
 };
+
+exports.createOrderWizardStatus = (i18n, state) => {
+  const { type, priceMargin } = state;
+  const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
+  const sats = state.sats ? state.sats + ' ' : '';
+  const paymentAction =
+    type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
+  const fiatAmount =
+    undefined === state.fiatAmount ? '?' : state.fiatAmount.join('-');
+  const currency = state.currency || '?';
+
+  const text = [
+    `${action} ${sats}${i18n.t('sats')}`,
+    `${i18n.t('for')} ${fiatAmount} ${currency}.`,
+    `${paymentAction} ${i18n.t('by')} ${state.method || '?'}`,
+    priceMargin
+      ? `${i18n.t('rate')}: ${process.env.FIAT_RATE_NAME} ${priceMargin}%`
+      : ``,
+    state.error && `Error: ${state.error}`,
+  ]
+    .filter(e => e)
+    .join('\n');
+  return { text };
+};
