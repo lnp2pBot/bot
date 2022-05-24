@@ -9,7 +9,7 @@ exports.listOrdersResponse = async orders => {
     let amount = '\\-';
     const status = order.status.split('_').join('\\_');
     if (typeof order.fiat_amount !== 'undefined')
-      fiatAmount = order.fiat_amount;
+      fiatAmount = sanitizeMD(order.fiat_amount);
     if (typeof order.amount !== 'undefined') amount = order.amount;
     return `\`${order.id}\` \\| ${status} \\| ${amount} \\| ${fiatAmount} \\| ${
       order.fiat_code
