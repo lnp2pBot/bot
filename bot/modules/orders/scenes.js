@@ -27,11 +27,11 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         method,
       } = ctx.wizard.state;
       if (!statusMessage) {
-        const { text } = createOrderWizardStatus(ctx.wizard.state);
+        const { text } = createOrderWizardStatus(ctx.i18n, ctx.wizard.state);
         const res = await ctx.reply(text);
         ctx.wizard.state.statusMessage = res;
         ctx.wizard.state.updateUI = async () => {
-          const { text } = createOrderWizardStatus(ctx.wizard.state);
+          const { text } = createOrderWizardStatus(ctx.i18n, ctx.wizard.state);
           ctx.telegram.editMessageText(res.chat.id, res.message_id, null, text);
         };
       }
