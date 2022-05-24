@@ -1,8 +1,11 @@
 const { Scenes, Markup } = require('telegraf');
 const { getCurrency } = require('../../../util');
 const ordersActions = require('../../ordersActions');
-const messages = require('../../messages');
-const { createOrderWizardStatus } = require('./messages');
+const {
+  publishBuyOrderMessage,
+  publishSellOrderMessage,
+} = require('../../messages');
+const messages = require('./messages');
 
 const CREATE_ORDER = (exports.CREATE_ORDER = 'CREATE_ORDER_WIZARD');
 
@@ -27,11 +30,17 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
         method,
       } = ctx.wizard.state;
       if (!statusMessage) {
-        const { text } = createOrderWizardStatus(ctx.i18n, ctx.wizard.state);
+        const { text } = messages.createOrderWizardStatus(
+          ctx.i18n,
+          ctx.wizard.state
+        );
         const res = await ctx.reply(text);
         ctx.wizard.state.statusMessage = res;
         ctx.wizard.state.updateUI = async () => {
-          const { text } = createOrderWizardStatus(ctx.i18n, ctx.wizard.state);
+          const { text } = messages.createOrderWizardStatus(
+            ctx.i18n,
+            ctx.wizard.state
+          );
           ctx.telegram.editMessageText(res.chat.id, res.message_id, null, text);
         };
       }
@@ -56,9 +65,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       });
       if (order) {
         const publishFn =
-          type === 'buy'
-            ? messages.publishBuyOrderMessage
-            : messages.publishSellOrderMessage;
+          type === 'buy' ? publishBuyOrderMessage : publishSellOrderMessage;
         publishFn(ctx, user, order, ctx.i18n, true);
       }
       return ctx.scene.leave();

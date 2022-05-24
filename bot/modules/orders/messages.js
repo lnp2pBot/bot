@@ -31,7 +31,8 @@ exports.createOrderWizardStatus = (i18n, state) => {
   const sats = state.sats ? state.sats + ' ' : '';
   const paymentAction =
     type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
-  const fiatAmount = undefined === state.fiatAmount ? '?' : state.fiatAmount.join('-');
+  const fiatAmount =
+    undefined === state.fiatAmount ? '?' : state.fiatAmount.join('-');
   const currency = state.currency || '?';
 
   const text = [
