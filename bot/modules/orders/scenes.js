@@ -83,7 +83,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       }
       return ctx.scene.leave();
     } catch (err) {
-      await ctx.reply('ERROR|' + err.message);
+      logger.error(err)
       return ctx.scene.leave();
     }
   },
@@ -97,7 +97,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       await ctx.wizard.selectStep(0);
       return ctx.wizard.steps[ctx.wizard.cursor](ctx);
     } catch (err) {
-      await ctx.reply('ERROR|' + err.message);
+      logger.error(err)
       return ctx.scene.leave();
     }
   }
