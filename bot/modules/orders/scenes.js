@@ -1,4 +1,5 @@
 const { Scenes, Markup } = require('telegraf');
+const logger = require('../../../logger');
 const { getCurrency } = require('../../../util');
 const ordersActions = require('../../ordersActions');
 const {
@@ -35,13 +36,25 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
           ctx.wizard.state
         );
         const res = await ctx.reply(text);
+        ctx.wizard.state.currentStatusText = text;
         ctx.wizard.state.statusMessage = res;
         ctx.wizard.state.updateUI = async () => {
-          const { text } = messages.createOrderWizardStatus(
-            ctx.i18n,
-            ctx.wizard.state
-          );
-          ctx.telegram.editMessageText(res.chat.id, res.message_id, null, text);
+          try {
+            const { text } = messages.createOrderWizardStatus(
+              ctx.i18n,
+              ctx.wizard.state
+            );
+            if (ctx.wizard.state.currentStatusText === text) return;
+            await ctx.telegram.editMessageText(
+              res.chat.id,
+              res.message_id,
+              null,
+              text
+            );
+            ctx.wizard.state.currentStatusText = text;
+          } catch (err) {
+            logger.error(err);
+          }
         };
       }
       if (undefined === currency) return createOrderSteps.currency(ctx);
@@ -70,7 +83,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       }
       return ctx.scene.leave();
     } catch (err) {
-      await ctx.reply('ERROR|' + err.message);
+      logger.error(err)
       return ctx.scene.leave();
     }
   },
@@ -84,7 +97,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       await ctx.wizard.selectStep(0);
       return ctx.wizard.steps[ctx.wizard.cursor](ctx);
     } catch (err) {
-      await ctx.reply('ERROR|' + err.message);
+      logger.error(err)
       return ctx.scene.leave();
     }
   }
