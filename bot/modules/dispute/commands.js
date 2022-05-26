@@ -1,4 +1,4 @@
-const { User, Dispute } = require('../../../models');
+const { User, Dispute, Order } = require('../../../models');
 const {
   validateUser,
   validateParams,
@@ -32,27 +32,29 @@ const dispute = async (ctx, bot) => {
     order[`${initiator}_dispute`] = true;
     order.status = 'DISPUTE';
     await order.save();
-    // We increment the number of disputes on both users
-    // If a user disputes is equal to MAX_DISPUTES, we ban the user
-    const buyerDisputes =
-      (await Dispute.count({
-        $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
-      })) + 1;
-    const sellerDisputes =
-      (await Dispute.count({
-        $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
-      })) + 1;
 
-    if (buyerDisputes >= process.env.MAX_DISPUTES) {
-      // TODO: This also needs to be migrated to communities
-      buyer.banned = true;
+    // If this is a non community order, we may ban the user globally
+    if (order.community_id) {
+      // We increment the number of disputes on both users
+      // If a user disputes is equal to MAX_DISPUTES, we ban the user
+      const buyerDisputes =
+        (await Dispute.count({
+          $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
+        })) + 1;
+      const sellerDisputes =
+        (await Dispute.count({
+          $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
+        })) + 1;
+      if (buyerDisputes >= process.env.MAX_DISPUTES) {
+        buyer.banned = true;
+        await buyer.save();
+      }
+      if (sellerDisputes >= process.env.MAX_DISPUTES) {
+        seller.banned = true;
+        await seller.save();
+      }
     }
-    if (sellerDisputes >= process.env.MAX_DISPUTES) {
-      // TODO: This also needs to be migrated to communities
-      seller.banned = true;
-    }
-    await buyer.save();
-    await seller.save();
+
     const dispute = new Dispute({
       initiator,
       seller_id: seller._id,
@@ -77,14 +79,53 @@ const deleteDispute = async (ctx, bot) => {
 
     if (!admin) return;
 
-    let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
+    let [username, orderId] = await validateParams(
+      ctx,
+      3,
+      '\\<_username_\\> \\<_order id_\\>'
+    );
 
     if (!username) return;
+    if (!orderId) return;
 
+    if (!(await validateObjectId(ctx, orderId))) return;
+    const order = await Order.findOne({ _id: orderId });
+
+    if (!order) {
+      return await globalMessages.notActiveOrderMessage(ctx);
+    }
     username = username[0] == '@' ? username.slice(1) : username;
     const user = await User.findOne({ username });
-    user.disputes = user.disputes - 1;
-    await user.save();
+    if (!user) {
+      return await globalMessages.notFoundUserMessage(ctx);
+    }
+    const dispute = await Dispute.findOne({
+      order_id: orderId,
+    });
+    if (!dispute) {
+      return await messages.notFoundDisputeMessage(ctx);
+    }
+    // We check if this is a solver, the order must be from the same community
+    if (!admin.admin) {
+      if (!order.community_id) {
+        return await globalMessages.notAuthorized(ctx);
+      }
+
+      if (order.community_id != admin.default_community_id) {
+        return await globalMessages.notAuthorized(ctx);
+      }
+
+      // We check if this dispute is from a community we validate that
+      // the solver is running this command
+      if (dispute && dispute.solver_id != admin._id) {
+        return await globalMessages.notAuthorized(ctx);
+      }
+    }
+
+    if (user._id == dispute.buyer_id) dispute.buyer_id = null;
+    if (user._id == dispute.seller_id) dispute.seller_id = null;
+    await dispute.save();
+
     await globalMessages.operationSuccessfulMessage(ctx);
   } catch (error) {
     logger.error(error);

@@ -58,6 +58,8 @@ const disputeData = async (
   order,
   initiator,
   solver,
+  buyerDisputes,
+  sellerDisputes,
   i18n
 ) => {
   try {
@@ -72,10 +74,12 @@ const disputeData = async (
     await bot.telegram.sendMessage(
       solver.tg_id,
       i18n.t('dispute_started_channel', {
-        order,
-        initiator,
         initiatorUser,
         counterPartyUser,
+        buyer,
+        seller,
+        buyerDisputes,
+        sellerDisputes,
         detailedOrder,
         type,
       }),
@@ -86,4 +90,17 @@ const disputeData = async (
   }
 };
 
-module.exports = { takeDisputeButton, beginDispute, disputeData };
+const notFoundDisputeMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('not_found_dispute'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+module.exports = {
+  takeDisputeButton,
+  beginDispute,
+  disputeData,
+  notFoundDisputeMessage,
+};

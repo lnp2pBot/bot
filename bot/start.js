@@ -496,9 +496,11 @@ const initialize = (botToken, options) => {
 
       if (!adminUser) return;
 
-      const [username] = await validateParams(ctx, 2, '\\<_username_\\>');
+      let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
 
       if (!username) return;
+
+      username = username[0] == '@' ? username.slice(1) : username;
 
       const user = await User.findOne({ username });
       if (!user) {

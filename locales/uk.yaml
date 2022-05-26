@@ -400,3 +400,4 @@ use_default: Use by default
 orders: Orders
 volume: Volume
 users: Users
+not_found_dispute: There is no dispute for this order

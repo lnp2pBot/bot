@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const DisputeSchema = new mongoose.Schema({
   initiator: { type: String, required: true },
-  seller_id: { type: String, required: true },
-  buyer_id: { type: String, required: true },
+  seller_id: { type: String },
+  buyer_id: { type: String },
   status: {
     type: String,
     enum: ['WAITING_FOR_SOLVER', 'IN_PROGRESS', 'FINISHED'],

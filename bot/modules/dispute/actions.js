@@ -10,6 +10,12 @@ const takeDispute = async (ctx, bot) => {
   const buyer = await User.findOne({ _id: order.buyer_id });
   const seller = await User.findOne({ _id: order.seller_id });
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
+  const buyerDisputes = await Dispute.count({
+    $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
+  });
+  const sellerDisputes = await Dispute.count({
+    $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
+  });
   await Dispute.findOneAndUpdate(
     { order_id: order._id },
     { solver_id: solver._id, status: 'IN_PROGRESS' }
@@ -21,6 +27,8 @@ const takeDispute = async (ctx, bot) => {
     order,
     initiator,
     solver,
+    buyerDisputes,
+    sellerDisputes,
     ctx.i18n
   );
 };

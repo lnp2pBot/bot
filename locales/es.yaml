@@ -176,8 +176,8 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
-  @${initiatorUser.username} ya tiene ${initiatorUser.disputes} disputas
-  @${counterPartyUser.username} ya tiene ${counterPartyUser.disputes} disputas
+  @${buyer.username} ya tiene ${buyerDisputes} disputas
+  @${seller.username} ya tiene ${sellerDisputes} disputas
 you_started_dispute_to_buyer: 🥴 Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla
 buyer_started_dispute_to_seller: '🥴 El comprador ha iniciado una disputa por tu orden con Id: ${orderId}, nos comunicaremos contigo y tu contraparte para resolverla'
 you_started_dispute_to_seller: 🥴 Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla
@@ -401,3 +401,4 @@ use_default: Utilizar por defecto
 orders: Órdenes
 volume: Volúmen
 users: Usuarios
+not_found_dispute: No hay ninguna disputa para esta orden
