@@ -291,6 +291,7 @@ wizard_community_enter_solvers_channel: Gib nun bitte die ID oder den Namen des 
 wizard_community_success: Herzlichen Glückwunsch, du hast deine Community gegründet!
 wizard_community_wrong_permissions: Du hast keine Administratorrechte für diese Gruppe oder diesen Kanal
 wizard_community_you_are_not_admin: ${username} ist kein Administrator in ${channel}.
+wizard_to_exit: /exit to exit the wizard.
 wizard_exit: Du hast den Assistentenmodus verlassen, du kannst jetzt Befehle schreiben
 wizard_add_fiat_amount: |
   Bitte gib den Betrag von ${currency} an, den du für ${action} haben möchtest.

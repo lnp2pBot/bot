@@ -44,7 +44,7 @@ exports.createOrderWizardStatus = (i18n, state) => {
       : ``,
     state.error && `Error: ${state.error}`,
     ` `,
-    `/exit para salir del asistente.`,
+    i18n.t('wizard_to_exit'),
   ]
     .filter(e => e)
     .join('\n');
