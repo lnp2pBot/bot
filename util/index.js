@@ -218,7 +218,7 @@ const extractId = text => {
 const sanitizeMD = text => {
   if (!text) return '';
 
-  return text.replace(/(?=[|(){}[\]\-_#.`=+])/g, '\\');
+  return text.toString().replace(/(?=[|(){}[\]\-_#.`=+])/g, '\\');
 };
 
 const secondsToTime = secs => {
