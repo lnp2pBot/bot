@@ -35,6 +35,16 @@ const plural = (n) => {
     return 's';
 };
 
+const numberFormat = (code, number) => {
+  if (!isIso4217(code)) return false;
+  const locale = currencies[code].locale;
+  let numberLocale = Intl.NumberFormat(locale);
+
+  if (!locale) return number;
+
+  return numberLocale.format(number);
+};
+
 // This function checks if the current buyer and seller were doing circular operations
 // In order to increase their trades_completed and volume_traded.
 // If we found those trades in the last 24 hours we decrease both variables to both users
@@ -113,7 +123,6 @@ const getBtcExchangePrice = (fiatAmount, satsAmount) => {
     logger.error(error);
   }
 };
-
 
 // Convers a string to an array of arguments
 // Source: https://stackoverflow.com/a/39304272
@@ -302,4 +311,5 @@ module.exports = {
   deleteOrderFromChannel,
   getOrderChannel,
   getUserI18nContext,
+  numberFormat
 };

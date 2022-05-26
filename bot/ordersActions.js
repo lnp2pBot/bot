@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongoose').Types;
 const { Order } = require('../models');
 const messages = require('./messages');
-const { getCurrency, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
+const { getCurrency, numberFormat, getBtcExchangePrice, getEmojiRate, decimalRound } = require('../util');
 const logger = require('../logger');
 
 const createOrder = async (i18n, bot, user, {
@@ -53,8 +53,8 @@ const createOrder = async (i18n, bot, user, {
       description: buildDescription(i18n, {
         user,
         type,
-        amount,
-        fiatAmount,
+        amount: numberFormat(fiatCode, amount),
+        fiatAmount: isNaN(fiatAmount) ? fiatAmount : numberFormat(fiatCode, fiatAmount),
         fiatCode,
         paymentMethod,
         priceMargin,
@@ -124,7 +124,7 @@ const buildDescription = (i18n, {
     let fiatAmountString;
     
     if (fiatAmount.length == 2) { 
-      fiatAmountString = `${fiatAmount[0]}-${fiatAmount[1]}`;
+      fiatAmountString = `${numberFormat(fiatCode, fiatAmount[0])}-${numberFormat(fiatCode, fiatAmount[1])}`;
     } else {
       fiatAmountString = `${fiatAmount}`;
     }
@@ -141,7 +141,7 @@ const buildDescription = (i18n, {
       tasaText = i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
-      tasaText = i18n.t('price') + `: ${exchangePrice.toFixed(2)}\n`;
+      tasaText = i18n.t('price') + `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
     }
   
     let rateText = '';
