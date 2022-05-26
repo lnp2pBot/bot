@@ -216,6 +216,8 @@ const extractId = text => {
 
 // Clean strings that are going to be rendered with markdown
 const sanitizeMD = text => {
+  if (!text) return '';
+
   return text.replace(/(?=[|(){}[\]\-_#.`=+])/g, '\\');
 };
 
