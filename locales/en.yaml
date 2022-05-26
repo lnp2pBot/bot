@@ -368,7 +368,7 @@ hours: hours
 minutes: minutes
 community_updated: Community successfully updated
 operation_successful: Operation successful!
-select_community: Select the community you want to modify
+select_community: Select the community
 what_modify: What do you want to modify?
 channels: Channels
 dispute_solvers: Solvers
@@ -396,3 +396,7 @@ not_zero: Cannot be 0 (zero)
 not_negative: Cannot be a negative number
 wizard_community_wrong_percent: The percentage must be between 0 and 100
 fee: Fee
+use_default: Use by default
+orders: Orders
+volume: Volume
+users: Users

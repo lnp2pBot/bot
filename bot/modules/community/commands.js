@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 // @ts-check
 const logger = require('../../../logger');
+const messages = require('../../messages');
 const { Community, Order } = require('../../../models');
-const { getCurrency } = require('../../../util');
 const { validateUser, validateParams } = require('../../validations');
 
 async function getOrderCountByCommunity() {
@@ -31,14 +31,12 @@ exports.findCommunity = async ctx => {
 
     const [fiatCode] = await validateParams(ctx, 2, '\\<_fiat code_\\>');
     if (!fiatCode) return;
-    const currency = getCurrency(fiatCode.toUpperCase());
 
-    if (!currency) {
-      await ctx.reply('InvalidCurrencyCode');
-      return;
+    const communities = await findCommunities(fiatCode.toUpperCase());
+    if (!communities.length) {
+      return await messages.communityNotFoundMessage(ctx);
     }
 
-    const communities = await findCommunities(currency.code);
     communities.sort((a, b) => a.orders - b.orders);
 
     const inlineKeyboard = [];
@@ -50,8 +48,8 @@ exports.findCommunity = async ctx => {
       }));
       inlineKeyboard.push(lineBtn);
     }
-    const text = 'Selecciona la comunidad';
-    await ctx.reply(text, {
+
+    await ctx.reply(ctx.i18n.t('select_community'), {
       reply_markup: { inline_keyboard: inlineKeyboard },
     });
   } catch (error) {

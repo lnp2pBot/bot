@@ -53,24 +53,24 @@ const onCommunityInfo = async ctx => {
 
   const rows = [];
   rows.push([
-    { text: 'Orders 24hs', callback_data: 'none' },
+    { text: ctx.i18n.t('orders') + ' 24hs', callback_data: 'none' },
     { text: orderCount, callback_data: 'none' },
   ]);
   rows.push([
-    { text: 'Volume 24hs', callback_data: 'none' },
+    { text: ctx.i18n.t('volume') + ' 24hs', callback_data: 'none' },
     { text: `${volume} sats`, callback_data: 'none' },
   ]);
   rows.push([
-    { text: 'Users', callback_data: 'none' },
+    { text: ctx.i18n.t('users'), callback_data: 'none' },
     { text: userCount, callback_data: 'none' },
   ]);
   rows.push([
     {
-      text: 'Utilizar por defecto',
+      text: ctx.i18n.t('use_default'),
       callback_data: `setCommunity_${commId}`,
     },
   ]);
-  const text = `${community.name}\n@${community.group}`;
+  const text = `${community.name}\n${community.group}`;
   await ctx.reply(text, {
     reply_markup: { inline_keyboard: rows },
   });
