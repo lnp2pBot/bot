@@ -43,8 +43,11 @@ exports.createOrderWizardStatus = (i18n, state) => {
       ? `${i18n.t('rate')}: ${process.env.FIAT_RATE_NAME} ${priceMargin}%`
       : ``,
     state.error && `Error: ${state.error}`,
+    ` `,
+    `/exit para salir del asistente.`,
   ]
     .filter(e => e)
     .join('\n');
+
   return { text };
 };
