@@ -50,7 +50,6 @@ const {
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
-  communityWizard,
   updateNameCommunityWizard,
   updateCurrenciesCommunityWizard,
   updateGroupCommunityWizard,
@@ -89,7 +88,7 @@ const initialize = (botToken, options) => {
   const stage = new Scenes.Stage([
     addInvoiceWizard,
     addFiatAmountWizard,
-    communityWizard,
+    CommunityModule.Scenes.communityWizard,
     updateNameCommunityWizard,
     updateCurrenciesCommunityWizard,
     updateGroupCommunityWizard,
@@ -783,69 +782,6 @@ const initialize = (botToken, options) => {
       user.show_volume_traded = show;
       await user.save();
       messages.updateUserSettingsMessage(ctx, 'showvolume', show);
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.command('community', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.command('mycomms', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-
-      const communities = await Community.find({ creator_id: user._id });
-
-      await messages.showUserCommunitiesMessage(ctx, communities);
-    } catch (error) {
-      logger.error(error);
-    }
-  });
-
-  bot.command('setcomm', async ctx => {
-    try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      const [groupName] = await validateParams(
-        ctx,
-        2,
-        '\\<_@communityGroupName / off_\\>'
-      );
-      if (!groupName) {
-        return;
-      }
-
-      if (groupName === 'off') {
-        user.default_community_id = null;
-        await user.save();
-        await messages.noDefaultCommunityMessage(ctx);
-        return;
-      }
-      // Allow find communities case insensitive
-      const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
-      const community = await Community.findOne({ group: regex });
-      if (!community) {
-        await messages.communityNotFoundMessage(ctx);
-        return;
-      }
-
-      user.default_community_id = community._id;
-      await user.save();
-
-      await messages.operationSuccessfulMessage(ctx);
     } catch (error) {
       logger.error(error);
     }
