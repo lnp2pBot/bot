@@ -311,6 +311,10 @@ const createCommunitySteps = {
         return await ctx.wizard.state.updateUI();
       }
       if (text < 0 || text > 100) {
+        await ctx.telegram.deleteMessage(
+          ctx.message.chat.id,
+          ctx.message.message_id
+        );
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_wrong_percent');
         return await ctx.wizard.state.updateUI();
       }
