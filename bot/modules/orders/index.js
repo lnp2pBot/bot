@@ -15,6 +15,7 @@ exports.configure = bot => {
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
+      if (ctx.message.chat.type !== 'private') return next();
       if (await commands.isMaxPending(ctx.user)) {
         await tooManyPendingOrdersMessage(ctx, ctx.user, ctx.i18n);
         return;
@@ -29,6 +30,7 @@ exports.configure = bot => {
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
+      if (ctx.message.chat.type !== 'private') return next();
       if (await commands.isMaxPending(ctx.user)) {
         await tooManyPendingOrdersMessage(ctx, ctx.user, ctx.i18n);
         return;
