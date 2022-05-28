@@ -401,3 +401,4 @@ orders: Orders
 volume: Volume
 users: Users
 not_found_dispute: There is no dispute for this order
+max_allowed: The maximum allowed is ${max}

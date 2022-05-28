@@ -60,10 +60,8 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       if (undefined === currency) return createOrderSteps.currency(ctx);
       if (undefined === fiatAmount) return createOrderSteps.fiatAmount(ctx);
       if (undefined === sats) return createOrderSteps.sats(ctx);
-      if (undefined === priceMargin) {
-        if (fiatAmount === 0 || sats === 0)
-          return createOrderSteps.priceMargin(ctx);
-      }
+      if (undefined === priceMargin && sats === 0)
+        return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
@@ -120,8 +118,7 @@ const createOrderSteps = {
         const currency = getCurrency(ctx.message.text.toUpperCase());
         if (!currency) {
           ctx.wizard.state.error = ctx.i18n.t('invalid_currency');
-          await ctx.wizard.state.updateUI();
-          return;
+          return await ctx.wizard.state.updateUI();
         }
         ctx.wizard.state.currency = currency.code;
         await ctx.wizard.state.updateUI();

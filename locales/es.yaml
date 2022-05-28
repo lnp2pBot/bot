@@ -402,3 +402,4 @@ orders: Órdenes
 volume: Volúmen
 users: Usuarios
 not_found_dispute: No hay ninguna disputa para esta orden
+max_allowed: El máximo permitido es ${max}

@@ -403,3 +403,4 @@ orders: Aufträge
 volume: Volumen
 users: Benutzer
 not_found_dispute: Für diesen Auftrag gib es keinen Streitfall
+max_allowed: The maximum allowed is ${max}
