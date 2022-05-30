@@ -35,14 +35,17 @@ const plural = (n) => {
     return 's';
 };
 
+
+// This function formats a number to locale strings.
+// If Iso code or locale code doesn´t exist, the function will return a number without format.
 const numberFormat = (code, number) => {
   if (!isIso4217(code)) return false;
   const locale = currencies[code].locale;
-  let numberLocale = Intl.NumberFormat(locale);
+  const numberToLocaleString = Intl.NumberFormat(locale);
 
   if (!locale) return number;
 
-  return numberLocale.format(number);
+  return numberToLocaleString.format(number);
 };
 
 // This function checks if the current buyer and seller were doing circular operations

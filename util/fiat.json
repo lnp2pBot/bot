@@ -61,7 +61,8 @@
 		"code": "AUD",
     "emoji": "🇦🇺",
 		"name_plural": "Australian dollars",
-		"price": true
+		"price": true,
+		"locale": "en-AU"
 	},
 	"AZN": {
 		"symbol": "man.",
@@ -143,7 +144,8 @@
 		"code": "BOB",
 		"emoji": "🇧🇴",
 		"name_plural": "Bolivianos",
-		"price": true
+		"price": true,
+		"locale": "es-BO"
 	},
 	"BRL": {
 		"symbol": "R$",
@@ -154,7 +156,8 @@
 		"code": "BRL",
 		"emoji": "🇧🇷",
 		"name_plural": "Brazilian reals",
-		"price": true
+		"price": true,
+		"locale": "pt-BR"
 	},
 	"BWP": {
 		"symbol": "BWP",
@@ -196,7 +199,8 @@
 		"code": "CAD",
 		"emoji": "🇨🇦",
 		"name_plural": "Canadian dollars",
-		"price": true
+		"price": true,
+		"locale": "en-CA"
 	},
 	"CDF": {
 		"symbol": "CDF",
@@ -228,7 +232,8 @@
 		"code": "CLP",
 		"emoji": "🇨🇱",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-CL"
 	},
 	"CNY": {
 		"symbol": "CN¥",
@@ -250,7 +255,8 @@
 		"code": "COP",
 		"emoji": "🇨🇴",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-CO"
 	},
 	"CRC": {
 		"symbol": "₡",
@@ -261,7 +267,8 @@
 		"code": "CRC",
 		"emoji": "🇨🇷",
 		"name_plural": "Colones",
-		"price": true
+		"price": true,
+		"locale": "es-CR"
 	},
 	"CUP": {
 		"symbol": "CU$",
@@ -272,7 +279,8 @@
 		"code": "CUP",
 		"emoji": "🇨🇺",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-AR"
 	},
 	"CVE": {
 		"symbol": "CV$",
@@ -325,7 +333,8 @@
 		"code": "DOP",
     "emoji": "🇩🇴",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-DO"
 	},
 	"DZD": {
 		"symbol": "DA",
@@ -386,7 +395,8 @@
 		"code": "EUR",
 		"emoji": "🇪🇺",
 		"name_plural": "euros",
-		"price": true
+		"price": true,
+		"locale": "de-DE"
 	},
 	"GBP": {
 		"symbol": "£",
@@ -741,7 +751,8 @@
 		"code": "MLC",
 		"emoji": "🇨🇺",
 		"name_plural": "MLC",
-		"price": true
+		"price": true,
+		"locale": "es-AR"
 	},
 	"MMK": {
 		"symbol": "MMK",
@@ -782,7 +793,8 @@
 		"code": "MXN",
 		"emoji": "🇲🇽",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-MX"
 	},
 	"MYR": {
 		"symbol": "RM",
@@ -899,7 +911,8 @@
 		"code": "PEN",
 		"emoji": "🇵🇪",
 		"name_plural": "Nuevos soles peruanos",
-		"price": true
+		"price": true,
+		"locale": "es-PE"
 	},
 	"PHP": {
 		"symbol": "₱",
@@ -1163,7 +1176,8 @@
 		"code": "USD",
 		"emoji": "🇺🇸",
 		"name_plural": "US dollars",
-		"price": true
+		"price": true,
+		"locale": "en-US"
 	},
 	"USDSV": {
 		"symbol": "$",
@@ -1174,7 +1188,8 @@
 		"code": "USDSV",
 		"emoji": "🇺🇸🇸🇻",
 		"name_plural": "USD en El Salvador",
-		"price": true
+		"price": true,
+		"locale": "es-SV"
 	},
 	"USDVE": {
 		"symbol": "$",
@@ -1185,7 +1200,8 @@
 		"code": "USDVE",
 		"emoji": "🇺🇸🇻🇪",
 		"name_plural": "USD en Bs",
-		"price": true
+		"price": true,
+		"locale": "es-VE"
 	},
 	"USDUY": {
 		"symbol": "$",
@@ -1196,7 +1212,8 @@
 		"code": "USDUY",
 		"emoji": "🇺🇸🇺🇾",
 		"name_plural": "USD en Uruguay",
-		"price": true
+		"price": true,
+		"locale": "es-UY"
 	},
 	"UYU": {
 		"symbol": "$U",
@@ -1207,7 +1224,8 @@
 		"code": "UYU",
 		"emoji": "🇺🇾",
 		"name_plural": "Pesos",
-		"price": true
+		"price": true,
+		"locale": "es-UY"
 	},
 	"UZS": {
 		"symbol": "UZS",
@@ -1228,7 +1246,8 @@
 		"code": "VES",
 		"emoji": "🇻🇪",
 		"name_plural": "Bolívares",
-		"price": true
+		"price": true,
+		"locale": "es-VE"
 	},
 	"VND": {
 		"symbol": "₫",

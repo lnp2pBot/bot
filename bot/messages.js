@@ -1,6 +1,7 @@
 const { TelegramError } = require('telegraf');
 const {
   getCurrency,
+  numberFormat,
   sanitizeMD,
   secondsToTime,
   getOrderChannel,
@@ -257,8 +258,8 @@ const showHoldInvoiceMessage = async (ctx, request, amount, fiatCode, fiatAmount
     let currency = getCurrency(fiatCode);
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : fiatCode;
     await ctx.reply(ctx.i18n.t('pay_invoice', {
-      amount,
-      fiatAmount,
+      amount: numberFormat(fiatCode, amount),
+      fiatAmount: numberFormat(fiatCode, fiatAmount),
       currency,
     }));
     await ctx.reply("`" + request + "`", { parse_mode: "MarkdownV2" });
@@ -319,13 +320,13 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18nBuy
       i18nBuyer.t('get_in_touch_with_seller', {
         currency,
         sellerUsername: sellerUser.username,
-        fiatAmount: order.fiat_amount,
+        fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
       }),
     );
     await bot.telegram.sendMessage(buyerUser.tg_id, i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(sellerUser.tg_id, i18nSeller.t('buyer_took_your_order', {
-      fiatAmount: order.fiat_amount,
+      fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
       paymentMethod: order.payment_method,
       currency,
       buyerUsername: buyerUser.username,
@@ -647,7 +648,7 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
       ctx.i18n.t('get_in_touch_with_seller', {
         currency,
         sellerUsername: seller.username,
-        fiatAmount: order.fiat_amount,
+        fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
       }),
     );
@@ -666,7 +667,7 @@ const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
       i18n.t('get_in_touch_with_buyer', {
         currency,
         buyerUsername: buyer.username,
-        fiatAmount: order.fiat_amount,
+        fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
       }),
     );
@@ -986,9 +987,9 @@ const wizardAddInvoiceInitMessage = async (ctx, order, currency, expirationTime)
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_invoice_init', {
       expirationTime,
-      satsAmount: order.amount,
+      satsAmount: numberFormat(order.fiat_code, order.amount),
       currency,
-      fiatAmount: order.fiat_amount,
+      fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
     }));
   } catch (error) {
     logger.error(error);
@@ -998,7 +999,7 @@ const wizardAddInvoiceInitMessage = async (ctx, order, currency, expirationTime)
 const wizardAddInvoiceExitMessage = async (ctx, order) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_invoice_exit', {
-      amount: order.amount,
+      amount: numberFormat(order.fiat_code, order.amount),
       orderId: order._id,
     }),
     { parse_mode: "MarkdownV2" },
@@ -1136,9 +1137,9 @@ const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
     await ctx.reply(ctx.i18n.t('wizard_add_fiat_amount', {
       action,
       currency,
-      fiatAmount: order.fiat_amount,
-      minAmount: order.min_amount,
-      maxAmount: order.max_amount,
+      fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
+      minAmount: numberFormat(order.fiat_code, order.min_amount),
+      maxAmount: numberFormat(order.fiat_code, order.max_amount),
     }));
   } catch (error) {
     logger.error(error);
@@ -1148,8 +1149,8 @@ const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
 const wizardAddFiatAmountWrongAmountMessage = async (ctx, order) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_fiat_wrong_amount', {
-      minAmount: order.min_amount,
-      maxAmount: order.max_amount,
+      minAmount: numberFormat(order.fiat_code, order.min_amount),
+      maxAmount: numberFormat(order.fiat_code, order.max_amount),
     }));
   } catch (error) {
     logger.error(error);
@@ -1160,7 +1161,7 @@ const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_fiat_correct_amount', {
       currency: currency.symbol_native,
-      fiatAmount,
+      fiatAmount: numberFormat(order.fiat_code, fiatAmount),
     }));
   } catch (error) {
     logger.error(error);
@@ -1268,7 +1269,7 @@ const toAdminChannelPendingPaymentSuccessMessage = async (bot, user, order, pend
       orderId: order._id,
       username: user.username,
       attempts: pending.attempts,
-      amount: order.amount,
+      amount: numberFormat(order.fiat_code, order.amount),
       paymentSecret: payment.secret,
     }));
   } catch (error) {
@@ -1280,7 +1281,7 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_success', {
       orderId: order._id,
-      amount: order.amount,
+      amount: numberFormat(order.fiat_code, order.amount),
       paymentSecret: payment.secret,
     }));
   } catch (error) {
