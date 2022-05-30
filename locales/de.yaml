@@ -397,6 +397,10 @@ not_number: Es muss eine Zahl sein
 not_zero: Darf nicht 0 (Null) sein
 not_negative: Darf keine negative Nummer sein
 wizard_community_wrong_percent: Der Prozentsatz muss zwischen 0 und 100 liegen
+wizard_community_enter_fee_percent: |
+  Enter the fee:
+
+  The fee in a community is variable and is indicated as a percentage from 0 to 100, if you do not want to charge fee, indicate 0, if you want to charge half of the maximum value, indicate 50, if you want it to have the maximum value, indicate 100.
 fee: Gebühr
 use_default: Standardmäßig verwenden
 orders: Aufträge

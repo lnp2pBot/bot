@@ -395,7 +395,10 @@ not_number: Debe ser un número
 not_zero: No puede ser 0 (cero)
 not_negative: No puede ser un número negativo
 wizard_community_wrong_percent: El porcentaje debe estar entre 0 y 100
-wizard_community_enter_fee_percent: Ingresa el porcentaje de la comisión
+wizard_community_enter_fee_percent: |
+  Ingresa la comisión:
+
+  La comisión en una comunidad es variable y se indica como un porcentaje de 0 a 100, si no quieres cobrar comisión indica 0, si quieres cobrar la mitad de máximo a cobrar indica 50, si quieres que tenga el valor máximo indica 100.
 fee: Tarifa
 use_default: Utilizar por defecto
 orders: Órdenes
@@ -404,3 +407,4 @@ users: Usuarios
 not_found_dispute: No hay ninguna disputa para esta orden
 max_allowed: El máximo permitido es ${max}
 dispute_channel: Canal de disputas
+not_wizard: No estás en el modo wizard en este momento, si tienes dudas puedes escribir /help

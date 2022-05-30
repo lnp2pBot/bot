@@ -395,6 +395,10 @@ not_number: It must be a number
 not_zero: Cannot be 0 (zero)
 not_negative: Cannot be a negative number
 wizard_community_wrong_percent: The percentage must be between 0 and 100
+wizard_community_enter_fee_percent: |
+  Enter the fee:
+
+  The fee in a community is variable and is indicated as a percentage from 0 to 100, if you do not want to charge fee, indicate 0, if you want to charge half of the maximum value, indicate 50, if you want it to have the maximum value, indicate 100.
 fee: Fee
 use_default: Use by default
 orders: Orders

@@ -786,11 +786,24 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('exit', async ctx => {
+    try {
+      if (ctx.message.chat.type !== 'private') return;
+
+      const user = await validateUser(ctx, false);
+
+      if (!user) return;
+
+      await ctx.reply(ctx.i18n.t('not_wizard'));
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+
   bot.on('text', async ctx => {
     try {
-      if (ctx.message.chat.type !== 'private') {
-        return;
-      }
+      if (ctx.message.chat.type !== 'private') return;
+
       const user = await validateUser(ctx, false);
 
       if (!user) return;
