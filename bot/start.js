@@ -50,13 +50,7 @@ const {
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
-  updateNameCommunityWizard,
-  updateCurrenciesCommunityWizard,
-  updateGroupCommunityWizard,
-  updateChannelsCommunityWizard,
-  updateSolversCommunityWizard,
   addInvoicePHIWizard,
-  updateFeeCommunityWizard,
 } = require('./scenes');
 const logger = require('../logger');
 
@@ -89,13 +83,14 @@ const initialize = (botToken, options) => {
     addInvoiceWizard,
     addFiatAmountWizard,
     CommunityModule.Scenes.communityWizard,
-    updateNameCommunityWizard,
-    updateCurrenciesCommunityWizard,
-    updateGroupCommunityWizard,
-    updateChannelsCommunityWizard,
-    updateSolversCommunityWizard,
+    CommunityModule.Scenes.updateNameCommunityWizard,
+    CommunityModule.Scenes.updateGroupCommunityWizard,
+    CommunityModule.Scenes.updateCurrenciesCommunityWizard,
+    CommunityModule.Scenes.updateChannelsCommunityWizard,
+    CommunityModule.Scenes.updateSolversCommunityWizard,
+    CommunityModule.Scenes.updateFeeCommunityWizard,
+    CommunityModule.Scenes.updateDisputeChannelCommunityWizard,
     addInvoicePHIWizard,
-    updateFeeCommunityWizard,
     OrdersModule.Scenes.createOrder,
   ]);
   bot.use(session());
@@ -691,6 +686,10 @@ const initialize = (botToken, options) => {
 
   bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async ctx => {
     await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
+  });
+
+  bot.action(/^editDisputeChannelBtn_([0-9a-f]{24})$/, async ctx => {
+    await updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
   });
 
   bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {

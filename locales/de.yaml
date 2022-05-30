@@ -287,7 +287,7 @@ wizard_community_enter_order_channels: |
 wizard_community_one_or_two_channels: Du musst entweder einen oder zwei Kanäle angeben
 wizard_community_enter_solvers: Schreibe jetzt bitte die Namen der Nutzer/innen auf, die Streitigkeiten schlichten sollen, jeweils getrennt durch ein Leerzeichen.
 wizard_community_must_enter_names: Du musst mindestens einen Namen hinzufügen, oder zwei durch ein Leerzeichen getrennte Namen
-wizard_community_enter_solvers_channel: Gib nun bitte die ID oder den Namen des Kanals an, den der Bot verwenden soll, um zu alarmieren, wenn ein Streitfall gemeldet wird.
+wizard_community_enter_solvers_channel: Gib die ID oder den Namen des Kanals an, den der Bot verwenden soll, um zu alarmieren, wenn ein Streitfall gemeldet wird.
 wizard_community_success: Herzlichen Glückwunsch, du hast deine Community gegründet!
 wizard_community_wrong_permissions: Du hast keine Administratorrechte für diese Gruppe oder diesen Kanal
 wizard_community_you_are_not_admin: ${username} ist kein Administrator in ${channel}.
@@ -404,3 +404,4 @@ volume: Volumen
 users: Benutzer
 not_found_dispute: Für diesen Auftrag gib es keinen Streitfall
 max_allowed: The maximum allowed is ${max}
+dispute_channel: Dispute channel

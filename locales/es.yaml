@@ -287,7 +287,7 @@ wizard_community_enter_order_channels: |
 wizard_community_one_or_two_channels: Debes ingresar uno o dos canales
 wizard_community_enter_solvers: Ahora ingresa los username de los usuarios que se encargan de resolver disputas, cada username separado por un espacio en blanco.
 wizard_community_must_enter_names: Debes ingresar uno o dos nombres separados por un espacio
-wizard_community_enter_solvers_channel: Para finalizar indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal
+wizard_community_enter_solvers_channel: Indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal
 wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_community_you_are_not_admin: ${username} no es administrador en ${channel}.
@@ -403,3 +403,4 @@ volume: Volúmen
 users: Usuarios
 not_found_dispute: No hay ninguna disputa para esta orden
 max_allowed: El máximo permitido es ${max}
+dispute_channel: Canal de disputas

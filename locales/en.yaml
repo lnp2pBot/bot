@@ -287,7 +287,7 @@ wizard_community_enter_order_channels: |
 wizard_community_one_or_two_channels: You must indicate either one or two channels
 wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
 wizard_community_must_enter_names: You must add at least one name, or two separated by a space
-wizard_community_enter_solvers_channel: Now please indicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
+wizard_community_enter_solvers_channel: Idicate the id or name of the chanell that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
 wizard_community_success: Congratulations, you have created your community!
 wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
 wizard_community_you_are_not_admin: ${username} is not an admin on ${channel}.
@@ -402,3 +402,4 @@ volume: Volume
 users: Users
 not_found_dispute: There is no dispute for this order
 max_allowed: The maximum allowed is ${max}
+dispute_channel: Dispute channel

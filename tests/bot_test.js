@@ -47,7 +47,6 @@ describe('Telegram bot test', () => {
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);
     // const updates = await client.getUpdates();
-    // console.log(updates);
     // We restore the stubs
     userStub.restore();
     orderStub.restore();

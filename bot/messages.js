@@ -1619,6 +1619,12 @@ const updateCommunityMessage = async (ctx, id) => {
               callback_data: `editSolversBtn_${id}`,
             },
           ],
+          [
+            {
+              text: ctx.i18n.t('dispute_channel'),
+              callback_data: `editDisputeChannelBtn_${id}`,
+            },
+          ],
         ],
       },
     });

@@ -377,6 +377,13 @@ const getFee = async (amount, communityId) => {
   return botFee + communityFee;
 };
 
+const itemsFromMessage = str => {
+  return str
+    .split(' ')
+    .map(e => e.trim())
+    .filter(e => !!e);
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -399,4 +406,5 @@ module.exports = {
   getDetailedOrder,
   isDisputeSolver,
   getFee,
+  itemsFromMessage,
 };

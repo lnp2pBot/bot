@@ -8,7 +8,6 @@ exports.createCommunityWizardStatus = (i18n, state) => {
     state.channels && state.channels.map(channel => channel.name).join(', ');
   channels = channels || '__';
   fee = state.fee || '__';
-  console.log(state.solvers);
   solvers =
     state.solvers && state.solvers.map(solver => solver.username).join(', ');
   solvers = solvers || '__';

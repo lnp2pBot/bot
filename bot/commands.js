@@ -575,6 +575,12 @@ const updateCommunity = async (ctx, id, field, bot) => {
       });
     } else if (field === 'solvers') {
       ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+    } else if (field === 'disputeChannel') {
+      ctx.scene.enter('UPDATE_DISPUTE_CHANNEL_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
     }
   } catch (error) {
     logger.error(error);
