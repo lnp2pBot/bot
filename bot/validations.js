@@ -23,7 +23,7 @@ const validateUser = async (ctx, start) => {
     } else if (!user) {
       return false;
     } else if (user.banned) {
-      await messages.bannedUserErrorMessage(ctx);
+      await messages.bannedUserErrorMessage(ctx, user);
 
       return false;
     }

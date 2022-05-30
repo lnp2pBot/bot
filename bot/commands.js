@@ -4,6 +4,7 @@ const {
   validateTakeBuyOrder,
   validateTakeSellOrder,
   validateUserWaitingOrder,
+  isBannedFromCommunity,
 } = require('./validations');
 const { createHoldInvoice, subscribeInvoice } = require('../ln');
 const { Order, User } = require('../models');
@@ -25,12 +26,12 @@ const takebuy = async (ctx, bot) => {
 
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
+
     const user = await User.findOne({ tg_id: tgUser.id });
 
     // If user didn't initialize the bot we can't do anything
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
 
     // We check if the user has the same username that we have
     if (tgUser.username !== user.username) {
@@ -48,6 +49,11 @@ const takebuy = async (ctx, bot) => {
     if (!orderId) return;
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+    // We verify if the user is not banned on this community
+    if (await isBannedFromCommunity(user, order.community_id))
+      return await messages.bannedUserErrorMessage(ctx, user);
+
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
     // We change the status to trigger the expiration of this order
     // if the user don't do anything
@@ -71,9 +77,9 @@ const takesell = async (ctx, bot) => {
     if (!tgUser) return;
     const user = await User.findOne({ tg_id: tgUser.id });
     // If user didn't initialize the bot we can't do anything
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+
     // We check if the user has the same username that we have
     if (tgUser.username !== user.username) {
       user.username = tgUser.username;
@@ -84,6 +90,10 @@ const takesell = async (ctx, bot) => {
     const orderId = extractId(text);
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+    // We verify if the user is not banned on this community
+    if (await isBannedFromCommunity(user, order.community_id))
+      return await messages.bannedUserErrorMessage(ctx, user);
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;

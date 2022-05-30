@@ -674,9 +674,12 @@ const mustBeGreatherEqThan = async (ctx, fieldName, qty) => {
   }
 };
 
-const bannedUserErrorMessage = async ctx => {
+const bannedUserErrorMessage = async (ctx, user) => {
   try {
-    await ctx.reply(ctx.i18n.t('you_have_been_banned'));
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('you_have_been_banned')
+    );
   } catch (error) {
     logger.error(error);
   }

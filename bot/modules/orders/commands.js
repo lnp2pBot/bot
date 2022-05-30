@@ -53,10 +53,9 @@ const sell = async ctx => {
       community = await Community.findOne({ _id: communityId });
     }
     // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, communityId)) {
-      await messages.bannedUserErrorMessage(ctx);
-      return;
-    }
+    if (await isBannedFromCommunity(user, communityId))
+      return await messages.bannedUserErrorMessage(ctx, user);
+
     // If the user is in a community, we need to check if the currency is supported
     if (!!community && !community.currencies.includes(fiatCode)) {
       await messages.currencyNotSupportedMessage(ctx, community.currencies);
@@ -112,10 +111,9 @@ const buy = async ctx => {
       community = await Community.findOne({ _id: communityId });
     }
     // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, communityId)) {
-      await messages.bannedUserErrorMessage(ctx);
-      return;
-    }
+    if (await isBannedFromCommunity(user, communityId))
+      return await messages.bannedUserErrorMessage(ctx, user);
+
     // If the user is in a community, we need to check if the currency is supported
     if (!!community && !community.currencies.includes(fiatCode)) {
       await messages.currencyNotSupportedMessage(ctx, community.currencies);
