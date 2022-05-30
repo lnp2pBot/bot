@@ -1,24 +1,22 @@
-const { I18n } = require('@grammyjs/i18n');
 const {
-    validateSeller,
-    validateObjectId,
-    validateTakeBuyOrder,
-    validateTakeSellOrder,
-    validateUserWaitingOrder,
-  } = require('./validations');
-  const {
-    createHoldInvoice,
-    subscribeInvoice,
-  } = require('../ln');
-const { Order, User, Community } = require('../models');
+  validateSeller,
+  validateObjectId,
+  validateTakeBuyOrder,
+  validateTakeSellOrder,
+  validateUserWaitingOrder,
+  isBannedFromCommunity,
+} = require('./validations');
+const { createHoldInvoice, subscribeInvoice } = require('../ln');
+const { Order, User } = require('../models');
 const messages = require('./messages');
 const {
   getBtcFiatPrice,
   extractId,
   deleteOrderFromChannel,
   getUserI18nContext,
+  getFee,
 } = require('../util');
-const { resolvLightningAddress } = require("../lnurl/lnurl-pay");
+const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
 const takebuy = async (ctx, bot) => {
@@ -28,15 +26,15 @@ const takebuy = async (ctx, bot) => {
 
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
+
     const user = await User.findOne({ tg_id: tgUser.id });
 
     // If user didn't initialize the bot we can't do anything
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
 
     // We check if the user has the same username that we have
-    if (tgUser.username != user.username) {
+    if (tgUser.username !== user.username) {
       user.username = tgUser.username;
       await user.save();
     }
@@ -51,6 +49,11 @@ const takebuy = async (ctx, bot) => {
     if (!orderId) return;
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+    // We verify if the user is not banned on this community
+    if (await isBannedFromCommunity(user, order.community_id))
+      return await messages.bannedUserErrorMessage(ctx, user);
+
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
     // We change the status to trigger the expiration of this order
     // if the user don't do anything
@@ -72,13 +75,13 @@ const takesell = async (ctx, bot) => {
     if (!text) return;
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
-    let user = await User.findOne({ tg_id: tgUser.id });
+    const user = await User.findOne({ tg_id: tgUser.id });
     // If user didn't initialize the bot we can't do anything
-    if (!user) {
-      return;
-    }
+    if (!user) return;
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+
     // We check if the user has the same username that we have
-    if (tgUser.username != user.username) {
+    if (tgUser.username !== user.username) {
       user.username = tgUser.username;
       await user.save();
     }
@@ -87,6 +90,10 @@ const takesell = async (ctx, bot) => {
     const orderId = extractId(text);
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+    // We verify if the user is not banned on this community
+    if (await isBannedFromCommunity(user, order.community_id))
+      return await messages.bannedUserErrorMessage(ctx, user);
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
@@ -107,12 +114,18 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
     // We need the i18n context to send the message with the correct language
     const i18nCtx = await getUserI18nContext(seller);
     // If the buyer is the creator, at this moment the seller already paid the hold invoice
-    if (order.creator_id == order.buyer_id) {
+    if (order.creator_id === order.buyer_id) {
       order.status = 'ACTIVE';
       // Message to buyer
       await messages.addInvoiceMessage(ctx, bot, buyer, seller, order);
       // Message to seller
-      await messages.sendBuyerInfo2SellerMessage(bot, buyer, seller, order, i18nCtx);
+      await messages.sendBuyerInfo2SellerMessage(
+        bot,
+        buyer,
+        seller,
+        order,
+        i18nCtx
+      );
     } else {
       // We create a hold invoice
       const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
@@ -129,14 +142,20 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await subscribeInvoice(bot, hash);
 
       // We send the hold invoice to the seller
-      await messages.invoicePaymentRequestMessage(bot, seller, request, order, i18nCtx);
+      await messages.invoicePaymentRequestMessage(
+        bot,
+        seller,
+        request,
+        order,
+        i18nCtx
+      );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();
   } catch (error) {
     logger.error(error);
   }
-}
+};
 
 const addInvoice = async (ctx, bot, order) => {
   try {
@@ -150,29 +169,33 @@ const addInvoice = async (ctx, bot, order) => {
     }
 
     // Buyers only can take orders with status WAITING_BUYER_INVOICE
-    if (order.status != 'WAITING_BUYER_INVOICE') {
+    if (order.status !== 'WAITING_BUYER_INVOICE') {
       return;
     }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
 
-    if(order.fiat_amount === undefined) {
-      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: buyer });
+    if (order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', {
+        bot,
+        order,
+        caller: buyer,
+      });
       return;
     }
 
     let amount = order.amount;
-    if (amount == 0) {
-        amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-        const marginPercent = order.price_margin / 100;
-        amount = amount - (amount * marginPercent);
-        amount = Math.floor(amount);
-        order.fee = Math.round(amount * parseFloat(process.env.FEE));
-        order.amount = amount;
+    if (amount === 0) {
+      amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
+      const marginPercent = order.price_margin / 100;
+      amount = amount - amount * marginPercent;
+      amount = Math.floor(amount);
+      order.fee = await getFee(amount, order.community_id);
+      order.amount = amount;
     }
 
     // If the price API fails we can't continue with the process
-    if (order.amount == 0) {
+    if (order.amount === 0) {
       await messages.priceApiFailedMessage(ctx, bot, buyer);
       return;
     }
@@ -180,16 +203,36 @@ const addInvoice = async (ctx, bot, order) => {
     const seller = await User.findOne({ _id: order.seller_id });
 
     if (buyer.lightning_address) {
-      let laRes = await resolvLightningAddress(buyer.lightning_address, order.amount * 1000);
+      const laRes = await resolvLightningAddress(
+        buyer.lightning_address,
+        order.amount * 1000
+      );
       if (!!laRes && !laRes.pr) {
-        logger.warn(`lightning address ${buyer.lightning_address} not available`);
-        messages.unavailableLightningAddress(ctx, bot, buyer, buyer.lightning_address);
-        ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+        logger.warn(
+          `lightning address ${buyer.lightning_address} not available`
+        );
+        messages.unavailableLightningAddress(
+          ctx,
+          bot,
+          buyer,
+          buyer.lightning_address
+        );
+        ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
+          order,
+          seller,
+          buyer,
+          bot,
+        });
       } else {
         await waitPayment(ctx, bot, buyer, seller, order, laRes.pr);
       }
     } else {
-      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', { order, seller, buyer, bot });
+      ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
+        order,
+        seller,
+        buyer,
+        bot,
+      });
     }
   } catch (error) {
     logger.error(error);
@@ -210,12 +253,12 @@ const rateUser = async (ctx, bot, rating, orderId) => {
     const seller = await User.findOne({ _id: order.seller_id });
 
     let targetUser = buyer;
-    if (callerId == buyer.tg_id) {
+    if (callerId === buyer.tg_id) {
       targetUser = seller;
     }
 
     // User can only rate other after a successful exchange
-    if (!(order.status == 'SUCCESS' || order.status == 'PAID_HOLD_INVOICE')) {
+    if (!(order.status === 'SUCCESS' || order.status === 'PAID_HOLD_INVOICE')) {
       await messages.invalidDataMessage(ctx, bot, targetUser);
       return;
     }
@@ -237,10 +280,10 @@ const saveUserReview = async (targetUser, review) => {
     // Its formula is based on the iterative method to compute mean,
     // as in:
     // https://math.stackexchange.com/questions/2148877/iterative-calculation-of-mean-and-standard-deviation
-    const newRating = oldRating + ((lastRating - oldRating) / totalReviews);
+    const newRating = oldRating + (lastRating - oldRating) / totalReviews;
     targetUser.total_rating = newRating || 0;
 
-    await targetUser.save()
+    await targetUser.save();
   } catch (error) {
     logger.error(error);
   }
@@ -248,7 +291,7 @@ const saveUserReview = async (targetUser, review) => {
 
 const cancelAddInvoice = async (ctx, bot, order) => {
   try {
-    if (!!ctx) {
+    if (ctx) {
       ctx.deleteMessage();
       ctx.scene.leave();
     }
@@ -267,25 +310,40 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
     const i18nCtx = await getUserI18nContext(user);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
-    if (order.status != 'WAITING_BUYER_INVOICE') {
+    if (order.status !== 'WAITING_BUYER_INVOICE') {
       await messages.genericErrorMessage(bot, user, i18nCtx);
       return;
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
-    if (order.creator_id == order.buyer_id) {
+    if (order.creator_id === order.buyer_id) {
       // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping 
+      // there are users that block the bot and it raises the catch block stopping
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, clonedOrder, i18nCtx);
+      await messages.toBuyerDidntAddInvoiceMessage(
+        bot,
+        user,
+        clonedOrder,
+        i18nCtx
+      );
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
-      await messages.toSellerBuyerDidntAddInvoiceMessage(bot, sellerUser, clonedOrder, i18nCtxSeller);
-    } else { // Re-publish order
+      await messages.toSellerBuyerDidntAddInvoiceMessage(
+        bot,
+        sellerUser,
+        clonedOrder,
+        i18nCtxSeller
+      );
+    } else {
+      // Re-publish order
       if (userAction) {
-        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+        logger.info(
+          `User cancelled Order Id: ${order._id}, republishing to the channel`
+        );
       } else {
-        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+        logger.info(
+          `Order Id: ${order._id} expired, republishing to the channel`
+        );
       }
       order.taken_at = null;
       order.status = 'PENDING';
@@ -299,7 +357,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
         order.secret = null;
       }
 
-      if (order.type == 'buy') {
+      if (order.type === 'buy') {
         order.seller_id = null;
         await messages.publishBuyOrderMessage(bot, user, order, i18nCtx);
       } else {
@@ -308,7 +366,12 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       if (!userAction) {
-        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
         await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
       } else {
         await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
@@ -333,25 +396,29 @@ const showHoldInvoice = async (ctx, bot, order) => {
     if (!user) return;
 
     // Sellers only can take orders with status WAITING_PAYMENT
-    if (order.status != 'WAITING_PAYMENT') {
+    if (order.status !== 'WAITING_PAYMENT') {
       await messages.invalidDataMessage(ctx, bot, user);
       return;
     }
 
-    if(order.fiat_amount === undefined) {
-      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', { bot, order, caller: user });
+    if (order.fiat_amount === undefined) {
+      ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', {
+        bot,
+        order,
+        caller: user,
+      });
       return;
     }
 
     // We create the hold invoice and show it to the seller
     const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
     let amount;
-    if (order.amount == 0) {
+    if (order.amount === 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
       const marginPercent = order.price_margin / 100;
-      amount = amount - (amount * marginPercent);
+      amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
-      order.fee = Math.round(amount * parseFloat(process.env.FEE));
+      order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
     amount = Math.floor(order.amount + order.fee);
@@ -365,7 +432,13 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
     // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
-    await messages.showHoldInvoiceMessage(ctx, request, amount, order.fiat_code, order.fiat_amount);
+    await messages.showHoldInvoiceMessage(
+      ctx,
+      request,
+      amount,
+      order.fiat_code,
+      order.fiat_amount
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -373,7 +446,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
 
 const cancelShowHoldInvoice = async (ctx, bot, order) => {
   try {
-    if (!!ctx) ctx.deleteMessage();
+    if (ctx) ctx.deleteMessage();
     let userAction = false;
     if (!order) {
       userAction = true;
@@ -387,25 +460,40 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     if (!user) return;
     const i18nCtx = await getUserI18nContext(user);
     // Sellers only can cancel orders with status WAITING_PAYMENT
-    if (order.status != 'WAITING_PAYMENT') {
+    if (order.status !== 'WAITING_PAYMENT') {
       await messages.genericErrorMessage(bot, user, i18nCtx);
       return;
     }
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
-    if (order.creator_id == order.seller_id) {
+    if (order.creator_id === order.seller_id) {
       // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping 
+      // there are users that block the bot and it raises the catch block stopping
       // the process
       const clonedOrder = order;
       await order.remove();
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, clonedOrder, i18nCtx);
-      await messages.toBuyerSellerDidntPayInvoiceMessage(bot, buyerUser, clonedOrder, i18nCtx);
-    } else { // Re-publish order
+      await messages.toSellerDidntPayInvoiceMessage(
+        bot,
+        user,
+        clonedOrder,
+        i18nCtx
+      );
+      await messages.toBuyerSellerDidntPayInvoiceMessage(
+        bot,
+        buyerUser,
+        clonedOrder,
+        i18nCtx
+      );
+    } else {
+      // Re-publish order
       if (userAction) {
-        logger.info(`User cancelled Order Id: ${order._id}, republishing to the channel`);
+        logger.info(
+          `User cancelled Order Id: ${order._id}, republishing to the channel`
+        );
       } else {
-        logger.info(`Order Id: ${order._id} expired, republishing to the channel`);
+        logger.info(
+          `Order Id: ${order._id} expired, republishing to the channel`
+        );
       }
       order.taken_at = null;
       order.status = 'PENDING';
@@ -421,7 +509,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
         order.secret = null;
       }
 
-      if (order.type == 'buy') {
+      if (order.type === 'buy') {
         order.seller_id = null;
         await messages.publishBuyOrderMessage(bot, buyerUser, order, i18nCtx);
       } else {
@@ -430,8 +518,18 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       }
       await order.save();
       if (!userAction) {
-        await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
-        await messages.toAdminChannelSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toSellerDidntPayInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
+        await messages.toAdminChannelSellerDidntPayInvoiceMessage(
+          bot,
+          user,
+          order,
+          i18nCtx
+        );
       } else {
         await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
       }
@@ -453,7 +551,7 @@ const updateCommunity = async (ctx, id, field, bot) => {
     }
 
     // We check if the user has the same username that we have
-    if (tgUser.username != user.username) {
+    if (tgUser.username !== user.username) {
       user.username = tgUser.username;
       await user.save();
     }
@@ -461,16 +559,38 @@ const updateCommunity = async (ctx, id, field, bot) => {
     if (!user) return;
     if (!id) return;
     if (!(await validateObjectId(ctx, id))) return;
-    if (field == 'name') {
+    if (field === 'name') {
       ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
-    } else if (field == 'currencies') {
-      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', { id, user });
-    } else if (field == 'group') {
-      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
-    } else if (field == 'channels') {
-      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', { id, bot, user });
-    } else if (field == 'solvers') {
+    } else if (field === 'currencies') {
+      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+      });
+    } else if (field === 'group') {
+      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
+    } else if (field === 'channels') {
+      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
+    } else if (field === 'fee') {
+      ctx.scene.enter('UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+      });
+    } else if (field === 'solvers') {
       ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
+    } else if (field === 'disputeChannel') {
+      ctx.scene.enter('UPDATE_DISPUTE_CHANNEL_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+      });
     }
   } catch (error) {
     logger.error(error);
@@ -489,13 +609,13 @@ const addInvoicePHI = async (ctx, bot, orderId) => {
     ctx.deleteMessage();
     const order = await Order.findOne({ _id: orderId });
     // orders with status PAID_HOLD_INVOICE are released payments
-    if (order.status != 'PAID_HOLD_INVOICE') {
+    if (order.status !== 'PAID_HOLD_INVOICE') {
       return;
     }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (!buyer) return;
-    if (order.amount == 0) {
+    if (order.amount === 0) {
       await messages.genericErrorMessage(bot, buyer, ctx.i18n);
       return;
     }

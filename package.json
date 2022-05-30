@@ -7,6 +7,8 @@
   "scripts": {
     "start": "node ./app",
     "dev": "nodemon ./app",
+    "lint": "eslint .",
+    "format": "prettier --write '**/*.js'",
     "test": "mocha --exit tests/"
   },
   "license": "MIT",
@@ -15,7 +17,7 @@
     "axios": "^0.25.0",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
-    "invoices": "^1.2.1",
+    "invoices": "2.0.6",
     "lightning": "^5.16.0",
     "mongoose": "^6.0.11",
     "node-schedule": "^2.0.0",
@@ -33,8 +35,15 @@
   "devDependencies": {
     "chai": "^4.3.4",
     "chokidar": "^3.5.3",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.0",
+    "eslint-plugin-promise": "^6.0.0",
     "mocha": "^9.2.0",
     "nodemon": "^2.0.12",
+    "prettier": "^2.6.2",
     "sinon": "^11.1.2",
     "telegram-test-api": "^2.5.0"
   }

@@ -1,9 +1,9 @@
-const { initialize, start } = require("./start");
+const { initialize, start } = require('./start');
 const {
   createOrder,
   getOrder,
   getNewRangeOrderPayload,
-} =require("./ordersActions");
+} = require('./ordersActions');
 const {
   validateSellOrder,
   validateBuyOrder,
@@ -13,7 +13,7 @@ const {
   validateTakeBuyOrder,
   validateReleaseOrder,
   validateDisputeOrder,
-} = require("./validations");
+} = require('./validations');
 const {
   startMessage,
   initBotErrorMessage,
@@ -41,7 +41,7 @@ const {
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
-} = require("./messages");
+} = require('./messages');
 
 module.exports = {
   initialize,

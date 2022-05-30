@@ -2,16 +2,19 @@ const { TelegramError } = require('telegraf');
 const {
   getCurrency,
   numberFormat,
-  sanitizeMD,
+  getDetailedOrder,
   secondsToTime,
   getOrderChannel,
 } = require('../util');
 const logger = require('../logger');
 
-const startMessage = async (ctx) => {
+const startMessage = async ctx => {
   try {
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
-    let message = ctx.i18n.t('start', { orderExpiration, channel: process.env.CHANNEL });
+    const message = ctx.i18n.t('start', {
+      orderExpiration,
+      channel: process.env.CHANNEL,
+    });
     await ctx.reply(message);
   } catch (error) {
     logger.error(error);
@@ -23,13 +26,15 @@ const initBotErrorMessage = async (ctx, bot, user) => {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('init_bot_error'));
   } catch (error) {
     // Ignore TelegramError - Forbidden request
-    if (!(error instanceof TelegramError && error.response.error_code == 403)) {
+    if (
+      !(error instanceof TelegramError && error.response.error_code === 403)
+    ) {
       logger.error(error);
     }
   }
 };
 
-const nonHandleErrorMessage = async (ctx) => {
+const nonHandleErrorMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('non_handle_error'));
   } catch (error) {
@@ -37,18 +42,30 @@ const nonHandleErrorMessage = async (ctx) => {
   }
 };
 
-const invoicePaymentRequestMessage = async (bot, user, request, order, i18n) => {
+const invoicePaymentRequestMessage = async (
+  bot,
+  user,
+  request,
+  order,
+  i18n
+) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
-    const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    let message = i18n.t('invoice_payment_request', {
+    currency =
+      !!currency && !!currency.symbol_native
+        ? currency.symbol_native
+        : order.fiat_code;
+    const expirationTime =
+      parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
+    const message = i18n.t('invoice_payment_request', {
       currency,
       order,
       expirationTime,
     });
     await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, "`" + request + "`", { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, '`' + request + '`', {
+      parse_mode: 'MarkdownV2',
+    });
   } catch (error) {
     logger.error(error);
   }
@@ -56,12 +73,20 @@ const invoicePaymentRequestMessage = async (bot, user, request, order, i18n) => 
 
 const pendingSellMessage = async (bot, user, order, channel, i18n) => {
   try {
-    let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_sell', {
-      channel,
-      orderExpirationWindow: Math.round(orderExpirationWindow),
-    }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    const orderExpirationWindow =
+      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('pending_sell', {
+        channel,
+        orderExpirationWindow: Math.round(orderExpirationWindow),
+      })
+    );
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('cancel_order_cmd', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -69,12 +94,20 @@ const pendingSellMessage = async (bot, user, order, channel, i18n) => {
 
 const pendingBuyMessage = async (bot, user, order, channel, i18n) => {
   try {
-    let orderExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_buy', {
-      channel,
-      orderExpirationWindow: Math.round(orderExpirationWindow),
-    }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    const orderExpirationWindow =
+      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('pending_buy', {
+        channel,
+        orderExpirationWindow: Math.round(orderExpirationWindow),
+      })
+    );
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('cancel_order_cmd', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -88,40 +121,49 @@ const mustBeIntMessage = async (ctx, fieldName) => {
   }
 };
 
-const sellOrderCorrectFormatMessage = async (ctx) => {
+const sellOrderCorrectFormatMessage = async ctx => {
   try {
-    await ctx.reply(ctx.i18n.t('sell_correct_format'), { parse_mode: "MarkdownV2" });
+    await ctx.reply(ctx.i18n.t('sell_correct_format'), {
+      parse_mode: 'MarkdownV2',
+    });
   } catch (error) {
     logger.error(error);
   }
 };
 
-const buyOrderCorrectFormatMessage = async (ctx) => {
+const buyOrderCorrectFormatMessage = async ctx => {
   try {
-    await ctx.reply(ctx.i18n.t('buy_correct_format'), { parse_mode: "MarkdownV2" });
+    await ctx.reply(ctx.i18n.t('buy_correct_format'), {
+      parse_mode: 'MarkdownV2',
+    });
   } catch (error) {
     logger.error(error);
   }
 };
 
-const minimunAmountInvoiceMessage = async (ctx) => {
+const minimunAmountInvoiceMessage = async ctx => {
   try {
-    await ctx.reply(ctx.i18n.t('min_invoice_amount', { minPaymentAmount: process.env.MIN_PAYMENT_AMT}));
+    await ctx.reply(
+      ctx.i18n.t('min_invoice_amount', {
+        minPaymentAmount: process.env.MIN_PAYMENT_AMT,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const minimunExpirationTimeInvoiceMessage = async (ctx) => {
+const minimunExpirationTimeInvoiceMessage = async ctx => {
   try {
-    const expirationTime = parseInt(INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
+    const expirationTime =
+      parseInt(process.env.INVOICE_EXPIRATION_WINDOW) / 60 / 1000;
     await ctx.reply(ctx.i18n.t('min_expiration_time', { expirationTime }));
   } catch (error) {
     logger.error(error);
   }
 };
 
-const expiredInvoiceMessage = async (ctx) => {
+const expiredInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_expired'));
   } catch (error) {
@@ -132,13 +174,17 @@ const expiredInvoiceMessage = async (ctx) => {
 const expiredInvoiceOnPendingMessage = async (bot, user, order, i18n) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_expired_long'));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('setinvoice_cmd_order', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('setinvoice_cmd_order', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const requiredAddressInvoiceMessage = async (ctx) => {
+const requiredAddressInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_require_destination'));
   } catch (error) {
@@ -146,15 +192,19 @@ const requiredAddressInvoiceMessage = async (ctx) => {
   }
 };
 
-const invoiceMustBeLargerMessage = async (ctx) => {
+const invoiceMustBeLargerMessage = async ctx => {
   try {
-    await ctx.reply(ctx.i18n.t('invoice_must_be_larger_error', { minInvoice: process.env.MIN_PAYMENT_AMT }));
+    await ctx.reply(
+      ctx.i18n.t('invoice_must_be_larger_error', {
+        minInvoice: process.env.MIN_PAYMENT_AMT,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const invoiceExpiryTooShortMessage = async (ctx) => {
+const invoiceExpiryTooShortMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_expiry_too_short_error'));
   } catch (error) {
@@ -162,7 +212,7 @@ const invoiceExpiryTooShortMessage = async (ctx) => {
   }
 };
 
-const invoiceHasExpiredMessage = async (ctx) => {
+const invoiceHasExpiredMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_has_expired_error'));
   } catch (error) {
@@ -170,7 +220,7 @@ const invoiceHasExpiredMessage = async (ctx) => {
   }
 };
 
-const invoiceHasWrongDestinationMessage = async (ctx) => {
+const invoiceHasWrongDestinationMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_has_wrong_destination_error'));
   } catch (error) {
@@ -178,7 +228,7 @@ const invoiceHasWrongDestinationMessage = async (ctx) => {
   }
 };
 
-const requiredHashInvoiceMessage = async (ctx) => {
+const requiredHashInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_require_hash'));
   } catch (error) {
@@ -186,7 +236,7 @@ const requiredHashInvoiceMessage = async (ctx) => {
   }
 };
 
-const invoiceInvalidMessage = async (ctx) => {
+const invoiceInvalidMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_invalid_error'));
   } catch (error) {
@@ -204,7 +254,10 @@ const invalidOrderMessage = async (ctx, bot, user) => {
 
 const invalidTypeOrderMessage = async (ctx, bot, user, type) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_invalid_type', { type }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('order_invalid_type', { type })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -212,7 +265,10 @@ const invalidTypeOrderMessage = async (ctx, bot, user, type) => {
 
 const alreadyTakenOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_already_taken'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('order_already_taken')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -236,14 +292,24 @@ const genericErrorMessage = async (bot, user, i18n) => {
 
 const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
   try {
-    const expirationTime = parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(seller.tg_id, ctx.i18n.t('begin_take_buy', { expirationTime }));
+    const expirationTime =
+      parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      ctx.i18n.t('begin_take_buy', { expirationTime })
+    );
     await bot.telegram.sendMessage(seller.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: ctx.i18n.t('continue'), callback_data: 'showHoldInvoiceBtn'},
-            {text: ctx.i18n.t('cancel'), callback_data: 'cancelShowHoldInvoiceBtn'},
+            {
+              text: ctx.i18n.t('continue'),
+              callback_data: 'showHoldInvoiceBtn',
+            },
+            {
+              text: ctx.i18n.t('cancel'),
+              callback_data: 'cancelShowHoldInvoiceBtn',
+            },
           ],
         ],
       },
@@ -253,7 +319,13 @@ const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
   }
 };
 
-const showHoldInvoiceMessage = async (ctx, request, amount, fiatCode, fiatAmount) => {
+const showHoldInvoiceMessage = async (
+  ctx,
+  request,
+  amount,
+  fiatCode,
+  fiatAmount
+) => {
   try {
     let currency = getCurrency(fiatCode);
     currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : fiatCode;
@@ -268,18 +340,33 @@ const showHoldInvoiceMessage = async (ctx, request, amount, fiatCode, fiatAmount
   }
 };
 
-const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nSeller) => {
+const onGoingTakeBuyMessage = async (
+  bot,
+  seller,
+  buyer,
+  order,
+  i18nBuyer,
+  i18nSeller
+) => {
   try {
-    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('payment_received'));
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      i18nSeller.t('payment_received')
+    );
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
-    expirationTime += (time.minutes > 0) ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
-    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('someone_took_your_order', {expirationTime}), { parse_mode: "MarkdownV2" });
+    expirationTime +=
+      time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
+    await bot.telegram.sendMessage(
+      buyer.tg_id,
+      i18nBuyer.t('someone_took_your_order', { expirationTime }),
+      { parse_mode: 'MarkdownV2' }
+    );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
-          [{text: i18nBuyer.t('continue'), callback_data: 'addInvoiceBtn'}],
+          [{ text: i18nBuyer.t('continue'), callback_data: 'addInvoiceBtn' }],
         ],
       },
     });
@@ -288,20 +375,27 @@ const onGoingTakeBuyMessage = async (bot, seller, buyer, order, i18nBuyer, i18nS
   }
 };
 
-
 const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   try {
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + ctx.i18n.t('hours');
-    expirationTime += (time.minutes > 0) ? ' ' + time.minutes + ' ' + ctx.i18n.t('minutes') : '';
-    await bot.telegram.sendMessage(buyer.tg_id,  ctx.i18n.t('you_took_someone_order', {expirationTime}), { parse_mode: "MarkdownV2" });
+    expirationTime +=
+      time.minutes > 0 ? ' ' + time.minutes + ' ' + ctx.i18n.t('minutes') : '';
+    await bot.telegram.sendMessage(
+      buyer.tg_id,
+      ctx.i18n.t('you_took_someone_order', { expirationTime }),
+      { parse_mode: 'MarkdownV2' }
+    );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: ctx.i18n.t('continue'), callback_data: 'addInvoiceBtn'},
-            {text: ctx.i18n.t('cancel'), callback_data: 'cancelAddInvoiceBtn'},
+            { text: ctx.i18n.t('continue'), callback_data: 'addInvoiceBtn' },
+            {
+              text: ctx.i18n.t('cancel'),
+              callback_data: 'cancelAddInvoiceBtn',
+            },
           ],
         ],
       },
@@ -311,10 +405,20 @@ const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   }
 };
 
-const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18nBuyer, i18nSeller) => {
+const onGoingTakeSellMessage = async (
+  bot,
+  sellerUser,
+  buyerUser,
+  order,
+  i18nBuyer,
+  i18nSeller
+) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+    currency =
+      !!currency && !!currency.symbol_native
+        ? currency.symbol_native
+        : order.fiat_code;
     await bot.telegram.sendMessage(
       buyerUser.tg_id,
       i18nBuyer.t('get_in_touch_with_seller', {
@@ -322,7 +426,21 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18nBuy
         sellerUsername: sellerUser.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
-      }),
+      })
+    );
+    await bot.telegram.sendMessage(
+      buyerUser.tg_id,
+      i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
+    await bot.telegram.sendMessage(
+      sellerUser.tg_id,
+      i18nSeller.t('buyer_took_your_order', {
+        fiatAmount: order.fiat_amount,
+        paymentMethod: order.payment_method,
+        currency,
+        buyerUsername: buyerUser.username,
+      })
     );
     await bot.telegram.sendMessage(buyerUser.tg_id, i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
     await bot.telegram.sendMessage(sellerUser.tg_id, i18nSeller.t('buyer_took_your_order', {
@@ -336,18 +454,38 @@ const onGoingTakeSellMessage = async (bot, sellerUser, buyerUser, order, i18nBuy
   }
 };
 
-const takeSellWaitingSellerToPayMessage = async (ctx, bot, buyerUser, order) => {
+const takeSellWaitingSellerToPayMessage = async (
+  ctx,
+  bot,
+  buyerUser,
+  order
+) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      buyerUser.tg_id,
+      ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18nBuyer, i18nSeller) => {
+const releasedSatsMessage = async (
+  bot,
+  sellerUser,
+  buyerUser,
+  i18nBuyer,
+  i18nSeller
+) => {
   try {
-    await bot.telegram.sendMessage(sellerUser.tg_id, i18nSeller.t('sell_success', { buyerUsername: buyerUser.username }));
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18nBuyer.t('funds_released', { sellerUsername: sellerUser.username }));
+    await bot.telegram.sendMessage(
+      sellerUser.tg_id,
+      i18nSeller.t('sell_success', { buyerUsername: buyerUser.username })
+    );
+    await bot.telegram.sendMessage(
+      buyerUser.tg_id,
+      i18nBuyer.t('funds_released', { sellerUsername: sellerUser.username })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -355,9 +493,14 @@ const releasedSatsMessage = async (bot, sellerUser, buyerUser, i18nBuyer, i18nSe
 
 const rateUserMessage = async (bot, caller, order, i18n) => {
   try {
-    const starButtons = []
+    const starButtons = [];
     for (let num = 5; num > 0; num--) {
-      starButtons.push([{text: '⭐'.repeat(num), callback_data: `showStarBtn(${num},${order._id})`}])
+      starButtons.push([
+        {
+          text: '⭐'.repeat(num),
+          callback_data: `showStarBtn(${num},${order._id})`,
+        },
+      ]);
     }
     await bot.telegram.sendMessage(caller.tg_id, i18n.t('rate_counterpart'), {
       reply_markup: {
@@ -369,7 +512,7 @@ const rateUserMessage = async (bot, caller, order, i18n) => {
   }
 };
 
-const notActiveOrderMessage = async (ctx) => {
+const notActiveOrderMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cant_process_order'));
   } catch (error) {
@@ -377,7 +520,7 @@ const notActiveOrderMessage = async (ctx) => {
   }
 };
 
-const waitingForBuyerOrderMessage = async (ctx) => {
+const waitingForBuyerOrderMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cant_release_order'));
   } catch (error) {
@@ -385,7 +528,7 @@ const waitingForBuyerOrderMessage = async (ctx) => {
   }
 };
 
-const notOrderMessage = async (ctx) => {
+const notOrderMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('no_id_related'));
   } catch (error) {
@@ -393,7 +536,13 @@ const notOrderMessage = async (ctx) => {
   }
 };
 
-const publishBuyOrderMessage = async (bot, user, order, i18n) => {
+const publishBuyOrderMessage = async (
+  bot,
+  user,
+  order,
+  i18n,
+  messageToUser
+) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
@@ -403,108 +552,51 @@ const publishBuyOrderMessage = async (bot, user, order, i18n) => {
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
-          [{text: i18n.t('sell_sats'), callback_data: 'takebuy'}],
+          [{ text: i18n.t('sell_sats'), callback_data: 'takebuy' }],
         ],
       },
     });
     // We save the id of the message in the order
-    order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
+    order.tg_channel_message1 =
+      message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
-    // Message to user let know the order was published
-    await pendingBuyMessage(bot, user, order, channel, i18n);
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const publishSellOrderMessage = async (bot, user, order, i18n) => {
-  try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `:${order._id}:`;
-    const channel = await getOrderChannel(order);
-    // We send the message to the channel
-    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
-      reply_markup: {
-        inline_keyboard: [
-          [{text: i18n.t('buy_sats'), callback_data: 'takesell'}],
-        ],
-      },
-    });
-    // We save the id of the message in the order
-    order.tg_channel_message1 = message1 && message1.message_id ? message1.message_id : null;
-
-    await order.save();
-    // Message to user let know the order was published
-    await pendingSellMessage(bot, user, order, channel, i18n);
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const getDetailedOrder = (i18n, order, buyer, seller) => {
-  try {
-    const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
-    const sellerUsername = seller ? sanitizeMD(seller.username) : '';
-    const buyerId = buyer ? buyer._id : '';
-    const paymentMethod = sanitizeMD(order.payment_method);
-    const priceMargin = sanitizeMD(order.price_margin.toString());
-    let createdAt = order.created_at.toISOString();
-    let takenAt = !!order.taken_at ? order.taken_at.toISOString() : '';
-    createdAt = sanitizeMD(createdAt);
-    takenAt = sanitizeMD(takenAt);
-    const status = sanitizeMD(order.status);
-    const fee = !!order.fee ? parseInt(order.fee) : '';
-    const creator = order.creator_id == buyerId ? buyerUsername : sellerUsername;
-    let message = i18n.t('order_detail', {
-      order,
-      creator,
-      buyerUsername,
-      sellerUsername,
-      createdAt,
-      takenAt,
-      status,
-      fee,
-      paymentMethod,
-      priceMargin
-      },
-    );
-
-    return message;
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const beginDisputeMessage = async (bot, buyer, seller, order, initiator, i18n) => {
-  try {
-    const type = initiator === 'seller' ? i18n.t('seller') : i18n.t('buyer');
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
+    if (messageToUser) {
+      // Message to user let know the order was published
+      await pendingBuyMessage(bot, user, order, channel, i18n);
     }
-    let detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
-    await bot.telegram.sendMessage(
-      process.env.ADMIN_CHANNEL,
-      i18n.t('dispute_started_channel', {
-        order,
-        initiator,
-        initiatorUser,
-        counterPartyUser,
-        detailedOrder,
-        type,
-      }),
-      { parse_mode: 'MarkdownV2' },
-    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
 
-    if (initiator === 'buyer') {
-      await bot.telegram.sendMessage(initiatorUser.tg_id, i18n.t('you_started_dispute_to_buyer'));
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, i18n.t('buyer_started_dispute_to_seller', { orderId: order._id }));
-    } else {
-      await bot.telegram.sendMessage(initiatorUser.tg_id, i18n.t('you_started_dispute_to_seller'));
-      await bot.telegram.sendMessage(counterPartyUser.tg_id, i18n.t('seller_started_dispute_to_buyer', { orderId: order._id }));
+const publishSellOrderMessage = async (
+  bot,
+  user,
+  order,
+  i18n,
+  messageToUser
+) => {
+  try {
+    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
+    publishMessage += `:${order._id}:`;
+    const channel = await getOrderChannel(order);
+    // We send the message to the channel
+    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
+        ],
+      },
+    });
+    // We save the id of the message in the order
+    order.tg_channel_message1 =
+      message1 && message1.message_id ? message1.message_id : null;
+
+    await order.save();
+    if (messageToUser) {
+      // Message to user let know the order was published
+      await pendingSellMessage(bot, user, order, channel, i18n);
     }
   } catch (error) {
     logger.error(error);
@@ -513,7 +605,7 @@ const beginDisputeMessage = async (bot, buyer, seller, order, initiator, i18n) =
 
 const customMessage = async (ctx, message) => {
   try {
-    await ctx.reply(message, { parse_mode: "MarkdownV2"});
+    await ctx.reply(message, { parse_mode: 'MarkdownV2' });
   } catch (error) {
     logger.error(error);
   }
@@ -529,7 +621,7 @@ const checkOrderMessage = async (ctx, order, buyer, seller) => {
   }
 };
 
-const mustBeValidCurrency = async (ctx) => {
+const mustBeValidCurrency = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('must_be_valid_currency'));
   } catch (error) {
@@ -537,7 +629,7 @@ const mustBeValidCurrency = async (ctx) => {
   }
 };
 
-const mustBeANumberOrRange = async (ctx) => {
+const mustBeANumberOrRange = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('must_be_number_or_range'));
   } catch (error) {
@@ -545,7 +637,7 @@ const mustBeANumberOrRange = async (ctx) => {
   }
 };
 
-const invalidLightningAddress = async (ctx) => {
+const invalidLightningAddress = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_lightning_address'));
   } catch (error) {
@@ -553,15 +645,18 @@ const invalidLightningAddress = async (ctx) => {
   }
 };
 
-const unavailableLightningAddress = async (ctx, bot, user,la) => {
+const unavailableLightningAddress = async (ctx, bot, user, la) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('unavailable_lightning_address', { la }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('unavailable_lightning_address', { la })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const helpMessage = async (ctx) => {
+const helpMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('help'), { parse_mode: 'Markdown' });
   } catch (error) {
@@ -571,43 +666,71 @@ const helpMessage = async (ctx) => {
 
 const mustBeGreatherEqThan = async (ctx, fieldName, qty) => {
   try {
-    await ctx.reply(ctx.i18n.t('must_be_gt_or_eq', {
-      fieldName,
-      qty,
-    }));
+    await ctx.reply(
+      ctx.i18n.t('must_be_gt_or_eq', {
+        fieldName,
+        qty,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const bannedUserErrorMessage = async (ctx) => {
+const bannedUserErrorMessage = async (ctx, user) => {
   try {
-    await ctx.reply(ctx.i18n.t('you_have_been_banned'));
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('you_have_been_banned')
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const fiatSentMessages = async (bot, buyer, seller, order, i18nBuyer, i18nSeller) => {
+const fiatSentMessages = async (
+  bot,
+  buyer,
+  seller,
+  order,
+  i18nBuyer,
+  i18nSeller
+) => {
   try {
-    await bot.telegram.sendMessage(buyer.tg_id, i18nBuyer.t('I_told_seller_you_sent_fiat', { sellerUsername: seller.username }));
-    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('buyer_told_me_that_sent_fiat', { buyerUsername: buyer.username }));
-    await bot.telegram.sendMessage(seller.tg_id, i18nSeller.t('release_order_cmd', { orderId: order._id }), { parse_mode: 'Markdown' });
+    await bot.telegram.sendMessage(
+      buyer.tg_id,
+      i18nBuyer.t('I_told_seller_you_sent_fiat', {
+        sellerUsername: seller.username,
+      })
+    );
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      i18nSeller.t('buyer_told_me_that_sent_fiat', {
+        buyerUsername: buyer.username,
+      })
+    );
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      i18nSeller.t('release_order_cmd', { orderId: order._id }),
+      { parse_mode: 'Markdown' }
+    );
   } catch (error) {
     logger.error(error);
   }
 };
-
 
 const orderOnfiatSentStatusMessages = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('you_have_orders_waiting'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('you_have_orders_waiting')
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const userBannedMessage = async (ctx) => {
+const userBannedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('user_banned'));
   } catch (error) {
@@ -615,7 +738,7 @@ const userBannedMessage = async (ctx) => {
   }
 };
 
-const notFoundUserMessage = async (ctx) => {
+const notFoundUserMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('user_not_found'));
   } catch (error) {
@@ -623,7 +746,7 @@ const notFoundUserMessage = async (ctx) => {
   }
 };
 
-const errorParsingInvoiceMessage = async (ctx) => {
+const errorParsingInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('parse_invoice_error'));
   } catch (error) {
@@ -631,7 +754,7 @@ const errorParsingInvoiceMessage = async (ctx) => {
   }
 };
 
-const notValidIdMessage = async (ctx) => {
+const notValidIdMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_id'));
   } catch (error) {
@@ -642,7 +765,10 @@ const notValidIdMessage = async (ctx) => {
 const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+    currency =
+      !!currency && !!currency.symbol_native
+        ? currency.symbol_native
+        : order.fiat_code;
     await bot.telegram.sendMessage(
       buyer.tg_id,
       ctx.i18n.t('get_in_touch_with_seller', {
@@ -650,9 +776,13 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
         sellerUsername: seller.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
-      }),
+      })
     );
-    await bot.telegram.sendMessage(buyer.tg_id, ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(
+      buyer.tg_id,
+      ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -661,7 +791,10 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
 const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    currency = (!!currency && !!currency.symbol_native) ? currency.symbol_native : order.fiat_code;
+    currency =
+      !!currency && !!currency.symbol_native
+        ? currency.symbol_native
+        : order.fiat_code;
     await bot.telegram.sendMessage(
       seller.tg_id,
       i18n.t('get_in_touch_with_buyer', {
@@ -669,7 +802,7 @@ const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
         buyerUsername: buyer.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
-      }),
+      })
     );
   } catch (error) {
     logger.error(error);
@@ -678,7 +811,10 @@ const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
 
 const cantTakeOwnOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cant_take_own_order'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('cant_take_own_order')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -687,13 +823,16 @@ const cantTakeOwnOrderMessage = async (ctx, bot, user) => {
 const notLightningInvoiceMessage = async (ctx, order) => {
   try {
     await ctx.reply(ctx.i18n.t('send_me_lninvoice', { amount: order.amount }));
-    await ctx.reply(ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await ctx.reply(
+      ctx.i18n.t('setinvoice_cmd_order', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const notOrdersMessage = async (ctx) => {
+const notOrdersMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('you_have_no_orders'));
   } catch (error) {
@@ -701,32 +840,20 @@ const notOrdersMessage = async (ctx) => {
   }
 };
 
-const listOrdersResponse = async (bot, user, orders) => {
-  try {
-    let response = "             Id          \\|     Status    \\|   sats amount  \\|  fiat amt  \\|  fiat\n";
-    orders.forEach(order => {
-      let fiatAmount = '\\-';
-      let amount = '\\-';
-      const status = order.status.replace(/_/g, '\\_');
-      if (typeof order.fiat_amount != 'undefined') fiatAmount = order.fiat_amount;
-      if (typeof order.amount != 'undefined') amount = order.amount;
-      response += "`" + order._id + "` \\| " + status + " \\| " + amount + " \\| " + fiatAmount + " \\| " + order.fiat_code + "\n";
-    });
-    await bot.telegram.sendMessage(user.tg_id, response, { parse_mode: "MarkdownV2" });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const notRateForCurrency = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('not_rate_for_currency', { fiatRateProvider: process.env.FIAT_RATE_NAME }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('not_rate_for_currency', {
+        fiatRateProvider: process.env.FIAT_RATE_NAME,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const incorrectAmountInvoiceMessage = async (ctx) => {
+const incorrectAmountInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
   } catch (error) {
@@ -734,7 +861,7 @@ const incorrectAmountInvoiceMessage = async (ctx) => {
   }
 };
 
-const invoiceUpdatedMessage = async (ctx) => {
+const invoiceUpdatedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_updated'));
   } catch (error) {
@@ -742,7 +869,7 @@ const invoiceUpdatedMessage = async (ctx) => {
   }
 };
 
-const invoiceUpdatedPaymentWillBeSendMessage = async (ctx) => {
+const invoiceUpdatedPaymentWillBeSendMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
   } catch (error) {
@@ -750,14 +877,14 @@ const invoiceUpdatedPaymentWillBeSendMessage = async (ctx) => {
   }
 };
 
-const invoiceAlreadyUpdatedMessage = async (ctx) => {
+const invoiceAlreadyUpdatedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
   } catch (error) {
     logger.error(error);
   }
 };
-const successSetAddress = async (ctx) => {
+const successSetAddress = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('lightning_address_saved'));
   } catch (error) {
@@ -765,7 +892,7 @@ const successSetAddress = async (ctx) => {
   }
 };
 
-const badStatusOnCancelOrderMessage = async (ctx) => {
+const badStatusOnCancelOrderMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cancel_error'));
   } catch (error) {
@@ -775,13 +902,16 @@ const badStatusOnCancelOrderMessage = async (ctx) => {
 
 const successCancelOrderMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_success', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('cancel_success', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const successCancelAllOrdersMessage = async (ctx) => {
+const successCancelAllOrdersMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cancelall_success'));
   } catch (error) {
@@ -791,7 +921,10 @@ const successCancelAllOrdersMessage = async (ctx) => {
 
 const successCancelOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_cancelled_by_admin', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('order_cancelled_by_admin', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -807,7 +940,10 @@ const successCompleteOrderMessage = async (ctx, order) => {
 
 const successCompleteOrderByAdminMessage = async (ctx, bot, user, order) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_completed_by_admin', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('order_completed_by_admin', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -815,7 +951,10 @@ const successCompleteOrderByAdminMessage = async (ctx, bot, user, order) => {
 
 const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('have_to_wait_for_counterpart'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('have_to_wait_for_counterpart')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -823,7 +962,10 @@ const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
 
 const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('ok_cooperativecancel', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('ok_cooperativecancel', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -831,7 +973,10 @@ const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
 
 const refundCooperativeCancelMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('refund_cooperativecancel'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('refund_cooperativecancel')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -839,16 +984,30 @@ const refundCooperativeCancelMessage = async (bot, user, i18n) => {
 
 const initCooperativeCancelMessage = async (ctx, order) => {
   try {
-    await ctx.reply(ctx.i18n.t('init_cooperativecancel', { orderId: order._id }));
+    await ctx.reply(
+      ctx.i18n.t('init_cooperativecancel', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const counterPartyWantsCooperativeCancelMessage = async (bot, user, order, i18n) => {
+const counterPartyWantsCooperativeCancelMessage = async (
+  bot,
+  user,
+  order,
+  i18n
+) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id }));
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('cancel_order_cmd', { orderId: order._id }), { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id })
+    );
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('cancel_order_cmd', { orderId: order._id }),
+      { parse_mode: 'MarkdownV2' }
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -856,10 +1015,13 @@ const counterPartyWantsCooperativeCancelMessage = async (bot, user, order, i18n)
 
 const invoicePaymentFailedMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_payment_failed', {
-      pendingPaymentWindow: process.env.PENDING_PAYMENT_WINDOW,
-      attempts: process.env.PAYMENT_ATTEMPTS,
-    }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('invoice_payment_failed', {
+        pendingPaymentWindow: process.env.PENDING_PAYMENT_WINDOW,
+        attempts: process.env.PAYMENT_ATTEMPTS,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -867,7 +1029,10 @@ const invoicePaymentFailedMessage = async (bot, user, i18n) => {
 
 const userCantTakeMoreThanOneWaitingOrderMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('cant_take_more_orders'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('cant_take_more_orders')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -885,9 +1050,11 @@ const showInfoMessage = async (bot, user, info) => {
   try {
     // const status = !!info.public_key;
     // const statusEmoji = status ? '🟢' : '🔴';
-    let fee = (process.env.FEE * 100).toString();
+    let fee = (process.env.MAX_FEE * 100).toString();
     fee = fee.replace('.', '\\.');
-    await bot.telegram.sendMessage(user.tg_id, `*Bot fee*: ${fee}%`, { parse_mode: "MarkdownV2" });
+    await bot.telegram.sendMessage(user.tg_id, `*Bot fee*: ${fee}%`, {
+      parse_mode: 'MarkdownV2',
+    });
     // if (status) {
     //   await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
     // }
@@ -898,9 +1065,12 @@ const showInfoMessage = async (bot, user, info) => {
 
 const buyerReceivedSatsMessage = async (bot, buyerUser, sellerUser, i18n) => {
   try {
-    await bot.telegram.sendMessage(buyerUser.tg_id, i18n.t('your_purchase_is_completed', {
-      sellerUsername: sellerUser.username,
-    }));
+    await bot.telegram.sendMessage(
+      buyerUser.tg_id,
+      i18n.t('your_purchase_is_completed', {
+        sellerUsername: sellerUser.username,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -920,7 +1090,10 @@ const listCurrenciesResponse = async (ctx, currencies) => {
 
 const priceApiFailedMessage = async (ctx, bot, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('problem_getting_price'));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('problem_getting_price')
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -928,16 +1101,18 @@ const priceApiFailedMessage = async (ctx, bot, user) => {
 
 const updateUserSettingsMessage = async (ctx, field, newState) => {
   try {
-    await ctx.reply(ctx.i18n.t('update_user_setting', {
-      field,
-      newState,
-    }));
+    await ctx.reply(
+      ctx.i18n.t('update_user_setting', {
+        field,
+        newState,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const disableLightningAddress = async (ctx) => {
+const disableLightningAddress = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('lightning_address_disabled'));
   } catch (error) {
@@ -945,7 +1120,7 @@ const disableLightningAddress = async (ctx) => {
   }
 };
 
-const invalidRangeWithAmount = async (ctx) => {
+const invalidRangeWithAmount = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('invalid_range_with_amount'));
   } catch (error) {
@@ -966,15 +1141,18 @@ const listCommunitiesMessage = async (ctx, communities) => {
     let message = '';
     communities.forEach(community => {
       message += `ID: #${community.id}\n`;
-      message += ctx.i18n.t('name') +`: ${community.name}\n`;
+      message += ctx.i18n.t('name') + `: ${community.name}\n`;
       message += ctx.i18n.t('group') + `: ${community.group}\n`;
       community.order_channels.forEach(channel => {
-        message += ctx.i18n.t('channel') + ` ${channel.type}: ${channel.name}\n`;
+        message +=
+          ctx.i18n.t('channel') + ` ${channel.type}: ${channel.name}\n`;
       });
       community.solvers.forEach(solver => {
         message += ctx.i18n.t('solver') + `: ${solver.username}\n`;
       });
-      message += ctx.i18n.t('published') + `: ${community.public ? ctx.i18n.t('yes') : ctx.i18n.t('no')}\n`;
+      message +=
+        ctx.i18n.t('published') +
+        `: ${community.public ? ctx.i18n.t('yes') : ctx.i18n.t('no')}\n`;
       message += ctx.i18n.t('created') + `: ${community.created_at}\n\n`;
     });
     await ctx.reply(message);
@@ -983,7 +1161,12 @@ const listCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-const wizardAddInvoiceInitMessage = async (ctx, order, currency, expirationTime) => {
+const wizardAddInvoiceInitMessage = async (
+  ctx,
+  order,
+  currency,
+  expirationTime
+) => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_add_invoice_init', {
       expirationTime,
@@ -1009,7 +1192,7 @@ const wizardAddInvoiceExitMessage = async (ctx, order) => {
   }
 };
 
-const wizardCommunityEnterNameMessage = async (ctx) => {
+const wizardCommunityEnterNameMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
   } catch (error) {
@@ -1017,7 +1200,7 @@ const wizardCommunityEnterNameMessage = async (ctx) => {
   }
 };
 
-const wizardExitMessage = async (ctx) => {
+const wizardExitMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_exit'));
   } catch (error) {
@@ -1025,7 +1208,7 @@ const wizardExitMessage = async (ctx) => {
   }
 };
 
-const orderExpiredMessage = async (ctx) => {
+const orderExpiredMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('order_expired'));
   } catch (error) {
@@ -1033,7 +1216,7 @@ const orderExpiredMessage = async (ctx) => {
   }
 };
 
-const cantAddInvoiceMessage = async (ctx) => {
+const cantAddInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cant_add_invoice'));
   } catch (error) {
@@ -1049,7 +1232,7 @@ const wizardCommunityTooLongNameMessage = async (ctx, length) => {
   }
 };
 
-const wizardCommunityEnterCurrencyMessage = async (ctx) => {
+const wizardCommunityEnterCurrencyMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
   } catch (error) {
@@ -1057,7 +1240,7 @@ const wizardCommunityEnterCurrencyMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityEnterGroupMessage = async (ctx) => {
+const wizardCommunityEnterGroupMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
   } catch (error) {
@@ -1065,7 +1248,7 @@ const wizardCommunityEnterGroupMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityEnterOrderChannelsMessage = async (ctx) => {
+const wizardCommunityEnterOrderChannelsMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_order_channels'));
   } catch (error) {
@@ -1073,7 +1256,7 @@ const wizardCommunityEnterOrderChannelsMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityOneOrTwoChannelsMessage = async (ctx) => {
+const wizardCommunityOneOrTwoChannelsMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_one_or_two_channels'));
   } catch (error) {
@@ -1081,7 +1264,7 @@ const wizardCommunityOneOrTwoChannelsMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityEnterSolversMessage = async (ctx) => {
+const wizardCommunityEnterSolversMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers'));
   } catch (error) {
@@ -1089,7 +1272,7 @@ const wizardCommunityEnterSolversMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityMustEnterNamesSeparatedMessage = async (ctx) => {
+const wizardCommunityMustEnterNamesSeparatedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_must_enter_names'));
   } catch (error) {
@@ -1097,7 +1280,7 @@ const wizardCommunityMustEnterNamesSeparatedMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityEnterSolversChannelMessage = async (ctx) => {
+const wizardCommunityEnterSolversChannelMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers_channel'));
   } catch (error) {
@@ -1105,7 +1288,23 @@ const wizardCommunityEnterSolversChannelMessage = async (ctx) => {
   }
 };
 
-const wizardCommunityCreatedMessage = async (ctx) => {
+const wizardCommunityWrongPercentFeeMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_wrong_percent'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const wizardCommunityEnterPercentFeeMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('wizard_community_enter_fee_percent'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const wizardCommunityCreatedMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_community_success'));
   } catch (error) {
@@ -1115,10 +1314,12 @@ const wizardCommunityCreatedMessage = async (ctx) => {
 
 const wizardCommunityWrongPermission = async (ctx, user, channel) => {
   try {
-    await ctx.reply(ctx.i18n.t('wizard_community_you_are_not_admin', {
-      username: user.username,
-      channel,
-    }));
+    await ctx.reply(
+      ctx.i18n.t('wizard_community_you_are_not_admin', {
+        username: user.username,
+        channel,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1178,7 +1379,7 @@ const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
         buyerUser,
         sellerUser,
       }),
-      { parse_mode: 'MarkdownV2' },
+      { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {
     logger.error(error);
@@ -1187,7 +1388,10 @@ const expiredOrderMessage = async (bot, order, buyerUser, sellerUser, i18n) => {
 
 const toBuyerExpiredOrderMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_buyer', {helpGroup: process.env.HELP_GROUP}));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('expired_order_to_buyer', { helpGroup: process.env.HELP_GROUP })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1195,7 +1399,10 @@ const toBuyerExpiredOrderMessage = async (bot, user, i18n) => {
 
 const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('expired_order_to_seller', {helpGroup: process.env.HELP_GROUP}));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('expired_order_to_seller', { helpGroup: process.env.HELP_GROUP })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1203,7 +1410,10 @@ const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
 
 const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('didnt_add_invoice', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('didnt_add_invoice', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1211,18 +1421,29 @@ const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
 
 const toSellerBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('buyer_havent_add_invoice', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('buyer_havent_add_invoice', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const toAdminChannelBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
+const toAdminChannelBuyerDidntAddInvoiceMessage = async (
+  bot,
+  user,
+  order,
+  i18n
+) => {
   try {
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('buyer_havent_add_invoice_to_admin_channel', {
-      orderId: order._id,
-      username: user.username,
-    }));
+    await bot.telegram.sendMessage(
+      process.env.ADMIN_CHANNEL,
+      i18n.t('buyer_havent_add_invoice_to_admin_channel', {
+        orderId: order._id,
+        username: user.username,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1230,7 +1451,10 @@ const toAdminChannelBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n)
 
 const toSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('havent_paid_invoice', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('havent_paid_invoice', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -1238,32 +1462,42 @@ const toSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
 
 const toBuyerSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('seller_havent_paid_invoice', { orderId: order._id }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('seller_havent_paid_invoice', { orderId: order._id })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const toAdminChannelSellerDidntPayInvoiceMessage = async (bot, user, order, i18n) => {
+const toAdminChannelSellerDidntPayInvoiceMessage = async (
+  bot,
+  user,
+  order,
+  i18n
+) => {
   try {
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('seller_havent_add_invoice_to_admin_channel', {
-      orderId: order._id,
-      username: user.username,
-    }));
+    await bot.telegram.sendMessage(
+      process.env.ADMIN_CHANNEL,
+      i18n.t('seller_havent_add_invoice_to_admin_channel', {
+        orderId: order._id,
+        username: user.username,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const userCantDoMessage = async (ctx) => {
-  try {
-    await ctx.reply(ctx.i18n.t('user_cant_do'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const toAdminChannelPendingPaymentSuccessMessage = async (bot, user, order, pending, payment, i18n) => {
+const toAdminChannelPendingPaymentSuccessMessage = async (
+  bot,
+  user,
+  order,
+  pending,
+  payment,
+  i18n
+) => {
   try {
     await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('pending_payment_success_to_admin', {
       orderId: order._id,
@@ -1277,7 +1511,13 @@ const toAdminChannelPendingPaymentSuccessMessage = async (bot, user, order, pend
   }
 };
 
-const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i18n) => {
+const toBuyerPendingPaymentSuccessMessage = async (
+  bot,
+  user,
+  order,
+  payment,
+  i18n
+) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_success', {
       orderId: order._id,
@@ -1292,13 +1532,21 @@ const toBuyerPendingPaymentSuccessMessage = async (bot, user, order, payment, i1
 const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   try {
     const attempts = process.env.PAYMENT_ATTEMPTS;
-    await bot.telegram.sendMessage(user.tg_id, i18n.t('pending_payment_failed', {
-      attempts,
-    }));
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('pending_payment_failed', {
+        attempts,
+      })
+    );
     await bot.telegram.sendMessage(user.tg_id, i18n.t('press_to_continue'), {
       reply_markup: {
         inline_keyboard: [
-          [{text: i18n.t('continue'), callback_data: `addInvoicePHIBtn_${order._id}`}],
+          [
+            {
+              text: i18n.t('continue'),
+              callback_data: `addInvoicePHIBtn_${order._id}`,
+            },
+          ],
         ],
       },
     });
@@ -1307,19 +1555,28 @@ const toBuyerPendingPaymentFailedMessage = async (bot, user, order, i18n) => {
   }
 };
 
-const toAdminChannelPendingPaymentFailedMessage = async (bot, user, order, pending, i18n) => {
+const toAdminChannelPendingPaymentFailedMessage = async (
+  bot,
+  user,
+  order,
+  pending,
+  i18n
+) => {
   try {
-    await bot.telegram.sendMessage(process.env.ADMIN_CHANNEL, i18n.t('pending_payment_failed_to_admin', {
-      attempts: pending.attempts,
-      orderId: order._id,
-      username: user.username,
-    }));
+    await bot.telegram.sendMessage(
+      process.env.ADMIN_CHANNEL,
+      i18n.t('pending_payment_failed_to_admin', {
+        attempts: pending.attempts,
+        orderId: order._id,
+        username: user.username,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const communitiesUpdatedOkMessage = async (ctx) => {
+const communitiesUpdatedOkMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('community_updated'));
   } catch (error) {
@@ -1333,15 +1590,31 @@ const updateCommunityMessage = async (ctx, id) => {
       reply_markup: {
         inline_keyboard: [
           [
-            {text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}`},
-            {text: ctx.i18n.t('currencies'), callback_data: `editCurrenciesBtn_${id}`},
+            { text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}` },
+            {
+              text: ctx.i18n.t('currencies'),
+              callback_data: `editCurrenciesBtn_${id}`,
+            },
           ],
           [
-            {text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}`},
-            {text: ctx.i18n.t('channels'), callback_data: `editChannelsBtn_${id}`},
+            { text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}` },
+            {
+              text: ctx.i18n.t('channels'),
+              callback_data: `editChannelsBtn_${id}`,
+            },
           ],
           [
-            {text: ctx.i18n.t('dispute_solvers'), callback_data: `editSolversBtn_${id}`},
+            { text: ctx.i18n.t('fee'), callback_data: `editFeeBtn_${id}` },
+            {
+              text: ctx.i18n.t('dispute_solvers'),
+              callback_data: `editSolversBtn_${id}`,
+            },
+          ],
+          [
+            {
+              text: ctx.i18n.t('dispute_channel'),
+              callback_data: `editDisputeChannelBtn_${id}`,
+            },
           ],
         ],
       },
@@ -1360,7 +1633,7 @@ const showUserCommunitiesMessage = async (ctx, communities) => {
         return {
           text: c.name,
           callback_data: `updateCommunity_${c._id}`,
-        }
+        };
       });
       buttons.push(lineBtn);
     }
@@ -1375,7 +1648,7 @@ const showUserCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-const operationSuccessfulMessage = async (ctx) => {
+const operationSuccessfulMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {
@@ -1383,7 +1656,7 @@ const operationSuccessfulMessage = async (ctx) => {
   }
 };
 
-const noDefaultCommunityMessage = async (ctx) => {
+const noDefaultCommunityMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('no_default_community'));
   } catch (error) {
@@ -1391,7 +1664,7 @@ const noDefaultCommunityMessage = async (ctx) => {
   }
 };
 
-const communityNotFoundMessage = async (ctx) => {
+const communityNotFoundMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('community_not_found'));
   } catch (error) {
@@ -1408,19 +1681,29 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
   }
 };
 
-const startAddInvoiceMessage = async (bot, user, orderId, i18nCtx) => {
+const notAuthorized = async ctx => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, 'presiona para continuar', {
-      reply_markup: {
-        inline_keyboard: [
-          [{text: i18nCtx.t('continue'), callback_data: `addInvoicePHIBtn_${orderId}`}],
-        ],
-      },
-    });
+    await ctx.reply(ctx.i18n.t('not_authorized'));
   } catch (error) {
     logger.error(error);
   }
-}
+};
+
+const needDefaultCommunity = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('need_default_community'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const mustBeANumber = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('not_number'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
 
 module.exports = {
   startMessage,
@@ -1451,7 +1734,6 @@ module.exports = {
   pendingSellMessage,
   pendingBuyMessage,
   mustBeIntMessage,
-  beginDisputeMessage,
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,
@@ -1474,7 +1756,6 @@ module.exports = {
   cantTakeOwnOrderMessage,
   notLightningInvoiceMessage,
   notOrdersMessage,
-  listOrdersResponse,
   notRateForCurrency,
   incorrectAmountInvoiceMessage,
   beginTakeSellMessage,
@@ -1536,7 +1817,6 @@ module.exports = {
   toSellerDidntPayInvoiceMessage,
   toBuyerSellerDidntPayInvoiceMessage,
   toAdminChannelSellerDidntPayInvoiceMessage,
-  userCantDoMessage,
   toAdminChannelPendingPaymentSuccessMessage,
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
@@ -1552,7 +1832,10 @@ module.exports = {
   noDefaultCommunityMessage,
   communityNotFoundMessage,
   currencyNotSupportedMessage,
-  wizardCommunityWrongPermission,
   sendMeAnInvoiceMessage,
-  startAddInvoiceMessage,
+  notAuthorized,
+  needDefaultCommunity,
+  wizardCommunityWrongPercentFeeMessage,
+  wizardCommunityEnterPercentFeeMessage,
+  mustBeANumber,
 };
