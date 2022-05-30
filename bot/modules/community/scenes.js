@@ -333,7 +333,9 @@ const createCommunitySteps = {
       const usernames = itemsFromMessage(text);
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
-          const user = await User.findOne({ username: usernames[i] });
+          const username =
+            usernames[i][0] == '@' ? usernames[i].slice(1) : usernames[i];
+          const user = await User.findOne({ username });
           if (user) {
             solvers.push({
               id: user._id,
@@ -712,7 +714,9 @@ const updateSolversCommunityWizard = (exports.updateSolversCommunityWizard =
         const usernames = itemsFromMessage(ctx.message.text);
         if (usernames.length > 0 && usernames.length < 10) {
           for (let i = 0; i < usernames.length; i++) {
-            const user = await User.findOne({ username: usernames[i] });
+            const username =
+              usernames[i][0] == '@' ? usernames[i].slice(1) : usernames[i];
+            const user = await User.findOne({ username });
             if (user) {
               solvers.push({
                 id: user._id,
