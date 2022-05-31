@@ -8,8 +8,6 @@ const user = {
   balance: 0,
   tg_id: '1',
   username: 'negrunch',
-  first_name: 'Francisco',
-  last_name: 'Calderón',
   created_at: '2021-07-27T20:39:42.403Z',
 };
 
