@@ -88,7 +88,7 @@ const communityWizard = (exports.communityWizard = new Scenes.WizardScene(
         if (!ret) return;
         delete ctx.wizard.state.handler;
       }
-      await ctx.wizard.selectStep(0);
+      ctx.wizard.selectStep(0);
       return ctx.wizard.steps[ctx.wizard.cursor](ctx);
     } catch (err) {
       logger.error(err);
@@ -149,7 +149,6 @@ const createCommunitySteps = {
         ctx.wizard.state.error = ctx.i18n.t('max_allowed', { max });
         return await ctx.wizard.state.updateUI();
       }
-
       ctx.wizard.state.currencies = currencies;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
@@ -513,8 +512,11 @@ const updateGroupCommunityWizard = (exports.updateGroupCommunityWizard =
         }
         const { id, bot, user } = ctx.wizard.state;
         if (!(await isGroupAdmin(group, user, bot.telegram))) {
-          messages.wizardCommunityWrongPermission(ctx, user, group);
-          return;
+          return await messages.wizardCommunityWrongPermission(
+            ctx,
+            user,
+            group
+          );
         }
         const community = await Community.findOne({
           _id: id,
@@ -568,10 +570,8 @@ const updateCurrenciesCommunityWizard =
 
         let currencies = itemsFromMessage(ctx.message.text);
         currencies = currencies.map(currency => currency.toUpperCase());
-        if (currencies.length > 10) {
-          await messages.wizardCommunityEnterCurrencyMessage(ctx);
-          return;
-        }
+        if (currencies.length > 10)
+          return await messages.wizardCommunityEnterCurrencyMessage(ctx);
 
         const { id, user } = ctx.wizard.state;
         const community = await Community.findOne({
@@ -624,10 +624,8 @@ const updateChannelsCommunityWizard = (exports.updateChannelsCommunityWizard =
           return ctx.scene.leave();
         }
         const chan = itemsFromMessage(ctx.message.text);
-        if (chan.length > 2) {
-          await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
-          return;
-        }
+        if (chan.length > 2)
+          return await messages.wizardCommunityOneOrTwoChannelsMessage(ctx);
 
         const { id, bot, user } = ctx.wizard.state;
         const community = await Community.findOne({
@@ -641,24 +639,33 @@ const updateChannelsCommunityWizard = (exports.updateChannelsCommunityWizard =
         }
         const orderChannels = [];
         if (chan.length === 1) {
-          if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
-            messages.wizardCommunityWrongPermission(ctx, user, chan[0]);
-            return;
-          }
+          if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
+            return await messages.wizardCommunityWrongPermission(
+              ctx,
+              user,
+              chan[0]
+            );
+
           const channel = {
             name: chan[0],
             type: 'mixed',
           };
           orderChannels.push(channel);
         } else {
-          if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
-            messages.wizardCommunityWrongPermission(ctx, user, chan[0]);
-            return;
-          }
-          if (!(await isGroupAdmin(chan[1], user, bot.telegram))) {
-            messages.wizardCommunityWrongPermission(ctx, user, chan[1]);
-            return;
-          }
+          if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
+            return await messages.wizardCommunityWrongPermission(
+              ctx,
+              user,
+              chan[0]
+            );
+
+          if (!(await isGroupAdmin(chan[1], user, bot.telegram)))
+            return await messages.wizardCommunityWrongPermission(
+              ctx,
+              user,
+              chan[1]
+            );
+
           const channel1 = {
             name: chan[0],
             type: 'buy',
@@ -781,13 +788,11 @@ const updateFeeCommunityWizard = (exports.updateFeeCommunityWizard =
         }
 
         if (isNaN(fee)) {
-          await messages.mustBeANumber(ctx);
-          return;
+          return await messages.mustBeANumber(ctx);
         }
 
         if (fee < 0 || fee > 100) {
-          await messages.wizardCommunityWrongPercentFeeMessage(ctx);
-          return;
+          return await messages.wizardCommunityWrongPercentFeeMessage(ctx);
         }
         const { id, user } = ctx.wizard.state;
         const community = await Community.findOne({
@@ -841,22 +846,22 @@ const updateDisputeChannelCommunityWizard =
           return ctx.scene.leave();
         }
         const { id, bot, user } = ctx.wizard.state;
-        if (!(await isGroupAdmin(channel, user, bot.telegram))) {
+        if (!(await isGroupAdmin(channel, user, bot.telegram)))
           return await messages.wizardCommunityWrongPermission(
             ctx,
             user,
             channel
           );
-        }
+
         const community = await Community.findOne({
           _id: id,
           creator_id: user._id,
         });
-        if (!community) {
+        if (!community)
           throw new Error(
             'Community not found in UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID'
           );
-        }
+
         community.dispute_channel = channel;
         await community.save();
         await messages.operationSuccessfulMessage(ctx);

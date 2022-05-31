@@ -170,20 +170,26 @@ const initialize = (botToken, options) => {
       // We check if this is a solver, the order must be from the same community
       if (!user.admin) {
         if (!order.community_id) {
-          await messages.notAuthorized(ctx);
-          return;
+          logger.debug(
+            `cancelorder ${order._id}: The order is not in a community`
+          );
+          return await messages.notAuthorized(ctx);
         }
 
         if (order.community_id != user.default_community_id) {
-          await messages.notAuthorized(ctx);
-          return;
+          logger.debug(
+            `cancelorder ${order._id}: The community and the default user community are not the same`
+          );
+          return await messages.notAuthorized(ctx);
         }
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
         if (dispute && dispute.solver_id != user._id) {
-          await messages.notAuthorized(ctx);
-          return;
+          logger.debug(
+            `cancelorder ${order._id}: @${user.username} is not the solver of this dispute`
+          );
+          return await messages.notAuthorized(ctx);
         }
       }
 
