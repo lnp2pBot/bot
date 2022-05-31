@@ -59,7 +59,7 @@ const createOrder = async (
         user,
         type,
         amount: numberFormat(fiatCode, amount),
-        fiatAmount: isNaN(fiatAmount) ? fiatAmount : numberFormat(fiatCode, fiatAmount),
+        fiatAmount: numberFormat(fiatCode, fiatAmount),
         fiatCode,
         paymentMethod,
         priceMargin,
@@ -155,7 +155,8 @@ const buildDescription = (
       tasaText =
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
-      const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
+      const regex = /\,|\./g;
+      const exchangePrice = getBtcExchangePrice(fiatAmount.replace(regex,''), amount.replace(regex,''));
       tasaText = i18n.t('price') + `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
     }
 

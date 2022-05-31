@@ -43,7 +43,7 @@ const numberFormat = (code, number) => {
   const locale = currencies[code].locale;
   const numberToLocaleString = Intl.NumberFormat(locale);
 
-  if (!locale) return number;
+  if (!locale || isNaN(number)) return number;
 
   return numberToLocaleString.format(number);
 };
