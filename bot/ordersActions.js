@@ -134,18 +134,12 @@ const buildDescription = (
     priceMargin =
       !!priceMargin && priceMargin > 0 ? `+${priceMargin}` : priceMargin;
     const priceMarginText = priceMargin ? `${priceMargin}%` : ``;
-    let fiatAmountString;
+    const fiatAmountString = fiatAmount.join('-');
 
-    if (fiatAmount.length === 2) {
-      fiatAmountString = `${fiatAmount[0]}-${fiatAmount[1]}`;
-    } else {
-      fiatAmountString = `${fiatAmount}`;
-    }
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
-    if (currency) {
+    if (currency)
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
-    }
 
     let amountText = `${amount} `;
     let tasaText = '';
