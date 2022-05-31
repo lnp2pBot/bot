@@ -144,9 +144,8 @@ const buildDescription = (
     }
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
-    if (currency) {
+    if (currency)
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
-    }
 
     let amountText = `${amount} `;
     let tasaText = '';
