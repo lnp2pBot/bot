@@ -8,10 +8,10 @@ const UserReviewSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   tg_id: { type: String, unique: true },
   username: { type: String },
-  first_name: { type: String },
-  last_name: { type: String },
   lang: { type: String, default: 'en' },
   trades_completed: { type: Number, min: 0, default: 0 },
+  total_reviews: { type: Number, min: 0, default: 0 },
+  last_rating: { type: Number, min: 0, max: 5, default: 0 },
   total_rating: { type: Number, min: 0, max: 5, default: 0 },
   reviews: [UserReviewSchema],
   volume_traded: { type: Number, min: 0, default: 0 },
