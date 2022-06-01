@@ -409,3 +409,4 @@ users: Benutzer
 not_found_dispute: Für diesen Auftrag gib es keinen Streitfall
 max_allowed: The maximum allowed is ${max}
 dispute_channel: Dispute channel
+not_wizard: You are not in wizard mode at the moment, if you have doubts you can type /help
