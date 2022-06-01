@@ -1,8 +1,8 @@
 exports.createCommunityWizardStatus = (i18n, state) => {
   let { name, currencies, group, channels, fee, solvers } = state;
-
   name = state.name || '__';
-  currencies = state.currencies || '__';
+  currencies = state.currencies && state.currencies.join(', ');
+  currencies = currencies || '__';
   group = state.group || '__';
   channels =
     state.channels && state.channels.map(channel => channel.name).join(', ');
