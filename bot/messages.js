@@ -1368,7 +1368,7 @@ const wizardAddFiatAmountCorrectMessage = async (ctx, currency, fiatAmount) => {
     await ctx.reply(
       ctx.i18n.t('wizard_add_fiat_correct_amount', {
         currency: currency.symbol_native,
-        fiatAmount: numberFormat(order.fiat_code, fiatAmount),
+        fiatAmount,
       })
     );
   } catch (error) {
