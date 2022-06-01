@@ -408,3 +408,4 @@ not_found_dispute: No hay ninguna disputa para esta orden
 max_allowed: El máximo permitido es ${max}
 dispute_channel: Canal de disputas
 not_wizard: No estás en el modo wizard en este momento, si tienes dudas puedes escribir /help
+wizard_help: Estás en modo wizard, si necesitas volver al modo comando ejecuta /exit

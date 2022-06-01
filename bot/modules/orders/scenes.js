@@ -101,11 +101,6 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
   }
 ));
 
-createOrder.command('exit', ctx => {
-  ctx.scene.leave();
-  ctx.reply(ctx.i18n.t('wizard_exit'));
-});
-
 const createOrderSteps = {
   async currency(ctx) {
     const prompt = await createOrderPrompts.currency(ctx);
