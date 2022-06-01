@@ -1,4 +1,4 @@
-const { Telegraf, Scenes, session } = require('telegraf');
+const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
 const schedule = require('node-schedule');
 const {
@@ -47,11 +47,6 @@ const {
   cancelOrders,
   deleteOrders,
 } = require('../jobs');
-const {
-  addInvoiceWizard,
-  addFiatAmountWizard,
-  addInvoicePHIWizard,
-} = require('./scenes');
 const logger = require('../logger');
 
 const initialize = (botToken, options) => {
@@ -79,23 +74,9 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  const stage = new Scenes.Stage([
-    addInvoiceWizard,
-    addFiatAmountWizard,
-    CommunityModule.Scenes.communityWizard,
-    CommunityModule.Scenes.updateNameCommunityWizard,
-    CommunityModule.Scenes.updateGroupCommunityWizard,
-    CommunityModule.Scenes.updateCurrenciesCommunityWizard,
-    CommunityModule.Scenes.updateChannelsCommunityWizard,
-    CommunityModule.Scenes.updateSolversCommunityWizard,
-    CommunityModule.Scenes.updateFeeCommunityWizard,
-    CommunityModule.Scenes.updateDisputeChannelCommunityWizard,
-    addInvoicePHIWizard,
-    OrdersModule.Scenes.createOrder,
-  ]);
   bot.use(session());
   bot.use(i18n.middleware());
-  bot.use(stage.middleware());
+  bot.use(require('./stage').middleware());
 
   bot.start(async ctx => {
     try {
