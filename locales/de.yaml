@@ -361,7 +361,7 @@ unknown_command: 😕 Ich verstehe das nicht. Bitte benutze /help, um die Liste 
 invoice_invalid_error: |
   Fehler beim Parsen der LN-Rechnung. Bitte füge eine Lightning-Netzwerk LN-Rechnung ein, die mit "lnbc" beginnt.
 
-  Wenn du abbrechen und in den Befehlseingabemodus zurückkehren willst, tippe einfach => exit <=
+  Wenn du abbrechen und in den Befehlseingabemodus zurückkehren willst, tippe einfach /exit
 invoice_expiry_too_short_error: LN-Rechnungsablauf ist zu kurz
 invoice_has_expired_error: Die LN-Rechnung ist abgelaufen
 invoice_has_wrong_destination_error: Die LN-Rechnung hat ein falsches Ziel

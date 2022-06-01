@@ -47,14 +47,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (lnInvoice === 'exit') {
-        if (!!order && order.status === 'WAITING_BUYER_INVOICE') {
-          await messages.wizardAddInvoiceExitMessage(ctx, order);
-        } else {
-          await messages.wizardExitMessage(ctx);
-        }
-        return ctx.scene.leave();
-      }
       const res = await isValidInvoice(ctx, lnInvoice);
       if (!res.success) {
         return;
@@ -108,11 +100,6 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       order = await Order.findOne({ _id: order._id });
       if (!order) {
         await ctx.reply(ctx.i18n.t('generic_error'));
-        return ctx.scene.leave();
-      }
-
-      if (lnInvoice === 'exit') {
-        await messages.wizardExitMessage(ctx);
         return ctx.scene.leave();
       }
 

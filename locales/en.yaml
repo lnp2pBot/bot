@@ -359,7 +359,7 @@ unknown_command: 😕 I do not understand. Please use /help to see the list of a
 invoice_invalid_error: |
   Error parsing the invoice. Please copy-paste a lightning invoice starting with 'lnbc'.
 
-  If you want to abort and return to the command entering mode just type => exit <=
+  If you want to abort and return to the command entering mode just run /exit
 invoice_expiry_too_short_error: Invoice expiry is too short
 invoice_has_expired_error: Invoice has expired
 invoice_has_wrong_destination_error: Invoice has wrong destination
