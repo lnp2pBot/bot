@@ -58,8 +58,8 @@ const createOrder = async (
       description: buildDescription(i18n, {
         user,
         type,
-        amount: numberFormat(fiatCode, amount),
-        fiatAmount: numberFormat(fiatCode, fiatAmount),
+        amount,
+        fiatAmount,
         fiatCode,
         paymentMethod,
         priceMargin,
@@ -123,7 +123,7 @@ const buildDescription = (
     const paymentAction =
       type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
     const trades = user.trades_completed;
-    const volume = user.volume_traded;
+    const volume = numberFormat(fiatCode, user.volume_traded);
     const totalRating = user.total_rating;
     const totalReviews = user.reviews.length;
     const username = user.show_username
@@ -135,28 +135,27 @@ const buildDescription = (
     priceMargin =
       !!priceMargin && priceMargin > 0 ? `+${priceMargin}` : priceMargin;
     const priceMarginText = priceMargin ? `${priceMargin}%` : ``;
-    let fiatAmountString;
-    
-    if (fiatAmount.length == 2) { 
-      fiatAmountString = `${numberFormat(fiatCode, fiatAmount[0])}-${numberFormat(fiatCode, fiatAmount[1])}`;
-    } else {
-      fiatAmountString = `${fiatAmount}`;
-    }
+
+    const fiatAmountString = fiatAmount
+      .map(amt => numberFormat(fiatCode, amt))
+      .join(' - ');
+
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
     if (currency)
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
 
-    let amountText = `${amount} `;
+    let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
     if (priceFromAPI) {
       amountText = '';
       tasaText =
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
-      const regex = /\,|\./g;
-      const exchangePrice = getBtcExchangePrice(fiatAmount.replace(regex,''), amount.replace(regex,''));
-      tasaText = i18n.t('price') + `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
+      const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
+      tasaText =
+        i18n.t('price') +
+        `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
     }
 
     let rateText = '';

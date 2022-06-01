@@ -35,7 +35,6 @@ const plural = n => {
   return 's';
 };
 
-
 // This function formats a number to locale strings.
 // If Iso code or locale code doesn´t exist, the function will return a number without format.
 const numberFormat = (code, number) => {
