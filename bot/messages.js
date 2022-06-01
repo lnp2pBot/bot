@@ -447,20 +447,6 @@ const onGoingTakeSellMessage = async (
         buyerUsername: buyerUser.username,
       })
     );
-    await bot.telegram.sendMessage(
-      buyerUser.tg_id,
-      i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }),
-      { parse_mode: 'MarkdownV2' }
-    );
-    await bot.telegram.sendMessage(
-      sellerUser.tg_id,
-      i18nSeller.t('buyer_took_your_order', {
-        fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
-        paymentMethod: order.payment_method,
-        currency,
-        buyerUsername: buyerUser.username,
-      })
-    );
   } catch (error) {
     logger.error(error);
   }
