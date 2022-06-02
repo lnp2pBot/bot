@@ -11,7 +11,7 @@ const isIso4217 = code => {
   }
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
   code = code.toLowerCase().split('');
-  code.every(letter => {
+  return code.every(letter => {
     if (alphabet.indexOf(letter) == -1) {
       return false;
     }
@@ -38,6 +38,9 @@ const plural = n => {
 // If Iso code or locale code doesn´t exist, the function will return a number without format.
 const numberFormat = (code, number) => {
   if (!isIso4217(code)) return false;
+
+  if (!currencies[code]) return number;
+
   const locale = currencies[code].locale;
   const numberToLocaleString = Intl.NumberFormat(locale);
 
