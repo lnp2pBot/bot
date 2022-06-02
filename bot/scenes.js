@@ -35,9 +35,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
       const lnInvoice = ctx.message.text.trim();
       let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
@@ -62,10 +60,9 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      if (res.invoice.tokens && res.invoice.tokens !== order.amount) {
-        await messages.incorrectAmountInvoiceMessage(ctx);
-        return;
-      }
+      if (res.invoice.tokens && res.invoice.tokens !== order.amount)
+        return await messages.incorrectAmountInvoiceMessage(ctx);
+
       await waitPayment(ctx, bot, buyer, seller, order, lnInvoice);
 
       return ctx.scene.leave();
@@ -91,9 +88,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
       const lnInvoice = ctx.message.text.trim();
       let { buyer, order } = ctx.wizard.state;
       // We get an updated order from the DB
@@ -108,10 +103,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return;
       }
 
-      if (!!res.invoice.tokens && res.invoice.tokens !== order.amount) {
-        await messages.incorrectAmountInvoiceMessage(ctx);
-        return;
-      }
+      if (!!res.invoice.tokens && res.invoice.tokens !== order.amount)
+        return await messages.incorrectAmountInvoiceMessage(ctx);
 
       const isScheduled = await PendingPayment.findOne({
         order_id: order._id,
@@ -121,10 +114,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       // We check if the payment is on flight
       const isPending = await isPendingPayment(order.buyer_invoice);
 
-      if (!!isScheduled || !!isPending) {
-        await messages.invoiceAlreadyUpdatedMessage(ctx);
-        return;
-      }
+      if (!!isScheduled || !!isPending)
+        return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
       // if the payment is not on flight, we create a pending payment
       if (!order.paid_hold_buyer_invoice_updated) {
@@ -181,9 +172,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
     try {
       const { bot, order } = ctx.wizard.state;
 
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
 
       const fiatAmount = parseInt(ctx.message.text.trim());
       if (!Number.isInteger(fiatAmount)) {

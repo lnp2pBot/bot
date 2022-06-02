@@ -103,6 +103,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
 
 const createOrderSteps = {
   async currency(ctx) {
+    if (ctx.message === undefined) return ctx.scene.leave();
     const prompt = await createOrderPrompts.currency(ctx);
     const deletePrompt = () =>
       ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -139,6 +140,7 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async method(ctx) {
+    if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.handler = async ctx => {
       const { text } = ctx.message;
       if (!text) return;
@@ -157,6 +159,7 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async priceMargin(ctx) {
+    if (ctx.message === undefined) return ctx.scene.leave();
     const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
@@ -229,6 +232,7 @@ const createOrderPrompts = {
 
 const createOrderHandlers = {
   async fiatAmount(ctx) {
+    if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.error = null;
     const inputs = ctx.message.text.split('-').map(Number);
     const notNumbers = inputs.filter(isNaN);
@@ -253,6 +257,7 @@ const createOrderHandlers = {
     return true;
   },
   async sats(ctx) {
+    if (ctx.message === undefined) return ctx.scene.leave();
     if (ctx.callbackQuery) {
       ctx.wizard.state.sats = 0;
       await ctx.wizard.state.updateUI();
