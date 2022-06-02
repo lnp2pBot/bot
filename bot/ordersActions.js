@@ -3,6 +3,7 @@ const { Order } = require('../models');
 const messages = require('./messages');
 const {
   getCurrency,
+  numberFormat,
   getBtcExchangePrice,
   getEmojiRate,
   decimalRound,
@@ -122,7 +123,7 @@ const buildDescription = (
     const paymentAction =
       type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
     const trades = user.trades_completed;
-    const volume = user.volume_traded;
+    const volume = numberFormat(fiatCode, user.volume_traded);
     const totalRating = user.total_rating;
     const totalReviews = user.reviews.length;
     const username = user.show_username
@@ -134,14 +135,17 @@ const buildDescription = (
     priceMargin =
       !!priceMargin && priceMargin > 0 ? `+${priceMargin}` : priceMargin;
     const priceMarginText = priceMargin ? `${priceMargin}%` : ``;
-    const fiatAmountString = fiatAmount.join('-');
+
+    const fiatAmountString = fiatAmount
+      .map(amt => numberFormat(fiatCode, amt))
+      .join(' - ');
 
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
     if (currency)
       currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
 
-    let amountText = `${amount} `;
+    let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
     if (priceFromAPI) {
       amountText = '';
@@ -149,7 +153,9 @@ const buildDescription = (
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
-      tasaText = i18n.t('price') + `: ${exchangePrice.toFixed(2)}\n`;
+      tasaText =
+        i18n.t('price') +
+        `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
     }
 
     let rateText = '';

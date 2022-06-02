@@ -35,6 +35,18 @@ const plural = n => {
   return 's';
 };
 
+// This function formats a number to locale strings.
+// If Iso code or locale code doesn´t exist, the function will return a number without format.
+const numberFormat = (code, number) => {
+  if (!isIso4217(code)) return false;
+  const locale = currencies[code].locale;
+  const numberToLocaleString = Intl.NumberFormat(locale);
+
+  if (!locale || isNaN(number)) return number;
+
+  return numberToLocaleString.format(number);
+};
+
 // This function checks if the current buyer and seller were doing circular operations
 // In order to increase their trades_completed and volume_traded.
 // If we found those trades in the last 24 hours we decrease both variables to both users
@@ -402,6 +414,7 @@ module.exports = {
   deleteOrderFromChannel,
   getOrderChannel,
   getUserI18nContext,
+  numberFormat,
   getDisputeChannel,
   getDetailedOrder,
   isDisputeSolver,
