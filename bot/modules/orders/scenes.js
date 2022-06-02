@@ -159,7 +159,6 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async priceMargin(ctx) {
-    if (ctx.message === undefined) return ctx.scene.leave();
     const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
@@ -257,7 +256,6 @@ const createOrderHandlers = {
     return true;
   },
   async sats(ctx) {
-    if (ctx.message === undefined) return ctx.scene.leave();
     if (ctx.callbackQuery) {
       ctx.wizard.state.sats = 0;
       await ctx.wizard.state.updateUI();
