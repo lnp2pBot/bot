@@ -409,3 +409,4 @@ max_allowed: El máximo permitido es ${max}
 dispute_channel: Canal de disputas
 not_wizard: No estás en el modo wizard en este momento, si tienes dudas puedes escribir /help
 wizard_help: Estás en modo wizard, si necesitas volver al modo comando ejecuta /exit
+hold_invoice_memo: "@${botName} - Depósito en garantía para la orden #${orderId} - VENTA por ${fiatCode} ${fiatAmount} - SE CONGELARÁ EN SU BILLETERA. Se libera al comprador una vez ejecute '/release'. Retorna a la wallet si el comprador no confirma el pago"

@@ -128,7 +128,12 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       );
     } else {
       // We create a hold invoice
-      const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+      const description = i18nCtx.t('hold_invoice_memo', {
+        botName: ctx.botInfo.username,
+        orderId: order._id,
+        fiatCode: order.fiat_code,
+        fiatAmount: order.fiat_amount,
+      });
       const amount = Math.floor(order.amount + order.fee);
       const { request, hash, secret } = await createHoldInvoice({
         amount,
@@ -420,7 +425,12 @@ const showHoldInvoice = async (ctx, bot, order) => {
     }
 
     // We create the hold invoice and show it to the seller
-    const description = `Venta por @${ctx.botInfo.username} #${order._id}`;
+    const description = ctx.i18n.t('hold_invoice_memo', {
+      botName: ctx.botInfo.username,
+      orderId: order._id,
+      fiatCode: order.fiat_code,
+      fiatAmount: order.fiat_amount,
+    });
     let amount;
     if (order.amount === 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
