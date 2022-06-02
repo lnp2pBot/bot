@@ -298,8 +298,8 @@ wizard_exit: You have exit wizard mode, you can now write commands
 wizard_add_fiat_amount: |
   Please indicate the amount of ${currency} that you want to ${action}.
 
-  Remember it must be between ${minAmount} and ${maxAmount}:
-wizard_add_fiat_wrong_amount: Invalid amount, input must be between ${minAmount} and ${maxAmount}
+  Remember it must be only numbers and be between ${minAmount} and ${maxAmount}:
+wizard_add_fiat_wrong_amount: Invalid amount, input must be between ${minAmount} and ${maxAmount}, it must be only numbers.
 wizard_add_fiat_correct_amount: 'Amount: ${currency} ${fiatAmount}.'
 order_expired: This order has expired!
 cant_add_invoice: You can no  longer add an invoice to this order!
@@ -385,11 +385,11 @@ new_dispute: ⚠️⚠️⚠️ A user has started a dispute, touch the button t
 take_dispute: Take dispute
 not_authorized: 🤨 You are not authorized to perform this operation
 need_default_community: To perform this operation you need to have a default community
-enter_sats_amount: Enter sats amount
+enter_sats_amount: Enter sats amount, enter only numbers.
 market_price: Market price
 enter_currency: 'Enter a currency by your code, eg: USD'
 choose_currency: Choose a currency
-enter_currency_amount: Enter the amount of ${currency}.
+enter_currency_amount: Enter the amount of ${currency}, enter only numbers.
 enter_premium_discount: Enter the premium or discount to apply to the offer. Premium is a positive number and discount is a negative number, if you don't want the offer to have a premium or discount enter 0.
 enter_payment_method: Enter the payment method
 invalid_currency: Invalid currency

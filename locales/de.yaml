@@ -387,11 +387,11 @@ new_dispute: ⚠️⚠️⚠️ Ein Benutzer hat einen Streitfall eröffnet. Dr�
 take_dispute: Streitfall übernehmen
 not_authorized: 🤨 Du bist nicht berechtigt diese Aktion durchzuführen
 need_default_community: Um diese Aktion durchzufüren, musst du eine Standart-Community gesetzt haben
-enter_sats_amount: Sats-Betrag eingeben
+enter_sats_amount: Sats-Betrag eingeben, enter only numbers.
 market_price: Marktpreis
 enter_currency: 'Gib eine Währung anhand des Codes ein, z.B.: USD'
 choose_currency: Wähle eine Währung
-enter_currency_amount: Gib den Betrag in ${currency} ein.
+enter_currency_amount: Gib den Betrag in ${currency} ein, enter only numbers.
 enter_premium_discount: Gib die Zuschlag oder den Rabatt ein, der für das Angebot gelten soll. Der Zuschlag ist eine positive Zahl und der Rabatt ist eine negative Zahl. Wenn du nicht möchtest, dass das Angebot einen Zuschlag oder einen Rabatt erhält, gib 0 ein.
 enter_payment_method: Gib die Zahlungsmethode ein (z.B. Banküberweisung)
 invalid_currency: Ungültige Währung
