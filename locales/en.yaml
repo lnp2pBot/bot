@@ -101,6 +101,8 @@ payment_received: |
   🤑 Payment received!
 
   Now I need that the buyer sends an invoice so I can send satoshis to his/her wallet. as soon as the buyer sends the invoice I will put you both in touch.
+
+  Wait a bit. If the buyer does not cooperate, the collateral will be returned to you.
 someone_took_your_order: |
   🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\\.
 

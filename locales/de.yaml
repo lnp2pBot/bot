@@ -101,6 +101,8 @@ payment_received: |
   🤑 Zahlung erhalten!
 
   Jetzt muss mir der Käufer eine LN-Rechnung schicken, damit ich die sats an sein Wallet senden kann. Sobald der Käufer die LN-Rechnung schickt, werde ich euch beide kontaktieren.
+
+  Wait a bit. If the buyer does not cooperate, the collateral will be returned to you.
 someone_took_your_order: |
   🤖 Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt\\. Bitte verwende einen FIAT\\-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird\\.
 
