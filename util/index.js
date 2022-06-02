@@ -11,13 +11,12 @@ const isIso4217 = code => {
   }
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
   code = code.toLowerCase().split('');
-  code.forEach(letter => {
-    if (alphabet.indexOf(letter) === -1) {
+  code.every(letter => {
+    if (alphabet.indexOf(letter) == -1) {
       return false;
     }
+    return true;
   });
-
-  return true;
 };
 
 const getCurrency = code => {
