@@ -2,17 +2,19 @@ require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
+const logger = require('../logger');
+
 const mongoString = process.env.DATABASE_URL;
 
 mongoose.connect(mongoString);
 const database = mongoose.connection;
 
 database.on('error', error => {
-  console.log(error);
+  logger.error(`Error connecting to Mongo: ${error}`);
 });
 
 database.once('connected', () => {
-  console.log('Database Connected');
+  logger.error(`Connected to Mongo instance.`);
 });
 const app = express();
 app.use(cors());
@@ -23,5 +25,5 @@ const routes = require('./routes/routes');
 app.use('/api', routes);
 
 app.listen(3000, () => {
-  console.log(`Server Started at ${3000}`);
+  logger.error(`Server Started at ${3000}`);
 });

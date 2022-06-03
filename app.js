@@ -1,22 +1,23 @@
 require('dotenv').config();
+const { SocksProxyAgent } = require('socks-proxy-agent');
 const { start } = require('./bot');
 const mongoConnect = require('./db_connect');
 const { resubscribeInvoices } = require('./ln');
-const { SocksProxyAgent } = require('socks-proxy-agent');
+const logger = require('./logger');
 
 (async () => {
   process.on('unhandledRejection', e => {
-    console.log(e);
+    logger.error(`Unhandled Rejection: ${e.message}`);
   });
 
   process.on('uncaughtException', e => {
-    console.log(e);
+    logger.error(`Uncaught Exception: ${e.message}`);
   });
 
   const mongoose = mongoConnect();
   mongoose.connection
     .once('open', async () => {
-      console.log('Connected to Mongo instance.');
+      logger.info('Connected to Mongo instance.');
       let options = null;
       if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
@@ -30,5 +31,5 @@ const { SocksProxyAgent } = require('socks-proxy-agent');
       const bot = start(process.env.BOT_TOKEN, options);
       await resubscribeInvoices(bot);
     })
-    .on('error', error => console.log('Error connecting to Mongo:', error));
+    .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
 })();
