@@ -158,7 +158,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
     }
     await order.save();
   } catch (error) {
-    logger.error(error);
+    logger.error(`Error in waitPayment: ${error}`);
   }
 };
 
@@ -459,7 +459,7 @@ const showHoldInvoice = async (ctx, bot, order) => {
       order.fiat_amount
     );
   } catch (error) {
-    logger.error(error);
+    logger.error(`Error in showHoldInvoice: ${error}`);
   }
 };
 
