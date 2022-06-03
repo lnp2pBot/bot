@@ -57,6 +57,9 @@ const initialize = (botToken, options) => {
   });
 
   const bot = new Telegraf(botToken, options);
+  bot.catch(err => {
+    logger.error(err);
+  });
 
   // We schedule pending payments job
   schedule.scheduleJob(
