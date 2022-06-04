@@ -84,10 +84,8 @@ const initialize = (botToken, options) => {
   bot.start(async ctx => {
     try {
       const tgUser = ctx.update.message.from;
-      if (!tgUser.username) {
-        await messages.nonHandleErrorMessage(ctx);
-        return;
-      }
+      if (!tgUser.username) return await messages.nonHandleErrorMessage(ctx);
+
       messages.startMessage(ctx);
       await validateUser(ctx, true);
     } catch (error) {
@@ -177,9 +175,7 @@ const initialize = (botToken, options) => {
         }
       }
 
-      if (order.hash) {
-        await cancelHoldInvoice({ hash: order.hash });
-      }
+      if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       if (dispute) {
         dispute.status = 'FINISHED';
@@ -229,9 +225,7 @@ const initialize = (botToken, options) => {
         // we sent a private message to the user
         await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
         // We delete the messages related to that order from the channel
-        await deleteOrderFromChannel(order, bot.telegram);
-
-        return;
+        return await deleteOrderFromChannel(order, bot.telegram);
       }
 
       if (
@@ -240,10 +234,8 @@ const initialize = (botToken, options) => {
           order.status === 'FIAT_SENT' ||
           order.status === 'DISPUTE'
         )
-      ) {
-        await messages.badStatusOnCancelOrderMessage(ctx);
-        return;
-      }
+      )
+        return await messages.badStatusOnCancelOrderMessage(ctx);
 
       // If the order is active we start a cooperative cancellation
       let counterPartyUser, initiator, counterParty;
@@ -259,14 +251,12 @@ const initialize = (botToken, options) => {
         counterParty = 'buyer';
       }
 
-      if (order[`${initiator}_cooperativecancel`]) {
-        await messages.shouldWaitCooperativeCancelMessage(
+      if (order[`${initiator}_cooperativecancel`])
+        return await messages.shouldWaitCooperativeCancelMessage(
           ctx,
           bot,
           initiatorUser
         );
-        return;
-      }
 
       order[`${initiator}_cooperativecancel`] = true;
 
@@ -274,9 +264,7 @@ const initialize = (botToken, options) => {
       // If the counter party already requested a cooperative cancel order
       if (order[`${counterParty}_cooperativecancel`]) {
         // If we already have a holdInvoice we cancel it and return the money
-        if (order.hash) {
-          await cancelHoldInvoice({ hash: order.hash });
-        }
+        if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
         order.status = 'CANCELED';
         let seller = initiatorUser;
@@ -362,26 +350,21 @@ const initialize = (botToken, options) => {
       // We check if this is a solver, the order must be from the same community
       if (!user.admin) {
         if (!order.community_id) {
-          await messages.notAuthorized(ctx);
-          return;
+          return await messages.notAuthorized(ctx);
         }
 
         if (order.community_id != user.default_community_id) {
-          await messages.notAuthorized(ctx);
-          return;
+          return await messages.notAuthorized(ctx);
         }
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
         if (dispute && dispute.solver_id != user._id) {
-          await messages.notAuthorized(ctx);
-          return;
+          return await messages.notAuthorized(ctx);
         }
       }
 
-      if (order.secret) {
-        await settleHoldInvoice({ secret: order.secret });
-      }
+      if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       if (dispute) {
         dispute.status = 'FINISHED';
@@ -528,21 +511,16 @@ const initialize = (botToken, options) => {
         2,
         '\\<_lightningAddress / off_\\>'
       );
-      if (!lightningAddress) {
-        return;
-      }
+      if (!lightningAddress) return;
 
       if (lightningAddress === 'off') {
         user.lightning_address = null;
         await user.save();
-        await messages.disableLightningAddress(ctx);
-        return;
+        return await messages.disableLightningAddress(ctx);
       }
 
-      if (!(await validateLightningAddress(lightningAddress))) {
-        await messages.invalidLightningAddress(ctx);
-        return;
-      }
+      if (!(await validateLightningAddress(lightningAddress)))
+        return await messages.invalidLightningAddress(ctx);
 
       user.lightning_address = lightningAddress;
       await user.save();
@@ -572,18 +550,14 @@ const initialize = (botToken, options) => {
         _id: orderId,
         buyer_id: user._id,
       });
-      if (!order) {
-        await messages.notActiveOrderMessage(ctx);
-        return;
-      }
-      if (order.status === 'SUCCESS') {
-        await messages.successCompleteOrderMessage(ctx, order);
-        return;
-      }
-      if (invoice.tokens && invoice.tokens !== order.amount) {
-        await messages.incorrectAmountInvoiceMessage(ctx);
-        return;
-      }
+      if (!order) return await messages.notActiveOrderMessage(ctx);
+
+      if (order.status === 'SUCCESS')
+        return await messages.successCompleteOrderMessage(ctx, order);
+
+      if (invoice.tokens && invoice.tokens !== order.amount)
+        return await messages.incorrectAmountInvoiceMessage(ctx);
+
       order.buyer_invoice = lnInvoice;
       // When a seller release funds but the buyer didn't get the invoice paid
       if (order.status === 'PAID_HOLD_INVOICE') {
@@ -595,10 +569,8 @@ const initialize = (botToken, options) => {
         // We check if the payment is on flight
         const isPending = await isPendingPayment(order.buyer_invoice);
 
-        if (!!isScheduled || !!isPending) {
-          await messages.invoiceAlreadyUpdatedMessage(ctx);
-          return;
-        }
+        if (!!isScheduled || !!isPending)
+          return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
         if (!order.paid_hold_buyer_invoice_updated) {
           order.paid_hold_buyer_invoice_updated = true;
@@ -696,10 +668,7 @@ const initialize = (botToken, options) => {
       const order = await Order.findOne({
         _id: orderId,
       });
-      if (!order) {
-        await messages.notActiveOrderMessage(ctx);
-        return;
-      }
+      if (!order) return await messages.notActiveOrderMessage(ctx);
 
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
@@ -707,9 +676,8 @@ const initialize = (botToken, options) => {
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
       });
 
-      if (isPending) {
-        return;
-      }
+      if (isPending) return;
+
       await payToBuyer(bot, order);
     } catch (error) {
       logger.error(error);
