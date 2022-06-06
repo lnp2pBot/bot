@@ -6,7 +6,13 @@ const DisputeSchema = new mongoose.Schema({
   buyer_id: { type: String },
   status: {
     type: String,
-    enum: ['WAITING_FOR_SOLVER', 'IN_PROGRESS', 'FINISHED'],
+    enum: [
+      'WAITING_FOR_SOLVER',
+      'IN_PROGRESS', // taken by a solver
+      'SETTLED', // settled seller's invoice by admin/solver and started to pay sats to buyer
+      'SELLER_REFUNDED', // canceled by admin/solver and refunded to seller
+      'RELEASED', // release by the seller
+    ],
   },
   community_id: { type: String, default: null },
   order_id: { type: String, default: null },

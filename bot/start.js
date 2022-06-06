@@ -124,6 +124,13 @@ const initialize = (botToken, options) => {
       const order = await validateReleaseOrder(ctx, user, orderId);
 
       if (!order) return;
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
+      if (dispute) {
+        dispute.status = 'RELEASED';
+        await dispute.save();
+      }
 
       await settleHoldInvoice({ secret: order.secret });
     } catch (error) {
@@ -178,7 +185,7 @@ const initialize = (botToken, options) => {
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       if (dispute) {
-        dispute.status = 'FINISHED';
+        dispute.status = 'SELLER_REFUNDED';
         await dispute.save();
       }
 
@@ -367,7 +374,7 @@ const initialize = (botToken, options) => {
       if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       if (dispute) {
-        dispute.status = 'FINISHED';
+        dispute.status = 'SETTLED';
         await dispute.save();
       }
 

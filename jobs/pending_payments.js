@@ -49,6 +49,7 @@ const attemptPendingPayments = async bot => {
         order.status = 'SUCCESS';
         order.routing_fee = payment.fee;
         pending.paid = true;
+        pending.paid_at = new Date().toISOString();
         // We add a new completed trade for the buyer
         buyerUser.trades_completed++;
         await buyerUser.save();
