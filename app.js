@@ -18,7 +18,7 @@ const logger = require('./logger');
   mongoose.connection
     .once('open', async () => {
       logger.info('Connected to Mongo instance.');
-      let options = { handlerTimeout: 600000 };
+      let options = { handlerTimeout: 60000 };
       if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
         options = {
