@@ -1729,7 +1729,7 @@ const showConfirmationButtons = async (ctx, orders, commandString) => {
           return {
             _id: ord._id.toString(),
             fiat: ord.fiat_code,
-            amount: ord.fiat_amount,
+            amount: ord.fiat_amount || '-',
             type: ord.type,
           };
         })
