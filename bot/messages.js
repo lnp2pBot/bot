@@ -1734,9 +1734,9 @@ const showConfirmationButtons = async (ctx, orders, commandString) => {
           };
         })
         .map(ord => ({
-          text: `${ord._id.slice(0, 3)}...${ord._id.slice(-3)} - ${
-            ord.type
-          } - ${ord.fiat} ${ord.amount}`,
+          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${
+            ord.fiat
+          } ${ord.amount}`,
           callback_data: `${commandString}_${ord._id}`,
         }));
       inlineKeyboard.push(lineBtn);
