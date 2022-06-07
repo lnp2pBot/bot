@@ -10,7 +10,7 @@ const messages = require('./messages');
 const globalMessages = require('../../messages');
 const logger = require('../../../logger');
 
-const dispute = async (ctx, bot) => {
+const dispute = async ctx => {
   try {
     const user = await validateUser(ctx, false);
 
@@ -65,15 +65,15 @@ const dispute = async (ctx, bot) => {
     });
     await dispute.save();
     // Send message to both users
-    await messages.beginDispute(bot, initiator, order, buyer, seller, ctx.i18n);
+    await messages.beginDispute(ctx, initiator, order, buyer, seller);
     // Show the dispute button to solvers
-    await messages.takeDisputeButton(ctx, bot, order);
+    await messages.takeDisputeButton(ctx, order);
   } catch (error) {
     logger.error(error);
   }
 };
 
-const deleteDispute = async (ctx, bot) => {
+const deleteDispute = async ctx => {
   try {
     const admin = await validateAdmin(ctx);
 

@@ -1,7 +1,7 @@
 const { User, Order, Dispute } = require('../../../models');
 const messages = require('./messages');
 
-const takeDispute = async (ctx, bot) => {
+const takeDispute = async ctx => {
   ctx.deleteMessage();
   const tgId = ctx.update.callback_query.from.id;
   const orderId = ctx.match[1];
@@ -21,15 +21,14 @@ const takeDispute = async (ctx, bot) => {
     { solver_id: solver._id, status: 'IN_PROGRESS' }
   );
   await messages.disputeData(
-    bot,
+    ctx,
     buyer,
     seller,
     order,
     initiator,
     solver,
     buyerDisputes,
-    sellerDisputes,
-    ctx.i18n
+    sellerDisputes
   );
 };
 

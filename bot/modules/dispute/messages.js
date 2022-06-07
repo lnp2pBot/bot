@@ -1,7 +1,7 @@
 const { getDisputeChannel, getDetailedOrder } = require('../../../util');
 const logger = require('../../../logger');
 
-const beginDispute = async (bot, initiator, order, buyer, seller, i18n) => {
+const beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
     let initiatorUser = buyer;
     let counterPartyUser = seller;
@@ -10,31 +10,31 @@ const beginDispute = async (bot, initiator, order, buyer, seller, i18n) => {
       counterPartyUser = buyer;
     }
     if (initiator === 'buyer') {
-      await bot.telegram.sendMessage(
+      await ctx.telegram.sendMessage(
         initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_buyer')
+        ctx.i18n.t('you_started_dispute_to_buyer')
       );
-      await bot.telegram.sendMessage(
+      await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
-        i18n.t('buyer_started_dispute_to_seller', { orderId: order._id })
+        ctx.i18n.t('buyer_started_dispute_to_seller', { orderId: order._id })
       );
     } else {
-      await bot.telegram.sendMessage(
+      await ctx.telegram.sendMessage(
         initiatorUser.tg_id,
-        i18n.t('you_started_dispute_to_seller')
+        ctx.i18n.t('you_started_dispute_to_seller')
       );
-      await bot.telegram.sendMessage(
+      await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
-        i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
+        ctx.i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
       );
     }
   } catch (error) {}
 };
 
-const takeDisputeButton = async (ctx, bot, order) => {
+const takeDisputeButton = async (ctx, order) => {
   try {
     const disputeChannel = await getDisputeChannel(order);
-    await bot.telegram.sendMessage(disputeChannel, ctx.i18n.t('new_dispute'), {
+    await ctx.telegram.sendMessage(disputeChannel, ctx.i18n.t('new_dispute'), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -52,28 +52,28 @@ const takeDisputeButton = async (ctx, bot, order) => {
 };
 
 const disputeData = async (
-  bot,
+  ctx,
   buyer,
   seller,
   order,
   initiator,
   solver,
   buyerDisputes,
-  sellerDisputes,
-  i18n
+  sellerDisputes
 ) => {
   try {
-    const type = initiator === 'seller' ? i18n.t('seller') : i18n.t('buyer');
+    const type =
+      initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
     let initiatorUser = buyer;
     let counterPartyUser = seller;
     if (initiator === 'seller') {
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
-    const detailedOrder = getDetailedOrder(i18n, order, buyer, seller);
-    await bot.telegram.sendMessage(
+    const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    await ctx.telegram.sendMessage(
       solver.tg_id,
-      i18n.t('dispute_started_channel', {
+      ctx.i18n.t('dispute_started_channel', {
         initiatorUser,
         counterPartyUser,
         buyer,

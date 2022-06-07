@@ -5,8 +5,15 @@ const {
   validateTakeSellOrder,
   validateUserWaitingOrder,
   isBannedFromCommunity,
+  validateFiatSentOrder,
+  validateReleaseOrder,
 } = require('./validations');
-const { createHoldInvoice, subscribeInvoice } = require('../ln');
+const {
+  createHoldInvoice,
+  subscribeInvoice,
+  cancelHoldInvoice,
+  settleHoldInvoice,
+} = require('../ln');
 const { Order, User } = require('../models');
 const messages = require('./messages');
 const {
@@ -16,6 +23,8 @@ const {
   getUserI18nContext,
   getFee,
 } = require('../util');
+const ordersActions = require('./ordersActions');
+
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
@@ -388,7 +397,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
         );
         await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
       } else {
-        await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
+        await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
     }
   } catch (error) {
@@ -550,7 +559,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
           i18nCtx
         );
       } else {
-        await messages.successCancelOrderMessage(bot, user, order, i18nCtx);
+        await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
     }
   } catch (error) {
@@ -645,6 +654,166 @@ const addInvoicePHI = async (ctx, bot, orderId) => {
   }
 };
 
+const cancelOrder = async (ctx, orderId, user) => {
+  try {
+    if (!user) {
+      const tgUser = ctx.update.callback_query.from;
+      if (!tgUser) return;
+
+      user = await User.findOne({ tg_id: tgUser.id });
+
+      // If user didn't initialize the bot we can't do anything
+      if (!user) return;
+    }
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+    const order = await ordersActions.getOrder(ctx, user, orderId);
+
+    if (!order) return;
+
+    if (order.status === 'PENDING') {
+      // If we already have a holdInvoice we cancel it and return the money
+      if (order.hash) {
+        await cancelHoldInvoice({ hash: order.hash });
+      }
+
+      order.status = 'CANCELED';
+      order.canceled_by = user._id;
+      await order.save();
+      // we sent a private message to the user
+      await messages.successCancelOrderMessage(ctx, user, order, ctx.i18n);
+      // We delete the messages related to that order from the channel
+      return await deleteOrderFromChannel(order, ctx.telegram);
+    }
+
+    if (
+      !(
+        order.status === 'ACTIVE' ||
+        order.status === 'FIAT_SENT' ||
+        order.status === 'DISPUTE'
+      )
+    )
+      return await messages.badStatusOnCancelOrderMessage(ctx);
+
+    // If the order is active we start a cooperative cancellation
+    let counterPartyUser, initiator, counterParty;
+
+    const initiatorUser = user;
+    if (initiatorUser._id == order.buyer_id) {
+      counterPartyUser = await User.findOne({ _id: order.seller_id });
+      initiator = 'buyer';
+      counterParty = 'seller';
+    } else {
+      counterPartyUser = await User.findOne({ _id: order.buyer_id });
+      initiator = 'seller';
+      counterParty = 'buyer';
+    }
+
+    if (order[`${initiator}_cooperativecancel`])
+      return await messages.shouldWaitCooperativeCancelMessage(
+        ctx,
+        initiatorUser
+      );
+
+    order[`${initiator}_cooperativecancel`] = true;
+
+    const i18nCtxCP = await getUserI18nContext(counterPartyUser);
+    // If the counter party already requested a cooperative cancel order
+    if (order[`${counterParty}_cooperativecancel`]) {
+      // If we already have a holdInvoice we cancel it and return the money
+      if (order.hash) await cancelHoldInvoice({ hash: order.hash });
+
+      order.status = 'CANCELED';
+      let seller = initiatorUser;
+      let i18nCtxSeller = ctx.i18n;
+      if (order.seller_id == counterPartyUser._id) {
+        seller = counterPartyUser;
+        i18nCtxSeller = i18nCtxCP;
+      }
+      // We sent a private message to the users
+      await messages.successCancelOrderMessage(
+        ctx,
+        initiatorUser,
+        order,
+        ctx.i18n
+      );
+      await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
+      await messages.okCooperativeCancelMessage(
+        ctx,
+        counterPartyUser,
+        order,
+        i18nCtxCP
+      );
+    } else {
+      await messages.initCooperativeCancelMessage(ctx, order);
+      await messages.counterPartyWantsCooperativeCancelMessage(
+        ctx,
+        counterPartyUser,
+        order,
+        i18nCtxCP
+      );
+    }
+    await order.save();
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const fiatSent = async (ctx, orderId, user) => {
+  try {
+    if (!user) {
+      const tgUser = ctx.update.callback_query.from;
+      if (!tgUser) return;
+
+      user = await User.findOne({ tg_id: tgUser.id });
+
+      // If user didn't initialize the bot we can't do anything
+      if (!user) return;
+    }
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+    const order = await validateFiatSentOrder(ctx, user, orderId);
+    if (!order) return;
+
+    order.status = 'FIAT_SENT';
+    const seller = await User.findOne({ _id: order.seller_id });
+    await order.save();
+    // We sent messages to both parties
+    // We need to create i18n context for each user
+    const i18nCtxBuyer = await getUserI18nContext(user);
+    const i18nCtxSeller = await getUserI18nContext(seller);
+    await messages.fiatSentMessages(
+      ctx,
+      user,
+      seller,
+      order,
+      i18nCtxBuyer,
+      i18nCtxSeller
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const release = async (ctx, orderId, user) => {
+  try {
+    if (!user) {
+      const tgUser = ctx.update.callback_query.from;
+      if (!tgUser) return;
+
+      user = await User.findOne({ tg_id: tgUser.id });
+
+      // If user didn't initialize the bot we can't do anything
+      if (!user) return;
+    }
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+    const order = await validateReleaseOrder(ctx, user, orderId);
+    if (!order) return;
+
+    await settleHoldInvoice({ secret: order.secret });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 module.exports = {
   takebuy,
   takesell,
@@ -657,4 +826,7 @@ module.exports = {
   showHoldInvoice,
   updateCommunity,
   addInvoicePHI,
+  cancelOrder,
+  fiatSent,
+  release,
 };
