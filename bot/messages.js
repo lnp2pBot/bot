@@ -687,7 +687,7 @@ const bannedUserErrorMessage = async (ctx, user) => {
 };
 
 const fiatSentMessages = async (
-  bot,
+  ctx,
   buyer,
   seller,
   order,
@@ -695,19 +695,19 @@ const fiatSentMessages = async (
   i18nSeller
 ) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       buyer.tg_id,
       i18nBuyer.t('I_told_seller_you_sent_fiat', {
         sellerUsername: seller.username,
       })
     );
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       seller.tg_id,
       i18nSeller.t('buyer_told_me_that_sent_fiat', {
         buyerUsername: buyer.username,
       })
     );
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       seller.tg_id,
       i18nSeller.t('release_order_cmd', { orderId: order._id }),
       { parse_mode: 'Markdown' }
@@ -898,9 +898,9 @@ const badStatusOnCancelOrderMessage = async ctx => {
   }
 };
 
-const successCancelOrderMessage = async (bot, user, order, i18n) => {
+const successCancelOrderMessage = async (ctx, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_success', { orderId: order._id })
     );
@@ -947,9 +947,9 @@ const successCompleteOrderByAdminMessage = async (ctx, bot, user, order) => {
   }
 };
 
-const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
+const shouldWaitCooperativeCancelMessage = async (ctx, user) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       ctx.i18n.t('have_to_wait_for_counterpart')
     );
@@ -958,9 +958,9 @@ const shouldWaitCooperativeCancelMessage = async (ctx, bot, user) => {
   }
 };
 
-const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
+const okCooperativeCancelMessage = async (ctx, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('ok_cooperativecancel', { orderId: order._id })
     );
@@ -969,9 +969,9 @@ const okCooperativeCancelMessage = async (bot, user, order, i18n) => {
   }
 };
 
-const refundCooperativeCancelMessage = async (bot, user, i18n) => {
+const refundCooperativeCancelMessage = async (ctx, user, i18n) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('refund_cooperativecancel')
     );
@@ -991,17 +991,17 @@ const initCooperativeCancelMessage = async (ctx, order) => {
 };
 
 const counterPartyWantsCooperativeCancelMessage = async (
-  bot,
+  ctx,
   user,
   order,
   i18n
 ) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('counterparty_wants_cooperativecancel', { orderId: order._id })
     );
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'MarkdownV2' }
@@ -1036,9 +1036,9 @@ const userCantTakeMoreThanOneWaitingOrderMessage = async (ctx, bot, user) => {
   }
 };
 
-const sellerPaidHoldMessage = async (ctx, bot, user) => {
+const sellerPaidHoldMessage = async (ctx, user) => {
   try {
-    await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('seller_released'));
+    await ctx.telegram.sendMessage(user.tg_id, ctx.i18n.t('seller_released'));
   } catch (error) {
     logger.error(error);
   }
@@ -1718,6 +1718,43 @@ const mustBeANumber = async ctx => {
   }
 };
 
+const showConfirmationButtons = async (ctx, orders, commandString) => {
+  try {
+    commandString = commandString.slice(1);
+    const inlineKeyboard = [];
+    while (orders.length > 0) {
+      const lastTwo = orders.splice(-2);
+      const lineBtn = lastTwo
+        .map(ord => {
+          return {
+            _id: ord._id.toString(),
+            fiat: ord.fiat_code,
+            amount: ord.fiat_amount,
+            type: ord.type,
+          };
+        })
+        .map(ord => ({
+          text: `${ord._id.slice(0, 3)}...${ord._id.slice(-3)} - ${
+            ord.type
+          } - ${ord.fiat} ${ord.amount}`,
+          callback_data: `${commandString}_${ord._id}`,
+        }));
+      inlineKeyboard.push(lineBtn);
+    }
+
+    const message =
+      commandString === 'release'
+        ? ctx.i18n.t('tap_release')
+        : ctx.i18n.t('tap_button');
+
+    await ctx.reply(message, {
+      reply_markup: { inline_keyboard: inlineKeyboard },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 module.exports = {
   startMessage,
   initBotErrorMessage,
@@ -1851,4 +1888,5 @@ module.exports = {
   wizardCommunityWrongPercentFeeMessage,
   wizardCommunityEnterPercentFeeMessage,
   mustBeANumber,
+  showConfirmationButtons,
 };
