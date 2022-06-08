@@ -1,4 +1,3 @@
-// @ts-check
 const { Community, Order, User } = require('../../../models');
 const messages = require('../../messages');
 

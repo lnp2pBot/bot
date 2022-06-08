@@ -42,6 +42,7 @@ const {
   validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
+const { updateCommunityMessage } = require('./modules/community/messages');
 const {
   attemptPendingPayments,
   cancelOrders,
@@ -630,7 +631,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.action(/^updateCommunity_([0-9a-f]{24})$/, async ctx => {
-    await messages.updateCommunityMessage(ctx, ctx.match[1]);
+    await updateCommunityMessage(ctx, ctx.match[1]);
   });
 
   bot.action(/^editNameBtn_([0-9a-f]{24})$/, async ctx => {

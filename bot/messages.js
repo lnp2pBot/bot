@@ -1134,31 +1134,6 @@ const tooManyPendingOrdersMessage = async (bot, user, i18n) => {
   }
 };
 
-const listCommunitiesMessage = async (ctx, communities) => {
-  try {
-    let message = '';
-    communities.forEach(community => {
-      message += `ID: #${community.id}\n`;
-      message += ctx.i18n.t('name') + `: ${community.name}\n`;
-      message += ctx.i18n.t('group') + `: ${community.group}\n`;
-      community.order_channels.forEach(channel => {
-        message +=
-          ctx.i18n.t('channel') + ` ${channel.type}: ${channel.name}\n`;
-      });
-      community.solvers.forEach(solver => {
-        message += ctx.i18n.t('solver') + `: ${solver.username}\n`;
-      });
-      message +=
-        ctx.i18n.t('published') +
-        `: ${community.public ? ctx.i18n.t('yes') : ctx.i18n.t('no')}\n`;
-      message += ctx.i18n.t('created') + `: ${community.created_at}\n\n`;
-    });
-    await ctx.reply(message);
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const wizardAddInvoiceInitMessage = async (
   ctx,
   order,
@@ -1193,14 +1168,6 @@ const wizardAddInvoiceExitMessage = async (ctx, order) => {
   }
 };
 
-const wizardCommunityEnterNameMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const wizardExitMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_exit'));
@@ -1220,94 +1187,6 @@ const orderExpiredMessage = async ctx => {
 const cantAddInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cant_add_invoice'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityTooLongNameMessage = async (ctx, length) => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_too_long_name', { length }));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterCurrencyMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterGroupMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterOrderChannelsMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_order_channels'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityOneOrTwoChannelsMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_one_or_two_channels'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterSolversMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityMustEnterNamesSeparatedMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_must_enter_names'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterSolversChannelMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers_channel'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityWrongPercentFeeMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_wrong_percent'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterPercentFeeMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_fee_percent'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityCreatedMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_success'));
   } catch (error) {
     logger.error(error);
   }
@@ -1597,46 +1476,6 @@ const communitiesUpdatedOkMessage = async ctx => {
   }
 };
 
-const updateCommunityMessage = async (ctx, id) => {
-  try {
-    await ctx.reply(ctx.i18n.t('what_modify'), {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}` },
-            {
-              text: ctx.i18n.t('currencies'),
-              callback_data: `editCurrenciesBtn_${id}`,
-            },
-          ],
-          [
-            { text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}` },
-            {
-              text: ctx.i18n.t('channels'),
-              callback_data: `editChannelsBtn_${id}`,
-            },
-          ],
-          [
-            { text: ctx.i18n.t('fee'), callback_data: `editFeeBtn_${id}` },
-            {
-              text: ctx.i18n.t('dispute_solvers'),
-              callback_data: `editSolversBtn_${id}`,
-            },
-          ],
-          [
-            {
-              text: ctx.i18n.t('dispute_channel'),
-              callback_data: `editDisputeChannelBtn_${id}`,
-            },
-          ],
-        ],
-      },
-    });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const showUserCommunitiesMessage = async (ctx, communities) => {
   try {
     const buttons = [];
@@ -1803,22 +1642,11 @@ module.exports = {
   disableLightningAddress,
   invalidRangeWithAmount,
   tooManyPendingOrdersMessage,
-  listCommunitiesMessage,
   wizardAddInvoiceInitMessage,
   wizardAddInvoiceExitMessage,
   orderExpiredMessage,
   cantAddInvoiceMessage,
-  wizardCommunityEnterNameMessage,
   wizardExitMessage,
-  wizardCommunityTooLongNameMessage,
-  wizardCommunityEnterCurrencyMessage,
-  wizardCommunityEnterGroupMessage,
-  wizardCommunityEnterOrderChannelsMessage,
-  wizardCommunityOneOrTwoChannelsMessage,
-  wizardCommunityEnterSolversMessage,
-  wizardCommunityMustEnterNamesSeparatedMessage,
-  wizardCommunityEnterSolversChannelMessage,
-  wizardCommunityCreatedMessage,
   wizardCommunityWrongPermission,
   wizardAddFiatAmountMessage,
   wizardAddFiatAmountWrongAmountMessage,
@@ -1839,7 +1667,6 @@ module.exports = {
   toBuyerExpiredOrderMessage,
   toSellerExpiredOrderMessage,
   communitiesUpdatedOkMessage,
-  updateCommunityMessage,
   showUserCommunitiesMessage,
   operationSuccessfulMessage,
   noDefaultCommunityMessage,
@@ -1848,7 +1675,5 @@ module.exports = {
   sendMeAnInvoiceMessage,
   notAuthorized,
   needDefaultCommunity,
-  wizardCommunityWrongPercentFeeMessage,
-  wizardCommunityEnterPercentFeeMessage,
   mustBeANumber,
 };
