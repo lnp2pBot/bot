@@ -59,7 +59,7 @@ const payToBuyer = async (bot, order) => {
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (!!payment && !!payment.confirmed_at) {
-      logger.info(`Invoice with hash: ${payment.id} paid`);
+      logger.info(`Order ${order._id} - Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
 

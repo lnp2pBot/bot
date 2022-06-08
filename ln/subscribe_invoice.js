@@ -12,8 +12,10 @@ const subscribeInvoice = async (bot, id, resub) => {
     const sub = subscribeToInvoice({ id, lnd });
     sub.on('invoice_updated', async invoice => {
       if (invoice.is_held && !resub) {
-        logger.info(`invoice with hash: ${id} is being held!`);
         const order = await Order.findOne({ hash: invoice.id });
+        logger.info(
+          `Order ${order._id} Invoice with hash: ${id} is being held!`
+        );
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         const sellerUser = await User.findOne({ _id: order.seller_id });
         order.status = 'ACTIVE';
@@ -44,8 +46,10 @@ const subscribeInvoice = async (bot, id, resub) => {
         order.save();
       }
       if (invoice.is_confirmed) {
-        logger.info(`Invoice with hash: ${id} was settled!`);
         const order = await Order.findOne({ hash: id });
+        logger.info(
+          `Order ${order._id} - Invoice with hash: ${id} was settled!`
+        );
         order.status = 'PAID_HOLD_INVOICE';
         await order.save();
         const buyerUser = await User.findOne({ _id: order.buyer_id });
