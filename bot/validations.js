@@ -457,7 +457,7 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
   }
 };
 
-const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
+const validateFiatSentOrder = async (ctx, user, orderId) => {
   try {
     const where = {
       $and: [
@@ -476,7 +476,7 @@ const validateFiatSentOrder = async (ctx, bot, user, orderId) => {
     }
 
     if (order.status === 'PAID_HOLD_INVOICE') {
-      await messages.sellerPaidHoldMessage(ctx, bot, user);
+      await messages.sellerPaidHoldMessage(ctx, user);
       return false;
     }
 

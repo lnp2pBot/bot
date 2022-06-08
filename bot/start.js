@@ -24,6 +24,9 @@ const {
   waitPayment,
   updateCommunity,
   addInvoicePHI,
+  cancelOrder,
+  fiatSent,
+  release,
 } = require('./commands');
 const {
   settleHoldInvoice,
@@ -33,9 +36,7 @@ const {
 } = require('../ln');
 const {
   validateUser,
-  validateReleaseOrder,
   validateAdmin,
-  validateFiatSentOrder,
   validateParams,
   validateObjectId,
   validateInvoice,
@@ -49,6 +50,51 @@ const {
   deleteOrders,
 } = require('../jobs');
 const logger = require('../logger');
+
+const askForConfirmation = async (user, command) => {
+  try {
+    const where = {};
+    if (command == '/cancel') {
+      where.$and = [
+        { $or: [{ buyer_id: user._id }, { seller_id: user._id }] },
+        {
+          $or: [
+            { status: 'ACTIVE' },
+            { status: 'PENDING' },
+            { status: 'FIAT_SENT' },
+            { status: 'DISPUTE' },
+          ],
+        },
+      ];
+      const orders = await Order.find(where);
+
+      return orders;
+    } else if (command == '/fiatsent') {
+      where.$and = [{ buyer_id: user._id }, { status: 'ACTIVE' }];
+      const orders = await Order.find(where);
+
+      return orders;
+    } else if (command == '/release') {
+      where.$and = [
+        { seller_id: user._id },
+        {
+          $or: [
+            { status: 'ACTIVE' },
+            { status: 'FIAT_SENT' },
+            { status: 'DISPUTE' },
+          ],
+        },
+      ];
+      const orders = await Order.find(where);
+
+      return orders;
+    }
+
+    return [];
+  } catch (error) {
+    logger.error(error);
+  }
+};
 
 const initialize = (botToken, options) => {
   const i18n = new I18n({
@@ -118,22 +164,19 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const params = ctx.update.message.text.split(' ');
+      const [command, orderId] = params.filter(el => el);
 
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await validateReleaseOrder(ctx, user, orderId);
+      if (!orderId) {
+        const orders = await askForConfirmation(user, command);
+        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
 
-      if (!order) return;
-      // We look for a dispute for this order
-      const dispute = await Dispute.findOne({ order_id: order._id });
-
-      if (dispute) {
-        dispute.status = 'RELEASED';
-        await dispute.save();
+        return await messages.showConfirmationButtons(ctx, orders, command);
+      } else if (!(await validateObjectId(ctx, orderId))) {
+        return;
+      } else {
+        await release(ctx, orderId, user);
       }
-
-      await settleHoldInvoice({ secret: order.secret });
     } catch (error) {
       logger.error(error);
     }
@@ -196,7 +239,7 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
+      await messages.successCancelOrderMessage(ctx, user, order, ctx.i18n);
       // we sent a private message to the seller
       await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
@@ -213,102 +256,19 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
       if (!user) return;
 
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const params = ctx.update.message.text.split(' ');
+      const [command, orderId] = params.filter(el => el);
 
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await ordersActions.getOrder(ctx, user, orderId);
+      if (!orderId) {
+        const orders = await askForConfirmation(user, command);
+        if (!orders.length) return await ctx.reply(`${command}  <order Id>`);
 
-      if (!order) return;
-
-      if (order.status === 'PENDING') {
-        // If we already have a holdInvoice we cancel it and return the money
-        if (order.hash) {
-          await cancelHoldInvoice({ hash: order.hash });
-        }
-
-        order.status = 'CANCELED';
-        order.canceled_by = user._id;
-        await order.save();
-        // we sent a private message to the user
-        await messages.successCancelOrderMessage(bot, user, order, ctx.i18n);
-        // We delete the messages related to that order from the channel
-        return await deleteOrderFromChannel(order, bot.telegram);
-      }
-
-      if (
-        !(
-          order.status === 'ACTIVE' ||
-          order.status === 'FIAT_SENT' ||
-          order.status === 'DISPUTE'
-        )
-      )
-        return await messages.badStatusOnCancelOrderMessage(ctx);
-
-      // If the order is active we start a cooperative cancellation
-      let counterPartyUser, initiator, counterParty;
-
-      const initiatorUser = user;
-      if (initiatorUser._id == order.buyer_id) {
-        counterPartyUser = await User.findOne({ _id: order.seller_id });
-        initiator = 'buyer';
-        counterParty = 'seller';
+        return await messages.showConfirmationButtons(ctx, orders, command);
+      } else if (!(await validateObjectId(ctx, orderId))) {
+        return;
       } else {
-        counterPartyUser = await User.findOne({ _id: order.buyer_id });
-        initiator = 'seller';
-        counterParty = 'buyer';
+        await cancelOrder(ctx, orderId, user);
       }
-
-      if (order[`${initiator}_cooperativecancel`])
-        return await messages.shouldWaitCooperativeCancelMessage(
-          ctx,
-          bot,
-          initiatorUser
-        );
-
-      order[`${initiator}_cooperativecancel`] = true;
-
-      const i18nCtxCP = i18n.createContext(counterPartyUser.lang);
-      // If the counter party already requested a cooperative cancel order
-      if (order[`${counterParty}_cooperativecancel`]) {
-        // If we already have a holdInvoice we cancel it and return the money
-        if (order.hash) await cancelHoldInvoice({ hash: order.hash });
-
-        order.status = 'CANCELED';
-        let seller = initiatorUser;
-        let i18nCtxSeller = ctx.i18n;
-        if (order.seller_id == counterPartyUser._id) {
-          seller = counterPartyUser;
-          i18nCtxSeller = i18nCtxCP;
-        }
-        // We sent a private message to the users
-        await messages.successCancelOrderMessage(
-          bot,
-          initiatorUser,
-          order,
-          ctx.i18n
-        );
-        await messages.refundCooperativeCancelMessage(
-          bot,
-          seller,
-          i18nCtxSeller
-        );
-        await messages.okCooperativeCancelMessage(
-          bot,
-          counterPartyUser,
-          order,
-          i18nCtxCP
-        );
-      } else {
-        await messages.initCooperativeCancelMessage(ctx, order);
-        await messages.counterPartyWantsCooperativeCancelMessage(
-          bot,
-          counterPartyUser,
-          order,
-          i18nCtxCP
-        );
-      }
-      await order.save();
     } catch (error) {
       logger.error(error);
     }
@@ -438,28 +398,19 @@ const initialize = (botToken, options) => {
       const user = await validateUser(ctx, false);
 
       if (!user) return;
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const params = ctx.update.message.text.split(' ');
+      const [command, orderId] = params.filter(el => el);
 
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const order = await validateFiatSentOrder(ctx, bot, user, orderId);
-      if (!order) return;
+      if (!orderId) {
+        const orders = await askForConfirmation(user, command);
+        if (!orders.length) return await ctx.reply(`${command} <order Id>`);
 
-      order.status = 'FIAT_SENT';
-      const seller = await User.findOne({ _id: order.seller_id });
-      await order.save();
-      // We sent messages to both parties
-      // We need to create i18n context for each user
-      const i18nCtxBuyer = i18n.createContext(user.lang);
-      const i18nCtxSeller = i18n.createContext(seller.lang);
-      await messages.fiatSentMessages(
-        bot,
-        user,
-        seller,
-        order,
-        i18nCtxBuyer,
-        i18nCtxSeller
-      );
+        return await messages.showConfirmationButtons(ctx, orders, command);
+      } else if (!(await validateObjectId(ctx, orderId))) {
+        return;
+      } else {
+        await fiatSent(ctx, orderId, user);
+      }
     } catch (error) {
       logger.error(error);
     }
@@ -664,6 +615,21 @@ const initialize = (botToken, options) => {
 
   bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {
     await addInvoicePHI(ctx, bot, ctx.match[1]);
+  });
+
+  bot.action(/^cancel_([0-9a-f]{24})$/, async ctx => {
+    ctx.deleteMessage();
+    await cancelOrder(ctx, ctx.match[1]);
+  });
+
+  bot.action(/^fiatsent_([0-9a-f]{24})$/, async ctx => {
+    ctx.deleteMessage();
+    await fiatSent(ctx, ctx.match[1]);
+  });
+
+  bot.action(/^release_([0-9a-f]{24})$/, async ctx => {
+    ctx.deleteMessage();
+    await release(ctx, ctx.match[1]);
   });
 
   bot.command('paytobuyer', async ctx => {

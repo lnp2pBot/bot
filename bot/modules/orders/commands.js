@@ -61,6 +61,7 @@ const sell = async ctx => {
       await messages.currencyNotSupportedMessage(ctx, community.currencies);
       return;
     }
+    // @ts-ignore
     const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
       type: 'sell',
       amount,
@@ -119,6 +120,7 @@ const buy = async ctx => {
       await messages.currencyNotSupportedMessage(ctx, community.currencies);
       return;
     }
+    // @ts-ignore
     const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
       type: 'buy',
       amount,

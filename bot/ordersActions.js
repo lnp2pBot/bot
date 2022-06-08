@@ -125,7 +125,7 @@ const buildDescription = (
     const trades = user.trades_completed;
     const volume = numberFormat(fiatCode, user.volume_traded);
     const totalRating = user.total_rating;
-    const totalReviews = user.reviews.length;
+    const totalReviews = user.total_reviews;
     const username = user.show_username
       ? `@${user.username} ` + i18n.t('is') + ` `
       : ``;
