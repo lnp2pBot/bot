@@ -1,35 +1,50 @@
-const { payViaPaymentRequest, getPayment } = require('lightning');
+const {
+  payViaPaymentRequest,
+  getPayment,
+  probeForRoute,
+} = require('lightning');
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
 const logger = require('../logger');
+const subscribeProbe = require('./subscribe_probe');
 
 const payRequest = async ({ request, amount }) => {
   try {
     const invoice = parsePaymentRequest({ request });
-    if (!invoice) {
-      return false;
-    }
+    if (!invoice) return false;
     // If the invoice is expired we return is_expired = true
-    if (invoice.is_expired) {
-      return invoice;
-    }
+    if (invoice.is_expired) return invoice;
+
     // We need to set a max fee amount
-    const maxFee = amount * process.env.MAX_ROUTING_FEE;
+    const maxFee = amount * parseFloat(process.env.MAX_ROUTING_FEE);
+    const maxFeeMsats = Math.round(maxFee * 1000).toString();
+    const mtokens = (amount * 1000).toString();
     const params = {
       lnd,
       request,
       max_fee: maxFee,
     };
     if (!invoice.tokens) params.tokens = amount;
-
+    await subscribeProbe(invoice.destination, amount);
+    // Probe to find a successful route
+    const { route } = await probeForRoute({
+      lnd,
+      destination: invoice.destination,
+      mtokens,
+      total_mtokens: mtokens,
+      cltv_delta: invoice.cltv_delta,
+      payment: invoice.payment,
+      max_fee_mtokens: maxFeeMsats,
+    });
+    console.log(route);
     const payment = await payViaPaymentRequest(params);
-
+    console.log(payment);
     return payment;
   } catch (error) {
-    logger.error(error);
+    logger.error(`payRequest: ${error}`);
     return false;
   }
 };
