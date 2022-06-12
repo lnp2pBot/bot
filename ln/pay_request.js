@@ -1,7 +1,7 @@
 const {
   payViaPaymentRequest,
   getPayment,
-  probeForRoute,
+  deleteForwardingReputations,
 } = require('lightning');
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
@@ -9,7 +9,6 @@ const lnd = require('./connect');
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
 const logger = require('../logger');
-const subscribeProbe = require('./subscribe_probe');
 
 const payRequest = async ({ request, amount }) => {
   try {
@@ -20,28 +19,19 @@ const payRequest = async ({ request, amount }) => {
 
     // We need to set a max fee amount
     const maxFee = amount * parseFloat(process.env.MAX_ROUTING_FEE);
-    const maxFeeMsats = Math.round(maxFee * 1000).toString();
-    const mtokens = (amount * 1000).toString();
+
     const params = {
       lnd,
       request,
       max_fee: maxFee,
     };
     if (!invoice.tokens) params.tokens = amount;
-    await subscribeProbe(invoice.destination, amount);
-    // Probe to find a successful route
-    const { route } = await probeForRoute({
-      lnd,
-      destination: invoice.destination,
-      mtokens,
-      total_mtokens: mtokens,
-      cltv_delta: invoice.cltv_delta,
-      payment: invoice.payment,
-      max_fee_mtokens: maxFeeMsats,
-    });
-    console.log(route);
+
+    // Delete all routing reputations to clear pathfinding memory
+    await deleteForwardingReputations({ lnd });
+
     const payment = await payViaPaymentRequest(params);
-    console.log(payment);
+
     return payment;
   } catch (error) {
     logger.error(`payRequest: ${error}`);
@@ -100,7 +90,7 @@ const payToBuyer = async (bot, order) => {
       await pp.save();
     }
   } catch (error) {
-    logger.error('payToBuyer catch:', error);
+    logger.error(`payToBuyer catch: ${error}`);
   }
 };
 
