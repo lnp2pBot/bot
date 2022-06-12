@@ -21,11 +21,15 @@ const attemptPendingPayments = async bot => {
         logger.info(`Order id: ${order._id} was already paid`);
         return;
       }
-      // We check if the payment is on flight we don't do anything
-      const isPending = await isPendingPayment(order.buyer_invoice);
-      if (isPending) {
-        return;
-      }
+      // We check if the old payment is on flight
+      const isPendingOldPayment = await isPendingPayment(order.buyer_invoice);
+
+      // We check if this new payment is on flight
+      const isPending = await isPendingPayment(pending.payment_request);
+
+      // If one of the payments is on flight we don't do anything
+      if (isPending || isPendingOldPayment) return;
+
       const payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
