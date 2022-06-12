@@ -23,10 +23,12 @@ const payRequest = async ({ request, amount }) => {
     const params = {
       lnd,
       request,
-      max_fee: maxFee,
       pathfinding_timeout: 60000,
     };
+    // If the invoice doesn't have amount we add it to the params
     if (!invoice.tokens) params.tokens = amount;
+    // We ignore the max routing fee for small amounts
+    if (amount > 10000) params.max_fee = maxFee;
 
     // Delete all routing reputations to clear pathfinding memory
     await deleteForwardingReputations({ lnd });
@@ -98,9 +100,8 @@ const payToBuyer = async (bot, order) => {
 const isPendingPayment = async request => {
   try {
     const { id } = parsePaymentRequest({ request });
-    // eslint-disable-next-line camelcase
     const { is_pending } = await getPayment({ lnd, id });
-    // eslint-disable-next-line camelcase
+
     return !!is_pending;
   } catch (error) {
     const message = error.toString();
