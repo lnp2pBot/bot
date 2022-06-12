@@ -84,6 +84,7 @@ exports.communityWizard = new Scenes.WizardScene(
   async ctx => {
     try {
       if (ctx.wizard.state.handler) {
+        if (ctx.message === undefined) return ctx.scene.leave();
         const ret = await ctx.wizard.state.handler(ctx);
         if (!ret) return;
         delete ctx.wizard.state.handler;
@@ -102,8 +103,13 @@ const createCommunitySteps = {
     const prompt = await createCommunityPrompts.name(ctx);
 
     ctx.wizard.state.handler = async ctx => {
+      const { text } = ctx.message;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       ctx.wizard.state.error = null;
-      const name = ctx.message.text.trim();
+      const name = text.trim();
       if (!name) {
         ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_enter_name');
@@ -132,8 +138,13 @@ const createCommunitySteps = {
     const prompt = await createCommunityPrompts.currencies(ctx);
 
     ctx.wizard.state.handler = async ctx => {
+      const { text } = ctx.message;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       ctx.wizard.state.error = null;
-      let currencies = itemsFromMessage(ctx.message.text);
+      let currencies = itemsFromMessage(text);
       currencies = currencies.map(currency => currency.toUpperCase());
       const max = 10;
       if (currencies.length > max) {
@@ -160,9 +171,14 @@ const createCommunitySteps = {
 
     ctx.wizard.state.handler = async ctx => {
       try {
+        const { text } = ctx.message;
+        if (!text) {
+          await ctx.deleteMessage();
+          return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        }
         ctx.wizard.state.error = null;
         const { bot, user } = ctx.wizard.state;
-        const group = ctx.message.text.trim();
+        const group = text.trim();
         if (!(await isGroupAdmin(group, user, bot.telegram))) {
           await ctx.telegram.deleteMessage(
             ctx.message.chat.id,
@@ -196,7 +212,10 @@ const createCommunitySteps = {
   async channels(ctx) {
     ctx.wizard.state.handler = async ctx => {
       const { text } = ctx.message;
-      if (!text) return;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       const { bot, user } = ctx.wizard.state;
       const chan = itemsFromMessage(text);
       ctx.wizard.state.channels = text;
@@ -288,7 +307,10 @@ const createCommunitySteps = {
   async fee(ctx) {
     ctx.wizard.state.handler = async ctx => {
       const { text } = ctx.message;
-      if (!text) return;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       if (isNaN(text)) {
         await ctx.telegram.deleteMessage(
           ctx.message.chat.id,
@@ -322,7 +344,10 @@ const createCommunitySteps = {
   async solvers(ctx) {
     ctx.wizard.state.handler = async ctx => {
       const { text } = ctx.message;
-      if (!text) return;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       const solvers = [];
       const usernames = itemsFromMessage(text);
       if (usernames.length > 0 && usernames.length < 10) {
@@ -365,7 +390,10 @@ const createCommunitySteps = {
   async disputeChannel(ctx) {
     ctx.wizard.state.handler = async ctx => {
       const { text } = ctx.message;
-      if (!text) return;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
       const { bot, user } = ctx.wizard.state;
       if (text < 0 || text > 100) {
         return await messages.wizardCommunityWrongPercentFeeMessage(ctx);
