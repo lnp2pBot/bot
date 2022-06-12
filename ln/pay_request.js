@@ -24,6 +24,7 @@ const payRequest = async ({ request, amount }) => {
       lnd,
       request,
       max_fee: maxFee,
+      pathfinding_timeout: 60000,
     };
     if (!invoice.tokens) params.tokens = amount;
 
