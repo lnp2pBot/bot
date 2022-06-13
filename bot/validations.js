@@ -74,13 +74,20 @@ const validateSellOrder = async ctx => {
     let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     if (priceMargin && isNaN(priceMargin)) {
-      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
+      await ctx.reply(
+        ctx.i18n.t('must_be_numeric', {
+          fieldName: ctx.i18n.t('premium_discount'),
+        })
+      );
       return false;
     }
 
     amount = parseInt(amount);
     if (isNaN(amount)) {
-      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
+      await ctx.reply(
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+      );
+
       return false;
     }
 
@@ -154,13 +161,19 @@ const validateBuyOrder = async ctx => {
     let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     if (priceMargin && isNaN(priceMargin)) {
-      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
+      await ctx.reply(
+        ctx.i18n.t('must_be_numeric', {
+          fieldName: ctx.i18n.t('premium_discount'),
+        })
+      );
       return false;
     }
 
     amount = parseInt(amount);
     if (isNaN(amount)) {
-      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
+      await ctx.reply(
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+      );
       return false;
     }
 

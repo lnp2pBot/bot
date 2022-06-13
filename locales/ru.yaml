@@ -47,6 +47,7 @@ pending_buy: |
 
   Вы можете отменить эту заявку до того, как ее примет кто-то другой, командой 👇
 must_be_int: ${fieldName} - допускаются только целые числа
+must_be_numeric: ${fieldName} must be numeric
 sats_amount: сумма в сатоши
 fiat_amount: сумма в валюте
 sell_correct_format: |
@@ -414,3 +415,6 @@ wizard_help: You are in wizard mode, if you need to go back to command mode run 
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
 tap_button: Select an order to perform the operation
 tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
+premium: Premium
+discount: Discount
+premium_discount: premium/discount
