@@ -1,5 +1,6 @@
 const { Scenes } = require('telegraf');
 const { User } = require('../../../models');
+const logger = require('../../../logger');
 
 const ROLES = {
   BUYER: 'Buyer',
@@ -34,13 +35,13 @@ const chatWizard = (exports.chatWizard = new Scenes.WizardScene(
       if (!ctx.wizard.state.role || !ctx.wizard.state.targetUser)
         return ctx.scene.leave();
 
-      CHAT_ENABLED[user.id] = ctx.from.id;
+      CHAT_ENABLED[`${order.id}/${user.id}`] = ctx.from.id;
 
       await help(ctx);
       await history(ctx);
       return ctx.wizard.next();
     } catch (err) {
-      await ctx.reply(err.message);
+      logger.error(err);
     }
   },
   async ctx => {
@@ -54,8 +55,8 @@ const chatWizard = (exports.chatWizard = new Scenes.WizardScene(
         date: new Date(),
         message: text,
       });
-      const { targetUser } = ctx.wizard.state;
-      if (CHAT_ENABLED[targetUser.id]) {
+      const { order, targetUser } = ctx.wizard.state;
+      if (CHAT_ENABLED[`${order.id}/${targetUser.id}`]) {
         await ctx.telegram.sendMessage(targetUser.tg_id, text);
       } else {
         await ctx.telegram.sendMessage(
@@ -65,7 +66,7 @@ const chatWizard = (exports.chatWizard = new Scenes.WizardScene(
       }
       return;
     } catch (err) {
-      ctx.reply(err.message);
+      logger.error(err);
     }
   }
 ));
@@ -92,13 +93,13 @@ chatWizard.command('help', help);
 chatWizard.command('exit', async ctx => {
   try {
     const { order, user, targetUser } = ctx.wizard.state;
-    delete CHAT_ENABLED[user.id];
+    delete CHAT_ENABLED[`${order.id}/${user.id}`];
     if (!CHAT_ENABLED[targetUser.id]) deleteOrderChat(order);
 
     await ctx.scene.leave();
     await ctx.reply('Exited chat mode.');
   } catch (err) {
-    await ctx.reply(err.message);
+    logger.error(err);
   }
 });
 
