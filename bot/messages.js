@@ -113,14 +113,6 @@ const pendingBuyMessage = async (bot, user, order, channel, i18n) => {
   }
 };
 
-const mustBeIntMessage = async (ctx, fieldName) => {
-  try {
-    await ctx.reply(ctx.i18n.t('must_be_int', { fieldName }));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const sellOrderCorrectFormatMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('sell_correct_format'), {
@@ -1783,7 +1775,6 @@ module.exports = {
   onGoingTakeBuyMessage,
   pendingSellMessage,
   pendingBuyMessage,
-  mustBeIntMessage,
   notOrderMessage,
   customMessage,
   nonHandleErrorMessage,

@@ -146,38 +146,6 @@ const getBtcExchangePrice = (fiatAmount, satsAmount) => {
   }
 };
 
-// Convers a string to an array of arguments
-// Source: https://stackoverflow.com/a/39304272
-const parseArgs = cmdline => {
-  const re_next_arg =
-    /^\s*((?:(?:"(?:\\.|[^"])*")|(?:'[^']*')|\\.|\S)+)\s*(.*)$/;
-  let next_arg = ['', '', cmdline];
-  const args = [];
-  while ((next_arg = re_next_arg.exec(next_arg[2]))) {
-    let quoted_arg = next_arg[1];
-    let unquoted_arg = '';
-    while (quoted_arg.length > 0) {
-      if (/^"/.test(quoted_arg)) {
-        const quoted_part = /^"((?:\\.|[^"])*)"(.*)$/.exec(quoted_arg);
-        unquoted_arg += quoted_part[1].replace(/\\(.)/g, '$1');
-        quoted_arg = quoted_part[2];
-      } else if (/^'/.test(quoted_arg)) {
-        const quoted_part = /^'([^']*)'(.*)$/.exec(quoted_arg);
-        unquoted_arg += quoted_part[1];
-        quoted_arg = quoted_part[2];
-      } else if (/^\\/.test(quoted_arg)) {
-        unquoted_arg += quoted_arg[1];
-        quoted_arg = quoted_arg.substring(2);
-      } else {
-        unquoted_arg += quoted_arg[0];
-        quoted_arg = quoted_arg.substring(1);
-      }
-    }
-    args[args.length] = unquoted_arg;
-  }
-  return args;
-};
-
 const objectToArray = object => {
   const array = [];
 
@@ -405,7 +373,6 @@ module.exports = {
   handleReputationItems,
   getBtcFiatPrice,
   getBtcExchangePrice,
-  parseArgs,
   getCurrenciesWithPrice,
   getEmojiRate,
   decimalRound,

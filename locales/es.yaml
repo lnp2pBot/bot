@@ -49,6 +49,7 @@ pending_buy: |
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 must_be_int: ${fieldName} debe ser un número entero
+must_be_numeric: ${fieldName} debe ser numérico
 sats_amount: monto en sats
 fiat_amount: monto en fiat
 sell_correct_format: |
@@ -414,3 +415,6 @@ wizard_help: Estás en modo wizard, si necesitas volver al modo comando ejecuta 
 hold_invoice_memo: '@${botName} - Depósito en garantía Orden #${orderId} - VENTA x ${fiatCode} ${fiatAmount} - SE CONGELA EN BILLETERA. Se libera una vez ejecute /release. Retorna a la wallet si el comprador no confirma el pago'
 tap_button: Selecciona una orden para realizar la operación
 tap_release: Selecciona la orden para liberar los fondos, una vez toques el botón la operación no puede ser reversada.
+premium: Prima
+discount: Descuento
+premium_discount: prima/descuento
