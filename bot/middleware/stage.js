@@ -1,14 +1,14 @@
 // @ts-check
 const { Scenes } = require('telegraf');
-const CommunityModule = require('./modules/community');
-const OrdersModule = require('./modules/orders');
+const CommunityModule = require('../modules/community');
+const OrdersModule = require('../modules/orders');
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
   addInvoicePHIWizard,
-} = require('./scenes');
+} = require('../scenes');
 
-exports.middleware = () => {
+exports.stageMiddleware = () => {
   const scenes = [
     addInvoiceWizard,
     addFiatAmountWizard,

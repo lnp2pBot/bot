@@ -2,7 +2,7 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User, Community } = require('../models');
-const { isIso4217, parseArgs, isDisputeSolver } = require('../util');
+const { isIso4217, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
 
@@ -65,24 +65,29 @@ const validateAdmin = async ctx => {
 
 const validateSellOrder = async ctx => {
   try {
-    const args = parseArgs(ctx.update.message.text);
-    if (args.length < 5) {
+    const args = ctx.state.command.args;
+    if (args.length < 4) {
       await messages.sellOrderCorrectFormatMessage(ctx);
       return false;
     }
 
-    let [, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
-    priceMargin = parseInt(priceMargin);
-    // FIXME: this is not validating well
-    if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
+    if (priceMargin && isNaN(priceMargin)) {
+      await ctx.reply(
+        ctx.i18n.t('must_be_numeric', {
+          fieldName: ctx.i18n.t('premium_discount'),
+        })
+      );
       return false;
     }
 
     amount = parseInt(amount);
-    if (!Number.isInteger(amount)) {
-      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
+    if (isNaN(amount)) {
+      await ctx.reply(
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+      );
+
       return false;
     }
 
@@ -148,23 +153,27 @@ const validateSellOrder = async ctx => {
 
 const validateBuyOrder = async ctx => {
   try {
-    const args = parseArgs(ctx.update.message.text);
-    if (args.length < 5) {
+    const args = ctx.state.command.args;
+    if (args.length < 4) {
       await messages.buyOrderCorrectFormatMessage(ctx);
       return false;
     }
-    let [, amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
-    priceMargin = parseInt(priceMargin);
-    // FIXME: this is not validating well
-    if (!!priceMargin && !Number.isInteger(priceMargin)) {
-      await messages.mustBeIntMessage(ctx, 'prima_o_descuento');
+    if (priceMargin && isNaN(priceMargin)) {
+      await ctx.reply(
+        ctx.i18n.t('must_be_numeric', {
+          fieldName: ctx.i18n.t('premium_discount'),
+        })
+      );
       return false;
     }
 
     amount = parseInt(amount);
-    if (!Number.isInteger(amount)) {
-      await messages.mustBeIntMessage(ctx, 'monto_en_sats');
+    if (isNaN(amount)) {
+      await ctx.reply(
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+      );
       return false;
     }
 
