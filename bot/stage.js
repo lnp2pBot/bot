@@ -22,6 +22,7 @@ exports.middleware = () => {
     CommunityModule.Scenes.updateDisputeChannelCommunityWizard,
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
+    require('./modules/orders/scenes.chat').chatWizard,
   ];
   scenes.forEach(addGenericCommands);
   const stage = new Scenes.Stage(scenes);

@@ -51,4 +51,6 @@ exports.configure = bot => {
       return logger.error(error);
     }
   });
+
+  bot.command('chat', auth, commands.chat);
 };

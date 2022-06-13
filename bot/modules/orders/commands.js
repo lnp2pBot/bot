@@ -168,4 +168,15 @@ const isMaxPending = async user => {
   return false;
 };
 
-module.exports = { buyWizard, sellWizard, buy, sell, isMaxPending };
+const chat = async ctx => {
+  try {
+    const { user } = ctx;
+    const [cmd, orderId] = ctx.message.text.split(' ');
+    const order = await Order.findById(orderId);
+    await ctx.scene.enter('ORDER_CHAT', { user, order });
+  } catch (err) {
+    await ctx.reply(err.message);
+  }
+};
+
+module.exports = { buyWizard, sellWizard, buy, sell, chat, isMaxPending };
