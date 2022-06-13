@@ -110,7 +110,7 @@ const createOrderSteps = {
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
       if (!ctx.wizard.state.currencies) {
-        ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+        await ctx.deleteMessage();
         const currency = getCurrency(ctx.message.text.toUpperCase());
         if (!currency) {
           ctx.wizard.state.error = ctx.i18n.t('invalid_currency');
@@ -146,10 +146,7 @@ const createOrderSteps = {
       if (!text) return;
       ctx.wizard.state.method = text;
       await ctx.wizard.state.updateUI();
-      await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
-      );
+      await ctx.deleteMessage();
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
         prompt.message_id
@@ -162,10 +159,7 @@ const createOrderSteps = {
     const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
-      await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
-      );
+      await ctx.deleteMessage();
       const input = ctx.message.text;
       if (isNaN(input)) {
         ctx.wizard.state.error = ctx.i18n.t('not_number');
@@ -235,10 +229,7 @@ const createOrderHandlers = {
     ctx.wizard.state.error = null;
     const inputs = ctx.message.text.split('-').map(Number);
     const notNumbers = inputs.filter(isNaN);
-    await ctx.telegram.deleteMessage(
-      ctx.message.chat.id,
-      ctx.message.message_id
-    );
+    await ctx.deleteMessage();
     if (notNumbers.length) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
@@ -262,10 +253,7 @@ const createOrderHandlers = {
       return true;
     }
     const input = ctx.message.text;
-    await ctx.telegram.deleteMessage(
-      ctx.message.chat.id,
-      ctx.message.message_id
-    );
+    await ctx.deleteMessage();
     if (isNaN(input)) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
