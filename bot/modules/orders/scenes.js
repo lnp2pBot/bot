@@ -103,7 +103,6 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
 
 const createOrderSteps = {
   async currency(ctx) {
-    if (ctx.message === undefined) return ctx.scene.leave();
     const prompt = await createOrderPrompts.currency(ctx);
     const deletePrompt = () =>
       ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -111,6 +110,7 @@ const createOrderSteps = {
       ctx.wizard.state.error = null;
       if (!ctx.wizard.state.currencies) {
         await ctx.deleteMessage();
+        if (ctx.message === undefined) return ctx.scene.leave();
         const currency = getCurrency(ctx.message.text.toUpperCase());
         if (!currency) {
           ctx.wizard.state.error = ctx.i18n.t('invalid_currency');
@@ -140,8 +140,8 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async method(ctx) {
-    if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.handler = async ctx => {
+      if (ctx.message === undefined) return ctx.scene.leave();
       const { text } = ctx.message;
       if (!text) return;
       ctx.wizard.state.method = text;
