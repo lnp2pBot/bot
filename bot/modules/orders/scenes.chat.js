@@ -41,7 +41,6 @@ const chatWizard = (exports.chatWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } catch (err) {
       await ctx.reply(err.message);
-      return;
     }
   },
   async ctx => {
@@ -67,7 +66,6 @@ const chatWizard = (exports.chatWizard = new Scenes.WizardScene(
       return;
     } catch (err) {
       ctx.reply(err.message);
-      return;
     }
   }
 ));

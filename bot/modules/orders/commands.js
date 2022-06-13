@@ -171,7 +171,7 @@ const isMaxPending = async user => {
 const chat = async ctx => {
   try {
     const { user } = ctx;
-    const [cmd, orderId] = ctx.message.text.split(' ');
+    const [, orderId] = ctx.message.text.split(' ');
     const order = await Order.findById(orderId);
     await ctx.scene.enter('ORDER_CHAT', { user, order });
   } catch (err) {
