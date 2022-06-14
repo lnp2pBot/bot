@@ -49,6 +49,7 @@ pending_buy: |
 
   Ви можете скасувати цю заявку до того, як її прийме хтось інший командою 👇
 must_be_int: ${fieldName} - допускаються лише цілі числа
+must_be_numeric: ${fieldName} must be numeric
 sats_amount: сума у сатоші
 fiat_amount: сума у валюті
 sell_correct_format: |
@@ -415,3 +416,6 @@ hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for 
 tap_button: Select an order to perform the operation
 tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
 earnings: Earnings
+premium: Premium
+discount: Discount
+premium_discount: premium/discount

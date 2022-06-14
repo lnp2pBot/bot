@@ -1,4 +1,8 @@
-const { payViaPaymentRequest, getPayment } = require('lightning');
+const {
+  payViaPaymentRequest,
+  getPayment,
+  deleteForwardingReputations,
+} = require('lightning');
 const { parsePaymentRequest } = require('invoices');
 const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
@@ -9,27 +13,31 @@ const logger = require('../logger');
 const payRequest = async ({ request, amount }) => {
   try {
     const invoice = parsePaymentRequest({ request });
-    if (!invoice) {
-      return false;
-    }
+    if (!invoice) return false;
     // If the invoice is expired we return is_expired = true
-    if (invoice.is_expired) {
-      return invoice;
-    }
+    if (invoice.is_expired) return invoice;
+
     // We need to set a max fee amount
-    const maxFee = amount * process.env.MAX_ROUTING_FEE;
+    const maxFee = amount * parseFloat(process.env.MAX_ROUTING_FEE);
+
     const params = {
       lnd,
       request,
-      max_fee: maxFee,
+      pathfinding_timeout: 60000,
     };
+    // If the invoice doesn't have amount we add it to the params
     if (!invoice.tokens) params.tokens = amount;
+    // We ignore the max routing fee for small amounts
+    if (amount > 10000) params.max_fee = maxFee;
+
+    // Delete all routing reputations to clear pathfinding memory
+    await deleteForwardingReputations({ lnd });
 
     const payment = await payViaPaymentRequest(params);
 
     return payment;
   } catch (error) {
-    logger.error(error);
+    logger.error(`payRequest: ${error}`);
     return false;
   }
 };
@@ -59,7 +67,7 @@ const payToBuyer = async (bot, order) => {
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (!!payment && !!payment.confirmed_at) {
-      logger.info(`Invoice with hash: ${payment.id} paid`);
+      logger.info(`Order ${order._id} - Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
 
@@ -85,16 +93,15 @@ const payToBuyer = async (bot, order) => {
       await pp.save();
     }
   } catch (error) {
-    logger.error('payToBuyer catch:', error);
+    logger.error(`payToBuyer catch: ${error}`);
   }
 };
 
 const isPendingPayment = async request => {
   try {
     const { id } = parsePaymentRequest({ request });
-    // eslint-disable-next-line camelcase
     const { is_pending } = await getPayment({ lnd, id });
-    // eslint-disable-next-line camelcase
+
     return !!is_pending;
   } catch (error) {
     const message = error.toString();

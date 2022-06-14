@@ -743,6 +743,7 @@ const cancelOrder = async (ctx, orderId, user) => {
         order,
         i18nCtxCP
       );
+      logger.info(`Order ${order._id} was cancelled!`);
     } else {
       await messages.initCooperativeCancelMessage(ctx, order);
       await messages.counterPartyWantsCooperativeCancelMessage(

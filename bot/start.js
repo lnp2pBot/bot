@@ -9,6 +9,7 @@ const {
   Dispute,
 } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
+const { commandArgsMiddleware, stageMiddleware } = require('./middleware');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
 const OrdersModule = require('./modules/orders');
@@ -126,7 +127,8 @@ const initialize = (botToken, options) => {
 
   bot.use(session());
   bot.use(i18n.middleware());
-  bot.use(require('./stage').middleware());
+  bot.use(stageMiddleware());
+  bot.use(commandArgsMiddleware());
 
   bot.start(async ctx => {
     try {
@@ -232,6 +234,8 @@ const initialize = (botToken, options) => {
         dispute.status = 'SELLER_REFUNDED';
         await dispute.save();
       }
+
+      logger.info(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
       order.canceled_by = user._id;
