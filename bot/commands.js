@@ -14,7 +14,7 @@ const {
   cancelHoldInvoice,
   settleHoldInvoice,
 } = require('../ln');
-const { Order, User } = require('../models');
+const { Order, User, Dispute } = require('../models');
 const messages = require('./messages');
 const {
   getBtcFiatPrice,
@@ -808,6 +808,14 @@ const release = async (ctx, orderId, user) => {
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
+
+    // We look for a dispute for this order
+    const dispute = await Dispute.findOne({ order_id: order._id });
+
+    if (dispute) {
+      dispute.status = 'RELEASED';
+      await dispute.save();
+    }
 
     await settleHoldInvoice({ secret: order.secret });
   } catch (error) {

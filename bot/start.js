@@ -230,9 +230,11 @@ const initialize = (botToken, options) => {
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       if (dispute) {
-        dispute.status = 'FINISHED';
+        dispute.status = 'SELLER_REFUNDED';
         await dispute.save();
       }
+
+      logger.debug(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
       order.canceled_by = user._id;
@@ -336,7 +338,7 @@ const initialize = (botToken, options) => {
       if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       if (dispute) {
-        dispute.status = 'FINISHED';
+        dispute.status = 'SETTLED';
         await dispute.save();
       }
 
