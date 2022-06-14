@@ -37,7 +37,8 @@ const CommunitySchema = new mongoose.Schema({
     validate: [arrayLimits, '{PATH} is not within limits'],
   },
   fee: { type: Number, min: 0, max: 100, default: 0 },
-  payday: { type: Number, min: 1, max: 31 }, // day of month when the admin receives the money
+  earnings: { type: Number, default: 0 }, // Sats amount to be paid to the community
+  orders_to_redeem: { type: Number, default: 0 }, // Number of orders calculated to be redeemed
   dispute_channel: { type: String }, // Id or public name, channel to send new disputes
   solvers: [usernameIdSchema], // users that are dispute solvers
   banned_users: [usernameIdSchema], // users that are banned from the community

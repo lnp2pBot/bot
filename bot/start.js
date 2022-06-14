@@ -49,6 +49,7 @@ const {
   attemptPendingPayments,
   cancelOrders,
   deleteOrders,
+  calculateEarnings,
 } = require('../jobs');
 const logger = require('../logger');
 
@@ -123,6 +124,10 @@ const initialize = (botToken, options) => {
 
   schedule.scheduleJob(`25 * * * *`, async () => {
     await deleteOrders(bot);
+  });
+
+  schedule.scheduleJob(`0 * * * *`, async () => {
+    await calculateEarnings(bot);
   });
 
   bot.use(session());

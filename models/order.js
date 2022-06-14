@@ -18,6 +18,8 @@ const OrderSchema = new mongoose.Schema({
     min: 0,
   },
   fee: { type: Number, min: 0 },
+  bot_fee: { type: Number, min: 0 }, // bot MAX_FEE at the moment of order creation
+  community_fee: { type: Number, min: 0 }, // community FEE_PERCENT at the moment of order creation
   routing_fee: { type: Number, min: 0, default: 0 },
   hash: {
     type: String,
@@ -73,6 +75,7 @@ const OrderSchema = new mongoose.Schema({
   range_parent_id: { type: String }, // If the order have a parent we save the Id
   price_from_api: { type: Boolean },
   price_margin: { type: Number, default: 0 },
+  calculated: { type: Boolean, default: false },
   admin_warned: { type: Boolean, default: false }, // We set this to true when the bot warns admins the order is about to expire
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
   community_id: { type: String },

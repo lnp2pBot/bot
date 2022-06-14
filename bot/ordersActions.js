@@ -32,6 +32,8 @@ const createOrder = async (
   try {
     amount = parseInt(amount);
     const fee = await getFee(amount, community_id);
+    const botFee = parseFloat(process.env.MAX_FEE);
+    const communityFee = parseFloat(process.env.FEE_PERCENT);
     const currency = getCurrency(fiatCode);
     const priceFromAPI = !amount;
 
@@ -46,6 +48,8 @@ const createOrder = async (
       ...fiatAmountData,
       amount,
       fee,
+      bot_fee: botFee,
+      community_fee: communityFee,
       creator_id: user._id,
       type,
       status,
