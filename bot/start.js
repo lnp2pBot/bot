@@ -234,7 +234,7 @@ const initialize = (botToken, options) => {
         await dispute.save();
       }
 
-      logger.debug(`order ${order._id}: cancelled by admin`);
+      logger.info(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
       order.canceled_by = user._id;
