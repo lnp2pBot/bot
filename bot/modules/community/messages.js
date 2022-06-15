@@ -1,4 +1,5 @@
 const logger = require('../../../logger');
+const { Community, PendingPayment } = require('../../../models');
 
 exports.createCommunityWizardStatus = (i18n, state) => {
   try {
@@ -97,6 +98,82 @@ exports.listCommunitiesMessage = async (ctx, communities) => {
       message += ctx.i18n.t('created') + `: ${community.created_at}\n\n`;
     });
     await ctx.reply(message);
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.earningsMessage = async (ctx, communityId) => {
+  try {
+    // We check if there is a payment scheduled for this community
+    const isScheduled = await PendingPayment.findOne({
+      community_id: communityId,
+      attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+      paid: false,
+    });
+    if (isScheduled)
+      return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
+
+    const community = await Community.findById(communityId);
+    const button =
+      community.earnings > 0
+        ? {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: ctx.i18n.t('withdraw_earnings'),
+                    callback_data: `withdrawEarnings_${community._id}`,
+                  },
+                ],
+              ],
+            },
+          }
+        : null;
+    await ctx.reply(
+      ctx.i18n.t('current_earnings', {
+        ordersToRedeem: community.orders_to_redeem,
+        earnings: community.earnings,
+      }),
+      button
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.showUserCommunitiesMessage = async (ctx, communities) => {
+  try {
+    const buttons = [];
+    while (communities.length > 0) {
+      const lastTwo = communities.splice(-2);
+      const lineBtn = lastTwo.map(c => {
+        return {
+          text: c.name,
+          callback_data: `updateCommunity_${c._id}`,
+        };
+      });
+      buttons.push(lineBtn);
+    }
+
+    await ctx.reply(ctx.i18n.t('select_community'), {
+      reply_markup: {
+        inline_keyboard: buttons,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.wizardCommunityWrongPermission = async (ctx, user, channel) => {
+  try {
+    await ctx.reply(
+      ctx.i18n.t('wizard_community_you_are_not_admin', {
+        username: user.username,
+        channel,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }

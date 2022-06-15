@@ -334,7 +334,7 @@ pending_payment_success_to_admin: |
 
   Prueba de pago: ${paymentSecret}
 pending_payment_success: |
-  ¡He pagado la factura lightning por ${amount} satoshis, Id de orden: ${orderId}!
+  ¡He pagado la factura lightning por ${amount} satoshis, Id: ${id}!
 
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
@@ -419,3 +419,9 @@ earnings: Ganancias
 premium: Prima
 discount: Descuento
 premium_discount: prima/descuento
+current_earnings: |
+  Ordenes completadas hasta el momento en la comunidad: ${ordersToRedeem}
+
+  Ganancias de la comunidad: ${earnings} sats
+withdraw_earnings: Retirar ganancias
+invoice_expired_earnings: La factura ha expirado, vuelve a hacer una solicitud de retiro con una factura nueva.

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 // @ts-check
 const logger = require('../../../logger');
-const messages = require('../../messages');
+const { showUserCommunitiesMessage } = require('./messages');
 const { Community, Order } = require('../../../models');
 const { validateParams } = require('../../validations');
 
@@ -40,21 +40,19 @@ exports.setComm = async ctx => {
     if (groupName === 'off') {
       user.default_community_id = null;
       await user.save();
-      await messages.noDefaultCommunityMessage(ctx);
-      return;
+      return await ctx.reply(ctx.i18n.t('no_default_community'));
     }
     // Allow find communities case insensitive
     const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
     const community = await Community.findOne({ group: regex });
     if (!community) {
-      await messages.communityNotFoundMessage(ctx);
-      return;
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     }
 
     user.default_community_id = community._id;
     await user.save();
 
-    await messages.operationSuccessfulMessage(ctx);
+    await ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {
     logger.error(error);
   }
@@ -66,7 +64,7 @@ exports.myComms = async ctx => {
 
     const communities = await Community.find({ creator_id: user._id });
 
-    await messages.showUserCommunitiesMessage(ctx, communities);
+    await showUserCommunitiesMessage(ctx, communities);
   } catch (error) {
     logger.error(error);
   }
@@ -79,7 +77,7 @@ exports.findCommunity = async ctx => {
 
     const communities = await findCommunities(fiatCode.toUpperCase());
     if (!communities.length) {
-      return await messages.communityNotFoundMessage(ctx);
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     }
 
     communities.sort((a, b) => a.orders - b.orders);

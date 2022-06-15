@@ -1,5 +1,4 @@
 const { Community, Order, User } = require('../../../models');
-const messages = require('../../messages');
 
 const getOrdersNDays = async (days, communityId) => {
   const yesterday = new Date();
@@ -43,7 +42,7 @@ const getVolumeNDays = async (days, communityId) => {
   return row.amount;
 };
 
-const onCommunityInfo = async ctx => {
+exports.onCommunityInfo = async ctx => {
   const commId = ctx.match[1];
   const community = await Community.findById(commId);
   const userCount = await User.count({ default_community_id: commId });
@@ -75,19 +74,20 @@ const onCommunityInfo = async ctx => {
   });
 };
 
-const onSetCommunity = async ctx => {
+exports.onSetCommunity = async ctx => {
   const tgId = ctx.update.callback_query.from.id;
   const defaultCommunityId = ctx.match[1];
   await User.findOneAndUpdate(
     { tg_id: tgId },
     { default_community_id: defaultCommunityId }
   );
-  await messages.operationSuccessfulMessage(ctx);
+  await ctx.reply(ctx.i18n.t('operation_successful'));
 };
 
-module.exports = {
-  getVolumeNDays,
-  getOrdersNDays,
-  onCommunityInfo,
-  onSetCommunity,
+exports.withdrawEarnings = async ctx => {
+  ctx.deleteMessage();
+  const community = await Community.findById(ctx.match[1]);
+  ctx.scene.enter('ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID', {
+    community,
+  });
 };

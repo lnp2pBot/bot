@@ -1,9 +1,14 @@
 const { Scenes } = require('telegraf');
 const logger = require('../../../logger');
-const { Community, User } = require('../../../models');
+const { Community, User, PendingPayment } = require('../../../models');
+const { isPendingPayment } = require('../../../ln');
 const { isGroupAdmin, itemsFromMessage } = require('../../../util');
 const messages = require('../../messages');
-const { createCommunityWizardStatus } = require('./messages');
+const { isValidInvoice } = require('../../validations');
+const {
+  createCommunityWizardStatus,
+  wizardCommunityWrongPermission,
+} = require('./messages');
 
 exports.communityWizard = new Scenes.WizardScene(
   'COMMUNITY_WIZARD_SCENE_ID',
@@ -490,7 +495,7 @@ exports.updateNameCommunityWizard = new Scenes.WizardScene(
       }
       community.name = name;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -521,7 +526,7 @@ exports.updateGroupCommunityWizard = new Scenes.WizardScene(
       const group = ctx.message.text.trim();
       const { id, bot, user } = ctx.wizard.state;
       if (!(await isGroupAdmin(group, user, bot.telegram))) {
-        return await messages.wizardCommunityWrongPermission(ctx, user, group);
+        return await wizardCommunityWrongPermission(ctx, user, group);
       }
       const community = await Community.findOne({
         _id: id,
@@ -534,7 +539,7 @@ exports.updateGroupCommunityWizard = new Scenes.WizardScene(
       }
       community.group = group;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -579,7 +584,7 @@ exports.updateCurrenciesCommunityWizard = new Scenes.WizardScene(
       }
       community.currencies = currencies;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -624,11 +629,7 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
       const orderChannels = [];
       if (chan.length === 1) {
         if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
-          return await messages.wizardCommunityWrongPermission(
-            ctx,
-            user,
-            chan[0]
-          );
+          return await wizardCommunityWrongPermission(ctx, user, chan[0]);
 
         const channel = {
           name: chan[0],
@@ -637,18 +638,10 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         orderChannels.push(channel);
       } else {
         if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
-          return await messages.wizardCommunityWrongPermission(
-            ctx,
-            user,
-            chan[0]
-          );
+          return await wizardCommunityWrongPermission(ctx, user, chan[0]);
 
         if (!(await isGroupAdmin(chan[1], user, bot.telegram)))
-          return await messages.wizardCommunityWrongPermission(
-            ctx,
-            user,
-            chan[1]
-          );
+          return await wizardCommunityWrongPermission(ctx, user, chan[1]);
 
         const channel1 = {
           name: chan[0],
@@ -663,7 +656,7 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
       }
       community.order_channels = orderChannels;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -721,7 +714,7 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
       }
       community.solvers = solvers;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -770,7 +763,7 @@ exports.updateFeeCommunityWizard = new Scenes.WizardScene(
       }
       community.fee = fee;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
 
       return ctx.scene.leave();
     } catch (error) {
@@ -802,11 +795,7 @@ exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
 
       const { id, bot, user } = ctx.wizard.state;
       if (!(await isGroupAdmin(channel, user, bot.telegram)))
-        return await messages.wizardCommunityWrongPermission(
-          ctx,
-          user,
-          channel
-        );
+        return await wizardCommunityWrongPermission(ctx, user, channel);
 
       const community = await Community.findOne({
         _id: id,
@@ -819,7 +808,66 @@ exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
 
       community.dispute_channel = channel;
       await community.save();
-      await messages.operationSuccessfulMessage(ctx);
+      await ctx.reply(ctx.i18n.t('operation_successful'));
+
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  }
+);
+
+exports.addEarningsInvoiceWizard = new Scenes.WizardScene(
+  'ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID',
+  async ctx => {
+    try {
+      const { community } = ctx.wizard.state;
+      if (community.earnings === 0) return ctx.scene.leave();
+
+      await ctx.reply(
+        ctx.i18n.t('send_me_lninvoice', { amount: community.earnings })
+      );
+
+      return ctx.wizard.next();
+    } catch (error) {
+      logger.error(error);
+    }
+  },
+  async ctx => {
+    try {
+      if (ctx.message === undefined) return ctx.scene.leave();
+      const lnInvoice = ctx.message.text.trim();
+      const { community } = ctx.wizard.state;
+
+      const res = await isValidInvoice(ctx, lnInvoice);
+      if (!res.success) return;
+
+      if (!!res.invoice.tokens && res.invoice.tokens !== community.earnings)
+        return await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
+
+      const isScheduled = await PendingPayment.findOne({
+        community_id: community._id,
+        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        paid: false,
+      });
+      // We check if the payment is on flight
+      const isPending = await isPendingPayment(lnInvoice);
+
+      if (!!isScheduled || !!isPending)
+        return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
+      const user = await User.findById(community.creator_id);
+      logger.debug(`Creating pending payment for community ${community.id}`);
+      const pp = new PendingPayment({
+        amount: community.earnings,
+        payment_request: lnInvoice,
+        user_id: user.id,
+        community_id: community._id,
+        description: `Retiro por admin @${user.username}`,
+        hash: res.invoice.hash,
+      });
+      await pp.save();
+      await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
 
       return ctx.scene.leave();
     } catch (error) {

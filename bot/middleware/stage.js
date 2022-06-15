@@ -20,6 +20,7 @@ exports.stageMiddleware = () => {
     CommunityModule.Scenes.updateSolversCommunityWizard,
     CommunityModule.Scenes.updateFeeCommunityWizard,
     CommunityModule.Scenes.updateDisputeChannelCommunityWizard,
+    CommunityModule.Scenes.addEarningsInvoiceWizard,
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
   ];

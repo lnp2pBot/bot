@@ -334,7 +334,7 @@ pending_payment_success_to_admin: |
 
   Zahlungsnachweis: ${paymentSecret}
 pending_payment_success: |
-  Ich habe die LN-Rechnung über ${amount} Sats für den Auftrag ${orderId} bezahlt!
+  Ich habe die LN-Rechnung über ${amount} Sats für den Auftrag ${id} bezahlt!
 
   Zahlungsnachweis: ${paymentSecret}
 pending_payment_failed: |
@@ -421,3 +421,5 @@ earnings: Earnings
 premium: Premium
 discount: Discount
 premium_discount: premium/discount
+withdraw_earnings: Withdraw earnings
+invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.

@@ -334,7 +334,7 @@ pending_payment_success_to_admin: |
 
   Подтверждение оплаты: ${paymentSecret}
 pending_payment_success: |
-  Я оплатил счет Lightning для вашего идентификатора покупки: ${orderId}!
+  Я оплатил счет Lightning для вашего идентификатора покупки: ${id}!
 
   Подтверждение оплаты: ${paymentSecret}
 pending_payment_failed: |
@@ -419,3 +419,5 @@ earnings: Earnings
 premium: Premium
 discount: Discount
 premium_discount: premium/discount
+withdraw_earnings: Withdraw earnings
+invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.

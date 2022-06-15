@@ -50,6 +50,7 @@ const {
   cancelOrders,
   deleteOrders,
   calculateEarnings,
+  attemptCommunitiesPendingPayments,
 } = require('../jobs');
 const logger = require('../logger');
 
@@ -128,6 +129,10 @@ const initialize = (botToken, options) => {
 
   schedule.scheduleJob(`0 * * * *`, async () => {
     await calculateEarnings(bot);
+  });
+
+  schedule.scheduleJob(`* * * * *`, async () => {
+    await attemptCommunitiesPendingPayments(bot);
   });
 
   bot.use(session());
@@ -455,8 +460,7 @@ const initialize = (botToken, options) => {
           });
           await community.save();
         } else {
-          await messages.needDefaultCommunity(ctx);
-          return;
+          return await ctx.reply(ctx.i18n.t('need_default_community'));
         }
       } else {
         user.banned = true;
