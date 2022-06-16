@@ -195,15 +195,25 @@ help: |
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)
   /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
-  /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+  /setinvoice <_id orden_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
   /listorders - El usuario puede listar sus órdenes no finalizadas
   /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
-  /fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
-  /release <_order id_> - El vendedor libera los satoshis
-  /dispute <_order id_> - Abre una disputa entre los participantes
-  /cancel <_order id_> - Cancela una orden que no ha sido tomada
+  /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
+  /release <_id orden_> - El vendedor libera los satoshis
+  /dispute <_id orden_> - Abre una disputa entre los participantes
+  /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
+
+  Comunidades:
+  /community - Crea una nueva comunidad
+  /findcomms <_código fiat_> - Busca comunidades que operen con la moneda indicada
+  /setcomm <_@grupoDeUnaComunidad / off_> - Establece una comunidad por defecto o la quita con 'off'
+  /settleorder <_id orden_> - Acepta el pago del vendedor y automáticamente envía los sats al comprador, debe haber una comunidad por defecto
+  /cancelorder <_id orden_> - Cancela la orden lo cual retorna los sats al vendedor, debe haber una comunidad por defecto
+  /deldispute <_username_> <_id orden_> - Le elimina una disputa al usuario en la comunidad, debe haber una comunidad por defecto
+  /ban <_username_> - Expulsa a un usuario de una comunidad, debe haber una comunidad por defecto
+
   /help - Mensaje de ayuda
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!

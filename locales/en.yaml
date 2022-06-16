@@ -204,6 +204,16 @@ help: |
   /dispute <_order id_> - Opens a dispute between participant parties
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
+
+  Communities:
+  /community - Create a new community
+  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
+  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
+  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
+  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
+  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
+  /ban <_username_> - Ban a user from a community, there should be a default community
+
   /help - help messages
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
