@@ -36,37 +36,49 @@ exports.createCommunityWizardStatus = (i18n, state) => {
 
 exports.updateCommunityMessage = async (ctx, id) => {
   try {
-    await ctx.reply(ctx.i18n.t('what_modify'), {
+    const community = await Community.findById(id);
+    let text = ctx.i18n.t('community') + `: ${community.name}\n`;
+    text += ctx.i18n.t('what_to_do');
+    await ctx.reply(text, {
       reply_markup: {
         inline_keyboard: [
           [
-            { text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}` },
             {
-              text: ctx.i18n.t('currencies'),
+              text: '✏️ ' + ctx.i18n.t('name'),
+              callback_data: `editNameBtn_${id}`,
+            },
+            {
+              text: '✏️ ' + ctx.i18n.t('currencies'),
               callback_data: `editCurrenciesBtn_${id}`,
             },
           ],
           [
-            { text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}` },
             {
-              text: ctx.i18n.t('channels'),
+              text: '✏️ ' + ctx.i18n.t('group'),
+              callback_data: `editGroupBtn_${id}`,
+            },
+            {
+              text: '✏️ ' + ctx.i18n.t('channels'),
               callback_data: `editChannelsBtn_${id}`,
             },
           ],
           [
-            { text: ctx.i18n.t('fee'), callback_data: `editFeeBtn_${id}` },
             {
-              text: ctx.i18n.t('dispute_solvers'),
+              text: '✏️ ' + ctx.i18n.t('fee'),
+              callback_data: `editFeeBtn_${id}`,
+            },
+            {
+              text: '✏️ ' + ctx.i18n.t('dispute_solvers'),
               callback_data: `editSolversBtn_${id}`,
             },
           ],
           [
             {
-              text: ctx.i18n.t('dispute_channel'),
+              text: '✏️ ' + ctx.i18n.t('dispute_channel'),
               callback_data: `editDisputeChannelBtn_${id}`,
             },
             {
-              text: ctx.i18n.t('earnings'),
+              text: '💰 ' + ctx.i18n.t('earnings'),
               callback_data: `earningsBtn_${id}`,
             },
           ],

@@ -23,7 +23,6 @@ const {
   cancelShowHoldInvoice,
   showHoldInvoice,
   waitPayment,
-  updateCommunity,
   addInvoicePHI,
   cancelOrder,
   fiatSent,
@@ -44,7 +43,6 @@ const {
   validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
-const { updateCommunityMessage } = require('./modules/community/messages');
 const {
   attemptPendingPayments,
   cancelOrders,
@@ -592,38 +590,6 @@ const initialize = (botToken, options) => {
 
   bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async ctx => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
-  });
-
-  bot.action(/^updateCommunity_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunityMessage(ctx, ctx.match[1]);
-  });
-
-  bot.action(/^editNameBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'name');
-  });
-
-  bot.action(/^editFeeBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'fee');
-  });
-
-  bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'currencies');
-  });
-
-  bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'group', bot);
-  });
-
-  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'channels', bot);
-  });
-
-  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
-  });
-
-  bot.action(/^editDisputeChannelBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
   });
 
   bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {

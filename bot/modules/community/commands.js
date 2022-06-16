@@ -2,8 +2,8 @@
 // @ts-check
 const logger = require('../../../logger');
 const { showUserCommunitiesMessage } = require('./messages');
-const { Community, Order } = require('../../../models');
-const { validateParams } = require('../../validations');
+const { Community, Order, User } = require('../../../models');
+const { validateParams, validateObjectId } = require('../../validations');
 
 async function getOrderCountByCommunity() {
   const data = await Order.aggregate([
@@ -95,6 +95,85 @@ exports.findCommunity = async ctx => {
     await ctx.reply(ctx.i18n.t('select_community'), {
       reply_markup: { inline_keyboard: inlineKeyboard },
     });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.updateCommunity = async (ctx, id, field, bot) => {
+  try {
+    if (!id) return;
+    const tgUser = ctx.update.callback_query.from;
+    if (!tgUser) return;
+    const user = await User.findOne({ tg_id: tgUser.id });
+
+    // If user didn't initialize the bot we can't do anything
+    if (!user) return;
+
+    // We check if the user has the same username that we have
+    if (tgUser.username !== user.username) {
+      user.username = tgUser.username;
+      await user.save();
+    }
+
+    if (!(await validateObjectId(ctx, id))) return;
+    const community = await Community.findOne({
+      _id: id,
+      creator_id: user._id,
+    });
+
+    if (!community) {
+      throw new Error(
+        'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID'
+      );
+    }
+
+    if (field === 'name') {
+      ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
+    } else if (field === 'currencies') {
+      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
+    } else if (field === 'group') {
+      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+        community,
+      });
+    } else if (field === 'channels') {
+      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+        community,
+      });
+    } else if (field === 'fee') {
+      ctx.scene.enter('UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
+    } else if (field === 'solvers') {
+      ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
+    } else if (field === 'disputeChannel') {
+      ctx.scene.enter('UPDATE_DISPUTE_CHANNEL_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        bot,
+        user,
+        community,
+      });
+    }
   } catch (error) {
     logger.error(error);
   }
