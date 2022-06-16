@@ -27,13 +27,12 @@ const calculateEarnings = async () => {
     }
     for (const [communityId, earnings] of earningsMap) {
       const community = await Community.findById(communityId);
-      community.earnings = Math.round(community.earnings + earnings[0]);
+      const amount = Math.round(earnings[0]);
+      community.earnings = community.earnings + amount;
       community.orders_to_redeem = community.orders_to_redeem + earnings[1];
       await community.save();
       logger.info(
-        `New earnings for community Id: ${community.id} sats: ${
-          earnings[0]
-        } orders calculated: ${Math.round(earnings[1])}`
+        `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`
       );
     }
   } catch (error) {
