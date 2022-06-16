@@ -6,7 +6,7 @@ const calculateEarnings = async () => {
     const orders = await Order.find({
       status: 'SUCCESS',
       community_id: { $ne: null },
-      calculated: false || null,
+      calculated: false,
     });
     const earningsMap = new Map();
     for (const order of orders) {
