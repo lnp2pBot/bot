@@ -32,6 +32,8 @@ const createOrder = async (
   try {
     amount = parseInt(amount);
     const fee = await getFee(amount, community_id);
+    // Global fee values at the moment of the order creation
+    // We will need this to calculate the final amount
     const botFee = parseFloat(process.env.MAX_FEE);
     const communityFee = parseFloat(process.env.FEE_PERCENT);
     const currency = getCurrency(fiatCode);
