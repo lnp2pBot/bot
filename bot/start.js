@@ -117,7 +117,7 @@ const initialize = (botToken, options) => {
     }
   );
 
-  schedule.scheduleJob(`*/10 * * * *`, async () => {
+  schedule.scheduleJob(`5/* * * * *`, async () => {
     await cancelOrders(bot);
   });
 
@@ -125,7 +125,7 @@ const initialize = (botToken, options) => {
     await deleteOrders(bot);
   });
 
-  schedule.scheduleJob(`*/20 * * * *`, async () => {
+  schedule.scheduleJob(`*/10 * * * *`, async () => {
     await calculateEarnings();
   });
 

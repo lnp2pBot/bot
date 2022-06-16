@@ -488,10 +488,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     if (!user) return;
     const i18nCtx = await getUserI18nContext(user);
     // Sellers only can cancel orders with status WAITING_PAYMENT
-    if (order.status !== 'WAITING_PAYMENT') {
-      await messages.genericErrorMessage(bot, user, i18nCtx);
-      return;
-    }
+    if (order.status !== 'WAITING_PAYMENT')
+      return await messages.genericErrorMessage(bot, user, i18nCtx);
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id === order.seller_id) {

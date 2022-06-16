@@ -6,7 +6,7 @@ const calculateEarnings = async () => {
     const orders = await Order.find({
       status: 'SUCCESS',
       community_id: { $ne: null },
-      calculated: false,
+      calculated: false || null,
     });
     const earningsMap = new Map();
     for (const order of orders) {
@@ -31,7 +31,9 @@ const calculateEarnings = async () => {
       community.orders_to_redeem = community.orders_to_redeem + earnings[1];
       await community.save();
       logger.info(
-        `New earnings for community Id: ${community.id} sats: ${earnings[0]} orders calculated: ${earnings[1]}`
+        `New earnings for community Id: ${community.id} sats: ${
+          earnings[0]
+        } orders calculated: ${Math.round(earnings[1])}`
       );
     }
   } catch (error) {
