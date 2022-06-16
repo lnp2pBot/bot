@@ -23,7 +23,6 @@ const {
   cancelShowHoldInvoice,
   showHoldInvoice,
   waitPayment,
-  updateCommunity,
   addInvoicePHI,
   cancelOrder,
   fiatSent,
@@ -48,6 +47,8 @@ const {
   attemptPendingPayments,
   cancelOrders,
   deleteOrders,
+  calculateEarnings,
+  attemptCommunitiesPendingPayments,
 } = require('../jobs');
 const logger = require('../logger');
 
@@ -116,12 +117,20 @@ const initialize = (botToken, options) => {
     }
   );
 
-  schedule.scheduleJob(`*/2 * * * *`, async () => {
+  schedule.scheduleJob(`*/10 * * * *`, async () => {
     await cancelOrders(bot);
   });
 
   schedule.scheduleJob(`25 * * * *`, async () => {
     await deleteOrders(bot);
+  });
+
+  schedule.scheduleJob(`*/20 * * * *`, async () => {
+    await calculateEarnings();
+  });
+
+  schedule.scheduleJob(`*/5 * * * *`, async () => {
+    await attemptCommunitiesPendingPayments(bot);
   });
 
   bot.use(session());
@@ -449,8 +458,7 @@ const initialize = (botToken, options) => {
           });
           await community.save();
         } else {
-          await messages.needDefaultCommunity(ctx);
-          return;
+          return await ctx.reply(ctx.i18n.t('need_default_community'));
         }
       } else {
         user.banned = true;
@@ -582,38 +590,6 @@ const initialize = (botToken, options) => {
 
   bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async ctx => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
-  });
-
-  bot.action(/^updateCommunity_([0-9a-f]{24})$/, async ctx => {
-    await messages.updateCommunityMessage(ctx, ctx.match[1]);
-  });
-
-  bot.action(/^editNameBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'name');
-  });
-
-  bot.action(/^editFeeBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'fee');
-  });
-
-  bot.action(/^editCurrenciesBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'currencies');
-  });
-
-  bot.action(/^editGroupBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'group', bot);
-  });
-
-  bot.action(/^editChannelsBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'channels', bot);
-  });
-
-  bot.action(/^editSolversBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'solvers', bot);
-  });
-
-  bot.action(/^editDisputeChannelBtn_([0-9a-f]{24})$/, async ctx => {
-    await updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
   });
 
   bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {

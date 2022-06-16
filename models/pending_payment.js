@@ -17,8 +17,10 @@ const PendingPaymentSchema = new mongoose.Schema({
   payment_request: { type: String },
   hash: { type: String },
   created_at: { type: Date, default: Date.now },
+  paid_at: { type: Date },
   user_id: { type: String },
   order_id: { type: String },
+  community_id: { type: String },
 });
 
 module.exports = mongoose.model('PendingPayment', PendingPaymentSchema);

@@ -334,7 +334,7 @@ pending_payment_success_to_admin: |
 
   Proof of payment: ${paymentSecret}
 pending_payment_success: |
-  I have paid the lightning invoice for ${amount} satoshis, order Id: ${orderId}!
+  I have paid the lightning invoice for ${amount} satoshis, order Id: ${id}!
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
@@ -415,6 +415,11 @@ wizard_help: You are in wizard mode, if you need to go back to command mode run 
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
 tap_button: Select an order to perform the operation
 tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
+earnings: Earnings
 premium: Premium
 discount: Discount
 premium_discount: premium/discount
+withdraw_earnings: Withdraw earnings
+invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
+what_to_do: What do you want to do?
+community: Community

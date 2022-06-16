@@ -269,7 +269,7 @@ wizard_add_invoice_init: |
 
   Si no la envías en ${expirationTime} minutos la orden será cancelada
 wizard_add_invoice_exit: |
-  Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
+  Has salido del modo asistente, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
   /setinvoice ${orderId} \\<factura lightning con o sin monto\\>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
@@ -295,7 +295,7 @@ wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_community_you_are_not_admin: ${username} no es administrador en ${channel}.
 wizard_to_exit: /exit para salir del asistente.
-wizard_exit: Has salido del modo wizard, ahora puedes escribir comandos.
+wizard_exit: Has salido del modo asistente, ahora puedes escribir comandos.
 wizard_add_fiat_amount: |
   Ingresa la cantidad de ${currency} que desea ${action}.
 
@@ -334,7 +334,7 @@ pending_payment_success_to_admin: |
 
   Prueba de pago: ${paymentSecret}
 pending_payment_success: |
-  ¡He pagado la factura lightning por ${amount} satoshis, Id de orden: ${orderId}!
+  ¡He pagado la factura lightning por ${amount} satoshis, Id: ${id}!
 
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
@@ -410,11 +410,20 @@ users: Usuarios
 not_found_dispute: No hay ninguna disputa para esta orden
 max_allowed: El máximo permitido es ${max}
 dispute_channel: Canal de disputas
-not_wizard: No estás en el modo wizard en este momento, si tienes dudas puedes escribir /help
-wizard_help: Estás en modo wizard, si necesitas volver al modo comando ejecuta /exit
+not_wizard: No estás en el modo asistente en este momento, si tienes dudas puedes escribir /help
+wizard_help: Estás en modo asistente, si necesitas volver al modo comando ejecuta /exit
 hold_invoice_memo: '@${botName} - Depósito en garantía Orden #${orderId} - VENTA x ${fiatCode} ${fiatAmount} - SE CONGELA EN BILLETERA. Se libera una vez ejecute /release. Retorna a la wallet si el comprador no confirma el pago'
 tap_button: Selecciona una orden para realizar la operación
 tap_release: Selecciona la orden para liberar los fondos, una vez toques el botón la operación no puede ser reversada.
+earnings: Ganancias
 premium: Prima
 discount: Descuento
 premium_discount: prima/descuento
+current_earnings: |
+  Ordenes completadas hasta el momento en la comunidad: ${ordersToRedeem}
+
+  Ganancias de la comunidad: ${earnings} sats
+withdraw_earnings: Retirar ganancias
+invoice_expired_earnings: La factura ha expirado, vuelve a hacer una solicitud de retiro con una factura nueva.
+what_to_do: ¿Qué quieres hacer?
+community: Comunidad

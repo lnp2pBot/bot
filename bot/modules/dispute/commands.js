@@ -126,7 +126,7 @@ const deleteDispute = async ctx => {
     if (user._id == dispute.seller_id) dispute.seller_id = null;
     await dispute.save();
 
-    await globalMessages.operationSuccessfulMessage(ctx);
+    await ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {
     logger.error(error);
   }
