@@ -22,6 +22,8 @@ const {
   deleteOrderFromChannel,
   getUserI18nContext,
   getFee,
+  getEmojiRate,
+  decimalRound,
 } = require('../util');
 const ordersActions = require('./ordersActions');
 
@@ -155,13 +157,18 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       // We monitor the invoice to know when the seller makes the payment
       await subscribeInvoice(bot, hash);
 
+      // We need the seller rating
+      const stars = getEmojiRate(seller.total_rating);
+      const roundedRating = decimalRound(seller.total_rating, -1);
+      const rate = `${roundedRating} ${stars} (${seller.total_reviews})`;
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
         bot,
         seller,
         request,
         order,
-        i18nCtx
+        i18nCtx,
+        rate
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }

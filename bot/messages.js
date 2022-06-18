@@ -47,7 +47,8 @@ const invoicePaymentRequestMessage = async (
   user,
   request,
   order,
-  i18n
+  i18n,
+  rate
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
@@ -61,6 +62,7 @@ const invoicePaymentRequestMessage = async (
       currency,
       order,
       expirationTime,
+      rate,
     });
     await bot.telegram.sendMessage(user.tg_id, message);
     await bot.telegram.sendMessage(user.tg_id, '`' + request + '`', {
@@ -343,7 +345,8 @@ const onGoingTakeBuyMessage = async (
   buyer,
   order,
   i18nBuyer,
-  i18nSeller
+  i18nSeller,
+  rate
 ) => {
   try {
     await bot.telegram.sendMessage(
@@ -357,8 +360,7 @@ const onGoingTakeBuyMessage = async (
       time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      i18nBuyer.t('someone_took_your_order', { expirationTime }),
-      { parse_mode: 'MarkdownV2' }
+      i18nBuyer.t('someone_took_your_order', { expirationTime, rate })
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {

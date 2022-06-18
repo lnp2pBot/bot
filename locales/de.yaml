@@ -33,6 +33,8 @@ non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutze
 invoice_payment_request: |
   Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
 
+  Buyer Reputation: ${rate}
+
   Bitte bezahle diese LN-Rechnung, um deinen Verkaufsprozess zu starten. Diese LN-Rechnung läuft in ${expirationTime} Minuten ab
 pending_sell: |
   📝 Dein Angebot wurde im Kanal ${channel} veröffentlicht
@@ -105,9 +107,11 @@ payment_received: |
 
   Wait a bit. If the buyer does not cooperate, the collateral will be returned to you.
 someone_took_your_order: |
-  🤖 Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt\\. Bitte verwende einen FIAT\\-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird\\.
+  🤖 Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
 
-  *Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden\\.*
+  Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden.
+
+  Seller Reputation: ${rate}
 
   Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 you_took_someone_order: |

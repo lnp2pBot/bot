@@ -4,7 +4,7 @@ const { payToBuyer } = require('./pay_request');
 const lnd = require('./connect');
 const messages = require('../bot/messages');
 const ordersActions = require('../bot/ordersActions');
-const { getUserI18nContext } = require('../util');
+const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
 const logger = require('../logger');
 
 const subscribeInvoice = async (bot, id, resub) => {
@@ -33,13 +33,18 @@ const subscribeInvoice = async (bot, id, resub) => {
           );
         } else if (order.type === 'buy') {
           order.status = 'WAITING_BUYER_INVOICE';
+          // We need the seller rating
+          const stars = getEmojiRate(sellerUser.total_rating);
+          const roundedRating = decimalRound(sellerUser.total_rating, -1);
+          const rate = `${roundedRating} ${stars} (${sellerUser.total_reviews})`;
           await messages.onGoingTakeBuyMessage(
             bot,
             sellerUser,
             buyerUser,
             order,
             i18nCtxBuyer,
-            i18nCtxSeller
+            i18nCtxSeller,
+            rate
           );
         }
         order.invoice_held_at = Date.now();

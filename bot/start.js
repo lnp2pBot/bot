@@ -117,7 +117,7 @@ const initialize = (botToken, options) => {
     }
   );
 
-  schedule.scheduleJob(`*/5 * * * *`, async () => {
+  schedule.scheduleJob(`*/3 * * * *`, async () => {
     await cancelOrders(bot);
   });
 
