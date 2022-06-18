@@ -10,7 +10,12 @@ const {
   Dispute,
 } = require('../models');
 const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
-const { commandArgsMiddleware, stageMiddleware } = require('./middleware');
+const {
+  commandArgsMiddleware,
+  stageMiddleware,
+  userMiddleware,
+  adminMiddleware,
+} = require('./middleware');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
 const OrdersModule = require('./modules/orders');
@@ -37,7 +42,6 @@ const {
 } = require('../ln');
 const {
   validateUser,
-  validateAdmin,
   validateParams,
   validateObjectId,
   validateInvoice,
@@ -171,23 +175,20 @@ const initialize = (botToken, options) => {
     await takebuy(ctx, bot);
   });
 
-  bot.command('release', async ctx => {
+  bot.command('release', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-
       const params = ctx.update.message.text.split(' ');
       const [command, orderId] = params.filter(el => el);
 
       if (!orderId) {
-        const orders = await askForConfirmation(user, command);
+        const orders = await askForConfirmation(ctx.user, command);
         if (!orders.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
         return;
       } else {
-        await release(ctx, orderId, user);
+        await release(ctx, orderId, ctx.user);
       }
     } catch (error) {
       logger.error(error);
@@ -196,11 +197,8 @@ const initialize = (botToken, options) => {
 
   DisputeModule.configure(bot);
 
-  bot.command('cancelorder', async ctx => {
+  bot.command('cancelorder', userMiddleware, async ctx => {
     try {
-      const user = await validateAdmin(ctx);
-      if (!user) return;
-
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
@@ -213,7 +211,7 @@ const initialize = (botToken, options) => {
       const dispute = await Dispute.findOne({ order_id: order._id });
 
       // We check if this is a solver, the order must be from the same community
-      if (!user.admin) {
+      if (!ctx.user.admin) {
         if (!order.community_id) {
           logger.debug(
             `cancelorder ${order._id}: The order is not in a community`
@@ -221,7 +219,7 @@ const initialize = (botToken, options) => {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != user.default_community_id) {
+        if (order.community_id != ctx.user.default_community_id) {
           logger.debug(
             `cancelorder ${order._id}: The community and the default user community are not the same`
           );
@@ -230,9 +228,9 @@ const initialize = (botToken, options) => {
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
-        if (dispute && dispute.solver_id != user._id) {
+        if (dispute && dispute.solver_id != ctx.user._id) {
           logger.debug(
-            `cancelorder ${order._id}: @${user.username} is not the solver of this dispute`
+            `cancelorder ${order._id}: @${ctx.user.username} is not the solver of this dispute`
           );
           return await messages.notAuthorized(ctx);
         }
@@ -248,12 +246,12 @@ const initialize = (botToken, options) => {
       logger.info(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
-      order.canceled_by = user._id;
+      order.canceled_by = ctx.user._id;
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCancelOrderMessage(ctx, user, order, ctx.i18n);
+      await messages.successCancelOrderMessage(ctx, ctx.user, order, ctx.i18n);
       // we sent a private message to the seller
       await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
@@ -265,23 +263,20 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancel', async ctx => {
+  bot.command('cancel', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-
       const params = ctx.update.message.text.split(' ');
       const [command, orderId] = params.filter(el => el);
 
       if (!orderId) {
-        const orders = await askForConfirmation(user, command);
+        const orders = await askForConfirmation(ctx.user, command);
         if (!orders.length) return await ctx.reply(`${command}  <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
         return;
       } else {
-        await cancelOrder(ctx, orderId, user);
+        await cancelOrder(ctx, orderId, ctx.user);
       }
     } catch (error) {
       logger.error(error);
@@ -290,18 +285,15 @@ const initialize = (botToken, options) => {
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancelall', async ctx => {
+  bot.command('cancelall', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-
-      const orders = await ordersActions.getOrders(ctx, user, 'PENDING');
+      const orders = await ordersActions.getOrders(ctx, ctx.user, 'PENDING');
 
       if (!orders) return;
 
       for (const order of orders) {
         order.status = 'CANCELED';
-        order.canceled_by = user._id;
+        order.canceled_by = ctx.user.id;
         await order.save();
         // We delete the messages related to that order from the channel
         await deleteOrderFromChannel(order, bot.telegram);
@@ -313,11 +305,8 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('settleorder', async ctx => {
+  bot.command('settleorder', userMiddleware, async ctx => {
     try {
-      const user = await validateAdmin(ctx);
-      if (!user) return;
-
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
@@ -330,18 +319,18 @@ const initialize = (botToken, options) => {
       const dispute = await Dispute.findOne({ order_id: order._id });
 
       // We check if this is a solver, the order must be from the same community
-      if (!user.admin) {
+      if (!ctx.user.admin) {
         if (!order.community_id) {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != user.default_community_id) {
+        if (order.community_id != ctx.user.default_community_id) {
           return await messages.notAuthorized(ctx);
         }
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
-        if (dispute && dispute.solver_id != user._id) {
+        if (dispute && dispute.solver_id != ctx.user.id) {
           return await messages.notAuthorized(ctx);
         }
       }
@@ -373,11 +362,8 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('checkorder', async ctx => {
+  bot.command('checkorder', userMiddleware, async ctx => {
     try {
-      const user = await validateAdmin(ctx);
-      if (!user) return;
-
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!orderId) return;
@@ -395,11 +381,8 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('help', async ctx => {
+  bot.command('help', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-      if (!user) return;
-
       await messages.helpMessage(ctx);
     } catch (error) {
       logger.error(error);
@@ -407,35 +390,28 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('fiatsent', async ctx => {
+  bot.command('fiatsent', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
       const params = ctx.update.message.text.split(' ');
       const [command, orderId] = params.filter(el => el);
 
       if (!orderId) {
-        const orders = await askForConfirmation(user, command);
+        const orders = await askForConfirmation(ctx.user, command);
         if (!orders.length) return await ctx.reply(`${command} <order Id>`);
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
         return;
       } else {
-        await fiatSent(ctx, orderId, user);
+        await fiatSent(ctx, orderId, ctx.user);
       }
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('ban', async ctx => {
+  bot.command('ban', adminMiddleware, async ctx => {
     try {
-      const adminUser = await validateAdmin(ctx);
-
-      if (!adminUser) return;
-
       let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
 
       if (!username) return;
@@ -449,8 +425,8 @@ const initialize = (botToken, options) => {
       }
 
       // We check if this is a solver, we ban the user only in the default community of the solver
-      if (!adminUser.admin) {
-        if (adminUser.default_community_id) {
+      if (!ctx.admin.admin) {
+        if (ctx.admin.default_community_id) {
           const community = await Community.findOne({
             _id: user.default_community_id,
           });
@@ -472,12 +448,8 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('setaddress', async ctx => {
+  bot.command('setaddress', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
       const [lightningAddress] = await validateParams(
         ctx,
         2,
@@ -486,16 +458,16 @@ const initialize = (botToken, options) => {
       if (!lightningAddress) return;
 
       if (lightningAddress === 'off') {
-        user.lightning_address = null;
-        await user.save();
+        ctx.user.lightning_address = null;
+        await ctx.user.save();
         return await messages.disableLightningAddress(ctx);
       }
 
       if (!(await validateLightningAddress(lightningAddress)))
         return await messages.invalidLightningAddress(ctx);
 
-      user.lightning_address = lightningAddress;
-      await user.save();
+      ctx.user.lightning_address = lightningAddress;
+      await ctx.user.save();
       await messages.successSetAddress(ctx);
     } catch (error) {
       logger.error(error);
@@ -503,11 +475,8 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('setinvoice', async ctx => {
+  bot.command('setinvoice', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
       const [orderId, lnInvoice] = await validateParams(
         ctx,
         3,
@@ -520,7 +489,7 @@ const initialize = (botToken, options) => {
       if (!invoice) return;
       const order = await Order.findOne({
         _id: orderId,
-        buyer_id: user._id,
+        buyer_id: ctx.user.id,
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
 
@@ -549,7 +518,7 @@ const initialize = (botToken, options) => {
           const pp = new PendingPayment({
             amount: order.amount,
             payment_request: lnInvoice,
-            user_id: user._id,
+            user_id: ctx.user.id,
             description: order.description,
             hash: order.hash,
             order_id: order._id,
@@ -561,7 +530,7 @@ const initialize = (botToken, options) => {
         }
       } else if (order.status === 'WAITING_BUYER_INVOICE') {
         const seller = await User.findOne({ _id: order.seller_id });
-        await waitPayment(ctx, bot, user, seller, order, lnInvoice);
+        await waitPayment(ctx, bot, ctx.user, seller, order, lnInvoice);
       } else {
         await messages.invoiceUpdatedMessage(ctx);
       }
@@ -613,10 +582,8 @@ const initialize = (botToken, options) => {
     await release(ctx, ctx.match[1]);
   });
 
-  bot.command('paytobuyer', async ctx => {
+  bot.command('paytobuyer', adminMiddleware, async ctx => {
     try {
-      const adminUser = await validateAdmin(ctx);
-      if (!adminUser) return;
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -639,12 +606,8 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('listcurrencies', async ctx => {
+  bot.command('listcurrencies', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
       const currencies = getCurrenciesWithPrice();
 
       await messages.listCurrenciesResponse(ctx, currencies);
@@ -653,59 +616,43 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('info', async ctx => {
+  bot.command('info', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
-      await messages.showInfoMessage(bot, user);
+      await messages.showInfoMessage(bot, ctx.user);
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('showusername', async ctx => {
+  bot.command('showusername', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
       let [show] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show === 'yes';
-      user.show_username = show;
-      await user.save();
+      ctx.user.show_username = show;
+      await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showusername', show);
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('showvolume', async ctx => {
+  bot.command('showvolume', userMiddleware, async ctx => {
     try {
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
-
       let [show] = await validateParams(ctx, 2, '_yes/no_');
       if (!show) return;
       show = show === 'yes';
-      user.show_volume_traded = show;
-      await user.save();
+      ctx.user.show_volume_traded = show;
+      await ctx.user.save();
       messages.updateUserSettingsMessage(ctx, 'showvolume', show);
     } catch (error) {
       logger.error(error);
     }
   });
 
-  bot.command('exit', async ctx => {
+  bot.command('exit', userMiddleware, async ctx => {
     try {
       if (ctx.message.chat.type !== 'private') return;
-
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
 
       await ctx.reply(ctx.i18n.t('not_wizard'));
     } catch (error) {
@@ -713,13 +660,10 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.on('text', async ctx => {
+  bot.on('text', userMiddleware, async ctx => {
     try {
       if (ctx.message.chat.type !== 'private') return;
 
-      const user = await validateUser(ctx, false);
-
-      if (!user) return;
       const text = ctx.message.text;
       let message;
       // If the user is trying to enter a command with first letter uppercase
