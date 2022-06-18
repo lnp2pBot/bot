@@ -1,5 +1,6 @@
 const { Telegraf, session } = require('telegraf');
 const { I18n } = require('@grammyjs/i18n');
+const { limit } = require('@grammyjs/ratelimiter');
 const schedule = require('node-schedule');
 const {
   Order,
@@ -134,6 +135,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.use(session());
+  bot.use(limit());
   bot.use(i18n.middleware());
   bot.use(stageMiddleware());
   bot.use(commandArgsMiddleware());
