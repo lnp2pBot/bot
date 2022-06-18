@@ -31,9 +31,11 @@ start: |
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
 non_handle_error: 👤 Para usar este bot debes activar tu username de telegram, para activarlo abre el menú de hamburguesa arriba a la izquierda, selecciona ajustes -> editar perfil -> username
 invoice_payment_request: |
-  Alguien quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
+  Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
-  Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
+  Reputación del comprador: ${rate}
+
+  Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos
 pending_sell: |
   📝 Publicada la oferta en el canal ${channel}
 
@@ -105,9 +107,11 @@ payment_received: |
 
   Espera un momento. Si el comprador no coopera, se te devolverá el colateral.
 someone_took_your_order: |
-  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\\.
+  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\\.*
+  Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats.
+
+  Reputación del vendedor: ${rate}
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |
