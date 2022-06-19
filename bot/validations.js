@@ -502,7 +502,7 @@ const validateFiatSentOrder = async (ctx, user, orderId) => {
 };
 
 // If a seller have an order with status FIAT_SENT, return false
-const validateSeller = async (ctx, bot, user) => {
+const validateSeller = async (ctx, user) => {
   try {
     const where = {
       seller_id: user._id,
@@ -512,7 +512,7 @@ const validateSeller = async (ctx, bot, user) => {
     const order = await Order.findOne(where);
 
     if (order) {
-      await messages.orderOnfiatSentStatusMessages(ctx, bot, user);
+      await messages.orderOnfiatSentStatusMessages(ctx, user);
       return false;
     }
 

@@ -53,7 +53,7 @@ const takebuy = async (ctx, bot) => {
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
+    const isOnFiatSentStatus = await validateSeller(ctx, user);
 
     if (!isOnFiatSentStatus) return;
     const orderId = extractId(text);

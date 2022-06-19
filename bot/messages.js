@@ -711,9 +711,9 @@ const fiatSentMessages = async (
   }
 };
 
-const orderOnfiatSentStatusMessages = async (ctx, bot, user) => {
+const orderOnfiatSentStatusMessages = async (ctx, user) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       ctx.i18n.t('you_have_orders_waiting')
     );
