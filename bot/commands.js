@@ -157,10 +157,11 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       // We monitor the invoice to know when the seller makes the payment
       await subscribeInvoice(bot, hash);
 
-      // We need the seller rating
-      const stars = getEmojiRate(seller.total_rating);
-      const roundedRating = decimalRound(seller.total_rating, -1);
-      const rate = `${roundedRating} ${stars} (${seller.total_reviews})`;
+      // We need the buyer rate
+      const buyer = await User.findById(order.buyer_id);
+      const stars = getEmojiRate(buyer.total_rating);
+      const roundedRating = decimalRound(buyer.total_rating, -1);
+      const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
         bot,
