@@ -684,13 +684,13 @@ const cancelOrder = async (ctx, orderId, user) => {
         order,
         ctx.i18n
       );
-      await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
         order,
         i18nCtxCP
       );
+      await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${order._id} was cancelled!`);
     } else {
       await messages.initCooperativeCancelMessage(ctx, order);
