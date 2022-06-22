@@ -366,6 +366,12 @@ const itemsFromMessage = str => {
     .filter(e => !!e);
 };
 
+// Check if a number is int
+const isInt = n => parseInt(n) === n;
+
+// Check if a number is float
+const isFloat = n => typeof n === 'number' && !isInt(n);
+
 module.exports = {
   isIso4217,
   plural,
@@ -389,4 +395,6 @@ module.exports = {
   isDisputeSolver,
   getFee,
   itemsFromMessage,
+  isInt,
+  isFloat,
 };

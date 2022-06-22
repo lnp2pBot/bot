@@ -1,6 +1,7 @@
 // @ts-check
 const logger = require('../../../logger');
 const { Community, Order } = require('../../../models');
+const { isFloat } = require('../../../util');
 const {
   validateBuyOrder,
   isBannedFromCommunity,
@@ -30,8 +31,11 @@ const sell = async ctx => {
     const sellOrderParams = await validateSellOrder(ctx);
 
     if (!sellOrderParams) return;
-    const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-      sellOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
+    let priceMargin = sellOrderParams.priceMargin;
+    priceMargin = isFloat(priceMargin)
+      ? parseFloat(priceMargin.toFixed(2))
+      : parseInt(priceMargin);
     let communityId = null;
     let community = null;
     // If this message came from a group
@@ -89,8 +93,11 @@ const buy = async ctx => {
     const buyOrderParams = await validateBuyOrder(ctx);
     if (!buyOrderParams) return;
 
-    const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-      buyOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
+    let priceMargin = buyOrderParams.priceMargin;
+    priceMargin = isFloat(priceMargin)
+      ? parseFloat(priceMargin.toFixed(2))
+      : parseInt(priceMargin);
     let communityId = null;
     let community = null;
     // If this message came from a group
