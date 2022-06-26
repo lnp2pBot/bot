@@ -1,7 +1,7 @@
 // @ts-check
+const { userMiddleware } = require('../../middleware/user');
 const logger = require('../../../logger');
 const ordersActions = require('../../ordersActions');
-const { auth } = require('../user/middleware');
 
 const commands = require('./commands');
 const messages = require('./messages');
@@ -11,7 +11,7 @@ exports.Scenes = require('./scenes');
 exports.configure = bot => {
   bot.command(
     'buy',
-    auth,
+    userMiddleware,
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
@@ -26,7 +26,7 @@ exports.configure = bot => {
   );
   bot.command(
     'sell',
-    auth,
+    userMiddleware,
     async (ctx, next) => {
       const args = ctx.message.text.split(' ');
       if (args.length > 1) return next();
@@ -40,7 +40,7 @@ exports.configure = bot => {
     commands.sell
   );
 
-  bot.command('listorders', auth, async ctx => {
+  bot.command('listorders', userMiddleware, async ctx => {
     try {
       const orders = await ordersActions.getOrders(ctx, ctx.user);
       if (!orders) return false;
