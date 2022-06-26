@@ -1,17 +1,17 @@
 // @ts-check
-const { auth } = require('../user/middleware');
+const { userMiddleware } = require('../../middleware/user');
 const actions = require('./actions');
 const commands = require('./commands');
 const { earningsMessage, updateCommunityMessage } = require('./messages');
 exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
-  bot.command('mycomms', auth, commands.myComms);
-  bot.command('community', auth, async ctx => {
+  bot.command('mycomms', userMiddleware, commands.myComms);
+  bot.command('community', userMiddleware, async ctx => {
     const { user } = ctx;
     await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
   });
-  bot.command('setcomm', auth, commands.setComm);
+  bot.command('setcomm', userMiddleware, commands.setComm);
 
   bot.action(/^updateCommunity_([0-9a-f]{24})$/, async ctx => {
     ctx.deleteMessage();
@@ -39,7 +39,7 @@ exports.configure = bot => {
     await commands.updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
   });
 
-  bot.command('findcomms', auth, commands.findCommunity);
+  bot.command('findcomms', userMiddleware, commands.findCommunity);
   bot.action(/^communityInfo_([0-9a-f]{24})$/, actions.onCommunityInfo);
   bot.action(/^setCommunity_([0-9a-f]{24})$/, actions.onSetCommunity);
   bot.action(/^earningsBtn_([0-9a-f]{24})$/, async ctx => {
