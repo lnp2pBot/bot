@@ -114,6 +114,12 @@ const initialize = (botToken, options) => {
     logger.error(err);
   });
 
+  bot.use(session());
+  bot.use(limit());
+  bot.use(i18n.middleware());
+  bot.use(stageMiddleware());
+  bot.use(commandArgsMiddleware());
+
   // We schedule pending payments job
   schedule.scheduleJob(
     `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
@@ -137,12 +143,6 @@ const initialize = (botToken, options) => {
   schedule.scheduleJob(`*/5 * * * *`, async () => {
     await attemptCommunitiesPendingPayments(bot);
   });
-
-  bot.use(session());
-  bot.use(limit());
-  bot.use(i18n.middleware());
-  bot.use(stageMiddleware());
-  bot.use(commandArgsMiddleware());
 
   bot.start(async ctx => {
     try {
