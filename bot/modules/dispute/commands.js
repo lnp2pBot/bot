@@ -12,9 +12,7 @@ const logger = require('../../../logger');
 
 const dispute = async ctx => {
   try {
-    const user = await validateUser(ctx, false);
-
-    if (!user) return;
+    const { user } = ctx;
 
     const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
@@ -75,9 +73,7 @@ const dispute = async ctx => {
 
 const deleteDispute = async ctx => {
   try {
-    const admin = await validateAdmin(ctx);
-
-    if (!admin) return;
+    const { admin } = ctx;
 
     let [username, orderId] = await validateParams(
       ctx,

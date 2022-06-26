@@ -60,7 +60,7 @@ exports.setComm = async ctx => {
 
 exports.myComms = async ctx => {
   try {
-    const user = ctx.user;
+    const { user } = ctx;
 
     const communities = await Community.find({ creator_id: user._id });
 
