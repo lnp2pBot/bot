@@ -11,7 +11,7 @@ exports.setlang = async ctx => {
       const lang = file.split('.')[0];
       flags.push(getLanguageFlag(lang));
     });
-    await showFlagsMessage(ctx, flags);
+    await showFlagsMessage(ctx, flags, ctx.user.lang);
   } catch (error) {
     logger.error(error);
   }

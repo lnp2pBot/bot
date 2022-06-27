@@ -1,13 +1,15 @@
 const logger = require('../../../logger');
 
-exports.showFlagsMessage = async (ctx, flags) => {
+exports.showFlagsMessage = async (ctx, flags, code) => {
   try {
     const buttons = [];
     while (flags.length > 0) {
       const lastTwo = flags.splice(-2);
       const lineBtn = lastTwo.map(c => {
+        let text = `${c.name} ${c.emoji}`;
+        text += c.code === code ? '✔️' : '';
         return {
-          text: c.name + ' ' + c.emoji,
+          text,
           callback_data: `setLanguage_${c.code}`,
         };
       });
