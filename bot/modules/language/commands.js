@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const { getCountryFlag } = require('../../../util');
+const { getLanguageFlag } = require('../../../util');
 const logger = require('../../../logger');
 const { showFlagsMessage } = require('./messages');
 
@@ -9,7 +9,7 @@ exports.setlang = async ctx => {
     const flags = [];
     fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
       const lang = file.split('.')[0];
-      flags.push(getCountryFlag(lang));
+      flags.push(getLanguageFlag(lang));
     });
     await showFlagsMessage(ctx, flags);
   } catch (error) {

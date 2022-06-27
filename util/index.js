@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
+const languages = require('./languages.json');
 const { Order, Community } = require('../models');
 const logger = require('../logger');
 
@@ -372,19 +373,9 @@ const isInt = n => parseInt(n) === n;
 // Check if a number is float
 const isFloat = n => typeof n === 'number' && !isInt(n);
 
-// Create flag from country code
-// from https://stackoverflow.com/a/44070554/1356311
-const getCountryFlag = cc => {
-  // Mild sanity check.
-  if (cc.length !== 2) return cc;
-
-  // Convert char to Regional Indicator Symbol Letter
-  function risl(chr) {
-    return String.fromCodePoint(0x1f1e6 - 65 + chr.toUpperCase().charCodeAt(0));
-  }
-
-  // Create RISL sequence from country code.
-  return risl(cc[0]) + risl(cc[1]);
+// Returns an emoji flag for a language
+const getLanguageFlag = code => {
+  return languages[code];
 };
 
 module.exports = {
@@ -412,5 +403,5 @@ module.exports = {
   itemsFromMessage,
   isInt,
   isFloat,
-  getCountryFlag,
+  getLanguageFlag,
 };

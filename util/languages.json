@@ -1,0 +1,32 @@
+{
+  "de": {
+    "name": "Deutsch",
+    "emoji": "🇩🇪",
+    "code": "de"
+  },
+  "en": {
+    "name": "English",
+    "emoji": "🇬🇧",
+    "code": "en"
+  },
+  "es": {
+    "name": "Español",
+    "emoji": "🇪🇸",
+    "code": "es"
+  },
+  "pt": {
+    "name": "Português",
+    "emoji": "🇵🇹",
+    "code": "pt"
+  },
+  "ru": {
+    "name": "Русский",
+    "emoji": "🇷🇺",
+    "code": "ru"
+  },
+  "uk": {
+    "name": "Українська",
+    "emoji": "🇺🇦",
+    "code": "uk"
+  }
+}
