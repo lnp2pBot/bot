@@ -201,6 +201,7 @@ help: |
   /showvolume - Permite mostrar o volume de negócios em cada novo pedido criado, o padrão é não (falso)
   /setinvoice <ID do pedido> <Fatura Lightning> - Permite que o comprador atualize a fatura Lightning na qual receberá sats
   /setaddress <lightning address / off> - Permite que o comprador indique um endereço de pagamento estático (lightning address), off para desativá-lo
+  /setlang - Allows the user to change the language
   /listorders - O usuário pode listar seus pedidos inacabados
   /listcurrencies - Lista as moedas que podemos usar sem indicar o valor em satoshis
   /fiatsent <order id> - O comprador indica que já enviou o dinheiro Fiat para o vendedor

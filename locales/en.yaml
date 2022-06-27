@@ -201,6 +201,7 @@ help: |
   /showvolume - shows trade volume when each order is created, default value is *no* (false)
   /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the ligthning invoice where to receive the sats. 
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment adress (lightning address), _off_ to deactivate 
+  /setlang - Allows the user to change the language
   /listorders - Use this command to list all your pending transactions. 
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that has already sent FIAT money to seller
