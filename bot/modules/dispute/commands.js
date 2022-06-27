@@ -1,10 +1,8 @@
 const { User, Dispute, Order } = require('../../../models');
 const {
-  validateUser,
   validateParams,
   validateObjectId,
   validateDisputeOrder,
-  validateAdmin,
 } = require('../../validations');
 const messages = require('./messages');
 const globalMessages = require('../../messages');

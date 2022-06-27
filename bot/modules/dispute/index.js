@@ -11,7 +11,7 @@ exports.configure = bot => {
     commands.deleteDispute(ctx);
   });
 
-  bot.action(/^takeDispute_([0-9a-f]{24})$/, userMiddleware, async ctx => {
+  bot.action(/^takeDispute_([0-9a-f]{24})$/, async ctx => {
     actions.takeDispute(ctx);
   });
 };

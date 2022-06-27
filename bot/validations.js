@@ -39,10 +39,10 @@ const validateUser = async (ctx, start) => {
   }
 };
 
-const validateAdmin = async ctx => {
+const validateAdmin = async (ctx, id) => {
   try {
-    const tgUser = ctx.update.message.from;
-    const user = await User.findOne({ tg_id: tgUser.id });
+    const tgUserId = id || ctx.update.message.from.id;
+    const user = await User.findOne({ tg_id: tgUserId });
     if (!user) {
       await messages.notAuthorized(ctx);
       return false;
