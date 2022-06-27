@@ -18,6 +18,7 @@ const {
 } = require('./middleware');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
+const LanguageModule = require('./modules/language');
 const OrdersModule = require('./modules/orders');
 const DisputeModule = require('./modules/dispute');
 const {
@@ -166,6 +167,7 @@ const initialize = (botToken, options) => {
   });
 
   CommunityModule.configure(bot);
+  LanguageModule.configure(bot);
 
   bot.action('takesell', async ctx => {
     await takesell(ctx, bot);
