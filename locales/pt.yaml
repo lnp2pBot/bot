@@ -217,7 +217,7 @@ help: |
   /cancelorder <id order> - Cancela o pedido que devolve o sats ao vendedor, deve haver uma comunidade por padrão
   /deldispute <username> <order id> - Exclui uma disputa de usuário na comunidade, deve haver uma comunidade padrão
   /ban <username> - Banir um usuário de uma comunidade, deve haver uma comunidade padrão
-  
+
   /help - mensagem de ajuda
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
@@ -437,3 +437,4 @@ withdraw_earnings: Withdraw earnings
 invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
 what_to_do: What do you want to do?
 community: Community
+seller_already_released: Don't worry the seller already released the funds 🥲

@@ -1,7 +1,7 @@
 const { getDisputeChannel, getDetailedOrder } = require('../../../util');
 const logger = require('../../../logger');
 
-const beginDispute = async (ctx, initiator, order, buyer, seller) => {
+exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
     let initiatorUser = buyer;
     let counterPartyUser = seller;
@@ -28,10 +28,12 @@ const beginDispute = async (ctx, initiator, order, buyer, seller) => {
         ctx.i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
       );
     }
-  } catch (error) {}
+  } catch (error) {
+    logger.error(error);
+  }
 };
 
-const takeDisputeButton = async (ctx, order) => {
+exports.takeDisputeButton = async (ctx, order) => {
   try {
     const disputeChannel = await getDisputeChannel(order);
     await ctx.telegram.sendMessage(disputeChannel, ctx.i18n.t('new_dispute'), {
@@ -51,7 +53,7 @@ const takeDisputeButton = async (ctx, order) => {
   }
 };
 
-const disputeData = async (
+exports.disputeData = async (
   ctx,
   buyer,
   seller,
@@ -90,7 +92,7 @@ const disputeData = async (
   }
 };
 
-const notFoundDisputeMessage = async ctx => {
+exports.notFoundDisputeMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('not_found_dispute'));
   } catch (error) {
@@ -98,9 +100,13 @@ const notFoundDisputeMessage = async ctx => {
   }
 };
 
-module.exports = {
-  takeDisputeButton,
-  beginDispute,
-  disputeData,
-  notFoundDisputeMessage,
+exports.sellerReleased = async (ctx, solver) => {
+  try {
+    await ctx.telegram.sendMessage(
+      solver.tg_id,
+      ctx.i18n.t('seller_already_released')
+    );
+  } catch (error) {
+    logger.error(error);
+  }
 };

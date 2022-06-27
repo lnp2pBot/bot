@@ -3,7 +3,7 @@ const messages = require('./messages');
 const { validateAdmin } = require('../../validations');
 const globalMessages = require('../../messages');
 
-const takeDispute = async ctx => {
+exports.takeDispute = async ctx => {
   const tgId = ctx.update.callback_query.from.id;
   const admin = await validateAdmin(ctx, tgId);
   if (!admin) return;
@@ -28,6 +28,8 @@ const takeDispute = async ctx => {
   }
   ctx.deleteMessage();
   const solver = await User.findOne({ tg_id: tgId });
+  if (dispute.status === 'RELEASED')
+    return await messages.sellerReleased(ctx, solver);
   const buyer = await User.findOne({ _id: order.buyer_id });
   const seller = await User.findOne({ _id: order.seller_id });
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
@@ -52,5 +54,3 @@ const takeDispute = async ctx => {
     sellerDisputes
   );
 };
-
-module.exports = { takeDispute };
