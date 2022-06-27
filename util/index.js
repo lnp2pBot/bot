@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
+const languages = require('./languages.json');
 const { Order, Community } = require('../models');
 const logger = require('../logger');
 
@@ -372,6 +373,11 @@ const isInt = n => parseInt(n) === n;
 // Check if a number is float
 const isFloat = n => typeof n === 'number' && !isInt(n);
 
+// Returns an emoji flag for a language
+const getLanguageFlag = code => {
+  return languages[code];
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -397,4 +403,5 @@ module.exports = {
   itemsFromMessage,
   isInt,
   isFloat,
+  getLanguageFlag,
 };
