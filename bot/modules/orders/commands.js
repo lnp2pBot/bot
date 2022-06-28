@@ -19,12 +19,11 @@ const sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
 const sell = async ctx => {
   try {
     const user = ctx.user;
-    if (await isMaxPending(user)) {
-      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
-      return;
-    }
+    if (await isMaxPending(user))
+      return await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+
     // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(ctx, ctx, user);
+    const isOnFiatSentStatus = await validateSeller(ctx, user);
 
     if (!isOnFiatSentStatus) return;
 
@@ -83,13 +82,13 @@ const sell = async ctx => {
     logger.error(error);
   }
 };
+
 const buy = async ctx => {
   try {
     const user = ctx.user;
-    if (await isMaxPending(user)) {
-      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
-      return;
-    }
+    if (await isMaxPending(user))
+      return await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+
     const buyOrderParams = await validateBuyOrder(ctx);
     if (!buyOrderParams) return;
 

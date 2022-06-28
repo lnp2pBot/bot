@@ -711,9 +711,9 @@ const fiatSentMessages = async (
   }
 };
 
-const orderOnfiatSentStatusMessages = async (ctx, bot, user) => {
+const orderOnfiatSentStatusMessages = async (ctx, user) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       ctx.i18n.t('you_have_orders_waiting')
     );
@@ -1120,9 +1120,9 @@ const invalidRangeWithAmount = async ctx => {
   }
 };
 
-const tooManyPendingOrdersMessage = async (bot, user, i18n) => {
+const tooManyPendingOrdersMessage = async (ctx, user, i18n) => {
   try {
-    bot.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
+    ctx.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
   } catch (error) {
     logger.error(error);
   }
