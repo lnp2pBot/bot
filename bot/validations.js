@@ -43,18 +43,14 @@ const validateAdmin = async (ctx, id) => {
   try {
     const tgUserId = id || ctx.update.message.from.id;
     const user = await User.findOne({ tg_id: tgUserId });
-    if (!user) {
-      await messages.notAuthorized(ctx);
-      return false;
-    }
+    if (!user) return await messages.notAuthorized(ctx);
+
     let community = null;
-    if (user.default_community_id) {
+    if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
-    }
-    if (!user.admin && !isDisputeSolver(community, user)) {
-      await messages.notAuthorized(ctx);
-      return false;
-    }
+
+    if (!user.admin && !isDisputeSolver(community, user))
+      return await messages.notAuthorized(ctx);
 
     return user;
   } catch (error) {
