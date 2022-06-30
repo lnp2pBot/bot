@@ -1,12 +1,13 @@
 const commands = require('./commands');
 const actions = require('./actions');
+const { userMiddleware } = require('../../middleware/user');
 
 exports.configure = bot => {
-  bot.command('dispute', async ctx => {
+  bot.command('dispute', userMiddleware, async ctx => {
     commands.dispute(ctx);
   });
 
-  bot.command('deldispute', async ctx => {
+  bot.command('deldispute', userMiddleware, async ctx => {
     commands.deleteDispute(ctx);
   });
 

@@ -1,12 +1,27 @@
 const { User, Order, Dispute } = require('../../../models');
 const messages = require('./messages');
+const { validateAdmin } = require('../../validations');
+const globalMessages = require('../../messages');
 
-const takeDispute = async ctx => {
-  ctx.deleteMessage();
+exports.takeDispute = async ctx => {
   const tgId = ctx.update.callback_query.from.id;
+  const admin = await validateAdmin(ctx, tgId);
+  if (!admin) return;
   const orderId = ctx.match[1];
+  // We check if this is a solver, the order must be from the same community
   const order = await Order.findOne({ _id: orderId });
+  const dispute = await Dispute.findOne({ order_id: orderId });
+  if (!admin.admin) {
+    if (!order.community_id) return await globalMessages.notAuthorized(ctx);
+
+    if (order.community_id != admin.default_community_id)
+      return await globalMessages.notAuthorized(ctx);
+  }
+  ctx.deleteMessage();
   const solver = await User.findOne({ tg_id: tgId });
+  if (dispute.status === 'RELEASED')
+    return await messages.sellerReleased(ctx, solver);
+
   const buyer = await User.findOne({ _id: order.buyer_id });
   const seller = await User.findOne({ _id: order.seller_id });
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
@@ -16,10 +31,10 @@ const takeDispute = async ctx => {
   const sellerDisputes = await Dispute.count({
     $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
   });
-  await Dispute.findOneAndUpdate(
-    { order_id: order._id },
-    { solver_id: solver._id, status: 'IN_PROGRESS' }
-  );
+
+  dispute.solver_id = solver.id;
+  dispute.status = 'IN_PROGRESS';
+  await dispute.save();
   await messages.disputeData(
     ctx,
     buyer,
@@ -31,5 +46,3 @@ const takeDispute = async ctx => {
     sellerDisputes
   );
 };
-
-module.exports = { takeDispute };

@@ -1,6 +1,7 @@
 // @ts-check
 const logger = require('../../../logger');
 const { Community, Order } = require('../../../models');
+const { isFloat } = require('../../../util');
 const {
   validateBuyOrder,
   isBannedFromCommunity,
@@ -18,20 +19,22 @@ const sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
 const sell = async ctx => {
   try {
     const user = ctx.user;
-    if (await isMaxPending(user)) {
-      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
-      return;
-    }
+    if (await isMaxPending(user))
+      return await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+
     // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(ctx, ctx, user);
+    const isOnFiatSentStatus = await validateSeller(ctx, user);
 
     if (!isOnFiatSentStatus) return;
 
     const sellOrderParams = await validateSellOrder(ctx);
 
     if (!sellOrderParams) return;
-    const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-      sellOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
+    let priceMargin = sellOrderParams.priceMargin;
+    priceMargin = isFloat(priceMargin)
+      ? parseFloat(priceMargin.toFixed(2))
+      : parseInt(priceMargin);
     let communityId = null;
     let community = null;
     // If this message came from a group
@@ -79,18 +82,21 @@ const sell = async ctx => {
     logger.error(error);
   }
 };
+
 const buy = async ctx => {
   try {
     const user = ctx.user;
-    if (await isMaxPending(user)) {
-      await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
-      return;
-    }
+    if (await isMaxPending(user))
+      return await messages.tooManyPendingOrdersMessage(ctx, user, ctx.i18n);
+
     const buyOrderParams = await validateBuyOrder(ctx);
     if (!buyOrderParams) return;
 
-    const { amount, fiatAmount, fiatCode, paymentMethod, priceMargin } =
-      buyOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
+    let priceMargin = buyOrderParams.priceMargin;
+    priceMargin = isFloat(priceMargin)
+      ? parseFloat(priceMargin.toFixed(2))
+      : parseInt(priceMargin);
     let communityId = null;
     let community = null;
     // If this message came from a group

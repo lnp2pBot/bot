@@ -47,7 +47,8 @@ const invoicePaymentRequestMessage = async (
   user,
   request,
   order,
-  i18n
+  i18n,
+  rate
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
@@ -61,6 +62,7 @@ const invoicePaymentRequestMessage = async (
       currency,
       order,
       expirationTime,
+      rate,
     });
     await bot.telegram.sendMessage(user.tg_id, message);
     await bot.telegram.sendMessage(user.tg_id, '`' + request + '`', {
@@ -343,7 +345,8 @@ const onGoingTakeBuyMessage = async (
   buyer,
   order,
   i18nBuyer,
-  i18nSeller
+  i18nSeller,
+  rate
 ) => {
   try {
     await bot.telegram.sendMessage(
@@ -357,8 +360,7 @@ const onGoingTakeBuyMessage = async (
       time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      i18nBuyer.t('someone_took_your_order', { expirationTime }),
-      { parse_mode: 'MarkdownV2' }
+      i18nBuyer.t('someone_took_your_order', { expirationTime, rate })
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
@@ -709,9 +711,9 @@ const fiatSentMessages = async (
   }
 };
 
-const orderOnfiatSentStatusMessages = async (ctx, bot, user) => {
+const orderOnfiatSentStatusMessages = async (ctx, user) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       ctx.i18n.t('you_have_orders_waiting')
     );
@@ -1118,34 +1120,9 @@ const invalidRangeWithAmount = async ctx => {
   }
 };
 
-const tooManyPendingOrdersMessage = async (bot, user, i18n) => {
+const tooManyPendingOrdersMessage = async (ctx, user, i18n) => {
   try {
-    bot.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const listCommunitiesMessage = async (ctx, communities) => {
-  try {
-    let message = '';
-    communities.forEach(community => {
-      message += `ID: #${community.id}\n`;
-      message += ctx.i18n.t('name') + `: ${community.name}\n`;
-      message += ctx.i18n.t('group') + `: ${community.group}\n`;
-      community.order_channels.forEach(channel => {
-        message +=
-          ctx.i18n.t('channel') + ` ${channel.type}: ${channel.name}\n`;
-      });
-      community.solvers.forEach(solver => {
-        message += ctx.i18n.t('solver') + `: ${solver.username}\n`;
-      });
-      message +=
-        ctx.i18n.t('published') +
-        `: ${community.public ? ctx.i18n.t('yes') : ctx.i18n.t('no')}\n`;
-      message += ctx.i18n.t('created') + `: ${community.created_at}\n\n`;
-    });
-    await ctx.reply(message);
+    ctx.telegram.sendMessage(user.tg_id, i18n.t('too_many_pending_orders'));
   } catch (error) {
     logger.error(error);
   }
@@ -1185,14 +1162,6 @@ const wizardAddInvoiceExitMessage = async (ctx, order) => {
   }
 };
 
-const wizardCommunityEnterNameMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const wizardExitMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('wizard_exit'));
@@ -1212,107 +1181,6 @@ const orderExpiredMessage = async ctx => {
 const cantAddInvoiceMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cant_add_invoice'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityTooLongNameMessage = async (ctx, length) => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_too_long_name', { length }));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterCurrencyMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterGroupMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterOrderChannelsMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_order_channels'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityOneOrTwoChannelsMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_one_or_two_channels'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterSolversMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityMustEnterNamesSeparatedMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_must_enter_names'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterSolversChannelMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_solvers_channel'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityWrongPercentFeeMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_wrong_percent'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityEnterPercentFeeMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_enter_fee_percent'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityCreatedMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('wizard_community_success'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const wizardCommunityWrongPermission = async (ctx, user, channel) => {
-  try {
-    await ctx.reply(
-      ctx.i18n.t('wizard_community_you_are_not_admin', {
-        username: user.username,
-        channel,
-      })
-    );
   } catch (error) {
     logger.error(error);
   }
@@ -1524,7 +1392,7 @@ const toBuyerPendingPaymentSuccessMessage = async (
     await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_payment_success', {
-        orderId: order._id,
+        id: order._id,
         amount: numberFormat(order.fiat_code, order.amount),
         paymentSecret: payment.secret,
       })
@@ -1581,102 +1449,6 @@ const toAdminChannelPendingPaymentFailedMessage = async (
   }
 };
 
-const communitiesUpdatedOkMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('community_updated'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const updateCommunityMessage = async (ctx, id) => {
-  try {
-    await ctx.reply(ctx.i18n.t('what_modify'), {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: ctx.i18n.t('name'), callback_data: `editNameBtn_${id}` },
-            {
-              text: ctx.i18n.t('currencies'),
-              callback_data: `editCurrenciesBtn_${id}`,
-            },
-          ],
-          [
-            { text: ctx.i18n.t('group'), callback_data: `editGroupBtn_${id}` },
-            {
-              text: ctx.i18n.t('channels'),
-              callback_data: `editChannelsBtn_${id}`,
-            },
-          ],
-          [
-            { text: ctx.i18n.t('fee'), callback_data: `editFeeBtn_${id}` },
-            {
-              text: ctx.i18n.t('dispute_solvers'),
-              callback_data: `editSolversBtn_${id}`,
-            },
-          ],
-          [
-            {
-              text: ctx.i18n.t('dispute_channel'),
-              callback_data: `editDisputeChannelBtn_${id}`,
-            },
-          ],
-        ],
-      },
-    });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const showUserCommunitiesMessage = async (ctx, communities) => {
-  try {
-    const buttons = [];
-    while (communities.length > 0) {
-      const lastTwo = communities.splice(-2);
-      const lineBtn = lastTwo.map(c => {
-        return {
-          text: c.name,
-          callback_data: `updateCommunity_${c._id}`,
-        };
-      });
-      buttons.push(lineBtn);
-    }
-
-    await ctx.reply(ctx.i18n.t('select_community'), {
-      reply_markup: {
-        inline_keyboard: buttons,
-      },
-    });
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const operationSuccessfulMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('operation_successful'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const noDefaultCommunityMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('no_default_community'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const communityNotFoundMessage = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('community_not_found'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const currencyNotSupportedMessage = async (ctx, currencies) => {
   try {
     currencies = currencies.join(', ');
@@ -1689,14 +1461,6 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
 const notAuthorized = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('not_authorized'));
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const needDefaultCommunity = async ctx => {
-  try {
-    await ctx.reply(ctx.i18n.t('need_default_community'));
   } catch (error) {
     logger.error(error);
   }
@@ -1831,23 +1595,11 @@ module.exports = {
   disableLightningAddress,
   invalidRangeWithAmount,
   tooManyPendingOrdersMessage,
-  listCommunitiesMessage,
   wizardAddInvoiceInitMessage,
   wizardAddInvoiceExitMessage,
   orderExpiredMessage,
   cantAddInvoiceMessage,
-  wizardCommunityEnterNameMessage,
   wizardExitMessage,
-  wizardCommunityTooLongNameMessage,
-  wizardCommunityEnterCurrencyMessage,
-  wizardCommunityEnterGroupMessage,
-  wizardCommunityEnterOrderChannelsMessage,
-  wizardCommunityOneOrTwoChannelsMessage,
-  wizardCommunityEnterSolversMessage,
-  wizardCommunityMustEnterNamesSeparatedMessage,
-  wizardCommunityEnterSolversChannelMessage,
-  wizardCommunityCreatedMessage,
-  wizardCommunityWrongPermission,
   wizardAddFiatAmountMessage,
   wizardAddFiatAmountWrongAmountMessage,
   wizardAddFiatAmountCorrectMessage,
@@ -1866,18 +1618,9 @@ module.exports = {
   refundCooperativeCancelMessage,
   toBuyerExpiredOrderMessage,
   toSellerExpiredOrderMessage,
-  communitiesUpdatedOkMessage,
-  updateCommunityMessage,
-  showUserCommunitiesMessage,
-  operationSuccessfulMessage,
-  noDefaultCommunityMessage,
-  communityNotFoundMessage,
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
   notAuthorized,
-  needDefaultCommunity,
-  wizardCommunityWrongPercentFeeMessage,
-  wizardCommunityEnterPercentFeeMessage,
   mustBeANumber,
   showConfirmationButtons,
 };

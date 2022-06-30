@@ -194,32 +194,32 @@ must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  
 invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Unavailable lightning adress ${la}
 help: |
-  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
-  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
-  /info - Shows additional info about the BOT
-  /showusername - Toggles off the display of the username in each new order created. Default value is se to no (false)
-  /showvolume - shows trade volume when each order is created, default value is *no* (false)
-  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the ligthning invoice where to receive the sats. 
-  /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment adress (lightning address), _off_ to deactivate 
+  /sell <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto - Criar uma ordem de venda
+  /buy <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto - Cria um pedido de compra
+  /info - Mostra informações sobre o bot
+  /showusername - Permite mostrar ou ocultar o nome de usuário em cada novo pedido criado, o valor padrão é não (falso)
+  /showvolume - Permite mostrar o volume de negócios em cada novo pedido criado, o padrão é não (falso)
+  /setinvoice <ID do pedido> <Fatura Lightning> - Permite que o comprador atualize a fatura Lightning na qual receberá sats
+  /setaddress <lightning address / off> - Permite que o comprador indique um endereço de pagamento estático (lightning address), off para desativá-lo
   /setlang - Allows the user to change the language
-  /listorders - Use this command to list all your pending transactions. 
-  /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
-  /fiatsent <_order id_> - Buyer informs that has already sent FIAT money to seller
-  /release <_order id_> - Seller releases satoshis 
-  /dispute <_order id_> - Opens a dispute between participant parties
-  /cancel <_order id_> - Cancel an order that has not been taken yet
-  /cancelall - Cancel all posted and untaken orders
+  /listorders - O usuário pode listar seus pedidos inacabados
+  /listcurrencies - Lista as moedas que podemos usar sem indicar o valor em satoshis
+  /fiatsent <order id> - O comprador indica que já enviou o dinheiro Fiat para o vendedor
+  /release <ID do pedido> - O vendedor libera os satoshis
+  /dispute <ID do pedido> - Abre uma disputa entre os participantes
+  /cancel <ID do pedido> - Cancela um pedido que não foi feito
+  /cancelall - Cancela todos os pedidos postados e não atendidos
 
-  Communities:
-  /community - Create a new community
-  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
-  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
-  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
-  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
-  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
-  /ban <_username_> - Ban a user from a community, there should be a default community
+  Comunidades:
+  /community - Crie uma nova comunidade
+  /findcomms <fiat code> - Busca por comunidades que operam com a moeda indicada
+  /setcomm <@groupOfACommunity / off> - Defina uma comunidade padrão ou remova-a com 'off'
+  /settleorder <order id> - Aceita o pagamento do vendedor e envia automaticamente o sats para o comprador, deve haver uma comunidade por padrão
+  /cancelorder <id order> - Cancela o pedido que devolve o sats ao vendedor, deve haver uma comunidade por padrão
+  /deldispute <username> <order id> - Exclui uma disputa de usuário na comunidade, deve haver uma comunidade padrão
+  /ban <username> - Banir um usuário de uma comunidade, deve haver uma comunidade padrão
 
-  /help - help messages
+  /help - mensagem de ajuda
 must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent fiat money once the seller confirms the money was received, the sats should be sent to you.

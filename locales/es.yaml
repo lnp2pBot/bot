@@ -31,9 +31,11 @@ start: |
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
 non_handle_error: 👤 Para usar este bot debes activar tu username de telegram, para activarlo abre el menú de hamburguesa arriba a la izquierda, selecciona ajustes -> editar perfil -> username
 invoice_payment_request: |
-  Alguien quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
+  Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
-  Por favor paga esta factura para comenzar la venta, esta factura expira en ${expirationTime} minutos
+  Reputación del comprador: ${rate}
+
+  Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos
 pending_sell: |
   📝 Publicada la oferta en el canal ${channel}
 
@@ -105,9 +107,11 @@ payment_received: |
 
   Espera un momento. Si el comprador no coopera, se te devolverá el colateral.
 someone_took_your_order: |
-  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos\\.
+  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos.
 
-  *Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats\\.*
+  Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats.
+
+  Reputación del vendedor: ${rate}
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |
@@ -195,15 +199,26 @@ help: |
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)
   /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
-  /setinvoice <_order id_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+  /setinvoice <_id orden_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
+  /setlang - Le permite al usuario cambiar el idioma
   /listorders - El usuario puede listar sus órdenes no finalizadas
   /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
-  /fiatsent <_order id_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
-  /release <_order id_> - El vendedor libera los satoshis
-  /dispute <_order id_> - Abre una disputa entre los participantes
-  /cancel <_order id_> - Cancela una orden que no ha sido tomada
+  /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
+  /release <_id orden_> - El vendedor libera los satoshis
+  /dispute <_id orden_> - Abre una disputa entre los participantes
+  /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
+
+  Comunidades:
+  /community - Crea una nueva comunidad
+  /findcomms <_código fiat_> - Busca comunidades que operen con la moneda indicada
+  /setcomm <_@grupoDeUnaComunidad / off_> - Establece una comunidad por defecto o la quita con 'off'
+  /settleorder <_id orden_> - Acepta el pago del vendedor y automáticamente envía los sats al comprador, debe haber una comunidad por defecto
+  /cancelorder <_id orden_> - Cancela la orden lo cual retorna los sats al vendedor, debe haber una comunidad por defecto
+  /deldispute <_username_> <_id orden_> - Le elimina una disputa al usuario en la comunidad, debe haber una comunidad por defecto
+  /ban <_username_> - Expulsa a un usuario de una comunidad, debe haber una comunidad por defecto
+
   /help - Mensaje de ayuda
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
@@ -269,7 +284,7 @@ wizard_add_invoice_init: |
 
   Si no la envías en ${expirationTime} minutos la orden será cancelada
 wizard_add_invoice_exit: |
-  Has salido del modo wizard, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
+  Has salido del modo asistente, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
   /setinvoice ${orderId} \\<factura lightning con o sin monto\\>
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
@@ -295,7 +310,7 @@ wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_community_you_are_not_admin: ${username} no es administrador en ${channel}.
 wizard_to_exit: /exit para salir del asistente.
-wizard_exit: Has salido del modo wizard, ahora puedes escribir comandos.
+wizard_exit: Has salido del modo asistente, ahora puedes escribir comandos.
 wizard_add_fiat_amount: |
   Ingresa la cantidad de ${currency} que desea ${action}.
 
@@ -334,7 +349,7 @@ pending_payment_success_to_admin: |
 
   Prueba de pago: ${paymentSecret}
 pending_payment_success: |
-  ¡He pagado la factura lightning por ${amount} satoshis, Id de orden: ${orderId}!
+  ¡He pagado la factura lightning por ${amount} satoshis, Id: ${id}!
 
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
@@ -410,11 +425,22 @@ users: Usuarios
 not_found_dispute: No hay ninguna disputa para esta orden
 max_allowed: El máximo permitido es ${max}
 dispute_channel: Canal de disputas
-not_wizard: No estás en el modo wizard en este momento, si tienes dudas puedes escribir /help
-wizard_help: Estás en modo wizard, si necesitas volver al modo comando ejecuta /exit
+not_wizard: No estás en el modo asistente en este momento, si tienes dudas puedes escribir /help
+wizard_help: Estás en modo asistente, si necesitas volver al modo comando ejecuta /exit
 hold_invoice_memo: '@${botName} - Depósito en garantía Orden #${orderId} - VENTA x ${fiatCode} ${fiatAmount} - SE CONGELA EN BILLETERA. Se libera una vez ejecute /release. Retorna a la wallet si el comprador no confirma el pago'
 tap_button: Selecciona una orden para realizar la operación
 tap_release: Selecciona la orden para liberar los fondos, una vez toques el botón la operación no puede ser reversada.
+earnings: Ganancias
 premium: Prima
 discount: Descuento
 premium_discount: prima/descuento
+current_earnings: |
+  Ordenes completadas hasta el momento en la comunidad: ${ordersToRedeem}
+
+  Ganancias de la comunidad: ${earnings} sats
+withdraw_earnings: Retirar ganancias
+invoice_expired_earnings: La factura ha expirado, vuelve a hacer una solicitud de retiro con una factura nueva.
+what_to_do: ¿Qué quieres hacer?
+community: Comunidad
+seller_already_released: No te preocupes, el vendedor ya liberó los fondos. 🥲
+select_language: Seleccione un idioma

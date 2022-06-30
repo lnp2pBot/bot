@@ -39,22 +39,18 @@ const validateUser = async (ctx, start) => {
   }
 };
 
-const validateAdmin = async ctx => {
+const validateAdmin = async (ctx, id) => {
   try {
-    const tgUser = ctx.update.message.from;
-    const user = await User.findOne({ tg_id: tgUser.id });
-    if (!user) {
-      await messages.notAuthorized(ctx);
-      return false;
-    }
+    const tgUserId = id || ctx.update.message.from.id;
+    const user = await User.findOne({ tg_id: tgUserId });
+    if (!user) return await messages.notAuthorized(ctx);
+
     let community = null;
-    if (user.default_community_id) {
+    if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
-    }
-    if (!user.admin && !isDisputeSolver(community, user)) {
-      await messages.notAuthorized(ctx);
-      return false;
-    }
+
+    if (!user.admin && !isDisputeSolver(community, user))
+      return await messages.notAuthorized(ctx);
 
     return user;
   } catch (error) {
@@ -502,7 +498,7 @@ const validateFiatSentOrder = async (ctx, user, orderId) => {
 };
 
 // If a seller have an order with status FIAT_SENT, return false
-const validateSeller = async (ctx, bot, user) => {
+const validateSeller = async (ctx, user) => {
   try {
     const where = {
       seller_id: user._id,
@@ -512,7 +508,7 @@ const validateSeller = async (ctx, bot, user) => {
     const order = await Order.findOne(where);
 
     if (order) {
-      await messages.orderOnfiatSentStatusMessages(ctx, bot, user);
+      await messages.orderOnfiatSentStatusMessages(ctx, user);
       return false;
     }
 

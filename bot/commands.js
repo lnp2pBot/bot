@@ -14,7 +14,7 @@ const {
   cancelHoldInvoice,
   settleHoldInvoice,
 } = require('../ln');
-const { Order, User } = require('../models');
+const { Order, User, Dispute } = require('../models');
 const messages = require('./messages');
 const {
   getBtcFiatPrice,
@@ -22,6 +22,8 @@ const {
   deleteOrderFromChannel,
   getUserI18nContext,
   getFee,
+  getEmojiRate,
+  decimalRound,
 } = require('../util');
 const ordersActions = require('./ordersActions');
 
@@ -51,7 +53,7 @@ const takebuy = async (ctx, bot) => {
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
     // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(ctx, bot, user);
+    const isOnFiatSentStatus = await validateSeller(ctx, user);
 
     if (!isOnFiatSentStatus) return;
     const orderId = extractId(text);
@@ -155,13 +157,19 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       // We monitor the invoice to know when the seller makes the payment
       await subscribeInvoice(bot, hash);
 
+      // We need the buyer rate
+      const buyer = await User.findById(order.buyer_id);
+      const stars = getEmojiRate(buyer.total_rating);
+      const roundedRating = decimalRound(buyer.total_rating, -1);
+      const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
         bot,
         seller,
         request,
         order,
-        i18nCtx
+        i18nCtx,
+        rate
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
@@ -488,10 +496,8 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
     if (!user) return;
     const i18nCtx = await getUserI18nContext(user);
     // Sellers only can cancel orders with status WAITING_PAYMENT
-    if (order.status !== 'WAITING_PAYMENT') {
-      await messages.genericErrorMessage(bot, user, i18nCtx);
-      return;
-    }
+    if (order.status !== 'WAITING_PAYMENT')
+      return await messages.genericErrorMessage(bot, user, i18nCtx);
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id === order.seller_id) {
@@ -561,64 +567,6 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
-    }
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const updateCommunity = async (ctx, id, field, bot) => {
-  try {
-    const tgUser = ctx.update.callback_query.from;
-    if (!tgUser) return;
-    const user = await User.findOne({ tg_id: tgUser.id });
-
-    // If user didn't initialize the bot we can't do anything
-    if (!user) {
-      return;
-    }
-
-    // We check if the user has the same username that we have
-    if (tgUser.username !== user.username) {
-      user.username = tgUser.username;
-      await user.save();
-    }
-
-    if (!user) return;
-    if (!id) return;
-    if (!(await validateObjectId(ctx, id))) return;
-    if (field === 'name') {
-      ctx.scene.enter('UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID', { id, user });
-    } else if (field === 'currencies') {
-      ctx.scene.enter('UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID', {
-        id,
-        user,
-      });
-    } else if (field === 'group') {
-      ctx.scene.enter('UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID', {
-        id,
-        bot,
-        user,
-      });
-    } else if (field === 'channels') {
-      ctx.scene.enter('UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID', {
-        id,
-        bot,
-        user,
-      });
-    } else if (field === 'fee') {
-      ctx.scene.enter('UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID', {
-        id,
-        user,
-      });
-    } else if (field === 'solvers') {
-      ctx.scene.enter('UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID', { id, user });
-    } else if (field === 'disputeChannel') {
-      ctx.scene.enter('UPDATE_DISPUTE_CHANNEL_COMMUNITY_WIZARD_SCENE_ID', {
-        id,
-        bot,
-        user,
-      });
     }
   } catch (error) {
     logger.error(error);
@@ -736,13 +684,14 @@ const cancelOrder = async (ctx, orderId, user) => {
         order,
         ctx.i18n
       );
-      await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
         order,
         i18nCtxCP
       );
+      await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
+      logger.info(`Order ${order._id} was cancelled!`);
     } else {
       await messages.initCooperativeCancelMessage(ctx, order);
       await messages.counterPartyWantsCooperativeCancelMessage(
@@ -807,6 +756,13 @@ const release = async (ctx, orderId, user) => {
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
+    // We look for a dispute for this order
+    const dispute = await Dispute.findOne({ order_id: order._id });
+
+    if (dispute) {
+      dispute.status = 'RELEASED';
+      await dispute.save();
+    }
 
     await settleHoldInvoice({ secret: order.secret });
   } catch (error) {
@@ -824,7 +780,6 @@ module.exports = {
   addInvoice,
   cancelShowHoldInvoice,
   showHoldInvoice,
-  updateCommunity,
   addInvoicePHI,
   cancelOrder,
   fiatSent,

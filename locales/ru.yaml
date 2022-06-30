@@ -32,6 +32,9 @@ init_bot_error: Чтобы пользоваться Ботом сначала н
 non_handle_error: 👤 Для пользования этим ботом нужно активировать имя пользователя в Телеграм
 invoice_payment_request: |
   Кто-то хочет купить ваши ${order.amount} сатоши за ${currency} ${order.fiat_amount}.
+
+  Buyer Reputation: ${rate}
+
   Пожалуйста, оплатите этот счет, чтобы начать продажу. Срок действия этого счета истекает через ${expirationTime} минут
 pending_sell: |
   📝 Разместил заявку в канале ${channel}
@@ -103,9 +106,11 @@ payment_received: |
 
   Wait a bit. If the buyer does not cooperate, the collateral will be returned to you.
 someone_took_your_order: |
-  🤖 Кто\\-то принял Вашу заявку и уже прислал мне сатоши\\. Пожалуйста, используйте платежную систему, которая позволит Вам мгновенно переслать деньги, и у которой отсутствует риск заморозки средств\\.
+  🤖 Кто-то принял Вашу заявку и уже прислал мне сатоши. Пожалуйста, используйте платежную систему, которая позволит Вам мгновенно переслать деньги, и у которой отсутствует риск заморозки средств.
 
-  *Если по какой\\-либо причине Ваша платежная система задержит перевод, и средства не поступят в течение ${expirationTime}, сатоши будут автоматически возвращены продавцу\\. В этом случае покупатель несет риск, что мы не сможем убедить продавца выслать сатоши заново\\.*
+  Если по какой-либо причине Ваша платежная система задержит перевод, и средства не поступят в течение ${expirationTime}, сатоши будут автоматически возвращены продавцу. В этом случае покупатель несет риск, что мы не сможем убедить продавца выслать сатоши заново.
+
+  Seller Reputation: ${rate}
 
   Если Вы согласны с таким условием, нажмите кнопку Продолжить 👇
 you_took_someone_order: |
@@ -195,6 +200,7 @@ help: |
   /showvolume - Позволяет отображать объем торгов по каждому новому созданному ордеру, по умолчанию - нет (false)
   /setinvoice <_order id_> <_factura lightning_> - Позволяет покупателю обновить счет-фактуру Lightning, по которой он получает сатоши.
   /setaddress <_lightning address / off_> - Позволяет покупателю указать статический платежный адрес (lightning address), _off_ - отключить
+  /setlang - Allows the user to change the language
   /listorders - Пользователь может перечислить свои незавершенные заявки
   /listcurrencies - Перечислите валюты, которые мы можем использовать без указания суммы в сатоши
   /fiatsent <_order id_> - Покупатель указывает, что уже отправил фиатные деньги продавцу
@@ -202,6 +208,16 @@ help: |
   /dispute <_order id_> - Инициировать разбирательство между участниками
   /cancel <_order id_> - Отменить заявку до ее исполнения
   /cancelall - Отменить все выставленные заявки
+
+  Communities:
+  /community - Create a new community
+  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
+  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
+  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
+  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
+  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
+  /ban <_username_> - Ban a user from a community, there should be a default community
+
   /help - Показать ключевые команды
 must_be_gt_or_eq: ${fieldName} должно быть больше или равно ${qty}
 you_have_been_banned: Вы были забанены!
@@ -334,7 +350,7 @@ pending_payment_success_to_admin: |
 
   Подтверждение оплаты: ${paymentSecret}
 pending_payment_success: |
-  Я оплатил счет Lightning для вашего идентификатора покупки: ${orderId}!
+  Я оплатил счет Lightning для вашего идентификатора покупки: ${id}!
 
   Подтверждение оплаты: ${paymentSecret}
 pending_payment_failed: |
@@ -415,6 +431,13 @@ wizard_help: You are in wizard mode, if you need to go back to command mode run 
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
 tap_button: Select an order to perform the operation
 tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
+earnings: Earnings
 premium: Premium
 discount: Discount
 premium_discount: premium/discount
+withdraw_earnings: Withdraw earnings
+invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
+what_to_do: What do you want to do?
+community: Community
+seller_already_released: Don't worry the seller already released the funds 🥲
+select_language: Select language

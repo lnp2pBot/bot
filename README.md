@@ -93,7 +93,7 @@ $ npm start
 $ npm test
 ```
 # FAQ
-You can read the `frequently asked questions` in [english](docs/FAQ.en.md) and [spanish](docs/FAQ.en.md).
+You can read the `frequently asked questions` in [english](docs/FAQ.en.md) and [spanish](docs/FAQ.es.md).
 
 # Contribute
 
