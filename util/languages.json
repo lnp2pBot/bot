@@ -14,6 +14,11 @@
     "emoji": "🇪🇸",
     "code": "es"
   },
+  "it": {
+    "name": "Italiano",
+    "emoji": "🇮🇹",
+    "code": "it"
+  },
   "pt": {
     "name": "Português",
     "emoji": "🇵🇹",
