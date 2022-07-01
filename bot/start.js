@@ -199,7 +199,7 @@ const initialize = (botToken, options) => {
 
   DisputeModule.configure(bot);
 
-  bot.command('cancelorder', userMiddleware, async ctx => {
+  bot.command('cancelorder', adminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
@@ -307,7 +307,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('settleorder', userMiddleware, async ctx => {
+  bot.command('settleorder', adminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
@@ -364,7 +364,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('checkorder', userMiddleware, async ctx => {
+  bot.command('checkorder', adminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
