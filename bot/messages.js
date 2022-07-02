@@ -1,4 +1,5 @@
 const { TelegramError } = require('telegraf');
+const QR = require('qrcode');
 const {
   getCurrency,
   numberFormat,
@@ -333,7 +334,16 @@ const showHoldInvoiceMessage = async (
         currency,
       })
     );
-    await ctx.reply('`' + request + '`', { parse_mode: 'MarkdownV2' });
+    // todo: send QRCode
+    const qrBytes = await QR.toBuffer(request);
+    await ctx.replyWithMediaGroup([
+      {
+        type: 'photo',
+        media: { source: qrBytes },
+        caption: ['`', request, '`'].join(''),
+        parse_mode: 'MarkdownV2',
+      },
+    ]);
   } catch (error) {
     logger.error(error);
   }
