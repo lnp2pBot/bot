@@ -8,7 +8,7 @@
     "start": "node ./app",
     "dev": "nodemon ./app",
     "lint": "eslint .",
-    "format": "prettier --write '**/*.js'",
+    "format": "prettier --write 'bot/**/*.js'",
     "test": "mocha --exit tests/"
   },
   "license": "MIT",
@@ -22,6 +22,7 @@
     "lightning": "^5.16.0",
     "mongoose": "^6.0.11",
     "node-schedule": "^2.0.0",
+    "qrcode": "^1.5.0",
     "socks-proxy-agent": "^6.2.0-beta.0",
     "telegraf": "^4.6.0",
     "winston": "^3.7.2"
