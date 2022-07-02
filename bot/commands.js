@@ -141,7 +141,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
-        bot,
+        ctx,
         seller,
         request,
         order,

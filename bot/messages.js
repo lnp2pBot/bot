@@ -44,7 +44,7 @@ const nonHandleErrorMessage = async ctx => {
 };
 
 const invoicePaymentRequestMessage = async (
-  bot,
+  ctx,
   user,
   request,
   order,
@@ -65,10 +65,18 @@ const invoicePaymentRequestMessage = async (
       expirationTime,
       rate,
     });
-    await bot.telegram.sendMessage(user.tg_id, message);
-    await bot.telegram.sendMessage(user.tg_id, '`' + request + '`', {
-      parse_mode: 'MarkdownV2',
-    });
+    await ctx.telegram.sendMessage(user.tg_id, message);
+    // Create QR code
+    const qrBytes = await QR.toBuffer(request);
+    // Send payment request in QR and text
+    await ctx.telegram.sendMediaGroup(user.tg_id, [
+      {
+        type: 'photo',
+        media: { source: qrBytes },
+        caption: ['`', request, '`'].join(''),
+        parse_mode: 'MarkdownV2',
+      },
+    ]);
   } catch (error) {
     logger.error(error);
   }
@@ -334,8 +342,9 @@ const showHoldInvoiceMessage = async (
         currency,
       })
     );
-    // todo: send QRCode
+    // Create QR code
     const qrBytes = await QR.toBuffer(request);
+    // Send payment request in QR and text
     await ctx.replyWithMediaGroup([
       {
         type: 'photo',
