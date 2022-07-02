@@ -169,11 +169,11 @@ const initialize = (botToken, options) => {
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
 
-  bot.action('takesell', async ctx => {
+  bot.action('takesell', userMiddleware, async ctx => {
     await takesell(ctx, bot);
   });
 
-  bot.action('takebuy', async ctx => {
+  bot.action('takebuy', userMiddleware, async ctx => {
     await takebuy(ctx, bot);
   });
 
@@ -213,7 +213,7 @@ const initialize = (botToken, options) => {
       const dispute = await Dispute.findOne({ order_id: order._id });
 
       // We check if this is a solver, the order must be from the same community
-      if (!ctx.user.admin) {
+      if (!ctx.admin.admin) {
         if (!order.community_id) {
           logger.debug(
             `cancelorder ${order._id}: The order is not in a community`
@@ -248,12 +248,12 @@ const initialize = (botToken, options) => {
       logger.info(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
-      order.canceled_by = ctx.user._id;
+      order.canceled_by = ctx.admin._id;
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
       // we sent a private message to the admin
-      await messages.successCancelOrderMessage(ctx, ctx.user, order, ctx.i18n);
+      await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
       // we sent a private message to the seller
       await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
       // we sent a private message to the buyer
@@ -321,7 +321,7 @@ const initialize = (botToken, options) => {
       const dispute = await Dispute.findOne({ order_id: order._id });
 
       // We check if this is a solver, the order must be from the same community
-      if (!ctx.user.admin) {
+      if (!ctx.admin.admin) {
         if (!order.community_id) {
           return await messages.notAuthorized(ctx);
         }
@@ -545,41 +545,41 @@ const initialize = (botToken, options) => {
 
   OrdersModule.configure(bot);
 
-  bot.action('addInvoiceBtn', async ctx => {
+  bot.action('addInvoiceBtn', userMiddleware, async ctx => {
     await addInvoice(ctx, bot);
   });
 
-  bot.action('cancelAddInvoiceBtn', async ctx => {
+  bot.action('cancelAddInvoiceBtn', userMiddleware, async ctx => {
     await cancelAddInvoice(ctx, bot);
   });
 
-  bot.action('showHoldInvoiceBtn', async ctx => {
+  bot.action('showHoldInvoiceBtn', userMiddleware, async ctx => {
     await showHoldInvoice(ctx, bot);
   });
 
-  bot.action('cancelShowHoldInvoiceBtn', async ctx => {
+  bot.action('cancelShowHoldInvoiceBtn', userMiddleware, async ctx => {
     await cancelShowHoldInvoice(ctx, bot);
   });
 
-  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, async ctx => {
+  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, userMiddleware, async ctx => {
     await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
   });
 
-  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, async ctx => {
+  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
-  bot.action(/^cancel_([0-9a-f]{24})$/, async ctx => {
+  bot.action(/^cancel_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     ctx.deleteMessage();
     await cancelOrder(ctx, ctx.match[1]);
   });
 
-  bot.action(/^fiatsent_([0-9a-f]{24})$/, async ctx => {
+  bot.action(/^fiatsent_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     ctx.deleteMessage();
     await fiatSent(ctx, ctx.match[1]);
   });
 
-  bot.action(/^release_([0-9a-f]{24})$/, async ctx => {
+  bot.action(/^release_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     ctx.deleteMessage();
     await release(ctx, ctx.match[1]);
   });

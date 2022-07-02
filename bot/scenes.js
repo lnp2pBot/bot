@@ -36,6 +36,9 @@ const addInvoiceWizard = new Scenes.WizardScene(
   async ctx => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
+      if (ctx.message.document)
+        return await ctx.reply(ctx.i18n.t('must_enter_text'));
+
       const lnInvoice = ctx.message.text.trim();
       let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
@@ -89,6 +92,9 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
   async ctx => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
+      if (ctx.message.document)
+        return await ctx.reply(ctx.i18n.t('must_enter_text'));
+
       const lnInvoice = ctx.message.text.trim();
       let { buyer, order } = ctx.wizard.state;
       // We get an updated order from the DB
