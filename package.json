@@ -8,7 +8,7 @@
     "start": "node ./app",
     "dev": "nodemon ./app",
     "lint": "eslint .",
-    "format": "prettier --write 'bot/**/*.js'",
+    "format": "prettier --write '**/*.js'",
     "test": "mocha --exit tests/"
   },
   "license": "MIT",
