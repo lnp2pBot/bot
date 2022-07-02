@@ -440,3 +440,8 @@ what_to_do: Що ти хочеш робити?
 community: Спільнота
 seller_already_released: Не хвилюйтеся, продавець вже випустив кошти
 select_language: Виберіть мову
+must_enter_text: You must enter only text
+current_earnings: |
+  Orders completed so far in the community: ${ordersToRedeem}
+
+  Community Earnings: ${earnings} sats
