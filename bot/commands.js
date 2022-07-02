@@ -35,20 +35,7 @@ const takebuy = async (ctx, bot) => {
     const text = ctx.update.callback_query.message.text;
     if (!text) return;
 
-    const tgUser = ctx.update.callback_query.from;
-    if (!tgUser) return;
-
-    const user = await User.findOne({ tg_id: tgUser.id });
-
-    // If user didn't initialize the bot we can't do anything
-    if (!user) return;
-    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
-
-    // We check if the user has the same username that we have
-    if (tgUser.username !== user.username) {
-      user.username = tgUser.username;
-      await user.save();
-    }
+    const { user } = ctx;
 
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
 
@@ -84,18 +71,8 @@ const takesell = async (ctx, bot) => {
   try {
     const text = ctx.update.callback_query.message.text;
     if (!text) return;
-    const tgUser = ctx.update.callback_query.from;
-    if (!tgUser) return;
-    const user = await User.findOne({ tg_id: tgUser.id });
-    // If user didn't initialize the bot we can't do anything
-    if (!user) return;
-    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
 
-    // We check if the user has the same username that we have
-    if (tgUser.username !== user.username) {
-      user.username = tgUser.username;
-      await user.save();
-    }
+    const { user } = ctx;
 
     if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
     const orderId = extractId(text);

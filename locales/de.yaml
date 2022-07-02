@@ -442,3 +442,8 @@ what_to_do: What do you want to do?
 community: Community
 seller_already_released: Don't worry the seller already released the funds 🥲
 select_language: Select language
+must_enter_text: You must enter only text
+current_earnings: |
+  Orders completed so far in the community: ${ordersToRedeem}
+
+  Community Earnings: ${earnings} sats

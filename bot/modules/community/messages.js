@@ -34,8 +34,9 @@ exports.createCommunityWizardStatus = (i18n, state) => {
   }
 };
 
-exports.updateCommunityMessage = async (ctx, id) => {
+exports.updateCommunityMessage = async ctx => {
   try {
+    const id = ctx.match[1];
     const community = await Community.findById(id);
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
@@ -115,8 +116,9 @@ exports.listCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-exports.earningsMessage = async (ctx, communityId) => {
+exports.earningsMessage = async ctx => {
   try {
+    const communityId = ctx.match[1];
     // We check if there is a payment scheduled for this community
     const isScheduled = await PendingPayment.findOne({
       community_id: communityId,

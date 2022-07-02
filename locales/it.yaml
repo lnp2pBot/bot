@@ -439,3 +439,8 @@ what_to_do: Cosa vuoi fare?
 community: Community
 seller_already_released: Non preoccuparti, il venditore ha già sbloccato i fondi. 🥲
 select_language: Seleziona una lingua
+must_enter_text: Devi inserire solo testo
+current_earnings: |
+  Orders completed so far in the community: ${ordersToRedeem}
+
+  Community Earnings: ${earnings} sats

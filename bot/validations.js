@@ -10,7 +10,9 @@ const logger = require('../logger');
 // if not, it creates a new user
 const validateUser = async (ctx, start) => {
   try {
-    const tgUser = ctx.update.message.from;
+    const tgUser = ctx.update.callback_query
+      ? ctx.update.callback_query.from
+      : ctx.update.message.from;
     let user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user && start) {
