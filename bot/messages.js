@@ -589,7 +589,6 @@ const publishSellOrderMessage = async (
   messageToUser
 ) => {
   try {
-    console.log(ctx.i18n.locale());
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
