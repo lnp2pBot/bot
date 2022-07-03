@@ -82,18 +82,18 @@ const invoicePaymentRequestMessage = async (
   }
 };
 
-const pendingSellMessage = async (bot, user, order, channel, i18n) => {
+const pendingSellMessage = async (ctx, user, order, channel, i18n) => {
   try {
     const orderExpirationWindow =
       process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW / 60 / 60;
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('pending_sell', {
         channel,
         orderExpirationWindow: Math.round(orderExpirationWindow),
       })
     );
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'MarkdownV2' }
@@ -582,7 +582,7 @@ const publishBuyOrderMessage = async (
 };
 
 const publishSellOrderMessage = async (
-  bot,
+  ctx,
   user,
   order,
   i18n,
@@ -593,7 +593,7 @@ const publishSellOrderMessage = async (
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
     // We send the message to the channel
-    const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
+    const message1 = await ctx.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
           [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
@@ -605,10 +605,9 @@ const publishSellOrderMessage = async (
       message1 && message1.message_id ? message1.message_id : null;
 
     await order.save();
-    if (messageToUser) {
-      // Message to user let know the order was published
-      await pendingSellMessage(bot, user, order, channel, i18n);
-    }
+    // Message to user let know the order was published
+    if (messageToUser)
+      await pendingSellMessage(ctx, user, order, channel, i18n);
   } catch (error) {
     logger.error(error);
   }
@@ -1231,6 +1230,7 @@ const wizardAddFiatAmountMessage = async (ctx, currency, action, order) => {
 
 const wizardAddFiatAmountWrongAmountMessage = async (ctx, order) => {
   try {
+    ctx.deleteMessage();
     await ctx.reply(
       ctx.i18n.t('wizard_add_fiat_wrong_amount', {
         minAmount: numberFormat(order.fiat_code, order.min_amount),
@@ -1294,9 +1294,9 @@ const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
   }
 };
 
-const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
+const toBuyerDidntAddInvoiceMessage = async (ctx, user, order, i18n) => {
   try {
-    await bot.telegram.sendMessage(
+    await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('didnt_add_invoice', { orderId: order._id })
     );
