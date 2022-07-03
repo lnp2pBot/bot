@@ -46,10 +46,8 @@ const sell = async ctx => {
         'i'
       );
       community = await Community.findOne({ group: regex });
-      if (!community) {
-        ctx.deleteMessage();
-        return;
-      }
+      if (!community) return ctx.deleteMessage();
+
       communityId = community._id;
     } else if (user.default_community_id) {
       communityId = user.default_community_id;
@@ -60,10 +58,12 @@ const sell = async ctx => {
       return await messages.bannedUserErrorMessage(ctx, user);
 
     // If the user is in a community, we need to check if the currency is supported
-    if (!!community && !community.currencies.includes(fiatCode)) {
-      await messages.currencyNotSupportedMessage(ctx, community.currencies);
-      return;
-    }
+    if (!!community && !community.currencies.includes(fiatCode))
+      return await messages.currencyNotSupportedMessage(
+        ctx,
+        community.currencies
+      );
+
     // @ts-ignore
     const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
       type: 'sell',
@@ -75,9 +75,8 @@ const sell = async ctx => {
       priceMargin,
       community_id: communityId,
     });
-    if (order) {
+    if (order)
       await messages.publishSellOrderMessage(ctx, user, order, ctx.i18n, true);
-    }
   } catch (error) {
     logger.error(error);
   }

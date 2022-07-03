@@ -330,7 +330,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       const clonedOrder = order;
       await order.remove();
       await messages.toBuyerDidntAddInvoiceMessage(
-        bot,
+        ctx,
         user,
         clonedOrder,
         i18nCtx
@@ -380,7 +380,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
           order,
           i18nCtx
         );
-        await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+        await messages.toBuyerDidntAddInvoiceMessage(ctx, user, order, i18nCtx);
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }

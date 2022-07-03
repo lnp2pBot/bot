@@ -181,15 +181,11 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       if (ctx.message === undefined) return ctx.scene.leave();
 
       const fiatAmount = parseInt(ctx.message.text.trim());
-      if (!Number.isInteger(fiatAmount)) {
-        await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
-        return;
-      }
+      if (!Number.isInteger(fiatAmount))
+        return await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
 
-      if (fiatAmount < order.min_amount || fiatAmount > order.max_amount) {
-        await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
-        return;
-      }
+      if (fiatAmount < order.min_amount || fiatAmount > order.max_amount)
+        return await messages.wizardAddFiatAmountWrongAmountMessage(ctx, order);
 
       order.fiat_amount = fiatAmount;
       const currency = getCurrency(order.fiat_code);

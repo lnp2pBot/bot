@@ -25,7 +25,9 @@ exports.stageMiddleware = () => {
     OrdersModule.Scenes.createOrder,
   ];
   scenes.forEach(addGenericCommands);
-  const stage = new Scenes.Stage(scenes);
+  const stage = new Scenes.Stage(scenes, {
+    ttl: 1200, // All wizards live 20 minutes
+  });
   return stage.middleware();
 };
 
