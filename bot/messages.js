@@ -1294,9 +1294,9 @@ const toSellerExpiredOrderMessage = async (bot, user, i18n) => {
   }
 };
 
-const toBuyerDidntAddInvoiceMessage = async (ctx, user, order, i18n) => {
+const toBuyerDidntAddInvoiceMessage = async (bot, user, order, i18n) => {
   try {
-    await ctx.telegram.sendMessage(
+    await bot.telegram.sendMessage(
       user.tg_id,
       i18n.t('didnt_add_invoice', { orderId: order._id })
     );
