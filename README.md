@@ -1,9 +1,14 @@
 ![p2pLNBot](logo-600.png)
 
+[![chat](https://img.shields.io/badge/chat-telegram-%2326A5E4)](https://t.me/lnp2pbot) [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen)](./LICENSE)
 # P2PLNBot
 Telegram bot which allows to people to trade using lightning network with other people on telegram, this is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
 
 ## Try it out!
+* Website: [lnp2pbot.com](https://lnp2pbot.com)
+* Bot: [@lnp2pBot](https://t.me/lnp2pbot)
+* Main channel offers: [@p2plightning](https://t.me/p2plightning)
+
 Wherever you are you can start using the [bot](https://t.me/lnp2pbot), just need to have a telegram account with a username and `/start` the bot.
 
 ---
@@ -92,8 +97,8 @@ $ npm start
 ```
 $ npm test
 ```
-# FAQ
-You can read the `frequently asked questions` in [english](docs/FAQ.en.md) and [spanish](docs/FAQ.es.md).
+# Documentation
+You can find documentation in [english](https://lnp2pbot.com/learn) and [spanish](https://lnp2pbot.com/aprende).
 
 # Contribute
 
