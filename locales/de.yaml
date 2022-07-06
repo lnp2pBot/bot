@@ -394,6 +394,7 @@ channels: Kanäle
 dispute_solvers: Streitschlichter
 no_default_community: Du hast keine standardmäßige Community mehr
 community_not_found: Community nicht gefunden
+currency: Währung
 currencies: Währungen
 currency_not_supported: Diese Währung kann in dieser Community nicht verwendet werden, es ist nur erlaubt, [${currencies}] zu verwenden.
 press_to_continue: Drücke den Knopf um weiterzufahren

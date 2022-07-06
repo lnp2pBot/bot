@@ -391,6 +391,7 @@ channels: Canali
 dispute_solvers: Arbitri
 no_default_community: Non hai più una comunità di default
 community_not_found: Community non trovata
+currency: Valuta
 currencies: Valute
 currency_not_supported: Questa valuta non può essere utilizzata in questa community, è consentito solo l'utilizzo di [${currencies}]
 press_to_continue: Premi il pulsante per continuare

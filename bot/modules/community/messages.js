@@ -16,14 +16,14 @@ exports.createCommunityWizardStatus = (i18n, state) => {
       state.solvers && state.solvers.map(solver => solver.username).join(', ');
     solvers = solvers || '__';
     const text = [
-      `Nombre: ${name}`,
-      `Moneda: ${currencies}`,
-      `Grupo: ${group}`,
-      `Canales: ${channels}`,
-      `Comisión: ${fee}%`,
-      `Solvers: ${solvers}`,
+      i18n.t('name') + `: ${name}`,
+      i18n.t('currency') + `: ${currencies}`,
+      i18n.t('group') + `: ${group}`,
+      i18n.t('channels') + `: ${channels}`,
+      i18n.t('fee') + `: ${fee}%`,
+      i18n.t('dispute_solvers') + `: ${solvers}`,
 
-      state.error && `Error: ${state.error}`,
+      state.error && i18n.t('generic_error') + `: ${state.error}`,
       ``,
       i18n.t('wizard_to_exit'),
     ].join('\n');
