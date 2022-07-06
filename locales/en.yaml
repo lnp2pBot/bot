@@ -392,6 +392,7 @@ channels: Channels
 dispute_solvers: Solvers
 no_default_community: You no longer have a community by default
 community_not_found: Community not found
+currency: Currency
 currencies: Currencies
 currency_not_supported: This currency cannot be used in this community, it is only allowed to use [${currencies}]
 press_to_continue: Press the button to continue
