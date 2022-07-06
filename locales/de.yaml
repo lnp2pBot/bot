@@ -445,6 +445,6 @@ seller_already_released: Machen Sie sich keine Sorgen, der Verkäufer hat die Mi
 select_language: Sprache auswählen
 must_enter_text: Sie müssen nur Text eingeben
 current_earnings: |
-  Bestellungen bisher in der Community ausgefüllt: ${orderStorateem}
+  Bestellungen bisher in der Community ausgefüllt: ${ordersToRedeem}
 
   Community -Einkommen: ${earnings} sats
