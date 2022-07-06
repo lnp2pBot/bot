@@ -105,13 +105,13 @@ payment_received: |
 
   Jetzt muss mir der Käufer eine LN-Rechnung schicken, damit ich die sats an sein Wallet senden kann. Sobald der Käufer die LN-Rechnung schickt, werde ich euch beide kontaktieren.
 
-  Wait a bit. If the buyer does not cooperate, the collateral will be returned to you.
+  Warten Sie ein wenig.Wenn der Käufer nicht zusammenarbeitet, wird die Sicherheiten an Sie zurückgegeben.
 someone_took_your_order: |
   🤖 Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
 
   Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden.
 
-  Seller Reputation: ${rate}
+  Verkäufer Ruf: ${rate}
 
   Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 you_took_someone_order: |
@@ -201,7 +201,7 @@ help: |
   /showvolume - zeigt das Handelsvolumen an, wenn eine Auftrag erstellt wird, Standardwert ist *nein* (false)
   /setinvoice <_order id_> <_lightning LN-Rechnung_> - Mit diesem Befehl kann der Käufer die Ligthning-Rechnung aktualisieren, mit welcher er die Sats empfangen will. 
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
-  /setlang - Allows the user to change the language
+  /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten.
   /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können. 
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
@@ -210,14 +210,14 @@ help: |
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
 
-  Communities:
-  /community - Create a new community
-  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
-  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
-  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
-  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
-  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
-  /ban <_username_> - Ban a user from a community, there should be a default community
+  Gemeinschaften:
+  /community - Erstellen Sie eine neue Community
+  /findcomms <_fiat code_> - Findet Gemeinden, die mit der angegebenen Währung arbeiten
+  /setcomm <_@groupOfACommunity / off_> - Stellen Sie eine Standardgemeinschaft fest oder entfernen Sie sie mit 'off'
+  /settleorder <_order id_> - Akzeptieren Sie die Zahlung des Verkäufers und senden Sie die SATs automatisch an den Käufer. Es muss standardmäßig eine Community geben
+  /cancelorder <_id orden_> - Steckt die Bestellung ab, die die SATs an den Verkäufer zurückgibt. Es muss standardmäßig eine Community geben
+  /deldispute <_username_> <_id order_> - Löscht einen Streit vom Benutzer in der Community, es muss standardmäßig eine Community geben
+  /ban <_username_> - Verbieten Sie einen Benutzer aus einer Community, es sollte eine Standard -Community geben
 
   /help - Hilfe
 must_be_gt_or_eq: ${fieldName} muss ${qty} oder mehr entsprechen
@@ -309,7 +309,7 @@ wizard_community_enter_solvers_channel: Gib die ID oder den Namen des Kanals an,
 wizard_community_success: Herzlichen Glückwunsch, du hast deine Community gegründet!
 wizard_community_wrong_permissions: Du hast keine Administratorrechte für diese Gruppe oder diesen Kanal
 wizard_community_you_are_not_admin: ${username} ist kein Administrator in ${channel}.
-wizard_to_exit: /exit to exit the wizard.
+wizard_to_exit: /exit den Zauberer verlassen.
 wizard_exit: Du hast den Assistentenmodus verlassen, du kannst jetzt Befehle schreiben
 wizard_add_fiat_amount: |
   Bitte gib den Betrag von ${currency} an, den du für ${action} haben möchtest.
@@ -404,7 +404,7 @@ new_dispute: ⚠️⚠️⚠️ Ein Benutzer hat einen Streitfall eröffnet. Dr�
 take_dispute: Streitfall übernehmen
 not_authorized: 🤨 Du bist nicht berechtigt diese Aktion durchzuführen
 need_default_community: Um diese Aktion durchzufüren, musst du eine Standart-Community gesetzt haben
-enter_sats_amount: Sats-Betrag eingeben, enter only numbers.
+enter_sats_amount: Sats-Betrag eingeben, Geben Sie nur Zahlen ein.
 market_price: Marktpreis
 enter_currency: 'Gib eine Währung anhand des Codes ein, z.B.: USD'
 choose_currency: Wähle eine Währung
@@ -417,34 +417,34 @@ not_zero: Darf nicht 0 (Null) sein
 not_negative: Darf keine negative Nummer sein
 wizard_community_wrong_percent: Der Prozentsatz muss zwischen 0 und 100 liegen
 wizard_community_enter_fee_percent: |
-  Enter the fee:
+  Geben Sie die Gebühr ein:
 
-  The fee in a community is variable and is indicated as a percentage from 0 to 100, if you do not want to charge fee, indicate 0, if you want to charge half of the maximum value, indicate 50, if you want it to have the maximum value, indicate 100.
+  Die Gebühr in einer Community ist variabel und wird als Prozentsatz von 0 bis 100 angegeben. Wenn Sie keine Gebühr erhoben möchten, geben Sie 0 an, wenn Sie die Hälfte des MaximalwertDer Maximalwert zeigt 100 an.
 fee: Gebühr
 use_default: Standardmäßig verwenden
 orders: Aufträge
 volume: Volumen
 users: Benutzer
 not_found_dispute: Für diesen Auftrag gib es keinen Streitfall
-max_allowed: The maximum allowed is ${max}
-dispute_channel: Dispute channel
-not_wizard: You are not in wizard mode at the moment, if you have doubts you can type /help
-wizard_help: You are in wizard mode, if you need to go back to command mode run /exit
-hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
-tap_button: Select an order to perform the operation
-tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
-earnings: Earnings
-premium: Premium
-discount: Discount
-premium_discount: premium/discount
-withdraw_earnings: Withdraw earnings
-invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
-what_to_do: What do you want to do?
-community: Community
-seller_already_released: Don't worry the seller already released the funds 🥲
-select_language: Select language
-must_enter_text: You must enter only text
+max_allowed: Das maximal erlaubte ist ${max}
+dispute_channel: Streitkanal
+not_wizard: Sie sind momentan nicht im Assistentenmodus. Wenn Sie Zweifel haben, können Sie /help
+wizard_help: Sie befinden sich im Assistentenmodus, wenn Sie wieder zum Befehlsmodus laufen /exit
+hold_invoice_memo: '@${botName} - Treuhandbetragauftrag #${orderId}: BTC verkaufen für ${fiatCode} ${fiatAmount} - Es wird in Brieftasche gefrieren.Es wird veröffentlicht, sobald Sie laufen /release. Es wird zurücksetzt, wenn der Käufer die Zahlung nicht bestätigt'
+tap_button: Wählen Sie eine Bestellung, um den Vorgang auszuführen
+tap_release: Wählen Sie die Reihenfolge aus, um die Mittel freizugeben. Sobald Sie die Schaltfläche berühren, kann der Vorgang nicht umgekehrt werden.
+earnings: Verdienste
+premium: Prämie
+discount: Rabatt
+premium_discount: Premium/Rabatt
+withdraw_earnings: Einkommen zurückziehen
+invoice_expired_earnings: Die Rechnung ist abgelaufen und eine Auszahlungsanfrage mit einer neuen Rechnung erneut eingeräumt.
+what_to_do: Was möchten Sie tun?
+community: Gemeinschaft
+seller_already_released: Machen Sie sich keine Sorgen, der Verkäufer hat die Mittel bereits veröffentlicht 🥲
+select_language: Sprache auswählen
+must_enter_text: Sie müssen nur Text eingeben
 current_earnings: |
-  Orders completed so far in the community: ${ordersToRedeem}
+  Bestellungen bisher in der Community ausgefüllt: ${orderStorateem}
 
-  Community Earnings: ${earnings} sats
+  Community -Einkommen: ${earnings} sats
