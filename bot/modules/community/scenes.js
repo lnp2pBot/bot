@@ -14,9 +14,7 @@ exports.communityWizard = new Scenes.WizardScene(
   'COMMUNITY_WIZARD_SCENE_ID',
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
 
       const {
         name,
@@ -475,9 +473,7 @@ exports.updateNameCommunityWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
 
       const name = ctx.message.text.trim();
       const length = 30;
@@ -519,9 +515,7 @@ exports.updateGroupCommunityWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
 
       const group = ctx.message.text.trim();
       const { community, bot, user } = ctx.wizard.state;
