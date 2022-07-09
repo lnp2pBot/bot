@@ -1,24 +1,35 @@
 const { getOrderChannel, sanitizeMD } = require('../../../util');
 
 exports.listOrdersResponse = async orders => {
-  const response =
-    '             Id          \\|     Status    \\|   sats amount  \\|  fiat amt  \\|  fiat\n';
   const tasks = orders.map(async order => {
     const channel = await getOrderChannel(order);
-    let fiatAmount = '\\-';
     let amount = '\\-';
     const status = order.status.split('_').join('\\_');
-    if (typeof order.fiat_amount !== 'undefined')
-      fiatAmount = sanitizeMD(order.fiat_amount);
+    const fiatAmount =
+      typeof order.fiat_amount !== 'undefined'
+        ? sanitizeMD(order.fiat_amount)
+        : [
+            sanitizeMD(order.min_amount),
+            ' \\- ',
+            sanitizeMD(order.max_amount),
+          ].join('');
+
     if (typeof order.amount !== 'undefined') amount = order.amount;
-    return `\`${order.id}\` \\| ${status} \\| ${amount} \\| ${fiatAmount} \\| ${
-      order.fiat_code
-    } \\| ${sanitizeMD(channel)}`;
+    return [
+      [''].join(''),
+      ['`Id         ` : ', '`', order.id, '`'].join(''),
+      ['`Status     ` : ', '`', status, '`'].join(''),
+      ['`Sats amt   ` : ', '`', amount, '`'].join(''),
+      ['`Fiat amt   ` : ', '`', fiatAmount, '`'].join(''),
+      ['`Fiat       ` : ', '`', order.fiat_code, '`'].join(''),
+      ['`Channel    ` : ', '`', sanitizeMD(channel), '`'].join(''),
+      ['`________________________________________________`'].join(''),
+    ].join('\n');
   });
   const lines = await Promise.all(tasks);
   const body = lines.join('\n');
   return {
-    text: response + body,
+    text: body,
     extra: {
       parse_mode: 'MarkdownV2',
     },
