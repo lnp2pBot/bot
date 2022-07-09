@@ -64,6 +64,9 @@ exports.myComms = async ctx => {
 
     const communities = await Community.find({ creator_id: user._id });
 
+    if (!communities.length)
+      return await ctx.reply(ctx.i18n.t('you_dont_have_communities'));
+
     await showUserCommunitiesMessage(ctx, communities);
   } catch (error) {
     logger.error(error);

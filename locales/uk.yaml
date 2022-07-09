@@ -446,3 +446,4 @@ current_earnings: |
   Orders completed so far in the community: ${ordersToRedeem}
 
   Community Earnings: ${earnings} sats
+you_dont_have_communities: You have no communities created
