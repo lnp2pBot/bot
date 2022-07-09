@@ -447,3 +447,5 @@ seller_already_released: No te preocupes, el vendedor ya liberó los fondos. �
 select_language: Seleccione un idioma
 must_enter_text: Debe ingresar solo texto
 you_dont_have_communities: No tienes comunidades creadas
+users_added: 'Has agregado a: ${users}'
+users_not_added: 'No he podido agregar a: ${users}; asegúrate de que estos usuarios han iniciado al bot'
