@@ -667,12 +667,13 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
   },
   async ctx => {
     try {
-      if (ctx.message === undefined) {
-        return ctx.scene.leave();
-      }
+      if (ctx.message === undefined) return ctx.scene.leave();
 
       const solvers = [];
+      const botUsers = [];
+      const notBotUsers = [];
       const usernames = itemsFromMessage(ctx.message.text);
+
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
           const username =
@@ -683,17 +684,31 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
               id: user._id,
               username: user.username,
             });
+            botUsers.push(username);
+          } else {
+            notBotUsers.push(username);
           }
         }
       } else {
         await ctx.reply(ctx.i18n.t('wizard_community_must_enter_names'));
       }
 
-      const { community } = ctx.wizard.state;
+      if (botUsers.length) {
+        await ctx.reply(
+          ctx.i18n.t('users_added', {
+            users: botUsers.join(', '),
+          })
+        );
+        const { community } = ctx.wizard.state;
 
-      community.solvers = solvers;
-      await community.save();
-      await ctx.reply(ctx.i18n.t('operation_successful'));
+        community.solvers = solvers;
+        await community.save();
+      }
+
+      if (notBotUsers.length)
+        await ctx.reply(
+          ctx.i18n.t('users_not_added', { users: notBotUsers.join(', ') })
+        );
 
       return ctx.scene.leave();
     } catch (error) {
