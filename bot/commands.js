@@ -337,7 +337,7 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `User cancelled Order Id: ${order._id}, republishing to the channel`
+          `Buyer Id: ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
         );
       } else {
         logger.info(
@@ -482,7 +482,7 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `User cancelled Order Id: ${order._id}, republishing to the channel`
+          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
         );
       } else {
         logger.info(
