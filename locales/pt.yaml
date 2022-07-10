@@ -446,6 +446,6 @@ current_earnings: |
   Pedidos concluídos até agora na comunidade: ${ordersToRedeem}
 
   Ganhos da comunidade: ${earnings} sats
-you_dont_have_communities: You have no communities created
-users_added: 'You have added: ${users}'
-users_not_added: 'Could not add to: ${users}; please make sure these users have started the bot'
+you_dont_have_communities: Você não tem comunidades criadas
+users_added: 'Você foi adicionado: ${users}'
+users_not_added: 'Não poderia adicionar a: ${users}; Certifique-se de que esses usuários começaram o bot'
