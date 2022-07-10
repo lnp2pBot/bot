@@ -17,13 +17,13 @@ exports.listOrdersResponse = async orders => {
     if (typeof order.amount !== 'undefined') amount = order.amount;
     return [
       [''].join(''),
-      ['`Id         ` : ', '`', order.id, '`'].join(''),
-      ['`Status     ` : ', '`', status, '`'].join(''),
-      ['`Sats amt   ` : ', '`', amount, '`'].join(''),
-      ['`Fiat amt   ` : ', '`', fiatAmount, '`'].join(''),
-      ['`Fiat       ` : ', '`', order.fiat_code, '`'].join(''),
-      ['`Channel    ` : ', '`', sanitizeMD(channel), '`'].join(''),
-      ['`________________________________________________`'].join(''),
+      ['`Id      `: ', '`', order.id, '`'].join(''),
+      ['`Status  `: ', '`', status, '`'].join(''),
+      ['`Sats amt`: ', '`', amount, '`'].join(''),
+      ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),
+      ['`Fiat    `: ', '`', order.fiat_code, '`'].join(''),
+      ['`Channel `: ', '`', sanitizeMD(channel), '`'].join(''),
+      ['`_________________________________`'].join(''),
     ].join('\n');
   });
   const lines = await Promise.all(tasks);
