@@ -318,28 +318,19 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
     const i18nCtx = await getUserI18nContext(user);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
-    if (order.status !== 'WAITING_BUYER_INVOICE') {
-      await messages.genericErrorMessage(bot, user, i18nCtx);
-      return;
-    }
+    if (order.status !== 'WAITING_BUYER_INVOICE')
+      return await messages.genericErrorMessage(bot, user, i18nCtx);
+
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (order.creator_id === order.buyer_id) {
-      // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping
-      // the process
-      const clonedOrder = order;
-      await order.remove();
-      await messages.toBuyerDidntAddInvoiceMessage(
-        bot,
-        user,
-        clonedOrder,
-        i18nCtx
-      );
+      order.status = 'CLOSED';
+      await order.save();
+      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.toSellerBuyerDidntAddInvoiceMessage(
         bot,
         sellerUser,
-        clonedOrder,
+        order,
         i18nCtxSeller
       );
     } else {
@@ -478,21 +469,13 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id === order.seller_id) {
-      // We use a different var for order because we need to delete the order and
-      // there are users that block the bot and it raises the catch block stopping
-      // the process
-      const clonedOrder = order;
-      await order.remove();
-      await messages.toSellerDidntPayInvoiceMessage(
-        bot,
-        user,
-        clonedOrder,
-        i18nCtx
-      );
+      order.status = 'CLOSED';
+      await order.save();
+      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
       await messages.toBuyerSellerDidntPayInvoiceMessage(
         bot,
         buyerUser,
-        clonedOrder,
+        order,
         i18nCtx
       );
     } else {
