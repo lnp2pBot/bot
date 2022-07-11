@@ -98,6 +98,14 @@ const takesell = async (ctx, bot) => {
 
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
+    // If there is not fiat amount the function don't do anything
+    if (order.fiat_amount === undefined) {
+      logger.debug(
+        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`
+      );
+      return;
+    }
+
     order.buyer_invoice = buyerInvoice;
     // We need the i18n context to send the message with the correct language
     const i18nCtx = await getUserI18nContext(seller);
