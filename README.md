@@ -55,7 +55,7 @@ A seller that didn't release funds to the buyer can't open or take another order
 
 To financially support further development of **p2plnbot**, please consider support our project sending bitcoin to our own node at [ln.grunch.dev](https://ln.grunch.dev).
 
-# Instalation
+# Installation
 You will need to create an `.env` file on the root dir, you can use a sample env file called `.env.sample` on the root dir, an easy way of doing this is just to copy the sample file to `.env`.
 
 ```
@@ -69,7 +69,7 @@ You will need to have [mongo](https://www.mongodb.com) installed and fill the mo
 You will need a telegram bot api key (`BOT_TOKEN`), find out more about it [here](https://core.telegram.org/bots/).
 
 ## Tor service or another proxy
-You can route the bot API via Tor service or another proxy if you specify 'SOCKS_PROXY_HOST' parameter in .env. For Ubuntu see [this](https://www.linuxuprising.com/2018/10/how-to-install-and-use-tor-as-proxy-in.html) 
+You can route the bot API via Tor service or another proxy if you specify 'SOCKS_PROXY_HOST' parameter in .env. For Ubuntu see [this](https://www.linuxuprising.com/2018/10/how-to-install-and-use-tor-as-proxy-in.html)
 
 ## Lightning Network
 You will need a lightning network node, for this bot we use [LND](https://github.com/lightningnetwork/lnd/).
