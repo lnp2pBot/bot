@@ -159,14 +159,16 @@ const createOrderSteps = {
     const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
+      if (ctx.message === undefined) return ctx.scene.leave();
+      const { text } = ctx.message;
+      if (!text) return;
       await ctx.deleteMessage();
-      const input = ctx.message.text;
-      if (isNaN(input)) {
+      if (isNaN(text)) {
         ctx.wizard.state.error = ctx.i18n.t('not_number');
         await ctx.wizard.state.updateUI();
         return;
       }
-      ctx.wizard.state.priceMargin = parseInt(input);
+      ctx.wizard.state.priceMargin = parseInt(text);
       await ctx.wizard.state.updateUI();
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
