@@ -221,7 +221,7 @@ const initialize = (botToken, options) => {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.user.default_community_id) {
+        if (order.community_id != ctx.admin.default_community_id) {
           logger.debug(
             `cancelorder ${order._id}: The community and the default user community are not the same`
           );
@@ -230,9 +230,9 @@ const initialize = (botToken, options) => {
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
-        if (dispute && dispute.solver_id != ctx.user._id) {
+        if (dispute && dispute.solver_id != ctx.admin._id) {
           logger.debug(
-            `cancelorder ${order._id}: @${ctx.user.username} is not the solver of this dispute`
+            `cancelorder ${order._id}: @${ctx.admin.username} is not the solver of this dispute`
           );
           return await messages.notAuthorized(ctx);
         }
@@ -326,13 +326,13 @@ const initialize = (botToken, options) => {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.user.default_community_id) {
+        if (order.community_id != ctx.admin.default_community_id) {
           return await messages.notAuthorized(ctx);
         }
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
-        if (dispute && dispute.solver_id != ctx.user.id) {
+        if (dispute && dispute.solver_id != ctx.admin.id) {
           return await messages.notAuthorized(ctx);
         }
       }
