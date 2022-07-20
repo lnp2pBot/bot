@@ -382,6 +382,7 @@ module.exports = {
   isIso4217,
   plural,
   getCurrency,
+  getCurrenciesWithPrice,
   handleReputationItems,
   getBtcFiatPrice,
   getBtcExchangePrice,
