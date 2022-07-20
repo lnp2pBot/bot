@@ -130,7 +130,7 @@ describe('Telegram bot test', () => {
     userStub.restore();
     expect(updates.ok).to.be.equal(true);
     let flags = 0;
-    updates.result[0].message.reply_markup.inline_keyboard.map(flag => {
+    updates.result[0].message.reply_markup.inline_keyboard.forEach(flag => {
       flags += flag.length;
     });
     let langs = 0;
