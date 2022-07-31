@@ -429,7 +429,7 @@ not_found_dispute: Für diesen Auftrag gib es keinen Streitfall
 max_allowed: Das maximal erlaubte ist ${max}
 dispute_channel: Streitkanal
 not_wizard: Sie sind momentan nicht im Assistentenmodus. Für Hilfe verwenden Sie /help
-wizard_help: Sie befinden sich im Assistentenmodus, wenn Sie wieder zum Befehlsmodus wollen: /exit
+wizard_help: Sie befinden sich im Assistentenmodus, wenn Sie wieder zum Befehlsmodus wollen, verwenden Sie /exit
 hold_invoice_memo: '@${botName} - Auftrag #${orderId}: BTC verkaufen für ${fiatCode} ${fiatAmount} - Der Betrag wird im gehalten, bis Sie diesen mit /release freigeben. Wenn der Käufer nicht bestätigt, wird der Betrag zurückbezahlt.'
 tap_button: Wählen Sie eine Bestellung, um den Vorgang auszuführen
 tap_release: Wählen Sie die Reihenfolge aus, um die Mittel freizugeben. Sobald Sie die Schaltfläche berühren, kann der Vorgang nicht rückgängig gemacht werden.
