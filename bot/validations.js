@@ -51,8 +51,9 @@ const validateAdmin = async (ctx, id) => {
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
 
-    if (!user.admin && !isDisputeSolver(community, user))
-      return await messages.notAuthorized(ctx);
+    const isSolver = isDisputeSolver(community, user);
+
+    if (!user.admin && !isSolver) return await messages.notAuthorized(ctx);
 
     return user;
   } catch (error) {

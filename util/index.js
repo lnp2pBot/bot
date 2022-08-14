@@ -339,10 +339,11 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
 };
 
 // We need to know if this user is a dispute solver for this community
-const isDisputeSolver = async (community, user) => {
+const isDisputeSolver = (community, user) => {
   if (!community || !user) {
     return false;
   }
+
   return community.solvers.some(solver => solver.id == user._id);
 };
 
