@@ -156,7 +156,8 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async priceMargin(ctx) {
-    const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
+    const prompt = await messages.premiumDiscountBtn(ctx);
+    // const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
       if (ctx.message === undefined) return ctx.scene.leave();
@@ -165,8 +166,8 @@ const createOrderSteps = {
       await ctx.deleteMessage();
       if (isNaN(text)) {
         ctx.wizard.state.error = ctx.i18n.t('not_number');
-        await ctx.wizard.state.updateUI();
-        return;
+
+        return await ctx.wizard.state.updateUI();
       }
       ctx.wizard.state.priceMargin = parseInt(text);
       await ctx.wizard.state.updateUI();
