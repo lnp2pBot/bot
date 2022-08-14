@@ -20,7 +20,7 @@
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
     "lightning": "^5.16.0",
-    "mongoose": "^6.0.11",
+    "mongoose": "6.5.2",
     "node-schedule": "^2.0.0",
     "qrcode": "^1.5.0",
     "socks-proxy-agent": "^6.2.0-beta.0",
@@ -44,7 +44,7 @@
     "eslint-plugin-n": "^15.2.0",
     "eslint-plugin-promise": "^6.0.0",
     "mocha": "^9.2.0",
-    "nodemon": "^2.0.12",
+    "nodemon": "2.0.19",
     "prettier": "^2.6.2",
     "sinon": "^11.1.2",
     "telegram-test-api": "^2.5.0"
