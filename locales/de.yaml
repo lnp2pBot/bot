@@ -409,7 +409,8 @@ market_price: Marktpreis
 enter_currency: 'Gib eine Währung anhand des Codes ein, z.B.: USD'
 choose_currency: Wähle eine Währung
 enter_currency_amount: Gib den Betrag in ${currency} ein, enter only numbers.
-enter_premium_discount: Gib die Zuschlag oder den Rabatt ein, der für das Angebot gelten soll. Der Zuschlag ist eine positive Zahl und der Rabatt ist eine negative Zahl. Wenn du nicht möchtest, dass das Angebot einen Zuschlag oder einen Rabatt erhält, gib 0 ein.
+no_premium_or_discount: No premium or discount
+enter_premium_discount: Enter the premium(+) or discount(-) to apply to the market price.
 enter_payment_method: Gib die Zahlungsmethode ein (z.B. Banküberweisung)
 invalid_currency: Ungültige Währung
 not_number: Es muss eine Zahl sein
