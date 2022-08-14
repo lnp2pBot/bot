@@ -601,6 +601,12 @@ const cancelOrder = async (ctx, orderId, user) => {
       return await deleteOrderFromChannel(order, ctx.telegram);
     }
 
+    // If a buyer is taking a sell offer and accidentally touch continue button we
+    // let the user to cancel
+    if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
+      return await cancelAddInvoice(null, ctx, order);
+    }
+
     if (
       !(
         order.status === 'ACTIVE' ||
