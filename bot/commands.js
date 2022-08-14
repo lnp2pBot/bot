@@ -607,6 +607,12 @@ const cancelOrder = async (ctx, orderId, user) => {
       return await cancelAddInvoice(null, ctx, order);
     }
 
+    // If a seller is taking a buy offer and accidentally touch continue button we
+    // let the user to cancel
+    if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
+      return await cancelShowHoldInvoice(null, ctx, order);
+    }
+
     if (
       !(
         order.status === 'ACTIVE' ||
