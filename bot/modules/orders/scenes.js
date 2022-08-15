@@ -156,20 +156,25 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async priceMargin(ctx) {
-    const prompt = await ctx.reply(ctx.i18n.t('enter_premium_discount'));
+    const prompt = await createOrderPrompts.priceMargin(ctx);
     ctx.wizard.state.handler = async ctx => {
       ctx.wizard.state.error = null;
-      if (ctx.message === undefined) return ctx.scene.leave();
-      const { text } = ctx.message;
-      if (!text) return;
-      await ctx.deleteMessage();
-      if (isNaN(text)) {
-        ctx.wizard.state.error = ctx.i18n.t('not_number');
+      if (!ctx.callbackQuery) {
+        if (ctx.message === undefined) return ctx.scene.leave();
+        const { text } = ctx.message;
+        if (!text) return;
+        await ctx.deleteMessage();
+        if (isNaN(text)) {
+          ctx.wizard.state.error = ctx.i18n.t('not_number');
+
+          return await ctx.wizard.state.updateUI();
+        }
+        ctx.wizard.state.priceMargin = parseInt(text);
         await ctx.wizard.state.updateUI();
-        return;
+      } else {
+        ctx.wizard.state.priceMargin = parseInt(ctx.callbackQuery.data);
+        await ctx.wizard.state.updateUI();
       }
-      ctx.wizard.state.priceMargin = parseInt(text);
-      await ctx.wizard.state.updateUI();
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
         prompt.message_id
@@ -192,6 +197,28 @@ const createOrderSteps = {
 };
 
 const createOrderPrompts = {
+  async priceMargin(ctx) {
+    const margin = ['-5', '-4', '-3', '-2', '-1', '+1', '+2', '+3', '+4', '+5'];
+    const buttons = margin.map(m => Markup.button.callback(m + '%', m));
+    const rows = [];
+    const chunkSize = 5;
+    for (let i = 0; i < buttons.length; i += chunkSize) {
+      const chunk = buttons.slice(i, i + chunkSize);
+      rows.push(chunk);
+    }
+    const noMargin = [
+      {
+        text: ctx.i18n.t('no_premium_or_discount'),
+        callback_data: '0',
+        hide: false,
+      },
+    ];
+    rows.splice(1, 0, noMargin);
+    return ctx.reply(
+      ctx.i18n.t('enter_premium_discount'),
+      Markup.inlineKeyboard(rows)
+    );
+  },
   async currency(ctx) {
     const { currencies } = ctx.wizard.state;
     if (!currencies) return ctx.reply(ctx.i18n.t('enter_currency'));

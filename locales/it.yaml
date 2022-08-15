@@ -406,7 +406,8 @@ market_price: Prezzo di mercato
 enter_currency: 'Inserisci una valuta con il relativo codice, ad es: EUR'
 choose_currency: Scegli una valuta
 enter_currency_amount: Inserisci l'importo di ${currency}, solo numeri.
-enter_premium_discount: Inserisci il surplus o lo sconto da applicare all'offerta. Surplus è un numero positivo, sconto è un numero negativo; se non si desidera che l'offerta abbia un surplus o uno sconto, scegliere 0.
+enter_premium_discount: Inserisci il surplus(+) o lo sconto(-) da applicare al prezzo di mercato.
+no_premium_or_discount: Nessun premio o sconto
 enter_payment_method: Inserisci il metodo di pagamento
 invalid_currency: Valuta non valida
 not_number: Deve essere un numero

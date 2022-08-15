@@ -407,7 +407,8 @@ market_price: Preço de mercado
 enter_currency: 'Digite uma moeda pelo seu código, por exemplo: USD'
 choose_currency: Escolha uma moeda
 enter_currency_amount: Digite o valor de ${currency}, digite apenas números.
-enter_premium_discount: Digite o prêmio ou desconto para aplicar à oferta. O Premium é um número positivo e o desconto é um número negativo, se você não deseja que a oferta tenha um prêmio ou desconto, digite 0.
+enter_premium_discount: Digite o prêmio(+) ou desconto(-) para aplicar ao preço de mercado.
+no_premium_or_discount: Sem prêmio ou desconto
 enter_payment_method: Insira o método de pagamento
 invalid_currency: Moeda inválida
 not_number: Deve ser um número

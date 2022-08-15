@@ -407,7 +407,8 @@ market_price: Ринкова ціна
 enter_currency: 'Введіть валюту за своїм кодом, наприклад: USD'
 choose_currency: Виберіть валюту
 enter_currency_amount: Введіть суму ${currency}, Введіть лише цифри.
-enter_premium_discount: Enter the premium or discount to apply to the offer. Premium is a positive number and discount is a negative number, if you don't want the offer to have a premium or discount enter 0.
+enter_premium_discount: Enter the premium(+) or discount(-) to apply to the market price.
+no_premium_or_discount: No premium or discount
 enter_payment_method: Введіть метод оплати
 invalid_currency: Недійсна валюта
 not_number: Це має бути число
