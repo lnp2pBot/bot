@@ -1,5 +1,4 @@
 const { getOrderChannel, sanitizeMD } = require('../../../util');
-const logger = require('../../../logger');
 
 exports.listOrdersResponse = async orders => {
   const tasks = orders.map(async order => {
