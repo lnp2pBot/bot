@@ -1,5 +1,4 @@
 const { getDisputeChannel, getDetailedOrder } = require('../../../util');
-const logger = require('../../../logger');
 
 exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
