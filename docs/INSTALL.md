@@ -18,8 +18,7 @@
 
 ## Purpose.
 
-Allow people to trade using the _Lightning_ network with other people on Telegram. The _p2plnbot_ bot is developed in nodejs and connects to a LND (Lightning Network Daemon) node is a full i
-mplementation of a Lightning Network node. 
+Allow people to trade using the _Lightning_ network with other people on Telegram. The _p2plnbot_ bot is developed in nodejs and connects to a LND (Lightning Network Daemon) node is a full implementation of a Lightning Network node. 
 
 ## Target.
 
