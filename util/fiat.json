@@ -465,13 +465,14 @@
   },
   "HNL": {
     "symbol": "HNL",
-    "name": "Honduran Lempira",
+    "name": "Lempira",
     "symbol_native": "L",
     "decimal_digits": 2,
     "rounding": 0,
     "code": "HNL",
-    "emoji": "",
-    "name_plural": "Honduran lempiras"
+    "emoji": "🇭🇳",
+    "name_plural": "Lempiras",
+    "price": true
   },
   "HRK": {
     "symbol": "kn",
