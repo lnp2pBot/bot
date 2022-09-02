@@ -84,7 +84,7 @@ To connect with a lnd node we need to set 3 variables in the `.env` file,
 
 To install just run:
 ```
-$ git clone https://github.com/bot/lnp2pbot.git
+$ git clone https://github.com/lnp2pbot/bot.git lnp2pbot
 $ cd lnp2pbot
 $ npm install
 ```
