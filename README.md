@@ -1,7 +1,7 @@
-![p2pLNBot](logo-600.png)
+![LNp2pBot](logo-600.png)
 
 [![chat](https://img.shields.io/badge/chat-telegram-%2326A5E4)](https://t.me/lnp2pbot) [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen)](./LICENSE)
-# P2PLNBot
+# LNp2pBot
 Telegram bot that allows people to trade using lightning network with other people on telegram, this is an open source project and anyone can create issues, submit a PR, fork it, modify it or create their own bot with the code.
 
 ## Try it out!
@@ -13,7 +13,7 @@ Wherever you are you can start using the [bot](https://t.me/lnp2pbot), just need
 
 ---
 
-**p2plnbot** is being developed on nodejs and connects with an LND node, we wanted that the telegram bot be able to receive lightning payments without being custodial, after some thinking we decided to use hold invoices for it, the bot only settle seller invoices when each party is ok with it and right after that moment the bot pays the buyer's invoice.
+**LNp2pBot** is being developed on nodejs and connects with an LND node, we wanted that the telegram bot be able to receive lightning payments without being custodial, after some thinking we decided to use hold invoices for it, the bot only settle seller invoices when each party is ok with it and right after that moment the bot pays the buyer's invoice.
 
 ## Creating a sell order
 1. Alice tells to the bot that she wants to sell 5000 sats for **n** fiat amount.
@@ -51,9 +51,9 @@ After a user starts a dispute, both parties will have increased by **1** their o
 A seller that didn't release funds to the buyer can't open or take another order from the bot and probably will be involved in a dispute from the buyer damaging his/her reputation
 
 # Financial Support
-**p2plnbot** is an open source project. We are not a company, we don't do ICOs or dark business, we are just people that wants bring solutions to the people using the best open source money in the world. Our work depends on the financial collaboration of the users.
+**LNp2pBot** is an open source project. We are not a company, we don't do ICOs or dark business, we are just people that wants bring solutions to the people using the best open source money in the world. Our work depends on the financial collaboration of the users.
 
-To financially support further development of **p2plnbot**, please consider support our project sending bitcoin to our own node at [ln.grunch.dev](https://ln.grunch.dev).
+To financially support further development of **LNp2pBot**, please consider support our project sending bitcoin to our own node at [ln.grunch.dev](https://ln.grunch.dev).
 
 # Installation
 You will need to create an `.env` file on the root dir, you can use a sample env file called `.env.sample` on the root dir, an easy way of doing this is just to copy the sample file to `.env`.
@@ -84,8 +84,8 @@ To connect with a lnd node we need to set 3 variables in the `.env` file,
 
 To install just run:
 ```
-$ git clone https://github.com/grunch/p2plnbot.git
-$ cd p2plnbot
+$ git clone https://github.com/bot/lnp2pbot.git
+$ cd lnp2pbot
 $ npm install
 ```
 [Here](docs/INSTALL.md#installation) we have a detailed guide for installation and first steps using the bot.
