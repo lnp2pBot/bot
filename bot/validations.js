@@ -45,7 +45,9 @@ const validateAdmin = async (ctx, id) => {
   try {
     const tgUserId = id || ctx.update.message.from.id;
     const user = await User.findOne({ tg_id: tgUserId });
-    if (!user) return await messages.notAuthorized(ctx);
+    // If the user never started the bot we can't send messages
+    // to that user, so we do nothing
+    if (!user) return;
 
     let community = null;
     if (user.default_community_id)
@@ -53,7 +55,8 @@ const validateAdmin = async (ctx, id) => {
 
     const isSolver = isDisputeSolver(community, user);
 
-    if (!user.admin && !isSolver) return await messages.notAuthorized(ctx);
+    if (!user.admin && !isSolver)
+      return await messages.notAuthorized(ctx, tgUserId);
 
     return user;
   } catch (error) {
