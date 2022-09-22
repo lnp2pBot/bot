@@ -1477,9 +1477,13 @@ const currencyNotSupportedMessage = async (ctx, currencies) => {
   }
 };
 
-const notAuthorized = async ctx => {
+const notAuthorized = async (ctx, tgId) => {
   try {
-    await ctx.reply(ctx.i18n.t('not_authorized'));
+    if (tgId) {
+      await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
+    } else {
+      await ctx.reply(ctx.i18n.t('not_authorized'));
+    }
   } catch (error) {
     logger.error(error);
   }

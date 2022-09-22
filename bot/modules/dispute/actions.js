@@ -12,10 +12,11 @@ exports.takeDispute = async ctx => {
   const order = await Order.findOne({ _id: orderId });
   const dispute = await Dispute.findOne({ order_id: orderId });
   if (!admin.admin) {
-    if (!order.community_id) return await globalMessages.notAuthorized(ctx);
+    if (!order.community_id)
+      return await globalMessages.notAuthorized(ctx, tgId);
 
     if (order.community_id != admin.default_community_id)
-      return await globalMessages.notAuthorized(ctx);
+      return await globalMessages.notAuthorized(ctx, tgId);
   }
   ctx.deleteMessage();
   const solver = await User.findOne({ tg_id: tgId });
