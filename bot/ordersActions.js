@@ -164,7 +164,7 @@ const buildDescription = (
         `: ${numberFormat(fiatCode, exchangePrice.toFixed(2))}\n`;
     }
 
-    let rateText = '';
+    let rateText = '\n';
     if (totalRating) {
       const stars = getEmojiRate(totalRating);
       const roundedRating = decimalRound(totalRating, -1);
