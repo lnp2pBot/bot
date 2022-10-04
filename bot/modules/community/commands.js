@@ -31,7 +31,7 @@ exports.setComm = async ctx => {
     const [groupName] = await validateParams(
       ctx,
       2,
-      '\\<_@communityGroupName / off_\\>'
+      '\\<_@communityGroupName | telegram-group-id / off_\\>'
     );
     if (!groupName) {
       return;
@@ -42,9 +42,14 @@ exports.setComm = async ctx => {
       await user.save();
       return await ctx.reply(ctx.i18n.t('no_default_community'));
     }
-    // Allow find communities case insensitive
-    const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
-    const community = await Community.findOne({ group: regex });
+    let community;
+    if (groupName[0] == '@') {
+      // Allow find communities case insensitive
+      const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
+      community = await Community.findOne({ group: regex });
+    } else if (groupName[0] == '-') {
+      community = await Community.findOne({ group: groupName });
+    }
     if (!community) {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
     }
