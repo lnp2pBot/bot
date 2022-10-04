@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
-  description: { type: String },
+  description: { type: String, required: true },
   amount: {
     // amount in satoshis
     type: Number,
@@ -65,7 +65,7 @@ const OrderSchema = new mongoose.Schema({
   type: { type: String },
   fiat_amount: { type: Number, min: 1 }, // amount in fiat
   fiat_code: { type: String },
-  payment_method: { type: String },
+  payment_method: { type: String, required: true },
   created_at: { type: Date, default: Date.now },
   invoice_held_at: { type: Date },
   taken_at: { type: Date },
