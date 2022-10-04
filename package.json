@@ -1,6 +1,6 @@
 {
-  "name": "p2plnbot",
-  "version": "0.1.1",
+  "name": "lnp2pbot",
+  "version": "0.1.2",
   "author": "Francisco Calderón",
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
