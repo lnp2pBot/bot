@@ -2,7 +2,11 @@
 const { userMiddleware } = require('../../middleware/user');
 const actions = require('./actions');
 const commands = require('./commands');
-const { earningsMessage, updateCommunityMessage } = require('./messages');
+const {
+  earningsMessage,
+  updateCommunityMessage,
+  sureMessage,
+} = require('./messages');
 exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
@@ -59,10 +63,23 @@ exports.configure = bot => {
     userMiddleware,
     actions.onSetCommunity
   );
+  bot.action('doNothingBtn', userMiddleware, async ctx => {
+    await ctx.deleteMessage();
+  });
   bot.action(/^earningsBtn_([0-9a-f]{24})$/, userMiddleware, earningsMessage);
+  bot.action(
+    /^deleteCommunityAskBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    sureMessage
+  );
   bot.action(
     /^withdrawEarnings_([0-9a-f]{24})$/,
     userMiddleware,
     actions.withdrawEarnings
+  );
+  bot.action(
+    /^deleteCommunityBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    commands.deleteCommunity
   );
 };

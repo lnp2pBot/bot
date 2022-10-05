@@ -21,7 +21,7 @@ start: |
 
   9. Si estas tomando una compra, debes pagar la factura lightning, este pago estará retenido mientras el comprador realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen los sats al comprador.
 
-  10. Si en algun punto los usuarios no pueden solucionar operación, pueden usar este comando para llamar a los admin a que resuelvan la operacion como intermediarios.
+  10. Si en algun punto los usuarios no pueden solucionar operación, pueden usar este comando para llamar a los admin a que resuelvan la operación como intermediarios.
 
   11. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el el comando /cancel.
 
@@ -450,3 +450,6 @@ must_enter_text: Debe ingresar solo texto
 you_dont_have_communities: No tienes comunidades creadas
 users_added: 'Has agregado a: ${users}'
 users_not_added: 'No he podido agregar a: ${users}; asegúrate de que estos usuarios han iniciado al bot'
+delete_community: Eliminar comunidad
+are_you_sure: ¿Estás seguro?
+no_permission: No tienes permisos para realizar esta operación

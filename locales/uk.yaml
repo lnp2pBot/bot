@@ -450,3 +450,5 @@ current_earnings: |
 you_dont_have_communities: You have no communities created
 users_added: 'You have added: ${users}'
 users_not_added: 'Could not add to: ${users}; please make sure these users have started the bot'
+are_you_sure: Are you sure?
+no_permission: You do not have permissions to perform this operation
