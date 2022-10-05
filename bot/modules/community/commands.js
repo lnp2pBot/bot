@@ -186,3 +186,25 @@ exports.updateCommunity = async (ctx, id, field, bot) => {
     logger.error(error);
   }
 };
+
+exports.deleteCommunity = async ctx => {
+  try {
+    ctx.deleteMessage();
+    const id = ctx.match[1];
+
+    if (!(await validateObjectId(ctx, id))) return;
+    const community = await Community.findOne({
+      _id: id,
+      creator_id: ctx.user._id,
+    });
+
+    if (!community) {
+      return ctx.reply(ctx.i18n.t('no_permission'));
+    }
+    await community.remove();
+
+    return ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
