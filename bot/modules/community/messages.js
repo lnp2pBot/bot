@@ -36,6 +36,7 @@ exports.createCommunityWizardStatus = (i18n, state) => {
 
 exports.updateCommunityMessage = async ctx => {
   try {
+    await ctx.deleteMessage();
     const id = ctx.match[1];
     const community = await Community.findById(id);
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
@@ -81,6 +82,12 @@ exports.updateCommunityMessage = async ctx => {
             {
               text: '💰 ' + ctx.i18n.t('earnings'),
               callback_data: `earningsBtn_${id}`,
+            },
+          ],
+          [
+            {
+              text: '☠️ ' + ctx.i18n.t('delete_community'),
+              callback_data: `deleteCommunityAskBtn_${id}`,
             },
           ],
         ],
@@ -188,6 +195,31 @@ exports.wizardCommunityWrongPermission = async (ctx, user, channel) => {
         channel,
       })
     );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.sureMessage = async ctx => {
+  try {
+    await ctx.deleteMessage();
+    const id = ctx.match[1];
+    await ctx.reply(ctx.i18n.t('are_you_sure'), {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: '🔴 ' + ctx.i18n.t('no'),
+              callback_data: `doNothingBtn`,
+            },
+            {
+              text: '🟢 ' + ctx.i18n.t('yes'),
+              callback_data: `deleteCommunityBtn_${id}`,
+            },
+          ],
+        ],
+      },
+    });
   } catch (error) {
     logger.error(error);
   }
