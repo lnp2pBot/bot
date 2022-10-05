@@ -452,3 +452,6 @@ current_earnings: |
 you_dont_have_communities: Sie haben keine Community erstellt
 users_added: 'Du hast ${users} hinzugefügt.'
 users_not_added: 'Konnte ${users} nicht hinzufügen. Bitte stellen Sie sicher, dass dieser Benutzer den Bot gestartet hat (/start)'
+delete_community: Delete community
+are_you_sure: Are you sure?
+no_permission: You do not have permissions to perform this operation
