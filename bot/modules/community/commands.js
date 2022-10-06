@@ -31,7 +31,7 @@ exports.setComm = async ctx => {
     const [groupName] = await validateParams(
       ctx,
       2,
-      '\\<_@communityGroupName | telegram-group-id / off_\\>'
+      '\\<_@communityGroupName \\| telegram\\-group\\-id / off_\\>'
     );
     if (!groupName) {
       return;
