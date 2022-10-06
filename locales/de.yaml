@@ -172,7 +172,7 @@ order_detail: |
 
   Rechung Hash Verkäufer: `${order.hash || ''}`
 
-  LN-Rechnung Secret Verkäufer: `${order.secret || ''}`
+  LN\\-Rechnung Secret Verkäufer: `${order.secret || ''}`
 
   Zahlungsaufforderung Käufer: `${order.buyer_invoice || ''}`
 seller: Käufer
