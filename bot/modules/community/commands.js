@@ -110,6 +110,7 @@ exports.findCommunity = async ctx => {
 
 exports.updateCommunity = async (ctx, id, field, bot) => {
   try {
+    ctx.deleteMessage();
     if (!id) return;
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
@@ -202,6 +203,29 @@ exports.deleteCommunity = async ctx => {
       return ctx.reply(ctx.i18n.t('no_permission'));
     }
     await community.remove();
+
+    return ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+exports.changeVisibility = async ctx => {
+  try {
+    ctx.deleteMessage();
+    const id = ctx.match[1];
+
+    if (!(await validateObjectId(ctx, id))) return;
+    const community = await Community.findOne({
+      _id: id,
+      creator_id: ctx.user._id,
+    });
+
+    if (!community) {
+      return ctx.reply(ctx.i18n.t('no_permission'));
+    }
+    community.public = !community.public;
+    await community.save();
 
     return ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {

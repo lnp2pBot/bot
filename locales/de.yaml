@@ -455,3 +455,5 @@ users_not_added: 'Konnte ${users} nicht hinzufügen. Bitte stellen Sie sicher, d
 delete_community: Delete community
 are_you_sure: Are you sure?
 no_permission: You do not have permissions to perform this operation
+make_public: Make public
+make_private: Make private

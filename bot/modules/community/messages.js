@@ -41,6 +41,9 @@ exports.updateCommunityMessage = async ctx => {
     const community = await Community.findById(id);
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
+    const visibilityText = community.public
+      ? '🕵️ ' + ctx.i18n.t('make_private')
+      : '📢 ' + ctx.i18n.t('make_public');
     await ctx.reply(text, {
       reply_markup: {
         inline_keyboard: [
@@ -85,6 +88,10 @@ exports.updateCommunityMessage = async ctx => {
             },
           ],
           [
+            {
+              text: visibilityText,
+              callback_data: `changeVisibilityBtn_${id}`,
+            },
             {
               text: '☠️ ' + ctx.i18n.t('delete_community'),
               callback_data: `deleteCommunityAskBtn_${id}`,

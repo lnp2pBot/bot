@@ -82,4 +82,9 @@ exports.configure = bot => {
     userMiddleware,
     commands.deleteCommunity
   );
+  bot.action(
+    /^changeVisibilityBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    commands.changeVisibility
+  );
 };

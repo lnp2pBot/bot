@@ -453,3 +453,5 @@ users_not_added: 'No he podido agregar a: ${users}; asegúrate de que estos usua
 delete_community: Eliminar comunidad
 are_you_sure: ¿Estás seguro?
 no_permission: No tienes permisos para realizar esta operación
+make_public: Hacer pública
+make_private: Hacer privada
