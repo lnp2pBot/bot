@@ -270,6 +270,8 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return;
     }
+    if (inputs.length > 1) ctx.wizard.state.sats = 0;
+
     ctx.wizard.state.fiatAmount = inputs;
     await ctx.wizard.state.updateUI();
 
