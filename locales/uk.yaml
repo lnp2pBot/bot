@@ -394,7 +394,10 @@ no_default_community: У вас більше немає спільноти за 
 community_not_found: Спільнота не знайдено
 currency: Валюта
 currencies: Валюти
-currency_not_supported: Ця валюта не може бути використана в цій спільноті, їй дозволено лише використовувати [${currencies}]
+currency_not_supported: |
+  Ця валюта не може бути використана в цій спільноті, їй дозволено лише використовувати [${currencies}].
+
+  You can leave this community executing /setcomm off
 press_to_continue: Натисніть кнопку, щоб продовжити
 receive: отримувати
 send: надсилати

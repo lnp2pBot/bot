@@ -396,7 +396,10 @@ no_default_community: Du hast keine standardmäßige Community mehr
 community_not_found: Community nicht gefunden
 currency: Währung
 currencies: Währungen
-currency_not_supported: Diese Währung kann in dieser Community nicht verwendet werden, es ist nur erlaubt, [${currencies}] zu verwenden.
+currency_not_supported: |
+  Diese Währung kann in dieser Community nicht verwendet werden, es ist nur erlaubt, [${currencies}] zu verwenden.
+
+  Sie können diese Community verlassen, indem Sie /setcomm off ausführen.
 press_to_continue: Drücke den Knopf um weiterzufahren
 receive: erhalten
 send: senden
