@@ -16,7 +16,10 @@ async function getOrderCountByCommunity() {
 }
 
 async function findCommunities(currency) {
-  const communities = await Community.find({ currencies: currency });
+  const communities = await Community.find({
+    currencies: currency,
+    public: true,
+  });
   const orderCount = await getOrderCountByCommunity();
   return communities.map(comm => {
     comm.orders = orderCount[comm.id] || 0;
