@@ -1,5 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
-const { Order } = require('../models');
+const { Order, Community } = require('../models');
 const messages = require('./messages');
 const {
   getCurrency,
@@ -31,6 +31,11 @@ const createOrder = async (
 ) => {
   try {
     amount = parseInt(amount);
+    let isPublic = true;
+    if (community_id) {
+      const community = await Community.findById(community_id);
+      isPublic = community.public;
+    }
     const fee = await getFee(amount, community_id);
     // Global fee values at the moment of the order creation
     // We will need this to calculate the final amount
@@ -74,6 +79,7 @@ const createOrder = async (
       }),
       range_parent_id,
       community_id,
+      is_public: isPublic,
     };
 
     let order;

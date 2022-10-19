@@ -79,6 +79,7 @@ const OrderSchema = new mongoose.Schema({
   admin_warned: { type: Boolean, default: false }, // We set this to true when the bot warns admins the order is about to expire
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
   community_id: { type: String },
+  is_public: { type: Boolean, default: true },
 });
 
 module.exports = mongoose.model('Order', OrderSchema);
