@@ -219,6 +219,7 @@ help: |
   /deldispute <username> <order id> - Exclui uma disputa de usuário na comunidade, deve haver uma comunidade padrão
   /ban <username> - Banir um usuário de uma comunidade, deve haver uma comunidade padrão
 
+  /version - mostra a versão atual do bot
   /help - mensagem de ajuda
 must_be_gt_or_eq: ${fieldName} Deve ser mais ou igual a ${qty}
 you_have_been_banned: Você foi banido!

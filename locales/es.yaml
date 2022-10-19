@@ -219,6 +219,7 @@ help: |
   /deldispute <_username_> <_id orden_> - Le elimina una disputa al usuario en la comunidad, debe haber una comunidad por defecto
   /ban <_username_> - Expulsa a un usuario de una comunidad, debe haber una comunidad por defecto
 
+  /version - Muestra la versión actual del bot
   /help - Mensaje de ayuda
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!

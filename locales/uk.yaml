@@ -219,6 +219,7 @@ help: |
   /deldispute <_username_> <_id order_> - Видаляє суперечку користувача в спільноті, за замовчуванням повинно бути спільнота
   /ban <_username_> - Заборона користувача від спільноти, має бути спільнота за замовчуванням
 
+  /version - Shows the current version of the bot
   /help - Показати ключові команди
 must_be_gt_or_eq: ${fieldName} має бути більше чи рівно ${qty}
 you_have_been_banned: Ви були забанені!

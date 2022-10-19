@@ -219,6 +219,7 @@ help: |
   /deldispute <_username_> <_id order_> - Löscht einen Streit vom Benutzer in der Community, es muss standardmäßig eine Community geben
   /ban <_username_> - Verbieten Sie einen Benutzer aus einer Community, es sollte eine Standard -Community geben
 
+  /version - Zeigt die aktuelle Version des Bots
   /help - Hilfe
 must_be_gt_or_eq: ${fieldName} muss ${qty} oder mehr entsprechen
 you_have_been_banned: Du wurdest gesperrt!

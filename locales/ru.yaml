@@ -218,6 +218,7 @@ help: |
   /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
   /ban <_username_> - Ban a user from a community, there should be a default community
 
+  /version - Shows the current version of the bot
   /help - Показать ключевые команды
 must_be_gt_or_eq: ${fieldName} должно быть больше или равно ${qty}
 you_have_been_banned: Вы были забанены!
