@@ -117,16 +117,7 @@ exports.updateCommunity = async (ctx, id, field, bot) => {
     if (!id) return;
     const tgUser = ctx.update.callback_query.from;
     if (!tgUser) return;
-    const user = await User.findOne({ tg_id: tgUser.id });
-
-    // If user didn't initialize the bot we can't do anything
-    if (!user) return;
-
-    // We check if the user has the same username that we have
-    if (tgUser.username !== user.username) {
-      user.username = tgUser.username;
-      await user.save();
-    }
+    const { user } = ctx;
 
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
