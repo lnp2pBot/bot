@@ -14,15 +14,10 @@ const addInvoiceWizard = new Scenes.WizardScene(
       const { order } = ctx.wizard.state;
       const expirationTime =
         parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-      const currency = getCurrency(order.fiat_code);
-      const symbol =
-        !!currency && !!currency.symbol_native
-          ? currency.symbol_native
-          : order.fiat_code;
       await messages.wizardAddInvoiceInitMessage(
         ctx,
         order,
-        symbol,
+        order.fiat_code,
         expirationTime
       );
 
@@ -155,16 +150,11 @@ const addFiatAmountWizard = new Scenes.WizardScene(
   async ctx => {
     try {
       const { order } = ctx.wizard.state;
-      const currency = getCurrency(order.fiat_code);
       const action =
         order.type === 'buy' ? ctx.i18n.t('receive') : ctx.i18n.t('send');
-      const currencyName =
-        !!currency && !!currency.name_plural
-          ? currency.name_plural
-          : order.fiat_code;
       await messages.wizardAddFiatAmountMessage(
         ctx,
-        currencyName,
+        order.fiat_code,
         action,
         order
       );

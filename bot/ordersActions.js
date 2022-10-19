@@ -155,7 +155,7 @@ const buildDescription = (
     let currencyString = `${fiatCode} ${fiatAmountString}`;
 
     if (currency)
-      currencyString = `${fiatAmountString} ${currency.name_plural} ${currency.emoji}`;
+      currencyString = `${fiatAmountString} ${currency.code} ${currency.emoji}`;
 
     let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
