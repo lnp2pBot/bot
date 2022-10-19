@@ -448,7 +448,7 @@ const onGoingTakeSellMessage = async (
     );
     await bot.telegram.sendMessage(
       buyerUser.tg_id,
-      i18nBuyer.t('fiatsent_order_cmd', { orderId: order._id }),
+      i18nBuyer.t('fiatsent_order_cmd'),
       { parse_mode: 'MarkdownV2' }
     );
     await bot.telegram.sendMessage(
@@ -698,14 +698,7 @@ const bannedUserErrorMessage = async (ctx, user) => {
   }
 };
 
-const fiatSentMessages = async (
-  ctx,
-  buyer,
-  seller,
-  order,
-  i18nBuyer,
-  i18nSeller
-) => {
+const fiatSentMessages = async (ctx, buyer, seller, i18nBuyer, i18nSeller) => {
   try {
     await ctx.telegram.sendMessage(
       buyer.tg_id,
@@ -721,7 +714,7 @@ const fiatSentMessages = async (
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
-      i18nSeller.t('release_order_cmd', { orderId: order._id }),
+      i18nSeller.t('release_order_cmd'),
       { parse_mode: 'Markdown' }
     );
   } catch (error) {
@@ -790,7 +783,7 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
     );
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      ctx.i18n.t('fiatsent_order_cmd', { orderId: order._id }),
+      ctx.i18n.t('fiatsent_order_cmd'),
       { parse_mode: 'MarkdownV2' }
     );
   } catch (error) {

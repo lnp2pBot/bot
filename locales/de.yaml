@@ -124,8 +124,7 @@ get_in_touch_with_seller: |
   Nimm Kontakt mit dem Verkäufer @${sellerUsername} auf, um die Details zu erfahren, wie du ${currency} ${fiatAmount} mit ${paymentMethod} überweisen musst.
 
   Sobald du das Geld überwiesen hast, gib mir bitte mit dem folgenden Befehl Bescheid 👇
-fiatsent_order_cmd: |
-  /fiatsent ${orderId}
+fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Nimm Kontakt mit @${buyerUsername} auf, um ihm Informationen darüber zu geben, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann. Gib die Sats erst frei, wenn du dich vergewissert hast, dass der Käufer das Betrag bezahlt hat.
 
@@ -225,8 +224,7 @@ must_be_gt_or_eq: ${fieldName} muss ${qty} oder mehr entsprechen
 you_have_been_banned: Du wurdest gesperrt!
 I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Sobald der Verkäufer bestätigt, dass das Geld eingegangen ist, sollten die Sats an dich geschickt werden.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} hat mitgeteilt, dass er dir das FIAT-Geld geschickt hat. Sobald du den Erhalt bestätigt hast, gib die Sats bitte frei. Du kannst keinen weiteren Auftrag erstellen, bis du die Sats freigibst.
-release_order_cmd: |
-  /release ${orderId}
+release_order_cmd: /release
 you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der Käufer dir mitteilt, dass das Geld an dich geschickt wurde, du es aber noch nicht freigegeben hast. Du kannst keine neuen Aufträge erstellen, bis du das Geld freigibst.
 user_banned: Gesperrter Benutzer!
 user_not_found: Benutzer wurde in der Datenbank nicht gefunden!

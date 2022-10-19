@@ -124,8 +124,7 @@ get_in_touch_with_seller: |
   Entre em contato com o vendedor, usuário @${sellerUsername} Para obter os detalhes sobre como enviar o dinheiro que você deve enviar ${currency} ${fiatAmount} usando ${paymentMethod}.
 
   Depois de enviar o dinheiro, por favor me avise com o comando 👇
-fiatsent_order_cmd: |
-  /fiatsent ${orderId}
+fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Entre em contato com  @${buyerUsername} para fornecer informações sobre como enviar você ${currency} ${fiatAmount} através dos ${paymentMethod}. Não libere esses SATs até verificar se o comprador pagou o Fiat.
 
@@ -225,8 +224,7 @@ must_be_gt_or_eq: ${fieldName} Deve ser mais ou igual a ${qty}
 you_have_been_banned: Você foi banido!
 I_told_seller_you_sent_fiat: 🤖 Eu disse @${sellerUsername} que você enviou dinheiro fiduciário depois que o vendedor confirmar que o dinheiro foi recebido, os sats devem ser enviados a você.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} informou que já enviou o dinheiro fiduciário, depois de confirmar que você o recebeu, libere fundos. Você não poderá criar outro pedido até lançar fundos.
-release_order_cmd: |
-  /release ${orderId}
+release_order_cmd: /release
 you_have_orders_waiting: 🤖 Você tem um ou mais pedidos em que o comprador informa que o dinheiro fiduciário foi enviado a você, mas você não lançou os SATs.Você não poderá criar novos pedidos até lançar esses fundos.
 user_banned: Usuário proibido!
 user_not_found: O usuário não foi encontrado no banco de dados!

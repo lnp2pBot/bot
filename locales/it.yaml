@@ -124,8 +124,7 @@ get_in_touch_with_seller: |
   Contatta il venditore, @${sellerUsername} per ottenere i dettagli su come inviare i fondi ${currency} ${fiatAmount} usando ${paymentMethod}.
 
   Quando hai inviato i fondi fammelo sapere, con il comando 👇
-fiatsent_order_cmd: |
-  /fiatsent ${orderId}
+fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Mettiti in contatto con  @${buyerUsername} in modo da fornire informazioni su come inviarti ${currency} ${fiatAmount} tramite ${paymentMethod}. Non rilasciare i sats finché non è accertato che l'acquirente abbia pagato il controvalore in fiat.
 
@@ -225,8 +224,7 @@ must_be_gt_or_eq: ${fieldName} Deve essere superiore o uguale a ${qty}
 you_have_been_banned: Sei stato bannato!
 I_told_seller_you_sent_fiat: 🤖 Ho detto a @${sellerUsername} che hai inviato i fondi una volta che il venditore conferma che il denaro è stato ricevuto, i sats dovrebbero essere inviati a te.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} mi ha informato che ti ha già inviato i fondi, una volta confermata la ricezione, ti preghiamo di rilasciare i fondi. Non potrai creare un altro ordine fino a quando non si sbloccherai i fondi.
-release_order_cmd: |
-  /release ${orderId}
+release_order_cmd: /release
 you_have_orders_waiting: 🤖 hai uno o più ordini in cui l'acquirente comunica che il denaro ti è stato inviato ma non hai ancora rilasciato i sats. Non ti sarà possibile creare nuovi ordini fino a quando non si sbloccherai tali fondi..
 user_banned: Utente bannato!
 user_not_found: L'utente non è stato trovato!

@@ -124,8 +124,7 @@ get_in_touch_with_seller: |
   Get in touch with the seller, user @${sellerUsername} so as to get the details on how to send the money you must send ${currency} ${fiatAmount} using ${paymentMethod}.
 
   Once you send the money, please let me know with the command 👇
-fiatsent_order_cmd: |
-  /fiatsent ${orderId}
+fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Get in touch with  @${buyerUsername} so as to give information on how to send you${currency} ${fiatAmount} through ${paymentMethod}. Do not release those sats until you verify that the buyer paid you the fiat.
 
@@ -225,8 +224,7 @@ must_be_gt_or_eq: ${fieldName} Must be more or equal to ${qty}
 you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told  @${sellerUsername} that you have sent fiat money once the seller confirms the money was received, the sats should be sent to you.
 buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that already sent you the fiat money, once you confirmed you received it, please release funds. You will not be able to create another order until you release funds.
-release_order_cmd: |
-  /release ${orderId}
+release_order_cmd: /release
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven´t released the sats ye. You will not be able to create new orders until you release such funds.
 user_banned: Banned user!
 user_not_found: User was not found in the database!

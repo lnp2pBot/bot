@@ -124,8 +124,7 @@ get_in_touch_with_seller: |
   Ponte en contacto con el usuario @${sellerUsername} para que te de detalle de como enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
 
   Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
-fiatsent_order_cmd: |
-  /fiatsent ${orderId}
+fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Ponte en contacto con @${buyerUsername} para darle la información sobre cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
 
@@ -224,9 +223,11 @@ help: |
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
 I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden
-release_order_cmd: |
-  /release ${orderId}
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden.
+
+  Para liberar ejecuta el comando 👇
+release_order_cmd: /release
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!

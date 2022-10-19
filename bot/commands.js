@@ -713,7 +713,6 @@ const fiatSent = async (ctx, orderId, user) => {
       ctx,
       user,
       seller,
-      order,
       i18nCtxBuyer,
       i18nCtxSeller
     );
