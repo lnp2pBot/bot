@@ -121,19 +121,25 @@ you_took_someone_order: |
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 get_in_touch_with_seller: |
-  Ponte en contacto con el usuario @${sellerUsername} para que te de detalle de como enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
+  🤖 Orden Id: #${orderId}
+
+  Ponte en contacto con el usuario @${sellerUsername} para que te diga cómo enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
 
   Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
-  🤖 Ponte en contacto con @${buyerUsername} para darle la información sobre cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
+  🤖 Orden Id: #${orderId}
+
+  Ponte en contacto con @${buyerUsername} y dile cómo enviarte ${currency} ${fiatAmount} por ${paymentMethod}. NO liberes los fondos hasta que no verifiques que el comprador te envió el dinero fiat.
 
   Una vez confirmes la recepción del dinero debes liberar los fondos.
 buyer_took_your_order: |
+  🤖 Orden Id: #${orderId}
+
   @${buyerUsername} ha tomado tu venta y te quiere comprar sats. Escríbele para que te envíe ${currency} ${fiatAmount} por ${paymentMethod}.
 
   Una vez confirmes la recepción del dinero debes liberar los fondos.
-waiting_seller_to_pay: 'Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden ${orderId}, en cuanto realice el pago los pondremos en contacto'
+waiting_seller_to_pay: 'Le he enviado una solicitud de pago al vendedor para que nos envíe tus sats por la orden Id: #${orderId}, en cuanto realice el pago los pondremos en contacto'
 sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online.
 rate_counterpart: 'Califica a tu contraparte:'

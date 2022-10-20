@@ -121,19 +121,25 @@ you_took_someone_order: |
 
   Se você concorda com o exposto acima, pressione o botão para continuar 👇
 get_in_touch_with_seller: |
+  🤖 Order Id: #${orderId}
+
   Entre em contato com o vendedor, usuário @${sellerUsername} Para obter os detalhes sobre como enviar o dinheiro que você deve enviar ${currency} ${fiatAmount} usando ${paymentMethod}.
 
   Depois de enviar o dinheiro, por favor me avise com o comando 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
-  🤖 Entre em contato com  @${buyerUsername} para fornecer informações sobre como enviar você ${currency} ${fiatAmount} através dos ${paymentMethod}. Não libere esses SATs até verificar se o comprador pagou o Fiat.
+  🤖 Order Id: #${orderId}
+
+  Entre em contato com  @${buyerUsername} para fornecer informações sobre como enviar você ${currency} ${fiatAmount} através dos ${paymentMethod}. Não libere esses SATs até verificar se o comprador pagou o Fiat.
 
   Depois de confirmar a recepção do dinheiro, você deve desbloquear os sats.
 buyer_took_your_order: |
+  🤖 Order Id: #${orderId}
+
   @${buyerUsername} fez seu pedido e deseja comprar seus sats. Entre em contato e diga a ele como mandar você ${currency} ${fiatAmount} através dos ${paymentMethod}.
 
   Depois de verificar se você recebeu o valor total, você precisa liberar os sats
-waiting_seller_to_pay: 'Enviei uma solicitação de pagamento ao vendedor para que ele envie seus sats para o ${orderId}, Assim que o pagamento for feito, vou colocar vocês em contato'
+waiting_seller_to_pay: 'Enviei uma solicitação de pagamento ao vendedor para que ele envie seus sats para o #${orderId}, Assim que o pagamento for feito, vou colocar vocês em contato'
 sell_success: Sua venda de SATs foi concluída após a confirmação do pagamento de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} Já lançou os Satoshis, espere que sua fatura seja paga a qualquer momento, lembre-se de que sua carteira precisa estar online para receber através da Lightning Network.
 rate_counterpart: 'Por favor, qualifique sua contraparte:'

@@ -121,19 +121,25 @@ you_took_someone_order: |
 
   Se accetti le condizioni, premi per continuare 👇
 get_in_touch_with_seller: |
+  🤖 Order Id: #${orderId}
+
   Contatta il venditore, @${sellerUsername} per ottenere i dettagli su come inviare i fondi ${currency} ${fiatAmount} usando ${paymentMethod}.
 
   Quando hai inviato i fondi fammelo sapere, con il comando 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
-  🤖 Mettiti in contatto con  @${buyerUsername} in modo da fornire informazioni su come inviarti ${currency} ${fiatAmount} tramite ${paymentMethod}. Non rilasciare i sats finché non è accertato che l'acquirente abbia pagato il controvalore in fiat.
+  🤖 Order Id: #${orderId}
+
+  Mettiti in contatto con  @${buyerUsername} in modo da fornire informazioni su come inviarti ${currency} ${fiatAmount} tramite ${paymentMethod}. Non rilasciare i sats finché non è accertato che l'acquirente abbia pagato il controvalore in fiat.
 
   Una volta confermata la ricezione del denaro, è necessario sbloccare i satoshi.
 buyer_took_your_order: |
+  🤖 Order Id: #${orderId}
+
   @${buyerUsername} ha preso in carico il tuo ordine e vuole acquistare i tuoi sats. Mettiti in contatto con lui e digli come mandarti  ${currency} ${fiatAmount} tramite ${paymentMethod}.
 
   Una volta confermata la ricezione dell'importo totale, è necessario sbloccare i satoshi
-waiting_seller_to_pay: "Ho inviato una richiesta di pagamento al venditore in modo che invii i sats per l' ${orderId}, Non appena il pagamento sarà effettuato, vi metterò in contatto"
+waiting_seller_to_pay: "Ho inviato una richiesta di pagamento al venditore in modo che invii i sats per l' #${orderId}, Non appena il pagamento sarà effettuato, vi metterò in contatto"
 sell_success: La vendita di sats è stata completata dopo la conferma del pagamento da parte di @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ha rilasciato i satoshi, la vostra invoice verrà pagata da un momento all'altro. Ricordata che il tuo wallet deve essere online per ricevere attraverso la rete Lightning.
 rate_counterpart: 'Dai un voto alla tua controparte:'

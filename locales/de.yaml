@@ -121,19 +121,25 @@ you_took_someone_order: |
 
   Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 get_in_touch_with_seller: |
+  🤖 Order Id: #${orderId}
+
   Nimm Kontakt mit dem Verkäufer @${sellerUsername} auf, um die Details zu erfahren, wie du ${currency} ${fiatAmount} mit ${paymentMethod} überweisen musst.
 
   Sobald du das Geld überwiesen hast, gib mir bitte mit dem folgenden Befehl Bescheid 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
-  🤖 Nimm Kontakt mit @${buyerUsername} auf, um ihm Informationen darüber zu geben, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann. Gib die Sats erst frei, wenn du dich vergewissert hast, dass der Käufer das Betrag bezahlt hat.
+  🤖 Order Id: #${orderId}
+
+  Nimm Kontakt mit @${buyerUsername} auf, um ihm Informationen darüber zu geben, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann. Gib die Sats erst frei, wenn du dich vergewissert hast, dass der Käufer das Betrag bezahlt hat.
 
   Sobald du den Erhalt des Geldes bestätigt hast, musst du die Sats freigeben.
 buyer_took_your_order: |
+  🤖 Order Id: #${orderId}
+
   @${buyerUsername} hat deinen Auftrag angenommen und möchte deine Sats kaufen. Nimm Kontakt mit ihm auf und sag ihm, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann.
 
   Sobald du überprüft hast, dass du den vollen Betrag erhalten hast, musst du die Sats freigeben
-waiting_seller_to_pay: 'Ich habe eine Zahlungsaufforderung an den Verkäufer geschickt, damit er deine Sats für die ${orderId} schickt, sobald die Zahlung erfolgt ist, werde ich euch beide in Kontakt setzen'
+waiting_seller_to_pay: 'Ich habe eine Zahlungsaufforderung an den Verkäufer geschickt, damit er deine Sats für die #${orderId} schickt, sobald die Zahlung erfolgt ist, werde ich euch beide in Kontakt setzen'
 sell_success: Dein Verkauf von Sats wurde abgeschlossen, nachdem die Zahlung von @${buyerUsername} bestätigt wurde. ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kannst jederzeit mit der Bezahlung deiner LN-Rechnung rechnen, aber denke daran, dass deine Wallet online sein muss, um über das Lightning-Netzwerk zu empfangen.
 rate_counterpart: 'Bitte bewerte deine Gegenpartei:'

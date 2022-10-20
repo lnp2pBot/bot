@@ -432,15 +432,11 @@ const onGoingTakeSellMessage = async (
   i18nSeller
 ) => {
   try {
-    let currency = getCurrency(order.fiat_code);
-    currency =
-      !!currency && !!currency.symbol_native
-        ? currency.symbol_native
-        : order.fiat_code;
     await bot.telegram.sendMessage(
       buyerUser.tg_id,
       i18nBuyer.t('get_in_touch_with_seller', {
-        currency,
+        orderId: order.id,
+        currency: order.fiat_code,
         sellerUsername: sellerUser.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
@@ -454,9 +450,10 @@ const onGoingTakeSellMessage = async (
     await bot.telegram.sendMessage(
       sellerUser.tg_id,
       i18nSeller.t('buyer_took_your_order', {
+        orderId: order.id,
         fiatAmount: order.fiat_amount,
         paymentMethod: order.payment_method,
-        currency,
+        currency: order.fiat_code,
         buyerUsername: buyerUser.username,
       })
     );
@@ -767,15 +764,11 @@ const notValidIdMessage = async ctx => {
 
 const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
   try {
-    let currency = getCurrency(order.fiat_code);
-    currency =
-      !!currency && !!currency.symbol_native
-        ? currency.symbol_native
-        : order.fiat_code;
     await bot.telegram.sendMessage(
       buyer.tg_id,
       ctx.i18n.t('get_in_touch_with_seller', {
-        currency,
+        orderId: order.id,
+        currency: order.fiat_code,
         sellerUsername: seller.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
@@ -793,15 +786,11 @@ const addInvoiceMessage = async (ctx, bot, buyer, seller, order) => {
 
 const sendBuyerInfo2SellerMessage = async (bot, buyer, seller, order, i18n) => {
   try {
-    let currency = getCurrency(order.fiat_code);
-    currency =
-      !!currency && !!currency.symbol_native
-        ? currency.symbol_native
-        : order.fiat_code;
     await bot.telegram.sendMessage(
       seller.tg_id,
       i18n.t('get_in_touch_with_buyer', {
-        currency,
+        currency: order.fiat_code,
+        orderId: order.id,
         buyerUsername: buyer.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount),
         paymentMethod: order.payment_method,
