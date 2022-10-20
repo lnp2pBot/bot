@@ -307,7 +307,7 @@ wizard_community_must_enter_names: Du musst mindestens einen Namen hinzufügen, 
 wizard_community_enter_solvers_channel: Gib die ID oder den Namen des Kanals an, den der Bot verwenden soll, um zu alarmieren, wenn ein Streitfall gemeldet wird.
 wizard_community_success: Herzlichen Glückwunsch, du hast deine Community gegründet!
 wizard_community_wrong_permissions: Du hast keine Administratorrechte für diese Gruppe oder diesen Kanal
-wizard_community_you_are_not_admin: ${username} ist kein Administrator in ${channel}.
+wizard_community_you_are_not_admin: Sie sind kein Administrator von ${channel}.
 wizard_to_exit: /exit den Zauberer verlassen.
 wizard_exit: Du hast den Assistentenmodus verlassen, du kannst jetzt Befehle schreiben
 wizard_add_fiat_amount: |
@@ -459,3 +459,7 @@ are_you_sure: Are you sure?
 no_permission: You do not have permissions to perform this operation
 make_public: Make public
 make_private: Make private
+bot_kicked: Bot was kicked from chat, must be member and admin
+chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
+not_member: You are not member of that chat
+upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again

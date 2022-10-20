@@ -218,18 +218,34 @@ const secondsToTime = secs => {
 
 const isGroupAdmin = async (groupId, user, telegram) => {
   try {
-    const member = await telegram.getChatMember(groupId, parseInt(user.tg_id));
+    console.log(groupId, parseInt(user.tg_id));
+    const member = await telegram.getChatMember(groupId, user.tg_id);
+    console.log(member);
     if (
       member &&
       (member.status === 'creator' || member.status === 'administrator')
     ) {
-      return true;
+      return {
+        success: true,
+        message: `@${user.username} is ${member.status}`,
+      };
+    } else if (member.status === 'left') {
+      return {
+        success: false,
+        message: `@${user.username} is not a member of this chat`,
+      };
     }
 
-    return false;
+    return {
+      success: false,
+      message: `@${user.username} is not an admin`,
+    };
   } catch (error) {
     logger.error(error);
-    return false;
+    return {
+      success: false,
+      message: error.toString(),
+    };
   }
 };
 

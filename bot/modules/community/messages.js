@@ -194,14 +194,27 @@ exports.showUserCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-exports.wizardCommunityWrongPermission = async (ctx, user, channel) => {
+exports.wizardCommunityWrongPermission = async (ctx, channel, response) => {
   try {
-    await ctx.reply(
-      ctx.i18n.t('wizard_community_you_are_not_admin', {
-        username: user.username,
-        channel,
-      })
-    );
+    if (response.indexOf('bot was kicked from the supergroup chat') !== -1) {
+      await ctx.reply(ctx.i18n.t('bot_kicked'));
+    } else if (response.indexOf('chat not found') !== -1) {
+      await ctx.reply(ctx.i18n.t('chat_not_found'));
+    } else if (response.indexOf('not a member of this chat') !== -1) {
+      await ctx.reply(ctx.i18n.t('not_member'));
+    } else if (
+      response.indexOf('group chat was upgraded to a supergroup') !== -1
+    ) {
+      await ctx.reply(ctx.i18n.t('upgraded_to_supergroup'));
+    } else if (response.indexOf('is not an admin') !== -1) {
+      await ctx.reply(
+        ctx.i18n.t('wizard_community_you_are_not_admin', {
+          channel,
+        })
+      );
+    } else {
+      await ctx.reply(ctx.i18n.t('generic_error'));
+    }
   } catch (error) {
     logger.error(error);
   }

@@ -310,7 +310,7 @@ wizard_community_must_enter_names: Debes ingresar uno o dos nombres separados po
 wizard_community_enter_solvers_channel: Indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal
 wizard_community_success: ¡Felicidades has creado tu comunidad!
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
-wizard_community_you_are_not_admin: ${username} no es administrador en ${channel}.
+wizard_community_you_are_not_admin: No eres administrador en ${channel}.
 wizard_to_exit: /exit para salir del asistente.
 wizard_exit: Has salido del modo asistente, ahora puedes escribir comandos.
 wizard_add_fiat_amount: |
@@ -460,3 +460,7 @@ are_you_sure: ¿Estás seguro?
 no_permission: No tienes permisos para realizar esta operación
 make_public: Hacer pública
 make_private: Hacer privada
+bot_kicked: El bot fue pateado del chat, debe ser miembro y administrador
+chat_not_found: Chat no encontrado, ¿Estas segur@ que agregaste al bot al chat?
+not_member: No eres miembro de ese chat
+upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambiado, consulta el Id del chat nuevamente

@@ -174,26 +174,23 @@ const createCommunitySteps = {
 
     ctx.wizard.state.handler = async ctx => {
       try {
-        const { text } = ctx.message;
-        if (!text) {
+        const group = ctx.message.text.trim();
+        if (!group) {
           await ctx.deleteMessage();
           return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
         }
         ctx.wizard.state.error = null;
         const { bot, user } = ctx.wizard.state;
-        const group = text.trim();
-        if (!(await isGroupAdmin(group, user, bot.telegram))) {
+
+        const isGroupOk = await isGroupAdmin(group, user, bot.telegram);
+
+        if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message.chat.id,
             ctx.message.message_id
           );
-          ctx.wizard.state.error = ctx.i18n.t(
-            'wizard_community_you_are_not_admin',
-            {
-              username: user.username,
-              channel: group,
-            }
-          );
+          await wizardCommunityWrongPermission(ctx, group, isGroupOk.message);
+
           return await ctx.wizard.state.updateUI();
         }
 
@@ -234,18 +231,14 @@ const createCommunitySteps = {
       }
       const orderChannels = [];
       if (chan.length === 1) {
-        if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
+        const isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
+        if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message.chat.id,
             ctx.message.message_id
           );
-          ctx.wizard.state.error = ctx.i18n.t(
-            'wizard_community_you_are_not_admin',
-            {
-              username: user.username,
-              channel: chan[0],
-            }
-          );
+          await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
+
           return await ctx.wizard.state.updateUI();
         }
         const channel = {
@@ -254,32 +247,24 @@ const createCommunitySteps = {
         };
         orderChannels.push(channel);
       } else {
-        if (!(await isGroupAdmin(chan[0], user, bot.telegram))) {
+        let isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
+        if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message.chat.id,
             ctx.message.message_id
           );
-          ctx.wizard.state.error = ctx.i18n.t(
-            'wizard_community_you_are_not_admin',
-            {
-              username: user.username,
-              channel: chan[0],
-            }
-          );
+          await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
+
           return await ctx.wizard.state.updateUI();
         }
-        if (!(await isGroupAdmin(chan[1], user, bot.telegram))) {
+        isGroupOk = await isGroupAdmin(chan[1], user, bot.telegram);
+        if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message.chat.id,
             ctx.message.message_id
           );
-          ctx.wizard.state.error = ctx.i18n.t(
-            'wizard_community_you_are_not_admin',
-            {
-              username: user.username,
-              channel: chan[1],
-            }
-          );
+          await wizardCommunityWrongPermission(ctx, chan[1], isGroupOk.message);
+
           return await ctx.wizard.state.updateUI();
         }
         const channel1 = {
@@ -392,30 +377,24 @@ const createCommunitySteps = {
   },
   async disputeChannel(ctx) {
     ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
-      if (!text) {
+      const channel = ctx.message.text.trim();
+      if (!channel) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
       }
       const { bot, user } = ctx.wizard.state;
-      if (text < 0 || text > 100) {
-        return await ctx.reply(ctx.i18n.t('wizard_community_wrong_percent'));
-      }
-      if (!(await isGroupAdmin(text, user, bot.telegram))) {
+
+      const isGroupOk = await isGroupAdmin(channel, user, bot.telegram);
+      if (!isGroupOk.success) {
         await ctx.telegram.deleteMessage(
           ctx.message.chat.id,
           ctx.message.message_id
         );
-        ctx.wizard.state.error = ctx.i18n.t(
-          'wizard_community_you_are_not_admin',
-          {
-            username: user.username,
-            channel: text,
-          }
-        );
+        await wizardCommunityWrongPermission(ctx, channel, isGroupOk.message);
+
         return await ctx.wizard.state.updateUI();
       }
-      ctx.wizard.state.disputeChannel = text;
+      ctx.wizard.state.disputeChannel = channel;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message.chat.id,
@@ -519,8 +498,14 @@ exports.updateGroupCommunityWizard = new Scenes.WizardScene(
 
       const group = ctx.message.text.trim();
       const { community, bot, user } = ctx.wizard.state;
-      if (!(await isGroupAdmin(group, user, bot.telegram))) {
-        return await wizardCommunityWrongPermission(ctx, user, group);
+      const isGroupOk = await isGroupAdmin(group, user, bot.telegram);
+
+      if (!isGroupOk.success) {
+        return await wizardCommunityWrongPermission(
+          ctx,
+          group,
+          isGroupOk.message
+        );
       }
 
       community.group = group;
@@ -608,8 +593,15 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
 
       const orderChannels = [];
       if (chan.length === 1) {
-        if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
-          return await wizardCommunityWrongPermission(ctx, user, chan[0]);
+        const isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
+
+        if (!isGroupOk.success) {
+          return await wizardCommunityWrongPermission(
+            ctx,
+            chan[0],
+            isGroupOk.message
+          );
+        }
 
         const channel = {
           name: chan[0],
@@ -617,11 +609,25 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         };
         orderChannels.push(channel);
       } else {
-        if (!(await isGroupAdmin(chan[0], user, bot.telegram)))
-          return await wizardCommunityWrongPermission(ctx, user, chan[0]);
+        let isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
 
-        if (!(await isGroupAdmin(chan[1], user, bot.telegram)))
-          return await wizardCommunityWrongPermission(ctx, user, chan[1]);
+        if (!isGroupOk.success) {
+          return await wizardCommunityWrongPermission(
+            ctx,
+            chan[0],
+            isGroupOk.message
+          );
+        }
+
+        isGroupOk = await isGroupAdmin(chan[1], user, bot.telegram);
+
+        if (!isGroupOk.success) {
+          return await wizardCommunityWrongPermission(
+            ctx,
+            chan[1],
+            isGroupOk.message
+          );
+        }
 
         const channel1 = {
           name: chan[0],
@@ -634,6 +640,13 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         orderChannels.push(channel1);
         orderChannels.push(channel2);
       }
+      orderChannels.forEach(chan => {
+        if (chan.name[0] == '-') {
+          community.public = false;
+          console.log('public = false');
+        }
+      });
+
       community.order_channels = orderChannels;
       await community.save();
       await ctx.reply(ctx.i18n.t('operation_successful'));
@@ -790,8 +803,15 @@ exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
       const channel = ctx.message.text.trim();
 
       const { community, bot, user } = ctx.wizard.state;
-      if (!(await isGroupAdmin(channel, user, bot.telegram)))
-        return await wizardCommunityWrongPermission(ctx, user, channel);
+      const isGroupOk = await isGroupAdmin(channel, user, bot.telegram);
+
+      if (!isGroupOk.success) {
+        return await wizardCommunityWrongPermission(
+          ctx,
+          channel,
+          isGroupOk.message
+        );
+      }
 
       community.dispute_channel = channel;
       await community.save();

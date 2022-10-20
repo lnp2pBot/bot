@@ -307,7 +307,7 @@ wizard_community_must_enter_names: Você deve adicionar pelo menos um nome, ou d
 wizard_community_enter_solvers_channel: Indique o ID ou o nome do canal que o bot deve usar para alertar quando uma disputa for chamada, use @ no início do nome do canal.
 wizard_community_success: Parabéns, você criou sua comunidade!
 wizard_community_wrong_permissions: Você não tem permissões de administrador para este grupo ou canal
-wizard_community_you_are_not_admin: ${username} não é um administrador em ${channel}.
+wizard_community_you_are_not_admin: Você não é administrador em ${channel}.
 wizard_to_exit: /exit Para sair do assistente.
 wizard_exit: Você tem o modo de assistência de saída, agora você pode escrever comandos
 wizard_add_fiat_amount: |
@@ -457,3 +457,7 @@ are_you_sure: Are you sure?
 no_permission: You do not have permissions to perform this operation
 make_public: Make public
 make_private: Make private
+bot_kicked: Bot was kicked from chat, must be member and admin
+chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
+not_member: You are not member of that chat
+upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
