@@ -643,7 +643,6 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
       orderChannels.forEach(chan => {
         if (chan.name[0] == '-') {
           community.public = false;
-          console.log('public = false');
         }
       });
 

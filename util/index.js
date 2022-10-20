@@ -218,9 +218,7 @@ const secondsToTime = secs => {
 
 const isGroupAdmin = async (groupId, user, telegram) => {
   try {
-    console.log(groupId, parseInt(user.tg_id));
     const member = await telegram.getChatMember(groupId, user.tg_id);
-    console.log(member);
     if (
       member &&
       (member.status === 'creator' || member.status === 'administrator')
