@@ -218,7 +218,7 @@ const createCommunitySteps = {
       }
       const { bot, user } = ctx.wizard.state;
       const chan = itemsFromMessage(text);
-      ctx.wizard.state.channels = text;
+      ctx.wizard.state.channels = chan;
       if (chan.length > 2) {
         await ctx.telegram.deleteMessage(
           ctx.message.chat.id,
