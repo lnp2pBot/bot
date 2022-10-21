@@ -64,6 +64,7 @@ const dispute = async ctx => {
     await messages.beginDispute(ctx, initiator, order, buyer, seller);
     // Show the dispute button to solvers
     await messages.takeDisputeButton(ctx, order);
+    logger.warning(`Order ${order.id}: User ${user.id} started a dispute!`);
   } catch (error) {
     logger.error(error);
   }
