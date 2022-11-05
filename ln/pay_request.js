@@ -27,8 +27,10 @@ const payRequest = async ({ request, amount }) => {
     };
     // If the invoice doesn't have amount we add it to the params
     if (!invoice.tokens) params.tokens = amount;
-    // We ignore the max routing fee for small amounts
-    if (amount > 10000) params.max_fee = maxFee;
+    // We set the max fee
+    params.max_fee = maxFee;
+    // If the amount is small we use a different max routing fee
+    if (amount <= 100) params.max_fee = amount * 0.1;
 
     // Delete all routing reputations to clear pathfinding memory
     await deleteForwardingReputations({ lnd });
