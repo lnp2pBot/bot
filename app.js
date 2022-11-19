@@ -2,6 +2,7 @@ require('dotenv').config();
 const { SocksProxyAgent } = require('socks-proxy-agent');
 const { start } = require('./bot');
 const mongoConnect = require('./db_connect');
+const calculateResponse = require('./jobs/calculate_users_response');
 const { resubscribeInvoices } = require('./ln');
 const logger = require('./logger');
 
@@ -12,6 +13,11 @@ const logger = require('./logger');
 
   process.on('uncaughtException', e => {
     logger.error(`Uncaught Exception: ${e.message}`);
+  });
+
+  calculateResponse('637431192228f634827629ab').then(orders => {
+    const average = orders.reduce((a, b) => a + b, 0) / orders.length;
+    logger.info(`Average Time: ${average}`);
   });
 
   const mongoose = mongoConnect();
