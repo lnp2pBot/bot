@@ -22,8 +22,7 @@ const calculateSellerResponse = async id => {
       const releaseFundsAt = timeStringToTimestamp(order.release_funds_at);
       const fiatSentAt = timeStringToTimestamp(order.fiat_sent_at);
       const timeToRelease = (releaseFundsAt - fiatSentAt) / 1000 / 60;
-      ordersByTimeToRelease.push(timeToRelease);
-      logger.info(`Time To Release: ${timeToRelease}`);    
+      ordersByTimeToRelease.push(timeToRelease);  
     }
 
     if (ordersByTimeToRelease.length >= 1) {
@@ -55,7 +54,6 @@ const calculateBuyerResponse = async id => {
       const takenAt = timeStringToTimestamp(order.taken_at);
       const timeToSent = (fiatSentAt - takenAt) / 1000 / 60;
       ordersByTimeToSent.push(timeToSent);
-      logger.info(`Time to Sent: ${timeToSent}`);
     }
 
     if (ordersByTimeToSent.length >= 1) {
