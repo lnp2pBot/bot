@@ -80,6 +80,8 @@ const OrderSchema = new mongoose.Schema({
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
   community_id: { type: String },
   is_public: { type: Boolean, default: true },
+  fiat_sent_at: { type: Date },
+  release_funds_at: { type: Date },
 });
 
 module.exports = mongoose.model('Order', OrderSchema);

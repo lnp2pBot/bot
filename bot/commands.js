@@ -703,6 +703,7 @@ const fiatSent = async (ctx, orderId, user) => {
     if (!order) return;
 
     order.status = 'FIAT_SENT';
+    order.fiat_sent_at = new Date();
     const seller = await User.findOne({ _id: order.seller_id });
     await order.save();
     // We sent messages to both parties
@@ -744,6 +745,8 @@ const release = async (ctx, orderId, user) => {
     }
 
     await settleHoldInvoice({ secret: order.secret });
+    order.release_funds_at = new Date();
+    await order.save();
   } catch (error) {
     logger.error(error);
   }

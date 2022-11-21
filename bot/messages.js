@@ -8,6 +8,10 @@ const {
   getOrderChannel,
 } = require('../util');
 const logger = require('../logger');
+const {
+  calculateSellerResponse,
+  calculateBuyerResponse,
+} = require('../jobs/calculate_users_response');
 
 const startMessage = async ctx => {
   try {
@@ -53,6 +57,7 @@ const invoicePaymentRequestMessage = async (
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
+    const buyerResponse = await calculateBuyerResponse(order.buyer_id);
     currency =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
@@ -64,6 +69,7 @@ const invoicePaymentRequestMessage = async (
       order,
       expirationTime,
       rate,
+      buyerResponse,
     });
     await ctx.telegram.sendMessage(user.tg_id, message);
     // Create QR code
@@ -375,11 +381,16 @@ const onGoingTakeBuyMessage = async (
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
+    const sellerResponse = await calculateSellerResponse(order.seller_id);
     expirationTime +=
       time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      i18nBuyer.t('someone_took_your_order', { expirationTime, rate })
+      i18nBuyer.t('someone_took_your_order', {
+        expirationTime,
+        rate,
+        sellerResponse,
+      })
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
@@ -552,7 +563,10 @@ const publishBuyOrderMessage = async (
   messageToUser
 ) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
+    const buyerResponse = await calculateBuyerResponse(order.buyer_id);
+    let publishMessage = `⚡️🍊⚡️\n${order.description}${
+      !buyerResponse ? '' : i18n.t('buyer_time_response', { buyerResponse })
+    }\n`;
     publishMessage += `:${order._id}:`;
 
     const channel = await getOrderChannel(order);
@@ -586,7 +600,10 @@ const publishSellOrderMessage = async (
   messageToUser
 ) => {
   try {
-    let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
+    const sellerResponse = await calculateSellerResponse(order.seller_id);
+    let publishMessage = `⚡️🍊⚡️\n${order.description}${
+      sellerResponse ? i18n.t('seller_time_response', { sellerResponse }) : ''
+    }\n`;
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
     // We send the message to the channel

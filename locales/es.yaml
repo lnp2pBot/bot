@@ -35,6 +35,8 @@ invoice_payment_request: |
 
   Reputación del comprador: ${rate}
 
+  ⏱ Comprador suele enviar fiat en ${buyerResponse} minutos luego de tomada la oferta.
+
   Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos
 pending_sell: |
   📝 Publicada la oferta en el canal ${channel}
@@ -112,6 +114,8 @@ someone_took_your_order: |
   Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats.
 
   Reputación del vendedor: ${rate}
+
+  ⏱ Vendedor suele liberar los sats en ${sellerResponse} minutos luego de enviar fiat.
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |
@@ -470,3 +474,5 @@ bot_kicked: El bot fue pateado del chat, debe ser miembro y administrador
 chat_not_found: Chat no encontrado, ¿Estas segur@ que agregaste al bot al chat?
 not_member: No eres miembro de ese chat
 upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambiado, consulta el Id del chat nuevamente
+buyer_time_response: Comprador suele pagar en ${buyerResponse} min
+seller_time_response: Vendedor suele liberar en ${sellerResponse} min 
