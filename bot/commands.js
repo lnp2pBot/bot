@@ -24,6 +24,9 @@ const {
   getFee,
   getEmojiRate,
   decimalRound,
+  minutesCeil,
+  calculateBuyerResponse,
+  calculateSellerResponse,
 } = require('../util');
 const ordersActions = require('./ordersActions');
 
@@ -147,6 +150,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       const stars = getEmojiRate(buyer.total_rating);
       const roundedRating = decimalRound(buyer.total_rating, -1);
       const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
+      const buyerResponse = minutesCeil(buyer.avg_fiat_release_time);
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
         ctx,
@@ -154,7 +158,8 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
         request,
         order,
         i18nCtx,
-        rate
+        rate,
+        buyerResponse
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
@@ -704,6 +709,7 @@ const fiatSent = async (ctx, orderId, user) => {
 
     order.status = 'FIAT_SENT';
     order.fiat_sent_at = new Date();
+    calculateBuyerResponse(order.buyer_id);
     const seller = await User.findOne({ _id: order.seller_id });
     await order.save();
     // We sent messages to both parties
@@ -746,6 +752,7 @@ const release = async (ctx, orderId, user) => {
 
     await settleHoldInvoice({ secret: order.secret });
     order.release_funds_at = new Date();
+    calculateSellerResponse(order.seller_id);
     await order.save();
   } catch (error) {
     logger.error(error);

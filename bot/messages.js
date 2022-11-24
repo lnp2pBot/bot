@@ -6,12 +6,9 @@ const {
   getDetailedOrder,
   secondsToTime,
   getOrderChannel,
+  minutesCeil,
 } = require('../util');
 const logger = require('../logger');
-const {
-  calculateSellerResponse,
-  calculateBuyerResponse,
-} = require('../jobs/calculate_users_response');
 
 const startMessage = async ctx => {
   try {
@@ -53,11 +50,11 @@ const invoicePaymentRequestMessage = async (
   request,
   order,
   i18n,
-  rate
+  rate,
+  buyerResponse
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
-    const buyerResponse = await calculateBuyerResponse(order.buyer_id);
     currency =
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
@@ -371,7 +368,8 @@ const onGoingTakeBuyMessage = async (
   order,
   i18nBuyer,
   i18nSeller,
-  rate
+  rate,
+  sellerResponse
 ) => {
   try {
     await bot.telegram.sendMessage(
@@ -381,7 +379,6 @@ const onGoingTakeBuyMessage = async (
     const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
-    const sellerResponse = await calculateSellerResponse(order.seller_id);
     expirationTime +=
       time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
     await bot.telegram.sendMessage(
@@ -563,9 +560,11 @@ const publishBuyOrderMessage = async (
   messageToUser
 ) => {
   try {
-    const buyerResponse = await calculateBuyerResponse(order.buyer_id);
+    const buyerResponse = minutesCeil(user.avg_fiat_release_time);
     let publishMessage = `⚡️🍊⚡️\n${order.description}${
-      !buyerResponse ? '' : i18n.t('buyer_time_response', { buyerResponse })
+      buyerResponse === 0
+        ? ''
+        : i18n.t('buyer_time_response', { buyerResponse })
     }\n`;
     publishMessage += `:${order._id}:`;
 
@@ -600,9 +599,11 @@ const publishSellOrderMessage = async (
   messageToUser
 ) => {
   try {
-    const sellerResponse = await calculateSellerResponse(order.seller_id);
+    const sellerResponse = minutesCeil(user.avg_funds_release_time);
     let publishMessage = `⚡️🍊⚡️\n${order.description}${
-      sellerResponse ? i18n.t('seller_time_response', { sellerResponse }) : ''
+      sellerResponse === 0
+        ? ''
+        : i18n.t('seller_time_response', { sellerResponse })
     }\n`;
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
