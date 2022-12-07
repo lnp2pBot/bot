@@ -35,6 +35,8 @@ invoice_payment_request: |
 
   Reputazione del compratore: ${rate}
 
+  ⏱ Buyer usually sends fiat ${buyerResponse} minutes after accepting an offer.
+
   Si prega di procedere al pagamento di questa invoice per avviare il processo di vendita, la invoice scadrà tra ${expirationTime} minuti
 pending_sell: |
   📝 La tua offerta è stata pubblicata nel canale ${channel},
@@ -112,6 +114,8 @@ someone_took_your_order: |
   Se per qualche motivo il metodo di pagamento mette in pausa il trasferimento e i fondi non arrivano in meno di ${expirationTime}, i satoshi torneranno al venditore, mettendo a rischio l'acquirente e non potrò costringere il venditore a inviare di nuovo i fondi.
 
   Reputazione del venditore: ${rate}
+
+  ⏱ Seller usually releases sats within ${sellerResponse} minutes after sending fiat.
 
   Se accetti le condizioni, premi per continuare 👇
 you_took_someone_order: |
@@ -466,3 +470,5 @@ bot_kicked: Bot was kicked from chat, must be member and admin
 chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
 not_member: You are not member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
+buyer_time_response: Buyer responds in ${buyerResponse} min
+seller_time_response: Seller responds in ${sellerResponse} min
