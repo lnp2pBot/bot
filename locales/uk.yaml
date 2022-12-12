@@ -35,8 +35,6 @@ invoice_payment_request: |
 
   Buyer Reputation: ${rate}
 
-  ⏱ Buyer usually sends fiat ${buyerResponse} minutes after accepting an offer.
-
   Будь ласка, сплатіть цей рахунок, щоб почати продаж. Термін дії цього рахунку закінчується через ${expirationTime} хвилин
 pending_sell: |
   📝Вашу заявку розміщено на каналі ${channel}
@@ -114,8 +112,6 @@ someone_took_your_order: |
   Якщо з будь-якої причини Ваша платіжна система затримає переказ і кошти не надійдуть протягом ${expirationTime}, сатоші будуть автоматично повернені продавцю. У цьому випадку покупець несе ризик, що ми не зможемо переконати продавця вислати сатоші знову.
 
   Seller Reputation: ${rate}
-
-  ⏱ Seller usually releases sats within ${sellerResponse} minutes after sending fiat.
 
   Якщо Ви погоджуєтеся з такою умовою, натисніть кнопку Продовжити 👇
 you_took_someone_order: |
@@ -470,5 +466,3 @@ bot_kicked: Bot was kicked from chat, must be member and admin
 chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
 not_member: You are not member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
-buyer_time_response: Buyer responds in ${buyerResponse} min
-seller_time_response: Seller responds in ${sellerResponse} min

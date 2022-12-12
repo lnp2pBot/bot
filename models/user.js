@@ -23,8 +23,6 @@ const UserSchema = new mongoose.Schema({
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },
   default_community_id: { type: String },
-  avg_funds_release_time: { type: Number, min: 0, default: 0 },
-  avg_fiat_release_time: { type: Number, min: 0, default: 0 },
 });
 
 module.exports = mongoose.model('User', UserSchema);
