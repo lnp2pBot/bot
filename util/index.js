@@ -2,7 +2,7 @@ const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
 const languages = require('./languages.json');
-const { Order, Community, User } = require('../models');
+const { Order, Community } = require('../models');
 const logger = require('../logger');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
@@ -393,91 +393,6 @@ const getLanguageFlag = code => {
   return languages[code];
 };
 
-// Calculate users response time
-
-const timeStringToTimestamp = timeString => {
-  const date = new Date(timeString);
-  const timestamp = date.getTime();
-
-  return timestamp;
-};
-
-const minutesCeil = ( minutes) => {
-  return Math.ceil(minutes);
-}
-
-const limitOrders = 10;
-
-const calculateSellerResponse = async id => {
-  const ordersByTimeToRelease = [];
-  try {
-    const orders = await Order.find({
-      status: 'SUCCESS',
-      seller_id: id,
-      release_funds_at: { $ne: null },
-      fiat_sent_at: { $ne: null },
-    }).limit(limitOrders);
-
-    for (const order of orders) {
-      const releaseFundsAt = timeStringToTimestamp(order.release_funds_at);
-      const fiatSentAt = timeStringToTimestamp(order.fiat_sent_at);
-      const timeToRelease = (releaseFundsAt - fiatSentAt) / 1000 / 60;
-      ordersByTimeToRelease.push(timeToRelease);
-    }
-
-    if (ordersByTimeToRelease.length >= 1) {
-      const average =
-        ordersByTimeToRelease.reduce((a, b) => a + b, 0) / orders.length;
-
-      const user = await User.findById({ _id: id });
-      user.avg_funds_release_time = !average ? 0 : average;
-      await user.save();
-
-      return minutesCeil(average);
-    } else {
-      return false;
-    }
-  } catch (error) {
-    const message = error.toString();
-    logger.error(`calculateSellerResponse catch error: ${message}`);
-  }
-};
-
-const calculateBuyerResponse = async id => {
-  const ordersByTimeToSent = [];
-  try {
-    const orders = await Order.find({
-      status: 'SUCCESS',
-      buyer_id: id,
-      fiat_sent_at: { $ne: null },
-      release_funds_at: { $ne: null },
-    }).limit(limitOrders);
-
-    for (const order of orders) {
-      const fiatSentAt = timeStringToTimestamp(order.fiat_sent_at);
-      const takenAt = timeStringToTimestamp(order.taken_at);
-      const timeToSent = (fiatSentAt - takenAt) / 1000 / 60;
-      ordersByTimeToSent.push(timeToSent);
-    }
-
-    if (ordersByTimeToSent.length >= 1) {
-      const average =
-        ordersByTimeToSent.reduce((a, b) => a + b, 0) / orders.length;
-
-      const user = await User.findById({ _id: id });
-      user.avg_fiat_release_time = !average ? 0 : average;
-      await user.save();
-
-      return minutesCeil(average);
-    } else {
-      return false;
-    }
-  } catch (error) {
-    const message = error.toString();
-    logger.error(`calculateBuyerrResponse catch error: ${message}`);
-  }
-};
-
 module.exports = {
   isIso4217,
   plural,
@@ -504,7 +419,4 @@ module.exports = {
   isInt,
   isFloat,
   getLanguageFlag,
-  calculateBuyerResponse,
-  calculateSellerResponse,
-  minutesCeil,
 };
