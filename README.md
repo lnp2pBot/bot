@@ -53,7 +53,7 @@ A seller that didn't release funds to the buyer can't open or take another order
 # Financial Support
 **LNp2pBot** is an open source project. We are not a company, we don't do ICOs or dark business, we are just people that wants bring solutions to the people using the best open source money in the world. Our work depends on the financial collaboration of the users.
 
-To financially support further development of **LNp2pBot**, please consider support our project sending bitcoin to our own node at [ln.grunch.dev](https://ln.grunch.dev).
+To financially support further development of **LNp2pBot**, please consider support our project sending bitcoin to lightning address **lnp2pbot@getalby.com**.
 
 # Installation
 You will need to create an `.env` file on the root dir, you can use a sample env file called `.env.sample` on the root dir, an easy way of doing this is just to copy the sample file to `.env`.
