@@ -477,71 +477,71 @@ const initialize = (botToken, options) => {
   });
 
   // Only buyers can use this command
-  bot.command('setinvoice', userMiddleware, async ctx => {
-    try {
-      const [orderId, lnInvoice] = await validateParams(
-        ctx,
-        3,
-        '\\<_order id_\\> \\<_lightning invoice_\\>'
-      );
+  // bot.command('setinvoice', userMiddleware, async ctx => {
+  //   try {
+  //     const [orderId, lnInvoice] = await validateParams(
+  //       ctx,
+  //       3,
+  //       '\\<_order id_\\> \\<_lightning invoice_\\>'
+  //     );
 
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const invoice = await validateInvoice(ctx, lnInvoice);
-      if (!invoice) return;
-      const order = await Order.findOne({
-        _id: orderId,
-        buyer_id: ctx.user.id,
-      });
-      if (!order) return await messages.notActiveOrderMessage(ctx);
+  //     if (!orderId) return;
+  //     if (!(await validateObjectId(ctx, orderId))) return;
+  //     const invoice = await validateInvoice(ctx, lnInvoice);
+  //     if (!invoice) return;
+  //     const order = await Order.findOne({
+  //       _id: orderId,
+  //       buyer_id: ctx.user.id,
+  //     });
+  //     if (!order) return await messages.notActiveOrderMessage(ctx);
 
-      if (order.status === 'SUCCESS')
-        return await messages.successCompleteOrderMessage(ctx, order);
+  //     if (order.status === 'SUCCESS')
+  //       return await messages.successCompleteOrderMessage(ctx, order);
 
-      if (invoice.tokens && invoice.tokens !== order.amount)
-        return await messages.incorrectAmountInvoiceMessage(ctx);
+  //     if (invoice.tokens && invoice.tokens !== order.amount)
+  //       return await messages.incorrectAmountInvoiceMessage(ctx);
 
-      order.buyer_invoice = lnInvoice;
-      // When a seller release funds but the buyer didn't get the invoice paid
-      if (order.status === 'PAID_HOLD_INVOICE') {
-        const isScheduled = await PendingPayment.findOne({
-          order_id: order._id,
-          attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
-          is_invoice_expired: false,
-        });
-        // We check if the payment is on flight
-        const isPending = await isPendingPayment(order.buyer_invoice);
+  //     order.buyer_invoice = lnInvoice;
+  //     // When a seller release funds but the buyer didn't get the invoice paid
+  //     if (order.status === 'PAID_HOLD_INVOICE') {
+  //       const isScheduled = await PendingPayment.findOne({
+  //         order_id: order._id,
+  //         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+  //         is_invoice_expired: false,
+  //       });
+  //       // We check if the payment is on flight
+  //       const isPending = await isPendingPayment(order.buyer_invoice);
 
-        if (!!isScheduled || !!isPending)
-          return await messages.invoiceAlreadyUpdatedMessage(ctx);
+  //       if (!!isScheduled || !!isPending)
+  //         return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
-        if (!order.paid_hold_buyer_invoice_updated) {
-          order.paid_hold_buyer_invoice_updated = true;
-          const pp = new PendingPayment({
-            amount: order.amount,
-            payment_request: lnInvoice,
-            user_id: ctx.user.id,
-            description: order.description,
-            hash: order.hash,
-            order_id: order._id,
-          });
-          await pp.save();
-          await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
-        } else {
-          await messages.invoiceAlreadyUpdatedMessage(ctx);
-        }
-      } else if (order.status === 'WAITING_BUYER_INVOICE') {
-        const seller = await User.findOne({ _id: order.seller_id });
-        await waitPayment(ctx, bot, ctx.user, seller, order, lnInvoice);
-      } else {
-        await messages.invoiceUpdatedMessage(ctx);
-      }
+  //       if (!order.paid_hold_buyer_invoice_updated) {
+  //         order.paid_hold_buyer_invoice_updated = true;
+  //         const pp = new PendingPayment({
+  //           amount: order.amount,
+  //           payment_request: lnInvoice,
+  //           user_id: ctx.user.id,
+  //           description: order.description,
+  //           hash: order.hash,
+  //           order_id: order._id,
+  //         });
+  //         await pp.save();
+  //         await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
+  //       } else {
+  //         await messages.invoiceAlreadyUpdatedMessage(ctx);
+  //       }
+  //     } else if (order.status === 'WAITING_BUYER_INVOICE') {
+  //       const seller = await User.findOne({ _id: order.seller_id });
+  //       await waitPayment(ctx, bot, ctx.user, seller, order, lnInvoice);
+  //     } else {
+  //       await messages.invoiceUpdatedMessage(ctx);
+  //     }
 
-      await order.save();
-    } catch (error) {
-      logger.error(error);
-    }
-  });
+  //     await order.save();
+  //   } catch (error) {
+  //     logger.error(error);
+  //   }
+  // });
 
   OrdersModule.configure(bot);
 
