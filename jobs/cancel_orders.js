@@ -38,7 +38,6 @@ const cancelOrders = async bot => {
       invoice_held_at: { $lte: orderTime },
       $or: [
         {
-          // status: 'ACTIVE',
           status: 'FIAT_SENT',
         },
       ],
