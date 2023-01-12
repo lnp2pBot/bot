@@ -505,7 +505,7 @@ const initialize = (botToken, options) => {
         logger.info(
           `Buyer Id: ${order.buyer_id} is trying to add a new invoice when have a pending payment on Order id: ${order._id}`
         );
-        return;
+        return await messages.invoiceAlreadyUpdatedMessage(ctx);
       }
       if (order.status === 'SUCCESS')
         return await messages.successCompleteOrderMessage(ctx, order);
@@ -521,10 +521,8 @@ const initialize = (botToken, options) => {
           attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
           is_invoice_expired: false,
         });
-        // We check if the payment is on flight
-        const isPending = await isPendingPayment(order.buyer_invoice);
 
-        if (!!isScheduled || !!isPending)
+        if (isScheduled)
           return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
         if (!order.paid_hold_buyer_invoice_updated) {
