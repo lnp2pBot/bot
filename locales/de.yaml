@@ -311,9 +311,13 @@ wizard_community_one_or_two_channels: Du musst entweder einen oder zwei Kanäle 
 wizard_community_enter_solvers: Schreibe jetzt bitte die Namen der Nutzer/innen auf, die Streitigkeiten schlichten sollen, jeweils getrennt durch ein Leerzeichen.
 wizard_community_must_enter_names: Du musst mindestens einen Namen hinzufügen, oder zwei durch ein Leerzeichen getrennte Namen
 wizard_community_enter_solvers_channel: Gib die ID oder den Namen des Kanals an, den der Bot verwenden soll, um zu alarmieren, wenn ein Streitfall gemeldet wird.
-wizard_community_success: Herzlichen Glückwunsch, du hast deine Community gegründet!
+wizard_community_success: |
+  Herzlichen Glückwunsch, du hast deine Community gegründet!
+
+  Damit Ihre Community aktiv bleibt, muss sie in den letzten ${days} Tagen erfolgreich Bestellungen abgeschlossen haben.
 wizard_community_wrong_permissions: Du hast keine Administratorrechte für diese Gruppe oder diesen Kanal
 wizard_community_you_are_not_admin: Sie sind kein Administrator von ${channel}.
+Wizard_community_duplicated_name: Der eingegebene Name wird bereits von einer anderen Community verwendet, versuchen Sie es erneut mit einem anderen Namen.
 wizard_to_exit: /exit den Zauberer verlassen.
 wizard_exit: Du hast den Assistentenmodus verlassen, du kannst jetzt Befehle schreiben
 wizard_add_fiat_amount: |

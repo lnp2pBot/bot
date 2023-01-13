@@ -310,9 +310,13 @@ wizard_community_one_or_two_channels: È necessario indicare uno o due canali
 wizard_community_enter_solvers: Ora scrivi i nomi degli utenti che si occuperanno di risolvere le controversie, ciascuno separato da uno spazio.
 wizard_community_must_enter_names: È necessario aggiungere almeno un nome o due separati da uno spazio.
 wizard_community_enter_solvers_channel: Indica l'id o il nome del canale che il bot deve utilizzare per avvisare quando viene apertauna disputa; si prega di fare attenzione ad utilizzare @ all'inizio del nome del canale.
-wizard_community_success: Congratulazioni, hai creato la tua community!
+wizard_community_success: |
+  Congratulazioni, hai creato la tua community!
+
+  Affinché la tua comunità rimanga attiva, deve aver completato con successo gli ordini negli ultimi ${days} giorni.
 wizard_community_wrong_permissions: Non si dispone di permessi di amministratore per questo gruppo o canale.
 wizard_community_you_are_not_admin: Non sei amministratore su ${channel}.
+wizard_community_duplicated_name: il nome che hai inserito è già utilizzato da un'altra comunità, riprova con un altro nome.
 wizard_to_exit: /exit per uscire dall'installazione guidata.
 wizard_exit: Sei uscito dalla modalità guidata, ora puoi continuare scrivendo i comandi
 wizard_add_fiat_amount: |

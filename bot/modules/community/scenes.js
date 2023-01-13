@@ -76,12 +76,19 @@ exports.communityWizard = new Scenes.WizardScene(
         creator_id: user._id,
       });
       await community.save();
-      await ctx.reply(ctx.i18n.t('wizard_community_success'));
+      await ctx.reply(
+        ctx.i18n.t('wizard_community_success', {
+          days: process.env.COMMUNITY_TTL,
+        })
+      );
 
       return ctx.scene.leave();
     } catch (error) {
+      const errString = error.toString();
       logger.error(error);
       ctx.scene.leave();
+      if (errString.includes('duplicate key'))
+        await ctx.reply(ctx.i18n.t('wizard_community_duplicated_name'));
     }
   },
   async ctx => {

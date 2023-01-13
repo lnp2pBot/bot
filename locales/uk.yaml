@@ -311,9 +311,13 @@ wizard_community_one_or_two_channels: Ви повинні ввести один 
 wizard_community_enter_solvers: Тепер запишіть імена користувачів, які будуть вирішувати спір, відокремлюючи їх пробілом.
 wizard_community_must_enter_names: Ви повинні ввести одне або два імені, розділені пробілом.
 wizard_community_enter_solvers_channel: Щоб закінчити, повідомте мені ідентифікатор або назву каналу, який буде використовувати бот для повідомлення про виникнення спору, будь ласка, введіть @ на початку назви каналу.
-wizard_community_success: Вітаємо, Ви створили свою спільноту!
+wizard_community_success: |
+  Вітаємо, Ви створили свою спільноту!
+
+  Щоб ваша спільнота залишалася активною, вона має успішно виконати замовлення за останні ${days} днів.
 wizard_community_wrong_permissions: У Вас немає прав адміністратора для цієї групи або каналу.
-wizard_community_you_are_not_admin: You are not admin on ${channel}.
+wizard_community_you_are_not_admin: Ви не адміністратор на ${channel}.
+wizard_community_duplicated_name: ім’я, яке ви ввели, вже використовується іншою спільнотою, спробуйте ще раз із іншим ім’ям.
 wizard_to_exit: /exit вийти з майстра.
 wizard_exit: Ви вийшли із режиму майстра, тепер Ви можете писати команди.
 wizard_add_fiat_amount: |
