@@ -30,7 +30,7 @@ const cancelOrders = async bot => {
     // In this case we use another time field, `invoice_held_at` is the time when the
     // seller sent the money to the hold invoice, this is an important moment cause
     // we don't want to have a CLTV timeout
-    const orderTime = new Date();
+    let orderTime = new Date();
     orderTime.setSeconds(
       orderTime.getSeconds() - parseInt(process.env.ORDER_EXPIRATION_WINDOW)
     );
@@ -66,6 +66,31 @@ const cancelOrders = async bot => {
       );
       order.admin_warned = true;
       await order.save();
+    }
+    // ==============================
+    // Now we cancel orders expired
+    // ==============================
+    orderTime = new Date();
+    let orderExpirationTime = parseInt(
+      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW
+    );
+    orderExpirationTime = orderExpirationTime + orderExpirationTime * 0.2;
+    orderTime.setSeconds(orderTime.getSeconds() - orderExpirationTime);
+    const expiredOrders = await Order.find({
+      invoice_held_at: { $lte: orderTime },
+      $or: [
+        {
+          status: 'ACTIVE',
+        },
+        {
+          status: 'FIAT_SENT',
+        },
+      ],
+    });
+    for (const order of expiredOrders) {
+      order.status = 'EXPIRED';
+      await order.save();
+      logger.info(`Order Id ${order.id} expired!`);
     }
   } catch (error) {
     logger.error(error);
