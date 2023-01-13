@@ -146,7 +146,7 @@ const initialize = (botToken, options) => {
     await attemptCommunitiesPendingPayments(bot);
   });
 
-  schedule.scheduleJob(`* * * * *`, async () => {
+  schedule.scheduleJob(`33 0 * * *`, async () => {
     await deleteCommunity(bot);
   });
 
