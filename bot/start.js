@@ -55,6 +55,7 @@ const {
   deleteOrders,
   calculateEarnings,
   attemptCommunitiesPendingPayments,
+  deleteCommunity,
 } = require('../jobs');
 const logger = require('../logger');
 
@@ -129,7 +130,7 @@ const initialize = (botToken, options) => {
     }
   );
 
-  schedule.scheduleJob(`*/3 * * * *`, async () => {
+  schedule.scheduleJob(`*/2 * * * *`, async () => {
     await cancelOrders(bot);
   });
 
@@ -143,6 +144,10 @@ const initialize = (botToken, options) => {
 
   schedule.scheduleJob(`*/5 * * * *`, async () => {
     await attemptCommunitiesPendingPayments(bot);
+  });
+
+  schedule.scheduleJob(`33 0 * * *`, async () => {
+    await deleteCommunity(bot);
   });
 
   bot.start(async ctx => {

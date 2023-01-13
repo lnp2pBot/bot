@@ -310,9 +310,13 @@ wizard_community_enter_solvers: |
   Каждое имя пользователя, разделенное пробелом.
 wizard_community_must_enter_names: Вы должны ввести одно или два имени, разделенных пробелом.
 wizard_community_enter_solvers_channel: Чтобы закончить, сообщите мне идентификатор или название канала, который бот будет использовать для уведомления о возникновении разбирательства, пожалуйста, включите @ в начале названия канала.
-wizard_community_success: Поздравляем, вы создали свое сообщество!
+wizard_community_success: |
+  Поздравляем, вы создали свое сообщество!
+
+  Чтобы ваше сообщество оставалось активным, оно должно успешно выполнять заказы за последние ${days} дней.
 wizard_community_wrong_permissions: У вас нет прав администратора для этой группы или канала.
 wizard_community_you_are_not_admin: You are not admin on ${channel}.
+wizard_community_duplicated_name: Введенное вами имя уже используется другим сообществом, попробуйте еще раз с другим именем.
 wizard_to_exit: /exit to exit the wizard.
 wizard_exit: Вы вышли из режима мастера, теперь вы можете писать команды.
 wizard_add_fiat_amount: |

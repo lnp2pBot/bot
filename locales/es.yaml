@@ -314,9 +314,13 @@ wizard_community_one_or_two_channels: Debes ingresar uno o dos canales
 wizard_community_enter_solvers: Ahora ingresa los username de los usuarios que se encargan de resolver disputas, cada username separado por un espacio en blanco.
 wizard_community_must_enter_names: Debes ingresar uno o dos nombres separados por un espacio
 wizard_community_enter_solvers_channel: Indícame el id o nombre del canal que utilizará el bot para avisar cuando haya una disputa, por favor incluye un @ al inicio del nombre del canal
-wizard_community_success: ¡Felicidades has creado tu comunidad!
+wizard_community_success: |
+  ¡Felicidades has creado tu comunidad!
+
+  Para que tu comunidad permanezca activa debe tener ordenes completadas exitosamente en los últimos ${days} días.
 wizard_community_wrong_permissions: No tienes permisos de administrador en este grupo o canal
 wizard_community_you_are_not_admin: No eres administrador en ${channel}.
+wizard_community_duplicated_name: El nombre que ingresaste ya está siendo utilizado por otra comunidad, intenta de nuevo con otro nombre.
 wizard_to_exit: /exit para salir del asistente.
 wizard_exit: Has salido del modo asistente, ahora puedes escribir comandos.
 wizard_add_fiat_amount: |

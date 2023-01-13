@@ -5,6 +5,7 @@ const {
 const cancelOrders = require('./cancel_orders');
 const deleteOrders = require('./delete_published_orders');
 const calculateEarnings = require('./calculate_community_earnings');
+const deleteCommunity = require('./communities');
 
 module.exports = {
   attemptPendingPayments,
@@ -12,4 +13,5 @@ module.exports = {
   deleteOrders,
   calculateEarnings,
   attemptCommunitiesPendingPayments,
+  deleteCommunity,
 };
