@@ -470,3 +470,4 @@ bot_kicked: Bot was kicked from chat, must be member and admin
 chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
 not_member: You are not member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
+community_deleted: questa community è stata eliminata per inattività, ti ho scollegato da essa, prova a creare di nuovo l'ordine

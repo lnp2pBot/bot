@@ -40,6 +40,7 @@ const {
   cancelHoldInvoice,
   payToBuyer,
   isPendingPayment,
+  subscribeInvoice,
 } = require('../ln');
 const {
   validateUser,
@@ -385,6 +386,22 @@ const initialize = (botToken, options) => {
       await messages.checkOrderMessage(ctx, order, buyer, seller);
     } catch (error) {
       logger.error(error);
+    }
+  });
+
+  bot.command('resubscribe', adminMiddleware, async ctx => {
+    try {
+      const [hash] = await validateParams(ctx, 2, '\\<_hash_\\>');
+
+      if (!hash) return;
+
+      const order = await Order.findOne({ hash });
+
+      if (!order) return;
+      await subscribeInvoice(bot, hash, true);
+      ctx.reply(`hash resubscribed`);
+    } catch (error) {
+      logger.error(`/resubscribe command error: ${error.toString()}`);
     }
   });
 

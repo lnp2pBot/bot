@@ -4,6 +4,7 @@ const { start } = require('./bot');
 const mongoConnect = require('./db_connect');
 const { resubscribeInvoices } = require('./ln');
 const logger = require('./logger');
+const { delay } = require('./util');
 
 (async () => {
   process.on('unhandledRejection', e => {
@@ -27,8 +28,9 @@ const logger = require('./logger');
           },
         };
       }
-
       const bot = start(process.env.BOT_TOKEN, options);
+      // Wait 10 seconds before try to resubscribe hold invoices
+      await delay(10000);
       await resubscribeInvoices(bot);
     })
     .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));

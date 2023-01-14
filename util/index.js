@@ -393,6 +393,10 @@ const getLanguageFlag = code => {
   return languages[code];
 };
 
+const delay = time => {
+  return new Promise(resolve => setTimeout(resolve, time));
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -419,4 +423,5 @@ module.exports = {
   isInt,
   isFloat,
   getLanguageFlag,
+  delay,
 };
