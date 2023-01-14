@@ -10,6 +10,7 @@ const {
 } = require('../../validations');
 const messages = require('../../messages');
 const ordersActions = require('../../ordersActions');
+const { deletedCommunityMessage } = require('./messages');
 
 const Scenes = require('./scenes');
 
@@ -52,6 +53,11 @@ const sell = async ctx => {
     } else if (user.default_community_id) {
       communityId = user.default_community_id;
       community = await Community.findOne({ _id: communityId });
+      if (!community) {
+        user.default_community_id = null;
+        await user.save();
+        return deletedCommunityMessage(ctx);
+      }
     }
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, communityId))
@@ -115,6 +121,11 @@ const buy = async ctx => {
     } else if (user.default_community_id) {
       communityId = user.default_community_id;
       community = await Community.findOne({ _id: communityId });
+      if (!community) {
+        user.default_community_id = null;
+        await user.save();
+        return deletedCommunityMessage(ctx);
+      }
     }
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, communityId))

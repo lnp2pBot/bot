@@ -1,4 +1,5 @@
 const { getOrderChannel, sanitizeMD } = require('../../../util');
+const logger = require('../../../logger');
 
 exports.listOrdersResponse = async orders => {
   const tasks = orders.map(async order => {
@@ -61,4 +62,12 @@ exports.createOrderWizardStatus = (i18n, state) => {
     .join('\n');
 
   return { text };
+};
+
+exports.deletedCommunityMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('community_deleted'));
+  } catch (error) {
+    logger.error(error);
+  }
 };
