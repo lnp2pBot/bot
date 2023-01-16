@@ -157,7 +157,11 @@ order_detail: |
 
   Покупець: @${buyerUsername || ''}
 
+  репутація покупця: ${buyerReputation}
+
   Продавець: @${sellerUsername || ''}
+
+  репутація продавця: ${sellerReputation}
 
   Сума \\(сатоші\\): ${order.amount}
 
