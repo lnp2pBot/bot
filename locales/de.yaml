@@ -157,7 +157,11 @@ order_detail: |
 
   Käufer: @${buyerUsername || ''}
 
+  Käufer Ruf: ${buyerReputation}
+
   Verkäufer: @${sellerUsername || ''}
+
+  Ruf des Verkäufers: ${sellerReputation}
 
   Bestellwert \\(sats\\): ${order.amount}
 

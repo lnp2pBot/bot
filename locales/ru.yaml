@@ -156,7 +156,11 @@ order_detail: |
 
   Покупатель: @${buyerUsername || ''}
 
+  репутация покупателя: ${buyerReputation}
+
   Продавец: @${sellerUsername || ''}
+
+  репутация продавца: ${sellerReputation}
 
   Сумма \\(сатоши\\): ${order.amount}
 
