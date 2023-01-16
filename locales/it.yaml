@@ -471,3 +471,4 @@ chat_not_found: Chat not found, are you sure you added the bot to the group/chan
 not_member: You are not member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
 community_deleted: questa community è stata eliminata per inattività, ti ho scollegato da essa, prova a creare di nuovo l'ordine
+dispute_too_soon: Non puoi avviare una controversia così presto, sii paziente e attendi qualche minuto affinché la tua controparte risponda
