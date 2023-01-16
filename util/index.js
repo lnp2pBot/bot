@@ -321,7 +321,13 @@ const getUserI18nContext = async user => {
 const getDetailedOrder = (i18n, order, buyer, seller) => {
   try {
     const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
+    const buyerReputation = buyer
+      ? sanitizeMD(buyer.total_rating.toFixed(2))
+      : '';
     const sellerUsername = seller ? sanitizeMD(seller.username) : '';
+    const sellerReputation = seller
+      ? sanitizeMD(seller.total_rating.toFixed(2))
+      : '';
     const buyerId = buyer ? buyer._id : '';
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());
@@ -344,6 +350,8 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
       fee,
       paymentMethod,
       priceMargin,
+      buyerReputation,
+      sellerReputation,
     });
 
     return message;
