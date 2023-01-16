@@ -110,3 +110,11 @@ exports.sellerReleased = async (ctx, solver) => {
     logger.error(error);
   }
 };
+
+exports.disputeTooSoonMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('dispute_too_soon'));
+  } catch (error) {
+    logger.error(error);
+  }
+};

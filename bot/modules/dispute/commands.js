@@ -19,6 +19,13 @@ const dispute = async ctx => {
     const order = await validateDisputeOrder(ctx, user, orderId);
 
     if (!order) return;
+    // Users can't initiate a dispute before this time
+    const secsUntilDispute = 1800;
+    const time = new Date();
+    time.setSeconds(time.getSeconds() - secsUntilDispute);
+    if (order.taken_at > time) {
+      return await messages.disputeTooSoonMessage(ctx);
+    }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
     const seller = await User.findOne({ _id: order.seller_id });
