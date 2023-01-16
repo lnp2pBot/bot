@@ -41,6 +41,23 @@ const validateUser = async (ctx, start) => {
   }
 };
 
+const validateSuperAdmin = async (ctx, id) => {
+  try {
+    const tgUserId = id || ctx.update.message.from.id;
+    const user = await User.findOne({ tg_id: tgUserId });
+    // If the user never started the bot we can't send messages
+    // to that user, so we do nothing
+    if (!user) return;
+
+    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId);
+
+    return user;
+  } catch (error) {
+    logger.error(error);
+    return false;
+  }
+};
+
 const validateAdmin = async (ctx, id) => {
   try {
     const tgUserId = id || ctx.update.message.from.id;
@@ -619,4 +636,5 @@ module.exports = {
   isValidInvoice,
   validateUserWaitingOrder,
   isBannedFromCommunity,
+  validateSuperAdmin,
 };

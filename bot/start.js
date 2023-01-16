@@ -15,6 +15,7 @@ const {
   stageMiddleware,
   userMiddleware,
   adminMiddleware,
+  superAdminMiddleware,
 } = require('./middleware');
 const ordersActions = require('./ordersActions');
 const CommunityModule = require('./modules/community');
@@ -370,7 +371,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('checkorder', adminMiddleware, async ctx => {
+  bot.command('checkorder', superAdminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
 
@@ -389,7 +390,7 @@ const initialize = (botToken, options) => {
     }
   });
 
-  bot.command('resubscribe', adminMiddleware, async ctx => {
+  bot.command('resubscribe', superAdminMiddleware, async ctx => {
     try {
       const [hash] = await validateParams(ctx, 2, '\\<_hash_\\>');
 
@@ -616,7 +617,7 @@ const initialize = (botToken, options) => {
     await release(ctx, ctx.match[1]);
   });
 
-  bot.command('paytobuyer', adminMiddleware, async ctx => {
+  bot.command('paytobuyer', superAdminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
