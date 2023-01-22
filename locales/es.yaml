@@ -221,6 +221,7 @@ help: |
 
   Comunidades:
   /community - Crea una nueva comunidad
+  /mycomms - Muestra las comunidades que has creado
   /findcomms <_código fiat_> - Busca comunidades que operen con la moneda indicada
   /setcomm <_@grupoDeUnaComunidad / off_> - Establece una comunidad por defecto o la quita con 'off'
   /settleorder <_id orden_> - Acepta el pago del vendedor y automáticamente envía los sats al comprador, debe haber una comunidad por defecto
