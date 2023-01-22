@@ -374,7 +374,6 @@ const initialize = (botToken, options) => {
   bot.command('checkorder', superAdminMiddleware, async ctx => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
