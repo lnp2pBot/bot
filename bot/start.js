@@ -582,7 +582,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.action('cancelAddInvoiceBtn', userMiddleware, async ctx => {
-    await cancelAddInvoice(ctx, bot);
+    await cancelAddInvoice(ctx);
   });
 
   bot.action('showHoldInvoiceBtn', userMiddleware, async ctx => {
@@ -590,7 +590,7 @@ const initialize = (botToken, options) => {
   });
 
   bot.action('cancelShowHoldInvoiceBtn', userMiddleware, async ctx => {
-    await cancelShowHoldInvoice(ctx, bot);
+    await cancelShowHoldInvoice(ctx);
   });
 
   bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, userMiddleware, async ctx => {

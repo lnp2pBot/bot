@@ -261,6 +261,7 @@ cancelall_success: Você cancelou todos os seus pedidos publicados!
 order_cancelled_by_admin: 'Admin cancelou o pedido Id: ${orderId}!'
 order_completed: 'Você concluiu o pedido Id: ${orderId}!'
 order_completed_by_admin: 'Admin concluiu o pedido Id: ${orderId}!'
+order_cancelled_by_counterparty: 'Sua contraparte cancelou o ID do pedido: ${orderId}!'
 have_to_wait_for_counterpart: 🕒 Você já fez esta operação, deve esperar a outra parte agir
 ok_cooperativecancel: '👍 Contraparte concordou e o pedido Id: ${orderId} foi cancelado'
 refund_cooperativecancel: 💰 Você recebeu um reembolso do seu pagamento de lightning, não há mais ações para fazer

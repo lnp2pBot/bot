@@ -305,9 +305,9 @@ const saveUserReview = async (targetUser, rating) => {
   }
 };
 
-const cancelAddInvoice = async (ctx, bot, order) => {
+const cancelAddInvoice = async (ctx, order, job) => {
   try {
-    if (ctx) {
+    if (!job) {
       ctx.deleteMessage();
       ctx.scene.leave();
     }
@@ -320,6 +320,9 @@ const cancelAddInvoice = async (ctx, bot, order) => {
       if (!order) return;
     }
 
+    // We make sure the seller can't send us sats now
+    await cancelHoldInvoice({ hash: order.hash });
+
     const user = await User.findOne({ _id: order.buyer_id });
 
     if (!user) return;
@@ -327,16 +330,16 @@ const cancelAddInvoice = async (ctx, bot, order) => {
     const i18nCtx = await getUserI18nContext(user);
     // Buyers only can cancel orders with status WAITING_BUYER_INVOICE
     if (order.status !== 'WAITING_BUYER_INVOICE')
-      return await messages.genericErrorMessage(bot, user, i18nCtx);
+      return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (order.creator_id === order.buyer_id) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+      await messages.toBuyerDidntAddInvoiceMessage(ctx, user, order, i18nCtx);
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.toSellerBuyerDidntAddInvoiceMessage(
-        bot,
+        ctx,
         sellerUser,
         order,
         i18nCtxSeller
@@ -366,20 +369,40 @@ const cancelAddInvoice = async (ctx, bot, order) => {
 
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, user, order, i18nCtx);
+        await messages.publishBuyOrderMessage(ctx, user, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, sellerUser, order, i18nCtx);
+        await messages.publishSellOrderMessage(ctx, sellerUser, order, i18nCtx);
       }
       await order.save();
       if (!userAction) {
-        await messages.toAdminChannelBuyerDidntAddInvoiceMessage(
-          bot,
-          user,
-          order,
-          i18nCtx
-        );
-        await messages.toBuyerDidntAddInvoiceMessage(bot, user, order, i18nCtx);
+        if (job) {
+          await messages.toAdminChannelBuyerDidntAddInvoiceMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+          await messages.toBuyerDidntAddInvoiceMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+        } else {
+          await messages.successCancelOrderMessage(
+            ctx,
+            sellerUser,
+            order,
+            i18nCtx
+          );
+          await messages.counterPartyCancelOrderMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+        }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
@@ -456,9 +479,9 @@ const showHoldInvoice = async (ctx, bot, order) => {
   }
 };
 
-const cancelShowHoldInvoice = async (ctx, bot, order) => {
+const cancelShowHoldInvoice = async (ctx, order, job) => {
   try {
-    if (ctx) ctx.deleteMessage();
+    if (!job) ctx.deleteMessage();
     let userAction = false;
     if (!order) {
       userAction = true;
@@ -467,21 +490,23 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
       order = await Order.findOne({ _id: orderId });
       if (!order) return;
     }
+    // We make sure the seller can't send us sats now
+    await cancelHoldInvoice({ hash: order.hash });
 
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
     const i18nCtx = await getUserI18nContext(user);
     // Sellers only can cancel orders with status WAITING_PAYMENT
     if (order.status !== 'WAITING_PAYMENT')
-      return await messages.genericErrorMessage(bot, user, i18nCtx);
+      return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (order.creator_id === order.seller_id) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.toSellerDidntPayInvoiceMessage(bot, user, order, i18nCtx);
+      await messages.toSellerDidntPayInvoiceMessage(ctx, user, order, i18nCtx);
       await messages.toBuyerSellerDidntPayInvoiceMessage(
-        bot,
+        ctx,
         buyerUser,
         order,
         i18nCtx
@@ -513,25 +538,40 @@ const cancelShowHoldInvoice = async (ctx, bot, order) => {
 
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(bot, buyerUser, order, i18nCtx);
+        await messages.publishBuyOrderMessage(ctx, buyerUser, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(bot, user, order, i18nCtx);
+        await messages.publishSellOrderMessage(ctx, user, order, i18nCtx);
       }
       await order.save();
       if (!userAction) {
-        await messages.toSellerDidntPayInvoiceMessage(
-          bot,
-          user,
-          order,
-          i18nCtx
-        );
-        await messages.toAdminChannelSellerDidntPayInvoiceMessage(
-          bot,
-          user,
-          order,
-          i18nCtx
-        );
+        if (job) {
+          await messages.toSellerDidntPayInvoiceMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+          await messages.toAdminChannelSellerDidntPayInvoiceMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+        } else {
+          await messages.successCancelOrderMessage(
+            ctx,
+            buyerUser,
+            order,
+            i18nCtx
+          );
+          await messages.counterPartyCancelOrderMessage(
+            ctx,
+            user,
+            order,
+            i18nCtx
+          );
+        }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
@@ -588,9 +628,7 @@ const cancelOrder = async (ctx, orderId, user) => {
 
     if (order.status === 'PENDING') {
       // If we already have a holdInvoice we cancel it and return the money
-      if (order.hash) {
-        await cancelHoldInvoice({ hash: order.hash });
-      }
+      if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       order.status = 'CANCELED';
       order.canceled_by = user._id;
@@ -604,13 +642,13 @@ const cancelOrder = async (ctx, orderId, user) => {
     // If a buyer is taking a sell offer and accidentally touch continue button we
     // let the user to cancel
     if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
-      return await cancelAddInvoice(null, ctx, order);
+      return await cancelAddInvoice(ctx, order);
     }
 
     // If a seller is taking a buy offer and accidentally touch continue button we
     // let the user to cancel
     if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
-      return await cancelShowHoldInvoice(null, ctx, order);
+      return await cancelShowHoldInvoice(ctx, order);
     }
 
     if (

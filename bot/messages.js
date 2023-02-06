@@ -903,6 +903,17 @@ const successCancelOrderMessage = async (ctx, user, order, i18n) => {
   }
 };
 
+const counterPartyCancelOrderMessage = async (ctx, user, order, i18n) => {
+  try {
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('order_cancelled_by_counterparty', { orderId: order._id })
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const successCancelAllOrdersMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('cancelall_success'));
@@ -1628,4 +1639,5 @@ module.exports = {
   notAuthorized,
   mustBeANumber,
   showConfirmationButtons,
+  counterPartyCancelOrderMessage,
 };

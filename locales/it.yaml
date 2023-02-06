@@ -259,6 +259,7 @@ cancel_error: L'ordine non può essere annullato in questo momento
 cancel_success: "Hai cancellatol'ordine con ID: ${orderId}!"
 cancelall_success: Hai canellato tutti gli ordini pubblicati!
 order_cancelled_by_admin: "Un amministratore ha annullato l'ordine ID: ${orderId}!"
+order_cancelled_by_counterparty: "La tua controparte ha annullato l'ordine con ID: ${orderId}!"
 order_completed: "Hai completato l'ordine ID: ${orderId}!"
 order_completed_by_admin: "Un amministratore ha completato l'ordine ID: ${orderId}!"
 have_to_wait_for_counterpart: 🕒 Hai già effettuato questa operazione, devi attendere l'azione della controparte.

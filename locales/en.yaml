@@ -261,6 +261,7 @@ cancelall_success: You have cancelled all your published orders!
 order_cancelled_by_admin: 'Admin has cancelled the order Id: ${orderId}!'
 order_completed: 'You have completed the order Id: ${orderId}!'
 order_completed_by_admin: 'Admin has completed the order Id: ${orderId}!'
+order_cancelled_by_counterparty: 'Your counterparty canceled order Id: ${orderId}!'
 have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
 ok_cooperativecancel: '👍 Counterparty agreed and the order Id: ${orderId} has been cancelled'
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make

@@ -1,4 +1,3 @@
-const { cancelHoldInvoice } = require('../ln');
 const { User, Order } = require('../models');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
@@ -19,11 +18,10 @@ const cancelOrders = async bot => {
       taken_at: { $lte: holdInvoiceTime },
     });
     for (const order of waitingPaymentOrders) {
-      await cancelHoldInvoice({ hash: order.hash });
       if (order.status === 'WAITING_PAYMENT') {
-        await cancelShowHoldInvoice(null, bot, order);
+        await cancelShowHoldInvoice(bot, order, true);
       } else {
-        await cancelAddInvoice(null, bot, order);
+        await cancelAddInvoice(bot, order, true);
       }
     }
     // We get the expired order where the seller sent the sats but never released the order

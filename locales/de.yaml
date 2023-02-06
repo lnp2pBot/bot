@@ -261,6 +261,7 @@ cancelall_success: Du hast alle deine veröffentlichten Aufträge storniert!
 order_cancelled_by_admin: 'Der Administrator hat den Auftrag mit der ID ${orderId} storniert!'
 order_completed: 'Du hast den Auftrag mit der Id ${orderId} erfolgreich ausgeführt!'
 order_completed_by_admin: 'Der Administrator hat den Auftrag mit der Id ${orderId} erfolgreich ausgeführt!'
+order_cancelled_by_counterparty: 'Ihr Kontrahent hat die Bestell-ID storniert: ${orderId}!'
 have_to_wait_for_counterpart: 🕒 Du hast diesen Vorgang bereits durchgeführt, du musst warten, bis die andere Partei handelt
 ok_cooperativecancel: '👍 Die Gegenpartei hat zugestimmt und der Auftrag mit der Id ${orderId} wurde storniert'
 refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen
