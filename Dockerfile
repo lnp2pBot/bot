@@ -1,10 +1,11 @@
-FROM node:16-alpine3.16
+FROM node:16-buster-slim
 
 # Create App directory in Container
 WORKDIR /usr/src/app
 
 # Update
-RUN apk update
+RUN apt update
+RUN apt upgrade -y
 
 # Install App dependencies
 COPY package*.json ./
