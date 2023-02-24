@@ -167,14 +167,14 @@ const initialize = (botToken, options) => {
 
   bot.command('maintenance', superAdminMiddleware, async ctx => {
     try {
-      const [val] = await validateParams(ctx, 2, '\\<_yes/no_\\>');
+      const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
       if (!val) return;
       let config = await Config.findOne();
       if (!config) {
         config = new Config();
       }
       config.maintenance = false;
-      if (val == 'yes') {
+      if (val == 'on') {
         config.maintenance = true;
       }
       await config.save();
@@ -186,8 +186,6 @@ const initialize = (botToken, options) => {
 
   bot.on('text', userMiddleware, async (ctx, next) => {
     try {
-      if (ctx.message.chat.type !== 'private') return;
-
       const config = await Config.findOne({ maintenance: true });
       if (config) {
         await ctx.reply(ctx.i18n.t('maintenance'));
