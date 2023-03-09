@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 const credentials = process.env.DB_USER
   ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
   : '';
-const MONGO_URI = `mongodb://${credentials}${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+let MONGO_URI = `mongodb://${credentials}${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+MONGO_URI = process.env.MONGO_URI ? process.env.MONGO_URI : MONGO_URI;
+
 if (!MONGO_URI) {
   throw new Error('You must provide a MongoDB URI');
 }
