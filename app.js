@@ -29,8 +29,8 @@ const { delay } = require('./util');
         };
       }
       const bot = start(process.env.BOT_TOKEN, options);
-      // Wait 10 seconds before try to resubscribe hold invoices
-      await delay(10000);
+      // Wait 1 seconds before try to resubscribe hold invoices
+      await delay(1000);
       await resubscribeInvoices(bot);
     })
     .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
