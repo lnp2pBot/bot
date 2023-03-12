@@ -4,7 +4,11 @@ const { userMiddleware } = require('../../middleware/user');
 const { orderCreated } = require('./events');
 
 const pool = new Nostr.SimplePool();
-const relays = ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'];
+const relays = (env => {
+  if (!env.RELAYS)
+    return ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'];
+  return env.RELAYS.split(',');
+})(process.env);
 
 exports.addRelay = relay => relays.push(relay);
 exports.getRelays = () => relays;
