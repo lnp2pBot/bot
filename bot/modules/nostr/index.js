@@ -14,10 +14,8 @@ exports.addRelay = relay => relays.push(relay);
 exports.getRelays = () => relays;
 
 exports.configure = bot => {
-  if (!process.env.NOSTR_SK || !process.env.NOSTR_PK) {
-    console.warn('env.NOSTR_SK/env.NOSTR_PK not set');
-    return;
-  }
+  if (!process.env.NOSTR_SK || !process.env.NOSTR_PK) return;
+
   bot.command('nostr', async ctx => {
     const publicKey = process.env.NOSTR_PK;
     if (!publicKey) return;
