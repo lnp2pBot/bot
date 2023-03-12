@@ -1,7 +1,7 @@
 const Nostr = require('nostr-tools');
 
 const KIND = {
-  ORDER_CREATED: 1,
+  ORDER_CREATED: 20100,
 };
 
 exports.orderCreated = order => {
