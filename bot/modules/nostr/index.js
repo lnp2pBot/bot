@@ -1,3 +1,4 @@
+require('websocket-polyfill');
 const Nostr = require('nostr-tools');
 const logger = require('../../../logger');
 const { userMiddleware } = require('../../middleware/user');
@@ -9,12 +10,17 @@ const relays = (env => {
     return ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'];
   return env.RELAYS.split(',');
 })(process.env);
+relays.map(relay => pool.ensureRelay(relay));
 
-exports.addRelay = relay => relays.push(relay);
+exports.addRelay = relay => {
+  relays.push(relay);
+  relays.map(relay => pool.ensureRelay(relay));
+};
 exports.getRelays = () => relays;
 
 exports.configure = bot => {
-  if (!process.env.NOSTR_SK || !process.env.NOSTR_PK) return;
+  if (!process.env.NOSTR_SK) return;
+  process.env.NOSTR_PK = Nostr.getPublicKey(process.env.NOSTR_SK);
 
   bot.command('nostr', async ctx => {
     const publicKey = process.env.NOSTR_PK;
@@ -24,7 +30,7 @@ exports.configure = bot => {
       npub: Nostr.nip19.npubEncode(publicKey),
       relays,
     };
-    await ctx.reply(JSON.stringify(info));
+    await ctx.reply(JSON.stringify(info, null, 2));
   });
   bot.command('setnpub', userMiddleware, async ctx => {
     try {
@@ -42,9 +48,10 @@ exports.configure = bot => {
 };
 
 async function publish(relays, event) {
-  const p = new Promise(resolve => {
+  const p = new Promise(async (resolve, reject) => {
     const pub = pool.publish(relays, event);
     pub.on('ok', () => resolve(event));
+    pub.on('failed', reject);
   });
   return p;
 }

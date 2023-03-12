@@ -1,7 +1,7 @@
 const Nostr = require('nostr-tools');
 
 const KIND = {
-  ORDER_CREATED: 20100,
+  ORDER_CREATED: 1,
 };
 
 exports.orderCreated = order => {
@@ -12,12 +12,20 @@ exports.orderCreated = order => {
   event.kind = KIND.ORDER_CREATED;
   event.pubkey = pubkey;
   event.created_at = Math.floor(Date.now() / 1000);
-  event.content = JSON.stringify({
-    orderId: order.id,
-    type: order.type,
-    fiat_code: order.fiat_code,
-    description: order.description,
-  });
+  const evData = (order => {
+    const { id, type, amount, max_amount, min_amount, fiat_code, fiat_amount } =
+      order;
+    return {
+      id,
+      type,
+      amount,
+      max_amount,
+      min_amount,
+      fiat_code,
+      fiat_amount,
+    };
+  })(order);
+  event.content = JSON.stringify(evData);
   if (order.community_id) {
     // todo: tag community's npub
   }
