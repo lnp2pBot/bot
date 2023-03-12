@@ -10,6 +10,7 @@ const {
   getFee,
 } = require('../util');
 const logger = require('../logger');
+const nostr = require('./modules/nostr');
 
 const createOrder = async (
   i18n,
@@ -96,6 +97,8 @@ const createOrder = async (
       });
     }
     await order.save();
+
+    nostr.orderCreated(order);
 
     return order;
   } catch (error) {
