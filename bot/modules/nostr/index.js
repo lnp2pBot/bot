@@ -48,7 +48,7 @@ exports.configure = bot => {
 };
 
 async function publish(relays, event) {
-  const p = new Promise(async (resolve, reject) => {
+  const p = new Promise((resolve, reject) => {
     const pub = pool.publish(relays, event);
     pub.on('ok', () => resolve(event));
     pub.on('failed', reject);
