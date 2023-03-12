@@ -22,6 +22,7 @@
     "lightning": "^5.16.0",
     "mongoose": "6.5.2",
     "node-schedule": "^2.0.0",
+    "nostr-tools": "^1.7.4",
     "qrcode": "^1.5.0",
     "socks-proxy-agent": "^6.2.0-beta.0",
     "telegraf": "^4.6.0",
