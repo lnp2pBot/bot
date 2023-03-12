@@ -1,4 +1,3 @@
-//@ts-check
 const Nostr = require('nostr-tools');
 const logger = require('../../../logger');
 const { userMiddleware } = require('../../middleware/user');
@@ -50,6 +49,7 @@ async function publish(relays, event) {
 
 exports.orderCreated = async order => {
   try {
+    if (!process.env.NOSTR_SK) return;
     const event = orderCreated(order);
     await publish(relays, event);
     return event;
