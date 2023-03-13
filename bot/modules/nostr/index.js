@@ -34,12 +34,12 @@ exports.configure = bot => {
   });
   bot.command('setnpub', userMiddleware, async ctx => {
     try {
-      const npub = ctx.message.text.trim();
+      const [, npub] = ctx.message.text.trim().split(' ');
       const { type, data } = Nostr.nip19.decode(npub);
       if (type !== 'npub') throw new Error('InvalidNpub');
       ctx.user.nostrPublicKey = data;
       await ctx.user.save();
-      await ctx.reply(`user.npub = ${npub}`);
+      await ctx.reply(`user.nostrPublicKey = ${data}`);
     } catch (err) {
       logger.error(err);
       return ctx.reply('Error');
