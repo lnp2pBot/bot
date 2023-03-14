@@ -3,6 +3,7 @@ const Nostr = require('nostr-tools');
 const logger = require('../../../logger');
 const { userMiddleware } = require('../../middleware/user');
 const { orderCreated } = require('./events');
+const Config = require('./config');
 
 const pool = new Nostr.SimplePool();
 const relays = (env => {
@@ -19,18 +20,21 @@ exports.addRelay = relay => {
 exports.getRelays = () => relays;
 
 exports.configure = bot => {
-  if (!process.env.NOSTR_SK) return;
-  process.env.NOSTR_PK = Nostr.getPublicKey(process.env.NOSTR_SK);
-
   bot.command('nostr', async ctx => {
-    const publicKey = process.env.NOSTR_PK;
-    if (!publicKey) return;
-    const info = {
-      publicKey,
-      npub: Nostr.nip19.npubEncode(publicKey),
-      relays,
-    };
-    await ctx.reply(JSON.stringify(info, null, 2));
+    try {
+      const publicKey = Config.getPublicKey();
+      if (!publicKey) return;
+      const info = {
+        publicKey,
+        npub: Nostr.nip19.npubEncode(publicKey),
+        relays: relays.map(r => `<code>${r}</code>`).join('\n'),
+      };
+      const str = ctx.i18n.t('nostr_info', info);
+      await ctx.reply(str, { parse_mode: 'HTML' });
+    } catch (err) {
+      logger.error(err);
+      return ctx.reply('Error');
+    }
   });
   bot.command('setnpub', userMiddleware, async ctx => {
     try {
@@ -58,7 +62,6 @@ async function publish(relays, event) {
 
 exports.orderCreated = async order => {
   try {
-    if (!process.env.NOSTR_SK) return;
     const event = orderCreated(order);
     await publish(relays, event);
     return event;

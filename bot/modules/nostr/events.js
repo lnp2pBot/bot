@@ -1,12 +1,13 @@
 const Nostr = require('nostr-tools');
+const Config = require('./config');
 
 const KIND = {
   ORDER_CREATED: 20100,
 };
 
 exports.orderCreated = order => {
-  const sk = process.env.NOSTR_SK;
-  const pubkey = Nostr.getPublicKey(sk);
+  const sk = Config.getPrivateKey();
+  const pubkey = Config.getPublicKey();
 
   const event = Nostr.getBlankEvent();
   event.kind = KIND.ORDER_CREATED;

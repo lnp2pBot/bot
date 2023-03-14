@@ -484,3 +484,12 @@ community_deleted: Esta comunidad fue eliminada por inactividad, te he desvincul
 dispute_too_soon: No puedes iniciar una disputa tan pronto, ten paciencia y espera unos minutos a que tu contraparte responda
 maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
 user_npub_updated: Has configurado tu pubkey ${npub} exitosamente!
+nostr_info: |
+  npub:
+  <code>${npub}</code>
+
+  hex:
+  <code>${publicKey}</code>
+
+  relays:
+  ${relays}
