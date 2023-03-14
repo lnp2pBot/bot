@@ -480,6 +480,8 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has cha
 community_deleted: This community was deleted due to inactivity, I have unlinked you from it, try to create the order again
 dispute_too_soon: You can't start a dispute so soon, be patient and wait a few minutes for your counterparty to reply
 maintenance: 🚨 Bot in maintenance, please try again later 🚨
+
+# START modules/nostr
 user_npub_updated: You added your pubkey ${npub} successfully!
 nostr_info: |
   npub:
@@ -490,3 +492,9 @@ nostr_info: |
 
   relays:
   ${relays}
+npub_not_valid: |
+  Not a valid <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a> npub. Please check your input.
+
+  Example:
+  /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
+# END modules/nostr

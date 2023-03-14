@@ -40,13 +40,15 @@ exports.configure = bot => {
     try {
       const [, npub] = ctx.message.text.trim().split(' ');
       const { type, data } = Nostr.nip19.decode(npub);
-      if (type !== 'npub') throw new Error('InvalidNpub');
+      if (type !== 'npub') throw new Error('NpubNotValid');
       ctx.user.nostr_public_key = data;
       await ctx.user.save();
       await ctx.reply(ctx.i18n.t('user_npub_updated', { npub }));
     } catch (err) {
-      logger.error(err);
-      return ctx.reply('Error');
+      return ctx.reply(ctx.i18n.t('npub_not_valid'), {
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+      });
     }
   });
 };
