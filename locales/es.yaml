@@ -483,3 +483,4 @@ upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambia
 community_deleted: Esta comunidad fue eliminada por inactividad, te he desvinculado de ella, intenta crear la orden nuevamente
 dispute_too_soon: No puedes iniciar una disputa tan pronto, ten paciencia y espera unos minutos a que tu contraparte responda
 maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
+user_npub_updated: Has configurado tu pubkey ${npub} exitosamente!
