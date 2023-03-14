@@ -6,7 +6,7 @@ const KIND = {
 
 exports.orderCreated = order => {
   const sk = process.env.NOSTR_SK;
-  const pubkey = process.env.NOSTR_PK;
+  const pubkey = Nostr.getPublicKey(sk);
 
   const event = Nostr.getBlankEvent();
   event.kind = KIND.ORDER_CREATED;
