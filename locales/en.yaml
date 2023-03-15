@@ -17,7 +17,7 @@ start: |
 
   6. If you want to buy, publish your order using the /buy command and wait until a seller takes it. You can cancel the order at any time by using the /cancel command.
 
-  7. Once somebody takes your buy order, you must create a Lightning Network invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The BOT will send you the sats to your Lightning Network invoice.
+  7. Once somebody takes your buy order, you must create a Lightning Network invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your Lightning Network invoice.
 
   8. If you are taking a selling order, i.e. you buy sats, you must create a Lightning Network invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
 
@@ -169,7 +169,7 @@ order_detail: |
 
   Order Amount \\(sats\\): ${order.amount}
 
-  bot Fee \\(sats\\): ${fee}
+  Bot Fee \\(sats\\): ${fee}
 
   Routing Fee \\(sats\\): ${order.routing_fee}
 
@@ -209,7 +209,7 @@ unavailable_lightning_address: Unavailable lightning address ${la}
 help: |
   /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
-  /info - Shows additional info about the BOT
+  /info - Shows additional info about the bot
   /showusername - Toggles off the username display in each new order created. Default value is set to false
   /showvolume - Shows trade volume when each order is created, default value is false
   /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats. 
