@@ -219,6 +219,10 @@ help: |
   /cancel <_order id_> - Скасувати заявку до її виконання
   /cancelall - Скасувати всі виставлені заявки
 
+  Nostr:
+  /setnpub <_nostr npub_> - оновлює ваш ключ pubkey nostr
+  /nostr - показує pubkey nostr бота та ретранслятори, які використовуються для публікації
+
   Спільноти:
   /community - Створіть нову спільноту
   /mycomms - показує спільноти, які ви створили
@@ -229,7 +233,7 @@ help: |
   /deldispute <_username_> <_id order_> - Видаляє суперечку користувача в спільноті, за замовчуванням повинно бути спільнота
   /ban <_username_> - Заборона користувача від спільноти, має бути спільнота за замовчуванням
 
-  /version - Shows the current version of the bot
+  /version - Показує поточну версію бота
   /help - Показати ключові команди
 must_be_gt_or_eq: ${fieldName} має бути більше чи рівно ${qty}
 you_have_been_banned: Ви були забанені!

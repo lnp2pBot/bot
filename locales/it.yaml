@@ -219,6 +219,10 @@ help: |
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
 
+  Nostr:
+  /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey
+  /nostr - Mostra la nostr pubkey del bot e i relay utilizzati per la pubblicazione
+
   Communities:
   /community - Crea una nuova community
   /mycomms - Mostra le comunità che hai creato

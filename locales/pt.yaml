@@ -219,6 +219,10 @@ help: |
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
 
+  Nostr:
+  /setnpub <_nostr npub_> - Atualiza sua nostr pubkey
+  /nostr - Mostra a chave pública nostr do bot e os relés usados para publicar
+
   Comunidades:
   /community - Crie uma nova comunidade
   /mycomms - Mostra as comunidades que você criou

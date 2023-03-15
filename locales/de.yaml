@@ -219,6 +219,10 @@ help: |
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
 
+  Nostr:
+  /setnpub <_nostr npub_> - Aktualisiert Ihren Nostr-Pubkey
+  /nostr - Zeigt den Nostr-Pubkey des Bots und die zum Veröffentlichen verwendeten Relays an
+
   Gemeinschaften:
   /community - Erstellen Sie eine neue Community
   /mycomms - Zeigt die von Ihnen erstellten Communities an

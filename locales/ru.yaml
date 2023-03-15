@@ -218,17 +218,21 @@ help: |
   /cancel <_order id_> - Отменить заявку до ее исполнения
   /cancelall - Отменить все выставленные заявки
 
-  Communities:
-  /community - Create a new community
-  /mycomms - показывает созданные вами сообщества
-  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
-  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
-  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
-  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
-  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
-  /ban <_username_> - Ban a user from a community, there should be a default community
+  Nostr:
+  /setnpub <_nostr npub_> - Обновляет ваш публичный ключ nostr
+  /nostr - показывает публичный ключ nostr бота и ретрансляторы, используемые для публикации.
 
-  /version - Shows the current version of the bot
+  Сообщества:
+  /community - Создать новое сообщество
+  /mycomms - показывает созданные вами сообщества
+  /findcomms <_fiat code_> - Находит сообщества, работающие с указанной валютой
+  /setcomm <_@groupOfACommunity / off_> - Установите сообщество по умолчанию или удалите его с помощью «Выкл.»
+  /settleorder <_order id_> - Принять оплату продавца и автоматически отправить сат покупателю, по умолчанию должно быть сообщество
+  /cancelorder <_id orden_> - Отменяет заказ который возвращает сат продавцу, по умолчанию должно быть сообщество
+  /deldispute <_username_> <_id order_> - Удаляет спор от пользователя в сообществе, по умолчанию должно быть сообщество
+  /ban <_username_> - Забанить пользователя в сообществе, должно быть сообщество по умолчанию
+
+  /version - Показывает текущую версию бота
   /help - Показать ключевые команды
 must_be_gt_or_eq: ${fieldName} должно быть больше или равно ${qty}
 you_have_been_banned: Вы были забанены!
