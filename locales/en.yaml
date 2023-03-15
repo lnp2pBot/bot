@@ -485,14 +485,15 @@ community_deleted: This community was deleted due to inactivity. I have unlinked
 dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
 maintenance: 🚨 bot in maintenance, please try again later 🚨
 
-
 # START modules/nostr
 user_npub_updated: You added your pubkey ${npub} successfully!
 nostr_info: |
   npub:
   <code>${npub}</code>
+
   hex:
   <code>${publicKey}</code>
+
   relays:
   ${relays}
 npub_not_valid: |
