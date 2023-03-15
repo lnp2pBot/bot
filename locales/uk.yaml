@@ -479,3 +479,20 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has cha
 community_deleted: Ця спільнота була видалена через бездіяльність, я від’єднав вас від неї, спробуйте створити замовлення знову
 dispute_too_soon: Ви не можете розпочати диспут так рано, наберіться терпіння та зачекайте кілька хвилин, поки ваш контрагент відповість
 maintenance: 🚨 Бот виконує технічне обслуговування, спробуйте пізніше 🚨
+# START modules/nostr
+user_npub_updated: Ви успішно додали свій pubkey ${npub}!
+nostr_info: |
+  npub:
+  <code>${npub}</code>
+
+  hex:
+  <code>${publicKey}</code>
+
+  relays:
+  ${relays}
+npub_not_valid: |
+  Недійсний <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a> npub. Перевірте введені дані.
+
+  приклад:
+  /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
+# END modules/nostr
