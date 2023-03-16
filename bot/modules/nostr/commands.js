@@ -2,6 +2,8 @@ const Nostr = require('nostr-tools');
 const logger = require('../../../logger');
 const { userMiddleware } = require('../../middleware/user');
 const Config = require('./config');
+const { decodeNpub } = require('./lib');
+
 module.exports = bot => {
   bot.command('nostr', async ctx => {
     try {
@@ -24,9 +26,9 @@ module.exports = bot => {
   bot.command('setnpub', userMiddleware, async ctx => {
     try {
       const [, npub] = ctx.message.text.trim().split(' ');
-      const { type, data } = Nostr.nip19.decode(npub);
-      if (type !== 'npub') throw new Error('NpubNotValid');
-      ctx.user.nostr_public_key = data;
+      const hex = decodeNpub(npub);
+      if (!hex) throw new Error('NpubNotValid');
+      ctx.user.nostr_public_key = hex;
       await ctx.user.save();
       await ctx.reply(ctx.i18n.t('user_npub_updated', { npub }));
     } catch (err) {

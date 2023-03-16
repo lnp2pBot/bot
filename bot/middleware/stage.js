@@ -12,6 +12,7 @@ exports.stageMiddleware = () => {
   const scenes = [
     addInvoiceWizard,
     addFiatAmountWizard,
+    CommunityModule.Scenes.communityAdmin,
     CommunityModule.Scenes.communityWizard,
     CommunityModule.Scenes.updateNameCommunityWizard,
     CommunityModule.Scenes.updateGroupCommunityWizard,

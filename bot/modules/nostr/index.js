@@ -16,7 +16,7 @@ exports.configure = bot => {
   const OrderEvents = require('../events/orders');
   OrderEvents.onOrderCreated(async order => {
     try {
-      const event = orderCreated(order);
+      const event = await orderCreated(order);
       await publish(event);
       return event;
     } catch (err) {

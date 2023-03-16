@@ -10,6 +10,7 @@ const {
 exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
+  bot.command('mycomm', userMiddleware, commands.communityAdmin);
   bot.command('mycomms', userMiddleware, commands.myComms);
   bot.command('community', userMiddleware, async ctx => {
     const { user } = ctx;

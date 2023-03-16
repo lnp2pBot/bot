@@ -488,6 +488,30 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has cha
 community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
 dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
 maintenance: 🚨 Bot in maintenance, please try again later 🚨
+
+# START modules/community
+community_admin: |
+  <strong>Community Admin Mode</strong>
+  > ${community.name} (${community.group})
+  
+  Public:
+    ${community.public ? 'Yes' : 'No'}
+  Fee:
+    ${community.fee}
+  Earnings:
+    ${community.earnings}
+  npub:
+    <code>${community.nostr_public_key}</code>
+
+  /help - help messages.
+  /exit - to exit the wizard.
+community_admin_help: |
+  <strong>Community Admin Mode</strong>
+  # commands
+
+  /setnpub &lt;npub&gt; - Configure community's public key. Nostr events will be tagged with this public key.
+# END modules/community
+
 # START modules/nostr
 user_npub_updated: You added your pubkey ${npub} successfully!
 nostr_info: |

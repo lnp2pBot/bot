@@ -66,6 +66,26 @@ exports.setComm = async ctx => {
   }
 };
 
+exports.communityAdmin = async ctx => {
+  try {
+    const [group] = await validateParams(ctx, 2, '\\<_community_\\>');
+    if (!group) return;
+    const creator_id = ctx.user.id;
+    const [community] = await Community.find({ group, creator_id });
+    if (!community) throw new Error('CommunityNotFound');
+    await ctx.scene.enter('COMMUNITY_ADMIN', { community });
+  } catch (err) {
+    switch (err.message) {
+      case 'CommunityNotFound': {
+        return ctx.reply(ctx.i18n.t('community_not_found'));
+      }
+      default: {
+        return ctx.reply(ctx.i18n.t('generic_error'));
+      }
+    }
+  }
+};
+
 exports.myComms = async ctx => {
   try {
     const { user } = ctx;

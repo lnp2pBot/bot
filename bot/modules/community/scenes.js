@@ -10,6 +10,8 @@ const {
   wizardCommunityWrongPermission,
 } = require('./messages');
 
+exports.communityAdmin = require('./scenes.communityAdmin')();
+
 exports.communityWizard = new Scenes.WizardScene(
   'COMMUNITY_WIZARD_SCENE_ID',
   async ctx => {
