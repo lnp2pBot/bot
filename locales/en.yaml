@@ -223,6 +223,10 @@ help: |
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
 
+  Nostr:
+  /setnpub <_nostr npub_> - Updates your nostr pubkey
+  /nostr - Shows the bot's nostr pubkey and the relays used to publish
+
   Communities:
   /community - Create a new community
   /mycomms - Shows the communities you have created
@@ -483,8 +487,7 @@ not_member: You are not a member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has changed, check the chat ID again
 community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
 dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
-maintenance: 🚨 bot in maintenance, please try again later 🚨
-
+maintenance: 🚨 Bot in maintenance, please try again later 🚨
 # START modules/nostr
 user_npub_updated: You added your pubkey ${npub} successfully!
 nostr_info: |
