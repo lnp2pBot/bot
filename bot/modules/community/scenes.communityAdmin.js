@@ -1,4 +1,7 @@
 const { Scenes } = require('telegraf');
+
+const CommunityEvents = require('../events/community');
+
 module.exports = () => {
   const scene = new Scenes.WizardScene('COMMUNITY_ADMIN', async ctx => {
     const { community } = ctx.scene.state;
@@ -21,6 +24,7 @@ module.exports = () => {
       community.nostr_public_key = hex;
       await community.save();
       await ctx.reply(ctx.i18n.t('community_npub_updated', { npub }));
+      CommunityEvents.communityUpdated(community);
     } catch (err) {
       return ctx.reply(ctx.i18n.t('npub_not_valid'), {
         parse_mode: 'HTML',

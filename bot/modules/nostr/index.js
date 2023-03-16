@@ -13,6 +13,11 @@ exports.configure = bot => {
     );
   }
 
+  const CommunityEvents = require('../events/community');
+  CommunityEvents.onCommunityUpdated(async community => {
+    // todo: notify users
+  });
+
   const OrderEvents = require('../events/orders');
   OrderEvents.onOrderCreated(async order => {
     try {
@@ -25,7 +30,6 @@ exports.configure = bot => {
   });
   OrderEvents.onOrderTaken(order => {
     // todo: notify creator
-    console.log('OrderTaken', order);
   });
 };
 
