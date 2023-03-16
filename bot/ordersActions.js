@@ -11,6 +11,8 @@ const {
 } = require('../util');
 const logger = require('../logger');
 
+const OrderEvents = require('./modules/events/orders');
+
 const createOrder = async (
   i18n,
   bot,
@@ -96,6 +98,8 @@ const createOrder = async (
       });
     }
     await order.save();
+
+    OrderEvents.orderCreated(order);
 
     return order;
   } catch (error) {

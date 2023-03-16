@@ -219,6 +219,10 @@ help: |
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
 
+  Nostr:
+  /setnpub <_nostr npub_> - Atualiza sua nostr pubkey
+  /nostr - Mostra a chave pública nostr do bot e os relés usados para publicar
+
   Comunidades:
   /community - Crie uma nova comunidade
   /mycomms - Mostra as comunidades que você criou
@@ -482,3 +486,20 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has cha
 community_deleted: Esta comunidade foi deletada por inatividade, desvinculei você dela, tente criar o pedido novamente
 dispute_too_soon: Você não pode iniciar uma disputa tão cedo, seja paciente e aguarde alguns minutos para que sua contraparte responda
 maintenance: 🚨 Bot em manutenção, tente novamente mais tarde 🚨
+# START modules/nostr
+user_npub_updated: Você definiu sua chave pública ${npub} com sucesso!
+nostr_info: |
+  npub:
+  <code>${npub}</code>
+
+  hex:
+  <code>${publicKey}</code>
+
+  relays:
+  ${relays}
+npub_not_valid: |
+  Você inseriu um npub inválido (consulte <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a>).
+
+  Exemplo:
+  /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
+# END modules/nostr
