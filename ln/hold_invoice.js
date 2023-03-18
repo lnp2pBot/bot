@@ -13,7 +13,9 @@ const createHoldInvoice = async ({ description, amount }) => {
     expiresAt.setSeconds(expiresAt.getSeconds() + 3600);
 
     const hash = sha256(secret);
+    const cltv_delta = parseInt(process.env.HOLD_INVOICE_CLTV_DELTA);
     const { request, id } = await lightning.createHodlInvoice({
+      cltv_delta,
       lnd,
       description,
       id: hash,

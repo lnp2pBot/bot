@@ -193,7 +193,8 @@ CHANNEL='@tunuevocanal' # Canal creado por ti, el bot debe ser admin aquí
 ADMIN_CHANNEL='-10*****46' # Canal o grupo donde el bot envía info a admins, el bot debe ser admin
 
 MAX_DISPUTES=8
-ORDER_EXPIRATION_WINDOW=7200
+HOLD_INVOICE_CLTV_DELTA=144
+HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW=12
 
 PENDING_PAYMENT_WINDOW=5
 

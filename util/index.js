@@ -405,6 +405,19 @@ const delay = time => {
   return new Promise(resolve => setTimeout(resolve, time));
 };
 
+// Returns the hold invoice expiration time in seconds,
+// and the hold invoice safety window in seconds
+const holdInvoiceExpirationInSecs = () => {
+  const expirationTimeInSecs =
+    parseInt(process.env.HOLD_INVOICE_CLTV_DELTA) * 10 * 60;
+  const safetyWindowInSecs =
+    parseInt(process.env.HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW) * 10 * 60;
+  return {
+    expirationTimeInSecs,
+    safetyWindowInSecs,
+  };
+};
+
 module.exports = {
   isIso4217,
   plural,
@@ -432,4 +445,5 @@ module.exports = {
   isFloat,
   getLanguageFlag,
   delay,
+  holdInvoiceExpirationInSecs,
 };
