@@ -11,7 +11,7 @@ start: |
 
   4. Se stai vendendo, il bot pubblicherà l'ordine nel canale ${canale} in attesa che un altro utente prenda l'ordine. È possibile annullare l'ordine  di vendita in qualsiasi momento, con il comando /cancel, PRIMA che un altro utente lo accetti.
 
-  5. Una volta che qualcuno accetta il tuo ordine, il bot ti chiederà di pagare la invoice LN. Tale pagamento sarà trattenuto, l'ordine scadrà in un lasso di tempo massimo di ${orderExpiration} minuti a partire dal momento in cui l'ordine è stato accettato. Il bot ti rivelerà chi è l'acquirente e potrai inviare le istruzioni per effettuare il pagamento in valuta FIAT. Una volta ricevuto il pagamento FIAT, è necessario inviare i fondi all'acquirente rilasciandoli con il comando /release
+  5. Una volta che qualcuno accetta il tuo ordine, il bot ti chiederà di pagare la invoice LN. Tale pagamento sarà trattenuto, l'ordine scadrà in un lasso di tempo massimo di ${orderExpiration} ore a partire dal momento in cui l'ordine è stato accettato. Il bot ti rivelerà chi è l'acquirente e potrai inviare le istruzioni per effettuare il pagamento in valuta FIAT. Una volta ricevuto il pagamento FIAT, è necessario inviare i fondi all'acquirente rilasciandoli con il comando /release
 
   6. Se vuoi acquistare, è necessario pubblicare l'ordine con il comando /buy e attendere che un venditore lo accetti. È possibile annullare l'ordine in qualsiasi momento con il comando /cancel.
 

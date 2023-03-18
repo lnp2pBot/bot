@@ -6,14 +6,20 @@ const {
   getDetailedOrder,
   secondsToTime,
   getOrderChannel,
+  holdInvoiceExpirationInSecs,
 } = require('../util');
 const logger = require('../logger');
 
 const startMessage = async ctx => {
   try {
-    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW) / 60;
+    const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
+    const orderExpiration =
+      (holdInvoiceExpiration.expirationTimeInSecs -
+        holdInvoiceExpiration.safetyWindowInSecs) /
+      60 /
+      60;
     const message = ctx.i18n.t('start', {
-      orderExpiration,
+      orderExpiration: Math.floor(orderExpiration),
       channel: process.env.CHANNEL,
     });
     await ctx.reply(message);
@@ -372,7 +378,10 @@ const onGoingTakeBuyMessage = async (
       seller.tg_id,
       i18nSeller.t('payment_received')
     );
-    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
+    const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
+    const orderExpiration =
+      holdInvoiceExpiration.expirationTimeInSecs -
+      holdInvoiceExpiration.safetyWindowInSecs;
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
     expirationTime +=
@@ -395,7 +404,10 @@ const onGoingTakeBuyMessage = async (
 
 const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
   try {
-    const orderExpiration = parseInt(process.env.ORDER_EXPIRATION_WINDOW);
+    const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
+    const orderExpiration =
+      holdInvoiceExpiration.expirationTimeInSecs -
+      holdInvoiceExpiration.safetyWindowInSecs;
     const time = secondsToTime(orderExpiration);
     let expirationTime = time.hours + ' ' + ctx.i18n.t('hours');
     expirationTime +=

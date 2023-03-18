@@ -11,7 +11,7 @@ start: |
 
   4. Wenn du verkaufst, veröffentlicht der Bot den Auftrag im ${channel} Kanal in der Erwartung, dass ein anderer Nutzer den Auftrag annimmt. Du kannst diese Verkaufsauftrag jederzeit mit dem Befehl /cancel stornieren, BEVOR ein anderer Nutzer diesen annimmt.
 
-  5. Sobald jemand deinen Auftrag annimmt, wird der Bot dich auffordern, die Lighning-Netzwerk LN-Rechnung zu bezahlen. Diese Zahlung wird zurückgehalten und der Auftrag läuft nach maximal ${orderExpiration} Minuten ab dem Zeitpunkt der Bestellannahme ab. Der Bot verrät dir, wer der Käufer ist und du kannst Anweisungen für die FIAT-Zahlung senden. Sobald du die FIAT-Zahlung erhalten hast, musst du die Sats mit dem Befehl /release an den Käufer schicken.
+  5. Sobald jemand deinen Auftrag annimmt, wird der Bot dich auffordern, die Lighning-Netzwerk LN-Rechnung zu bezahlen. Diese Zahlung wird zurückgehalten und der Auftrag läuft nach maximal ${orderExpiration} Stunden ab dem Zeitpunkt der Bestellannahme ab. Der Bot verrät dir, wer der Käufer ist und du kannst Anweisungen für die FIAT-Zahlung senden. Sobald du die FIAT-Zahlung erhalten hast, musst du die Sats mit dem Befehl /release an den Käufer schicken.
 
   6. Wenn du kaufen willst, musst du deinen Auftrag mit dem Befehl /buy veröffentlichen und warten, bis ein Verkäufer diesen annimmt. Du kannst den Auftrag jederzeit mit dem Befehl /cancel abbrechen.
 

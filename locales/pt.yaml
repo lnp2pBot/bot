@@ -11,7 +11,7 @@ start: |
 
   4. Se você estiver vendendo o bot, publicará a ordem no ${channel} canal na expectativa de que outro usuário aceite o pedido. Você pode cancelar esse pedido de venda a qualquer momento ANTES que outro usuário o leve com o comando /cancel.
 
-  5. Uma vez que alguém aceite seu pedido, o bot solicitará que você pague a fatura da rede Lightning, Esse pagamento será realizado, o pedido expirará em um lapso máximo de ${orderExpiration} minutos começando quando o pedido foi realizado. O bot revelará quem é o comprador que você pode enviar para o pagamento da Fiat. Depois de receber o pagamento fiduciário, você deve enviar fundos ao comprador usando o comando /release.
+  5. Uma vez que alguém aceite seu pedido, o bot solicitará que você pague a fatura da rede Lightning, Esse pagamento será realizado, o pedido expirará em um lapso máximo de ${orderExpiration} horas começando quando o pedido foi realizado. O bot revelará quem é o comprador que você pode enviar para o pagamento da Fiat. Depois de receber o pagamento fiduciário, você deve enviar fundos ao comprador usando o comando /release.
 
   6. Se você quiser comprar, precisa publicar seu pedido usando o comando /buy E espere até que um vendedor o leve. Você pode cancelar o pedido a qualquer momento usando o comando /cancel.
 

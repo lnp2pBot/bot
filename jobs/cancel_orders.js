@@ -1,7 +1,7 @@
 const { User, Order } = require('../models');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
-const { getUserI18nContext } = require('../util');
+const { getUserI18nContext, holdInvoiceExpirationInSecs } = require('../util');
 const logger = require('../logger');
 
 const cancelOrders = async bot => {
@@ -29,8 +29,9 @@ const cancelOrders = async bot => {
     // seller sent the money to the hold invoice, this is an important moment cause
     // we don't want to have a CLTV timeout
     let orderTime = new Date();
+    const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
     orderTime.setSeconds(
-      orderTime.getSeconds() - parseInt(process.env.ORDER_EXPIRATION_WINDOW)
+      orderTime.getSeconds() - holdInvoiceExpiration.expirationTimeInSecs
     );
     const activeOrders = await Order.find({
       invoice_held_at: { $lte: orderTime },
