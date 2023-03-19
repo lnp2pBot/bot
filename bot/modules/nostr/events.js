@@ -31,7 +31,7 @@ exports.orderCreated = async order => {
   event.content = JSON.stringify(evData);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
-    if (community.public) {
+    if (community.public && community.nostr_public_key) {
       event.tags.push(['p', community.nostr_public_key]);
     }
   }
