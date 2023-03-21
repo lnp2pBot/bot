@@ -1,25 +1,95 @@
 const { Scenes } = require('telegraf');
 const { getLanguageFlag } = require('../../../../util');
-const NostrCommands = require('../../nostr/commands');
+const NostrLib = require('../../nostr/lib');
 
 function make() {
-  const stateUserToContext = (ctx, next) => {
-    ctx.user = ctx.scene.state.user;
-    next();
-  };
+  const resetMessage = async (ctx, next) => {
+    delete ctx.scene.state.feedback
+    delete ctx.scene.state.error
+    next()
+  }
+  async function updateMessage(ctx) {
+    try {
+      ctx.i18n.locale(ctx.scene.state.language) // i18n locale resets if user executes unknown action
+      const { user, message, error } = ctx.scene.state;
+      const language = getLanguageFlag(ctx.scene.state.language);
+      const main = ctx.i18n.t('user_settings', { user, language });
+
+      const errorText = (error => {
+        if (!error) return;
+        return '<strong># ERROR</strong>\n' + ctx.i18n.t(error.i18n, error)
+      })(error);
+      const feedbackText = (feedback => {
+        if (!feedback) return
+        if (typeof feedback === 'string') return feedback
+        return ctx.i18n.t(feedback.i18n, feedback)
+      })(ctx.scene.state.feedback)
+      const extras = [errorText, feedbackText].filter(e => e)
+      const str = [main, ...extras].filter(e => e).join('\n');
+
+      const messageChanged = str !== message.text
+      if (!messageChanged) return;
+
+      const msg = await ctx.telegram.editMessageText(
+        message.chat.id,
+        message.message_id,
+        null,
+        str,
+        {
+          parse_mode: 'HTML', disable_web_page_preview: true,
+        }
+      );
+      ctx.scene.state.message = msg;
+      ctx.scene.state.message.text = str;
+    } catch (err) {
+      debugger;
+    }
+  }
+  async function initHandler(ctx) {
+    try {
+      const { user } = ctx.scene.state;
+      ctx.scene.state.language = user.lang || ctx.from?.language_code
+      const language = getLanguageFlag(ctx.scene.state.language);
+      const str = ctx.i18n.t('user_settings', { user, language });
+      const msg = await ctx.reply(str, { parse_mode: 'HTML' });
+      ctx.scene.state.message = msg;
+      ctx.scene.state.message.text = str;
+    } catch (err) {
+      debugger;
+    }
+  }
   const scene = new Scenes.WizardScene('USER_SETTINGS', async ctx => {
-    const { user } = ctx.scene.state;
-    const language = getLanguageFlag(user.lang || ctx.from?.language_code);
-    const str = ctx.i18n.t('user_settings', { user, language });
-    await ctx.reply(str, { parse_mode: 'HTML' });
+    ctx.user = ctx.scene.state.user;
+    const { state } = ctx.scene;
+    if (!state.message) return initHandler(ctx);
+    await ctx.deleteMessage();
+    state.error = {
+      i18n: 'generic_error'
+    };
+    await updateMessage(ctx);
   });
 
-  scene.command('/help', async ctx => {
-    const str = ctx.i18n.t('user_settings_help');
-    await ctx.reply(str, { parse_mode: 'HTML' });
+  scene.command('/setnpub', resetMessage, async ctx => {
+    try {
+      await ctx.deleteMessage();
+      const [, npub] = ctx.message.text.trim().split(' ');
+      const hex = NostrLib.decodeNpub(npub);
+      if (!hex) throw new Error('NpubNotValid');
+      const user = ctx.scene.state.user
+      user.nostr_public_key = hex;
+      await user.save();
+      ctx.scene.state.feedback = {
+        i18n: 'user_npub_updated',
+        npub
+      }
+      await updateMessage(ctx)
+    } catch (err) {
+      ctx.scene.state.error = {
+        i18n: 'npub_not_valid'
+      }
+      await updateMessage(ctx)
+    }
   });
-
-  scene.command('/setnpub', stateUserToContext, NostrCommands.setUserNpub);
 
   return scene;
 }

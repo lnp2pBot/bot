@@ -539,11 +539,7 @@ user_settings: |
   npub:
     <code>${user.nostr_public_key || ''}</code>
 
-  /help - help messages.
-  /exit - to exit the wizard.
-user_settings_help: |
-  <strong>User settings</strong>
-  # commands
-
+  <strong># HELP</strong>
   /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
+  /exit - to exit the wizard.
 # END modules/user

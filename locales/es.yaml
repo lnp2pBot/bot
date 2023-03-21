@@ -539,11 +539,7 @@ user_settings: |
   npub:
     <code>${user.nostr_public_key || ''}</code>
 
-  /help - para ver la ayuda.
-  /exit - para salir del asistente.
-user_settings_help: |
-  <strong>Configuraciones de usuario</strong>
-  # comandos
-
+  <strong># AYUDA</strong>
   /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.
+  /exit - para salir del asistente.
 # END modules/user
