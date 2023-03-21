@@ -537,7 +537,7 @@ user_settings: |
   Idioma:
     ${language.emoji} ${language.name}
   npub:
-    <code>${user.nostr_public_key || ''}</code>
+    <code>${npub || ''}</code>
 
   <strong># AYUDA</strong>
   /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.

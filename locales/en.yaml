@@ -537,7 +537,7 @@ user_settings: |
   Language:
     ${language.emoji} ${language.name}
   npub:
-    <code>${user.nostr_public_key || ''}</code>
+    <code>${npub || ''}</code>
 
   <strong># HELP</strong>
   /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.

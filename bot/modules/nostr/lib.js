@@ -6,3 +6,6 @@ exports.decodeNpub = npub => {
     if (type === 'npub') return data;
   } catch (err) {}
 };
+exports.encodeNpub = hex => {
+  return Nostr.nip19.npubEncode(hex);
+};
