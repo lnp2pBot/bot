@@ -500,7 +500,7 @@ community_admin: |
   Ganancias:
     ${community.earnings}
   npub:
-    <code>${community.nostr_public_key}</code>
+    <code>${community.nostr_public_key || ''}</code>
 
   /help - para ver la ayuda.
   /exit - para salir del asistente.

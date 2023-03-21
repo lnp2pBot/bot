@@ -501,7 +501,7 @@ community_admin: |
   Earnings:
     ${community.earnings}
   npub:
-    <code>${community.nostr_public_key}</code>
+    <code>${community.nostr_public_key || ''}</code>
 
   /help - help messages.
   /exit - to exit the wizard.
