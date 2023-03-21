@@ -509,6 +509,7 @@ community_admin_help: |
   # comandos
 
   /setnpub &lt;npub&gt; - Setea la llave pública de la comunidad. Los eventos Nostr serán taggeados con esta misma.
+community_npub_updated: Has configurado la pubkey ${npub} de la comunidad exitosamente!
 # END modules/community
 
 # START modules/nostr
