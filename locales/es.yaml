@@ -529,3 +529,21 @@ npub_not_valid: |
   Ejemplo:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
+
+# START modules/user
+user_settings: |
+  <strong>Configuraciones de @${user.username}</strong>
+
+  Idioma:
+    ${language.emoji} ${language.name}
+  npub:
+    <code>${user.nostr_public_key || ''}</code>
+
+  /help - para ver la ayuda.
+  /exit - para salir del asistente.
+user_settings_help: |
+  <strong>Configuraciones de usuario</strong>
+  # comandos
+
+  /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.
+# END modules/user

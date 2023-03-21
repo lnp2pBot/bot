@@ -529,3 +529,21 @@ npub_not_valid: |
   Example:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
+
+# START modules/user
+user_settings: |
+  <strong>User settings for @${user.username}</strong>
+
+  Language:
+    ${language.emoji} ${language.name}
+  npub:
+    <code>${user.nostr_public_key || ''}</code>
+
+  /help - help messages.
+  /exit - to exit the wizard.
+user_settings_help: |
+  <strong>User settings</strong>
+  # commands
+
+  /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
+# END modules/user
