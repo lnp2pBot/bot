@@ -1,0 +1,1 @@
+exports.Settings = require('./settings');

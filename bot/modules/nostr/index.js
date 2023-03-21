@@ -3,9 +3,10 @@ require('websocket-polyfill');
 const logger = require('../../../logger');
 const Config = require('./config');
 const { orderCreated } = require('./events');
+const Commands = require('./commands');
 
 exports.configure = bot => {
-  require('./commands')(bot);
+  bot.command('/nostr', Commands.info);
 
   if (!Config.getRelays().length) {
     ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'].map(
