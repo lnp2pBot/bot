@@ -23,6 +23,7 @@ const CommunityModule = require('./modules/community');
 const LanguageModule = require('./modules/language');
 const NostrModule = require('./modules/nostr');
 const OrdersModule = require('./modules/orders');
+const UserModule = require('./modules/user');
 const DisputeModule = require('./modules/dispute');
 const {
   takebuy,
@@ -207,6 +208,7 @@ const initialize = (botToken, options) => {
     }
   });
 
+  UserModule.configure(bot);
   NostrModule.configure(bot);
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);

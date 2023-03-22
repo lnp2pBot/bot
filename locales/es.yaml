@@ -487,6 +487,31 @@ upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambia
 community_deleted: Esta comunidad fue eliminada por inactividad, te he desvinculado de ella, intenta crear la orden nuevamente
 dispute_too_soon: No puedes iniciar una disputa tan pronto, ten paciencia y espera unos minutos a que tu contraparte responda
 maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
+
+# START modules/community
+community_admin: |
+  <strong>Community Admin Mode</strong>
+  > ${community.name} (${community.group})
+  
+  Pública:
+    ${community.public ? 'Si' : 'No'}
+  Fee:
+    ${community.fee}
+  Ganancias:
+    ${community.earnings}
+  npub:
+    <code>${community.nostr_public_key || ''}</code>
+
+  /help - para ver la ayuda.
+  /exit - para salir del asistente.
+community_admin_help: |
+  <strong>Community Admin Mode</strong>
+  # comandos
+
+  /setnpub &lt;npub&gt; - Setea la llave pública de la comunidad. Los eventos Nostr serán taggeados con esta misma.
+community_npub_updated: Has configurado la pubkey ${npub} de la comunidad exitosamente!
+# END modules/community
+
 # START modules/nostr
 user_npub_updated: Has configurado tu pubkey ${npub} exitosamente!
 nostr_info: |
@@ -504,3 +529,17 @@ npub_not_valid: |
   Ejemplo:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
+
+# START modules/user
+user_settings: |
+  <strong>Configuraciones de @${user.username}</strong>
+
+  Idioma:
+    ${language.emoji} ${language.name}
+  npub:
+    <code>${npub || ''}</code>
+
+  <strong># AYUDA</strong>
+  /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.
+  /exit - para salir del asistente.
+# END modules/user

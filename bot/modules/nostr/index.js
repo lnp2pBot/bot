@@ -3,9 +3,10 @@ require('websocket-polyfill');
 const logger = require('../../../logger');
 const Config = require('./config');
 const { orderCreated } = require('./events');
+const Commands = require('./commands');
 
 exports.configure = bot => {
-  require('./commands')(bot);
+  bot.command('/nostr', Commands.info);
 
   if (!Config.getRelays().length) {
     ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'].map(
@@ -13,10 +14,15 @@ exports.configure = bot => {
     );
   }
 
+  const CommunityEvents = require('../events/community');
+  CommunityEvents.onCommunityUpdated(async community => {
+    // todo: notify users
+  });
+
   const OrderEvents = require('../events/orders');
   OrderEvents.onOrderCreated(async order => {
     try {
-      const event = orderCreated(order);
+      const event = await orderCreated(order);
       await publish(event);
       return event;
     } catch (err) {
@@ -25,7 +31,6 @@ exports.configure = bot => {
   });
   OrderEvents.onOrderTaken(order => {
     // todo: notify creator
-    console.log('OrderTaken', order);
   });
 };
 

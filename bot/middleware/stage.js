@@ -2,6 +2,7 @@
 const { Scenes } = require('telegraf');
 const CommunityModule = require('../modules/community');
 const OrdersModule = require('../modules/orders');
+const UserModule = require('../modules/user');
 const {
   addInvoiceWizard,
   addFiatAmountWizard,
@@ -12,6 +13,7 @@ exports.stageMiddleware = () => {
   const scenes = [
     addInvoiceWizard,
     addFiatAmountWizard,
+    CommunityModule.Scenes.communityAdmin,
     CommunityModule.Scenes.communityWizard,
     CommunityModule.Scenes.updateNameCommunityWizard,
     CommunityModule.Scenes.updateGroupCommunityWizard,
@@ -23,6 +25,7 @@ exports.stageMiddleware = () => {
     CommunityModule.Scenes.addEarningsInvoiceWizard,
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
+    UserModule.Scenes.Settings,
   ];
   scenes.forEach(addGenericCommands);
   const stage = new Scenes.Stage(scenes, {

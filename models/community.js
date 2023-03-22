@@ -50,6 +50,7 @@ const CommunitySchema = new mongoose.Schema({
     validate: [currencyLimits, '{PATH} is not within limits'],
   },
   created_at: { type: Date, default: Date.now },
+  nostr_public_key: { type: String },
 });
 
 module.exports = mongoose.model('Community', CommunitySchema);

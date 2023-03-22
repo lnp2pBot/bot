@@ -1,11 +1,13 @@
 const Nostr = require('nostr-tools');
 const Config = require('./config');
 
+const { Community } = require('../../../models');
+
 const KIND = {
   ORDER_CREATED: 20100,
 };
 
-exports.orderCreated = order => {
+exports.orderCreated = async order => {
   const sk = Config.getPrivateKey();
   const pubkey = Config.getPublicKey();
 
@@ -28,7 +30,10 @@ exports.orderCreated = order => {
   })(order);
   event.content = JSON.stringify(evData);
   if (order.community_id) {
-    // todo: tag community's npub
+    const community = await Community.findById(order.community_id);
+    if (community.public && community.nostr_public_key) {
+      event.tags.push(['p', community.nostr_public_key]);
+    }
   }
   event.id = Nostr.getEventHash(event);
   event.sig = Nostr.signEvent(event, sk);
