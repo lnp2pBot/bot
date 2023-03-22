@@ -1578,6 +1578,7 @@ module.exports = {
   orderOnfiatSentStatusMessages,
   takeSellWaitingSellerToPayMessage,
   userBannedMessage,
+  userUnBannedMessage,
   notFoundUserMessage,
   errorParsingInvoiceMessage,
   notValidIdMessage,
