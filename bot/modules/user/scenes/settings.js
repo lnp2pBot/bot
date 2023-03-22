@@ -26,7 +26,7 @@ function make() {
 
       const errorText = (error => {
         if (!error) return;
-        return '<strong># ERROR</strong>\n' + ctx.i18n.t(error.i18n, error);
+        return '<strong>⚠️ ERROR</strong>\n' + ctx.i18n.t(error.i18n, error);
       })(error);
       const feedbackText = (feedback => {
         if (!feedback) return;
@@ -53,9 +53,7 @@ function make() {
       );
       ctx.scene.state.message = msg;
       ctx.scene.state.message.text = str;
-    } catch (err) {
-      debugger;
-    }
+    } catch (err) {}
   }
   async function initHandler(ctx) {
     try {
@@ -65,9 +63,7 @@ function make() {
       const msg = await ctx.reply(str, { parse_mode: 'HTML' });
       ctx.scene.state.message = msg;
       ctx.scene.state.message.text = str;
-    } catch (err) {
-      debugger;
-    }
+    } catch (err) {}
   }
   const scene = new Scenes.WizardScene('USER_SETTINGS', async ctx => {
     ctx.user = ctx.scene.state.user;
