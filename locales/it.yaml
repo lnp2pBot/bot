@@ -232,6 +232,7 @@ help: |
   /cancelorder <_id orden_> - Annulla l'ordine e restituisce i sats al venditore, deve esserci una community predefinita
   /deldispute <_username_> <_id order_> - Elimina una disputa dall'utente nella community; per impostazione predefinita, deve esistere una community
   /ban <_username_> - Banna l'utente dalla community, deve esserci una community predefinita
+  /unban <_username_> - Sblocca l'utente dalla community, deve esserci una community predefinita
 
   /version - mostra la versione corrente del bot
   /help - messaggi di aiuto
@@ -242,6 +243,7 @@ buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} mi ha informato che ti ha g
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 hai uno o più ordini in cui l'acquirente comunica che il denaro ti è stato inviato ma non hai ancora rilasciato i sats. Non ti sarà possibile creare nuovi ordini fino a quando non si sbloccherai tali fondi..
 user_banned: Utente bannato!
+user_unbanned: Utente non bannato!
 user_not_found: L'utente non è stato trovato!
 parse_invoice_error: Errore nell'elaborazione della invoice
 invalid_id: Id non valido

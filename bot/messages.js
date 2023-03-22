@@ -750,6 +750,14 @@ const userBannedMessage = async ctx => {
   }
 };
 
+const userUnBannedMessage = async ctx => {
+  try {
+    await ctx.reply(ctx.i18n.t('user_unbanned'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const notFoundUserMessage = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('user_not_found'));
@@ -1582,6 +1590,7 @@ module.exports = {
   orderOnfiatSentStatusMessages,
   takeSellWaitingSellerToPayMessage,
   userBannedMessage,
+  userUnBannedMessage,
   notFoundUserMessage,
   errorParsingInvoiceMessage,
   notValidIdMessage,

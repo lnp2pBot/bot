@@ -232,6 +232,7 @@ help: |
   /cancelorder <_id orden_> - Cancela la orden lo cual retorna los sats al vendedor, debe haber una comunidad por defecto
   /deldispute <_username_> <_id orden_> - Le elimina una disputa al usuario en la comunidad, debe haber una comunidad por defecto
   /ban <_username_> - Expulsa a un usuario de una comunidad, debe haber una comunidad por defecto
+  /unban <_username_> - Desbanea a un usuario de una comunidad, debe haber una comunidad por defecto
 
   /version - Muestra la versión actual del bot
   /help - Mensaje de ayuda
@@ -245,6 +246,7 @@ buyer_told_me_that_sent_fiat: |
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Tienes una o más ordenes en las que el comprador indicó que te envió el dinero fiat pero no has liberado los fondos, no puedes seguir operando hasta completar esa(s) orden(es)
 user_banned: ¡Usuario baneado!
+user_unbanned: ¡Usuario no baneado!
 user_not_found: ¡Usuario no encontrado en base de datos!
 parse_invoice_error: Error parseando la factura
 invalid_id: Id no válida

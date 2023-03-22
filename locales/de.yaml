@@ -232,6 +232,7 @@ help: |
   /cancelorder <_id orden_> - Steckt die Bestellung ab, die die SATs an den Verkäufer zurückgibt. Es muss standardmäßig eine Community geben
   /deldispute <_username_> <_id order_> - Löscht einen Streit vom Benutzer in der Community, es muss standardmäßig eine Community geben
   /ban <_username_> - Verbieten Sie einen Benutzer aus einer Community, es sollte eine Standard -Community geben
+  /unban <_username_> - Entsperren Sie einen Benutzer aus einer Community, es sollte eine Standard-Community geben
 
   /version - Zeigt die aktuelle Version des Bots
   /help - Hilfe
@@ -242,6 +243,7 @@ buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} hat mitgeteilt, dass er dir
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der Käufer dir mitteilt, dass das Geld an dich geschickt wurde, du es aber noch nicht freigegeben hast. Du kannst keine neuen Aufträge erstellen, bis du das Geld freigibst.
 user_banned: Gesperrter Benutzer!
+user_unbanned: Nicht gesperrter Benutzer!
 user_not_found: Benutzer wurde in der Datenbank nicht gefunden!
 parse_invoice_error: Fehler beim Parsen der LN-Rechnung
 invalid_id: Ungültige Id

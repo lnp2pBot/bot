@@ -232,6 +232,7 @@ help: |
   /cancelorder <id order> - Cancela o pedido que devolve o sats ao vendedor, deve haver uma comunidade por padrão
   /deldispute <username> <order id> - Exclui uma disputa de usuário na comunidade, deve haver uma comunidade padrão
   /ban <username> - Banir um usuário de uma comunidade, deve haver uma comunidade padrão
+  /unban <username> - Desbanir um usuário de uma comunidade, deve haver uma comunidade padrão
 
   /version - mostra a versão atual do bot
   /help - mensagem de ajuda
@@ -242,6 +243,7 @@ buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} informou que já enviou o d
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Você tem um ou mais pedidos em que o comprador informa que o dinheiro fiduciário foi enviado a você, mas você não lançou os SATs.Você não poderá criar novos pedidos até lançar esses fundos.
 user_banned: Usuário proibido!
+user_unbanned: Usuário não proibido!
 user_not_found: O usuário não foi encontrado no banco de dados!
 parse_invoice_error: Erro analisando a fatura
 invalid_id: ID Inválido

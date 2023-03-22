@@ -509,6 +509,41 @@ const initialize = (botToken, options) => {
     }
   });
 
+  bot.command('unban', adminMiddleware, async ctx => {
+    try {
+      let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
+
+      if (!username) return;
+
+      username = username[0] == '@' ? username.slice(1) : username;
+
+      const user = await User.findOne({ username });
+      if (!user) {
+        await messages.notFoundUserMessage(ctx);
+        return;
+      }
+
+      // We check if this is a solver, we unban the user only in the default community of the solver
+      if (!ctx.admin.admin) {
+        if (ctx.admin.default_community_id) {
+          const community = await Community.findOne({
+            _id: user.default_community_id,
+          });
+          community.banned_users = community.filter(el => el.id !== user._id)
+          await community.save();
+        } else {
+          return await ctx.reply(ctx.i18n.t('need_default_community'));
+        }
+      } else {
+        user.banned = false;
+        await user.save();
+      }
+      await messages.userUnBannedMessage(ctx);
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+
   bot.command('setaddress', userMiddleware, async ctx => {
     try {
       const [lightningAddress] = await validateParams(

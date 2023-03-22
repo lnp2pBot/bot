@@ -236,6 +236,7 @@ help: |
   /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
   /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
   /ban <_username_> - Ban a user from a community, there should be a default community
+  /unban <_username_> - Unban a user from a community, there should be a default community
 
   /version - Shows the current version of the bot
   /help - Help messages
@@ -246,6 +247,7 @@ buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that he alread
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven't released the sats yet. You will not be able to create new orders until you release such funds.
 user_banned: Banned user!
+user_unbanned: Unbanned user!
 user_not_found: User was not found in the database!
 parse_invoice_error: Error parsing invoice
 invalid_id: Invalid ID
