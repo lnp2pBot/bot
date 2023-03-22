@@ -503,3 +503,41 @@ npub_not_valid: |
   Пример:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
+
+# START modules/community
+community_admin: |
+  <strong>Community Admin Mode</strong>
+  > ${community.name} (${community.group})
+  
+  Public:
+    ${community.public ? 'Yes' : 'No'}
+  Fee:
+    ${community.fee}
+  Earnings:
+    ${community.earnings}
+  npub:
+    <code>${community.nostr_public_key || ''}</code>
+
+  /help - help messages.
+  /exit - to exit the wizard.
+community_admin_help: |
+  <strong>Community Admin Mode</strong>
+  # commands
+
+  /setnpub &lt;npub&gt; - Configure community's public key. Nostr events will be tagged with this public key.
+community_npub_updated: You added the community's pubkey ${npub} successfully!
+# END modules/community
+
+# START modules/user
+user_settings: |
+  <strong>User settings for @${user.username}</strong>
+
+  Language:
+    ${language.emoji} ${language.name}
+  npub:
+    <code>${npub || ''}</code>
+
+  <strong># HELP</strong>
+  /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
+  /exit - to exit the wizard.
+# END modules/user
