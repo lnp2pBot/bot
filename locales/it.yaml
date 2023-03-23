@@ -221,12 +221,13 @@ help: |
   /cancelall - Cancella tutti gli ordini non ancora accettati
 
   Nostr:
-  /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey
+  /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey, questo comando è eseguibile solo nella procedura guidata /settings
   /nostr - Mostra la nostr pubkey del bot e i relay utilizzati per la pubblicazione
 
   Communities:
   /community - Crea una nuova community
   /mycomms - Mostra le comunità che hai creato
+  /mycomm <_@community_> - Accedi alla procedura guidata di amministrazione della comunità
   /findcomms <_fiat code_> - Trova community che operano con la valuta indicata
   /setcomm <_@groupOfACommunity / off_> - Imposta una community predefinita o rimuovila con 'off'
   /settleorder <_order id_> - Accettare il pagamento del venditore e inviare automaticamente i dati all'acquirente, deve esserci una community predefinita

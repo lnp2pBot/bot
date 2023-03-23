@@ -225,12 +225,13 @@ help: |
   /cancelall - Cancel all posted and untaken orders
 
   Nostr:
-  /setnpub <_nostr npub_> - Updates your nostr pubkey
+  /setnpub <_nostr npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
   /nostr - Shows the bot's nostr pubkey and the relays used to publish
 
   Communities:
   /community - Create a new community
   /mycomms - Shows the communities you have created
+  /mycomm <_@community_> - Enter Community Admin Wizard
   /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
   /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
   /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default

@@ -221,12 +221,13 @@ help: |
   /cancelall - Cancela todos os pedidos postados e não atendidos
 
   Nostr:
-  /setnpub <_nostr npub_> - Atualiza sua nostr pubkey
+  /setnpub <_nostr npub_> - Atualiza sua nostr pubkey, este comando só é executável no assistente /settings
   /nostr - Mostra a chave pública nostr do bot e os relés usados para publicar
 
   Comunidades:
   /community - Crie uma nova comunidade
   /mycomms - Mostra as comunidades que você criou
+  /mycomm <_@community_> - Entra no Community Admin Wizard
   /findcomms <fiat code> - Busca por comunidades que operam com a moeda indicada
   /setcomm <@groupOfACommunity / off> - Defina uma comunidade padrão ou remova-a com 'off'
   /settleorder <order id> - Aceita o pagamento do vendedor e envia automaticamente o sats para o comprador, deve haver uma comunidade por padrão

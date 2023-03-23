@@ -221,12 +221,13 @@ help: |
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
 
   Nostr:
-  /setnpub <_nostr npub_> - Aktualisiert Ihren Nostr-Pubkey
+  /setnpub <_nostr npub_> - Aktualisiert Ihren nostr Pubkey, dieser Befehl ist nur im /settings Wizard ausführbar
   /nostr - Zeigt den Nostr-Pubkey des Bots und die zum Veröffentlichen verwendeten Relays an
 
   Gemeinschaften:
   /community - Erstellen Sie eine neue Community
   /mycomms - Zeigt die von Ihnen erstellten Communities an
+  /mycomm <_@community_> – Aufrufen des Community-Admin-Assistenten
   /findcomms <_fiat code_> - Findet Gemeinden, die mit der angegebenen Währung arbeiten
   /setcomm <_@groupOfACommunity / off_> - Stellen Sie eine Standardgemeinschaft fest oder entfernen Sie sie mit 'off'
   /settleorder <_order id_> - Akzeptieren Sie die Zahlung des Verkäufers und senden Sie die SATs automatisch an den Käufer. Es muss standardmäßig eine Community geben
