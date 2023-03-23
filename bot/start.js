@@ -488,9 +488,9 @@ const initialize = (botToken, options) => {
       // We check if this is a solver, we ban the user only in the default community of the solver
       if (!ctx.admin.admin) {
         if (ctx.admin.default_community_id) {
-          const community = await Community.findOne({
-            _id: user.default_community_id,
-          });
+          const community = await Community.findById(
+            ctx.admin.default_community_id
+          );
           community.banned_users.push({
             id: user._id,
             username: user.username,
@@ -526,10 +526,12 @@ const initialize = (botToken, options) => {
       // We check if this is a solver, we unban the user only in the default community of the solver
       if (!ctx.admin.admin) {
         if (ctx.admin.default_community_id) {
-          const community = await Community.findOne({
-            _id: user.default_community_id,
-          });
-          community.banned_users = community.filter(el => el.id !== user._id)
+          const community = await Community.findById(
+            ctx.admin.default_community_id
+          );
+          community.banned_users = community.banned_users.filter(
+            el => el.id !== user.id
+          );
           await community.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));

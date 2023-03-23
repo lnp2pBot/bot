@@ -209,7 +209,8 @@ help: |
   /showvolume - Позволяет отображать объем торгов по каждому новому созданному ордеру, по умолчанию - нет (false)
   /setinvoice <_order id_> <_factura lightning_> - Позволяет покупателю обновить счет-фактуру Lightning, по которой он получает сатоши.
   /setaddress <_lightning address / off_> - Позволяет покупателю указать статический платежный адрес (lightning address), _off_ - отключить
-  /setlang - Allows the user to change the language
+  /setlang - Позволяет пользователю изменить язык
+  /settings - Отображает текущие настройки пользователя
   /listorders - Пользователь может перечислить свои незавершенные заявки
   /listcurrencies - Перечислите валюты, которые мы можем использовать без указания суммы в сатоши
   /fiatsent <_order id_> - Покупатель указывает, что уже отправил фиатные деньги продавцу
@@ -536,6 +537,8 @@ user_settings: |
 
   Language:
     ${language.emoji} ${language.name}
+  Community:
+    ${community || ''}
   npub:
     <code>${npub || ''}</code>
 

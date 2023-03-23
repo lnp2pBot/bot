@@ -211,6 +211,7 @@ help: |
   /setinvoice <_order id_> <_lightning invoice_> - Questo comando consente all'acquirente di aggiornare la invoice LN su cui ricevere i sats. 
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
+  /settings - Visualizza le impostazioni correnti dell'utente
   /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso. 
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
@@ -533,6 +534,8 @@ user_settings: |
 
   Language:
     ${language.emoji} ${language.name}
+  Community:
+    ${community || ''}
   npub:
     <code>${npub || ''}</code>
 

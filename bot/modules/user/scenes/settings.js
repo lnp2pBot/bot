@@ -1,4 +1,5 @@
 const { Scenes } = require('telegraf');
+const { Community } = require('../../../../models');
 const { getLanguageFlag } = require('../../../../util');
 const NostrLib = require('../../nostr/lib');
 
@@ -8,15 +9,22 @@ function make() {
     delete ctx.scene.state.error;
     next();
   };
-  function mainData(ctx) {
+  async function mainData(ctx) {
     const { user } = ctx.scene.state;
     const data = {
       user,
       language: getLanguageFlag(ctx.scene.state.language),
+      npub: '',
+      community: '',
     };
+    if (user.default_community_id) {
+      const community = await Community.findById(user.default_community_id);
+      data.community = community.group;
+    }
     if (user.nostr_public_key) {
       data.npub = NostrLib.encodeNpub(user.nostr_public_key);
     }
+
     return data;
   }
   async function updateMessage(ctx) {
@@ -35,7 +43,7 @@ function make() {
       })(ctx.scene.state.feedback);
       const extras = [errorText, feedbackText].filter(e => e);
 
-      const main = ctx.i18n.t('user_settings', mainData(ctx));
+      const main = ctx.i18n.t('user_settings', await mainData(ctx));
       const str = [main, ...extras].filter(e => e).join('\n');
 
       const messageChanged = str !== message.text;
@@ -59,7 +67,7 @@ function make() {
     try {
       const { user } = ctx.scene.state;
       ctx.scene.state.language = user.lang || ctx.from?.language_code;
-      const str = ctx.i18n.t('user_settings', mainData(ctx));
+      const str = ctx.i18n.t('user_settings', await mainData(ctx));
       const msg = await ctx.reply(str, { parse_mode: 'HTML' });
       ctx.scene.state.message = msg;
       ctx.scene.state.message.text = str;
