@@ -35,7 +35,7 @@ exports.orderCreated = async order => {
       if (community.nostr_public_key) {
         event.tags.push(['p', community.nostr_public_key]);
       }
-      event.tags.push(['com', community.group]);
+      event.tags.push(['com', order.community_id]);
     }
   }
   event.id = Nostr.getEventHash(event);
