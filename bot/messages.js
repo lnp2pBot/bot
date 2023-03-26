@@ -307,22 +307,26 @@ const beginTakeBuyMessage = async (ctx, bot, seller, order) => {
       seller.tg_id,
       ctx.i18n.t('begin_take_buy', { expirationTime })
     );
-    await bot.telegram.sendMessage(seller.tg_id, order._id, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: ctx.i18n.t('continue'),
-              callback_data: 'showHoldInvoiceBtn',
-            },
-            {
-              text: ctx.i18n.t('cancel'),
-              callback_data: 'cancelShowHoldInvoiceBtn',
-            },
+    await bot.telegram.sendMessage(
+      seller.tg_id,
+      order.description + order._id,
+      {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: ctx.i18n.t('continue'),
+                callback_data: 'showHoldInvoiceBtn',
+              },
+              {
+                text: ctx.i18n.t('cancel'),
+                callback_data: 'cancelShowHoldInvoiceBtn',
+              },
+            ],
           ],
-        ],
-      },
-    });
+        },
+      }
+    );
   } catch (error) {
     logger.error(error);
   }

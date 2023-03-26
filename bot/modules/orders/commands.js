@@ -7,17 +7,45 @@ const {
   isBannedFromCommunity,
   validateSeller,
   validateSellOrder,
+  validateParams,
 } = require('../../validations');
 const messages = require('../../messages');
 const ordersActions = require('../../ordersActions');
 const { deletedCommunityMessage } = require('./messages');
 
 const Scenes = require('./scenes');
+const { takebuy, takesell } = require('./takeOrder');
 
-const buyWizard = async ctx => enterWizard(ctx, ctx.user, 'buy');
-const sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
+exports.takeOrder = async ctx => {
+  try {
+    const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+    const order = await Order.findOne({
+      _id: orderId,
+      status: 'PENDING',
+    });
+    if (!order) throw new Error('OrderNotFound');
+    switch (order.type) {
+      case 'buy': {
+        return takebuy(ctx, ctx, orderId);
+      }
+      case 'sell': {
+        return takesell(ctx, ctx, orderId);
+      }
+    }
+  } catch (err) {
+    switch (err.message) {
+      case 'OrderNotFound':
+        return ctx.reply(ctx.i18n.t('order_not_found'));
+      default:
+        return ctx.reply(ctx.i18n.t('generic_error'));
+    }
+  }
+};
 
-const sell = async ctx => {
+exports.buyWizard = async ctx => enterWizard(ctx, ctx.user, 'buy');
+exports.sellWizard = async ctx => enterWizard(ctx, ctx.user, 'sell');
+
+exports.sell = async ctx => {
   try {
     const user = ctx.user;
     if (await isMaxPending(user))
@@ -88,7 +116,7 @@ const sell = async ctx => {
   }
 };
 
-const buy = async ctx => {
+exports.buy = async ctx => {
   try {
     const user = ctx.user;
     if (await isMaxPending(user))
@@ -172,7 +200,7 @@ async function enterWizard(ctx, user, type) {
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }
 
-const isMaxPending = async user => {
+const isMaxPending = (exports.isMaxPending = async user => {
   const pendingOrders = await Order.count({
     status: 'PENDING',
     creator_id: user._id,
@@ -182,6 +210,4 @@ const isMaxPending = async user => {
     return true;
   }
   return false;
-};
-
-module.exports = { buyWizard, sellWizard, buy, sell, isMaxPending };
+});
