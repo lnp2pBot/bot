@@ -421,7 +421,7 @@ const beginTakeSellMessage = async (ctx, bot, buyer, order) => {
       ctx.i18n.t('you_took_someone_order', { expirationTime }),
       { parse_mode: 'MarkdownV2' }
     );
-    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+    await bot.telegram.sendMessage(buyer.tg_id, order.description + order._id, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -1530,9 +1530,8 @@ const showConfirmationButtons = async (ctx, orders, commandString) => {
           };
         })
         .map(ord => ({
-          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${
-            ord.fiat
-          } ${ord.amount}`,
+          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${ord.fiat
+            } ${ord.amount}`,
           callback_data: `${commandString}_${ord._id}`,
         }));
       inlineKeyboard.push(lineBtn);
