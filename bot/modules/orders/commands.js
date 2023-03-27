@@ -14,7 +14,7 @@ const ordersActions = require('../../ordersActions');
 const { deletedCommunityMessage } = require('./messages');
 
 const Scenes = require('./scenes');
-const { takebuy, takesell } = require('./takeOrder');
+const { takebuy, takesell, takebuyValidation } = require('./takeOrder');
 
 exports.takeOrder = async ctx => {
   try {
@@ -26,6 +26,11 @@ exports.takeOrder = async ctx => {
     if (!order) throw new Error('OrderNotFound');
     switch (order.type) {
       case 'buy': {
+        let valid = false
+        await takebuyValidation(ctx, () => {
+          valid = true
+        })
+        if (!valid) return
         return takebuy(ctx, ctx, orderId);
       }
       case 'sell': {
