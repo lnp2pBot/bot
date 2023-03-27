@@ -58,7 +58,12 @@ exports.configure = bot => {
     }
   });
 
-  bot.command('/takeorder', userMiddleware, takeOrderValidation, commands.takeOrder);
+  bot.command(
+    '/takeorder',
+    userMiddleware,
+    takeOrderValidation,
+    commands.takeOrder
+  );
 
   bot.action(
     'takesell',

@@ -26,11 +26,11 @@ exports.takeOrder = async ctx => {
     if (!order) throw new Error('OrderNotFound');
     switch (order.type) {
       case 'buy': {
-        let valid = false
+        let valid = false;
         await takebuyValidation(ctx, () => {
-          valid = true
-        })
-        if (!valid) return
+          valid = true;
+        });
+        if (!valid) return;
         return takebuy(ctx, ctx, orderId);
       }
       case 'sell': {
