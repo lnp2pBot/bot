@@ -541,9 +541,11 @@ user_settings: |
   Idioma:
     ${language.emoji} ${language.name}
   Comunidad:
-    ${community || ''}
+    ${community || '🛇'}
   npub:
-    <code>${npub || ''}</code>
+    <code>${npub || '🛇'}</code>
+  lightning address:
+    <code>${lightning_address || '🛇'}</code>
 
   <strong># AYUDA</strong>
   /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.

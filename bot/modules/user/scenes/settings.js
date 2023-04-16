@@ -16,6 +16,7 @@ function make() {
       language: getLanguageFlag(ctx.scene.state.language),
       npub: '',
       community: '',
+      lightning_address: '',
     };
     if (user.default_community_id) {
       const community = await Community.findById(user.default_community_id);
@@ -23,6 +24,10 @@ function make() {
     }
     if (user.nostr_public_key) {
       data.npub = NostrLib.encodeNpub(user.nostr_public_key);
+    }
+
+    if (user.lightning_address) {
+      data.lightning_address = user.lightning_address;
     }
 
     return data;

@@ -539,9 +539,11 @@ user_settings: |
   Language:
     ${language.emoji} ${language.name}
   Community:
-    ${community || ''}
+    ${community || '🛇'}
   npub:
-    <code>${npub || ''}</code>
+    <code>${npub || '🛇'}</code>
+  lightning address:
+    <code>${lightning_address || '🛇'}</code>
 
   <strong># HELP</strong>
   /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
