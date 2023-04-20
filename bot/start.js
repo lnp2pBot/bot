@@ -726,7 +726,33 @@ const initialize = (botToken, options) => {
 
   bot.command('info', userMiddleware, async ctx => {
     try {
-      await messages.showInfoMessage(bot, ctx.user);
+      const { user } = ctx;
+      let userMessage = 'User info:\n';
+      let botMessage = 'Bot info:\n';
+  
+      // Retrieve user rating and disputes
+      const rating = await getUserRating(user.rating);
+      const disputes = await getUserDisputes(user.disputes);
+  
+      // Retrieve user transaction volume
+      const transactionVolume = await getTransactionVolume(user.volume_traded);
+  
+      // Check if the user has a default community set
+      const defaultCommunity = await getDefaultCommunity(user.default_community_id);
+      if (defaultCommunity) {
+        // Retrieve user's transaction volume within the default community for the last day
+        const communityTransactionVolume = await getVolumeNDays(1, user.default_community_id);
+        userMessage += `Rating: ${rating}\nDisputes: ${disputes}\nTransaction volume: ${transactionVolume}\nCommunity transaction volume: ${communityTransactionVolume}\n`;
+      } else {
+        userMessage += `Rating: ${rating}\nDisputes: ${disputes}\nTransaction volume: ${transactionVolume}\n`;
+      }
+  
+      // Retrieve bot's fee
+      const botFee = await getBotFee(user.showInfoMessage);
+      botMessage += `Bot fee: ${botFee}%\n`;
+  
+      // Send the message to the user
+      await user.telegram.sendMessage(user.tg_id, userMessage + '\n' + botMessage);
     } catch (error) {
       logger.error(error);
     }
