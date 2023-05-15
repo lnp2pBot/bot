@@ -1,6 +1,21 @@
 const { getOrderChannel, sanitizeMD } = require('../../../util');
 const logger = require('../../../logger');
 
+function calculateTimeRemaining(purchaseTime) {
+  const expirationTime = new Date(purchaseTime);
+  expirationTime.setHours(expirationTime.getHours() + 24);
+  const currentTime = new Date();
+  const timeRemaining = expirationTime - currentTime;
+
+  if (timeRemaining < 0) {
+    return 'Expired';
+  } else {
+    const remainingHours = Math.floor(timeRemaining / (1000 * 60 * 60));
+    const remainingMinutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    return `${remainingHours}h ${remainingMinutes}m`;
+  }
+}
+
 exports.listOrdersResponse = async orders => {
   const tasks = orders.map(async order => {
     const channel = await getOrderChannel(order);
@@ -16,10 +31,12 @@ exports.listOrdersResponse = async orders => {
           ].join('');
 
     if (typeof order.amount !== 'undefined') amount = order.amount;
+    const timeRem = calculateTimeRemaining(order.purchase_time);
     return [
       [''].join(''),
       ['`Id      `: ', '`', order.id, '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
+      ['`Time rem`: ', '`', timeRem, '`'].join(''),
       ['`Sats amt`: ', '`', amount, '`'].join(''),
       ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),
       ['`Fiat    `: ', '`', order.fiat_code, '`'].join(''),
