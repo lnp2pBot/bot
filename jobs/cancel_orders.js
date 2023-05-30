@@ -70,10 +70,10 @@ const cancelOrders = async bot => {
     // Now we cancel orders expired
     // ==============================
     orderTime = new Date();
-    let orderExpirationTime = parseInt(
-      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW
-    );
-    orderExpirationTime = orderExpirationTime + orderExpirationTime * 0.2;
+
+    const orderExpirationTime =
+      holdInvoiceExpiration.expirationTimeInSecs +
+      holdInvoiceExpiration.safetyWindowInSecs;
     orderTime.setSeconds(orderTime.getSeconds() - orderExpirationTime);
     const expiredOrders = await Order.find({
       invoice_held_at: { $lte: orderTime },

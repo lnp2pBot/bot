@@ -49,6 +49,7 @@ const payToBuyer = async (bot, order) => {
     // We check if the payment is on flight we don't do anything
     const isPending = await isPendingPayment(order.buyer_invoice);
     if (isPending) {
+      logger.info(`Order ${order._id} have a pending payment`);
       return;
     }
     const payment = await payRequest({

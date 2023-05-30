@@ -628,7 +628,6 @@ const initialize = (botToken, options) => {
             payment_request: lnInvoice,
             user_id: ctx.user.id,
             description: order.description,
-            hash: order.hash,
             order_id: order._id,
           });
           await pp.save();
