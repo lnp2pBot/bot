@@ -104,7 +104,7 @@ describe('Telegram bot test', () => {
     // expect(updates.result[0].message.text).to.be.equal("/buy \\<_monto en sats_\\> \\<_monto en fiat_\\> \\<_código fiat_\\> \\<_método de pago_\\> \\[_prima/descuento_\\]");
   });
 
-  it.skip('should return the list of supported currencies', async () => {
+  it('should return the list of supported currencies', async () => {
     const client = server.getClient(token, { timeout: 5000 });
     const userStub = sinon.stub(User, 'findOne');
     userStub.returns(testUser);
@@ -119,7 +119,7 @@ describe('Telegram bot test', () => {
     ).to.be.equal(getCurrenciesWithPrice().length);
   });
 
-  it.skip('should return flags of langs supported', async () => {
+  it('should return flags of langs supported', async () => {
     const client = server.getClient(token, { timeout: 5000 });
     const userStub = sinon.stub(User, 'findOne');
     userStub.returns(testUser);
