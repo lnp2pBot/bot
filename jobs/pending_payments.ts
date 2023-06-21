@@ -101,7 +101,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
           i18nCtx
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       const message: string = error.toString();
       logger.error(`attemptPendingPayments catch error: ${message}`);
     } finally {
