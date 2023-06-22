@@ -10,5 +10,52 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.x
+      - name: Update apt and install required packages
+        run: |
+          sudo apt update
+          sudo apt install --yes --no-install-recommends curl
+          sudo apt-get install --yes gnupg
+
+      - name: Import the public key used by the package management system
+        run: |
+          sudo rm -f /etc/ssl/certs/ca-bundle.crt
+          sudo apt reinstall --yes ca-certificates
+          sudo update-ca-certificates
+          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+            --dearmor
+
+      - name: Install MongoDB
+        run: |
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          sudo apt-get update
+          sudo apt-get install -y mongodb-org
+      - name: Check Mongo version
+        run: mongod --version
+      - name: Start MongoDB
+        run: sudo service mongod start
+      - name: Verify that MongoDB has started successfully
+        run: sudo service mongod status
+
+      - name: Create database
+        run: |
+          # this sleep is added to avoid race condition without this we sometimes get the following error:
+          # connecting to: mongodb://127.0.0.1:27017
+          # 2023-05-30T13:02:52.975+0000 W NETWORK  [thread1] Failed to connect to 127.0.0.1:27017, in(checking socket for error after poll), reason: Connection refused
+          # 2023-05-30T13:02:52.976+0000 E QUERY    [thread1] Error: couldn't connect to server 127.0.0.1:27017, connection attempt failed :
+          # connect@src/mongo/shell/mongo.js:257:13
+          # @(connect):1:6
+          # exception: connect failed
+          sleep 10
+          
+          mongosh --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
+
       - run: npm ci
-      - run: npm test
+      - name: Run tests
+        env:
+          DB_USER: ''
+          DB_PASS: ''
+          DB_HOST: 'localhost'
+          DB_PORT: '27017'
+          DB_NAME: 'lnp2pbot'
+        run: npm test
