@@ -26,8 +26,6 @@ const OrdersModule = require('./modules/orders');
 const UserModule = require('./modules/user');
 const DisputeModule = require('./modules/dispute');
 const {
-  takebuy,
-  takesell,
   rateUser,
   cancelAddInvoice,
   addInvoice,
@@ -212,14 +210,6 @@ const initialize = (botToken, options) => {
   NostrModule.configure(bot);
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
-
-  bot.action('takesell', userMiddleware, async ctx => {
-    await takesell(ctx, bot);
-  });
-
-  bot.action('takebuy', userMiddleware, async ctx => {
-    await takebuy(ctx, bot);
-  });
 
   bot.command('release', userMiddleware, async ctx => {
     try {
