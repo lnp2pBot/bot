@@ -143,7 +143,7 @@ buyer_took_your_order: |
   @${buyerUsername} a récupéré ton offre et veut acheter tes sats. Contacte-le pour lui indiquer comment t'envoyer ${fiatAmount} ${currency} via ${paymentMethod}.
 
   Dès que tu as vérifié que le paiement est arrivé en totalité, tu dois débloquer les sats
-waiting_seller_to_pay: 'J''ai envoyé une requête de paiement au vendeur pour qu''il envoie tes sats concernant l''offre dont la référence est #${orderId}, dès que le paiement est fait je vous informerai tous les deux.'
+waiting_seller_to_pay: "J'ai envoyé une requête de paiement au vendeur pour qu'il envoie tes sats concernant l'offre dont la référence est #${orderId}, dès que le paiement est fait je vous informerai tous les deux."
 sell_success: Ta vente de sats a été effectuée avec succès suite à la confirmation de paiement de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} a déjà débloqué les sats, ta facture sera payée incessamment, rappelle-toi que ton portefeuille doit être connecté pour la réception via Lightning Network.
 rate_counterpart: 'Merci de nommer ta contre-partie:'
@@ -199,7 +199,7 @@ dispute_started_channel: |
   @${initiatorUser.username} a été impliqué.e dans ${initiatorUser.disputes} litiges
   @${counterPartyUser.username} a été impliqué.e dans ${counterPartyUser.disputes} litiges
 you_started_dispute_to_buyer: 🥴 Tu as initié un litige à propos de ton offre d'achat, nous allons te contacter toi et ta contrepartie en vue de l'arbitrage.
-buyer_started_dispute_to_seller: '🥴 L''acheteur a initié un litige concernant l''offre ID: ${orderId}, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème.'
+buyer_started_dispute_to_seller: "🥴 L'acheteur a initié un litige concernant l'offre ID: ${orderId}, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème."
 you_started_dispute_to_seller: 🥴 Tu as initié un litige à propos de ton offre de vente, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème.
 seller_started_dispute_to_buyer: '🥴 Le vendeur a initié un ilitige concernant ton offre ID: ${orderId}, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème.'
 must_be_valid_currency: 'Le code FIAT doit être valide, par exemple : XOF, XAF, EUR, USD... Tu peux afficher la liste complète des codes FIAT avec la commande /listcurrencies'
@@ -268,17 +268,17 @@ invoice_updated_and_will_be_paid: Les factures ont été correctement mises à j
 invoice_already_being_paid: Tu as déjà envoyé une facture pour cette commande et j'essaie de la payer en ce moment même.
 lightning_address_saved: L'adresse Lightning a été enregistrée
 cancel_error: Cette commande ne peut pas être annulée pour le moment
-cancel_success: 'Tu as annulé l''offre ID : ${orderId}!'
+cancel_success: "Tu as annulé l'offre ID : ${orderId}!"
 cancelall_success: Tu as annulé toutes tes commandes publiées !
-order_cancelled_by_admin: 'Un Admin a annulé l''offre ID : ${orderId}!'
-order_completed: 'Tu as terminé l''offre ID : ${orderId}!'
-order_completed_by_admin: 'Un Admin a terminé l''order ID : ${orderId}!'
-order_cancelled_by_counterparty: 'Ta contrepartie a annulé l''offre ID : ${orderId}!'
+order_cancelled_by_admin: "Un Admin a annulé l'offre ID : ${orderId}!"
+order_completed: "Tu as terminé l'offre ID : ${orderId}!"
+order_completed_by_admin: "Un Admin a terminé l'order ID : ${orderId}!"
+order_cancelled_by_counterparty: "Ta contrepartie a annulé l'offre ID : ${orderId}!"
 have_to_wait_for_counterpart: 🕒 Vous avez déjà effectué cette opération, vous devez attendre que l'autre partie agisse
-ok_cooperativecancel: '👍 La contrepartie a accepté et l''offre ID : ${orderId} a été annulé'
+ok_cooperativecancel: "👍 La contrepartie a accepté et l'offre ID : ${orderId} a été annulé"
 refund_cooperativecancel: 💰 Vous avez reçu le remboursement de votre paiement lightning, il n'y a pas d'autre action à faire
-init_cooperativecancel: '🕒 Vous avez lancé l''annulation de l''offre ID : ${orderId}, votre contrepartie doit également accepter l'annulation.'
-counterparty_wants_cooperativecancel: '😳 Votre contrepartie souhaite annuler l''offre ID : ${orderId}. Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇'
+init_cooperativecancel: "🕒 Vous avez lancé l'annulation de l'offre ID : ${orderId}, votre contrepartie doit également accepter l'annulation."
+counterparty_wants_cooperativecancel: "😳 Votre contrepartie souhaite annuler l'offre ID : ${orderId}. Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇"
 invoice_payment_failed: ⛔ J'ai essayé de vous envoyer les données mais le paiement de votre facture a échoué, je vais essayer ${attempts} fois de plus dans une fenêtre de  ${pendingPaymentWindow} minutes, veuillez vérifier que votre nœud/portefeuille est en ligne.
 cant_take_more_orders: ⛔ Désolé ! Vous ne pouvez pas lancer d'autres offres alors que d'autres vous attendent
 seller_released: 💸 Le vendeur a déjà débloqué les satoshis, vous devez attendre le paiement de votre facture.
@@ -365,14 +365,14 @@ expired_order_to_seller: |
   Si vous avez reçu l'argent en fiat, veuillez débloquer les fonds avec la commande /release, sinon vous risquez que l'acheteur ouvre un litige qui affectera votre réputation.
 
   Si vous avez besoin d'aide, vous pouvez écrire au groupe ${helpGroup}
-didnt_add_invoice: '🤨 Vous n''avez pas envoyé la facture pour recevoir des sats pour l''offre ID : ${orderId}'
-buyer_havent_add_invoice: '😔  L''acheteur ne m''a pas envoyé la facture pour recevoir les sats pour votre offre ID : ${orderId}, vos sats vous ont été renvoyés.'
-buyer_havent_add_invoice_to_admin_channel: 'L''acheteur @${username} a pris l''offre ID : ${orderId} mais n'a pas envoyé la facture pour recevoir les sats, le temps a expiré, la commande a été republiée.'
-havent_paid_invoice: '🤨 Vous n''avez pas payé la facture de vente de sats pour l''offre ID : ${orderId}'
-seller_havent_paid_invoice: '😔 Le vendeur n''a pas payé la facture pour votre achat ID : ${orderId}, l'opération a été annulée.'
-seller_havent_add_invoice_to_admin_channel: 'Le vendeur @${username} n''a pas payé la facture de la l''offre ID : ${orderId}. Le délai est terminé et la commande a été publiée à nouveau.'
+didnt_add_invoice: "🤨 Vous n'avez pas envoyé la facture pour recevoir des sats pour l'offre ID : ${orderId}"
+buyer_havent_add_invoice: "😔  L'acheteur ne m'a pas envoyé la facture pour recevoir les sats pour votre offre ID : ${orderId}, vos sats vous ont été renvoyés."
+buyer_havent_add_invoice_to_admin_channel: "L'acheteur @${username} a pris l'offre ID : ${orderId} mais n'a pas envoyé la facture pour recevoir les sats, le temps a expiré, la commande a été republiée."
+havent_paid_invoice: "🤨 Vous n'avez pas payé la facture de vente de sats pour l'offre ID : ${orderId}"
+seller_havent_paid_invoice: "😔 Le vendeur n'a pas payé la facture pour votre achat ID : ${orderId}, l'opération a été annulée."
+seller_havent_add_invoice_to_admin_channel: "Le vendeur @${username} n'a pas payé la facture de la l'offre ID : ${orderId}. Le délai est terminé et la commande a été publiée à nouveau."
 pending_payment_success_to_admin: |
-  L''utilisateur @${username} avait une facture en attente, le paiement de l''offre d'achat : ${orderId} pour ${amount} satoshis, a finalement été exécuté après ${attempts} tentatives.
+  L'utilisateur @${username} avait une facture en attente, le paiement de l'offre d'achat : ${orderId} pour ${amount} satoshis, a finalement été exécuté après ${attempts} tentatives.
 
   Preuve de paiement : ${paymentSecret}
 pending_payment_success: |
@@ -459,9 +459,9 @@ max_allowed: Le maximum autorisé est ${max}
 dispute_channel: Canal de résolution des litiges
 not_wizard: Vous n'êtes pas en mode assistant pour le moment, si vous avez des doutes vous pouvez taper /help
 wizard_help: Vous êtes en mode assistant, si vous souhaitez revenir en mode commande, exécutez /exit.
-hold_invoice_memo: 'Montant du séquestre de l''offre #${orderId} : VENTE BTC pour ${fiatCode} ${fiatAmount} - CE SERA GELÉ DANS VOTRE PORTEFEUILLE. Il sera libéré une fois que vous aurez lancé la commande /release. Il vous sera remboursé si l'acheteur ne confirme pas le paiement.'
+hold_invoice_memo: "Montant du séquestre de l'offre #${orderId} : VENTE BTC pour ${fiatCode} ${fiatAmount} - CE SERA GELÉ DANS VOTRE PORTEFEUILLE. Il sera libéré une fois que vous aurez lancé la commande /release. Il vous sera remboursé si l'acheteur ne confirme pas le paiement."
 tap_button: Sélectionner une offre pour effectuer l'opération
-tap_release: Sélectionnez l''offre pour débloquer les fonds, une fois que vous avez appuyé sur le bouton, l'opération ne peut plus être annulée.
+tap_release: Sélectionnez l'offre pour débloquer les fonds, une fois que vous avez appuyé sur le bouton, l'opération ne peut plus être annulée.
 earnings: Revenus
 premium: Surcote
 discount: Décote
@@ -479,7 +479,7 @@ current_earnings: |
   Revenus de la Communauté : ${earnings} sats
 you_dont_have_communities: Vous n'avez pas créé de communautés
 users_added: 'Vous avez ajouté : ${users}'
-users_not_added: 'Impossible d''ajouter : ${users} ; veuillez vous assurer que ces utilisateurs ont démarré le bot'
+users_not_added: "Impossible d'ajouter : ${users} ; veuillez vous assurer que ces utilisateurs ont démarré le bot"
 delete_community: Supprimer la communauté
 are_you_sure: Êtes-vous sûr?
 no_permission: Vous n'êtes pas autorisé à effectuer cette opération
