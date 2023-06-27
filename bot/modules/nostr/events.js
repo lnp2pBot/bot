@@ -15,9 +15,22 @@ exports.orderCreated = async order => {
   event.kind = KIND.ORDER_CREATED;
   event.pubkey = pubkey;
   event.created_at = Math.floor(Date.now() / 1000);
+
+  event.tags.push(['ev', 'order_created']);
+  event.tags.push(['ot', order.type]);
+  event.tags.push(['of', order.fiat_code]);
+
   const evData = (order => {
-    const { id, type, amount, max_amount, min_amount, fiat_code, fiat_amount } =
-      order;
+    const {
+      id,
+      type,
+      amount,
+      max_amount,
+      min_amount,
+      fiat_code,
+      fiat_amount,
+      price_margin,
+    } = order;
     return {
       id,
       type,
@@ -26,6 +39,7 @@ exports.orderCreated = async order => {
       min_amount,
       fiat_code,
       fiat_amount,
+      price_margin,
     };
   })(order);
   event.content = JSON.stringify(evData);
