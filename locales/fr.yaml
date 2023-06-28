@@ -177,7 +177,7 @@ order_detail: |
 
   Mode de paiement de l'offre : ${paymentMethod}
 
-  Plus-value/remise : ${priceMargin}
+  Plus\\-value/remise : ${priceMargin}
 
   Créé le : ${createdAt}
 
