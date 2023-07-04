@@ -5,10 +5,13 @@
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
   "scripts": {
+    "prestart": "tsc",
     "start": "node ./app",
+    "predev": "tsc",
     "dev": "nodemon ./app",
     "lint": "eslint .",
     "format": "prettier --write '**/*.js'",
+    "pretest": "tsc",
     "test": "export NODE_ENV=test && mocha --exit tests/"
   },
   "license": "MIT",
