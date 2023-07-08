@@ -395,6 +395,7 @@ satoshis: satoshis
 by: par
 rate: Taux
 has_successful_trades: A ${trades} transactions réussies
+user_age: "Utilise le bot depuis ${pluralize(days, 'jour', 'jours')}"
 price: Prix
 for: Pour
 generic_error: Une erreur s'est produite
