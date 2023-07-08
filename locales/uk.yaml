@@ -391,6 +391,7 @@ satoshis: сатоші
 by: за допомогою
 rate: Kурс
 has_successful_trades: Провів ${trades} успішних угод
+user_age: Вік користувача ${days} днів
 price: ціна
 for: на
 generic_error: Сталася непередбачена помилка

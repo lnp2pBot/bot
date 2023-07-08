@@ -393,6 +393,7 @@ satoshis: сатоши
 by: посредством
 rate: Kурс
 has_successful_trades: Провел ${trades} успешных сделок
+user_age: Возраст пользователя ${days} дней
 price: цена
 for: на
 generic_error: Произошла непредвиденная ошибка

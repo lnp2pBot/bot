@@ -395,6 +395,7 @@ satoshis: satoshis
 by: par
 rate: Taux
 has_successful_trades: A ${trades} transactions réussies
+user_age: Âge de l'utilisateur ${days} jours
 price: Prix
 for: Pour
 generic_error: Une erreur s'est produite

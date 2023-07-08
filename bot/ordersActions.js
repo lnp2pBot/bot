@@ -181,11 +181,18 @@ const buildDescription = (
       rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
     }
 
+    const userCreationDate = new Date(user.created_at);
+    const today = new Date();
+    const ageInDays = Math.floor(
+      (today.getTime() - userCreationDate.getTime()) / (1000 * 3600 * 24)
+    );
+
     let description =
       `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
     description += i18n.t('has_successful_trades', { trades }) + `\n`;
+    description += i18n.t('user_age', { days: ageInDays }) + `\n`;
     description += volumeTraded;
     description += hashtag;
     description += tasaText;

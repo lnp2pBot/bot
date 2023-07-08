@@ -393,6 +393,7 @@ satoshis: Sats
 by: mit
 rate: Rate
 has_successful_trades: Hat ${trades} erfolgreiche Aufträge abgeschlossen
+user_age: Benutzeralter ${days} Tage
 price: Preis
 for: Für
 generic_error: Ein Fehler ist aufgetreten

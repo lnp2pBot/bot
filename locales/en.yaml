@@ -395,6 +395,7 @@ satoshis: satoshis
 by: by
 rate: Rate
 has_successful_trades: Has ${trades} successful trades
+member_since: User since ${days} days
 price: Price
 for: For
 generic_error: An error occurred
