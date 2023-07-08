@@ -390,6 +390,7 @@ satoshis: satoshi
 by: da
 rate: Valutazione
 has_successful_trades: Ha ${trades} transazioni eseguite con successo
+user_age: "Usa il bot da ${pluralize(days, 'giorno', 'giorni')}"
 price: Prezzo
 for: Per
 generic_error: Si è verificato un errore
