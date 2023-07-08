@@ -19,7 +19,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
-    "lightning": "^5.16.0",
+    "lightning": "^9.8.0",
     "mongoose": "6.5.2",
     "node-schedule": "^2.0.0",
     "nostr-tools": "^1.7.4",
