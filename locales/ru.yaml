@@ -393,7 +393,7 @@ satoshis: сатоши
 by: посредством
 rate: Kурс
 has_successful_trades: Провел ${trades} успешных сделок
-user_age: Возраст пользователя ${days} дней
+user_age: "Использует бота ${pluralize(days, 'день', 'дня', 'дней')}"
 price: цена
 for: на
 generic_error: Произошла непредвиденная ошибка
