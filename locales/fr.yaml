@@ -552,3 +552,8 @@ user_settings: |
   /setnpub &lt;npub&gt; - Configurer la clé publique de l'utilisateur. Les événements Nostr seront marqués avec cette clé publique.
   /exit - pour quitter l'assistant.
 # END modules/user
+# check hold invoice
+invoice_settled: Facture déjà installée
+invoice_cancelled: Facture annulée
+invoice_held: Facture tenue
+invoice_no_info: Je n'ai pas d'informations pour cette facture

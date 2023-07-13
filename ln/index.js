@@ -2,6 +2,7 @@ const {
   createHoldInvoice,
   settleHoldInvoice,
   cancelHoldInvoice,
+  getInvoice,
 } = require('./hold_invoice');
 const subscribeInvoice = require('./subscribe_invoice');
 const subscribeProbe = require('./subscribe_probe');
@@ -20,4 +21,5 @@ module.exports = {
   getInfo,
   isPendingPayment,
   subscribeProbe,
+  getInvoice,
 };

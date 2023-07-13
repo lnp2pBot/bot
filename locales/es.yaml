@@ -552,3 +552,8 @@ user_settings: |
   /setnpub &lt;npub&gt; - Setea la llave pública. Los eventos Nostr serán taggeados con esta misma.
   /exit - para salir del asistente.
 # END modules/user
+# check hold invoice
+invoice_settled: Factura ya cobrada
+invoice_cancelled: Factura cancelada
+invoice_held: Factura retenida
+invoice_no_info: No tengo información para esa factura
