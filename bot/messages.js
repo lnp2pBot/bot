@@ -640,6 +640,24 @@ const checkOrderMessage = async (ctx, order, buyer, seller) => {
   }
 };
 
+const checkInvoiceMessage = async (ctx, isConfirmed, isCanceled, isHeld) => {
+  try {
+    if (isConfirmed) {
+      return await ctx.reply(ctx.i18n.t('invoice_settled'));
+    }
+    if (isCanceled) {
+      return await ctx.reply(ctx.i18n.t('invoice_cancelled'));
+    }
+    if (isHeld) {
+      return await ctx.reply(ctx.i18n.t('invoice_held'));
+    }
+
+    return await ctx.reply(ctx.i18n.t('invoice_no_info'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const mustBeValidCurrency = async ctx => {
   try {
     await ctx.reply(ctx.i18n.t('must_be_valid_currency'));
@@ -1661,4 +1679,5 @@ module.exports = {
   mustBeANumber,
   showConfirmationButtons,
   counterPartyCancelOrderMessage,
+  checkInvoiceMessage,
 };
