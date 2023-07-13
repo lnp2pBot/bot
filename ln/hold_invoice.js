@@ -46,4 +46,17 @@ const cancelHoldInvoice = async ({ hash }) => {
   }
 };
 
-module.exports = { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice };
+const getInvoice = async ({ hash }) => {
+  try {
+    return await lightning.getInvoice({ lnd, id: hash });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+module.exports = {
+  createHoldInvoice,
+  settleHoldInvoice,
+  cancelHoldInvoice,
+  getInvoice,
+};

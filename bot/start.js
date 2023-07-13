@@ -45,6 +45,7 @@ const {
   payToBuyer,
   isPendingPayment,
   subscribeInvoice,
+  getInvoice,
 } = require('../ln');
 const {
   validateUser,
@@ -421,6 +422,29 @@ const initialize = (botToken, options) => {
       const seller = await User.findOne({ _id: order.seller_id });
 
       await messages.checkOrderMessage(ctx, order, buyer, seller);
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+
+  bot.command('checkinvoice', superAdminMiddleware, async ctx => {
+    try {
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      if (!orderId) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
+
+      if (!order) return;
+      if (!order.hash) return;
+
+      const invoice = await getInvoice({ hash: order.hash });
+
+      await messages.checkInvoiceMessage(
+        ctx,
+        invoice.is_confirmed,
+        invoice.is_canceled,
+        invoice.is_held
+      );
     } catch (error) {
       logger.error(error);
     }

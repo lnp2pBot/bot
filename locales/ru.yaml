@@ -550,3 +550,8 @@ user_settings: |
   /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
   /exit - to exit the wizard.
 # END modules/user
+# check hold invoice
+invoice_settled: Invoice already settled
+invoice_cancelled: Invoice cancelled
+invoice_held: Invoice held
+invoice_no_info: I don't have information for that invoice

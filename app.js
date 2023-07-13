@@ -8,11 +8,15 @@ const { delay } = require('./util');
 
 (async () => {
   process.on('unhandledRejection', e => {
-    logger.error(`Unhandled Rejection: ${e.message}`);
+    if (e) {
+      logger.error(`Unhandled Rejection: ${e}`);
+    }
   });
 
   process.on('uncaughtException', e => {
-    logger.error(`Uncaught Exception: ${e.message}`);
+    if (e) {
+      logger.error(`Uncaught Exception: ${e}`);
+    }
   });
 
   const mongoose = mongoConnect();
