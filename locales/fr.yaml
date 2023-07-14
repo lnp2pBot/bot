@@ -492,6 +492,10 @@ upgraded_to_supergroup: Le chat a été transformé en "supergroupe" et l'identi
 community_deleted: Cette communauté a été supprimée pour cause d'inactivité. Je vous en ai dissocié, essayez de créer l'offre à nouveau.
 dispute_too_soon: Vous ne pouvez pas lancer un litige trop tôt, soyez patient et attendez quelques minutes pour que votre contrepartie vous réponde.
 maintenance: 🚨 Bot en maintenance, veuillez réessayer plus tard 🚨
+invoice_settled: Facture déjà installée
+invoice_cancelled: Facture annulée
+invoice_held: Facture tenue
+invoice_no_info: Je n'ai pas d'informations pour cette facture
 
 # START modules/community
 community_admin: |
