@@ -7,6 +7,7 @@ const {
   secondsToTime,
   getOrderChannel,
   holdInvoiceExpirationInSecs,
+  sanitizeMD,
 } = require('../util');
 const logger = require('../logger');
 
@@ -1087,15 +1088,21 @@ const sellerPaidHoldMessage = async (ctx, user) => {
   }
 };
 
-const showInfoMessage = async (bot, user, info) => {
+const showInfoMessage = async (ctx, user, config) => {
   try {
-    // const status = !!info.public_key;
-    // const statusEmoji = status ? '🟢' : '🔴';
-    let fee = (process.env.MAX_FEE * 100).toString();
-    fee = fee.replace('.', '\\.');
-    await bot.telegram.sendMessage(user.tg_id, `*Bot fee*: ${fee}%`, {
-      parse_mode: 'MarkdownV2',
-    });
+    const status = config.node_status == 'up' ? '🟢' : '🔴';
+    const node_uri = sanitizeMD(config.node_uri);
+    let bot_fee = (process.env.MAX_FEE * 100).toString() + '%';
+    bot_fee = bot_fee.replace('.', '\\.');
+    let routing_fee = (process.env.MAX_ROUTING_FEE * 100).toString() + '%';
+    routing_fee = routing_fee.replace('.', '\\.');
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('bot_info', { bot_fee, routing_fee, status, node_uri }),
+      {
+        parse_mode: 'MarkdownV2',
+      }
+    );
     // if (status) {
     //   await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
     // }

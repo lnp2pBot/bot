@@ -553,3 +553,11 @@ invoice_settled: Fatura já liquidada
 invoice_cancelled: Fatura cancelada
 invoice_held: Fatura mantida
 invoice_no_info: Não tenho informações para essa fatura
+bot_info: |
+  Bot fee: ${bot_fee}
+
+  Routing fee: ${routing_fee}
+
+  Node URI: ${node_uri}
+  
+  Node status: ${status}

@@ -555,3 +555,11 @@ invoice_settled: Invoice already settled
 invoice_cancelled: Invoice cancelled
 invoice_held: Invoice held
 invoice_no_info: I don't have information for that invoice
+bot_info: |
+  Bot fee: ${bot_fee}
+
+  Routing fee: ${routing_fee}
+
+  Node URI: ${node_uri}
+  
+  Node status: ${status}
