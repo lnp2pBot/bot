@@ -562,7 +562,7 @@ bot_info: |
 
   Routing fee: ${routing_fee}
 
-  Node URI: ${node_uri}
+  Node URI: `${node_uri}`
   
   Node status: ${status}
 
