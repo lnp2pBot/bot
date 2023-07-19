@@ -555,3 +555,11 @@ invoice_settled: Rechnung wurde bereits niedergelassen
 invoice_cancelled: Rechnung storniert
 invoice_held: Rechnung festgehalten
 invoice_no_info: Ich habe keine Informationen für diese Rechnung
+bot_info: |
+  Bot fee: ${bot_fee}
+
+  Routing fee: ${routing_fee}
+
+  Node URI: `${node_uri}`
+  
+  Node status: ${status}

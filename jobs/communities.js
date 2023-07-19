@@ -1,5 +1,4 @@
 const { Order, Community } = require('../models');
-// const { deleteOrderFromChannel } = require('../util');
 const logger = require('../logger');
 
 const deleteCommunity = async bot => {
