@@ -60,6 +60,7 @@ const {
   calculateEarnings,
   attemptCommunitiesPendingPayments,
   deleteCommunity,
+  nodeInfo,
 } = require('../jobs');
 const logger = require('../logger');
 
@@ -152,6 +153,10 @@ const initialize = (botToken, options) => {
 
   schedule.scheduleJob(`33 0 * * *`, async () => {
     await deleteCommunity(bot);
+  });
+
+  schedule.scheduleJob(`* * * * *`, async () => {
+    await nodeInfo(bot);
   });
 
   bot.start(async ctx => {
@@ -740,7 +745,8 @@ const initialize = (botToken, options) => {
 
   bot.command('info', userMiddleware, async ctx => {
     try {
-      await messages.showInfoMessage(bot, ctx.user);
+      const config = await Config.findOne({});
+      await messages.showInfoMessage(ctx, ctx.user, config);
     } catch (error) {
       logger.error(error);
     }
