@@ -307,7 +307,7 @@ wizard_add_invoice_init: |
 
   Si vous n'envoyez pas la facture dans les ${expirationTime} minutes, la commande sera annulée.
 wizard_add_invoice_exit: |
-  Vous avez quitté le mode assistant, vous pouvez maintenant écrire les commandes et ajouter une facture à l'offre avec la commande /setinvoice indiquant l'ID de la commande et la facture. Vous pouvez m'envoyer une facture de ${Amount} satoshis, mais j'accepte également les factures sans montant spécifié :
+  Vous avez quitté le mode assistant, vous pouvez maintenant écrire les commandes et ajouter une facture à l'offre avec la commande /setinvoice indiquant l'ID de la commande et la facture. Vous pouvez m'envoyer une facture de ${amount} satoshis, mais j'accepte également les factures sans montant spécifié :
 
   `/setinvoice ${orderId} `\\<facture Lightning avec ou sans montant\\>
 wizard_community_enter_name: Choisissez un nom pour votre communauté
