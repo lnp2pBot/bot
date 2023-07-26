@@ -13,6 +13,10 @@ const validateUser = async (ctx, start) => {
     const tgUser = ctx.update.callback_query
       ? ctx.update.callback_query.from
       : ctx.update.message.from;
+    // We need to make sure the user has a username
+    if (!tgUser.username) {
+      return await messages.nonHandleErrorMessage(ctx);
+    }
     let user = await User.findOne({ tg_id: tgUser.id });
 
     if (!user && start) {
