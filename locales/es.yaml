@@ -33,7 +33,7 @@ non_handle_error: 👤 Para usar este bot debes activar tu username de telegram,
 invoice_payment_request: |
   Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
-  Reputación del comprador: ${rate}
+  Reputación del comprador: ${rate}, días utilizando el bot: ${days}
 
   Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos
 pending_sell: |
@@ -111,7 +111,7 @@ someone_took_your_order: |
 
   Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats.
 
-  Reputación del vendedor: ${rate}
+  Reputación del vendedor: ${rate}, días utilizando el bot: ${days}
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
 you_took_someone_order: |

@@ -8,6 +8,9 @@ const {
   getOrderChannel,
   holdInvoiceExpirationInSecs,
   sanitizeMD,
+  getEmojiRate,
+  decimalRound,
+  getUserAge
 } = require('../util');
 const logger = require('../logger');
 
@@ -56,7 +59,7 @@ const invoicePaymentRequestMessage = async (
   request,
   order,
   i18n,
-  rate
+  buyer
 ) => {
   try {
     let currency = getCurrency(order.fiat_code);
@@ -66,11 +69,19 @@ const invoicePaymentRequestMessage = async (
         : order.fiat_code;
     const expirationTime =
       parseInt(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
+    // We need the buyer rating
+    const stars = getEmojiRate(buyer.total_rating);
+    const roundedRating = decimalRound(buyer.total_rating, -1);
+    const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
+    // Extracting the buyer's days in the platform
+    const ageInDays = getUserAge(buyer);
+
     const message = i18n.t('invoice_payment_request', {
       currency,
       order,
       expirationTime,
       rate,
+      days: ageInDays
     });
     await ctx.telegram.sendMessage(user.tg_id, message);
     // Create QR code
@@ -387,9 +398,11 @@ const onGoingTakeBuyMessage = async (
     let expirationTime = time.hours + ' ' + i18nBuyer.t('hours');
     expirationTime +=
       time.minutes > 0 ? ' ' + time.minutes + ' ' + i18nBuyer.t('minutes') : '';
+    // Extracting the buyer's days in the platform
+    const ageInDays = getUserAge(seller);
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      i18nBuyer.t('someone_took_your_order', { expirationTime, rate })
+      i18nBuyer.t('someone_took_your_order', { expirationTime, rate, days: ageInDays })
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {

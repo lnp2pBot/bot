@@ -37,7 +37,7 @@ non_handle_error: 👤 To use this bot, you need to activate your Telegram Usern
 invoice_payment_request: |
   Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
 
-  Buyer Reputation: ${rate}
+  Buyer Reputation: ${rate}, days using the bot: ${days}
 
   Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes
 pending_sell: |
@@ -115,7 +115,7 @@ someone_took_your_order: |
 
   If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk. I cannot force the seller to send the sats again.
 
-  Seller Reputation: ${rate}
+  Seller Reputation: ${rate}, days using the bot: ${days}
 
   If you agree with the above, press the button to continue 👇
 you_took_someone_order: |

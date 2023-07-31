@@ -37,7 +37,7 @@ non_handle_error: 👤 Pour utiliser ce bot, tu dois d'abord activer ton nom d'u
 invoice_payment_request: |
   Quelqu'un veut t'acheter ${order.amount} sats à ${order.fiat_amount} ${currency}.
 
-  Buyer Reputation: ${rate}
+  Buyer Reputation: ${rate}, jours d'utilisation du bot: ${days}
 
   Merci de régler cette facture pour démarrer le processus de vente, elle expirera dans ${expirationTime} minutes
 pending_sell: |
@@ -115,7 +115,7 @@ someone_took_your_order: |
 
   Si pour une raison quelconque le processeur de paiement met le paiement en pause et que les fonds ne sont pas arrivés en moins de ${expirationTime}, les sats seront retournés au vendeur, mettant l'acheteur dans une position risquée. Je ne peux pas obliger le vendeur à vendre ses sats de nouveau.
 
-  Seller Reputation: ${rate}
+  Seller Reputation: ${rate}, jours d'utilisation du bot: ${days}
 
   Si tu es d'accord avec ce qui précède, clique sur le bouton pour continuer 👇
 you_took_someone_order: |
