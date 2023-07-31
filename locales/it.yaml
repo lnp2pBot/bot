@@ -33,7 +33,7 @@ non_handle_error: 👤 Per utilizzare questo bot è necessario impostare il prop
 invoice_payment_request: |
   Qualcuno richiede di comprare da te ${order.amount} sats per ${currency} ${order.fiat_amount}.
 
-  Reputazione del compratore: ${rate}
+  Reputazione del compratore: ${rate}, giorni di utilizzo del bot: ${days}
 
   Si prega di procedere al pagamento di questa invoice per avviare il processo di vendita, la invoice scadrà tra ${expirationTime} minuti
 pending_sell: |
@@ -111,7 +111,7 @@ someone_took_your_order: |
 
   Se per qualche motivo il metodo di pagamento mette in pausa il trasferimento e i fondi non arrivano in meno di ${expirationTime}, i satoshi torneranno al venditore, mettendo a rischio l'acquirente e non potrò costringere il venditore a inviare di nuovo i fondi.
 
-  Reputazione del venditore: ${rate}
+  Reputazione del venditore: ${rate}, giorni di utilizzo del bot: ${days}
 
   Se accetti le condizioni, premi per continuare 👇
 you_took_someone_order: |

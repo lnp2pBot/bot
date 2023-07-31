@@ -418,6 +418,16 @@ const holdInvoiceExpirationInSecs = () => {
   };
 };
 
+// Returns the user age in days
+const getUserAge = (user) => {
+  const userCreationDate = new Date(user.created_at);
+  const today = new Date();
+  const ageInDays = Math.floor(
+    (today.getTime() - userCreationDate.getTime()) / (1000 * 3600 * 24)
+  );
+  return ageInDays
+}
+
 module.exports = {
   isIso4217,
   plural,
@@ -446,4 +456,5 @@ module.exports = {
   getLanguageFlag,
   delay,
   holdInvoiceExpirationInSecs,
+  getUserAge
 };

@@ -33,7 +33,7 @@ non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usu�
 invoice_payment_request: |
   Alguém quer te comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
-  Reputação do comprador: ${rate}
+  Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
   Por favor, pague esta fatura para iniciar seu processo de venda, esta fatura expirará ${expirationTime} minutos
 pending_sell: |
@@ -111,7 +111,7 @@ someone_took_your_order: |
 
   Se por algum motivo o seu processador de pagamento coloca o pagamento em pausa e os fundos não chegam em menos de ${expirationTime}, Os SATs retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente.
 
-  Reputação do vendedor: ${rate}
+  Reputação do vendedor: ${rate}, dias usando o bot: ${days}
 
   Se você concorda com o exposto acima, pressione o botão para continuar 👇
 you_took_someone_order: |

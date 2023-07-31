@@ -33,7 +33,7 @@ non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutze
 invoice_payment_request: |
   Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
 
-  Buyer Reputation: ${rate}
+  Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
 
   Bitte bezahle diese LN-Rechnung, um deinen Verkaufsprozess zu starten. Diese LN-Rechnung läuft in ${expirationTime} Minuten ab
 pending_sell: |
@@ -111,7 +111,7 @@ someone_took_your_order: |
 
   Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden.
 
-  Verkäufer Ruf: ${rate}
+  Verkäufer Ruf: ${rate}, Tage mit dem Bot: ${days}
 
   Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
 you_took_someone_order: |
