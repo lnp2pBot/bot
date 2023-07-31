@@ -8,6 +8,7 @@ const {
   getEmojiRate,
   decimalRound,
   getFee,
+  getUserAge
 } = require('../util');
 const logger = require('../logger');
 
@@ -181,11 +182,7 @@ const buildDescription = (
       rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
     }
 
-    const userCreationDate = new Date(user.created_at);
-    const today = new Date();
-    const ageInDays = Math.floor(
-      (today.getTime() - userCreationDate.getTime()) / (1000 * 3600 * 24)
-    );
+    const ageInDays = getUserAge(user);
 
     let description =
       `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
