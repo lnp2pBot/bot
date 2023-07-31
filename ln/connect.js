@@ -17,18 +17,18 @@ if (macaroon) {
 }
 
 // If environment variables are not set, try to load them from files
-if (!cert) {
+if (!cert && process.env.NODE_ENV !== 'test') {
   logger.info('Loading TLS cert from file')
   cert = fs.readFileSync(path.resolve(__dirname, '../tls.cert')).toString('base64');
 }
-if (!macaroon) {
+if (!macaroon && process.env.NODE_ENV !== 'test') {
   logger.info('Loading macaroon from file')
   macaroon = fs.readFileSync(path.resolve(__dirname, '../admin.macaroon')).toString('base64');
 }
 
 // Enforcing presence of LND_GRPC_HOST environment variable
 const lndHost = process.env.LND_GRPC_HOST;
-if (!lndHost) {
+if (!lndHost && process.env.NODE_ENV !== 'test') {
   throw new Error('You must provide a LND_GRPC_HOST environment variable');
 }
 
