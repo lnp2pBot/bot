@@ -9,7 +9,7 @@
     "dev": "nodemon ./app",
     "lint": "eslint .",
     "format": "prettier --write '**/*.js'",
-    "test": "mocha --exit tests/"
+    "test": "export NODE_ENV=test && mocha --exit tests/"
   },
   "license": "MIT",
   "dependencies": {

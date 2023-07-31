@@ -72,15 +72,28 @@ You will need a telegram bot api key (`BOT_TOKEN`), find out more about it [here
 You can route the bot API via Tor service or another proxy if you specify 'SOCKS_PROXY_HOST' parameter in .env. For Ubuntu see [this](https://www.linuxuprising.com/2018/10/how-to-install-and-use-tor-as-proxy-in.html)
 
 ## Lightning Network
+
 You will need a lightning network node, for this bot we use [LND](https://github.com/lightningnetwork/lnd/).
 
-To connect with a lnd node we need to set 3 variables in the `.env` file,
+There are two methods to connect with an LND node:
 
-*LND_CERT_BASE64:* LND node TLS certificate on base64 format, you can get it with `base64 -w0 ~/.lnd/tls.cert` on the lnd node.
+### Method 1: Setting Variables in the `.env` File
 
-*LND_MACAROON_BASE64:* Macaroon file on base64 format, the macaroon file contains permission for doing actions on the lnd node, you can get it with `base64 -w0 ~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`.
+To connect with an LND node we need to set 3 variables in the `.env` file,
 
-*LND_GRPC_HOST:* IP address or domain name from the LND node and the port separated by colon (`:`), example: `192.168.0.2:10009`.
+1. *LND_CERT_BASE64:* LND node TLS certificate on base64 format, you can get it with `base64 -w0 ~/.lnd/tls.cert` on the LND node.
+
+2. *LND_MACAROON_BASE64:* Macaroon file on base64 format, the macaroon file contains permission for doing actions on the LND node, you can get it with `base64 -w0 ~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon`.
+
+3. *LND_GRPC_HOST:* IP address or domain name from the LND node and the port separated by colon (`:`), example: `192.168.0.2:10009`.
+
+### Method 2: Copying Files to the Project Root
+
+Instead of setting the `LND_MACAROON_BASE64` and `LND_CERT_BASE64` variables in the `.env` file, you can simply copy the `admin.macaroon` and `tls.cert` files to the root of the project.
+
+Please note that you will still need to define the `LND_GRPC_HOST` in the `.env` file as in Method 1, step 3.
+
+Please choose one of these two methods for your setup.
 
 To install just run:
 ```
