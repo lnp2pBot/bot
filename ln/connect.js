@@ -27,16 +27,16 @@ if (!macaroon && process.env.NODE_ENV !== 'test') {
 }
 
 // Enforcing presence of LND_GRPC_HOST environment variable
-const lndHost = process.env.LND_GRPC_HOST;
-if (!lndHost && process.env.NODE_ENV !== 'test') {
+const socket = process.env.LND_GRPC_HOST;
+if (!socket && process.env.NODE_ENV !== 'test') {
   throw new Error('You must provide a LND_GRPC_HOST environment variable');
 }
 
 // Use these credentials to connect to the LND node
 const { lnd } = authenticatedLndGrpc({
-    cert: cert,
-    macaroon: macaroon,
-    socket: lndHost
+    cert,
+    macaroon,
+    socket
 })
 
 module.exports = lnd;
