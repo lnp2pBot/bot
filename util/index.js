@@ -428,6 +428,32 @@ const getUserAge = (user) => {
   return ageInDays
 }
 
+/**
+ * Returns order expiration time text
+ * @param {*} order order object
+ * @param {*} i18n context
+ * @returns String with the remaining time to expiration in format '1 hours 30 minutes'
+ */
+const getTimeToExpirationOrder = (order, i18n) => {
+  const initialDateObj = new Date(order.created_at);
+  const timeToExpire = parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
+  initialDateObj.setSeconds(initialDateObj.getSeconds() + timeToExpire);
+
+  const currentDateObj = new Date();
+  const timeDifferenceMs = initialDateObj - currentDateObj;
+  const totalSecondsRemaining = Math.floor(timeDifferenceMs / 1000);
+  const textHour = i18n.t('hours');
+  const textMin = i18n.t('minutes');
+
+  if (totalSecondsRemaining <= 0) {
+    return `0 ${textHour} 0 ${textMin}`; // If the date has already passed, show remaining time as 00 hours 00 minutes
+  }
+  // Calculate hours, minutes, and seconds
+  const hours = Math.floor(totalSecondsRemaining / 3600);
+  const minutes = Math.floor((totalSecondsRemaining % 3600) / 60);
+  return `${hours} ${textHour} ${minutes} ${textMin}`;
+};
+
 module.exports = {
   isIso4217,
   plural,
