@@ -456,5 +456,6 @@ module.exports = {
   getLanguageFlag,
   delay,
   holdInvoiceExpirationInSecs,
-  getUserAge
+  getUserAge,
+  getTimeToExpirationOrder,
 };
