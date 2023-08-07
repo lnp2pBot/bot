@@ -51,7 +51,10 @@ exports.configure = bot => {
       const orders = await ordersActions.getOrders(ctx, ctx.user);
       if (!orders) return false;
 
-      const { text, extra } = await messages.listOrdersResponse(orders);
+      const { text, extra } = await messages.listOrdersResponse(
+        orders,
+        ctx.i18n
+      );
       return ctx.reply(text, extra);
     } catch (error) {
       return logger.error(error);
