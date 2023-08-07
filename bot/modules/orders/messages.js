@@ -1,7 +1,11 @@
-const { getOrderChannel, sanitizeMD } = require('../../../util');
+const {
+  getOrderChannel,
+  sanitizeMD,
+  getTimeToExpirationOrder,
+} = require('../../../util');
 const logger = require('../../../logger');
 
-exports.listOrdersResponse = async orders => {
+exports.listOrdersResponse = async (orders, i18n) => {
   const tasks = orders.map(async order => {
     const channel = await getOrderChannel(order);
     let amount = '\\-';
@@ -16,10 +20,12 @@ exports.listOrdersResponse = async orders => {
           ].join('');
 
     if (typeof order.amount !== 'undefined') amount = order.amount;
+    const timeToExpire = getTimeToExpirationOrder(order, i18n);
     return [
       [''].join(''),
       ['`Id      `: ', '`', order.id, '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
+      ['`Time rem`: ', '`', timeToExpire, '`'].join(''),
       ['`Sats amt`: ', '`', amount, '`'].join(''),
       ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),
       ['`Fiat    `: ', '`', order.fiat_code, '`'].join(''),
