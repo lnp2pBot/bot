@@ -508,7 +508,8 @@ const initialize = (botToken, options) => {
 
       username = username[0] == '@' ? username.slice(1) : username;
 
-      const user = await User.findOne({ username });
+      let userTelegramId = username;
+      const user = await User.findOne({ $or: [{name : username},{tg_id:userTelegramId}] });
       if (!user) {
         await messages.notFoundUserMessage(ctx);
         return;
