@@ -492,13 +492,13 @@ const initialize = (botToken, options) => {
 
   bot.command('ban', adminMiddleware, async ctx => {
     try {
-      let [username] = await validateParams(ctx, 2, '\\<_username_\\>');
+      let [username] = await validateParams(ctx, 2, '\\<_username or telegramID_\\>');
 
       if (!username) return;
 
       username = username[0] == '@' ? username.slice(1) : username;
-
-      const user = await User.findOne({ username });
+      let userTelegramId = username;
+      const user = await User.findOne({ $or: [{username : username},{tg_id:userTelegramId}] });
       if (!user) {
         await messages.notFoundUserMessage(ctx);
         return;
