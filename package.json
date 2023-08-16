@@ -40,6 +40,7 @@
     "network"
   ],
   "devDependencies": {
+    "@types/node": "^20.5.0",
     "chai": "^4.3.4",
     "chokidar": "^3.5.3",
     "eslint": "^8.15.0",
@@ -52,6 +53,7 @@
     "nodemon": "2.0.19",
     "prettier": "^2.6.2",
     "sinon": "^11.1.2",
-    "telegram-test-api": "^2.5.0"
+    "telegram-test-api": "^2.5.0",
+    "typescript": "^5.1.6"
   }
 }
