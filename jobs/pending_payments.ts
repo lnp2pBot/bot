@@ -3,8 +3,11 @@ const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
 const logger = require('../logger');
+import { Telegraf } from 'telegraf';
+import { I18nContext } from '@grammyjs/i18n';
+import { MainContext } from '../bot/start';
 
-exports.attemptPendingPayments = async bot => {
+exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -22,20 +25,20 @@ exports.attemptPendingPayments = async bot => {
         return;
       }
       // We check if the old payment is on flight
-      const isPendingOldPayment = await isPendingPayment(order.buyer_invoice);
+      const isPendingOldPayment: boolean = await isPendingPayment(order.buyer_invoice);
 
       // We check if this new payment is on flight
-      const isPending = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(pending.payment_request);
 
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      const payment = await payRequest({
+      let payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });
       const buyerUser = await User.findOne({ _id: order.buyer_id });
-      const i18nCtx = await getUserI18nContext(buyerUser);
+      const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
         pending.is_invoice_expired = true;
@@ -78,7 +81,10 @@ exports.attemptPendingPayments = async bot => {
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+        ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -95,8 +101,8 @@ exports.attemptPendingPayments = async bot => {
           i18nCtx
         );
       }
-    } catch (error) {
-      const message = error.toString();
+    } catch (error: any) {
+      const message: string = error.toString();
       logger.error(`attemptPendingPayments catch error: ${message}`);
     } finally {
       await order.save();
@@ -105,7 +111,7 @@ exports.attemptPendingPayments = async bot => {
   }
 };
 
-exports.attemptCommunitiesPendingPayments = async bot => {
+exports.attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -118,7 +124,7 @@ exports.attemptCommunitiesPendingPayments = async bot => {
       pending.attempts++;
 
       // We check if this new payment is on flight
-      const isPending = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(pending.payment_request);
 
       // If the payments is on flight we don't do anything
       if (isPending) return;
@@ -128,7 +134,7 @@ exports.attemptCommunitiesPendingPayments = async bot => {
         request: pending.payment_request,
       });
       const user = await User.findById(pending.user_id);
-      const i18nCtx = await getUserI18nContext(user);
+      const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
         pending.is_invoice_expired = true;
@@ -159,7 +165,10 @@ exports.attemptCommunitiesPendingPayments = async bot => {
           })
         );
       } else {
-        if (pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)) {
+        if (
+          process.env.PAYMENT_ATTEMPTS !== undefined &&
+          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+        ) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {

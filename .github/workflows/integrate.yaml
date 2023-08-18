@@ -50,6 +50,8 @@ jobs:
           
           mongosh --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
 
+      - run: npm install @types/node @types/i18n
+      - run: tsc
       - run: npm ci
       - name: Run tests
         env:
