@@ -158,10 +158,18 @@ order_detail: |
   Compradora: @${buyerUsername || ''}
 
   Reputação do comprador: ${buyerReputation}
+  
+  Operações bem-sucedidas do comprador: ${buyerTrades}
+  
+  Dias de uso do bot pelo comprador: ${buyerAgeInDays}
 
   Vendedora: @${sellerUsername || ''}
 
   Reputação do vendedor: ${sellerReputation}
+  
+  Operações bem-sucedidas do vendedor: ${sellerTrades}
+  
+  Dias de uso do bot pelo vendedor: ${sellerAgeInDays}
 
   Valor do pedido \\(sats\\): ${order.amount}
 

@@ -157,10 +157,18 @@ order_detail: |
   Покупатель: @${buyerUsername || ''}
 
   репутация покупателя: ${buyerReputation}
+  
+  Успешные операции покупателя: ${buyerTrades}
+  
+  Дни использования бота покупателем: ${buyerAgeInDays}
 
   Продавец: @${sellerUsername || ''}
 
   репутация продавца: ${sellerReputation}
+  
+  Успешные операции продавца: ${sellerTrades}
+  
+  Дни использования бота продавцом: ${sellerAgeInDays}
 
   Сумма \\(сатоши\\): ${order.amount}
 

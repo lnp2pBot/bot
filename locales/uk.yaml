@@ -158,10 +158,18 @@ order_detail: |
   Покупець: @${buyerUsername || ''}
 
   репутація покупця: ${buyerReputation}
+  
+  Успішні операції покупця: ${buyerTrades}
+  
+  Дні використання бота покупцем: ${buyerAgeInDays}
 
   Продавець: @${sellerUsername || ''}
 
   репутація продавця: ${sellerReputation}
+  
+  Успішні операції продавця: ${sellerTrades}
+  
+  Дні використання бота продавцем: ${sellerAgeInDays}
 
   Сума \\(сатоші\\): ${order.amount}
 

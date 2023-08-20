@@ -324,10 +324,14 @@ const getDetailedOrder = (i18n, order, buyer, seller) => {
     const buyerReputation = buyer
       ? sanitizeMD(buyer.total_rating.toFixed(2))
       : '';
+    const buyerTrades = buyer ? sanitizeMD(buyer.trades_completed) : '';
+    const buyerAgeInDays = buyer ? sanitizeMD(buyer.getUserAge) : '';
     const sellerUsername = seller ? sanitizeMD(seller.username) : '';
     const sellerReputation = seller
       ? sanitizeMD(seller.total_rating.toFixed(2))
       : '';
+    const sellerTrades = seller ? sanitizeMD(seller.trades_completed) : '';
+    const sellerAgeInDays = seller ? sanitizeMD(seller.getUserAge) : '';
     const buyerId = buyer ? buyer._id : '';
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());

@@ -158,10 +158,18 @@ order_detail: |
   Acquirente: @${buyerUsername || ''}
 
   Reputazione dell'acquirente: ${buyerReputation}
+  
+  Operazioni di successo dell'acquirente: ${buyerTrades}
+  
+  Giorni di utilizzo del bot da parte dell'acquirente: ${buyerAgeInDays}
 
   Venditore: @${sellerUsername || ''}
 
   Reputazione del venditore: ${sellerReputation}
+  
+  Operazioni di successo del venditore: ${sellerTrades}
+  
+  Giorni di utilizzo del bot da parte del venditore: ${sellerAgeInDays}
 
   Importo \\(sats\\): ${order.amount}
 

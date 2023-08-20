@@ -162,10 +162,18 @@ order_detail: |
   Acheteur : @${buyerUsername || ''}
 
   Réputation de l'acheteur : ${buyerReputation}
+  
+  Opérations réussies de l'acheteur: ${buyerTrades}
+  
+  Jours d'utilisation du bot par l'acheteur: ${buyerAgeInDays}
 
   Vendeur : @${sellerUsername || ''}
 
   Réputation du vendeur : ${sellerReputation}
+  
+  Opérations réussies du vendeur: ${sellerTrades}
+  
+  Jours d'utilisation du bot par le vendeur: ${sellerAgeInDays}
 
   Montant de l'offre \\(sats\\) : ${order.amount}
 
