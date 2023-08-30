@@ -1,6 +1,17 @@
-const mongoose = require('mongoose');
+import mongoose, { Document, Schema } from 'mongoose';
 
-const DisputeSchema = new mongoose.Schema({
+export interface IDispute extends Document {
+  initiator: string;
+  seller_id: string;
+  buyer_id: string;
+  status: string;
+  community_id: string;
+  order_id: string;
+  solver_id: string;
+  created_at: Date;
+}
+
+const DisputeSchema = new Schema<IDispute>({
   initiator: { type: String, required: true },
   seller_id: { type: String },
   buyer_id: { type: String },
@@ -20,4 +31,4 @@ const DisputeSchema = new mongoose.Schema({
   created_at: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Dispute', DisputeSchema);
+module.exports = mongoose.model<IDispute>('Dispute', DisputeSchema);
