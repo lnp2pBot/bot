@@ -8,7 +8,7 @@ const {
   getEmojiRate,
   decimalRound,
   getFee,
-  getUserAge
+  getUserAge,
 } = require('../util');
 const logger = require('../logger');
 

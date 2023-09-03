@@ -30,7 +30,7 @@ const OrdersModule = require('./modules/orders');
 const UserModule = require('./modules/user');
 const DisputeModule = require('./modules/dispute');
 const {
-  rateUser,ssssssssssssssssssssssssssssssssssssssssssss
+  rateUser,
   cancelAddInvoice,
   addInvoice,
   cancelShowHoldInvoice,
