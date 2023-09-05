@@ -1,10 +1,4 @@
 const {
-  validateSeller,
-  validateObjectId,
-  validateTakeBuyOrder,
-  validateTakeSellOrder,
-  validateUserWaitingOrder,
-  isBannedFromCommunity,
   validateFiatSentOrder,
   validateReleaseOrder,
 } = require('./validations');
@@ -18,7 +12,6 @@ const { Order, User, Dispute } = require('../models');
 const messages = require('./messages');
 const {
   getBtcFiatPrice,
-  extractId,
   deleteOrderFromChannel,
   getUserI18nContext,
   getFee,
@@ -27,72 +20,6 @@ const ordersActions = require('./ordersActions');
 
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const logger = require('../logger');
-
-const takebuy = async (ctx, bot) => {
-  try {
-    const text = ctx.update.callback_query.message.text;
-    if (!text) return;
-
-    const { user } = ctx;
-
-    if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
-
-    // Sellers with orders in status = FIAT_SENT, have to solve the order
-    const isOnFiatSentStatus = await validateSeller(ctx, user);
-
-    if (!isOnFiatSentStatus) return;
-    const orderId = extractId(text);
-    if (!orderId) return;
-    if (!(await validateObjectId(ctx, orderId))) return;
-    const order = await Order.findOne({ _id: orderId });
-    if (!order) return;
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, order.community_id))
-      return await messages.bannedUserErrorMessage(ctx, user);
-
-    if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
-    // We change the status to trigger the expiration of this order
-    // if the user don't do anything
-    order.status = 'WAITING_PAYMENT';
-    order.seller_id = user._id;
-    order.taken_at = Date.now();
-    await order.save();
-    // We delete the messages related to that order from the channel
-    await deleteOrderFromChannel(order, bot.telegram);
-    await messages.beginTakeBuyMessage(ctx, bot, user, order);
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
-const takesell = async (ctx, bot) => {
-  try {
-    const text = ctx.update.callback_query.message.text;
-    if (!text) return;
-
-    const { user } = ctx;
-
-    if (!(await validateUserWaitingOrder(ctx, bot, user))) return;
-    const orderId = extractId(text);
-    if (!orderId) return;
-    const order = await Order.findOne({ _id: orderId });
-    if (!order) return;
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, order.community_id))
-      return await messages.bannedUserErrorMessage(ctx, user);
-    if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
-    order.status = 'WAITING_BUYER_INVOICE';
-    order.buyer_id = user._id;
-    order.taken_at = Date.now();
-
-    await order.save();
-    // We delete the messages related to that order from the channel
-    await deleteOrderFromChannel(order, bot.telegram);
-    await messages.beginTakeSellMessage(ctx, bot, user, order);
-  } catch (error) {
-    logger.error(error);
-  }
-};
 
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
@@ -788,8 +715,6 @@ const release = async (ctx, orderId, user) => {
 };
 
 module.exports = {
-  takebuy,
-  takesell,
   rateUser,
   saveUserReview,
   cancelAddInvoice,

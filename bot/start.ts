@@ -30,8 +30,6 @@ const OrdersModule = require('./modules/orders');
 const UserModule = require('./modules/user');
 const DisputeModule = require('./modules/dispute');
 const {
-  takebuy,
-  takesell,
   rateUser,
   cancelAddInvoice,
   addInvoice,
@@ -252,15 +250,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
 
-  bot.action('takesell', userMiddleware, async (ctx: MainContext) => {
-    await takesell(ctx, bot);
-  });
-
-  bot.action('takebuy', userMiddleware, async (ctx: MainContext) => {
-    await takebuy(ctx, bot);
-  });
-
-  bot.command('release', userMiddleware, async (ctx: MainContext) => {
+  bot.command('release', userMiddleware, async ctx => {
     try {
       if (!('message' in ctx.update) || !('text' in ctx.update.message)){
         throw new Error(ctxUpdateAssertMsg);

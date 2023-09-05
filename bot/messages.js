@@ -10,7 +10,7 @@ const {
   sanitizeMD,
   getEmojiRate,
   decimalRound,
-  getUserAge
+  getUserAge,
 } = require('../util');
 const logger = require('../logger');
 
@@ -81,7 +81,7 @@ const invoicePaymentRequestMessage = async (
       order,
       expirationTime,
       rate,
-      days: ageInDays
+      days: ageInDays,
     });
     await ctx.telegram.sendMessage(user.tg_id, message);
     // Create QR code
@@ -402,7 +402,11 @@ const onGoingTakeBuyMessage = async (
     const ageInDays = getUserAge(seller);
     await bot.telegram.sendMessage(
       buyer.tg_id,
-      i18nBuyer.t('someone_took_your_order', { expirationTime, rate, days: ageInDays })
+      i18nBuyer.t('someone_took_your_order', {
+        expirationTime,
+        rate,
+        days: ageInDays,
+      })
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {

@@ -6,6 +6,14 @@ const ordersActions = require('../../ordersActions');
 const commands = require('./commands');
 const messages = require('./messages');
 const { tooManyPendingOrdersMessage } = require('../../messages');
+const {
+  takeOrderActionValidation,
+  takeOrderValidation,
+  takesell,
+  takebuyValidation,
+  takebuy,
+} = require('./takeOrder');
+const { extractId } = require('../../../util');
 exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
@@ -52,4 +60,30 @@ exports.configure = bot => {
       return logger.error(error);
     }
   });
+
+  bot.action(
+    'takesell',
+    userMiddleware,
+    takeOrderActionValidation,
+    takeOrderValidation,
+    async ctx => {
+      const text = ctx.update.callback_query.message.text;
+      const orderId = extractId(text);
+      if (!orderId) return;
+      await takesell(ctx, bot, orderId);
+    }
+  );
+  bot.action(
+    'takebuy',
+    userMiddleware,
+    takeOrderActionValidation,
+    takeOrderValidation,
+    takebuyValidation,
+    async ctx => {
+      const text = ctx.update.callback_query.message.text;
+      const orderId = extractId(text);
+      if (!orderId) return;
+      await takebuy(ctx, bot, orderId);
+    }
+  );
 };
