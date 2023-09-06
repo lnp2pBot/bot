@@ -1,6 +1,47 @@
-const mongoose = require('mongoose');
+import mongoose, { Document, Schema } from 'mongoose';
 
-const OrderSchema = new mongoose.Schema({
+export interface IOrder extends Document {
+  description?: string;
+  amount: number;
+  max_amount: number;
+  min_amount: number;
+  fee: number;
+  bot_fee: number;
+  community_fee: number;
+  routing_fee: number;
+  hash: string;
+  secret: string;
+  creator_id: string;
+  seller_id: string;
+  buyer_id: string;
+  buyer_invoice: string;
+  buyer_dispute: boolean
+  seller_dispute: boolean
+  buyer_cooperativecancel: boolean;
+  seller_cooperativecancel: boolean;
+  canceled_by: string
+  status: string;
+  type: string;
+  fiat_amount: number;
+  fiat_code: string;
+  payment_method: string;
+  created_at: Date;
+  invoice_held_at: Date;
+  taken_at: Date;
+  tg_chat_id: string;
+  tg_order_message: string;
+  tg_channel_message1: string | null;
+  range_parent_id: string;
+  price_from_api: boolean;
+  price_margin: number;
+  calculated: boolean;
+  admin_warned: boolean;
+  paid_hold_buyer_invoice_updated: boolean;
+  community_id: string;
+  is_public: boolean;
+}
+
+const orderSchema = new Schema<IOrder>({
   description: { type: String, required: true },
   amount: {
     // amount in satoshis
@@ -82,4 +123,4 @@ const OrderSchema = new mongoose.Schema({
   is_public: { type: Boolean, default: true },
 });
 
-module.exports = mongoose.model('Order', OrderSchema);
+module.exports = mongoose.model<IOrder>('Order', orderSchema);
