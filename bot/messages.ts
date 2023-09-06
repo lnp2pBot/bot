@@ -31,9 +31,11 @@ const startMessage = async (ctx: MainContext) => {
         holdInvoiceExpiration.safetyWindowInSecs) /
       60 /
       60;
+    const disclaimer = ctx.i18n.t('disclaimer');
     const message = ctx.i18n.t('start', {
       orderExpiration: Math.floor(orderExpiration),
       channel: process.env.CHANNEL,
+      disclaimer,
     });
     await ctx.reply(message);
   } catch (error) {
@@ -721,6 +723,14 @@ const unavailableLightningAddress = async (ctx: MainContext, bot: Telegraf<MainC
 const helpMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('help'), { parse_mode: 'Markdown' });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const disclaimerMessage = async (ctx: MainContext) => {
+  try {
+    await ctx.reply(ctx.i18n.t('disclaimer'), { parse_mode: 'Markdown' });
   } catch (error) {
     logger.error(error);
   }
@@ -1633,6 +1643,7 @@ module.exports = {
   unavailableLightningAddress,
   invalidLightningAddress,
   helpMessage,
+  disclaimerMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,
   fiatSentMessages,

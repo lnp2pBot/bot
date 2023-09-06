@@ -1,5 +1,10 @@
 start: |
-  Ce bot vous aidera à effectuer des transactions P2P Bitcoin via le réseau Lightning Network.
+  ---———— DISCLAIMER ————---
+
+  ${disclaimer}
+  ---———— DISCLAIMER ————---
+  
+  Ce bot vous aidera à effectuer des transactions P2P Bitcoin via le réseau Lightning Network (LN).
 
   Une fois le bot lancé, vous pouvez utiliser les commandes suivantes:
 
@@ -11,25 +16,21 @@ start: |
 
   4. Dans le cas d'une vente, le bot va publier l'offre dans le canal ${channel} pour que quelqu'un la récupère. Tu peux annuler cette offre de vente à tout moment AVANT qu'elle ne soit récupérée par un autre utilisateur via la commande /cancel.
 
-  5. Dès que quelqu'un prend ton offre, le bot te demandera de payer la facture Lightning Network. Ce paiement sera séquestré dans un coffre d'arbitrage encore appelé escrow et qui est gelé dans ton portefeuille, l'offre expirant dans un délai maximal de ${orderExpiration} heures après sa prise.
+  5. Dès que quelqu'un prend ton offre, le bot te demandera de payer la facture LN. Ce paiement sera séquestré dans un coffre d'arbitrage encore appelé escrow et qui est gelé dans ton portefeuille, l'offre expirant dans un délai maximal de ${orderExpiration} heures après sa prise.
 
   Le bot révèlera ensuite qui est l'acheteur afin que tu puisses lui communiquer les instructions pour recevoir le paiement en FIAT. Dès que tu reçois le paiement en FIAT, tu dois libérer les fonds gelés à destination de l'acheteur en utilisant la commande /release.
 
   6. Dans le cas d'un achat, publie ton offre en utilisant la commande /buy et attends jusqu'à ce qu'un vendeur la récupère. Tu peux annuler l'offre à tout moment en utilisant la commande /cancel.
 
-  7. Dès que quelqu'un prend ton offre, tu dois créer la facture Lightning Network et l'envoyer au bot. Ensuite, tu dois contacter le vendeur pour recevoir ses instructions afin de lui transférer le paiement en FIAT. Dès que tu as payé le vendeur, tu dois utiliser la commande /release. Le bot t'enverra les sats à ta facture Lightning Network.
+  7. Dès que quelqu'un prend ton offre, tu dois créer la facture LN et l'envoyer au bot. Ensuite, tu dois contacter le vendeur pour recevoir ses instructions afin de lui transférer le paiement en FIAT. Dès que tu as payé le vendeur, tu dois utiliser la commande /release. Le bot t'enverra les sats à ta facture LN.
 
-  8. Si tu prends une offre de vente, c'est-à-dire tu achètes des sats, tu dois créer une facture Lightning Network pour recevoir tes sats et demander au vendeur de te communiquer les instructions pour le paiement en FIAT. Dès que le vendeur reçoit le règlement en FIAT il doit utiliser la commande /release pour déclencher le transfert des sats vers ton portefeuille.
+  8. Si tu prends une offre de vente, c'est-à-dire tu achètes des sats, tu dois créer une facture LN pour recevoir tes sats et demander au vendeur de te communiquer les instructions pour le paiement en FIAT. Dès que le vendeur reçoit le règlement en FIAT il doit utiliser la commande /release pour déclencher le transfert des sats vers ton portefeuille.
 
-  9. Si tu prends une offre d'achat, c'est-à-dire tu vends des sats, tu dois payer la facture Lightning Network. Les sats seront gelés jusqu'à ce que l'acheteur effectue le paiement FIAT. Tu dois contacter l'acheteur et lui communiquer les informations requises pour recevoir le paiement en FIAT. 
-  
-  Dès que tu reçois le règlement FIAT, tu dois débloquer les fonds retenus par le bot ; ceci en utilisant la commande /release, et les sats seront automatiquement envoyés vers le portefeuille de l'acheteur.
+  9. Si tu prends une offre d'achat, c'est-à-dire tu vends des sats, tu dois payer la facture LN. Les sats seront gelés jusqu'à ce que l'acheteur effectue le paiement FIAT. Tu dois contacter l'acheteur et lui communiquer les informations requises pour recevoir le paiement en FIAT. Dès que tu reçois le règlement FIAT, tu dois débloquer les fonds retenus par le bot ; ceci en utilisant la commande /release, et les sats seront automatiquement envoyés vers le portefeuille de l'acheteur.
 
-  10. Si tu n'arrives pas à conclure l'offre à n'importe qu'elle étape, tu peux utiliser la commande /dispute pour interpeler les admins afin de trouver une solution en tant que tierce partie.
+  Vous pouvez trouver plus d'informations sur la façon d'utiliser ce bot ici 👇
 
-  11. Avant que tout utilisateur ne récupère ton offre en tant qu'acheteur ou vendeur, tu peux l'annuler avec la commande /cancel.
-
-  12. Si ton offre a été prise et que tu veux l'annuler tout de même, vous pouvez procéder à une annulation coopérative si vous êtes tous les deux d'accord. Pour ce faire, toi et ta contrepartie devez utiliser la commande /cancel.
+  https://lnp2pbot.com/apprendre
 
   On te souhaite une transaction rapide et sécurisée !
 init_bot_error: pour utiliser ce bot, tu dois d'abord initialiser le démarrage avec la commande /start
@@ -221,6 +222,7 @@ help: |
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
   /release <_order id_> - Le vendeur libère les satoshis 
   /dispute <_order id_> - Ouvre un litige entre les parties participantes
+  /disclaimer - Affiche la clause de non-responsabilité
   /cancel <_order id_> - Annule une commande qui n'a pas encore été prise
   /cancelall - Annule toutes les commandes validées et non prises
 
@@ -314,13 +316,13 @@ wizard_community_enter_name: Choisissez un nom pour votre communauté
 wizard_community_too_long_name: Le nom doit avoir une longueur maximale de ${length} caractères.
 wizard_community_enter_currency: Saisissez le code de la ou des monnaies FIAT avec lesquelles les utilisateurs peuvent opérer dans cette communauté. S'il y en a plusieurs, vous devez saisir chaque code en le séparant par un espace.
 wizard_community_enter_group: |
-  Choisissez un identifiant ou un nom pour le groupe, le robot et vous-même devrez être les administrateurs du groupe :
+  Choisissez un identifiant ou un nom pour le groupe, le bot et vous-même devrez être les administrateurs du groupe :
 
   exemple : @MaCommunaute
 wizard_community_enter_order_channels: |
   Toutes les offres de votre communauté doivent être publiées sur un canal Telegram, si vous m'indiquez un seul canal, les offres d'achat et de vente y seront publiées.
 
-  Si vous indiquez deux canaux, les offres d'achat seront placées dans l'un et les offres de vente dans l'autre. Vous et le robot devez être administrateurs dans les deux canaux.
+  Si vous indiquez deux canaux, les offres d'achat seront placées dans l'un et les offres de vente dans l'autre. Vous et le bot devez être administrateurs dans les deux canaux.
 
   Veuillez indiquer le nom du canal, ou si vous souhaitez utiliser deux canaux, indiquez les deux noms séparés par un espace.
 
@@ -328,7 +330,7 @@ wizard_community_enter_order_channels: |
 wizard_community_one_or_two_channels: Vous devez indiquer un ou deux canaux
 wizard_community_enter_solvers: Veuillez maintenant inscrire les noms des utilisateurs qui régleront les litiges, en les séparant par un espace.
 wizard_community_must_enter_names: You must add at least one name, or two separated by a space
-wizard_community_enter_solvers_channel: Indiquez l'ID ou le nom du canal que le robot doit utiliser pour être alerté lorsqu'un litige est appelé, veuillez utiliser @ au début du nom du canal.
+wizard_community_enter_solvers_channel: Indiquez l'ID ou le nom du canal que le bot doit utiliser pour être alerté lorsqu'un litige est appelé, veuillez utiliser @ au début du nom du canal.
 wizard_community_success: |
   Félicitations, vous avez créé votre communauté !
 
@@ -565,4 +567,13 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+disclaimer: |
+  *En utilisant le bot de commerce P2P, vous acceptez les termes et conditions suivants:*
 
+  Le bot est un logiciel libre décentralisé que chacun peut utiliser, copier, modifier et exécuter. Les développeurs ne sont pas responsables des actions des autres personnes qui utilisent le logiciel de quelque manière que ce soit, légale ou illégale, honnête ou malhonnête.
+
+  Le bot est fourni "en l'état" et "tel que disponible", et les développeurs n'offrent aucune garantie, expresse ou implicite, en ce qui concerne le bot ou son utilisation.
+
+  Les développeurs et les responsables de la résolution des litiges font de leur mieux pour empêcher les mauvais acteurs, les fraudes et les escroqueries d'utiliser le bot, mais l'utilisateur reconnaît que le système peut être exploité et en accepte l'entière responsabilité lorsqu'il l'utilise.
+
+  Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.

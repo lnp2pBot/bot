@@ -1,4 +1,9 @@
 start: |
+  ---———— DISCLAIMER ————---
+
+  ${disclaimer}
+  ---———— DISCLAIMER ————---
+  
   Dieser Bot wird dir helfen, P2P Bitcoin-Transaktionen über das Lightning Network durchzuführen.
 
   Sobald du den Bot gestartet hast, kannst du die folgenden Befehle verwenden:
@@ -21,12 +26,10 @@ start: |
 
   9. Wenn du einen Kaufauftrag annimmst, d.h. du verkaufst Sats, musst du die LN-Rechnung bezahlen. Du musst dich mit dem Käufer in Verbindung setzen und ihm die Informationen geben, die er für die FIAT-Zahlung benötigt. Sobald du die FIAT-Zahlung erhalten hast, musst du das vom Bot gehaltene Guthaben mit dem Befehl /release freigeben und die Sats werden automatisch an die Wallet des Käufers geschickt.
 
-  10. Wenn du zu irgendeinem Zeitpunkt den Handel nicht durchführen kannst, kannst du mit dem Befehl /dispute Admins herbeirufen, die als Dritte eine Lösung vermitteln. 
+  Weitere Informationen zur Verwendung dieses Bots finden Sie hier 👇
 
-  11. Bevor ein anderer Nutzer deinen Auftrag als Verkäufer oder Käufer annimmt, kannst du das Angebot mit dem Befehl /cancel abbrechen.
-
-  12. Wenn dein Auftrag angenommen wurde und du sie stornieren möchtest, kannst du eine kooperative Stornierung vornehmen, wenn beide Parteien damit einverstanden sind. Ihr solltet beide den Befehl /cancel verwenden.
-
+  https://lnp2pbot.com/learn
+  
   Mache eine schnelle und sichere Transaktion!
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
@@ -217,6 +220,7 @@ help: |
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
   /release <_order id_> - Der Verkäufer gibt die Sats frei
   /dispute <_order id_> - Eröffnet einen Streitfall zwischen den beteiligten Parteien
+  /disclaimer - Zeigt den Haftungsausschluss an
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
 
@@ -227,7 +231,7 @@ help: |
   Gemeinschaften:
   /community - Erstellen Sie eine neue Community
   /mycomms - Zeigt die von Ihnen erstellten Communities an
-  /mycomm <_@community_> – Aufrufen des Community-Admin-Assistenten
+  /mycomm <_@community_> - Aufrufen des Community-Admin-Assistenten
   /findcomms <_fiat code_> - Findet Gemeinden, die mit der angegebenen Währung arbeiten
   /setcomm <_@groupOfACommunity / off_> - Stellen Sie eine Standardgemeinschaft fest oder entfernen Sie sie mit 'off'
   /settleorder <_order id_> - Akzeptieren Sie die Zahlung des Verkäufers und senden Sie die SATs automatisch an den Käufer. Es muss standardmäßig eine Community geben
@@ -563,3 +567,13 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+disclaimer: |
+  *Mit der Nutzung des P2P-Trade-Bots erklären Sie sich mit den folgenden Bedingungen einverstanden:*
+
+  Der Bot ist eine dezentralisierte Open-Source-Software, die von jedermann genutzt, kopiert, verändert und ausgeführt werden kann. Die Entwickler sind nicht verantwortlich für die Handlungen anderer Personen, die die Software in irgendeiner Weise nutzen, sei es legal oder illegal, ehrlich oder unehrlich.
+
+  Der Bot wird so zur Verfügung gestellt, wie er ist" und wie er verfügbar ist", und die Entwickler geben keine ausdrücklichen oder stillschweigenden Garantien in Bezug auf den Bot oder seine Verwendung.
+
+  Die Entwickler und die Streitschlichter bemühen sich nach besten Kräften, die Nutzung des Bots durch böswillige Akteure, Betrüger und Schwindler zu unterbinden, aber der Nutzer erkennt an, dass das System ausgenutzt werden kann, und übernimmt die volle Verantwortung für seine Nutzung.
+
+  Weder die Entwickler noch die Streitschlichter sind für Verluste oder Schäden verantwortlich, die dem Benutzer durch die Nutzung des Bots entstehen können.

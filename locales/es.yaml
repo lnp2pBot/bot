@@ -1,4 +1,9 @@
 start: |
+  ---———— DISCLAIMER ————---
+
+  ${disclaimer}
+  ---———— DISCLAIMER ————---
+
   Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
 
   Una vez inicializado el Bot, puedes usar los siguientes comandos:
@@ -21,11 +26,9 @@ start: |
 
   9. Si estas tomando una compra, debes pagar la factura lightning, este pago estará retenido mientras el comprador realiza tu pago fiat. Debes contactarle y brindarle tus datos para ello. Una vez confirmes su pago, debes liberar los fondos por medio del comando /release para que le lleguen los sats al comprador.
 
-  10. Si en algun punto los usuarios no pueden solucionar operación, pueden usar este comando para llamar a los admin a que resuelvan la operación como intermediarios.
+  Puedes encontrar más información sobre como utilizar este bot aquí 👇
 
-  11. Antes de que cualquier otro usuario tome tu oferta de compra o venta, puedes cancelarla con el el comando /cancel.
-
-  12. Si la operación ya ha sido tomada y deseas cancelar, lo puedes realizar mediante una cancelación cooperativa, por seguridad esto solo se puede realizar si las dos partes están de acuerdo, las dos partes deben ejecutar el comando /cancel
+  https://lnp2pbot.com/aprende
 
   ¡Intercambia seguro y rápido!
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
@@ -217,6 +220,7 @@ help: |
   /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
   /release <_id orden_> - El vendedor libera los satoshis
   /dispute <_id orden_> - Abre una disputa entre los participantes
+  /disclaimer - Muestra descargo de responsabilidad
   /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
 
@@ -565,3 +569,13 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+disclaimer: |
+  *Al utilizar el bot de comercio P2P, aceptas los siguientes términos y condiciones:*
+
+  El bot es un software descentralizado de código abierto que está disponible para que cualquiera lo use, copie, modifique y ejecute. Los desarrolladores no son responsables de las acciones de otras personas que utilicen el software de cualquier manera, ya sea legal o ilegal, honesta o deshonesta.
+
+  El bot se proporciona "tal cual" y "según disponibilidad", y los desarrolladores no ofrecen garantías de ningún tipo, expresas o implícitas, con respecto al bot o su uso.
+
+  Los desarrolladores y los árbitros de disputas hacen todo lo posible para eliminar a los actores malintencionados y estafadores del uso del  bot, pero el usuario reconoce que el sistema puede ser atacado y acepta la plena responsabilidad al ejecutarlo.
+
+  Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir como resultado del uso del bot.
