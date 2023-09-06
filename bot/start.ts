@@ -508,6 +508,14 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     }
   });
 
+  bot.command('disclaimer', userMiddleware, async (ctx: MainContext) => {
+    try {
+      await messages.disclaimerMessage(ctx);
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+
   // Only buyers can use this command
   bot.command('fiatsent', userMiddleware, async (ctx: MainContext) => {
     try {

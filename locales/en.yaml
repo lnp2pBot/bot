@@ -1,5 +1,10 @@
 start: |
-  This bot will help you complete P2P Bitcoin transactions through the Lightning Network.
+  ---———— DISCLAIMER ————---
+
+  ${disclaimer}
+  ---———— DISCLAIMER ————---
+  
+  This bot will help you complete P2P Bitcoin transactions through the Lightning Network (LN).
 
   Once you start up the bot, you can use the following commands:
 
@@ -11,26 +16,22 @@ start: |
 
   4. If you are selling, the bot will publish the order in the ${channel} channel expecting another user will take it. You can cancel this sell order anytime BEFORE another user takes it with the /cancel command.
 
-  5. Once somebody takes your order, the bot will ask you to pay the Lightning Network invoice. Such payment will be held in an escrow that is frozen in your wallet, the order will expire in a maximum lapse of ${orderExpiration} hours starting when the order was taken.
+  5. Once somebody takes your order, the bot will ask you to pay the LN invoice. Such payment will be held in an escrow that is frozen in your wallet, the order will expire in a maximum lapse of ${orderExpiration} hours starting when the order was taken.
 
   The bot will reveal who the buyer is so you can send instructions for the FIAT payment to be made. Once you receive the FIAT payment, you must send the funds to the buyer using the /release command.
 
   6. If you want to buy, publish your order using the /buy command and wait until a seller takes it. You can cancel the order at any time by using the /cancel command.
 
-  7. Once somebody takes your buy order, you must create a Lightning Network invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your Lightning Network invoice.
+  7. Once somebody takes your buy order, you must create a LN invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your LN invoice.
 
-  8. If you are taking a selling order, i.e. you buy sats, you must create a Lightning Network invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
+  8. If you are taking a selling order, i.e. you buy sats, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
 
-  9. If you are taking a buy order, i.e. you sell sats, you must pay the Lightning Network invoice. These sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. 
+  9. If you are taking a buy order, i.e. you sell sats, you must pay the LN invoice. These sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. Once you receive the fiat payment, you must release the fund held by the bot; you must use the /release command, and the sats will be automatically sent to the buyer's wallet.
+
+  You can find more information on how to use this bot here 👇
+
+  https://lnp2pbot.com/learn
   
-  Once you receive the fiat payment, you must release the fund held by the bot; you must use the /release command, and the sats will be automatically sent to the buyer's wallet.
-
-  10. If you cannot carry out the trade at any stance, you can use this command /dispute to call in the admins to bring a solution as third party. 
-
-  11. Before any other user picks your order as a seller or buyer, you can cancel said offer with the /cancel command. 
-
-  12. If your order has been taken and you want to cancel it, you can proceed with a cooperative cancellation if both parties agree. You both should use /cancel command.
-
   Make a quick and safe transaction!
 init_bot_error: to use this bot, you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
@@ -221,6 +222,7 @@ help: |
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
+  /disclaimer - Displays disclaimer
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
 
@@ -565,3 +567,13 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+disclaimer: |
+  *By using the P2P trade bot, you agree to the following terms and conditions:*
+
+  The bot is a decentralized open-source software that is available for anyone to use, copy, modify, and run. The developers are not responsible for the actions of other individuals using the software in any manner, whether legal or illegal, honest or dishonest.
+
+  The bot is provided on an "as is" and "as available" basis, and the developers make no warranties of any kind, express or implied, with respect to the bot or its use.
+
+  The developers and the dispute resolvers make their best efforts to remove bad actors, frauds, and scams from using the bot, but the user recognizes that the system can be exploited and accepts full responsibility while using it.
+
+  Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.

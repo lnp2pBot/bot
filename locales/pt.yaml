@@ -1,4 +1,8 @@
 start: |
+  ---———— DISCLAIMER ————---
+
+  ${disclaimer}
+  ---———— DISCLAIMER ————---
   Este bot ajudará você a preencher as transações de Bitcoin P2P por meio da Rede Lightning.
 
   Depois de iniciar o bot, você pode usar os seguintes comandos:
@@ -21,11 +25,9 @@ start: |
 
   9. Se você estiver fazendo um pedido de compra, ou seja, vende sats. Você deve pagar a fatura do LN. Este sats será mantido até que o comprador efetue o pagamento da Fiat. Você deve entrar em contato com o comprador e fornecer a ele as informações necessárias para prosseguir com o pagamento da Fiat. Depois de receber o pagamento fiduciário, você deve liberar o fundo mantido pelo bot, você deve usar o comando /release e os SATs serão enviados automaticamente para a carteira do comprador.
 
-  10. Se, em qualquer postura, você não puder realizar a negociação, poderá usar esse comando /dispute para chamar os administradores para trazer uma solução como terceiros.
+  Você pode encontrar mais informações sobre como usar este bot aqui 👇
 
-  11. Antes de qualquer outro usuário escolher seu pedido como vendedor ou comprador, você pode cancelar essa oferta com o comando /cancel.
-
-  12. Se o seu pedido foi realizado e você deseja cancelar, poderá prosseguir com um cancelamento cooperativo se ambas as partes concordarem.Vocês dois devem usar /cancel comando.
+  https://lnp2pbot.com/learn
 
   Faça uma transação rápida e segura!
 init_bot_error: Para usar este bot, você precisa primeiro inicializar a inicialização com o comando /start
@@ -217,6 +219,7 @@ help: |
   /fiatsent <order id> - O comprador indica que já enviou o dinheiro Fiat para o vendedor
   /release <ID do pedido> - O vendedor libera os satoshis
   /dispute <ID do pedido> - Abre uma disputa entre os participantes
+  /disclaimer - Exibe isenção de responsabilidade
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
 
@@ -561,3 +564,13 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+disclaimer: |
+  *Ao utilizar o bot de comércio P2P, o utilizador concorda com os seguintes termos e condições
+
+  O bot é um software de código aberto descentralizado que está disponível para qualquer pessoa usar, copiar, modificar e executar. Os desenvolvedores não são responsáveis pelas ações de outros indivíduos que usam o software de qualquer maneira, seja legal ou ilegal, honesta ou desonesta.
+
+  O bot é fornecido numa base "como está" e "como disponível", e os criadores não dão garantias de qualquer tipo, expressas ou implícitas, relativamente ao bot ou à sua utilização.
+
+  Os criadores e os responsáveis pela resolução de litígios envidam os seus melhores esforços para impedir que os maus actores, as fraudes e as burlas utilizem o bot, mas o utilizador reconhece que o sistema pode ser explorado e aceita toda a responsabilidade enquanto o utiliza.
+
+  Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
