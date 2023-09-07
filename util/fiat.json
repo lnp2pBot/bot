@@ -146,8 +146,9 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "BIF",
-    "emoji": "",
-    "name_plural": "Burundian francs"
+    "emoji": "🇧🇮",
+    "name_plural": "Burundian francs",
+    "price": true
   },
   "BMD": {
     "symbol": "BMD",
@@ -347,8 +348,9 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "DJF",
-    "emoji": "",
-    "name_plural": "Djiboutian francs"
+    "emoji": "🇩🇯",
+    "name_plural": "Djiboutian francs",
+    "price": true
   },
   "DKK": {
     "symbol": "Dkr",
@@ -478,8 +480,9 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "GNF",
-    "emoji": "",
-    "name_plural": "Guinean francs"
+    "emoji": "🇬🇳",
+    "name_plural": "Guinean francs",
+    "price": true
   },
   "GTQ": {
     "symbol": "GTQ",
@@ -785,8 +788,9 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "MGA",
-    "emoji": "",
-    "name_plural": "Malagasy Ariaries"
+    "emoji": "🇲🇬",
+    "name_plural": "Malagasy Ariaries",
+    "price": true
   },
   "MKD": {
     "symbol": "MKD",
@@ -829,6 +833,16 @@
     "code": "MOP",
     "emoji": "",
     "name_plural": "Macanese patacas"
+  },
+  "MRU": {
+    "symbol": "UM",
+    "name": "Ouguiya",
+    "symbol_native": "UM",
+    "decimal_digits": 2,
+    "rounding": 0,
+    "code": "MRU",
+    "emoji": "🇲🇷",
+    "name_plural": "Ouguiya"
   },
   "MUR": {
     "symbol": "MURs",
@@ -1067,8 +1081,9 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "RWF",
-    "emoji": "",
-    "name_plural": "Rwandan francs"
+    "emoji": "🇷🇼",
+    "name_plural": "Rwandan francs",
+    "price": true
   },
   "SAR": {
     "symbol": "SR",
