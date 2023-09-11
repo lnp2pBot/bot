@@ -52,4 +52,4 @@ const UserSchema = new Schema<UserDocument>({
   default_community_id: { type: String },
 });
 
-module.exports = mongoose.model<UserDocument>('User', UserSchema);
+export default mongoose.model<UserDocument>('User', UserSchema);
