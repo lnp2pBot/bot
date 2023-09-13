@@ -1,4 +1,4 @@
-const winston = require('winston');
+import * as winston from 'winston';
 
 const level = process.env.LOG_LEVEL || 'notice';
 
@@ -9,9 +9,8 @@ const logger = winston.createLogger({
     }),
     winston.format.colorize(),
     winston.format.printf(info => {
-      return `[${info.timestamp}] ${info.level}: ${info.message} ${
-        info.stack ? info.stack : ''
-      }`;
+      return `[${info.timestamp}] ${info.level}: ${info.message} ${info.stack ? info.stack : ''
+        }`;
     })
   ),
   levels: winston.config.syslog.levels,
@@ -24,4 +23,5 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-module.exports = logger;
+
+export default logger;
