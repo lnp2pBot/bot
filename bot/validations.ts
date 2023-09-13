@@ -68,7 +68,7 @@ const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
-    if (!user) return;
+    if (user === null) return;
 
     if (!user.admin) return await messages.notAuthorized(ctx, tgUserId.toString());
 
@@ -88,7 +88,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
-    if (!user) return;
+    if (user === null) return;
 
     let community = null;
     if (user.default_community_id)
@@ -475,7 +475,7 @@ const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderI
     }
     order = await Order.findOne(where);
 
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
@@ -499,7 +499,7 @@ const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderI
 
     const order = await Order.findOne(where);
 
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
@@ -524,7 +524,7 @@ const validateFiatSentOrder = async (ctx: MainContext, user: UserDocument, order
       where._id = orderId;
     }
     const order = await Order.findOne(where);
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
