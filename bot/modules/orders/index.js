@@ -18,6 +18,12 @@ exports.Scenes = require('./scenes');
 
 exports.configure = bot => {
   bot.command(
+    'takeorder',
+    userMiddleware,
+    takeOrderValidation,
+    commands.takeOrder
+  );
+  bot.command(
     'buy',
     userMiddleware,
     async (ctx, next) => {

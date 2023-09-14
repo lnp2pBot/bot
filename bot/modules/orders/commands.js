@@ -7,10 +7,12 @@ const {
   isBannedFromCommunity,
   validateSeller,
   validateSellOrder,
+  validateParams,
 } = require('../../validations');
 const messages = require('../../messages');
 const ordersActions = require('../../ordersActions');
 const { deletedCommunityMessage } = require('./messages');
+const { takebuy, takesell, takebuyValidation } = require('./takeOrder');
 
 const Scenes = require('./scenes');
 
@@ -184,4 +186,35 @@ const isMaxPending = async user => {
   return false;
 };
 
-module.exports = { buyWizard, sellWizard, buy, sell, isMaxPending };
+const takeOrder = async ctx => {
+  try {
+    const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+    const order = await Order.findOne({
+      _id: orderId,
+      status: 'PENDING',
+    });
+    if (!order) throw new Error('OrderNotFound');
+    switch (order.type) {
+      case 'buy': {
+        let valid = false;
+        await takebuyValidation(ctx, () => {
+          valid = true;
+        });
+        if (!valid) return;
+        return takebuy(ctx, ctx, orderId);
+      }
+      case 'sell': {
+        return takesell(ctx, ctx, orderId);
+      }
+    }
+  } catch (err) {
+    switch (err.message) {
+      case 'OrderNotFound':
+        return ctx.reply(ctx.i18n.t('order_not_found'));
+      default:
+        return ctx.reply(ctx.i18n.t('generic_error'));
+    }
+  }
+};
+
+module.exports = { buyWizard, sellWizard, buy, sell, isMaxPending, takeOrder };

@@ -534,6 +534,10 @@ community_admin_help: |
 community_npub_updated: You added the community's pubkey ${npub} successfully!
 # END modules/community
 
+# START modules/orders
+order_not_found: Ordem não encontrada.
+# END modules/orders
+
 # START modules/user
 user_settings: |
   <strong>User settings for @${user.username}</strong>

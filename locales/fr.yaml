@@ -537,6 +537,10 @@ npub_not_valid: |
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
 
+# START modules/orders
+order_not_found: Ordre non trouvé.
+# END modules/orders
+
 # START modules/user
 user_settings: |
   <strong>Paramètres de l'utilisateur pour @${user.username}</strong>
