@@ -422,11 +422,6 @@ const itemsFromMessage = (str: string) => {
     .filter(e => !!e);
 };
 
-// Check if a number is int
-const isInt = (n: number) => Number(n) === n;
-
-exports.isInt = isInt;
-
 // Check if a number is float
 const isFloat = (n: number) => typeof n === 'number' && !Number.isInteger(n);
 
@@ -522,7 +517,6 @@ export {
   isDisputeSolver,
   getFee,
   itemsFromMessage,
-  isInt,
   isFloat,
   getLanguageFlag,
   delay,
