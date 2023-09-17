@@ -63,13 +63,15 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       if (undefined === priceMargin && sats === 0)
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
+      // We remove all special characters from the payment method
+      const paymentMethod = method.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
         type,
         amount: sats,
         fiatAmount,
         fiatCode: currency,
-        paymentMethod: method,
+        paymentMethod,
         status: 'PENDING',
         priceMargin,
         community_id: community && community.id,
