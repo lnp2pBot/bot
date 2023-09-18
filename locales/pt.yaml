@@ -569,9 +569,9 @@ bot_info: |
   
   Node status: ${status}
 disclaimer: |
-  *Ao utilizar o bot de comércio P2P, o utilizador concorda com os seguintes termos e condições
+  *Ao utilizar o bot de comércio P2P, o utilizador concorda com os seguintes termos e condições*
 
-  O bot é um software de código aberto descentralizado que está disponível para qualquer pessoa usar, copiar, modificar e executar. Os desenvolvedores não são responsáveis pelas ações de outros indivíduos que usam o software de qualquer maneira, seja legal ou ilegal, honesta ou desonesta.
+  O bot é um software de código aberto que está disponível para qualquer pessoa usar, copiar, modificar e executar. Os desenvolvedores não são responsáveis pelas ações de outros indivíduos que usam o software de qualquer maneira, seja legal ou ilegal, honesta ou desonesta.
 
   O bot é fornecido numa base "como está" e "como disponível", e os criadores não dão garantias de qualquer tipo, expressas ou implícitas, relativamente ao bot ou à sua utilização.
 
