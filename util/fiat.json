@@ -202,7 +202,7 @@
     "decimal_digits": 2,
     "rounding": 0,
     "code": "BWP",
-    "emoji": "",
+    "emoji": "🇧🇼",
     "name_plural": "Botswanan pulas",
     "price": true
   },
@@ -246,7 +246,7 @@
     "decimal_digits": 2,
     "rounding": 0,
     "code": "CDF",
-    "emoji": "",
+    "emoji": "🇨🇩",
     "name_plural": "Congolese francs",
     "price": true
   },
@@ -1059,7 +1059,7 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "RSD",
-    "emoji": "",
+    "emoji": "🇷🇸",
     "name_plural": "Serbian dinars",
     "price": true
   },
