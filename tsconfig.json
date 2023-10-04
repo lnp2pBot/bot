@@ -2,5 +2,6 @@
   "compilerOptions": {
     "strict": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true
   }
 }
