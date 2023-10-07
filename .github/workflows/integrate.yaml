@@ -1,4 +1,4 @@
-name: integracion continua con node.js
+name: NodeJS Continuous Integration
 
 on: [push, pull_request]
 
