@@ -1,9 +1,11 @@
-require('dotenv').config();
-const { SocksProxyAgent } = require('socks-proxy-agent');
-const { start } = require('./bot');
-const mongoConnect = require('./db_connect');
+import * as dotenv from "dotenv";
+dotenv.config()
+import { SocksProxyAgent } from "socks-proxy-agent";
+import { MainContext, start } from "./bot/start";
+import mongoConnect from './db_connect'
 const { resubscribeInvoices } = require('./ln');
-const logger = require('./logger');
+import logger from "./logger";
+import { Telegraf } from "telegraf";
 const { delay } = require('./util');
 
 (async () => {
@@ -23,7 +25,7 @@ const { delay } = require('./util');
   mongoose.connection
     .once('open', async () => {
       logger.info('Connected to Mongo instance.');
-      let options = { handlerTimeout: 60000 };
+      let options: Partial<Telegraf.Options<MainContext>> = { handlerTimeout: 60000 };
       if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
         options = {
@@ -32,10 +34,11 @@ const { delay } = require('./util');
           },
         };
       }
-      const bot = start(process.env.BOT_TOKEN, options);
+      const bot = start(String(process.env.BOT_TOKEN), options);
       // Wait 1 seconds before try to resubscribe hold invoices
       await delay(1000);
       await resubscribeInvoices(bot);
     })
-    .on('error', error => logger.error(`Error connecting to Mongo: ${error}`));
+    .on('error', (error: Error) => logger.error(`Error connecting to Mongo: ${error}`));
 })();
+
