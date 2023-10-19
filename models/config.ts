@@ -13,4 +13,5 @@ const configSchema = new Schema<IConfig>({
     node_uri: { type: String },
 });
 
-export default mongoose.model<IConfig>('Config', configSchema);
+
+module.exports = mongoose.model<IConfig>('Config', configSchema);

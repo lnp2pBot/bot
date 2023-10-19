@@ -1,5 +1,5 @@
-import mongoose, { ConnectOptions } from "mongoose";
-import logger from "./logger";
+const mongoose = require('mongoose');
+const logger = require('./logger');
 
 // connect to database
 const credentials = process.env.DB_USER
@@ -16,8 +16,8 @@ const connect = () => {
   mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  } as ConnectOptions);
+  });
   return mongoose;
 };
 
-export default connect;
+module.exports = connect;

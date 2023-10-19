@@ -1,28 +1,18 @@
-import { I18nContext } from "@grammyjs/i18n";
-import { ICommunity, IOrderChannel } from "../models/community";
-import { IOrder } from "../models/order";
-import { UserDocument } from "../models/user";
-import { IFiatCurrencies, IFiat } from "./fiatModel";
-import { ILanguage, ILanguages } from "./languagesModel";
-import { Telegram } from "telegraf/typings/core/types/typegram";
-import axios from "axios";
-import fiatJson from './fiat.json';
-import languagesJson from './languages.json';
-import { Order, Community } from "../models";
-import logger from "../logger";
+const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
-
-const languages: ILanguages = languagesJson;
-const currencies: IFiatCurrencies = fiatJson;
+const currencies = require('./fiat.json');
+const languages = require('./languages.json');
+const { Order, Community } = require('../models');
+const logger = require('../logger');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
-const isIso4217 = (code: string): boolean => {
+const isIso4217 = code => {
   if (code.length < 3 || code.length > 5) {
     return false;
   }
   const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  code = code.toLowerCase()
-  return code.split('').every(letter => {
+  code = code.toLowerCase().split('');
+  return code.every(letter => {
     if (alphabet.indexOf(letter) == -1) {
       return false;
     }
@@ -30,15 +20,15 @@ const isIso4217 = (code: string): boolean => {
   });
 };
 
-const getCurrency = (code: string): (IFiat | null) => {
-  if (!isIso4217(code)) return null;
+const getCurrency = code => {
+  if (!isIso4217(code)) return false;
   const currency = currencies[code];
-  if (!currency) return null;
+  if (!currency) return false;
 
   return currency;
 };
 
-const plural = (n: number): string => {
+const plural = n => {
   if (n === 1) {
     return '';
   }
@@ -47,7 +37,7 @@ const plural = (n: number): string => {
 
 // This function formats a number to locale strings.
 // If Iso code or locale code doesn´t exist, the function will return a number without format.
-const numberFormat = (code: string, number: number) => {
+const numberFormat = (code, number) => {
   if (!isIso4217(code)) return false;
 
   if (!currencies[code]) return number;
@@ -63,7 +53,7 @@ const numberFormat = (code: string, number: number) => {
 // This function checks if the current buyer and seller were doing circular operations
 // In order to increase their trades_completed and volume_traded.
 // If we found those trades in the last 24 hours we decrease both variables to both users
-const handleReputationItems = async (buyer: UserDocument, seller: UserDocument, amount: number) => {
+const handleReputationItems = async (buyer, seller, amount) => {
   try {
     const yesterday = new Date(Date.now() - 86400000).toISOString();
     const orders = await Order.find({
@@ -74,7 +64,7 @@ const handleReputationItems = async (buyer: UserDocument, seller: UserDocument, 
     });
     if (orders.length > 0) {
       let totalAmount = 0;
-      orders.forEach((order: IOrder) => {
+      orders.forEach(order => {
         totalAmount += order.amount;
       });
       const lastAmount = orders[orders.length - 1].amount;
@@ -128,10 +118,9 @@ const handleReputationItems = async (buyer: UserDocument, seller: UserDocument, 
   }
 };
 
-const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
+const getBtcFiatPrice = async (fiatCode, fiatAmount) => {
   try {
     const currency = getCurrency(fiatCode);
-    if (currency === null) throw Error("Currency not found");
     if (!currency.price) return;
     // Before hit the endpoint we make sure the code have only 3 chars
     const code = currency.code.substring(0, 3);
@@ -141,13 +130,13 @@ const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
     }
     const sats = (fiatAmount / response.data.btc) * 100000000;
 
-    return Number(sats);
+    return parseInt(sats);
   } catch (error) {
     logger.error(error);
   }
 };
 
-const getBtcExchangePrice = (fiatAmount: number, satsAmount: number) => {
+const getBtcExchangePrice = (fiatAmount, satsAmount) => {
   try {
     const satsPerBtc = 1e8;
     const feeRate = (satsPerBtc * fiatAmount) / satsAmount;
@@ -158,8 +147,8 @@ const getBtcExchangePrice = (fiatAmount: number, satsAmount: number) => {
   }
 };
 
-const objectToArray = (object: any): any[] => {
-  const array: any[] = [];
+const objectToArray = object => {
+  const array = [];
 
   for (const i in object) array.push(object[i]);
 
@@ -173,7 +162,7 @@ const getCurrenciesWithPrice = () => {
   return withPrice;
 };
 
-const getEmojiRate = (rate: number): string => {
+const getEmojiRate = rate => {
   const star = '⭐';
   const roundedRate = Math.round(rate);
   const output = [];
@@ -184,7 +173,7 @@ const getEmojiRate = (rate: number): string => {
 
 // Round number to exp decimal digits
 // Source: https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Math/round#redondeo_decimal
-const decimalRound = (value: number, exp: number): number => {
+const decimalRound = (value, exp) => {
   if (typeof exp === 'undefined' || +exp === 0) {
     return Math.round(value);
   }
@@ -195,29 +184,27 @@ const decimalRound = (value: number, exp: number): number => {
     return NaN;
   }
   // Shift
-  let valueArr = value.toString().split('e');
-  value = Math.round(+(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] - exp : -exp)));
+  value = value.toString().split('e');
+  value = Math.round(+(value[0] + 'e' + (value[1] ? +value[1] - exp : -exp)));
   // Shift back
-  valueArr = value.toString().split('e');
-  return +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] + exp : exp));
+  value = value.toString().split('e');
+  return +(value[0] + 'e' + (value[1] ? +value[1] + exp : exp));
 };
 
-const extractId = (text: string): (string | null) => {
+const extractId = text => {
   const matches = text.match(/:([a-f0-9]{24}):$/);
-  if (matches !== null){
-    return matches?.[1];
-  }
-  return null;
+
+  return matches[1];
 };
 
 // Clean strings that are going to be rendered with markdown
-const sanitizeMD = (text: any) => {
+const sanitizeMD = text => {
   if (!text) return '';
 
-  return String(text).replace(/(?=[|<>(){}[\]\-_!#.`=+])/g, '\\');
+  return text.toString().replace(/(?=[|<>(){}[\]\-_!#.`=+])/g, '\\');
 };
 
-const secondsToTime = (secs: number) => {
+const secondsToTime = secs => {
   const hours = Math.floor(secs / (60 * 60));
 
   const divisor = secs % (60 * 60);
@@ -229,9 +216,9 @@ const secondsToTime = (secs: number) => {
   };
 };
 
-const isGroupAdmin = async (groupId: string, user: UserDocument, telegram: Telegram) => {
+const isGroupAdmin = async (groupId, user, telegram) => {
   try {
-    const member = await telegram.getChatMember({chat_id: groupId, user_id: Number(user.tg_id)});
+    const member = await telegram.getChatMember(groupId, user.tg_id);
     if (
       member &&
       (member.status === 'creator' || member.status === 'administrator')
@@ -255,12 +242,12 @@ const isGroupAdmin = async (groupId: string, user: UserDocument, telegram: Teleg
     logger.error(error);
     return {
       success: false,
-      message: String(error),
+      message: error.toString(),
     };
   }
 };
 
-const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
+const deleteOrderFromChannel = async (order, telegram) => {
   try {
     let channel = process.env.CHANNEL;
     if (order.community_id) {
@@ -278,13 +265,13 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
         }
       }
     }
-    await telegram.deleteMessage({chat_id: channel!, message_id: Number(order.tg_channel_message1!)});
+    await telegram.deleteMessage(channel, order.tg_channel_message1);
   } catch (error) {
     logger.error(error);
   }
 };
 
-const getOrderChannel = async (order: IOrder) => {
+const getOrderChannel = async order => {
   let channel = process.env.CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
@@ -294,7 +281,7 @@ const getOrderChannel = async (order: IOrder) => {
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
-      community.order_channels.forEach(async (c: IOrderChannel) => {
+      community.order_channels.forEach(async c => {
         if (c.type === order.type) {
           channel = c.name;
         }
@@ -305,11 +292,10 @@ const getOrderChannel = async (order: IOrder) => {
   return channel;
 };
 
-const getDisputeChannel = async (order: IOrder) => {
+const getDisputeChannel = async order => {
   let channel = process.env.DISPUTE_CHANNEL;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
-    if (community === null) throw Error("Community was not found in DB");
     channel = community.dispute_channel;
   }
 
@@ -321,13 +307,8 @@ const getDisputeChannel = async (order: IOrder) => {
  * @param {*} user
  * @returns i18n context
  */
-const getUserI18nContext = async (user: UserDocument) => {
-  let language = null;
-  if (!('language' in user)) {
-    language = 'en';
-  } else {
-    language = user.language;
-  }
+const getUserI18nContext = async user => {
+  const language = user.language || 'en';
   const i18n = new I18n({
     locale: language,
     defaultLanguageOnMissing: true,
@@ -337,7 +318,7 @@ const getUserI18nContext = async (user: UserDocument) => {
   return i18n.createContext(user.lang);
 };
 
-const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
+const getDetailedOrder = (i18n, order, buyer, seller) => {
   try {
     const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
     const buyerReputation = buyer
@@ -355,7 +336,7 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
     createdAt = sanitizeMD(createdAt);
     takenAt = sanitizeMD(takenAt);
     const status = sanitizeMD(order.status);
-    const fee = order.fee ? Number(order.fee) : '';
+    const fee = order.fee ? parseInt(order.fee) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
     const message = i18n.t('order_detail', {
@@ -380,7 +361,7 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
 };
 
 // We need to know if this user is a dispute solver for this community
-const isDisputeSolver = (community: ICommunity, user: UserDocument) => {
+const isDisputeSolver = (community, user) => {
   if (!community || !user) {
     return false;
   }
@@ -390,35 +371,37 @@ const isDisputeSolver = (community: ICommunity, user: UserDocument) => {
 
 // Return the fee the bot will charge to the seller
 // this fee is a combination from the global bot fee and the community fee
-const getFee = async (amount: number, communityId: string) => {
-  const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
+const getFee = async (amount, communityId) => {
+  const maxFee = Math.round(amount * parseFloat(process.env.MAX_FEE));
   if (!communityId) return maxFee;
 
-  const botFee = maxFee * Number(process.env.FEE_PERCENT);
+  const botFee = maxFee * parseFloat(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
   const community = await Community.findOne({ _id: communityId });
-  if (community === null) throw Error("Community was not found in DB");
   communityFee = communityFee * (community.fee / 100);
 
   return botFee + communityFee;
 };
 
-const itemsFromMessage = (str: string) => {
+const itemsFromMessage = str => {
   return str
     .split(' ')
     .map(e => e.trim())
     .filter(e => !!e);
 };
 
+// Check if a number is int
+const isInt = n => parseInt(n) === n;
+
 // Check if a number is float
-const isFloat = (n: number) => typeof n === 'number' && !Number.isInteger(n);
+const isFloat = n => typeof n === 'number' && !isInt(n);
 
 // Returns an emoji flag for a language
-const getLanguageFlag = (code: string): ILanguage => {
+const getLanguageFlag = code => {
   return languages[code];
 };
 
-const delay = (time: number) => {
+const delay = time => {
   return new Promise(resolve => setTimeout(resolve, time));
 };
 
@@ -426,9 +409,9 @@ const delay = (time: number) => {
 // and the hold invoice safety window in seconds
 const holdInvoiceExpirationInSecs = () => {
   const expirationTimeInSecs =
-    Number(process.env.HOLD_INVOICE_CLTV_DELTA) * 10 * 60;
+    parseInt(process.env.HOLD_INVOICE_CLTV_DELTA) * 10 * 60;
   const safetyWindowInSecs =
-    Number(process.env.HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW) * 10 * 60;
+    parseInt(process.env.HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW) * 10 * 60;
   return {
     expirationTimeInSecs,
     safetyWindowInSecs,
@@ -436,7 +419,7 @@ const holdInvoiceExpirationInSecs = () => {
 };
 
 // Returns the user age in days
-const getUserAge = (user: UserDocument) => {
+const getUserAge = user => {
   const userCreationDate = new Date(user.created_at);
   const today = new Date();
   const ageInDays = Math.floor(
@@ -451,13 +434,13 @@ const getUserAge = (user: UserDocument) => {
  * @param {*} i18n context
  * @returns String with the remaining time to expiration in format '1 hours 30 minutes'
  */
-const getTimeToExpirationOrder = (order: IOrder, i18n: I18nContext) => {
+const getTimeToExpirationOrder = (order, i18n) => {
   const initialDateObj = new Date(order.created_at);
-  const timeToExpire = Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
+  const timeToExpire = parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
   initialDateObj.setSeconds(initialDateObj.getSeconds() + timeToExpire);
 
   const currentDateObj = new Date();
-  const timeDifferenceMs = initialDateObj.valueOf() - currentDateObj.valueOf();
+  const timeDifferenceMs = initialDateObj - currentDateObj;
   const totalSecondsRemaining = Math.floor(timeDifferenceMs / 1000);
   const textHour = i18n.t('hours');
   const textMin = i18n.t('minutes');
@@ -471,7 +454,7 @@ const getTimeToExpirationOrder = (order: IOrder, i18n: I18nContext) => {
   return `${hours} ${textHour} ${minutes} ${textMin}`;
 };
 
-export {
+module.exports = {
   isIso4217,
   plural,
   getCurrency,
@@ -494,6 +477,7 @@ export {
   isDisputeSolver,
   getFee,
   itemsFromMessage,
+  isInt,
   isFloat,
   getLanguageFlag,
   delay,
