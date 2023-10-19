@@ -1,16 +1,16 @@
-import {
+const {
   createHoldInvoice,
   settleHoldInvoice,
   cancelHoldInvoice,
   getInvoice,
-} from './hold_invoice';
-import subscribeInvoice from './subscribe_invoice';
+} = require('./hold_invoice');
+const subscribeInvoice = require('./subscribe_invoice');
 const subscribeProbe = require('./subscribe_probe');
-import resubscribeInvoices from './resubscribe_invoices';
+const resubscribeInvoices = require('./resubscribe_invoices');
 const { payRequest, payToBuyer, isPendingPayment } = require('./pay_request');
-import { getInfo } from './info';
+const { getInfo } = require('./info');
 
-export {
+module.exports = {
   createHoldInvoice,
   subscribeInvoice,
   resubscribeInvoices,
@@ -22,4 +22,4 @@ export {
   isPendingPayment,
   subscribeProbe,
   getInvoice,
-}
+};

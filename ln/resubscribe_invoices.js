@@ -1,15 +1,13 @@
-import { Telegraf } from 'telegraf';
-import { MainContext } from "../bot/start";
-import { getInvoices, GetInvoicesResult } from 'lightning';
-import { lnd } from './connect';
+const { getInvoices } = require('lightning');
+const lnd = require('./connect');
 const subscribeInvoice = require('./subscribe_invoice');
-import { Order } from '../models';
-import logger from "../logger";
+const { Order } = require('../models');
+const logger = require('../logger');
 
-const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
+const resubscribeInvoices = async bot => {
   try {
     let invoicesReSubscribed = 0;
-    const isHeld = (invoice: any) => !!invoice.is_held;
+    const isHeld = invoice => !!invoice.is_held;
     const unconfirmedInvoices = (
       await getInvoices({
         lnd,
@@ -31,9 +29,9 @@ const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
     }
     logger.info(`Invoices resubscribed: ${invoicesReSubscribed}`);
   } catch (error) {
-    logger.error(`ResuscribeInvoice catch: ${String(error)}`);
+    logger.error(`ResuscribeInvoice catch: ${error.toString()}`);
     return false;
   }
 };
 
-export default resubscribeInvoices
+module.exports = resubscribeInvoices;

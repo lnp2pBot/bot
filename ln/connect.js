@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as lightning from "lightning";
-import logger from "../logger";
+const fs = require('fs');
+const path = require('path');
+const lightning = require('lightning');
+const logger = require('../logger');
 
 const { authenticatedLndGrpc } = lightning;
 
@@ -47,4 +47,4 @@ const { lnd } = authenticatedLndGrpc({
   socket,
 });
 
-export { lnd };
+module.exports = lnd;
