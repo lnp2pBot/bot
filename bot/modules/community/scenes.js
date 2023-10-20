@@ -10,6 +10,8 @@ const {
   wizardCommunityWrongPermission,
 } = require('./messages');
 
+const CURRENCIES = 20;
+
 exports.communityAdmin = require('./scenes.communityAdmin')();
 
 exports.communityWizard = new Scenes.WizardScene(
@@ -158,7 +160,7 @@ const createCommunitySteps = {
       ctx.wizard.state.error = null;
       let currencies = itemsFromMessage(text);
       currencies = currencies.map(currency => currency.toUpperCase());
-      const max = 10;
+      const max = CURRENCIES;
       if (currencies.length > max) {
         await ctx.telegram.deleteMessage(
           ctx.message.chat.id,
@@ -554,7 +556,7 @@ exports.updateCurrenciesCommunityWizard = new Scenes.WizardScene(
 
       let currencies = itemsFromMessage(ctx.message.text);
       currencies = currencies.map(currency => currency.toUpperCase());
-      if (currencies.length > 10)
+      if (currencies.length > CURRENCIES)
         return await ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
 
       const { community } = ctx.wizard.state;
