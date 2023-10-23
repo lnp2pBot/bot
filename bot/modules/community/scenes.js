@@ -10,7 +10,7 @@ const {
   wizardCommunityWrongPermission,
 } = require('./messages');
 
-const CURRENCIES = 20;
+const CURRENCIES = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 
 exports.communityAdmin = require('./scenes.communityAdmin')();
 
