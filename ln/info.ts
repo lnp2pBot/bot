@@ -1,6 +1,6 @@
-import * as lightning from "lightning";
-import { lnd } from './connect'
-import logger from "../logger";
+import lightning from 'lightning';
+import { lnd } from './connect';
+import { logger } from '../logger';
 
 export const getInfo = async () => {
   try {

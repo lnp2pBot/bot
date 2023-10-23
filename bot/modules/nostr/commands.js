@@ -1,5 +1,5 @@
 const Nostr = require('nostr-tools');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const Config = require('./config');
 
 exports.info = async ctx => {

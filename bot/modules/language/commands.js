@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { getLanguageFlag } = require('../../../util');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { showFlagsMessage } = require('./messages');
 
 exports.setlang = async ctx => {

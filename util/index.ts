@@ -8,8 +8,9 @@ import { Telegram } from "telegraf/typings/core/types/typegram";
 import axios from "axios";
 import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
-import { Order, Community } from "../models";
-import logger from "../logger";
+import { Order, Community } from '../models';
+import { logger } from '../logger';
+import { MainContext } from '../bot/start';
 const { I18n } = require('@grammyjs/i18n');
 
 const languages: ILanguages = languagesJson;

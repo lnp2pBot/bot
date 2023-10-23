@@ -1,4 +1,4 @@
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { Community, PendingPayment } = require('../../../models');
 
 exports.createCommunityWizardStatus = (i18n, state) => {

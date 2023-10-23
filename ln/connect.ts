@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as lightning from "lightning";
-import logger from "../logger";
+import fs from 'fs';
+import path from 'path';
+import lightning from 'lightning';
+import { logger } from '../logger';
 
 const { authenticatedLndGrpc } = lightning;
 

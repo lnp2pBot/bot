@@ -7,7 +7,7 @@ import { lnd } from "./connect";
 import * as messages from '../bot/messages';
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
-import logger from "../logger";
+import { logger } from '../logger';
 
 const subscribeInvoice = async (bot: Telegraf<MainContext>, id: string, resub: boolean) => {
   try {

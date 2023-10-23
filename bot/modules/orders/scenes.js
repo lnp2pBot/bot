@@ -1,5 +1,5 @@
 const { Scenes, Markup } = require('telegraf');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { getCurrency } = require('../../../util');
 const ordersActions = require('../../ordersActions');
 const {

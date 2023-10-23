@@ -11,7 +11,7 @@ import * as messages from './messages';
 import { Order, User, Community } from '../models';
 const { isIso4217, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
-const logger = require('../logger');
+import { logger } from '../logger';
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user

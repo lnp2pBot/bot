@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from 'crypto';
-import * as lightning from "lightning";
-import { lnd } from './connect'
-import logger from "../logger";
+import lightning from 'lightning';
+import { lnd } from './connect';
+import { logger } from '../logger';
 
 const createHoldInvoice = async (description: string, amount: number ) => {
   try {
