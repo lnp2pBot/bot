@@ -1,11 +1,13 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
+const CURRENCIES: number = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
+
 const arrayLimits = (val: any[]): boolean => {
     return val.length > 0 && val.length <= 2;
 };
 
 const currencyLimits = (val: string): boolean => {
-    return val.length > 0 && val.length < 10;
+    return val.length > 0 && val.length <= CURRENCIES;
 };
 
 
