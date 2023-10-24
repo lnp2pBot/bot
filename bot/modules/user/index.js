@@ -1,4 +1,3 @@
-// @ts-check
 const { userMiddleware } = require('../../middleware/user');
 
 const Scenes = (exports.Scenes = require('./scenes'));

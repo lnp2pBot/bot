@@ -1,4 +1,3 @@
-// @ts-check
 require('websocket-polyfill');
 const { logger } = require('../../../logger');
 const Config = require('./config');

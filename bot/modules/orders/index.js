@@ -1,4 +1,3 @@
-// @ts-check
 const { userMiddleware } = require('../../middleware/user');
 const { logger } = require('../../../logger');
 const ordersActions = require('../../ordersActions');

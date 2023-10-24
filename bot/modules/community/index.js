@@ -1,4 +1,3 @@
-// @ts-check
 const { userMiddleware } = require('../../middleware/user');
 const actions = require('./actions');
 const commands = require('./commands');

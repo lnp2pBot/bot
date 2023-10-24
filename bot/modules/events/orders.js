@@ -1,4 +1,3 @@
-// @ts-check
 const Events = require('./index');
 
 const TYPES = (exports.TYPES = {

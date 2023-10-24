@@ -1,4 +1,3 @@
-// @ts-check
 const { Scenes } = require('telegraf');
 const CommunityModule = require('../modules/community');
 const OrdersModule = require('../modules/orders');

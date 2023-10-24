@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-// @ts-check
 const { logger } = require('../../../logger');
 const { showUserCommunitiesMessage } = require('./messages');
 const { Community, Order } = require('../../../models');
