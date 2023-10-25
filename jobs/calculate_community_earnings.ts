@@ -1,5 +1,5 @@
 import { Order, Community } from '../models';
-import logger from "../logger";
+import { logger } from "../logger";
 
 const calculateEarnings = async () => {
   try {
@@ -42,4 +42,4 @@ const calculateEarnings = async () => {
   }
 };
 
-export default calculateEarnings;
+export { calculateEarnings };

@@ -1,5 +1,5 @@
 import mongoose, { ConnectOptions } from "mongoose";
-import logger from "./logger";
+import { logger } from "./logger";
 
 // connect to database
 const credentials = process.env.DB_USER
@@ -20,4 +20,4 @@ const connect = () => {
   return mongoose;
 };
 
-export default connect;
+export { connect };

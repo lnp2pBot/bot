@@ -1,5 +1,5 @@
 import axios from 'axios';
-import logger from "../logger";
+import { logger } from "../logger";
 
 // {
 //	pr: String, // bech32-serialized lightning invoice

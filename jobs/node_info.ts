@@ -3,7 +3,7 @@ import { MainContext } from "../bot/start";
 
 import { Config } from '../models';
 const { getInfo } = require('../ln');
-import logger from "../logger";
+import { logger } from "../logger";
 
 const info = async (bot: Telegraf<MainContext>) => {
   try {
@@ -21,4 +21,4 @@ const info = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default info;
+export { info };

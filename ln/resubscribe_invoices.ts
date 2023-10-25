@@ -4,7 +4,7 @@ import { getInvoices, GetInvoicesResult } from 'lightning';
 import { lnd } from './connect';
 const subscribeInvoice = require('./subscribe_invoice');
 import { Order } from '../models';
-import logger from "../logger";
+import { logger } from "../logger";
 
 const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
   try {
@@ -36,4 +36,4 @@ const resubscribeInvoices = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default resubscribeInvoices
+export { resubscribeInvoices };

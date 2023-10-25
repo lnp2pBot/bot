@@ -1,6 +1,6 @@
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
-import logger from "../logger";
+import { logger } from "../logger";
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';

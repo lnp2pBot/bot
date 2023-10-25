@@ -4,7 +4,7 @@ import { User, Order } from "../models";
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 import * as messages from "../bot/messages";
 import { getUserI18nContext, holdInvoiceExpirationInSecs } from '../util';
-import logger from "../logger";
+import { logger } from "../logger";
 
 const cancelOrders = async (bot: Telegraf<MainContext>) => {
   try {
@@ -99,4 +99,4 @@ const cancelOrders = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-export default cancelOrders;
+export { cancelOrders };
