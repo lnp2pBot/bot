@@ -13,7 +13,7 @@ import {
   Dispute,
   Config,
 } from '../models';
-const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
+import { getCurrenciesWithPrice, deleteOrderFromChannel } from '../util';
 const {
   commandArgsMiddleware,
   stageMiddleware,

@@ -9,8 +9,8 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
-const { isIso4217, isDisputeSolver } = require('../util');
-const { existLightningAddress } = require('../lnurl/lnurl-pay');
+import { isIso4217, isDisputeSolver } from '../util';
+import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
 
 // We look in database if the telegram user exists,

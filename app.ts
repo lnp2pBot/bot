@@ -6,7 +6,7 @@ import { connect as mongoConnect } from './db_connect'
 const { resubscribeInvoices } = require('./ln');
 import { logger } from "./logger";
 import { Telegraf } from "telegraf";
-const { delay } = require('./util');
+import { delay } from './util';
 
 (async () => {
   process.on('unhandledRejection', e => {

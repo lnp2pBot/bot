@@ -5,7 +5,7 @@ import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
 const { payRequest, isPendingPayment } = require('../ln');
-const { getUserI18nContext } = require('../util');
+import { getUserI18nContext } from '../util';
 
 export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
