@@ -1,12 +1,15 @@
-const { Order, Community } = require('../models');
-const logger = require('../logger');
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
 
-const deleteCommunity = async bot => {
+import { Order, Community } from '../models';
+import logger from "../logger";
+
+const deleteCommunity = async (bot: Telegraf<MainContext>) => {
   try {
     const communities = await Community.find();
     for (const community of communities) {
       // Delete communities with COMMUNITY_TTL days without a successful order
-      const days = 86400 * parseInt(process.env.COMMUNITY_TTL);
+      const days = 86400 * Number(process.env.COMMUNITY_TTL);
       const time = new Date();
       time.setSeconds(time.getSeconds() - days);
       // If is a new community we don't do anything
@@ -26,9 +29,9 @@ const deleteCommunity = async bot => {
       }
     }
   } catch (error) {
-    const message = error.toString();
+    const message = String(error);
     logger.error(`deleteCommunity catch error: ${message}`);
   }
 };
 
-module.exports = deleteCommunity;
+export default deleteCommunity;
