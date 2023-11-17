@@ -258,9 +258,22 @@ const createOrderHandlers = {
   async fiatAmount(ctx) {
     if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.error = null;
-    const inputs = ctx.message.text.split('-').map(Number);
-    const notNumbers = inputs.filter(isNaN);
     await ctx.deleteMessage();
+    const inputs = ctx.message.text.split('-').map(Number);
+    // ranges like [100, 0, 2] (originate from ranges like 100--2)
+    // will make this conditional fail
+    if (inputs.length > 2) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_number_or_range');
+      await ctx.wizard.state.updateUI();
+      return false;
+    }
+
+    if (inputs.length === 2 && inputs[1] <= inputs[0]) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_number_or_range');
+      await ctx.wizard.state.updateUI();
+      return false;
+    }
+    const notNumbers = inputs.filter(isNaN);
     if (notNumbers.length) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
