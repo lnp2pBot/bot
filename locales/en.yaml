@@ -209,20 +209,22 @@ unavailable_lightning_address: Unavailable lightning address ${la}
 help: |
   /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
+  /takeorder <_order id_> - Allows the user to take an order from the chat with the bot without going to the channel where it was published
   /info - Shows additional info about the bot
   /showusername - Toggles off the username display in each new order created. Default value is set to false
   /showvolume - Shows trade volume when each order is created, default value is false
-  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats. 
+  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats 
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
-  /listorders - Use this command to list all your pending transactions. 
+  /listorders - Use this command to list all your pending transactions 
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
+  /disclaimer - Shows the terms and conditions when using the bot
 
   Nostr:
   /setnpub <_nostr npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
@@ -560,7 +562,7 @@ invoice_no_info: I don't have information for that invoice
 bot_info: |
   Bot fee: ${bot_fee}
 
-  Routing fee: ${routing_fee}
+  Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
   

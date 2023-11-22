@@ -209,20 +209,22 @@ unavailable_lightning_address: Adresse Lightning non disponible ${la}
 help: |
   /sell <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre de vente
   /buy <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre d'achat
+  /takeorder <_order id_> - Vous permet de prendre une commande depuis le chat avec le bot sans accéder au canal où elle a été publiée
   /info - Affiche des informations additionnelles à propos du bot
   /showusername - Désactive l'affichage du nom d'utilisateur dans chaque offre nouvellement créée. La valeur par défaut est définie sur false
   /showvolume - Affiche le volume de transactions dans chaque offre nouvellement créée, la valeur par défaut est false
-  /setinvoice <_ID d'offre_> <_facture lightning_> - Cette commande permet à l'acheteur d'actualiser la facture lightning pour recevoir les sats. 
+  /setinvoice <_ID d'offre_> <_facture lightning_> - Cette commande permet à l'acheteur d'actualiser la facture lightning pour recevoir les sats 
   /setaddress <_addresse lightning / off_> - Permet à l'acheteur de définir une adresse de paiement statique (adresse lightning), _off_ pour désactiver 
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
-  /listorders - Utilise cette commande pour afficher toutes tes offres en attente. 
+  /listorders - Utilise cette commande pour afficher toutes tes offres en attente 
   /listcurrencies - Lister les devises que nous pouvons utiliser sans spécifier le montant en satoshi. 
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
   /release <_order id_> - Le vendeur libère les satoshis 
   /dispute <_order id_> - Ouvre un litige entre les parties participantes
   /cancel <_order id_> - Annule une commande qui n'a pas encore été prise
   /cancelall - Annule toutes les commandes validées et non prises
+  /disclaimer - Affiche les termes et conditions lors de l'utilisation du bot
 
   Nostr:
   /setnpub <_nostr npub_> - Met à jour ta clé publique  nostr, cette commande n'est exécutable que dans l'assistant /settings
@@ -560,7 +562,7 @@ invoice_no_info: Je n'ai pas d'informations pour cette facture
 bot_info: |
   Bot fee: ${bot_fee}
 
-  Routing fee: ${routing_fee}
+  Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
   
