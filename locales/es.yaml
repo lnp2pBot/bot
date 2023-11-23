@@ -208,6 +208,7 @@ unavailable_lightning_address: Dirección lightning ${la} no disponible
 help: |
   /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
   /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
+  /takeorder <_order id_> - Permite tomar una orden desde el chat con el bot sin ir al canal donde fue publicada
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)
   /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
@@ -223,6 +224,7 @@ help: |
   /disclaimer - Muestra descargo de responsabilidad
   /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
+  /disclaimer - Muestra los términos y condiciones al usar el bot
 
   Nostr:
   /setnpub <_nostr npub_> - Actualiza tu nostr pubkey, este comando solo es ejecutable en el asistente de /settings
@@ -568,7 +570,7 @@ invoice_no_info: No tengo información para esa factura
 bot_info: |
   Bot fee: ${bot_fee}
 
-  Routing fee: ${routing_fee}
+  Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
   

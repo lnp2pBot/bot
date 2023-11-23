@@ -208,21 +208,23 @@ unavailable_lightning_address: Nicht verfügbare Lightning-Adresse ${la}
 help: |
   /sell <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt einen Bitcoin Verkaufsauftrag
   /buy <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt eine Bitcoin Kaufauftrag
+  /takeorder <_order id_> - Ermöglicht Ihnen, eine Bestellung aus dem Chat mit dem Bot anzunehmen, ohne zu dem Kanal zu gehen, in dem sie veröffentlicht wurde
   /info - Zeigt zusätzliche Informationen über das Bot an
-  /showusername - Schaltet die Anzeige des Benutzernamens in jedem neu erstellten Auftrag aus. Der Standardwert ist *nein* (false).
+  /showusername - Schaltet die Anzeige des Benutzernamens in jedem neu erstellten Auftrag aus. Der Standardwert ist *nein* (false)
   /showvolume - zeigt das Handelsvolumen an, wenn eine Auftrag erstellt wird, Standardwert ist *nein* (false)
-  /setinvoice <_order id_> <_lightning LN-Rechnung_> - Mit diesem Befehl kann der Käufer die Ligthning-Rechnung aktualisieren, mit welcher er die Sats empfangen will. 
+  /setinvoice <_order id_> <_lightning LN-Rechnung_> - Mit diesem Befehl kann der Käufer die Ligthning-Rechnung aktualisieren, mit welcher er die Sats empfangen will 
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
-  /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten.
-  /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können. 
+  /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten
+  /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können 
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
   /release <_order id_> - Der Verkäufer gibt die Sats frei
   /dispute <_order id_> - Eröffnet einen Streitfall zwischen den beteiligten Parteien
   /disclaimer - Zeigt den Haftungsausschluss an
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
+  /disclaimer - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
 
   Nostr:
   /setnpub <_nostr npub_> - Aktualisiert Ihren nostr Pubkey, dieser Befehl ist nur im /settings Wizard ausführbar
@@ -566,7 +568,7 @@ invoice_no_info: Ich habe keine Informationen für diese Rechnung
 bot_info: |
   Bot fee: ${bot_fee}
 
-  Routing fee: ${routing_fee}
+  Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
   

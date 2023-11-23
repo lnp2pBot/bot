@@ -208,14 +208,15 @@ unavailable_lightning_address: Lightning adress non disponibile ${la}
 help: |
   /sell <_importo in satoshi_> <_importo in fiat_> <_fiat code_> <_metodo di pagamento_> [surplus/sconto] - Crea un ordine di vendita
   /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [premium/discount] - Crea un ordine di acquisto
+  /takeorder <_order id_> - Permette di prendere un ordine dalla chat con il bot senza passare al canale dove è stato pubblicato
   /info - Mostra indo aggiuntive sul Bot
   /showusername - Disattiva la visualizzazione del nome utente in ogni nuovo ordine creato. Il valore predefinito è settato su no (false)
   /showvolume - mostra il volume degli scambi quando ogni ordine viene creato; il valore predefinito è *no* (false)
-  /setinvoice <_order id_> <_lightning invoice_> - Questo comando consente all'acquirente di aggiornare la invoice LN su cui ricevere i sats. 
+  /setinvoice <_order id_> <_lightning invoice_> - Questo comando consente all'acquirente di aggiornare la invoice LN su cui ricevere i sats 
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
-  /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso. 
+  /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso 
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
   /release <_order id_> - Il venditore rilascia i sats 
@@ -223,6 +224,7 @@ help: |
   /disclaimer - visualizza la dichiarazione di non responsabilità
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
+  /disclaimer: mostra i termini e le condizioni quando si utilizza il bot
 
   Nostr:
   /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey, questo comando è eseguibile solo nella procedura guidata /settings
@@ -563,7 +565,7 @@ invoice_no_info: Non ho informazioni per quella fattura
 bot_info: |
   Bot fee: ${bot_fee}
 
-  Routing fee: ${routing_fee}
+  Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
   
