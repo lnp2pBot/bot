@@ -20,6 +20,7 @@ export interface IOrder extends Document {
   buyer_cooperativecancel: boolean;
   seller_cooperativecancel: boolean;
   canceled_by: string
+  action_by: string
   status: string;
   type: string;
   fiat_amount: number;
@@ -38,6 +39,7 @@ export interface IOrder extends Document {
   admin_warned: boolean;
   paid_hold_buyer_invoice_updated: boolean;
   community_id: string;
+  is_frozen: boolean;
   is_public: boolean;
 }
 
@@ -85,6 +87,7 @@ const orderSchema = new Schema<IOrder>({
   buyer_cooperativecancel: { type: Boolean, default: false },
   seller_cooperativecancel: { type: Boolean, default: false },
   canceled_by: { type: String },
+  action_by: { type: String },
   status: {
     type: String,
     enum: [
@@ -101,6 +104,7 @@ const orderSchema = new Schema<IOrder>({
       'CANCELED_BY_ADMIN',
       'EXPIRED', // Expired orders, stated changed by a job
       'COMPLETED_BY_ADMIN',
+      'FROZEN',
     ],
   },
   type: { type: String },
@@ -121,6 +125,7 @@ const orderSchema = new Schema<IOrder>({
   paid_hold_buyer_invoice_updated: { type: Boolean, default: false }, // We set this to true when buyer executes /setinvoice on a order PAID_HOLD_INVOICE
   community_id: { type: String },
   is_public: { type: Boolean, default: true },
+  is_frozen: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model<IOrder>('Order', orderSchema);
