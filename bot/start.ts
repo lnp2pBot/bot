@@ -819,7 +819,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await release(ctx, ctx.match[1]);
   });
 
-  bot.command('paytobuyer', superAdminMiddleware, async (ctx: MainContext) => {
+  bot.command('paytobuyer', adminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
@@ -828,6 +828,17 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         _id: orderId,
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
+      
+      // We check if this is a solver, the order must be from the same community
+      if (!ctx.admin.admin) {
+        if (!order.community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        if (order.community_id != ctx.admin.default_community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+      }
 
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
