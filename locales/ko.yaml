@@ -59,13 +59,13 @@ must_be_numeric: ${fieldName}은 반드시 숫자형이어야만 합니다.
 sats_amount: 비트코인 액수 (sats)
 fiat_amount: 법정화폐 액수
 sell_correct_format: |
-  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /sell \<_비트코인 액수_\> \<_법정화폐 액수_\> \<_거래 통화_\> \<_결제 방법_\> \[_프리미엄/할인_\]
 
-  1000 \(KRW\_)에 500 사토시를 판매하는 주문을 생성하고 법정화폐 결제 방법 \(카카오톡 오픈챗 송금 혹은 은행 입금\)을 명시하기 합니다, \<\>와 \[\]는 빼는 것을 잊지 마세요.
+  1000 \(KRW\_)에 500 사토시를 판매하는 주문을 생성하고 법정화폐 결제 방법을 명시할 때, 위의 예시에서 \<\>와 \[\]는 빼는 것을 잊지 마세요.
 
   `/sell 500 1000 KRW "결제 방법"`
 
-  3%의 \(프리미엄\)을 얹어서 판매 주문을 만들 때에는, 법정화폐 액수\ 앞에 파라미터 0을 추가해야 하고, 마지막 파라미터로 3을 넣어주세요. 봇은 비트코인 시장가에 프리미엄 금액을 더해서 판매가를 계산해 줄 것입니다.
+  3%의 \(프리미엄\)을 얹어서 판매 주문을 만들 때에는, \<_법정화폐 액수_\> 앞에 파라미터 0을 추가해야 하고, 마지막 파라미터로 3을 넣어주세요. 봇은 비트코인 시장가에 프리미엄 금액을 더해서 판매가를 계산해 줄 것입니다.
   
   `/sell 0 1000 KRW "결제 방법" 3`
 
@@ -73,43 +73,43 @@ sell_correct_format: |
 
   `/sell 0 10000\-50000 KRW "결제 방법" 3`
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /buy \<_비트코인 액수_\> \<_법정화폐 액수_\> \<_거래 통화_\> \<_결제 방법_\> \[_프리미엄/할인_\]
 
-  In order to create an order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
+  500 사토시를 1000 \(KRW\)에 구매하는 주문을 생성하고 법정화폐 결제 방법을 명시할 때, 위의 예시에서 \<\>와 \[\]는 빼는 것을 잊지 마세요.
+  
+  `/buy 500 1000 KRW "카카오톡 오픈챗 송금"`
 
-  `/buy 1000 2 USD "online transfer"`
+  지정가 거래를 원치 않고 시장가보다 낮은 가격에 구매하고 싶을 경우, 구매 주문에 할인율을 적용하여 구매 주문을 만들 수 있습니다. 해당 할인율은 주문이 등록되는 시점의 시장가에 적용됩니다. 이를 위해서는 \<_비트코인 액수_\> 앞에 파라미터 0을 추가하면, 봇은 비트코인 시장가에 프리미엄 금액을 더해서 구매 희망 가격을 계산해 줄 것입니다. 2%의 할인율을 적용하고자 한다면, 마지막 파라미터로 \-2를 넣어주세요.
+  
+  `/buy 0 1000 KRW "payment method" \-2`
 
-  If you do not want to establish a fixed amount of satoshis and you want to buy with a price under market value, you can place a buy order establishing a certain discount, such rate is the percentage that will be substracted of market price when your order is published\. You need to specify 0 at the \<_sats amount_\> field, the bot will calculate the price\. If you want to buy with a 2% discount on the price market, you should write \-2 as the last parameter
+  구매 액수 범위를 제시하며 주문을 생성하기 위해서는, 고정된 법정화폐 금액 대신 최소 및 최대 금액을 하이픈 *\-*으로 분리해서 표현하면 됩니다.
 
-  `/buy 0 2 USD "payment method" \-2`
-
-  If you want to create a purchase order by range instead of indicating a fixed Fiat amount, you can set the minimum and maximum to transact separated by a hyphen *\-*
-
-  `/buy 0 100\-500 USD "payment method" \-2`
-min_invoice_amount: invoice needs to be equal or higher than ${minPaymentAmount} satoshis
-min_expiration_time: Time expiration for the invoice should be of at least ${expirationTime} minutes
-invoice_expired: The invoice has expired
+  `/buy 0 1000\-50000 KRW "payment method" \-2`
+min_invoice_amount: 라이트닝 인보이스는 최소 ${minPaymentAmount} 사토시보다 크거나 같아야 합니다.
+min_expiration_time: 인보이스의 초과 시간은 최소 ${expirationTime} 분이어야 합니다.
+invoice_expired: 인보이스가 만료되었습니다.
 invoice_expired_long: |
-  The invoice has expired. You can use the following command to send me a new invoice to receive the satoshis 👇
+  라이트닝 인보이스가 만료되었습니다. 다음 명령어를 입력하여 비트코인을 받을 새로운 인보이스를 봇에게 보낼 수 있습니다 👇
 setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Lightning Invoice\\>
-invoice_require_destination: Invoice needs a receiver address
-invoice_require_hash: Invoice needs a hash
-order_id_invalid: Invalid order ID
-order_invalid_type: This ${type} order is invalid
-order_already_taken: This order has already been taken by another user.
-invalid_data: You have sent invalid data, try again.
+  /setinvoice ${orderId} \\<라이트닝 인보이스\\>
+invoice_require_destination: 인보이스는 수신자의 주소를 필요로 합니다.
+invoice_require_hash: 인보이스에는 해쉬 값이 포함되어야 합니다.
+order_id_invalid: 주문 ID가 유효하지 않습니다.
+order_invalid_type: 이런 ${type}의 주문은 유효하지 않습니다.
+order_already_taken: 이 주문은 이미 다른 사용자가 수락하였습니다.
+invalid_data: 유효하지 않은 데이터를 보냈습니다. 다시 시도해보세요.
 begin_take_buy: |
-  🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
-continue: Continue
-cancel: Cancel
-pay_invoice: Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation.
+  🤖 주문을 수락하려면 `계속` 버튼을 눌러 주세요. `취소` 버튼을 누르면, 당신은 해당 주문에서 나오게 되고, 주문은 마켓 채널에 재등록됩니다. 주문이 만료되기까지 ${expirationTime}분 남았습니다. 👇
+continue: 계속
+cancel: 취소
+pay_invoice: 거래를 시작하기 위해 ${currency} ${fiatAmount}에 해당되는 ${amount} 사토시를 이 라이트닝 인보이스에 지불해 주세요.
 payment_received: |
-  🤑 Payment received!
+  🤑 결제가 확인되었습니다.
 
-  Now I need the buyer to send an invoice so I can send satoshis to his/her wallet. I will put you both in touch as soon as the buyer sends the invoice
+  이제, 봇은 구매자의 지갑에 사토시를 보낼 수 있도록 구매자에게 라이트닝 인보이스를 요청할 것입니다. 구매자가 인보이스를 보내는 즉시 거래 참여자들에게 알려 드리겠습니다.
 
-  Wait a bit. The collateral will be returned to you if the buyer does not cooperate.
+  잠시만 기다려주세요. 구매자가 응답하지 않을 경우, 결제된 담보물은 당신에게 그대로 돌아오게 됩니다.
 someone_took_your_order: |
   🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds.
 
