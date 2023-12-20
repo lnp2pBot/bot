@@ -3,75 +3,75 @@ start: |
 
   ${disclaimer}
   ---———— DISCLAIMER ————---
-  이 텔레그램 봇은 여러분이 라이트닝 네트워크를 통해 P2P로 비트코인을 전송하는 것을 도와줍니다.
+  
+  이 텔레그램 봇은 당신이 라이트닝 네트워크를 통해 P2P로 비트코인을 전송하는 것을 도와줍니다.
   봇을 시작한 후에, 다음과 같은 명령어들을 사용할 수 있습니다:
 
-  1. /buy 혹은 /sell 명령어를 통해 만든 주문을 마켓에 등록하고 다음 지시를 따릅니다.
+  1. /buy 혹은 /sell 명령어를 통해 생성한 주문을 마켓에 등록하고 다음 지시를 따릅니다.
 
-  2. 다른 사용자가 당신의 주문에 "구매" 혹은 "판매" 버튼을 누를 때까지 기다립니다. 여러분도 다른 사람들의 주문을 똑같이 접수할 수 있습니다!
+  2. 다른 사용자가 당신의 주문에 "구매" 혹은 "판매" 버튼을 누를 때까지 기다립니다. 당신도 다른 사람들의 주문을 같은 방법으로 수락할 수 있습니다!
   
-  3. 여러분의 주문과 평판은 ${channel} 채널에서 보여집니다.
+  3. 당신의 주문과 평판은 ${channel} 채널에서 보여집니다.
 
-  4. If you are selling, the bot will publish the order in the ${channel} channel expecting another user will take it. You can cancel this sell order anytime BEFORE another user takes it with the /cancel command.
-  4. 판매하는 경우, 봇은 
+  4. 비트코인을 판매하는 경우, 봇은 해당 주문을 ${channel} 채널에 등록하고, 다른 누군가가 수락하기를 기다립니다. 이 판매 주문은 다른 사용자가 수락하기 전이라면 언제든지 /cancel 명령어로 취소할 수 있습니다.
 
-  5. Once somebody takes your order, the bot will ask you to pay the LN invoice. Such payment will be held in an escrow that is frozen in your wallet, the order will expire in a maximum lapse of ${orderExpiration} hours starting when the order was taken.
+  5. 누군가가 당신의 주문을 수락할 경우, 봇은 당신에게 라이트닝 인보이스에 결제할 것을 요구합니다. 이 결제 내역은 에스크로 결제이며, 당신의 라이트닝 지갑에 아직 묶여 있는 상태입니다. 이 주문은 주문이 수락된 후 최대 ${orderExpiration}시간이 지난 후 비활성화됩니다.
+  
+  봇은 구매자가 누구인지 알려주며, 당신은 구매자에게 어떤 형태로 법정화폐를 지불받을지에 대한 안내를 줄 수 있습니다. 법정화폐 결제를 받은 후에, 당신은 구매자에게 비트코인을 전송해주기 위해 반드시 /release 명령어를 입력해야 합니다.
 
-  The bot will reveal who the buyer is so you can send instructions for the FIAT payment to be made. Once you receive the FIAT payment, you must send the funds to the buyer using the /release command.
+  6. 비트코인을 구매하려면, /buy 명령어를 통해 구매 주문을 등록하고, 판매자가 수락하기를 기다리면 됩니다. 해당 주문은 /cancel 명령어를 입력하여 언제든지 취소가 가능합니다. 
 
-  6. If you want to buy, publish your order using the /buy command and wait until a seller takes it. You can cancel the order at any time by using the /cancel command.
+  7. 누군가가 당신의 구매 주문을 수락하게 되면, 당신은 반드시 라이트닝 인보이스를 생성하여 봇에게 입력해주어야 합니다. 이후, 판매자와 연락하여 법정화폐 결제에 대한 안내를 받을 수 있습니다. 판매자에게 법정화폐를 지불한 후, 반드시 봇에게 /fiatsent 명령어를 입력하세요. 봇은 당신의 인보이스로 sats를 보내줄 것입니다.
 
-  7. Once somebody takes your buy order, you must create a LN invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your LN invoice.
+  8. 판매 주문을 수락했다면, 즉 비트코인을 구매할 경우, 당신은 sats를 받기 위한 라이트닝 인보이스를 생성해야 하고, 법정화폐 결제 방법에 대해 판매자에게 문의해야 합니다. 판매자는 법정화폐 결제를 받은 후에 /release 명령어를 입력하여 sats가 당신의 지갑으로 보내지도록 해야 합니다.
+  
+  9. 구매 주문을 수락했다면, 즉 비트코인을 판매할 경우, 당신은 봇이 안내해주는 라이트닝 인보이스를 결제해야 합니다. 해당 비트코인은 구매자가 법정화폐 결제를 마칠 때까지 봇에 묶여 있을 것입니다. 구매자에게 연락하여 법정화폐 결제 방법에 대해 알려주세요. 법정화폐 결제를 받은 후에는, 반드시 봇에 묶여 있는 자금을 해제해주어야 합니다; /release 명령어를 입력하면, 비트코인은 자동으로 구매자의 지갑으로 보내집니다.
 
-  8. If you are taking a selling order, i.e. you buy sats, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
-
-  9. If you are taking a buy order, i.e. you sell sats, you must pay the LN invoice. These sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. Once you receive the fiat payment, you must release the fund held by the bot; you must use the /release command, and the sats will be automatically sent to the buyer's wallet.
-
-  You can find more information on how to use this bot here 👇
+  봇 사용법에 대해 더 많은 정보가 필요하다면 아래 링크를 참고하세요 👇
 
   https://lnp2pbot.com/learn
   
-  Make a quick and safe transaction!
-init_bot_error: to use this bot, you need to first initialize the boot with the command /start
-non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
+  빠르고 안전한 거래되시길!
+init_bot_error: 봇을 이용하기 위해서는, 먼저 /start 명령어로 봇을 초기화해주어야 합니다.
+non_handle_error: 👤 봇을 이용하기 위해서는, 당신의 텔레그램 사용자명 (Username)을 활성화해야 합니다. 활성화시키려면, 왼쪽 위에 있는 메뉴를 열고, 설정 (setting) -> 프로필 변경 (edit profile) -> 사용자명 (username)을 선택하세요.
 invoice_payment_request: |
-  Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
+  누군가 당신에게 ${order.amount} sats를 ${currency} ${order.fiat_amount}로 구매하기를 희망합니다.
 
-  Buyer Reputation: ${rate}, days using the bot: ${days}
+  Buyer Reputation: ${rate}, 봇 사용일수: ${days}
 
-  Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes
+  판매 프로세스를 시작하려면 이 인보이스에 결제해주세요. 이 인보이스는 ${expirationTime} 분 후에 만료됩니다.
 pending_sell: |
-  📝 Your offer has been published in the ${channel} channel
+  📝 당신의 주문이 ${channel} 채널에 등록되었습니다.
+  
+  다른 사용자가 당신의 주문을 수락할 때까지 기다려야 합니다. 주문은 ${orderExpirationWindow} 시간 동안 채널에서 보여집니다.
 
-  You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
-
-  You can cancel this order before another user picks it up by executing the command 👇
+  당신은 다른 사용자가 이 주문을 수락하기 전에 아래 명령어를 입력하여 취소할 수 있습니다.👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
-  📝 You offer to buy sats is active in the ${channel} channel.
+  📝 당신의 비트코인 구매 주문은 ${channel} 채널에서 활성화되어 있습니다.
 
-  You need to wait until another user picks up the order, this order will expire in ${orderExpirationWindow} hours.
+  다른 사람이 주문을 수락할 때까지 기다려야 합니다. 이 주문은 ${orderExpirationWindow} 시간 후에 만료됩니다.
 
-  You can cancel this order before another user picks it up by executing the command 👇
-must_be_int: ${fieldName} must be a number
-must_be_numeric: ${fieldName} must be numeric
-sats_amount: sats amount
-fiat_amount: fiat amount
+  당신은 다른 사용자가 이 주문을 수락하기 전에 다음 명령어를 수행하여 취소할 수 있습니다 👇
+must_be_int: ${fieldName}은 반드시 숫자여야만 합니다.
+must_be_numeric: ${fieldName}은 반드시 숫자형이어야만 합니다.
+sats_amount: 비트코인 액수 (sats)
+fiat_amount: 법정화폐 액수
 sell_correct_format: |
   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
 
-  In order to create a sell order of 1000 satoshis for 2 US dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must avoid \<\> and \[\]\.
+  1000 \(KRW\_)에 500 사토시를 판매하는 주문을 생성하고 법정화폐 결제 방법 \(카카오톡 오픈챗 송금 혹은 은행 입금\)을 명시하기 합니다, \<\>와 \[\]는 빼는 것을 잊지 마세요.
 
-  `/sell 1000 2 USD "transfer or ATM deposit"`
+  `/sell 500 1000 KRW "결제 방법"`
 
-  In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
+  3%의 \(프리미엄\)을 얹어서 판매 주문을 만들 때에는, 법정화폐 액수\ 앞에 파라미터 0을 추가해야 하고, 마지막 파라미터로 3을 넣어주세요. 봇은 비트코인 시장가에 프리미엄 금액을 더해서 판매가를 계산해 줄 것입니다.
+  
+  `/sell 0 1000 KRW "결제 방법" 3`
 
-  `/sell 0 2 USD "payment method" 3`
+  판매 액수 범위를 제시하며 주문을 생성하기 위해서는, 고정된 법정화폐 금액 대신 최소 및 최대 금액을 하이픈 *\-*으로 분리해서 표현하면 됩니다.
 
-  In order to create a sell by range, instead of indicating a fixed fiat amount you can indicate a mininum and maximum amount to transact separated by a hyphen *\-*
-
-  `/sell 0 100\-500 USD "payment method" 3`
+  `/sell 0 10000\-50000 KRW "결제 방법" 3`
 buy_correct_format: |
   /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
 
@@ -582,4 +582,3 @@ disclaimer: |
   The developers and the dispute resolvers make their best efforts to remove bad actors, frauds, and scams from using the bot, but the user recognizes that the system can be exploited and accepts full responsibility while using it.
 
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
-  
