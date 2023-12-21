@@ -96,7 +96,7 @@ setinvoice_cmd_order: |
 invoice_require_destination: 인보이스는 수신자의 주소를 필요로 합니다.
 invoice_require_hash: 인보이스에는 해쉬 값이 포함되어야 합니다.
 order_id_invalid: 주문 ID가 유효하지 않습니다.
-order_invalid_type: 이런 ${type}의 주문은 유효하지 않습니다.
+order_invalid_type: 이런 ${type} 형태의 주문은 유효하지 않습니다.
 order_already_taken: 이 주문은 이미 다른 사용자가 수락하였습니다.
 invalid_data: 유효하지 않은 데이터를 보냈습니다. 다시 시도해보세요.
 begin_take_buy: |
@@ -111,47 +111,47 @@ payment_received: |
 
   잠시만 기다려주세요. 구매자가 응답하지 않을 경우, 결제된 담보물은 당신에게 그대로 돌아오게 됩니다.
 someone_took_your_order: |
-  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds.
+  🤖 누군가 당신의 주문을 수락하였고 봇에게 사토시를 이미 보냈습니다. 바로 돈을 보낼 수 있고 자금 동결의 위험이 없는 법정화폐 결제 방법을 사용하세요.
+  
+  모종의 이유로 당신의 법정화폐 결제 솔루션이 결제를 못하게 막고 있을 경우, 자금이 ${expirationTime} 시간 안에 상대방에게 도착하지 않는다면, 사토시들은 판매자에게 돌아가며 구매자는 사토시를 받지 못할 위험에 빠지게 됩니다. 봇은 판매자에게 다시 사토시를 보내도록 강제할 수 없습니다.
+  
+  판매자 평판: ${rate}, 봇 사용 일수: ${days}
 
-  If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk. I cannot force the seller to send the sats again.
-
-  Seller Reputation: ${rate}, days using the bot: ${days}
-
-  If you agree with the above, press the button to continue 👇
+  위 내용을 이해하고 동의한다면, 아래 버튼을 눌러 계속해주세요 👇
 you_took_someone_order: |
-  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\\.
+  🤖 당신은 이 판매 주문을 수락하였습니다. 바로 돈을 보낼 수 있고 자금 동결의 위험이 없는 법정화폐 결제 방법을 사용하세요.
 
-  *If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk and I cannot force the seller to send the sats again\\.*
+  \\*모종의 이유로 당신의 법정화폐 결제 솔루션이 결제를 못하게 막고 있을 경우, 자금이 ${expirationTime} 시간 안에 상대방에게 도착하지 않는다면, 사토시들은 판매자에게 돌아가며 구매자는 사토시를 받지 못할 위험에 빠지게 됩니다. 봇은 판매자에게 다시 사토시를 보내도록 강제할 수 없습니다\\.*
 
-  If you agree with the above, press the button to continue 👇
+  위 내용을 이해하고 동의한다면, 아래 버튼을 눌러 계속해주세요 👇
 get_in_touch_with_seller: |
-  🤖 Order ID: #${orderId}
+  🤖 주문 ID: #${orderId}
 
-  Get in touch with the seller, user @${sellerUsername} to get the details on how to send the money, you must send ${currency} ${fiatAmount} using ${paymentMethod}.
-
-  Once you send the money, please let me know with the command 👇
+  사용자 @${sellerUsername}와 연락해서 어떻게 돈을 보낼지에 대해 좀 더 자세한 정보를 얻으세요. ${paymentMethod}를 사용해서 ${currency} ${fiatAmount}를 보내야 합니다.
+  
+  돈을 보냈다면, 아래 명령어를 통해 봇에게 알려주세요 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
-  🤖 Order ID: #${orderId}
+  🤖 주문 ID: #${orderId}
 
-  Get in touch with @${buyerUsername} to give information on how to send you ${currency} ${fiatAmount} through ${paymentMethod}. Do not release those sats until you verify that the buyer paid you the fiat.
-
-  Once you confirm the reception of the money, you must unlock the sats.
+  @${buterUsername}와 연락해서 어떻게 당신에게 ${paymentMethod}를 사용해서 ${currency} ${fiatAmount}를 보내야 하는지에 대해 알려주세요. 구매자가 당신에게 법정화폐 결제를 마쳤다고 확인하기 전까지는 절대로 비트코인을 release해서는 안 됩니다.
+  
+  법정화폐 입금을 확인한 후에, 당신은 비트코인의 잠금을 해제해 주어야 합니다.
 buyer_took_your_order: |
-  🤖 Order ID: #${orderId}
+  🤖 주문 ID: #${orderId}
 
-  @${buyerUsername} has taken your order and wants to buy your sats. Get in touch and tell him how to send you ${currency} ${fiatAmount} through ${paymentMethod}.
+  @${buyerUsername}가 당신의 주문을 수락하여 당신에게서 비트코인을 구매하기를 원합니다. 구매자와 연락해서 @${buterUsername}와 연락해서 어떻게 당신에게 ${paymentMethod}를 사용해서 ${currency} ${fiatAmount}를 보내야 하는지에 대해 알려주세요.
 
-  Once you verify you have received the full amount, you have to release the sats
-waiting_seller_to_pay: 'I have sent a payment request to the seller so he sends your sats for the order ID #${orderId}, as soon as payment is made I will put you both in touch'
-sell_success: Your sats sale has been completed after confirming the payment from @${buyerUsername} ⚡️🍊⚡️
-funds_released: 🕐 @${sellerUsername} already released the sats, expect your invoice to be paid any time, remember your wallet needs to be online to receive through Lightning Network.
-rate_counterpart: 'Please qualify your counterparty:'
-cant_process_order: This order cannot be processed, please check the ID is correct.
-cant_release_order: This order cannot be released, the buyer has not sent an invoice where to pay
-no_id_related: You do not have any order associated with this ID.
-sell_sats: Sell satoshis
-buy_sats: Buy satoshis
+  법정화폐 입금을 확인한 후에는 비트코인을 release해주어야 합니다.
+waiting_seller_to_pay: '판매자에게 결제 요청을 보냈고, 판매자는 주문 ID #${orderId}에 사토시를 보낼 것입니다. 결제가 이루어지는 대로, 거래자들 모두에게 알려드리겠습니다.'
+sell_success: 당신의 비트코인 판매가 @${buyerUsername}의 결제를 확인함으로써 완료되었습니다. ⚡️🍊⚡️
+funds_released: 🕐 @${sellerUsername} 님이 비트코인의 락업을 해제했고, 제공된 인보이스로 곧 결제가 완료될 것입니다. 논커스터디얼 지갑의 경우, 온라인 상태로 유지해서 결제를 받을 수 있게 해주세요.
+rate_counterpart: '거래 상대방을 평가해주세요:'
+cant_process_order: 이 주문은 처리될 수 없습니다. ID가 정확한지 확인해 주세요.
+cant_release_order: 이 주문은 락업 해제될 수 없습니다. 구매자가 비트코인을 받을 인보이스를 아직 보내지 않았습니다.
+no_id_related: 해당 ID로는 등록된 주문이 없습니다.
+sell_sats: 비트코인 판매
+buy_sats: 비트코인 구매
 order_detail: |
   ID: `${order._id}`
 
