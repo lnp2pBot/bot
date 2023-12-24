@@ -227,23 +227,23 @@ help: |
   /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
 
   Nostr:
-  /setnpub <_노스터 npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
-  /nostr - Shows the bot's nostr pubkey and the relays used to publish
+  /setnpub <_노스터 npub_> - 노스터 공개키를 설정합니다. 이 명령어는 /settings 명령어 수행 중에만 사용 가능합니다.
+  /nostr - 봇의 노스터 공개키와 주문 등록에 사용되는 릴레이들을 보여줍니다.
 
   Communities:
-  /community - Create a new community
-  /mycomms - Shows the communities you have created
-  /mycomm <_@community_> - Enter Community Admin Wizard
-  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
-  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
-  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
-  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
-  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
-  /ban <_username_> - Ban a user from a community, there should be a default community
-  /unban <_username_> - Unban a user from a community, there should be a default community
+  /community - 새로운 커뮤니티를 생성합니다.
+  /mycomms - 당신이 생성했던 커뮤니티들을 보여줍니다.
+  /mycomm <_@community_> - 커뮤니티 관리자 관리 모드로 들어갑니다.
+  /findcomms <_법정화폐 코드_> - 지정된 법정화폐로 운영되는 커뮤니티들을 찾습니다.
+  /setcomm <_@groupOfACommunity / off_> - 기본 커뮤니티를 설정하거나 'off'를 통해 삭제합니다.
+  /settleorder <_주문 ID_> - 판매자의 결제를 받아들이고, 구매자에게 자동으로 사토시를 보내줍니다. 기본적으로 커뮤니티가 설정되어 있어야 합니다.
+  /cancelorder <_주문 ID_> - 주문을 취소하고 판매자에게 사토시를 돌려줍니다. 기본적으로 커뮤니티가 설정되어 있어야 합니다.
+  /deldispute <_사용자명_> <_주문 ID_> - 커뮤니티 내의 해당 사용자로부터 분쟁 조정 건을 삭제합니다. 기본적으로 커뮤니티가 설정되어 있어야 합니다.
+  /ban <_사용자명_> - 사용자를 커뮤니티에서 영구 추방합니다. 기본적으로 커뮤니티가 설정되어 있어야 합니다.
+  /unban <_사용자명_> - 추방된 사용자를 다시 커뮤니티에 들어올 수 있게 허용합니다. 기본적으로 커뮤니티가 설정되어 있어야 합니다.
 
-  /version - Shows the current version of the bot
-  /help - Help messages
+  /version - 봇의 현재 버전을 보여줍니다.
+  /help - 도움말을 보여줍니다.
 must_be_gt_or_eq: ${fieldName} Must be greater or equal to ${qty}
 you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. Once the seller confirms the money was received, the sats should be sent to you.
