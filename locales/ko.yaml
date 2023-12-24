@@ -145,7 +145,7 @@ buyer_took_your_order: |
   법정화폐 입금을 확인한 후에는 비트코인을 release해주어야 합니다.
 waiting_seller_to_pay: '판매자에게 결제 요청을 보냈고, 판매자는 주문 ID #${orderId}에 사토시를 보낼 것입니다. 결제가 이루어지는 대로, 거래자들 모두에게 알려드리겠습니다.'
 sell_success: 당신의 비트코인 판매가 @${buyerUsername}의 결제를 확인함으로써 완료되었습니다. ⚡️🍊⚡️
-funds_released: 🕐 @${sellerUsername} 님이 비트코인의 락업을 해제했고, 제공된 인보이스로 곧 결제가 완료될 것입니다. 논커스터디얼 지갑의 경우, 온라인 상태로 유지해서 결제를 받을 수 있게 해주세요.
+funds_released: 🕐 @${sellerUsername} 님이 비트코인의 락업을 해제했고, 제공된 인보이스로 곧 결제가 완료될 것입니다. 비수탁형 지갑의 경우, 지갑을 온라인 상태로 유지해서 결제를 받을 수 있게 해주세요.
 rate_counterpart: '거래 상대방을 평가해주세요:'
 cant_process_order: 이 주문은 처리될 수 없습니다. ID가 정확한지 확인해 주세요.
 cant_release_order: 이 주문은 락업 해제될 수 없습니다. 구매자가 비트코인을 받을 인보이스를 아직 보내지 않았습니다.
@@ -155,80 +155,79 @@ buy_sats: 비트코인 구매
 order_detail: |
   ID: `${order._id}`
 
-  Status: ${status}
+  상태: ${status}
 
-  Creator: @${creator || ''}
+  생성자: @${creator || ''}
 
-  Buyer: @${buyerUsername || ''}
+  구매자: @${buyerUsername || ''}
 
-  Buyer reputation: ${buyerReputation}
+  구매자 평판: ${buyerReputation}
 
-  Seller: @${sellerUsername || ''}
+  판매자: @${sellerUsername || ''}
 
-  Seller reputation: ${sellerReputation}
+  판매자 평판: ${sellerReputation}
 
-  Order Amount \\(sats\\): ${order.amount}
+  주문 수량 \\(sats\\): ${order.amount}
 
-  Bot Fee \\(sats\\): ${fee}
+  봇 수수료 \\(sats\\): ${fee}
 
-  Routing Fee \\(sats\\): ${order.routing_fee}
+  라우팅 수수료 \\(sats\\): ${order.routing_fee}
 
-  Fiat Amount \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
+  법정화폐 액수 \\(fiat\\) ${order.fiat_code}: ${order.fiat_amount}
 
-  Order payment method: ${paymentMethod}
+  주문 결제 방법: ${paymentMethod}
 
-  Premium/discount: ${priceMargin}
+  프리미엄/할인율: ${priceMargin}
 
-  Created: ${createdAt}
+  생성 시기: ${createdAt}
 
-  Taken: ${takenAt || ''}
+  수락 시기: ${takenAt || ''}
 
-  seller invoice hash: `${order.hash || ''}`
+  판매자 인보이스 해시값: `${order.hash || ''}`
 
-  seller invoice secret: `${order.secret || ''}`
+  판매자 인보이스 비밀번호: `${order.secret || ''}`
 
-  buyer payment request: `${order.buyer_invoice || ''}`
-seller: seller
-buyer: buyer
+  구매자 결제 요청: `${order.buyer_invoice || ''}`
+seller: 판매자
+buyer: 구매자
 dispute_started_channel: |
-  User ${type} @${initiatorUser.username} 
-  has started a dispute with @${counterPartyUser.username} for the order
+  사용자 ${type} @${initiatorUser.username} 
+  님께서 @${counterPartyUser.username}와의 분쟁 조정을 시작하였습니다. 주문 상세 내역은 다음과 같습니다.
 
   ${detailedOrder}
 
-  @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
-  @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
-you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will contact you and your counterparty to sort it out.
-buyer_started_dispute_to_seller: '🥴 The buyer has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
-you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will contact you and your counterparty to sort it out.
-seller_started_dispute_to_buyer: '🥴 The Seller has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
-must_be_valid_currency: 'Fiat_code must be a valid code, for example: USD, EUR. Check the full list with the command /listcurrencies'
-must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format'
-invalid_lightning_address: Invalid lightning address
-unavailable_lightning_address: Unavailable lightning address ${la}
+  ${initiatorUser.disputes} 분쟁 조정에 @${initiatorUser.username}님께서 참여하셨습니다.
+  ${counterPartyUser.disputes} 분쟁 조정에 @${counterPartyUser.username}님께서 참여하셨습니다.
+you_started_dispute_to_buyer: 🥴 당신의 구매 주문에 대해 분쟁 조정을 시작하였습니다. 조정자가 상황 타개를 위해 거래 참여자들에게 연락을 할 것입니다.
+buyer_started_dispute_to_seller: '🥴 구매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 조정자가 해결을 위해 거래 참여자들에게 연락을 할 것입니다.'
+you_started_dispute_to_seller: 🥴 당신의 판매 주문에 대해 분쟁 조정을 시작하였습니다. 조정자가 상황 타개를 위해 거래 참여자들에게 연락을 할 것입니다.
+seller_started_dispute_to_buyer: '🥴 판매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 조정자가 해결을 위해 거래 참여자들에게 연락을 할 것입니다.'
+must_be_valid_currency: 'Fiat_code (법정화폐 코드)는 반드시 유효한 값을 넣어야 합니다. 예시: KRW, USD, EUR. /listcurrencies 명령어를 통해 입력 가능한 전체 통화 목록을 확인할 수 있습니다.'
+must_be_number_or_range: 'Fiat_amount는 반드시 숫자나 <최소>-<최대> 형태의 범위형 숫자로 입력되어야 합니다.'
+invalid_lightning_address: 유효하지 않은 라이트닝 주소입니다.
+unavailable_lightning_address: 사용할 수 없는 라이트닝 주소입니다 ${la}
 help: |
-  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
-  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
-  /takeorder <_order id_> - Allows the user to take an order from the chat with the bot without going to the channel where it was published
-  /info - Shows additional info about the bot
-  /showusername - Toggles off the username display in each new order created. Default value is set to false
-  /showvolume - Shows trade volume when each order is created, default value is false
-  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats 
-  /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
-  /setlang - Allows the user to change the language
-  /settings - Displays the user's current settings
-  /listorders - Use this command to list all your pending transactions 
-  /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
-  /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
-  /release <_order id_> - Seller releases satoshis 
-  /dispute <_order id_> - Opens a dispute between participant parties
-  /disclaimer - Displays disclaimer
-  /cancel <_order id_> - Cancel an order that has not been taken yet
-  /cancelall - Cancel all posted and untaken orders
-  /disclaimer - Shows the terms and conditions when using the bot
+  /sell <_사토시 금액_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [프리미엄/할인율] - 판매 주문을 생성합니다.
+  /buy <_사토시 금액_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [프리미엄/할인율] - 구매 주문을 생성합니다.
+  /takeorder <_주문 ID_> - 따로 주문이 등록된 마켓 채널에 가지 않고, 봇 채널에서 주문 ID로 주문을 수락할 수 있게 해 줍니다.
+  /info - 봇에 대한 추가적인 정보를 보여줍니다.
+  /showusername - 새로운 주문이 생성될 때마다 사용자명을 표시할지 여부를 설정합니다. 기본값은 false입니다.
+  /showvolume - 새로운 주문이 생성될 때마다 누적 거래량을 보여줄지 여부를 설정합니다. 기본값은 false입니다.
+  /setinvoice <_주문 ID_> <_라이트닝 인보이스_> - 이 명령어는 구매자가 비트코인을 받을 라이트닝 인보이스를 업데이트할 수 있게 해 줍니다.
+  /setaddress <_라이트닝 주소 / off_> - 구매자가 정적인 결제 주소 (라이트닝 주소)를 설정할 수 있게 해 줍니다. 주소 대신 _off_를 넣으면 비활성화됩니다.
+  /setlang - 사용자 언어를 변경합니다.
+  /settings - 사용자의 현재 설정을 표시합니다.
+  /listorders - 대기 중인 결제 내역들을 모두 보려면 이 명령어를 사용하세요.
+  /listcurrencies - 사용 가능한 모든 법정화폐 종류를 나열합니다. (sat 단위 제외)
+  /fiatsent <_주문 id_> - 구매자가 판매자에게 법정화폐의 지불을 마쳤다고 알려주는 명령어입니다.
+  /release <_주문 id_> - 판매자가 락업된 비트코인을 해제합니다.
+  /dispute <_주문 id_> - 주문 참여자 간의 분쟁 해소 절차를 시작합니다.
+  /disclaimer - 사용자 이용 약관 및 면책 조항을 표시합니다.
+  /cancel <_주문 id_> - 아직 수락되지 않은 주문을 취소합니다.
+  /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
 
   Nostr:
-  /setnpub <_nostr npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
+  /setnpub <_노스터 npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
   /nostr - Shows the bot's nostr pubkey and the relays used to publish
 
   Communities:
