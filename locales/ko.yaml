@@ -25,7 +25,7 @@ start: |
 
   8. 판매 주문을 수락했다면, 즉 비트코인을 구매할 경우, 당신은 sats를 받기 위한 라이트닝 인보이스를 생성해야 하고, 법정화폐 결제 방법에 대해 판매자에게 문의해야 합니다. 판매자는 법정화폐 결제를 받은 후에 /release 명령어를 입력하여 sats가 당신의 지갑으로 보내지도록 해야 합니다.
   
-  9. 구매 주문을 수락했다면, 즉 비트코인을 판매할 경우, 당신은 봇이 안내해주는 라이트닝 인보이스를 결제해야 합니다. 해당 비트코인은 구매자가 법정화폐 결제를 마칠 때까지 봇에 묶여 있을 것입니다. 구매자에게 연락하여 법정화폐 결제 방법에 대해 알려주세요. 법정화폐 결제를 받은 후에는, 반드시 봇에 묶여 있는 자금을 해제해주어야 합니다; /release 명령어를 입력하면, 비트코인은 자동으로 구매자의 지갑으로 보내집니다.
+  9. 구매 주문을 수락했다면, 즉 비트코인을 판매할 경우, 당신은 봇이 안내해주는 라이트닝 인보이스를 결제해야 합니다. 해당 비트코인은 구매자가 법정화폐 결제를 마칠 때까지 봇에 묶여 있을 것입니다. 구매자에게 연락하여 법정화폐 결제 방법에 대해 알려주세요. 법정화폐 결제를 받은 후에는, 반드시 봇에 묶여 있는 자금을 잠금 해제해주어야 합니다; /release 명령어를 입력하면, 비트코인은 자동으로 구매자의 지갑으로 보내집니다.
 
   봇 사용법에 대해 더 많은 정보가 필요하다면 아래 링크를 참고하세요 👇
 
@@ -244,66 +244,64 @@ help: |
 
   /version - 봇의 현재 버전을 보여줍니다.
   /help - 도움말을 보여줍니다.
-must_be_gt_or_eq: ${fieldName} Must be greater or equal to ${qty}
-you_have_been_banned: You have been banned!
-I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. Once the seller confirms the money was received, the sats should be sent to you.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that he already sent you the fiat money. Once you confirm the reception, please release funds. You will not be able to create another order until you release funds.
+must_be_gt_or_eq: ${fieldName}은 최소 ${qty}보다 크거나 같아야 합니다.
+you_have_been_banned: 당신은 추방되었습니다!
+I_told_seller_you_sent_fiat: 🤖 @${sellerUsername}님에게 당신이 법정화폐를 보냈음을 전달했습니다. 판매자가 입금을 확인한 후에 당신에게 사토시를 보내줄 것입니다.
+buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername}님이 당신에게 법정화폐를 보냈다는 것을 알려왔습니다. 입금을 확인한 후에 자금에 걸린 잠금을 해제해주세요. 잠금을 해제하기 전까지는 다른 주문을 생성할 수 없습니다.
 release_order_cmd: /release
-you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven't released the sats yet. You will not be able to create new orders until you release such funds.
-user_banned: Banned user!
-user_unbanned: Unbanned user!
-user_not_found: User was not found in the database!
-parse_invoice_error: Error parsing invoice
-invalid_id: Invalid ID
-cant_take_own_order: You cannot take your own order.
-send_me_lninvoice: Please send me a lightning invoice for ${amount} sats, although to make things easier for you, I also accept invoices without a specified amount. I will make the payment of ${amount} sats.
-you_have_no_orders: You don't have active orders
+you_have_orders_waiting: 🤖 법정화폐 입금을 받았지만 아직 자금에 걸린 잠금을 해제하지 않은 한 개 이상의 주문이 있습니다. 해당 잠금들을 해제하기 전까지는 다른 주문을 생성할 수 없습니다.
+user_banned: 사용자를 추방하였습니다!
+user_unbanned: 사용자의 추방을 취소하였습니다!
+user_not_found: 사용자가 데이터베이스에 존재하지 않습니다!
+parse_invoice_error: 인보이스 해석 오류
+invalid_id: 유효하지 않은 ID
+cant_take_own_order: 자신이 생성한 주문을 수락할 수 없습니다.
+send_me_lninvoice: 봇에게 ${amount} sats에 해당하는 라이트닝 인보이스를 보내주세요. 필요하다면 금액이 명시되지 않은 0 amount 인보이스 역시 가능합니다. 봇이 ${amount} sats의 인보이스를 생성하게 됩니다.
+you_have_no_orders: 활성화된 주문이 없습니다.
 not_rate_for_currency: |
-  ${fiatRateProvider} There is no exchange rate for this currency,
-  if you want to use this currency, you must indicate how many satoshis you want
-  If you woud like this currency in the listing, go to this link to place a request. 👇
-
+  ${fiatRateProvider} 현재 이 통화에 대해서는 환율을 제공하지 않는 관계로, 이 통화를 사용하고 싶다면 정확한 사토시 양을 명시해야 합니다.
+  이 통화의 환율을 등재하고 싶다면, 아래 링크로 가서 요청을 해주세요. 👇
   🌐 https://yadio.io/api.html
-invoice_with_incorrect_amount: the amount stated in the invoice is incorrect
-invoice_updated: 📝 Invoice has been correctly updated!
-invoice_updated_and_will_be_paid: Invoices has been correctly updated and will be paid in the next few seconds!
-invoice_already_being_paid: You have alreday send an invoice for this order and I am trying to pay it in this very right moment.
-lightning_address_saved: Lightning address has been saved
-cancel_error: This order cannot be cancelled at this moment
-cancel_success: 'You have cancelled the order ID: ${orderId}!'
-cancelall_success: You have cancelled all your published orders!
-order_cancelled_by_admin: 'Admin has cancelled the order ID: ${orderId}!'
-order_completed: 'You have completed the order ID: ${orderId}!'
-order_completed_by_admin: 'Admin has completed the order ID: ${orderId}!'
-order_cancelled_by_counterparty: 'Your counterparty cancelled the order ID: ${orderId}!'
-have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
-ok_cooperativecancel: '👍 Counterparty agreed and the order ID: ${orderId} has been cancelled'
-refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make
-init_cooperativecancel: '🕒 You have started the cancellation of the order ID: ${orderId}, your counterparty must agree on the cancellation too.'
-counterparty_wants_cooperativecancel: '😳 Your counterparty wants to cancel order ID: ${orderId}. If you agree on such cancellation, please execute the following command 👇'
-invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try ${attempts} more times in ${pendingPaymentWindow} minutes window, please check your node/wallet is online
-cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
-seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
+invoice_with_incorrect_amount: 인보이스에 적힌 금액이 잘못되었습니다.
+invoice_updated: 📝 인보이스가 제대로 업데이트되었습니다!
+invoice_updated_and_will_be_paid: 인보이스가 제대로 업데이트되었고, 곧 결제될 것입니다!
+invoice_already_being_paid: 이 주문에 대해 이미 인보이스를 보내셨습니다. 봇이 곧 인보이스에 결제가 이루어지도록 할 것입니다.
+lightning_address_saved: 라이트닝 주소가 등록되었습니다.
+cancel_error: 이 주문은 지금은 취소될 수 없습니다.
+cancel_success: '주문 ID: ${orderId}를 취소하였습니다!'
+cancelall_success: 등록한 모든 주문들을 취소하였습니다!
+order_cancelled_by_admin: '관리자가 주문 ID: ${orderId}ㄹㄹ 취소하였습니다!'
+order_completed: '주문 ID: ${orderId}가 완료되었습니다!'
+order_completed_by_admin: '관리자가 주문 ID: ${orderId}를 완료 처리하였습니다!'
+order_cancelled_by_counterparty: '거래 상대방이 주문 ID: ${orderId}를 취소하였습니다!'
+have_to_wait_for_counterpart: 🕒 이미 해당 작업을 수행하였습니다. 거래 상대방이 반응을 보일 때까지 기다려주세요.
+ok_cooperativecancel: '👍 거래 상대방이 동의하였으므로, 거래 ID: ${orderId}가 성공적으로 취소되었습니다'
+refund_cooperativecancel: 💰 라이트닝 결제를 환불 받았습니다. 더 이상 취할 행동은 없습니다.
+init_cooperativecancel: '🕒 거래 ID: ${orderId}의 취소 절차를 시작하였습니다. 거래 상대방이 취소에 동의해야 취소가 완료됩니다.'
+counterparty_wants_cooperativecancel: '😳 거래 상대방이 주문 ID: ${orderId}를 취소하기를 희망합니다. 취소에 동의하실 경우, 다음 명령어를 실행해주세요 👇'
+invoice_payment_failed: ⛔ 당신의 인보이스로 결제를 시도했으나 실패하였습니다. 앞으로 ${pendingPaymentWindow} 분 동안 ${attempts} 회 더 시도할 예정이니, 노드/지갑이 온라인 상태인지 다시 한 번 확인해 주세요.
+cant_take_more_orders: ⛔ 죄송합니다! 진행 중인 주문이 있을 때에는 다른 주문을 수락할 수 없습니다.
+seller_released: 💸 판매자가 이미 사토시의 잠금을 해제했습니다. 결제가 완료될 때까지 잠시만 기다려주세요.
 your_purchase_is_completed: |
-  🪙 Your satoshis purchase has been completed successfully, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
+  🪙 당신의 비트코인 주문이 성공적으로 완료되었습니다. @${sellerUsername}은 당신의 법정화폐 결제 입금을 확인하였고, 봇을 통해 당신의 인보이스에 결제를 완료했습니다. 사운드 머니 경험을 즐겨주세요!
 
   ⚡️🍊⚡️
-problem_getting_price: There is a problem accessing this coin's price, please try later. If the problem persists, please get in touch with an administrator.
-update_user_setting: I have modify the field ${field} to ${newState}
-lightning_address_disabled: Lightning address disabled
+problem_getting_price: 환율 데이터 접근에 문제가 발생했습니다. 잠시 뒤에 다시 시도해주세요. 문제가 계속된다면 관리자에게 문의해주세요.
+update_user_setting: ${field} 필드를 ${newState}로 업데이트하였습니다.
+lightning_address_disabled: 라이트닝 주소를 비활성화하였습니다.
 invalid_range_with_amount: |
-  Ranges are only available for floating rates
+  범위는 유동 비율로만 가능합니다.
 
-  Use ranges or specify the number of sats, but do not write both of them
-too_many_pending_orders: You have reached the maximum amount of orders that can be published simultaneously
-name: Name
-group: Group
-channel: Channel
-solver: Solver
-published: Published
-created: Created
-yes: Yes
-no: No
+  범위를 지정하거나 액수를 지정해주세요. 둘 다 사용하는 것은 안 됩니다.
+too_many_pending_orders: 동시에 등록할 수 있는 최대 주문 갯수까지 등록하였습니다.
+name: 이름
+group: 그룹
+channel: 채널
+solver: 분쟁해결자
+published: 등록됨
+created: 생성됨
+yes: 네
+no: 아니오
 wizard_add_invoice_init: |
   🤖 I need you to send me an invoice for ${satsAmount} satoshis that is worth ${currency} ${fiatAmount} so I can send you the money.
 
