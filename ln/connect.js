@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const lightning = require('lightning');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const { authenticatedLndGrpc } = lightning;
 

@@ -1,5 +1,5 @@
 const { Scenes } = require('telegraf');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { Community, User, PendingPayment } = require('../../../models');
 const { isPendingPayment } = require('../../../ln');
 const { isGroupAdmin, itemsFromMessage } = require('../../../util');

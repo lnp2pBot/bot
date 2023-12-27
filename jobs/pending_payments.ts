@@ -2,7 +2,7 @@ const { payRequest, isPendingPayment } = require('../ln');
 const { PendingPayment, Order, User, Community } = require('../models');
 const messages = require('../bot/messages');
 const { getUserI18nContext } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';

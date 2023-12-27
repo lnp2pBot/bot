@@ -8,7 +8,7 @@ const { User, PendingPayment } = require('../models');
 const lnd = require('./connect');
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const payRequest = async ({ request, amount }) => {
   try {

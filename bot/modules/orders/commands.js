@@ -1,5 +1,5 @@
 // @ts-check
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { Community, Order } = require('../../../models');
 const { isFloat } = require('../../../util');
 const {

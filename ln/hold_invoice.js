@@ -1,7 +1,7 @@
 const { createHash, randomBytes } = require('crypto');
 const lightning = require('lightning');
 const lnd = require('./connect');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const createHoldInvoice = async ({ description, amount }) => {
   try {

@@ -1,6 +1,6 @@
 const lightning = require('lightning');
 const lnd = require('./connect');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const getInfo = async () => {
   try {
