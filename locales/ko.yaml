@@ -314,38 +314,39 @@ wizard_community_enter_name: 당신의 커뮤니티 이름을 정해주세요.
 wizard_community_too_long_name: 커뮤니티 이름은 ${length} 글자 내에서 지어야 합니다.
 wizard_community_enter_currency: 커뮤니티 안에서 사용자들이 사용할 법정화폐의 코드(들)를 입력해주세요. 하나 이상일 경우, 스페이스로 구분해 주셔야 합니다.
 wizard_community_enter_group: |
-  그룹을 위한 ID나 이름을 정해주세요. 최소 그룹의 관리자는 봇과 당신이 되어야 합니다:
+  그룹을 위한 ID나 이름을 정해주세요. 봇과 당신은 그룹의 관리자가 되어야 합니다:
 
-  예: @내커뮤니티
+  예: @내_커뮤니티
 wizard_community_enter_order_channels: |
-  All orders of your community must be published in a telegram channel, if you indicate me only one channel both Buy and Sell orders will be published there.
+  봇에게 구매 및 판매 주문들이 등록될 채널을 하나만 명시하게 된다면, 당신의 커뮤니티 내에서의 모든 주문들은 텔레그램 채널에 등록됩니다. 
 
-  If you indicate two channels, Buy orders will be place in one and Sell orders in the other. Both you and the bot must be administrators in both channels.
+  두 개의 채널을 명시할 경우, 구매 주문과 판매 주문은 각기 다른 채널에 등록됩니다. 이 경우, 봇과 당신 모두는 해당 채널들의 관리자가 되어야 합니다.
 
-  Please indicate the name of the channel, or in case you want to use two chanels, indicate both names separated by a space.
-
-  i.e : @MyCommunitySell  @MyCommunityBuy
-wizard_community_one_or_two_channels: You must indicate either one or two channels
-wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
-wizard_community_must_enter_names: You must add at least one name, or two separated by a space
-wizard_community_enter_solvers_channel: Indicate the ID or name of the channel that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
+  채널의 이름을 알려주세요. 두 개의 채널을 원한다면 스페이스로 분리하여 이름들을 명시해주세요.
+  
+  예: @내_판매_커뮤니티 @내_구매_커뮤니티
+wizard_community_one_or_two_channels: 한 개 혹은 두 개의 채널을 명시해야 합니다.
+wizard_community_enter_solvers: 이제, 분쟁 해결을 담당할 사용자들을 스페이스로 분리하여 적어주세요.
+wizard_community_must_enter_names: 적어도 하나의 이름을 추가해야 합니다. 두 개 이상일 경우에는 스페이스로 분리해주세요.
+wizard_community_enter_solvers_channel: 봇이 분쟁 해소 절차 시작 시 알림을 주기 위한 ID나 채널명을 명시해주세요. 채널명 앞에는 @를 붙여주셔야 합니다.
 wizard_community_success: |
-  Congratulations, you have created your community!
+  축하합니다. 당신의 커뮤니티가 생성되었습니다!
 
-  In order for your community to remain active it must have successfully completed orders in the last ${days} days.
-wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
-wizard_community_you_are_not_admin: You are not admin on ${channel}.
-wizard_community_duplicated_name: The name you entered is already in use by another community, try again with a different one.
-wizard_to_exit: /exit to exit the wizard.
-wizard_exit: You have exited wizard mode, you can now write commands
+  활성화된 커뮤니티를 유지하기 위해서는, 최근 ${days}일 동안 성공적으로 완료된 주문들이 있어야 합니다.
+wizard_community_wrong_permissions: 당신에게는 이 그룹 혹은 채널의 관리자 권한이 없습니다.
+wizard_community_you_are_not_admin: 당신은 ${channel} 채널의 관리자가 아닙니다.
+wizard_community_duplicated_name: 이미 다른 커뮤니티에서 입력한 이름을 사용 중입니다. 다른 이름을 입력해주세요.
+wizard_to_exit: 설정에서 벗어나려면 /exit 명령어를 입력하세요.
+wizard_exit: 설정 모드에서 벗어났습니다. 이제 일반 명령어들을 사용할 수 있습니다.
 wizard_add_fiat_amount: |
-  Please indicate the amount of ${currency} you want to ${action}.
+  ${action}하려는 ${currency} 액수를 명시해주세요.
 
-  Remember it must be only numbers and be between ${minAmount} and ${maxAmount}:
-wizard_add_fiat_wrong_amount: Invalid amount, input must be between ${minAmount} and ${maxAmount}, it must be only numbers.
-wizard_add_fiat_correct_amount: 'Amount: ${currency} ${fiatAmount}.'
-order_expired: This order has expired!
-cant_add_invoice: You can no longer add an invoice to this order!
+  단순 숫자만을 사용하거나 ${minAmount}와 ${maxAmount}로 이루어진 범위를 제시해야 합니다:
+wizard_add_fiat_wrong_amount: 유효하지 않은 액수입니다. 단순 숫자만을 사용하거나 ${minAmount}와 ${maxAmount}로 이루어진 범위를 제시해야 합니다.
+Invalid amount, input must be between ${minAmount} and ${maxAmount}, it must be only numbers.
+wizard_add_fiat_correct_amount: '액수: ${currency} ${fiatAmount}.'
+order_expired: 주문의 유효기간이 만료되었습니다.
+cant_add_invoice: 이 주문에는 더 이상 인보이스를 추가할 수 없습니다!
 expired_order: |
   This order has expired without completion
 
