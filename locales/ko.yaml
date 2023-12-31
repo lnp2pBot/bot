@@ -348,58 +348,58 @@ wizard_add_fiat_correct_amount: '액수: ${currency} ${fiatAmount}.'
 order_expired: 주문의 유효기간이 만료되었습니다.
 cant_add_invoice: 이 주문에는 더 이상 인보이스를 추가할 수 없습니다!
 expired_order: |
-  This order has expired without completion
+  이 주문은 완료되지 않은 상태로 만료되었습니다.
 
   ${detailedOrder}
 
-  @${sellerUser.username} has ${sellerUser.disputes} disputes
-  @${buyerUser.username} has ${buyerUser.disputes} disputes
+  @${sellerUser.username}님이 ${sellerUser.disputes}님과 분쟁 해소 진행 중입니다.
+  @${buyerUser.username}님이 ${buyerUser.disputes}님과 분쟁 해소 진행 중입니다.
 expired_order_to_buyer: |
-  🚨🚨🚨 This order is about to expire and must be completed or cancelled immediately, if you haven't sent the fiat money yet, you can still cancel with the /cancel command.
+  🚨🚨🚨 이 주문은 곧 만료될 예정이며, 즉시 완료되거나 취소되어야 합니다. 당신이 법정화폐 입금을 하기 전이라면 /cancel 명령어를 통해 취소할 수 있습니다.
 
-  If you sent the fiat money but the seller refuses to release the sats, you can open a dispute with the /dispute command. The hold invoice that the seller paid has an expiration time and you must resolve this order before it expires or you risk losing your money.
-
-  If you need help, you can write to the group ${helpGroup}
+  만약 법정화폐 입금을 마쳤지만 판매자가 비트코인의 락업 해제를 하지 않은 상황이라면, /dispute 명령어를 통해 분쟁 조정 절차에 들어갈 수 있습니다. 락업된 hodl 인보이스는 유효기간이 있으므로, 유효기간이 끝나기 전에 주문을 완료하지 않으면 당신의 법정화폐를 잃게 됩니다.
+  
+  도움이 필요하시다면, ${helpGroup} 그룹에 메세지를 보내주세요.
 expired_order_to_seller: |
-  🚨🚨🚨 This order is about to expire and must be completed or cancelled immediately, if you haven't received the fiat money yet, you can still cancel with the /cancel command.
+  🚨🚨🚨 이 주문은 곧 만료될 예정이며, 즉시 완료되거나 취소되어야 합니다. 당신이 법정화폐 입금을 받기 전이라면 /cancel 명령어를 통해 취소할 수 있습니다.
 
-  If you received the fiat money please release the funds with the /release command, otherwise you are at risk of the buyer opening a dispute which will affect your reputation.
-
-  If you need help, you can write to the group ${helpGroup}
-didnt_add_invoice: '🤨 You have not sent the invoice to receive sats for the order ID: ${orderId}'
-buyer_havent_add_invoice: '😔 Buyer has not sent me the invoice to receive the sats for your order ID: ${orderId}, your sats were sent back to you'
-buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} took the order ID: ${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished.'
-havent_paid_invoice: '🤨 You have not paid the invoice to sell sats for the order ID: ${orderId}'
-seller_havent_paid_invoice: '😔 Seller has not paid the invoice for your purchase ID: ${orderId}, the operation was cancelled.'
-seller_havent_add_invoice_to_admin_channel: 'Seller @${username} has not paid the invoice of order ID: ${orderId} time lapse ended and the order has been published again.'
+  법정화폐 입금을 받았다면, /release 명령어를 통해 락업을 해제해 주세요. 해제하지 않을 경우, 구매자가 분쟁 조정 절차를 시작하면서 당신의 매매 평판에 악영향을 줄 수 있습니다.
+  
+  도움이 필요하시다면, ${helpGroup} 그룹에 메세지를 보내주세요.
+didnt_add_invoice: '🤨 아직 주문 ID: ${orderId}에 대해 비트코인을 받기 위한 인보이스를 보내지 않으셨습니다.'
+buyer_havent_add_invoice: '😔 아직 구매자가 주문 ID: ${orderId}에 대해 비트코인을 받기 위한 인보이스를 보내지 않았습니다. 당신의 비트코인은 무사합니다!'
+buyer_havent_add_invoice_to_admin_channel: '주문자 @${username}님이 주문 ID: ${orderId}를 수락하였으나, 시간 내에 인보이스를 보내지 못했습니다. 주문이 채널에 재등록됩니다.'
+havent_paid_invoice: '🤨 주문 ID: ${orderId}에 판매를 위한 인보이스에 결제를 하지 않으셨습니다.'
+seller_havent_paid_invoice: '😔 판매자가 주문 ID: ${orderId}의 결제 인보이스를 처리하지 않았습니다. 주문이 취소됩니다.'
+seller_havent_add_invoice_to_admin_channel: '판매자 @${username}님이 주문 ID: ${orderId}에 시간 내에 인보이스 결제를 하지 않았습니다. 주문이 채널에 재등록됩니다.'
 pending_payment_success_to_admin: |
-  User @${username} had a pending invoice, the payment for buying order ID: ${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
+  사용자 @${username}님은 ${amount} 사토시를 위한 구매 주문 ID: ${orderId}을 위한 대기 중인 인보이스가 있었고, ${attempts} 시도 후에 최종적으로 처리되었습니다. 
 
-  Proof of payment: ${paymentSecret}
+  결제 증거: ${paymentSecret}
 pending_payment_success: |
-  I have paid the lightning invoice for ${amount} satoshis, order ID: ${id}!
+  봇이 주문 ID: ${id}에 ${amount} 사토시의 인보이스를 결제하였습니다.
 
-  Proof of payment: ${paymentSecret}
+  결제 증거: ${paymentSecret}
 pending_payment_failed: |
-  🤖 I have tried to pay your invoice ${attempts} times and failed. Sometimes the Lightning Network users can't receive payments because their wallet has not enough inbound liquidity or the node is not well connected in the network. You might want to try to generate an invoice from another wallet.
+  🤖 봇이 당신의 인보이스를 결제하기 위해 ${attempts}회 시도하였으나 실패했습니다. 종종 라이트닝 네트워크 상에서 인바운드 유동성이 부족하거나 노드의 접속 불량으로 인해 결제를 받지 못하는 경우가 있습니다. 다른 지갑에서 인보이스 생성하는 것을 고려해보세요.
 pending_payment_failed_to_admin: |
-  Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
-
-  Payment attempts: ${attempts}
-selling: Selling
-buying: Buying
-receive_payment: Receive payment
-pay: Pay
+  사용자 @${username}님의 구매 주문 ${orderId}에 대한 인보이스 결제가 실패하였습니다.
+  
+  결제 시도 횟수: ${attempts}
+selling: 판매
+buying: 구매
+receive_payment: 입금 완료
+pay: 결제
 is: is
-trading_volume: 'Trading volume: ${volume} sats'
-satoshis: satoshis
-by: by
-rate: Rate
-has_successful_trades: Has ${trades} successful trades
-user_age: "Has been using the bot for ${pluralize(days, 'day', 'days')}"
-price: Price
+trading_volume: '거래량: ${volume} sats'
+satoshis: 사토시
+by: 에 의해
+rate: 평판
+has_successful_trades: ${trades}회의 성공적인 거래
+user_age: "봇을 사용한 기간: ${pluralize(days, 'day', 'days')}"
+price: 가격
 for: For
-generic_error: An error occurred
+generic_error: 오류 발생
 sats: sats
 no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
 unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
