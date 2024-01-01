@@ -401,52 +401,52 @@ price: 가격
 for: For
 generic_error: 오류 발생
 sats: sats
-no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
-unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
+no_capital_letters: 🤖 명령어의 첫 문자를 대문자로 입력하셨습니다. 모든 명령어는 소문자로 입력해주세요.
+unknown_command: 😕 무슨 명령어인지 모르겠네요. /help 명령어를 통해 가능한 명령어들을 알아보세요.
 invoice_invalid_error: |
-  Error parsing the invoice. Please copy-paste a lightning invoice starting with 'lnbc'.
+  인보이스 해독에 문제가 있습니다. 'lnbc'로 시작하는 라이트닝 인보이스를 제대로 붙여넣어 주세요.
 
-  If you want to abort and return to the command entering mode just run /exit
-invoice_expiry_too_short_error: Invoice expiry is too short
-invoice_has_expired_error: Invoice has expired
-invoice_has_wrong_destination_error: Invoice has a wrong destination
-invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
-hours: hours
-minutes: minutes
-community_updated: Community successfully updated
-operation_successful: Operation successful!
-select_community: Select the community
-what_modify: What do you want to modify?
-channels: Channels
-dispute_solvers: Solvers
-no_default_community: You no longer have a community by default
-community_not_found: Community not found
-currency: Currency
-currencies: Currencies
+  주문을 취소하고 싶으시다면, /exit 명령어를 입력해 주세요.
+invoice_expiry_too_short_error: 인보이스 만료 시간이 너무 짧습니다.
+invoice_has_expired_error: 인보이스가 만료되었습니다.
+invoice_has_wrong_destination_error: 인보이스의 목적지가 잘못된 것 같습니다.
+invoice_must_be_larger_error: 인보이스는 최소 ${minInvoice} 사토시를 요청해야 합니다.
+hours: 시간
+minutes: 분
+community_updated: 커뮤니티가 성공적으로 업데이트되었습니다
+operation_successful: 성공적으로 작업을 마쳤습니다!
+select_community: 커뮤니티를 선택하세요
+what_modify: 무엇을 변경하고 싶으신가요?
+channels: 채널들
+dispute_solvers: 분쟁 해결자들
+no_default_community: 기본적으로 당신은 속한 커뮤니티가 없습니다.
+community_not_found: 커뮤니티를 찾을 수 없습니다.
+currency: 통화
+currencies: 통화들
 currency_not_supported: |
-  This currency cannot be used in this community, it is only allowed to use [${currencies}].
+  이 통화는 이 커뮤니티에서 쓰일 수 없습니다. [$(currencies}]만이 쓰일 수 있습니다.
 
-  You can leave this community executing /setcomm off
-press_to_continue: Press the button to continue
-receive: receive
-send: send
-new_dispute: ⚠️⚠️⚠️ A user has started a dispute, press the button to take it
-take_dispute: Take dispute
-not_authorized: 🤨 You are not authorized to perform this operation
-need_default_community: To perform this operation, you need to have a default community
-enter_sats_amount: Enter sats amount, enter only numbers.
-market_price: Market price
-enter_currency: 'Enter a currency by your code, eg: USD'
-choose_currency: Choose a currency
-enter_currency_amount: Enter the amount of ${currency}, enter only numbers.
-enter_premium_discount: Enter the premium(+) or discount(-) to apply to the market price.
-no_premium_or_discount: No premium or discount
-enter_payment_method: Enter the payment method
-invalid_currency: Invalid currency
-not_number: It must be a number
-not_zero: Cannot be 0 (zero)
-not_negative: Cannot be a negative number
-wizard_community_wrong_percent: The percentage must be between 0 and 100
+  /setcomm off 명령어를 통해 이 커뮤니티를 떠날 수 있습니다.
+press_to_continue: 계속하려면 버튼을 눌러주세요.
+receive: 수신
+send: 송신
+new_dispute: ⚠️⚠️⚠️ 사용자가 분쟁 절차를 시작했습니다. 받아들이려면 해당 버튼을 눌러주세요
+take_dispute: 분쟁 해소 시작
+not_authorized: 🤨 이 작업을 수행할 권한이 없습니다.
+need_default_community: 이 작업을 수행하려면, 기본 커뮤니티가 설정되어 있어야 합니다.
+enter_sats_amount: 비트코인 수량을 숫자로만 적어주세요.
+market_price: 시장가
+enter_currency: '통화를 코드로 적어주세요. 예: KRW'
+choose_currency: 통화를 선택하세요
+enter_currency_amount: ${currency} 통화의 액수를 숫자로 입력하세요.
+enter_premium_discount: 시장가의 프리미엄(+)이나 할인율(-)을 입력하세요.
+no_premium_or_discount: 프리미엄이나 할인 없음
+enter_payment_method: 결제 방법을 입력하세요
+invalid_currency: 유효하지 않은 통화입니다
+not_number: 숫자여야 합니다
+not_zero: 0이면 안 됩니다
+not_negative: 음수일 수 없습니다
+wizard_community_wrong_percent: 퍼센티지는 0에서 100 사이여야 합니다.
 wizard_community_enter_fee_percent: |
   Enter the fee:
 
