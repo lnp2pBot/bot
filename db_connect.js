@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const logger = require('./logger');
 
+mongoose.set('strictQuery', false);
+
 // connect to database
 const credentials = process.env.DB_USER
   ? `${process.env.DB_USER}:${process.env.DB_PASS}@`
