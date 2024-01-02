@@ -165,7 +165,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     }
   );
 
-  schedule.scheduleJob(`30 * * * * *`, async () => {
+  schedule.scheduleJob(`*/20 * * * * *`, async () => {
     await cancelOrders(bot);
   });
 
