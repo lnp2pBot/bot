@@ -448,52 +448,52 @@ not_zero: 0이면 안 됩니다
 not_negative: 음수일 수 없습니다
 wizard_community_wrong_percent: 퍼센티지는 0에서 100 사이여야 합니다.
 wizard_community_enter_fee_percent: |
-  Enter the fee:
+  수수료를 입력하세요:
 
-  The fee in a community is variable and is indicated as a percentage from 0 to 100. If you do not want to charge a fee, indicate 0. If you want to charge half of the maximum value, indicate 50, if you want it to have the maximum value, indicate 100.
-fee: Fee
-use_default: Use by default
-orders: Orders
-volume: Volume
-users: Users
-not_found_dispute: There is no dispute for this order
-max_allowed: The maximum allowed is ${max}
-dispute_channel: Dispute channel
-not_wizard: You are not in wizard mode at the moment, if you have doubts you can type /help
-wizard_help: You are in wizard mode, if you need to go back to command mode run /exit
-hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN YOUR WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
-tap_button: Select an order to perform the operation
-tap_release: Select the order to release the funds, once you press the button, the operation cannot be reversed.
-earnings: Earnings
-premium: Premium
-discount: Discount
-premium_discount: premium/discount
-withdraw_earnings: Withdraw earnings
-invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
-what_to_do: What do you want to do?
-community: Community
-seller_already_released: Don't worry, the seller has already released the funds 🥲
-select_language: Select language
-must_enter_text: You must enter only text
+  수수료는 커뮤니티마다 다를 수 있으며, 0~100 퍼센트로 표현됩니다. 봇의 수수료 (0.6%) 중 최대 70%를 설정할 수 있습니다. 수수료를 받지 않으려면, 0을 입력하세요. 최대치의 절반을 청구하려면 50을 입력하시고, 최대치를 받으시려면 100을 입력하세요.
+fee: 수수료
+use_default: 기본값 사용
+orders: 주문들
+volume: 거래량
+users: 사용자들
+not_found_dispute: 이 주문에 대해서는 분쟁 해소 건이 없습니다.
+max_allowed: 최대 허용치는 ${max}입니다.
+dispute_channel: 분쟁 해소 채널
+not_wizard: 설정 상태에 있지 않습니다. 더 알고 싶다면 /help 명령어를 입력하세요.
+wizard_help: 설정 상태에 있습니다. 되돌아가려면 /exit 명령어를 입력하세요.
+hold_invoice_memo: '@${botName} - 주문 #${orderId}에 대한 에스크로 금액: ${fiatCode} ${fiatAmount}에 BTC를 판매합니다 - 이 금액은 당신의 지갑에 락업되며, /release 명령어를 통해 해제됩니다. 구매자가 주문을 최종 확인하지 않을 시, 판매자에게 돌아오게 됩니다.'
+tap_button: 작업을 수행하기 위한 주문을 선택해주세요.
+tap_release: 자금을 해제하기 위해 주문을 선택해 주세요. 해제 이후, 해당 작업은 돌이킬 수 없습니다.
+earnings: 수익
+premium: 프리미엄
+discount: 할인
+premium_discount: 프리미엄/할인
+withdraw_earnings: 출금 수익
+invoice_expired_earnings: 이 인보이스는 만료되었습니다. 새로운 인보이스를 통해 출금 재요청을 해 주세요.
+what_to_do: 무엇을 하고 싶으신가요?
+community: 커뮤니티
+seller_already_released: 걱정하지 마세요. 판매자가 이미 자금 락업을 해제했습니다. 🥲
+select_language: 언어를 선택하세요.
+must_enter_text: 문자만을 입력해야 합니다.
 current_earnings: |
-  Orders completed so far in the community: ${ordersToRedeem}
+  커뮤니티의 주문이 완료되었습니다: ${ordersToRedeem}
 
-  Community Earnings: ${earnings} sats
-you_dont_have_communities: You have no communities created
-users_added: 'You have added: ${users}'
-users_not_added: 'Could not add to: ${users}; please make sure these users have started the bot'
-delete_community: Delete community
-are_you_sure: Are you sure?
-no_permission: You do not have permission to perform this operation
-make_public: Make public
-make_private: Make private
-bot_kicked: bot was kicked from the chat, it must be a member and admin
-chat_not_found: Chat not found. Are you sure you added the bot to the group/channel?
-not_member: You are not a member of that chat
-upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has changed, check the chat ID again
-community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
-dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
-maintenance: 🚨 Bot in maintenance, please try again later 🚨
+  커뮤니티 수익: ${earnings} sats
+you_dont_have_communities: 당신이 생성한 커뮤니티가 없습니다.
+users_added: '사용자를 추가하였습니다: ${users}'
+users_not_added: '다음 사용자를 추가할 수 없습니다: ${users}; 사용자들이 봇을 추가했는지 확인해주세요.'
+delete_community: 커뮤니티 삭제
+are_you_sure: 확실한거죠?
+no_permission: 이 작업을 수행하기 위한 권한이 없습니다.
+make_public: 공개로 만들기
+make_private: 비공개로 만들기
+bot_kicked: 봇이 채팅에서 쫓겨났습니다. 멤버 혹은 관리자여야 합니다.
+chat_not_found: 대화를 찾을 수 없습니다. 봇을 그룹이나 채널에 추가했는지 확인해주세요.
+not_member: 당신은 해당 대화의 멤버가 아닙니다.
+upgraded_to_supergroup: 해당 대화는 '슈퍼그룹'으로 승격되었습니다. ID가 바뀌었거나 잘못되지 않았는지 확인해 주세요.
+community_deleted: 이 커뮤니티는 활동이 없는 관계로 삭제되었습니다. 당신은 해당 커뮤니티에서 연결이 해제되었습니다. 주문을 다시 생성해보세요.
+dispute_too_soon: 이렇게 빨리 분쟁 해소 절차를 시작할 수 없습니다. 거래 상대방이 응답할 때까지 몇 분만 더 기다려 주세요.
+maintenance: 🚨 봇이 정비 중에 있습니다. 잠시 후 다시 시도해 주세요. 🚨
 
 # START modules/community
 community_admin: |
