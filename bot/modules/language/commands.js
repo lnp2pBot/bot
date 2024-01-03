@@ -9,7 +9,10 @@ exports.setlang = async ctx => {
     const flags = [];
     fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
       const lang = file.split('.')[0];
-      flags.push(getLanguageFlag(lang));
+      const flag = getLanguageFlag(lang);
+      if (flag !== undefined) {
+        flags.push(flag);
+      }
     });
     await showFlagsMessage(ctx, flags, ctx.user.lang);
   } catch (error) {
