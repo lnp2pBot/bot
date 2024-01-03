@@ -497,30 +497,30 @@ maintenance: 🚨 봇이 정비 중에 있습니다. 잠시 후 다시 시도해
 
 # START modules/community
 community_admin: |
-  <strong>Community Admin Mode</strong>
+  <strong>커뮤니티 관리 모드</strong>
   > ${community.name} (${community.group})
   
-  Public:
+  공개:
     ${community.public ? 'Yes' : 'No'}
-  Fee:
+  수수료:
     ${community.fee}
-  Earnings:
+  수익:
     ${community.earnings}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
-  /help - help messages.
-  /exit - to exit the wizard.
+  /help - 도움말.
+  /exit - 관리 모드 나가기.
 community_admin_help: |
-  <strong>Community Admin Mode</strong>
-  # commands
+  <strong>커뮤니티 관리 모드</strong>
+  # 명령어
 
-  /setnpub &lt;npub&gt; - Configure community's public key. Nostr events will be tagged with this public key.
-community_npub_updated: You added the community's pubkey ${npub} successfully!
+  /setnpub &lt;npub&gt; - 커뮤니티의 Nostr npub을 등록합니다. Nostr 이벤트들은 이 npub으로 등록됩니다.
+community_npub_updated: 성공적으로 커뮤니티의 공개키 ${npub}을 추가하였습니다!
 # END modules/community
 
 # START modules/nostr
-user_npub_updated: You added your pubkey ${npub} successfully!
+user_npub_updated: 성공적으로 사용자의 공개키 ${npub}을 추가하였습니다!
 nostr_info: |
   npub:
   <code>${npub}</code>
@@ -531,52 +531,52 @@ nostr_info: |
   relays:
   ${relays}
 npub_not_valid: |
-  Not a valid <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a> npub. Please check your input.
-  Example:
+  유효한 <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a> npub이 아닙니다. 입력값을 다시 확인해 주세요.
+  예시:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
 
 # START modules/orders
-order_not_found: Order not found.
+order_not_found: 주문을 찾을 수 없습니다.
 # END modules/orders
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>@${user.username}의 사용자 설정</strong>
 
-  Language:
+  언어:
     ${language.emoji} ${language.name}
-  Community:
+  커뮤니티:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  라이트닝 주소:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
-  /exit - to exit the wizard.
+  <strong># 도움말</strong>
+  /setnpub &lt;npub&gt; - 사용자의 nostr 공개키를 설정해주세요. Nostr 이벤트들이 이 공개키로 등록됩니다.
+  /exit - 설정 모드 나가기.
 # END modules/user
 # check hold invoice
-invoice_settled: Invoice already settled
-invoice_cancelled: Invoice cancelled
-invoice_held: Invoice held
-invoice_no_info: I don't have information for that invoice
+invoice_settled: 인보이스가 이미 체결되었습니다.
+invoice_cancelled: 인보이스가 취소되었습니다.
+invoice_held: 인보이스가 락업되어 있습니다.
+invoice_no_info: 이 인보이스에 대한 정보가 없습니다.
 bot_info: |
-  Bot fee: ${bot_fee}
+  봇 수수료: ${bot_fee}
 
-  Max routing fee: ${routing_fee}
+  최대 라우팅 수수료: ${routing_fee}
 
-  Node URI: `${node_uri}`
+  라이트닝 노드 URI: `${node_uri}`
   
-  Node status: ${status}
+  라이트닝 노드 상태: ${status}
 disclaimer: |
-  *By using the P2P trade bot, you agree to the following terms and conditions:*
+  *이 P2P 거래 봇을 이용함으로써, 당신은 아래의 약관에 동의하는 것입니다:*
 
-  The bot is an open-source software that is available for anyone to use, copy, modify, and run. The developers are not responsible for the actions of other individuals using the software in any manner, whether legal or illegal, honest or dishonest.
+  이 봇은 누구나 사용하거나, 복사, 수정, 실행이 가능한 오픈 소스 소프트웨어입니다. 개발자들은 다른 사용자들이 이 소프트웨어를 합법/불법적, 정직/정직하지 않은 어떤 형태로 이용함에 있어 책임을 지지 않습니다.
+  
+  이 봇은 "있는 그대로" 그리고 "사용 가능한" 상태로 제공되며, 개발자들은 이 봇의 어떠한 사용에 있어 표현되어 있거나 의미하는 바와 상관 없이 어떠한 형태의 책임을 지지 않습니다.
+  
+  개발자들과 분쟁 해소자들은 봇일 이용한 불건전한 행위자, 사기, 스캠들을 방지하기 위해 최선을 다하겠지만, 사용자들은 이 시스템이 악용될 수 있다는 사실을 알고, 이를 이용함에 있어 스스로 모든 책임을 진다는 점을 받아 들여야 합니다.
 
-  The bot is provided on an "as is" and "as available" basis, and the developers make no warranties of any kind, express or implied, with respect to the bot or its use.
-
-  The developers and the dispute resolvers make their best efforts to remove bad actors, frauds, and scams from using the bot, but the user recognizes that the system can be exploited and accepts full responsibility while using it.
-
-  Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
+  개발자나 분쟁 해소자 모두 봇을 사용하는 사용자들이 겪는 어떠한 손실이나 손해에 대한 어떠한 책임을 지지 않습니다.
