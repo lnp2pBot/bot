@@ -15,7 +15,15 @@ const cancelOrders = async bot => {
     // or where the buyer didn't add the invoice
     const waitingPaymentOrders = await Order.find({
       $or: [{ status: 'WAITING_PAYMENT' }, { status: 'WAITING_BUYER_INVOICE' }],
-      taken_at: { $lte: holdInvoiceTime },
+      $and: [
+        {
+          taken_at: { $lte: holdInvoiceTime },
+          $or: [
+            { invoice_held_at: { $eq: null } },
+            { invoice_held_at: { $lte: holdInvoiceTime } },
+          ],
+        },
+      ],
     });
     for (const order of waitingPaymentOrders) {
       if (order.status === 'WAITING_PAYMENT') {
