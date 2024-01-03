@@ -1,6 +1,6 @@
 const { Order } = require('../models');
 const { deleteOrderFromChannel } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const deleteOrders = async bot => {
   try {

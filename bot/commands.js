@@ -19,7 +19,7 @@ const {
 const ordersActions = require('./ordersActions');
 
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {

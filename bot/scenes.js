@@ -5,7 +5,7 @@ const { waitPayment, addInvoice, showHoldInvoice } = require('./commands');
 const { getCurrency, getUserI18nContext } = require('../util');
 const messages = require('./messages');
 const { isPendingPayment } = require('../ln');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',

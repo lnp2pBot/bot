@@ -1,6 +1,6 @@
 // @ts-check
 require('websocket-polyfill');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const Config = require('./config');
 const { orderCreated } = require('./events');
 const Commands = require('./commands');

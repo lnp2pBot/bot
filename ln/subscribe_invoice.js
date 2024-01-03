@@ -5,7 +5,7 @@ const lnd = require('./connect');
 const messages = require('../bot/messages');
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const subscribeInvoice = async (bot, id, resub) => {
   try {

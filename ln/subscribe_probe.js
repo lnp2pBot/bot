@@ -1,6 +1,6 @@
 const { subscribeToProbeForRoute } = require('lightning');
 const lnd = require('./connect');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const subscribeProbe = async (destination, tokens) => {
   try {

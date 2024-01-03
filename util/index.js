@@ -3,7 +3,7 @@ const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
 const languages = require('./languages.json');
 const { Order, Community } = require('../models');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 // ISO 4217, all ISO currency codes are 3 letters but users can trade shitcoins
 const isIso4217 = code => {

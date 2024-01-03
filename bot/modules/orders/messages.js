@@ -3,7 +3,7 @@ const {
   sanitizeMD,
   getTimeToExpirationOrder,
 } = require('../../../util');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 
 exports.listOrdersResponse = async (orders, i18n) => {
   const tasks = orders.map(async order => {
