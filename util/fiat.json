@@ -1347,7 +1347,7 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "XAF",
-    "emoji": "🏳️",
+    "emoji": "🇨🇲 🇨🇫 🇹🇩 🇬🇶 🇬🇦 🇨🇬",
     "name_plural": "CFA francs BEAC",
     "price": true
   },
@@ -1358,7 +1358,7 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "XOF",
-    "emoji": "🏳️",
+    "emoji": "🇧🇯 🇧🇫 🇨🇮 🇬🇼 🇲🇱 🇳🇪 🇸🇳 🇹🇬",
     "name_plural": "CFA francs BCEAO",
     "price": true
   },

@@ -343,7 +343,6 @@ wizard_add_fiat_amount: |
 
   단순 숫자만을 사용하거나 ${minAmount}와 ${maxAmount}로 이루어진 범위를 제시해야 합니다:
 wizard_add_fiat_wrong_amount: 유효하지 않은 액수입니다. 단순 숫자만을 사용하거나 ${minAmount}와 ${maxAmount}로 이루어진 범위를 제시해야 합니다.
-Invalid amount, input must be between ${minAmount} and ${maxAmount}, it must be only numbers.
 wizard_add_fiat_correct_amount: '액수: ${currency} ${fiatAmount}.'
 order_expired: 주문의 유효기간이 만료되었습니다.
 cant_add_invoice: 이 주문에는 더 이상 인보이스를 추가할 수 없습니다!

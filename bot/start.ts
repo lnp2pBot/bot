@@ -165,7 +165,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     }
   );
 
-  schedule.scheduleJob(`30 * * * * *`, async () => {
+  schedule.scheduleJob(`*/20 * * * * *`, async () => {
     await cancelOrders(bot);
   });
 
@@ -274,6 +274,41 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   });
 
   DisputeModule.configure(bot);
+
+  bot.command('freezeorder', adminMiddleware, async (ctx: MainContext) => {
+    try {
+      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+
+      if (!orderId) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
+
+      const order = await Order.findOne({ _id: orderId });
+
+      if (!order) return;
+
+      // We check if this is a solver, the order must be from the same community
+      if (!ctx.admin.admin) {
+        if (!order.community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        if (order.community_id != ctx.admin.default_community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+      }
+
+      order.is_frozen = true;
+      order.status = 'FROZEN';
+      order.action_by = ctx.admin._id;
+      await order.save();
+
+      if (order.secret) await settleHoldInvoice({ secret: order.secret });
+
+      await ctx.reply(ctx.i18n.t('order_frozen'));
+    } catch (error) {
+      logger.error(error);
+    }
+  });
 
   bot.command('cancelorder', adminMiddleware, async (ctx: MainContext) => {
     try {
@@ -784,7 +819,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await release(ctx, ctx.match[1]);
   });
 
-  bot.command('paytobuyer', superAdminMiddleware, async (ctx: MainContext) => {
+  bot.command('paytobuyer', adminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
       if (!orderId) return;
@@ -793,6 +828,17 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         _id: orderId,
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
+      
+      // We check if this is a solver, the order must be from the same community
+      if (!ctx.admin.admin) {
+        if (!order.community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        if (order.community_id != ctx.admin.default_community_id) {
+          return await messages.notAuthorized(ctx);
+        }
+      }
 
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
