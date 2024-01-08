@@ -10,7 +10,7 @@ const ordersActions = require('../bot/ordersActions');
 const testUser = require('./user');
 const testOrder = require('./order');
 const { getCurrenciesWithPrice } = require('../util');
-const mongoConnect = require('../db_connect');
+const { connect: mongoConnect } = require('../db_connect');
 
 mongoConnect();
 
