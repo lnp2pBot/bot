@@ -475,7 +475,7 @@ seller_already_released: 걱정하지 마세요. 판매자가 이미 자금 락�
 select_language: 언어를 선택하세요.
 must_enter_text: 문자만을 입력해야 합니다.
 current_earnings: |
-  커뮤니티의 주문이 완료되었습니다: ${ordersToRedeem}
+  완료된 커뮤니티 내 주문들: ${ordersToRedeem}
 
   커뮤니티 수익: ${earnings} sats
 you_dont_have_communities: 당신이 생성한 커뮤니티가 없습니다.
