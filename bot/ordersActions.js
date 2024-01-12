@@ -10,7 +10,7 @@ const {
   getFee,
   getUserAge,
 } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const OrderEvents = require('./modules/events/orders');
 

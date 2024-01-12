@@ -1,5 +1,5 @@
 // @ts-check
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 const { Order } = require('../../../models');
 const { deleteOrderFromChannel } = require('../../../util');
 const messages = require('../../messages');

@@ -6,7 +6,7 @@ const {
 } = require('../../validations');
 const messages = require('./messages');
 const globalMessages = require('../../messages');
-const logger = require('../../../logger');
+const { logger } = require('../../../logger');
 
 const dispute = async ctx => {
   try {

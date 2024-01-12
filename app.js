@@ -3,7 +3,7 @@ const { SocksProxyAgent } = require('socks-proxy-agent');
 const { start } = require('./bot');
 const mongoConnect = require('./db_connect');
 const { resubscribeInvoices } = require('./ln');
-const logger = require('./logger');
+const { logger } = require('./logger');
 const { delay } = require('./util');
 
 (async () => {

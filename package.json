@@ -1,6 +1,6 @@
 {
   "name": "lnp2pbot",
-  "version": "0.9.10",
+  "version": "0.9.11",
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
   "main": "app.js",

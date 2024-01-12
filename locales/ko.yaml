@@ -385,6 +385,7 @@ pending_payment_failed_to_admin: |
   사용자 @${username}님의 구매 주문 ${orderId}에 대한 인보이스 결제가 실패하였습니다.
   
   결제 시도 횟수: ${attempts}
+
 selling: 팝니다
 buying: 삽니다
 receive_payment: 입금

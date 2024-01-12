@@ -2,7 +2,7 @@ const { User, Order } = require('../models');
 const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
 const { getUserI18nContext, holdInvoiceExpirationInSecs } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 
 const cancelOrders = async bot => {
   try {

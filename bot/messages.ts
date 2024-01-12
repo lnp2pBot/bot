@@ -12,7 +12,7 @@ const {
   decimalRound,
   getUserAge,
 } = require('../util');
-const logger = require('../logger');
+const { logger } = require('../logger');
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
