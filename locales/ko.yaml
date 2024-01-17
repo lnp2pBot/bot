@@ -385,19 +385,20 @@ pending_payment_failed_to_admin: |
   사용자 @${username}님의 구매 주문 ${orderId}에 대한 인보이스 결제가 실패하였습니다.
   
   결제 시도 횟수: ${attempts}
-selling: 판매
-buying: 구매
-receive_payment: 입금 완료
+
+selling: 팝니다
+buying: 삽니다
+receive_payment: 입금
 pay: 결제
 is: is
 trading_volume: '거래량: ${volume} sats'
 satoshis: 사토시
-by: 에 의해
-rate: 평판
+by: 방법 - 
+rate: 환율
 has_successful_trades: ${trades}회의 성공적인 거래
 user_age: "봇을 사용한 기간: ${pluralize(days, 'day', 'days')}"
 price: 가격
-for: For
+for: 금액
 generic_error: 오류 발생
 sats: sats
 no_capital_letters: 🤖 명령어의 첫 문자를 대문자로 입력하셨습니다. 모든 명령어는 소문자로 입력해주세요.
@@ -475,7 +476,7 @@ seller_already_released: 걱정하지 마세요. 판매자가 이미 자금 락�
 select_language: 언어를 선택하세요.
 must_enter_text: 문자만을 입력해야 합니다.
 current_earnings: |
-  커뮤니티의 주문이 완료되었습니다: ${ordersToRedeem}
+  완료된 커뮤니티 내 주문들: ${ordersToRedeem}
 
   커뮤니티 수익: ${earnings} sats
 you_dont_have_communities: 당신이 생성한 커뮤니티가 없습니다.
