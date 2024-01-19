@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { logger } = require('./logger');
+import mongoose, { ConnectOptions } from "mongoose";
+import { logger } from "./logger";
 
 mongoose.set('strictQuery', false);
 
@@ -18,8 +18,8 @@ const connect = () => {
   mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  });
+  } as ConnectOptions);
   return mongoose;
 };
 
-module.exports = connect;
+export { connect };
