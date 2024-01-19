@@ -1137,6 +1137,16 @@ const showInfoMessage = async (ctx: MainContext, user: UserDocument, config: ICo
         parse_mode: 'MarkdownV2',
       }
     );
+    const volume_traded = user.volume_traded
+    const total_rating = user.total_rating
+    const disputes = user.disputes
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('user_info', { volume_traded, total_rating, disputes }),
+      {
+        parse_mode: 'MarkdownV2',
+      }
+    );
     // if (status) {
     //   await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
     // }
