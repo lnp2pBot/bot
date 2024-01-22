@@ -11,6 +11,7 @@ const {
   getEmojiRate,
   decimalRound,
   getUserAge,
+  getStars,
 } = require('../util');
 const { logger } = require('../logger');
 import { MainContext } from './start';
@@ -1124,6 +1125,18 @@ const sellerPaidHoldMessage = async (ctx: MainContext, user: UserDocument) => {
 
 const showInfoMessage = async (ctx: MainContext, user: UserDocument, config: IConfig) => {
   try {
+    // user info
+    const volume_traded = sanitizeMD(user.volume_traded);
+    const total_rating = user.total_rating;
+    const disputes = user.disputes;
+    let ratingText = '';
+    if (total_rating) {
+      ratingText = getStars(total_rating, user.total_reviews);
+    }
+    ratingText = sanitizeMD(ratingText);
+    const user_info = ctx.i18n.t('user_info', { volume_traded, total_rating: ratingText, disputes });
+
+    // node info
     const status = config.node_status == 'up' ? '🟢' : '🔴';
     const node_uri = sanitizeMD(config.node_uri);
     let bot_fee = (Number(process.env.MAX_FEE) * 100).toString() + '%';
@@ -1132,24 +1145,11 @@ const showInfoMessage = async (ctx: MainContext, user: UserDocument, config: ICo
     routing_fee = routing_fee.replace('.', '\\.');
     await ctx.telegram.sendMessage(
       user.tg_id,
-      ctx.i18n.t('bot_info', { bot_fee, routing_fee, status, node_uri }),
+      ctx.i18n.t('bot_info', { bot_fee, routing_fee, status, node_uri, user_info }),
       {
         parse_mode: 'MarkdownV2',
       }
     );
-    const volume_traded = user.volume_traded
-    const total_rating = user.total_rating
-    const disputes = user.disputes
-    await ctx.telegram.sendMessage(
-      user.tg_id,
-      ctx.i18n.t('user_info', { volume_traded, total_rating, disputes }),
-      {
-        parse_mode: 'MarkdownV2',
-      }
-    );
-    // if (status) {
-    //   await bot.telegram.sendMessage(user.tg_id, `*Node pubkey*: ${info.public_key}\n`, { parse_mode: "MarkdownV2" });
-    // }
   } catch (error) {
     logger.error(error);
   }

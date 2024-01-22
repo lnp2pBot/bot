@@ -5,10 +5,9 @@ const {
   getCurrency,
   numberFormat,
   getBtcExchangePrice,
-  getEmojiRate,
-  decimalRound,
   getFee,
   getUserAge,
+  getStars,
 } = require('../util');
 const { logger } = require('../logger');
 
@@ -177,9 +176,7 @@ const buildDescription = (
 
     let rateText = '\n';
     if (totalRating) {
-      const stars = getEmojiRate(totalRating);
-      const roundedRating = decimalRound(totalRating, -1);
-      rateText = `${roundedRating} ${stars} (${totalReviews})\n`;
+      rateText = getStars(totalRating, totalReviews) + '\n';
     }
 
     const ageInDays = getUserAge(user);
