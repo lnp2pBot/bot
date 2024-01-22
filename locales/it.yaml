@@ -3,7 +3,7 @@ start: |
 
   ${disclaimer}
   ---———— DISCLAIMER ————---
-  
+
   Questo bot ti aiuterà a completare le transazioni P2P di Bitcoin attraverso la rete Lightning.
 
   Una volta avviato il bot, è possibile utilizzare i seguenti comandi:
@@ -190,7 +190,7 @@ order_detail: |
 seller: venditore
 buyer: acquirente
 dispute_started_channel: |
-  User ${type} @${initiatorUser.username} 
+  User ${type} @${initiatorUser.username}
   ha iniziato una disputa con @${counterPartyUser.username} per l'ordine
 
   ${detailedOrder}
@@ -216,10 +216,10 @@ help: |
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
-  /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso 
+  /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
-  /release <_order id_> - Il venditore rilascia i sats 
+  /release <_order id_> - Il venditore rilascia i sats
   /dispute <_order id_> - Apre una disputa tra le parti
   /disclaimer - visualizza la dichiarazione di non responsabilità
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
@@ -516,7 +516,7 @@ npub_not_valid: |
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -568,12 +568,16 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
+
+  User info:
+
+  ${user_info}
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
-  Disputes: `${disputes}`
+  Disputes: ${disputes}
 disclaimer: |
   *Utilizzando il bot per il commercio P2P, si accettano i seguenti termini e condizioni:*
 
