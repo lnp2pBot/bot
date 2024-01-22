@@ -570,6 +570,14 @@ bot_info: |
   라이트닝 노드 URI: `${node_uri}`
   
   라이트닝 노드 상태: ${status}
+
+  사용자 정보:
+
+  ${user_info}
+user_info: |
+  Volume traded: ${volume_traded}
+  Total rating: ${total_rating}
+  Disputes: ${disputes}
 disclaimer: |
   *이 P2P 거래 봇을 이용함으로써, 당신은 아래의 약관에 동의하는 것입니다:*
 

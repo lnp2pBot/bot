@@ -573,10 +573,14 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+
+  User info:
+
+  ${user_info}
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
-  Disputes: `${disputes}`
+  Disputes: ${disputes}
 disclaimer: |
   *By using the P2P trade bot, you agree to the following terms and conditions:*
 
