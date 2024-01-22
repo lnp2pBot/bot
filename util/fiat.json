@@ -588,8 +588,20 @@
     "decimal_digits": 0,
     "rounding": 0,
     "code": "IRR",
-    "emoji": "",
-    "name_plural": "Iranian rials"
+    "emoji": "🇮🇷",
+    "name_plural": "Iranian rials",
+    "price": true
+  },
+  "IRT": {
+    "symbol": "IRT",
+    "name": "Iranian Tomen",
+    "symbol_native": "﷼",
+    "decimal_digits": 0,
+    "rounding": 0,
+    "code": "IRT",
+    "emoji": "🇮🇷",
+    "name_plural": "Iranian Tomen",
+    "price": true
   },
   "ISK": {
     "symbol": "Ikr",
