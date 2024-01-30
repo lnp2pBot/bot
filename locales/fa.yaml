@@ -8,143 +8,141 @@ start: |
 
   پس از راه اندازی ربات، می توانید از دستورات زیر استفاده کنید:
 
-  1. سفارش خود را با استفاده از دستورات buy/ یا sell/ منتشر کنید و دستورالعمل‌های زیر را دنبال کنید.
+  1. سفارش خود را با استفاده از دستورات /buy یا /sell منتشر کنید و دستورالعمل‌های زیر را دنبال کنید.
 
   2. منتظر بمانید تا کاربر دیگری با استفاده از دکمه‌های "buy" یا "sell" درخواست شما را انتخاب کند. شما همچنین می توانید سفارشات کاربران دیگر را با این دکمه‌ها انتخاب کنید!
 
-  3.سفارشات و سابقه شما در کانال ${channel} قابل مشاهده است.
+  3.سفارشات و سابقه شما در کانال {channel}$ قابل مشاهده است.
 
-  4. If you are selling, the bot will publish the order in the ${channel} channel expecting another user will take it. You can cancel this sell order anytime BEFORE another user takes it with the /cancel command.
+  4. اگر قصد فروش دارید، ربات سفارش شما را در کانال ${channel} اضافه میکند تا کاربران دیگر آن را مشاهده کنند. شما هر زمان که بخواهید میتوانید، قبل از این که کاربر دیگری سفارشتان را بردارد، آن را با دستور /cancel لغو کنید.
 
-  5. Once somebody takes your order, the bot will ask you to pay the LN invoice. Such payment will be held in an escrow that is frozen in your wallet, the order will expire in a maximum lapse of ${orderExpiration} hours starting when the order was taken.
+  5. هنگامی که شخصی سفارش‌تان را برمیدارد، ربات به شما یک فاکتور لایتنینگ میدهد که باید آن را پرداخت کنید. وجه پرداختی از موجودی کیف پول شما کم شده و به شکل امانی داخل کیف پول شما فریز میشود،این سفارش حداکثر طی {orderExpiration}$ ساعت از زمان شروع منقضی می شود.
+  
+  سپس ربات آیدی تلگرام فروشنده را به شما میدهد، تا از طریق آن اطلاعات حساب و شیوه پرداخت وجه فیات را برای او ارسال کنید. پس از دریافت پرداخت وجه فیات، باید ساتوشی‌ها را با استفاده از دستور /release برای خریدار ارسال کنید.
 
-  The bot will reveal who the buyer is so you can send instructions for the FIAT payment to be made. Once you receive the FIAT payment, you must send the funds to the buyer using the /release command.
+  6. اگر قصد خرید دارید، سفارش خود را با استفاده از دستور /buy منتشر کنید و منتظر بمانید تا فروشنده آن را بردارد. با استفاده از دستور /cancel می توانید سفارش را در هر زمانی لغو کنید.
 
-  6. If you want to buy, publish your order using the /buy command and wait until a seller takes it. You can cancel the order at any time by using the /cancel command.
+  7. هنگامی که شخصی سفارش خرید شما را دریافت کرد، باید یک فاکتور لایتنینگ ایجاد کنید و آن را برای ربات ارسال کنید. پس از آن، باید به آیدی فروشنده پیام دهید تا اطلاعات حساب و شیوه پرداخت وجه فیات خود را دریافت کنید. پس از پرداخت به فروشنده، باید از دستور /release استفاده کنید. سپس ربات ساتوشی‌ها را به کیف پول شما ارسال می‌کند.
 
-  7. Once somebody takes your buy order, you must create a LN invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your LN invoice.
+  8. اگر سفارش فروش برمیدارید، یعنی sat می‌خرید، باید یک فاکتور LN برای دریافت sat خود ایجاد کنید و از فروشنده بخواهید دستورالعمل‌های پرداخت FIAT را به شما بدهد. هنگامی که فروشنده پرداخت فیات را دریافت کرد، باید از دستور /release برای ارسال satها به کیف پول شما استفاده کند.
 
-  8. If you are taking a selling order, i.e. you buy sats, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
+  9. اگر سفارش خرید برمیدارید، یعنی sat می‌فروشید، باید فاکتور LN را پرداخت کنید. این satها تا زمانی که خریدار پرداخت فیات را انجام ندهد، باقی خواهد ماند. شما باید با خریدار تماس بگیرید و اطلاعات مورد نیاز برای ادامه پرداخت فیات را به او بدهید. هنگامی که پرداخت فیات را دریافت کردید، باید sat که ربات در اختیار دارد را آزاد کنید. شما باید از دستور /release استفاده کنید، و satها به طور خودکار به کیف پول خریدار ارسال می شود.
 
-  9. If you are taking a buy order, i.e. you sell sats, you must pay the LN invoice. These sats will be held until the buyer makes the fiat payment. You must contact the buyer and give him the info needed to proceed with the fiat payment. Once you receive the fiat payment, you must release the fund held by the bot; you must use the /release command, and the sats will be automatically sent to the buyer's wallet.
-
-  You can find more information on how to use this bot here 👇
+  جهت کسب اطلاعات بیشتر در رابطه به نحوه استفاده از ربات به این لینک مراجعه کنید 👇
 
   https://lnp2pbot.com/learn
   
-  Make a quick and safe transaction!
-init_bot_error: to use this bot, you need to first initialize the boot with the command /start
-non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
+  یک معامله سریع و مطمئن انجام دهید!
+init_bot_error: برای استفاده از این ربات، ابتدا باید دستور /start را وارد کنید
+non_handle_error: 👤 برای استفاده از این ربات باید نام کاربری تلگرام خود را فعال کنید. جهت فعالسازی نام کاربری از سه‌خط بالا سمت راست تلگرام وارد بخش تنظیمات--ویرایش پروفایل شده و یک نام‌کاربری اضافه کنید
 invoice_payment_request: |
-  Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
+  یک نفر میخواهد از شما {order.amount}$ ساتوشی در ازا {currency} ${order.fiat_amount}$ بخرد.
 
   Buyer Reputation: ${rate}, days using the bot: ${days}
 
-  Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes
+  لطفاً برای شروع فرآیند فروش خود، این فاکتور را بپردازید، این درخواست در {expirationTime}$ دقیقه منقضی می شود
 pending_sell: |
-  📝 Your offer has been published in the ${channel} channel
+  📝 سفارش فروش sat شما در کانال {channel}$ منتشر شده است
 
-  You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
+  باید منتظر بمانید تا کاربر دیگری سفارش شما را انتخاب کند، این سفارش برای {orderExpirationWindow}$ ساعت در کانال در دسترس خواهد بود.
 
-  You can cancel this order before another user picks it up by executing the command 👇
+  شما می توانید این سفارش را قبل از اینکه کاربر دیگری آن را انتخاب کند با اجرای دستور زیر لغو کنید 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
-  📝 You offer to buy sats is active in the ${channel} channel.
+  📝 سفارش خرید sat شما در کانال {channel}$ فعال است.
 
-  You need to wait until another user picks up the order, this order will expire in ${orderExpirationWindow} hours.
+  باید منتظر بمانید تا کاربر دیگری سفارش را انتخاب کند، این سفارش طی {orderExpirationWindow}$ ساعت دیگر منقضی می‌شود.
 
-  You can cancel this order before another user picks it up by executing the command 👇
-must_be_int: ${fieldName} must be a number
-must_be_numeric: ${fieldName} must be numeric
-sats_amount: sats amount
-fiat_amount: fiat amount
+  شما می توانید این سفارش را قبل از اینکه کاربر دیگری آن را انتخاب کند با اجرای دستور لغو کنید 👇
+must_be_int: ${fieldName} باید اسم باشد
+must_be_numeric: ${fieldName} باید متغیر عددی باشد
+sats_amount: تعداد ساتوشی
+fiat_amount: مقدار فیات
 sell_correct_format: |
-  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /sell \<_مقدار ساتوشی_\> \<_مقدار فیات_\> \<_نوع ارز_\> \<_روش پرداخت_\> \[_تخفیف/حباب_\]
 
   In order to create a sell order of 1000 satoshis for 2 US dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must avoid \<\> and \[\]\.
 
-  `/sell 1000 2 USD "transfer or ATM deposit"`
+  `/sell 1000 500000 IRR "پرداخت با عابربانک"`
 
-  In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
+  برای ایجاد سفارش فروش با 3% بالاتر از قیمت فعلی \(به عنوان حق بیمه\) باید پارامتر 0 را که نشان دهنده مقدار فیات است اضافه کنید. ربات قیمت فروش را با استفاده از قیمت بازار بیت کوین محاسبه می کند و با اعمال مازاد نشان داده شده، همچنین عدد 3 را باید به عنوان آخرین پارامتر اضافه کنید.
 
-  `/sell 0 2 USD "payment method" 3`
+  `/sell 0 500000 IRR "روش پرداخت" 3`
 
-  In order to create a sell by range, instead of indicating a fixed fiat amount you can indicate a mininum and maximum amount to transact separated by a hyphen *\-*
+  به منظور ایجاد یک سفارش فروش بر اساس یک بازه مقداری(مثلا فروش 1 الی 2 میلیون ریال ساتوشی)، به جای وترد کردن یک مقدار ثابت فیات، می توانید مقدار حداقل و حداکثر را برای تراکنش مشخص کنید که با خط فاصله از هم جدا شده اند. *\-*
 
-  `/sell 0 100\-500 USD "payment method" 3`
+  `/sell 0 1000000\-2000000 IRR "پول نقد" 3`
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /buy \<_مقدار ساتوشی_\> \<_مقدار فیات_\> \<_نوع ارز_\> \<_روش پرداخت_\> \[_تخفیف/حباب_\]
 
   In order to create an order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 
-  `/buy 1000 2 USD "online transfer"`
+  `/buy 1000 500000 IRR "پرداخت با عابربانک"`
 
-  If you do not want to establish a fixed amount of satoshis and you want to buy with a price under market value, you can place a buy order establishing a certain discount, such rate is the percentage that will be substracted of market price when your order is published\. You need to specify 0 at the \<_sats amount_\> field, the bot will calculate the price\. If you want to buy with a 2% discount on the price market, you should write \-2 as the last parameter
+  برای ایجاد سفارش خرید با 3% بالاتر از قیمت فعلی \(به عنوان حق بیمه\) باید پارامتر 0 را که نشان دهنده مقدار فیات است اضافه کنید. ربات قیمت فروش را با استفاده از قیمت بازار بیت کوین محاسبه می کند و با اعمال مازاد نشان داده شده، همچنین عدد 3 را باید به عنوان آخرین پارامتر اضافه کنید.
 
-  `/buy 0 2 USD "payment method" \-2`
+  `/buy 0 500000 IRR "روش پرداخت" 3`
 
-  If you want to create a purchase order by range instead of indicating a fixed Fiat amount, you can set the minimum and maximum to transact separated by a hyphen *\-*
+  به منظور ایجاد یک سفارش خرید بر اساس یک بازه مقداری(مثلا فروش 1 الی 2 میلیون ریال ساتوشی)، به جای وترد کردن یک مقدار ثابت فیات، می توانید مقدار حداقل و حداکثر را برای تراکنش مشخص کنید که با خط فاصله از هم جدا شده اند. *\-*
 
-  `/buy 0 100\-500 USD "payment method" \-2`
-min_invoice_amount: invoice needs to be equal or higher than ${minPaymentAmount} satoshis
-min_expiration_time: Time expiration for the invoice should be of at least ${expirationTime} minutes
-invoice_expired: The invoice has expired
+  `/buy 0 1000000\-2000000 IRR "پول نقد" 3`
+min_invoice_amount: مقدار اینویس باید حداقل برابر با ${minPaymentAmount} ساتوشی باشد
+min_expiration_time: زمان منقضی شدن فاکتور باید حداقل ${expirationTime} دقیقه باشد
+invoice_expired: فاکتور منقضی شده
 invoice_expired_long: |
-  The invoice has expired. You can use the following command to send me a new invoice to receive the satoshis 👇
+  فاکتور منقضی شده است. جهت گرفتن فاکتور جدید برای دریافت ساتوشی می توانید از دستور زیر استفاده کنید 👇
 setinvoice_cmd_order: |
   /setinvoice ${orderId} \\<Lightning Invoice\\>
-invoice_require_destination: Invoice needs a receiver address
-invoice_require_hash: Invoice needs a hash
-order_id_invalid: Invalid order ID
-order_invalid_type: This ${type} order is invalid
-order_already_taken: This order has already been taken by another user.
-invalid_data: You have sent invalid data, try again.
+invoice_require_destination: فاکتور به آدرس گیرنده نیاز دارد
+invoice_require_hash: فاکتور نیاز به هش دارد
+order_id_invalid: شناسه سفارش نامعتبر است
+order_invalid_type: این ${type} نوع سفارش نامعتبر است
+order_already_taken: این سفارش قبلاً توسط کاربر دیگری گرفته شده است.
+invalid_data: داده های ارسال شده نامعتبر اند، دوباره امتحان کنید.
 begin_take_buy: |
-  🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
-continue: Continue
-cancel: Cancel
-pay_invoice: Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation.
+  🤖 برای دریافت سفارش، ادامه را فشار دهید، اگر لغو را فشار دهید، از معامله خارج می شوید و سفارش مجدداً منتشر می شود. شما {expirationTime}$ دقیقه قبل از انقضای این سفارش فرصت دارید. 👇
+continue: ادامه
+cancel: لغو
+pay_invoice: لطفاً برای شروع عملیات، فاکتور {amount}$ sat را برای {currency} ${fiatAmount}$ بپردازید.
 payment_received: |
-  🤑 Payment received!
+  🤑 پرداخت شد!
 
-  Now I need the buyer to send an invoice so I can send satoshis to his/her wallet. I will put you both in touch as soon as the buyer sends the invoice
+  اکنون نیاز است که خریدار فاکتور ارسال کند تا بتوانم ساتوشی را به کیف پول او ارسال کنم. به محض اینکه خریدار فاکتور را بفرستد، به هر دوی شما اطلاع خواهم داد
 
-  Wait a bit. The collateral will be returned to you if the buyer does not cooperate.
+  کمی صبر کن در صورت عدم همکاری خریدار ساتوشی وثیقه شده به شما بازگردانده می‌شود.
 someone_took_your_order: |
-  🤖 Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds.
-
-  If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk. I cannot force the seller to send the sats again.
-
+  🤖 شخصی سفارش شما را گرفته و sat را برای من ارسال کرده است، لطفاً از یک روش پرداخت فیات استفاده کنید که به شما امکان می‌دهد فوراً پول را ارسال کرده و در آن ریسک مسدود شدن وجوه وجود نداشته باشد.
+  اگر به هر دلیلی، پرداخت شما به مشکل خورد و وجه در کمتر از {expirationTime}$ نرسد، satها به فروشنده برمی‌گردد و این خریدار را در معرض ریسک قرار می‌دهد. ما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.
   Seller Reputation: ${rate}, days using the bot: ${days}
 
-  If you agree with the above, press the button to continue 👇
+  اگر با موارد فوق موافق هستید، برای ادامه دکمه زیر را فشار دهید 👇
 you_took_someone_order: |
-  🤖 You took this selling order, please use a fiat payment processor that allows you to send the money immediately and in which there is no risk of freezing funds\\.
+  🤖 شما این سفارش فروش را دریافت کردید، لطفاً از یک روش پرداخت فیات استفاده کنید که به شما امکان می‌دهد فوراً پول را ارسال کرده و در آن ریسک مسدود شدن وجوه وجود نداشته باشد.
 
-  *If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk and I cannot force the seller to send the sats again\\.*
+  *اگر به هر دلیلی، پرداخت شما متوقف شده و وجه در کمتر از {expirationTime}$ نرسد، satها به فروشنده برمی گردند و این خریدار را در معرض ریسک قرار می دهد وما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.*
 
-  If you agree with the above, press the button to continue 👇
+  اگر با موارد فوق موافق هستید، برای ادامه دکمه زیر را فشار دهید 👇
 get_in_touch_with_seller: |
   🤖 Order ID: #${orderId}
 
-  Get in touch with the seller, user @${sellerUsername} to get the details on how to send the money, you must send ${currency} ${fiatAmount} using ${paymentMethod}.
+  برای دریافت جزئیات نحوه ارسال پول، با فروشنده، کاربر {sellerUsername}$@ تماس بگیرید، باید {currency} ${fiatAmount}$ را با استفاده از ${paymentMethod}$ ارسال کنید.
 
-  Once you send the money, please let me know with the command 👇
+  به محض ارسال پول، لطفاً با دستور زیر ما را مطلع کنید. 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Order ID: #${orderId}
 
-  Get in touch with @${buyerUsername} to give information on how to send you ${currency} ${fiatAmount} through ${paymentMethod}. Do not release those sats until you verify that the buyer paid you the fiat.
+  با {buyerUsername}$@ تماس بگیرید تا اطلاعاتی درباره نحوه ارسال {currency} ${fiatAmount}$ از طریق {paymentMethod}$ به شما ارائه دهد. تا زمانی که اطمینان یابید که خریدار فیات را به شما پرداخت کرده است، آن satها را آزاد نکنید.
 
-  Once you confirm the reception of the money, you must unlock the sats.
+  هنگامی که پول را دریافت کردید، باید satها را آزاد کنید.
 buyer_took_your_order: |
   🤖 Order ID: #${orderId}
 
-  @${buyerUsername} has taken your order and wants to buy your sats. Get in touch and tell him how to send you ${currency} ${fiatAmount} through ${paymentMethod}.
+  کاربر {buyerUsername}$@ سفارش شما را پذیرفته است و می‌خواهد satهای شما را بخرد. با او تماس بگیرید و بگویید چگونه از طریق {paymentMethod}، ${currency} ${fiatAmount}$ را برای شما ارسال کند.
 
-  Once you verify you have received the full amount, you have to release the sats
-waiting_seller_to_pay: 'I have sent a payment request to the seller so he sends your sats for the order ID #${orderId}, as soon as payment is made I will put you both in touch'
+  هنگامی که کل مبلغ را دریافت کردید، باید satها را آزاد کنید
+waiting_seller_to_pay: 'ما یک درخواست پرداخت برای فروشنده ارسال کردیم، بنابراین او برای شناسه سفارش #${orderId} شما را ارسال می‌کند، به محض پرداخت، هر دوی شما را در تماس خواهم گرفت.'
 sell_success: Your sats sale has been completed after confirming the payment from @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} already released the sats, expect your invoice to be paid any time, remember your wallet needs to be online to receive through Lightning Network.
 rate_counterpart: 'Please qualify your counterparty:'
