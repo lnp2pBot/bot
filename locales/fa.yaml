@@ -12,11 +12,11 @@ start: |
 
   2. منتظر بمانید تا کاربر دیگری با استفاده از دکمه‌های "buy" یا "sell" درخواست شما را انتخاب کند. شما همچنین می توانید سفارشات کاربران دیگر را با این دکمه‌ها انتخاب کنید!
 
-  3.سفارشات و سابقه شما در کانال {channel}$ قابل مشاهده است.
+  3.سفارشات و سابقه شما در کانال ${channel} قابل مشاهده است.
 
   4. اگر قصد فروش دارید، ربات سفارش شما را در کانال ${channel} اضافه میکند تا کاربران دیگر آن را مشاهده کنند. شما هر زمان که بخواهید میتوانید، قبل از این که کاربر دیگری سفارشتان را بردارد، آن را با دستور /cancel لغو کنید.
 
-  5. هنگامی که شخصی سفارش‌تان را برمیدارد، ربات به شما یک فاکتور لایتنینگ میدهد که باید آن را پرداخت کنید. وجه پرداختی از موجودی کیف پول شما کم شده و به شکل امانی داخل کیف پول شما فریز میشود،این سفارش حداکثر طی {orderExpiration}$ ساعت از زمان شروع منقضی می شود.
+  5. هنگامی که شخصی سفارش‌تان را برمیدارد، ربات به شما یک فاکتور لایتنینگ میدهد که باید آن را پرداخت کنید. وجه پرداختی از موجودی کیف پول شما کم شده و به شکل امانی داخل کیف پول شما فریز میشود،این سفارش حداکثر طی ${orderExpiration} ساعت از زمان شروع منقضی می شود.
   
   سپس ربات آیدی تلگرام فروشنده را به شما میدهد، تا از طریق آن اطلاعات حساب و شیوه پرداخت وجه فیات را برای او ارسال کنید. پس از دریافت پرداخت وجه فیات، باید ساتوشی‌ها را با استفاده از دستور /release برای خریدار ارسال کنید.
 
@@ -36,23 +36,23 @@ start: |
 init_bot_error: برای استفاده از این ربات، ابتدا باید دستور /start را وارد کنید
 non_handle_error: 👤 برای استفاده از این ربات باید نام کاربری تلگرام خود را فعال کنید. جهت فعالسازی نام کاربری از سه‌خط بالا سمت راست تلگرام وارد بخش تنظیمات--ویرایش پروفایل شده و یک نام‌کاربری اضافه کنید
 invoice_payment_request: |
-  یک نفر میخواهد از شما {order.amount}$ ساتوشی در ازا {currency} ${order.fiat_amount}$ بخرد.
+ یک نفر میخواهد از شما ${order.amount} ساتوشی در ازا ${currency}$ {order.fiat_amount} بخرد.
 
   Buyer Reputation: ${rate}, days using the bot: ${days}
 
   لطفاً برای شروع فرآیند فروش خود، این فاکتور را بپردازید، این درخواست در {expirationTime}$ دقیقه منقضی می شود
 pending_sell: |
-  📝 سفارش فروش sat شما در کانال {channel}$ منتشر شده است
+  📝 سفارش فروش sat شما در کانال ${channel} منتشر شده است
 
-  باید منتظر بمانید تا کاربر دیگری سفارش شما را انتخاب کند، این سفارش برای {orderExpirationWindow}$ ساعت در کانال در دسترس خواهد بود.
+  باید منتظر بمانید تا کاربر دیگری سفارش شما را انتخاب کند، این سفارش برای ${orderExpirationWindow} ساعت در کانال در دسترس خواهد بود.
 
   شما می توانید این سفارش را قبل از اینکه کاربر دیگری آن را انتخاب کند با اجرای دستور زیر لغو کنید 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
-  📝 سفارش خرید sat شما در کانال {channel}$ فعال است.
+  📝 سفارش خرید sat شما در کانال ${channel} فعال است.
 
-  باید منتظر بمانید تا کاربر دیگری سفارش را انتخاب کند، این سفارش طی {orderExpirationWindow}$ ساعت دیگر منقضی می‌شود.
+  باید منتظر بمانید تا کاربر دیگری سفارش را انتخاب کند، این سفارش طی ${orderExpirationWindow} ساعت دیگر منقضی می‌شود.
 
   شما می توانید این سفارش را قبل از اینکه کاربر دیگری آن را انتخاب کند با اجرای دستور لغو کنید 👇
 must_be_int: ${fieldName} باید اسم باشد
@@ -61,22 +61,22 @@ sats_amount: تعداد ساتوشی
 fiat_amount: مقدار فیات
 sell_correct_format: |
   /sell \<_مقدار ساتوشی_\> \<_مقدار فیات_\> \<_نوع ارز_\> \<_روش پرداخت_\> \[_تخفیف/حباب_\]
+  
+  برای ایجاد یک سفارش فروش 1000 ساتوشی به قیمت 50000 تومان ایران \(IRT\) و نشان دادن اینکه پرداخت فیات از طریق انتقال یا واریز ATM است، باید از قرار دادن \<\> و \[\]\ اجتناب کنید.
 
-  In order to create a sell order of 1000 satoshis for 2 US dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must avoid \<\> and \[\]\.
-
-  `/sell 1000 500000 IRR "پرداخت با عابربانک"`
+  `/sell 1000 50000 IRT "پرداخت با عابربانک"`
 
   برای ایجاد سفارش فروش با 3% بالاتر از قیمت فعلی \(به عنوان حق بیمه\) باید پارامتر 0 را که نشان دهنده مقدار فیات است اضافه کنید. ربات قیمت فروش را با استفاده از قیمت بازار بیت کوین محاسبه می کند و با اعمال مازاد نشان داده شده، همچنین عدد 3 را باید به عنوان آخرین پارامتر اضافه کنید.
 
-  `/sell 0 500000 IRR "روش پرداخت" 3`
+  `/sell 0 50000 IRT "روش پرداخت" 3`
 
   به منظور ایجاد یک سفارش فروش بر اساس یک بازه مقداری(مثلا فروش 1 الی 2 میلیون ریال ساتوشی)، به جای وترد کردن یک مقدار ثابت فیات، می توانید مقدار حداقل و حداکثر را برای تراکنش مشخص کنید که با خط فاصله از هم جدا شده اند. *\-*
 
-  `/sell 0 1000000\-2000000 IRR "پول نقد" 3`
+  `/sell 0 100000\-200000 IRT "پول نقد" 3`
 buy_correct_format: |
   /buy \<_مقدار ساتوشی_\> \<_مقدار فیات_\> \<_نوع ارز_\> \<_روش پرداخت_\> \[_تخفیف/حباب_\]
-
-  In order to create an order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
+  
+   برای ایجاد یک سفارش فروش 1000 ساتوشی به قیمت 50000 تومان ایران \(IRT\) و نشان دادن اینکه پرداخت فیات از طریق انتقال یا واریز ATM است، باید از قرار دادن \<\> و \[\]\ اجتناب کنید.
 
   `/buy 1000 500000 IRR "پرداخت با عابربانک"`
 
@@ -101,10 +101,10 @@ order_invalid_type: این ${type} نوع سفارش نامعتبر است
 order_already_taken: این سفارش قبلاً توسط کاربر دیگری گرفته شده است.
 invalid_data: داده های ارسال شده نامعتبر اند، دوباره امتحان کنید.
 begin_take_buy: |
-  🤖 برای دریافت سفارش، ادامه را فشار دهید، اگر لغو را فشار دهید، از معامله خارج می شوید و سفارش مجدداً منتشر می شود. شما {expirationTime}$ دقیقه قبل از انقضای این سفارش فرصت دارید. 👇
+  🤖 برای دریافت سفارش، ادامه را فشار دهید، اگر لغو را فشار دهید، از معامله خارج می شوید و سفارش مجدداً منتشر می شود. شما ${expirationTime} دقیقه قبل از انقضای این سفارش فرصت دارید. 👇
 continue: ادامه
 cancel: لغو
-pay_invoice: لطفاً برای شروع عملیات، فاکتور {amount}$ sat را برای {currency} ${fiatAmount}$ بپردازید.
+pay_invoice: لطفاً برای شروع عملیات، فاکتور ${amount} sat را برای ${currency}$ {fiatAmount} بپردازید.
 payment_received: |
   🤑 پرداخت شد!
 
@@ -113,14 +113,16 @@ payment_received: |
   کمی صبر کن در صورت عدم همکاری خریدار ساتوشی وثیقه شده به شما بازگردانده می‌شود.
 someone_took_your_order: |
   🤖 شخصی سفارش شما را گرفته و sat را برای من ارسال کرده است، لطفاً از یک روش پرداخت فیات استفاده کنید که به شما امکان می‌دهد فوراً پول را ارسال کرده و در آن ریسک مسدود شدن وجوه وجود نداشته باشد.
-  اگر به هر دلیلی، پرداخت شما به مشکل خورد و وجه در کمتر از {expirationTime}$ نرسد، satها به فروشنده برمی‌گردد و این خریدار را در معرض ریسک قرار می‌دهد. ما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.
+  
+  اگر به هر دلیلی، پرداخت شما به مشکل خورد و وجه در کمتر از ${expirationTime} نرسد، satها به فروشنده برمی‌گردد و این خریدار را در معرض ریسک قرار می‌دهد. ما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.
+  
   Seller Reputation: ${rate}, days using the bot: ${days}
 
   اگر با موارد فوق موافق هستید، برای ادامه دکمه زیر را فشار دهید 👇
 you_took_someone_order: |
   🤖 شما این سفارش فروش را دریافت کردید، لطفاً از یک روش پرداخت فیات استفاده کنید که به شما امکان می‌دهد فوراً پول را ارسال کرده و در آن ریسک مسدود شدن وجوه وجود نداشته باشد.
 
-  *اگر به هر دلیلی، پرداخت شما متوقف شده و وجه در کمتر از {expirationTime}$ نرسد، satها به فروشنده برمی گردند و این خریدار را در معرض ریسک قرار می دهد وما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.*
+  *اگر به هر دلیلی، پرداخت شما متوقف شده و وجه در کمتر از ${expirationTime} نرسد، satها به فروشنده برمی گردند و این خریدار را در معرض ریسک قرار می دهد وما نمی توانیم فروشنده را مجبور کنیم که دوباره satها را بفرستد.*
 
   اگر با موارد فوق موافق هستید، برای ادامه دکمه زیر را فشار دهید 👇
 get_in_touch_with_seller: |
@@ -133,24 +135,24 @@ fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Order ID: #${orderId}
 
-  با {buyerUsername}$@ تماس بگیرید تا اطلاعاتی درباره نحوه ارسال {currency} ${fiatAmount}$ از طریق {paymentMethod}$ به شما ارائه دهد. تا زمانی که اطمینان یابید که خریدار فیات را به شما پرداخت کرده است، آن satها را آزاد نکنید.
+  با @${buyerUsername} تماس بگیرید تا اطلاعاتی درباره نحوه ارسال ${currency}$ {fiatAmount} از طریق ${paymentMethod} به شما ارائه دهد. تا زمانی که اطمینان یابید که خریدار فیات را به شما پرداخت کرده است، آن satها را آزاد نکنید.
 
   هنگامی که پول را دریافت کردید، باید satها را آزاد کنید.
 buyer_took_your_order: |
   🤖 Order ID: #${orderId}
 
-  کاربر {buyerUsername}$@ سفارش شما را پذیرفته است و می‌خواهد satهای شما را بخرد. با او تماس بگیرید و بگویید چگونه از طریق {paymentMethod}، ${currency} ${fiatAmount}$ را برای شما ارسال کند.
+  کاربر @${buyerUsername} سفارش شما را پذیرفته است و می‌خواهد satهای شما را بخرد. با او تماس بگیرید و بگویید چگونه از طریق ${paymentMethod}$، {currency}$ {fiatAmount} را برای شما ارسال کند.
 
   هنگامی که کل مبلغ را دریافت کردید، باید satها را آزاد کنید
 waiting_seller_to_pay: 'ما یک درخواست پرداخت برای فروشنده ارسال کردیم، بنابراین او برای شناسه سفارش #${orderId} شما را ارسال می‌کند، به محض پرداخت، هر دوی شما را در تماس خواهم گرفت.'
-sell_success: Your sats sale has been completed after confirming the payment from @${buyerUsername} ⚡️🍊⚡️
-funds_released: 🕐 @${sellerUsername} already released the sats, expect your invoice to be paid any time, remember your wallet needs to be online to receive through Lightning Network.
-rate_counterpart: 'Please qualify your counterparty:'
-cant_process_order: This order cannot be processed, please check the ID is correct.
-cant_release_order: This order cannot be released, the buyer has not sent an invoice where to pay
-no_id_related: You do not have any order associated with this ID.
-sell_sats: Sell satoshis
-buy_sats: Buy satoshis
+sell_success: فروش sats شما پس از تأیید پرداخت از سوی  @${buyer Username} تکمیل خواهد شد ⚡️🍊⚡️
+funds_released: 🕐 کاربر @${sellerUsername} قبلاً satها را آزاد کرده است، منتظر باشید تا فاکتور شما به زودی پرداخت شود، به یاد داشته باشید که کیف پول شما برای دریافت از طریق شبکه لایتنینگ باید آنلاین باشد.
+rate_counterpart: 'لطفا به شخصی که با آن معامله داشتید امتیاز بدهید:'
+cant_process_order: این سفارش قابل پردازش نیست، لطفاً درستی شناسه سفارش(ID) را برسی کنید.
+cant_release_order: این سفارش را نمی توان انجام داد، زیرا خریدار فاکتوری برای دریافت ساتوشی‌ها ارسال نکرده است
+no_id_related: شما هیچ سفارشی مرتبط با این شناسه ندارید.
+sell_sats: فروش ساتوشی‌ها
+buy_sats: خرید ساتوشی
 order_detail: |
   ID: `${order._id}`
 
@@ -190,201 +192,201 @@ order_detail: |
 seller: seller
 buyer: buyer
 dispute_started_channel: |
-  User ${type} @${initiatorUser.username} 
-  has started a dispute with @${counterPartyUser.username} for the order
+  کاربر ${type} @${initiatorUser.username} 
+  بابت سفارش زیر یک مشاجره را با کاربر @${counterPartyUser.username}آغاز کرده 
 
   ${detailedOrder}
 
-  @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
-  @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
-you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will contact you and your counterparty to sort it out.
-buyer_started_dispute_to_seller: '🥴 The buyer has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
-you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will contact you and your counterparty to sort it out.
-seller_started_dispute_to_buyer: '🥴 The Seller has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
-must_be_valid_currency: 'Fiat_code must be a valid code, for example: USD, EUR. Check the full list with the command /listcurrencies'
-must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format'
-invalid_lightning_address: Invalid lightning address
-unavailable_lightning_address: Unavailable lightning address ${la}
+  کابر@${initiatorUser.username} بابت ${initiatorUser.disputes} به اختلاف خورده
+  کاربر@${counterPartyUser.username} بابت ${counterPartyUser.disputes} به اختلاف خورده
+you_started_dispute_to_buyer: 🥴 شما بابت سفارش خرید خود یک مشاجره ایجاد کرده‌اید، ما با شما و طرف مقابلتان تماس خواهیم گرفت تا آن را حل و فصل کنیم.
+buyer_started_dispute_to_seller: '🥴 خریدار بابت سفارش خرید شما به شناسه: ${orderId} مشاجره‌ای را آغاز کرده، ما برای حل آن با شما و طرف مقابلتان تماس خواهیم گرفت.'
+you_started_dispute_to_seller: 🥴 شما بابت سفارش فروش خود یک مشاجره ایجاد کرده‌اید، ما با شما و طرف مقابلتان تماس خواهیم گرفت تا آن را حل و فصل کنیم.
+seller_started_dispute_to_buyer: '🥴 فروشنده بابت سفارش خرید شما به شناسه: ${orderId} مشاجره‌ای را آغاز کرده، ما برای حل آن با شما و طرف مقابلتان تماس خواهیم گرفت.'
+must_be_valid_currency: 'کد فیات باید یک کد معتبر باشد، به عنوان مثال: USD، IRT. لیست کامل را با دستور /listcurrencies بررسی کنید'
+must_be_number_or_range: 'مقدار فیات باید یک عدد یا محدوده عددی در قالب <حداقل>-<حداکثر> باشد.'
+invalid_lightning_address: آدرس لایتنینگ نامعتبر است
+unavailable_lightning_address: آدرس لایتنینگ قابل دسترسی نیست ${la}
 help: |
-  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
-  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
-  /takeorder <_order id_> - Allows the user to take an order from the chat with the bot without going to the channel where it was published
-  /info - Shows additional info about the bot
-  /showusername - Toggles off the username display in each new order created. Default value is set to false
-  /showvolume - Shows trade volume when each order is created, default value is false
-  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats 
-  /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
-  /setlang - Allows the user to change the language
-  /settings - Displays the user's current settings
-  /listorders - Use this command to list all your pending transactions 
-  /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
-  /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
-  /release <_order id_> - Seller releases satoshis 
-  /dispute <_order id_> - Opens a dispute between participant parties
-  /disclaimer - Displays disclaimer
-  /cancel <_order id_> - Cancel an order that has not been taken yet
-  /cancelall - Cancel all posted and untaken orders
-  /disclaimer - Shows the terms and conditions when using the bot
+  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - یک سفارش فروش ایجاد می‌کند
+  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - یک سفارش خرید ایجاد می‌کند
+  /takeorder <_order id_> - به کاربر این امکان را می‌دهد تا بدون مراجعه به کانال انتشار سفارشات، از چت با ربات سفارش را بگیرد
+  /info - اطلاعات اضافی درباره ربات را نشان می دهد
+  /showusername - در هر سفارش جدید ایجاد شده، نمایش نام‌کاربری را خاموش می کند. مقدار پیش فرض روی false تنظیم شده است(نمایش داده نمیشود)
+  /showvolume - حجم معاملات را هنگام ایجاد هر سفارش نشان می‌دهد، مقدار پیش فرض نادرست است
+  /setinvoice <_order id_> <_lightning invoice_> - این دستور به خریدار اجازه می‌دهد تا فاکتور لایتنینگ را برای دریافت ساتوشی‌ها آپدیت کند 
+  /setaddress <_lightning address / off_> - به خریدار امکان می‌دهد یک آدرس پرداخت ثابت (لایتنینگ آدرس) ایجاد کند، برای غیرفعال کردن عبارت_off_را جلو آن وارد کنید 
+  /setlang - به کاربر امکان تغییر زبان را می‌دهد
+  /settings - تنظیمات فعلی کاربر را نمایش می‌دهد
+  /listorders - از این دستور برای فهرست کردن تمام تراکنش های معلق خود استفاده کنید 
+  /listcurrencies - تمام ارزهایی را که می‌توانیم از آن‌ها استفاده کنیم، بدون نشان دادن مقدارشان به sat فهرست می‌کند 
+  /fiatsent <_order id_> - خریدار اطلاع می‌دهد که قبلاً پول فیات را برای فروشنده ارسال کرده است
+  /release <_order id_> - فروشنده ساتوشی‌ها را آزاد می‌کند 
+  /dispute <_order id_> - یک مشاجره بین طرفین شرکت کننده را آغاز می‌کند
+  /disclaimer -  موارد مربوط به سلب مسئولیت را نمایش می‌دهد
+  /cancel <_order id_> - سفارشی را که هنوز پذیرفته نشده است لغو کنید
+  /cancelall - تمام سفارشات ارسال شده و انجام نشده را لغو کنید
+  /disclaimer - شرایط و ضوابط استفاده از ربات نشان می‌دهد
 
   Nostr:
-  /setnpub <_nostr npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
-  /nostr - Shows the bot's nostr pubkey and the relays used to publish
+  /setnpub <_nostr npub_> - کلید عمومی ناستر خود را بروزرسانی کنید, این دستور تنها در /settings در حالت wizard قابل انجام است
+  /nostr - کلید عمومی ناستر ربات و رله‌های آن را نشان میدهد
 
   Communities:
-  /community - Create a new community
-  /mycomms - Shows the communities you have created
-  /mycomm <_@community_> - Enter Community Admin Wizard
-  /findcomms <_fiat code_> - Finds communities that operate with the indicated currency
-  /setcomm <_@groupOfACommunity / off_> - Set a default community or remove it with 'off'
-  /settleorder <_order id_> - Accept the seller's payment and automatically send the sats to the buyer, there must be a community by default
-  /cancelorder <_id orden_> - Cancels the order which returns the sats to the seller, there must be a community by default
-  /deldispute <_username_> <_id order_> - Deletes a dispute from the user in the community, there must be a community by default
-  /ban <_username_> - Ban a user from a community, there should be a default community
-  /unban <_username_> - Unban a user from a community, there should be a default community
+  /community - یک کامیونیتی جدید بسازید
+  /mycomms - کامیونیتی هایی که ساخته‌اید را مشاهده کنید
+  /mycomm <_@community_> - نام کامیونیتی خود را انتخاب کنید
+  /findcomms <_fiat code_> - کامیونیتی‌هایی را که با یک ارز مشخص کار میکنند پیدا کنید
+  /setcomm <_@groupOfACommunity / off_> - یک کامیونیتی را به عنوان پیش‌فرض انتخاب یا آن را با وارد کردن عبارت 'off' لغو کنید
+  /settleorder <_order id_> - پرداخت فروشنده را پذیرفته و به طور خودکار ساتوشی‌ها را برای خریدار ارسال کنید، برای این حالت باید به طور پیش فرض یک کامیونیتی را انتخاب کرده باشید
+  /cancelorder <_id orden_> - سفارشی را لغو می کند که ساتوشی‌ها را به فروشنده برمی‌گرداند، برای این حالت باید به طور پیش فرض یک انجمن وجود داشته باشد
+  /deldispute <_username_> <_id order_> - یک مشاجره را از کاربر در انجمن حذف می‌کند، برای این حالت باید به طور پیش فرض یک انجمن وجود داشته باشد
+  /ban <_username_> - استفاده کاربر را از یک انجمن ممنوع کنید، برای این حالت باید یک انجمن پیش فرض وجود داشته باشد
+  /unban <_username_> - لغو ممنوعیت استفاده یک کاربر از یک انجمن، برای این حالت باید یک انجمن پیش فرض وجود داشته باشد
 
-  /version - Shows the current version of the bot
-  /help - Help messages
-must_be_gt_or_eq: ${fieldName} Must be greater or equal to ${qty}
-you_have_been_banned: You have been banned!
-I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. Once the seller confirms the money was received, the sats should be sent to you.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that he already sent you the fiat money. Once you confirm the reception, please release funds. You will not be able to create another order until you release funds.
+  /version - ورژن فعلی ربات را نمایش می‌دهد
+  /help - پیام‌های راهنما
+must_be_gt_or_eq: فیلد ${field Name} باید بزرگتر یا مساوی ${qty} باشد
+you_have_been_banned: استفاده شما از ربات ممنوع شده است!
+I_told_seller_you_sent_fiat: 🤖 ما به @${sellerUsername} گفتم که شما وجه فیات را واریز کرده‌اید. هنگامی که فروشنده تأیید کرد که پول دریافت شده است، satها باید برای شما ارسال شود.
+buyer_told_me_that_sent_fiat: 🤖کاربر @${buyerUsername} اطلاع داده است که قبلاً وجه فیات را برایتان ارسال کرده. پس از تأیید پذیرش، لطفاً وجوه را آزاد کنید. تا زمانی که وجوه را آزاد نکنید، نمی‌توانید سفارش دیگری ایجاد کنید.
 release_order_cmd: /release
-you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven't released the sats yet. You will not be able to create new orders until you release such funds.
-user_banned: Banned user!
-user_unbanned: Unbanned user!
-user_not_found: User was not found in the database!
-parse_invoice_error: Error parsing invoice
-invalid_id: Invalid ID
-cant_take_own_order: You cannot take your own order.
-send_me_lninvoice: Please send me a lightning invoice for ${amount} sats, although to make things easier for you, I also accept invoices without a specified amount. I will make the payment of ${amount} sats.
-you_have_no_orders: You don't have active orders
+you_have_orders_waiting: 🤖 شما یک یا چند سفارش دارید که در آن خریدار به شما اطلاع داده که وجه فیات برایتان ارسال شده، اما شما هنوز ساتوشی‌های او را آزاد نکرده‌اید. تا زمانی که چنین وجوهی را آزاد نکنید، نمی‌توانید سفارش‌های جدیدی ایجاد کنید.
+user_banned: استفاده کاربر از ربات ممنوع شد!
+user_unbanned: کاربر از حالت ممنوع خارج شد!
+user_not_found: چنین کاربری در پایگاه‌داده یافت نشد!
+parse_invoice_error: خطا در تجزیه فاکتور
+invalid_id: شناسه نامعتبر
+cant_take_own_order: شما نمی توانید سفارش خود را دریافت کنید.
+send_me_lninvoice: لطفاً برای ما یک فاکتور لایتنینگ با مبلغ مشخص ${amount} sats بفرستید، (اگرچه برای سهولت کار برای شما، فاکتورها را بدون مبلغ مشخص نیز می پذیریم). ما پرداخت ${amount} را انجام خواهم داد.
+you_have_no_orders: در حال حاضر شما سفارش فعال‌ای ندارید
 not_rate_for_currency: |
-  ${fiatRateProvider} There is no exchange rate for this currency,
-  if you want to use this currency, you must indicate how many satoshis you want
-  If you woud like this currency in the listing, go to this link to place a request. 👇
+  سایت ${fiatRateProvider} هیچ نرخ تبدیلی برای این ارز ندارد،
+   اگر می خواهید از این ارز استفاده کنید، باید تعداد ساتوشی‌های مورد نظر خود را مشخص کنید
+   اگر مایل هستید این ارز به لیست اضافه شود، برای ثبت درخواست به این لینک بروید. 👇
 
   🌐 https://yadio.io/api.html
-invoice_with_incorrect_amount: the amount stated in the invoice is incorrect
-invoice_updated: 📝 Invoice has been correctly updated!
-invoice_updated_and_will_be_paid: Invoices has been correctly updated and will be paid in the next few seconds!
-invoice_already_being_paid: You have alreday send an invoice for this order and I am trying to pay it in this very right moment.
-lightning_address_saved: Lightning address has been saved
-cancel_error: This order cannot be cancelled at this moment
-cancel_success: 'You have cancelled the order ID: ${orderId}!'
-cancelall_success: You have cancelled all your published orders!
-order_cancelled_by_admin: 'Admin has cancelled the order ID: ${orderId}!'
-order_completed: 'You have completed the order ID: ${orderId}!'
-order_completed_by_admin: 'Admin has completed the order ID: ${orderId}!'
-order_cancelled_by_counterparty: 'Your counterparty cancelled the order ID: ${orderId}!'
-have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
-ok_cooperativecancel: '👍 Counterparty agreed and the order ID: ${orderId} has been cancelled'
-refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make
-init_cooperativecancel: '🕒 You have started the cancellation of the order ID: ${orderId}, your counterparty must agree on the cancellation too.'
-counterparty_wants_cooperativecancel: '😳 Your counterparty wants to cancel order ID: ${orderId}. If you agree on such cancellation, please execute the following command 👇'
-invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try ${attempts} more times in ${pendingPaymentWindow} minutes window, please check your node/wallet is online
-cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
-seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
+invoice_with_incorrect_amount: مبلغ درج شده در فاکتور اشتباه است
+invoice_updated: 📝 فاکتور به درستی آپدیت شد!
+invoice_updated_and_will_be_paid: فاکتورها به درستی آپدیت شدند و در چند ثانیه آینده پرداخت خواهد شد!
+invoice_already_being_paid: شما قبلاً یک فاکتور برای این سفارش ارسال کرده‌اید و ما سعی می‌کنیم آن را در اسرع زمان پرداخت کنیم.
+lightning_address_saved: آدرس لایتنینگ ذخیره شد
+cancel_error: این سفارش در حال حاضر قابل لغو نیست
+cancel_success: 'شما سفارش با شناسه ${orderId} را لغو کردید!'
+cancelall_success: شما تمام سفارش های منتشر شده خود را لغو کرده‌اید!
+order_cancelled_by_admin: ' ادمین کامیونیتی سفارش با شناسه  ${orderId} را لغو کرده است!'
+order_completed: 'شما سفارش با شناسه ${orderId} را تکمیل کردید!'
+order_completed_by_admin: ' ادمین کامیونیتی سفارش با شناسه  ${orderId} را تکمیل کرده است!'
+order_cancelled_by_counterparty: ' طرف مقابل شما سفارش با شناسه  ${orderId} را لغو کرده است!'
+have_to_wait_for_counterpart: 🕒 شما قبلاً این عملیات را انجام داده‌اید، باید منتظر باشید تا طرف مقابل اقدام کند
+ok_cooperativecancel: '👍 طرف مقابل موافقت کرد و سفارش با شناسه: ${orderId} لغو شد'
+refund_cooperativecancel: 💰 شما بازپرداخت پرداخت لایتنینگ خود را دریافت کرده‌اید، هیچ اقدام دیگری برای انجام دادن وجود ندارد
+init_cooperativecancel: '🕒 شما لغو سفارش با شناسه: ${orderId} را آغاز کردید، طرف مقابل شما نیز باید با درخواست لغو موافقت کند.'
+counterparty_wants_cooperativecancel: '😳 طرف مقابل شما می‌خواهد سفارش با شناسه: ${orderId} را لغو کند. اگر با چنین درخواستی موافق هستید، لطفاً دستور زیر را اجرا کنید 👇'
+invoice_payment_failed: ⛔ ما سعی کردیم satها را برای شما ارسال کنیم اما پرداخت فاکتورتان انجام نشد، در بازه ${pendingPaymentWindow} ${ttempts} بار دیگر تلاش خواهیم کرد، لطفاً بررسی کنید نود/کیف‌پول شما آنلاین باشد.
+cant_take_more_orders: ⛔ متاسفم! تا وقتی دیگران منتظر شما هستند نمی توانید سفارش دیگری بگیرید
+seller_released: 💸 فروشنده قبلا ساتوشی‌ها را آزاد کرده است، شما باید منتظر پرداخت فاکتور خود باشید.
 your_purchase_is_completed: |
-  🪙 Your satoshis purchase has been completed successfully, @${sellerUsername} has confirmed your fiat payment and I have paid your invoice, enjoy sound money!
+  🪙 خرید ساتوشی‌های شما با موفقیت انجام شد، @${sellerUsername} پرداخت فیات شما را تایید کرد و ما فاکتور شما را پرداخت کردیم، از پول سالم لذت ببرید!
 
   ⚡️🍊⚡️
-problem_getting_price: There is a problem accessing this coin's price, please try later. If the problem persists, please get in touch with an administrator.
-update_user_setting: I have modify the field ${field} to ${newState}
-lightning_address_disabled: Lightning address disabled
+problem_getting_price: در دسترسی به قیمت این ارز مشکلی وجود دارد، لطفاً بعداً امتحان کنید. اگر مشکل همچنان ادامه داشت، لطفا با یکی از ادمین‌ها تماس بگیرید.
+update_user_setting: ما فیلد ${field} را به ${newState} تغییر دادیم
+lightning_address_disabled: آدرس لایتنینگ غیرفعال است
 invalid_range_with_amount: |
-  Ranges are only available for floating rates
+  بازه‌ها فقط برای نرخ‌های شناور در دسترس هستند
 
-  Use ranges or specify the number of sats, but do not write both of them
-too_many_pending_orders: You have reached the maximum amount of orders that can be published simultaneously
-name: Name
-group: Group
-channel: Channel
-solver: Solver
-published: Published
-created: Created
-yes: Yes
-no: No
+  از بازه‌ها استفاده کنید یا تعداد satها را مشخص کنید، اما هر دوی آنها را باهم ننویسید
+too_many_pending_orders: شما به حداکثر تعداد سفارش‌هایی که می‌توان به طور همزمان منتشر کرد رسیده‌اید
+name: نام
+group: گروه
+channel: کانال
+solver: پشتیبانی
+published: منتشر شده
+created: ایجاد شده
+yes: بله
+no: خیر
 wizard_add_invoice_init: |
-  🤖 I need you to send me an invoice for ${satsAmount} satoshis that is worth ${currency} ${fiatAmount} so I can send you the money.
+  🤖 باید یک فاکتور برای ساتوشی ${satsAmount} به ارزش ${currency} ${fiatAmount} برای ما بفرستید تا بتوانیم پول را برایتان ارسال کنیم.
 
-  If you do not send the invoice within ${expirationTime} minutes the order will be cancelled
+  اگر فاکتور را ظرف ${expirationTime} دقیقه ارسال نکنید، سفارش لغو خواهد شد
 wizard_add_invoice_exit: |
-  You have exited wizard mode, you can now write down the commands and add an invoice to the order with the command /setinvoice indicating Order ID and Invoice. You may send me an invoice for ${amount} satoshis, but I also accept invoices with no amount specified:
+  شما از حالت wizard خارج شده اید، اکنون می توانید دستورات را یادداشت کرده و با دستور /setinvoice که نشان دهنده شناسه سفارش و فاکتور است، یک فاکتور به سفارش اضافه کنید. می توانید برای ما فاکتوری برای ${amount} ساتوشی بفرستید، اما ما فاکتورها را بدون مبلغ مشخص نیز می پذیریم:
 
   `/setinvoice ${orderId} `\\<lightning invoice with or without amount\\>
-wizard_community_enter_name: Pick a name for your community
-wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
-wizard_community_enter_currency: Enter the code of the fiat currency(ies) with which users can operate in this community, if there is more than one you must enter each code separated by a blank space.
+wizard_community_enter_name: نامی برای کامیونیتی خود انتخاب کنید
+wizard_community_too_long_name: این نام می‌تواند حداکثر طول ${length} کاراکتر داشته باشد.
+wizard_community_enter_currency: کد ارز(های) فیات را که کاربران می توانند با آن در این کامیونیتی فعالیت کنند، وارد کنید، اگر بیش از یک ارز وجود دارد، باید هر کد را با یک فاصله خالی از بقیه جدا کنید.
 wizard_community_enter_group: |
-  Pick an ID or a name for the group, the bot and you must be group administrators:
+  یک شناسه یا یک نام برای گروه، ربات انتخاب کنید. همچنین شما باید سرپرست گروه باشید:
 
-  i.e: @MyCommunity
+  مثال: @MyCommunity
 wizard_community_enter_order_channels: |
-  All orders of your community must be published in a telegram channel, if you indicate me only one channel both Buy and Sell orders will be published there.
+  تمامی سفارشات کامیونیتی شما باید در یک کانال تلگرامی منتشر شود، در صورتی که تنها یک کانال را به ما معرفی کنید، سفارشات خرید و فروش در آنجا منتشر می شود.
 
-  If you indicate two channels, Buy orders will be place in one and Sell orders in the other. Both you and the bot must be administrators in both channels.
+  اگر دو کانال را مشخص کنید، سفارشات خرید در یکی و سفارشات فروش در کانال دیگر انجام می شود. هم شما و هم ربات باید در هر دو کانال ادمین باشید.
 
-  Please indicate the name of the channel, or in case you want to use two chanels, indicate both names separated by a space.
+  لطفا نام کانال را ذکر کنید یا اگر می خواهید از دو کانال استفاده کنید نام هر دو را با فاصله خالی از هم جدا کنید.
 
-  i.e : @MyCommunitySell  @MyCommunityBuy
-wizard_community_one_or_two_channels: You must indicate either one or two channels
-wizard_community_enter_solvers: Now please write down the names of the users that will sort out disputes, each of them separated by a space.
-wizard_community_must_enter_names: You must add at least one name, or two separated by a space
-wizard_community_enter_solvers_channel: Indicate the ID or name of the channel that the bot must use to alert when a dispute is called, please use @ at the beginning of the channel name.
+  مثال : @MyCommunitySell  @MyCommunityBuy
+wizard_community_one_or_two_channels: شما باید یک یا دو کانال را تعیین دهید
+wizard_community_enter_solvers: اکنون لطفاً نام کاربرانی را بنویسید که اجازه دارند مشاجرات را حل کنند، هر کدام از آنها با یک فاصله خالی از هم جدا شده اند.
+wizard_community_must_enter_names: باید حداقل یک نام یا دو نام که با فاصله از هم جدا شده اند اضافه کنید
+wizard_community_enter_solvers_channel: شناسه یا نام کانالی را که ربات باید از آن برای هشدار در هنگام تماس با مناقشه استفاده کند، مشخص کنید، لطفاً از @ در ابتدای نام کانال استفاده کنید.
 wizard_community_success: |
-  Congratulations, you have created your community!
+  تبریک می گویم، شما کامیونیتی خود را ایجاد کرده‌اید!
 
-  In order for your community to remain active it must have successfully completed orders in the last ${days} days.
-wizard_community_wrong_permissions: You do not have administrator permits for this group or channel
-wizard_community_you_are_not_admin: You are not admin on ${channel}.
-wizard_community_duplicated_name: The name you entered is already in use by another community, try again with a different one.
-wizard_to_exit: /exit to exit the wizard.
-wizard_exit: You have exited wizard mode, you can now write commands
+  برای اینکه کامیونیتی شما فعال بماند، باید سفارشات خود را در ${days} روز گذشته با موفقیت تکمیل کرده باشد.
+wizard_community_wrong_permissions: شما مجوز سرپرستی برای این گروه یا کانال ندارید
+wizard_community_you_are_not_admin: شما ادمین ${channel} نیستید.
+wizard_community_duplicated_name: نامی که وارد کردید قبلاً توسط کامیونیتی دیگری استفاده شده است، با نام دیگری دوباره امتحان کنید.
+wizard_to_exit: عبارت /exit را برای خروج از حالت wizard تایپ کنید.
+wizard_exit: شما از حالت wizard خارج شده‌اید، اکنون می توانید دستورات را بنویسید
 wizard_add_fiat_amount: |
-  Please indicate the amount of ${currency} you want to ${action}.
+  لطفاً مقدار ${currency} را که می‌خواهید ${action} کنید، مشخص کنید.
 
-  Remember it must be only numbers and be between ${minAmount} and ${maxAmount}:
-wizard_add_fiat_wrong_amount: Invalid amount, input must be between ${minAmount} and ${maxAmount}, it must be only numbers.
-wizard_add_fiat_correct_amount: 'Amount: ${currency} ${fiatAmount}.'
-order_expired: This order has expired!
-cant_add_invoice: You can no longer add an invoice to this order!
+  به یاد داشته باشید که ورودی باید فقط اعداد بین ${minAmount} و ${maxAmount} باشد:
+wizard_add_fiat_wrong_amount: مقدار نامعتبر است، ورودی باید بین ${minAmount} و ${maxAmount} باشد، و فقط باید به فرمت اعداد باشد.
+wizard_add_fiat_correct_amount: 'مقدار: ${currency} ${fiatAmount}.'
+order_expired: این سفارش منقضی شده است!
+cant_add_invoice: دیگر نمی توانید فاکتوری به این سفارش اضافه کنید!
 expired_order: |
-  This order has expired without completion
+  این سفارش بدون تکمیل منقضی شده است
 
   ${detailedOrder}
 
-  @${sellerUser.username} has ${sellerUser.disputes} disputes
-  @${buyerUser.username} has ${buyerUser.disputes} disputes
+  کاربر @${sellerUser.username} به مشکل ${sellerUser.disputes} برخورده است
+  کاربر @${buyerUser.username} به مشکل ${buyerUser.disputes} برخورده است
 expired_order_to_buyer: |
-  🚨🚨🚨 This order is about to expire and must be completed or cancelled immediately, if you haven't sent the fiat money yet, you can still cancel with the /cancel command.
+  🚨🚨🚨 این سفارش در شرف منقضی شدن است و باید بلافاصله تکمیل یا لغو شود، اگر هنوز وجه فیات را ارسال نکرده‌اید، می‌توانید با دستور /cancel آن را لغو کنید.
 
-  If you sent the fiat money but the seller refuses to release the sats, you can open a dispute with the /dispute command. The hold invoice that the seller paid has an expiration time and you must resolve this order before it expires or you risk losing your money.
+  اگر وجه فیات را واریز کردید اما فروشنده از آزاد کردن satها امتناع کرد، می‌توانید با دستور /dispute یک درخواست مشاجره ایجاد کنید. فاکتور نگهداری که فروشنده پرداخت کرده دارای زمان انقضا است و شما باید این تکلیف این سفارش را تا قبل از انقضای آن مشخص کنید وگرنه ریسک از دست دادن پول خود را دارید.
 
-  If you need help, you can write to the group ${helpGroup}
+  اگر به کمک نیاز دارید، می توانید پیامتان را در گروه ${helpGroup} بنویسید.
 expired_order_to_seller: |
-  🚨🚨🚨 This order is about to expire and must be completed or cancelled immediately, if you haven't received the fiat money yet, you can still cancel with the /cancel command.
+  🚨🚨🚨 این سفارش در شرف اتمام است و باید بلافاصله تکمیل یا لغو شود، اگر هنوز پول فیات را دریافت نکرده‌اید، همچنان می‌توانید با دستور /cancel آن را لغو کنید.
 
-  If you received the fiat money please release the funds with the /release command, otherwise you are at risk of the buyer opening a dispute which will affect your reputation.
+  اگر پول فیات را دریافت کردید، لطفاً ساتوشی‌ها را با دستور /release آزاد کنید، در غیر این صورت در معرض خطر ایجاد اختلاف توسط خریدار هستید که بر اعتبار شما تأثیر می گذارد.
 
-  If you need help, you can write to the group ${helpGroup}
-didnt_add_invoice: '🤨 You have not sent the invoice to receive sats for the order ID: ${orderId}'
-buyer_havent_add_invoice: '😔 Buyer has not sent me the invoice to receive the sats for your order ID: ${orderId}, your sats were sent back to you'
-buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} took the order ID: ${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished.'
-havent_paid_invoice: '🤨 You have not paid the invoice to sell sats for the order ID: ${orderId}'
-seller_havent_paid_invoice: '😔 Seller has not paid the invoice for your purchase ID: ${orderId}, the operation was cancelled.'
-seller_havent_add_invoice_to_admin_channel: 'Seller @${username} has not paid the invoice of order ID: ${orderId} time lapse ended and the order has been published again.'
+  اگر به کمک نیاز دارید، می توانید پیامتان را در گروه ${helpGroup} بنویسید.
+didnt_add_invoice: '🤨 شما فاکتوری جهت دریافت ساتوشی‌ها برای سفارش با شناسه ${orderId}  ارسال نکرده‌اید.'
+buyer_havent_add_invoice: '😔 خریدار فاکتوری جهت دریافت ساتوشی‌ها برای سفارش به شناسه ${orderId} شما برای ما ارسال نکرده است. ساتوشی‌ها شما برای شما ارسال شد.'
+buyer_havent_add_invoice_to_admin_channel: 'خریدار @${username} سفارش با شناسه ${orderId} را گرفت، اما فاکتور را برای دریافت ساتوشی‌ها ارسال نکرد. زمان به پایان رسیده است و اکنون سفارش مجدداً در کانال منتشر میشود.'
+havent_paid_invoice: '🤨 شما فاکتوری جهت فروش ساتوشی‌ها برای سفارش با شناسه ${orderId} پرداخت نکرده‌اید.'
+seller_havent_paid_invoice: '😔 فروشنده فاکتوری جهت سفارش خرید شما با شناسه ${orderId}  پرداخت نکرده است، عملیات لغو شد.'
+seller_havent_add_invoice_to_admin_channel: 'فروشنده @${username} فاکتور سفارش با شناسه ${orderId} را پرداخت نکرده است. فرصت به پایان رسید و سفارش دوباره منتشر شد.'
 pending_payment_success_to_admin: |
-  User @${username} had a pending invoice, the payment for buying order ID: ${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
+  کاربر @${username} یک فاکتور معلق داشت، پرداخت برای خرید سفارش با شناسه ${orderId} برای ${amount} ساتوشی، در نهایت پس از ${attempts} تلاش انجام شد.
 
-  Proof of payment: ${paymentSecret}
+  اثبات پرداخت: ${paymentSecret}
 pending_payment_success: |
-  I have paid the lightning invoice for ${amount} satoshis, order ID: ${id}!
+  من فاکتور لایتنینگ ${amount} ساتوشی را پرداخت کرده ام، شناسه سفارش: ${id}!
 
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
-  🤖 I have tried to pay your invoice ${attempts} times and failed. Sometimes the Lightning Network users can't receive payments because their wallet has not enough inbound liquidity or the node is not well connected in the network. You might want to try to generate an invoice from another wallet.
+  🤖 من سعی کردم فاکتور ${ttempts} شما را پرداخت کنم و موفق نشدم. گاهی اوقات کاربران شبکه لایتنینگ نمی توانند پرداختی را دریافت کنند زیرا کیف پول آنها نقدینگی ورودی کافی ندارد یا به گره به خوبی در شبکه متصل نیست. لطفا یک فاکتور از یک کیف پول دیگر ایجاد کنید.
 pending_payment_failed_to_admin: |
-  Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
+  پرداخت فاکتور سفارش خرید ${orderId} کاربر @${username} انجام نشد.
 
   Payment attempts: ${attempts}
 selling: Selling
@@ -392,109 +394,109 @@ buying: Buying
 receive_payment: Receive payment
 pay: Pay
 is: is
-trading_volume: 'Trading volume: ${volume} sats'
-satoshis: satoshis
-by: by
-rate: Rate
-has_successful_trades: Has ${trades} successful trades
-user_age: "Has been using the bot for ${pluralize(days, 'day', 'days')}"
-price: Price
-for: For
-generic_error: An error occurred
-sats: sats
-no_capital_letters: 🤖 You are trying to execute a command with the first letter capitalized. Please write the entire command in lowercase.
-unknown_command: 😕 I do not understand. Please use /help to see the list of available commands
+trading_volume: 'حجم معاملات: ${volume} sat'
+satoshis: ساتوشی‌ها
+by: توسط
+rate: نرخ
+has_successful_trades: دارای ${trades} معاملات موفق
+user_age: "از ربات برای ${pluralize(days, 'day', 'days')} استفاده کرده است"
+price: قیمت
+for: برای
+generic_error: خطایی رخ داد
+sats: ساتوشی‌
+no_capital_letters: 🤖 شما سعی می کنید دستوری را با حرف اول بزرگ اجرا کنید. لطفا کل دستور را با حروف کوچک لاتین بنویسید.
+unknown_command: 😕 من متوجه نمی‌شوم. لطفا از /help برای دیدن لیست دستورات موجود استفاده کنید
 invoice_invalid_error: |
-  Error parsing the invoice. Please copy-paste a lightning invoice starting with 'lnbc'.
+  خطا در تجزیه فاکتور. لطفاً یک فاکتور لایتنینگ که با 'lnbc' شروع می‌شود، کپی کنید.
 
-  If you want to abort and return to the command entering mode just run /exit
-invoice_expiry_too_short_error: Invoice expiry is too short
-invoice_has_expired_error: Invoice has expired
-invoice_has_wrong_destination_error: Invoice has a wrong destination
-invoice_must_be_larger_error: Invoice must be for at least ${minInvoice} sats
-hours: hours
-minutes: minutes
-community_updated: Community successfully updated
-operation_successful: Operation successful!
-select_community: Select the community
-what_modify: What do you want to modify?
-channels: Channels
-dispute_solvers: Solvers
-no_default_community: You no longer have a community by default
-community_not_found: Community not found
-currency: Currency
-currencies: Currencies
+  اگر می‌خواهید لغو کنید و به حالت ورود به دستور بازگردید، کافیست دستور /exit را اجرا کنید
+invoice_expiry_too_short_error: انقضای فاکتور خیلی کوتاه است
+invoice_has_expired_error: فاکتور منقضی شده
+invoice_has_wrong_destination_error: فاکتور مقصد اشتباهی دارد
+invoice_must_be_larger_error: فاکتور باید حداقل برای ${minInvoice} ساتوشی باشد
+hours: ساعت
+minutes: دقیقه
+community_updated: کامیونیتی با موفقیت به روز شد
+operation_successful: عملیات با موفقیت انجام شد!
+select_community: کامیونیتی را انتخاب کنید
+what_modify: چه چیزی را می خواهید اصلاح کنید؟
+channels: کانال‌ها
+dispute_solvers: حل کننده‌ها
+no_default_community: شما دیگر به صورت پیش فرض کامیونیتی ندارید
+community_not_found: کامیونیتی پیدا نشد
+currency: ارز
+currencies: ارزها
 currency_not_supported: |
-  This currency cannot be used in this community, it is only allowed to use [${currencies}].
+  این ارز در این انجمن قابل استفاده نیست، فقط مجاز به استفاده از [${currency}] هستید.
 
-  You can leave this community executing /setcomm off
-press_to_continue: Press the button to continue
-receive: receive
-send: send
-new_dispute: ⚠️⚠️⚠️ A user has started a dispute, press the button to take it
-take_dispute: Take dispute
-not_authorized: 🤨 You are not authorized to perform this operation
-need_default_community: To perform this operation, you need to have a default community
-enter_sats_amount: Enter sats amount, enter only numbers.
-market_price: Market price
-enter_currency: 'Enter a currency by your code, eg: USD'
-choose_currency: Choose a currency
-enter_currency_amount: Enter the amount of ${currency}, enter only numbers.
-enter_premium_discount: Enter the premium(+) or discount(-) to apply to the market price.
-no_premium_or_discount: No premium or discount
-enter_payment_method: Enter the payment method
-invalid_currency: Invalid currency
-not_number: It must be a number
-not_zero: Cannot be 0 (zero)
-not_negative: Cannot be a negative number
-wizard_community_wrong_percent: The percentage must be between 0 and 100
+  شما می‌توانید این کامیونیتی در حال اجرا را با دستور /setcomm off ترک کنید
+press_to_continue: برای ادامه دکمه را فشار دهید
+receive: دریافت
+send: ارسال
+new_dispute: ⚠️⚠️⚠️ کاربری یک مشاجره را شروع کرده است، دکمه را فشار دهید تا وارد آن شوید
+take_dispute: ورود به مشاجره
+not_authorized: 🤨 شما مجاز به انجام این عملیات نیستید
+need_default_community: برای انجام این عملیات باید یک کامیونیتی پیش فرض داشته باشید
+enter_sats_amount: مقدار ساتوشی‌ها را وارد کنید، فقط اعداد را وارد کنید.
+market_price: قیمت بازار
+enter_currency: 'یک ارز را با کد خود وارد کنید، به عنوان مثال: IRT'
+choose_currency: یک ارز فیات انتخاب کنید
+enter_currency_amount: مقدار ${currency} را وارد کنید، فقط اعداد را وارد کنید.
+enter_premium_discount: حباب (+) یا تخفیف (-) را وارد کنید تا به قیمت بازار اعمال شود.
+no_premium_or_discount: بدون تخفیف یا حباب
+enter_payment_method: روش پرداخت را وارد کنید
+invalid_currency: ارز فیات نامعتبر
+not_number: باید یک عدد بنویسید
+not_zero: این قسمت نمی‌تواند عدد 0 باشد
+not_negative: این قسمت نمی‌تواند عدد منفی باشد
+wizard_community_wrong_percent: درصد باید عددی بین 0 تا 100 باشد
 wizard_community_enter_fee_percent: |
   Enter the fee:
 
-  The fee in a community is variable and is indicated as a percentage from 0 to 100. If you do not want to charge a fee, indicate 0. If you want to charge half of the maximum value, indicate 50, if you want it to have the maximum value, indicate 100.
-fee: Fee
-use_default: Use by default
-orders: Orders
-volume: Volume
-users: Users
-not_found_dispute: There is no dispute for this order
-max_allowed: The maximum allowed is ${max}
-dispute_channel: Dispute channel
-not_wizard: You are not in wizard mode at the moment, if you have doubts you can type /help
-wizard_help: You are in wizard mode, if you need to go back to command mode run /exit
+  کارمزد در یک انجمن متغیر است و به صورت درصدی از 0 تا 100 نشان داده می شود. اگر نمی خواهید هزینه ای دریافت کنید، 0 را وارد کنید. اگر می خواهید نیمی از حداکثر مقدار را بگیرید، 50 را بنویسید، و در صورتی که مایل به دریافت تمام آن هستید 100 را بنویسید.
+fee: فی
+use_default: استفاده به عنوان پیش فرض
+orders: سفارشات
+volume: حجم
+users: کاربران
+not_found_dispute: برای این سفارش مشاجره‌ای وجود ندارد
+max_allowed: حداکثر مجاز ${max} است
+dispute_channel: کانال مشاجرات
+not_wizard: شما در حال حاضر در حالت wizard نیستید، اگر شک دارید می توانید /help را تایپ کنید
+wizard_help: شما در حالت wizard هستید، اگر نیاز به بازگشت به حالت فرمان دارید، /exit را اجرا کنید
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN YOUR WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
-tap_button: Select an order to perform the operation
-tap_release: Select the order to release the funds, once you press the button, the operation cannot be reversed.
-earnings: Earnings
-premium: Premium
-discount: Discount
-premium_discount: premium/discount
-withdraw_earnings: Withdraw earnings
-invoice_expired_earnings: The invoice has expired, resubmit a withdrawal request with a new invoice.
-what_to_do: What do you want to do?
-community: Community
+tap_button: دستوری را برای انجام عملیات انتخاب کنید
+tap_release: سفارش را انتخاب کنید تا وجه را آزاد کنید، پس از فشار دادن دکمه، عملیات قابل برگشت نیست.
+earnings: درآمد
+premium: حباب
+discount: تخفیف
+premium_discount: حباب/تخفیف
+withdraw_earnings: برداشت درآمد
+invoice_expired_earnings: فاکتور منقضی شده است، با یک فاکتور جدید دوباره درخواست برداشت را ارسال کنید.
+what_to_do: میخواهید چکار کنید؟
+community: کامیونیتی
 seller_already_released: Don't worry, the seller has already released the funds 🥲
-select_language: Select language
-must_enter_text: You must enter only text
+select_language: انتخاب زبان
+must_enter_text: شما باید فقط متن را وارد کنید
 current_earnings: |
   Orders completed so far in the community: ${ordersToRedeem}
 
-  Community Earnings: ${earnings} sats
-you_dont_have_communities: You have no communities created
-users_added: 'You have added: ${users}'
-users_not_added: 'Could not add to: ${users}; please make sure these users have started the bot'
-delete_community: Delete community
-are_you_sure: Are you sure?
-no_permission: You do not have permission to perform this operation
-make_public: Make public
-make_private: Make private
-bot_kicked: bot was kicked from the chat, it must be a member and admin
-chat_not_found: Chat not found. Are you sure you added the bot to the group/channel?
-not_member: You are not a member of that chat
-upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has changed, check the chat ID again
-community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
-dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
-maintenance: 🚨 Bot in maintenance, please try again later 🚨
+  Community Earnings: ${earnings} sat
+you_dont_have_communities: شما هیچ انجمنی ایجاد نکرده‌اید
+users_added: 'شما ${users} را اضافه کرده اید'
+users_not_added: 'نمی توان ${users} را اضافه کرد. لطفا مطمئن شوید که این کاربران ربات را راه اندازی(start) کرده اند.'
+delete_community: حذف کامیونیتی
+are_you_sure: آیا از تصمیم خود اطمینان دارید؟
+no_permission: شما اجازه انجام این عملیات را ندارید
+make_public: عمومی کردن
+make_private: خصوصی کردن
+bot_kicked: ربات از چت حذف شده. ربات حتما باید عضو و ادمین باشد
+chat_not_found: چت پیدا نشد آیا مطمئن هستید که ربات را به گروه/کانال اضافه کرده اید؟
+not_member: شما عضو آن چت نیستید
+upgraded_to_supergroup: گروه به "supergroup" ارتقا یافته و آیدی آن تغییر کرده است، دوباره آیدی گروه را بررسی کنید
+community_deleted: این انجمن به دلیل عدم فعالیت حذف شد. من شما را از آن جدا کردم، دوباره سعی کنید سفارشی را ایجاد کنید
+dispute_too_soon: شما نمی توانید به این زودی مشاجره را شروع کنید، صبور باشید و چند دقیقه صبر کنید تا طرف مقابل شما پاسخ دهد
+maintenance: 🚨 ربات در حال تعمیر است، لطفاً بعداً دوباره امتحان کنید 🚨
 
 # START modules/community
 community_admin: |
@@ -516,24 +518,24 @@ community_admin_help: |
   <strong>Community Admin Mode</strong>
   # commands
 
-  /setnpub &lt;npub&gt; - Configure community's public key. Nostr events will be tagged with this public key.
-community_npub_updated: You added the community's pubkey ${npub} successfully!
+  /setnpub &lt;npub&gt; - کلید عمومی جامعه را پیکربندی کنید. رویدادهای ناستر با این کلید عمومی برچسب‌گذاری می‌شوند.
+community_npub_updated: شما کلیدعمومی انجمن ${npub} را با موفقیت اضافه کردید!
 # END modules/community
 
 # START modules/nostr
-user_npub_updated: You added your pubkey ${npub} successfully!
+user_npub_updated: شما کلیدعمومی ${npub} خود را با موفقیت اضافه کردید!
 nostr_info: |
-  npub:
+  کلیدعمومی:
   <code>${npub}</code>
 
-  hex:
+  هگز:
   <code>${publicKey}</code>
 
-  relays:
+  رله‌ها:
   ${relays}
 npub_not_valid: |
-  Not a valid <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a> npub. Please check your input.
-  Example:
+  کلیدعمومی نامعتبر <a href="https://github.com/nostr-protocol/nips/blob/master/19.md">NIP-19</a>. لطفا ورودی را چک کنید.
+  مثال:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
 
@@ -545,24 +547,24 @@ order_not_found: Order not found.
 user_settings: |
   <strong>User settings for @${user.username}</strong>
 
-  Language:
+  زبان:
     ${language.emoji} ${language.name}
-  Community:
+  کامیونیتی:
     ${community || '🛇'}
-  npub:
+  کلیدعمومی:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  لایتنینگ آدرس:
     <code>${lightning_address || '🛇'}</code>
 
   <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
+  /setnpub &lt;npub&gt; - کلید عمومی کاربر را پیکربندی کنید رویدادهای ناستر با این کلید عمومی برچسب‌گذاری می‌شوند.
   /exit - to exit the wizard.
 # END modules/user
 # check hold invoice
-invoice_settled: Invoice already settled
-invoice_cancelled: Invoice cancelled
-invoice_held: Invoice held
-invoice_no_info: I don't have information for that invoice
+invoice_settled: فاکتور قبلا تسویه شده است
+invoice_cancelled: فاکتور لغو شد
+invoice_held: فاکتور نگهداری شد
+invoice_no_info: من اطلاعاتی برای آن فاکتور ندارم
 bot_info: |
   Bot fee: ${bot_fee}
 
@@ -571,14 +573,22 @@ bot_info: |
   Node URI: `${node_uri}`
   
   Node status: ${status}
+
+  User info:
+
+  ${user_info}
+user_info: |
+  Volume traded: ${volume_traded}
+  Total rating: ${total_rating}
+  Disputes: ${disputes}
 disclaimer: |
-  *By using the P2P trade bot, you agree to the following terms and conditions:*
+  *با استفاده از ربات تجاری P2P، شما با شرایط و ضوابط زیر موافقت می کنید:*
 
-  The bot is an open-source software that is available for anyone to use, copy, modify, and run. The developers are not responsible for the actions of other individuals using the software in any manner, whether legal or illegal, honest or dishonest.
+  این ربات یک نرم‌افزار منبع باز است که برای استفاده، کپی، اصلاح و اجرا در دسترس عموم می‌باشد. توسعه دهندگان به هیچ وجه مسئولیتی در قبال اقدامات سایر افراد در استفاده از نرم افزار، اعم از قانونی یا غیرقانونی، صادقانه یا غیرصادقانه ندارند.
 
-  The bot is provided on an "as is" and "as available" basis, and the developers make no warranties of any kind, express or implied, with respect to the bot or its use.
+  ربات بر اساس "همانطور که هست" و "در صورت موجود بودن" ارائه می شود و توسعه دهندگان هیچ گونه ضمانتی صریح یا ضمنی در رابطه با ربات یا استفاده از آن ندارند.
 
-  The developers and the dispute resolvers make their best efforts to remove bad actors, frauds, and scams from using the bot, but the user recognizes that the system can be exploited and accepts full responsibility while using it.
+  توسعه‌دهندگان و حل‌کننده‌های مشاجره بهترین تلاش خود را برای حذف عوامل بد، متقلبان و کلاهبرداری‌ها از استفاده از ربات انجام می‌دهند، اما کاربر تشخیص می‌دهد که سیستم می‌تواند مورد سوء استفاده قرار گیرد و مسئولیت کامل آن را در حین استفاده می‌پذیرد.
 
-  Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
-order_frozen: You have frozen the order
+  نه توسعه‌دهندگان و نه حل‌کننده‌های اختلاف، مسئولیتی در قبال ضرر و زیان‌هایی که ممکن است کاربر در اثر استفاده از ربات متحمل شود، ندارند.
+order_frozen: شما سفارش را مسدود کردید
