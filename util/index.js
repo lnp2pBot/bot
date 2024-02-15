@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { I18n } = require('@grammyjs/i18n');
 const currencies = require('./fiat.json');
+// ISO 639-1 language codes
 const languages = require('./languages.json');
 const { Order, Community } = require('../models');
 const { logger } = require('../logger');
