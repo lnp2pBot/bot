@@ -128,4 +128,4 @@ const orderSchema = new Schema<IOrder>({
   is_frozen: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model<IOrder>('Order', orderSchema);
+export default mongoose.model<IOrder>('Order', orderSchema);
