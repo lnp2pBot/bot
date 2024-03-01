@@ -592,3 +592,4 @@ disclaimer: |
 
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
 order_frozen: You have frozen the order
+dispute_solver: 👮‍♂️ The solver @${solver} will be attending to your dispute, you can write to him/her or wait for him/her to write to you

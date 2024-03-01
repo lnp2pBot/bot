@@ -591,4 +591,5 @@ disclaimer: |
   Les développeurs et les responsables de la résolution des litiges font de leur mieux pour empêcher les mauvais acteurs, les fraudes et les escroqueries d'utiliser le bot, mais l'utilisateur reconnaît que le système peut être exploité et en accepte l'entière responsabilité lorsqu'il l'utilise.
 
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
-order_frozen : Vous avez gelé la commande
+order_frozen: Vous avez gelé la commande
+dispute_solver: 👮‍♂️ Le solveur @${solver} s'occupera de votre litige, vous pouvez lui écrire ou attendre qu'il vous écrive
