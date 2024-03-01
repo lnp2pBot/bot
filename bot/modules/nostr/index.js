@@ -26,7 +26,7 @@ exports.configure = bot => {
       await publish(event);
       return event;
     } catch (err) {
-      logger.warn(err);
+      logger.error(err);
     }
   });
   OrderEvents.onOrderTaken(order => {

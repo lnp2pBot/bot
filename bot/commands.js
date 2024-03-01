@@ -137,7 +137,7 @@ const addInvoice = async (ctx, bot, order) => {
         order.amount * 1000
       );
       if (!!laRes && !laRes.pr) {
-        logger.warn(
+        logger.error(
           `lightning address ${buyer.lightning_address} not available`
         );
         messages.unavailableLightningAddress(
