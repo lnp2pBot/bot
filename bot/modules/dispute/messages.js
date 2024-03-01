@@ -87,6 +87,20 @@ exports.disputeData = async (
       }),
       { parse_mode: 'MarkdownV2' }
     );
+    // message to both parties letting them know the dispute
+    // has been taken by a solver
+    await ctx.telegram.sendMessage(
+      buyer.tg_id,
+      ctx.i18n.t('dispute_solver', {
+        solver: solver.username,
+      })
+    );
+    await ctx.telegram.sendMessage(
+      seller.tg_id,
+      ctx.i18n.t('dispute_solver', {
+        solver: solver.username,
+      })
+    );
   } catch (error) {
     logger.error(error);
   }
