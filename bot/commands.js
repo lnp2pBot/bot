@@ -579,6 +579,9 @@ const cancelOrder = async (ctx, orderId, user) => {
       return await cancelShowHoldInvoice(ctx, order);
     }
 
+    if (order.status === 'CANCELED')
+      return await messages.orderIsAlreadyCanceledMessage(ctx);
+
     if (
       !(
         order.status === 'ACTIVE' ||

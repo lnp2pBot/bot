@@ -955,6 +955,14 @@ const badStatusOnCancelOrderMessage = async (ctx: MainContext) => {
   }
 };
 
+const orderIsAlreadyCanceledMessage = async (ctx: MainContext) => {
+  try {
+    await ctx.reply(ctx.i18n.t('already_cancelled'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const successCancelOrderMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, i18n: I18nContext) => {
   try {
     await ctx.telegram.sendMessage(
@@ -1669,6 +1677,7 @@ module.exports = {
   successCancelOrderByAdminMessage,
   successCancelOrderMessage,
   badStatusOnCancelOrderMessage,
+  orderIsAlreadyCanceledMessage,
   invoicePaymentFailedMessage,
   userCantTakeMoreThanOneWaitingOrderMessage,
   buyerReceivedSatsMessage,

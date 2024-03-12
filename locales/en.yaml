@@ -273,6 +273,7 @@ lightning_address_saved: Lightning address has been saved
 cancel_error: This order cannot be cancelled at this moment
 cancel_success: 'You have cancelled the order ID: ${orderId}!'
 cancelall_success: You have cancelled all your published orders!
+already_cancelled: The order has already been cancelled!
 order_cancelled_by_admin: 'Admin has cancelled the order ID: ${orderId}!'
 order_completed: 'You have completed the order ID: ${orderId}!'
 order_completed_by_admin: 'Admin has completed the order ID: ${orderId}!'
