@@ -966,6 +966,17 @@ const successCancelOrderMessage = async (ctx: MainContext, user: UserDocument, o
   }
 };
 
+const successCancelOrderInvoiceMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, i18n: I18nContext) => {
+  try {
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('cancel_invoice', { orderId: order._id })
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const counterPartyCancelOrderMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, i18n: I18nContext) => {
   try {
     await ctx.telegram.sendMessage(
@@ -1667,6 +1678,7 @@ module.exports = {
   successCompleteOrderMessage,
   successCancelOrderByAdminMessage,
   successCancelOrderMessage,
+  successCancelOrderInvoiceMessage,
   badStatusOnCancelOrderMessage,
   orderIsAlreadyCanceledMessage,
   invoicePaymentFailedMessage,
