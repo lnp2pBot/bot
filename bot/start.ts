@@ -403,11 +403,28 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   // pending orders are the ones that are not taken by another user
   bot.command('cancelall', userMiddleware, async (ctx: MainContext) => {
     try {
-      const orders = await ordersActions.getOrders(ctx, ctx.user, 'PENDING');
+      const pending_orders = await ordersActions.getOrders(ctx, ctx.user, 'PENDING');
+      const seller_orders = await ordersActions.getOrders(ctx, ctx.user, 'WAITING_BUYER_INVOICE');
+      const buyer_orders = await ordersActions.getOrders(ctx, ctx.user, 'WAITING_PAYMENT');
+
+      const orders = [...pending_orders, ...seller_orders, ...buyer_orders]
 
       if (!orders) return;
 
       for (const order of orders) {
+
+        // If a buyer is taking a sell offer and accidentally touch continue button we
+        // let the user to cancel
+        if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
+          return await cancelAddInvoice(ctx, order);
+        }
+
+        // If a seller is taking a buy offer and accidentally touch continue button we
+        // let the user to cancel
+        if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
+          return await cancelShowHoldInvoice(ctx, order);
+        }
+
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
