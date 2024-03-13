@@ -292,6 +292,7 @@ invoice_already_being_paid: You have alreday send an invoice for this order and 
 lightning_address_saved: Lightning address has been saved
 cancel_error: This order cannot be cancelled at this moment
 cancel_success: 'You have cancelled the order ID: ${orderId}!'
+cancel_invoice: 'Order ${orderId} has been cancelled, no need to create an invoice.'
 cancelall_success: You have cancelled all your published orders!
 already_cancelled: The order has already been cancelled!
 order_cancelled_by_admin: 'Admin has cancelled the order ID: ${orderId}!'

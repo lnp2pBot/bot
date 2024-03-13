@@ -330,7 +330,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
           );
         }
       } else {
-        await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
+        await messages.successCancelOrderInvoiceMessage(ctx, user, order, i18nCtx);
       }      
     }
   } catch (error) {
