@@ -43,17 +43,20 @@ Only if both parties cancel cooperatively the order is canceled and seller's fun
 If users have a disagreement on canceling or don't want to go forward they can start a dispute.
 
 ## Disputes
-Both parties can start a dispute at any moment, after a dispute is started a human will be notified with all the information, this human will contact both parties to evaluate the situation and take a decision.
+Both parties can start a dispute at any moment, after a dispute is started a human (aka "solver") will be notified with all the information, this solver will contact both parties to evaluate the situation and take a decision.
 
-After a user starts a dispute, both parties will have increased by **1** their own `dispute` field in database and after **2** disputes users will be banned from using the bot.
+After a user starts a dispute, both parties will have increased by **1** their own `dispute` field in database. If during a dispute it is proven that there is a malicious user, the solver can ban that user, and they will no longer be able to use the bot anymore.
 
 ## Incentive to release funds
 A seller that didn't release funds to the buyer can't open or take another order from the bot and probably will be involved in a dispute from the buyer damaging his/her reputation
 
+## Communities
+Anyone who already has or creates a Telegram group can include the [bot](https://t.me/lnp2pbot) inside to facilitate buying and selling bitcoin among its members. The group administrator will earn a commission for transactions conducted within their community, and they can also offer discounts on the fees that the bot charges within their community.
+
 # Financial Support
 **LNp2pBot** is an open source project. We are not a company, we don't do ICOs or dark business, we are just people that wants bring solutions to the people using the best open source money in the world. Our work depends on the financial collaboration of the users.
 
-To financially support further development of **LNp2pBot**, please consider support our project sending bitcoin to lightning address **lnp2pbot@getalby.com**.
+To financially support further development of **LNp2pBot**, please consider support our project sending bitcoin to lightning address **grunch@getalby.com**.
 
 # Installation
 You will need to create an `.env` file on the root dir, you can use a sample env file called `.env.sample` on the root dir, an easy way of doing this is just to copy the sample file to `.env`.
@@ -111,7 +114,7 @@ $ npm start
 $ npm test
 ```
 # Documentation
-You can find documentation in [english](https://lnp2pbot.com/learn) and [spanish](https://lnp2pbot.com/aprende).
+You can find documentation in [English](https://lnp2pbot.com/learn), [Spanish](https://lnp2pbot.com/aprende), [Portuguese](https://lnp2pbot.com/aprenda), [French](https://lnp2pbot.com/apprendre) and [Persian](https://lnp2pbot.com/farsi-doc)
 
 # Contribute
 
