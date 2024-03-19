@@ -1,6 +1,13 @@
 name: NodeJS Continuous Integration
 
-on: [push, pull_request]
+on: 
+  push:
+  pull_request:
+  workflow_dispatch:
+
+  # see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   ci_to_main:
@@ -51,7 +58,7 @@ jobs:
           mongosh --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
 
       - run: npm install @types/node @types/i18n
-      - run: tsc
+      - run: npx tsc
       - run: npm ci
       - name: Run tests
         env:
