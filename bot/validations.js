@@ -260,7 +260,7 @@ const validateBuyOrder = async ctx => {
   }
 };
 const validateLightningAddress = async lightningAddress => {
-  const pattern = /^[\w-.]+@([\w-]+.)+[\w-]{2,4}$/g;
+  const pattern = /^[\w-.]+@(?:[\w-]+(?<!-)\.)+(?:[A-Za-z]{2,63})$/;
 
   return (
     pattern.test(lightningAddress) && existLightningAddress(lightningAddress)
