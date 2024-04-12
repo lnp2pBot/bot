@@ -1,6 +1,6 @@
 require('dotenv').config();
-const path = require('path');
-const fs = require('fs');
+// const path = require('path');
+// const fs = require('fs');
 const TelegramServer = require('telegram-test-api');
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -9,7 +9,7 @@ const { User, Order } = require('../models');
 const ordersActions = require('../bot/ordersActions');
 const testUser = require('./user');
 const testOrder = require('./order');
-const { getCurrenciesWithPrice } = require('../util');
+// const { getCurrenciesWithPrice } = require('../util');
 const { connect: mongoConnect } = require('../db_connect');
 
 mongoConnect();
