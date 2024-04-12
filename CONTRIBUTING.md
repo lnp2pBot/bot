@@ -63,10 +63,6 @@ From https://chris.beams.io/posts/git-commit/#seven-rules:
 See https://github.com/blog/2144-gpg-signature-verification for background and
 https://help.github.com/articles/signing-commits-with-gpg/ for instructions.
 
-### Use an editor that supports Editorconfig
-
-The [.editorconfig](.editorconfig) settings in this repository ensure consistent management of whitespace. Most modern editors support it natively or with plugin. See http://editorconfig.org for details.
-
 ### Keep the git history clean
 
 It's very important to keep the git history clear, light and easily browsable. This means contributors must make sure their pull requests include only meaningful commits (if they are redundant or were added after a review, they should be removed) and _no merge commits_.
