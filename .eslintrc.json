@@ -12,6 +12,7 @@
   "rules": {
     "no-underscore-dangle": "off",
     "camelcase": "off",
-    "eqeqeq": "off"
+    "eqeqeq": "off",
+    "no-void": "off"
   }
 }

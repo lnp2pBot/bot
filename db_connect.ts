@@ -13,7 +13,7 @@ MONGO_URI = process.env.MONGO_URI ? process.env.MONGO_URI : MONGO_URI;
 if (!MONGO_URI) {
   throw new Error('You must provide a MongoDB URI');
 }
-logger.info(`Connecting to: ${MONGO_URI}`);
+logger.info(`Connecting to MongoDB`);
 const connect = () => {
   mongoose.connect(MONGO_URI, {
     useNewUrlParser: true,
