@@ -86,13 +86,46 @@ const validateAdmin = async (ctx, id) => {
   }
 };
 
+const processParameters = args => {
+  const correctedArgs = [];
+  let isGrouping = false;
+  let groupedString = '';
+
+  args.forEach((arg, _) => {
+    if (arg.startsWith('“') && !isGrouping) {
+      // Starts a new group, removing the incorrect quotation mark
+      groupedString = arg.substring(1);
+      isGrouping = true;
+    } else if (arg.endsWith('”') && isGrouping) {
+      // Closes the current group, removing the incorrect quotation mark and adding to the corrected array
+      groupedString += ' ' + arg.slice(0, -1);
+      correctedArgs.push(groupedString);
+      isGrouping = false;
+    } else if (isGrouping) {
+      // Continues grouping the elements
+      groupedString += ' ' + arg;
+    } else {
+      // Directly adds items that are outside a group
+      correctedArgs.push(arg);
+    }
+  });
+
+  // Handles the case when a group does not close properly
+  if (isGrouping) {
+    correctedArgs.push(groupedString);
+  }
+
+  return correctedArgs;
+};
+
 const validateSellOrder = async ctx => {
   try {
-    const args = ctx.state.command.args;
+    let args = ctx.state.command.args;
     if (args.length < 4) {
       await messages.sellOrderCorrectFormatMessage(ctx);
       return false;
     }
+    args = processParameters(args);
 
     let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
@@ -176,11 +209,13 @@ const validateSellOrder = async ctx => {
 
 const validateBuyOrder = async ctx => {
   try {
-    const args = ctx.state.command.args;
+    let args = ctx.state.command.args;
     if (args.length < 4) {
       await messages.buyOrderCorrectFormatMessage(ctx);
       return false;
     }
+    args = processParameters(args);
+
     let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
 
     if (priceMargin && isNaN(priceMargin)) {
