@@ -1,11 +1,12 @@
 const { Scenes } = require('telegraf');
-const { isValidInvoice } = require('./validations');
+const { isValidInvoice, validateLightningAddress } = require('./validations');
 const { Order, PendingPayment } = require('../models');
 const { waitPayment, addInvoice, showHoldInvoice } = require('./commands');
 const { getCurrency, getUserI18nContext } = require('../util');
 const messages = require('./messages');
 const { isPendingPayment } = require('../ln');
 const { logger } = require('../logger');
+const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
@@ -34,7 +35,6 @@ const addInvoiceWizard = new Scenes.WizardScene(
       if (ctx.message.document)
         return await ctx.reply(ctx.i18n.t('must_enter_text'));
 
-      const lnInvoice = ctx.message.text.trim();
       let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
@@ -43,9 +43,28 @@ const addInvoiceWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      const res = await isValidInvoice(ctx, lnInvoice);
-      if (!res.success) {
-        return;
+      let lnInvoice = ctx.message.text.trim();
+      const isValidLN = await validateLightningAddress(lnInvoice);
+      let res = {};
+      if (isValidLN) {
+        const laRes = await resolvLightningAddress(
+          lnInvoice,
+          order.amount * 1000
+        );
+        if (!!laRes && !laRes.pr) {
+          logger.error(
+            `lightning address ${buyer.lightning_address} not available`
+          );
+          messages.unavailableLightningAddress(ctx, bot, buyer, lnInvoice);
+
+          return;
+        } else {
+          lnInvoice = laRes.pr;
+          res.invoice = parsePaymentRequest({ request: lnInvoice });
+        }
+      } else {
+        res = await isValidInvoice(ctx, lnInvoice);
+        if (!res.success) return;
       }
 
       if (order.status === 'EXPIRED') {
@@ -90,7 +109,6 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (ctx.message.document)
         return await ctx.reply(ctx.i18n.t('must_enter_text'));
 
-      const lnInvoice = ctx.message.text.trim();
       let { buyer, order } = ctx.wizard.state;
       // We get an updated order from the DB
       order = await Order.findOne({ _id: order._id });
@@ -99,9 +117,28 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      const res = await isValidInvoice(ctx, lnInvoice);
-      if (!res.success) {
-        return;
+      let lnInvoice = ctx.message.text.trim();
+      const isValidLN = await validateLightningAddress(lnInvoice);
+      let res = {};
+      if (isValidLN) {
+        const laRes = await resolvLightningAddress(
+          lnInvoice,
+          order.amount * 1000
+        );
+        if (!!laRes && !laRes.pr) {
+          logger.error(
+            `lightning address ${buyer.lightning_address} not available`
+          );
+          messages.unavailableLightningAddress(ctx, bot, buyer, lnInvoice);
+
+          return;
+        } else {
+          lnInvoice = laRes.pr;
+          res.invoice = parsePaymentRequest({ request: lnInvoice });
+        }
+      } else {
+        res = await isValidInvoice(ctx, lnInvoice);
+        if (!res.success) return;
       }
 
       if (!!res.invoice.tokens && res.invoice.tokens !== order.amount)
