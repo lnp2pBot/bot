@@ -36,8 +36,8 @@ const existLightningAddress = async address => {
   const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
   try {
-    const lnAddressRes = (await axios.get(lnAddressQuery)).data;
-    if (lnAddressRes.tag !== 'payRequest') {
+    const lnAddressRes = await axios.get(lnAddressQuery, { timeout: 3000 });
+    if (lnAddressRes.data.tag !== 'payRequest') {
       logger.info('Invalid response from LNURL');
       return false;
     }

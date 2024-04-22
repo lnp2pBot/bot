@@ -1,4 +1,5 @@
 const { Scenes } = require('telegraf');
+const { parsePaymentRequest } = require('invoices');
 const { isValidInvoice, validateLightningAddress } = require('./validations');
 const { Order, PendingPayment } = require('../models');
 const { waitPayment, addInvoice, showHoldInvoice } = require('./commands');
@@ -51,17 +52,8 @@ const addInvoiceWizard = new Scenes.WizardScene(
           lnInvoice,
           order.amount * 1000
         );
-        if (!!laRes && !laRes.pr) {
-          logger.error(
-            `lightning address ${buyer.lightning_address} not available`
-          );
-          messages.unavailableLightningAddress(ctx, bot, buyer, lnInvoice);
-
-          return;
-        } else {
-          lnInvoice = laRes.pr;
-          res.invoice = parsePaymentRequest({ request: lnInvoice });
-        }
+        lnInvoice = laRes.pr;
+        res.invoice = parsePaymentRequest({ request: lnInvoice });
       } else {
         res = await isValidInvoice(ctx, lnInvoice);
         if (!res.success) return;
@@ -125,17 +117,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
           lnInvoice,
           order.amount * 1000
         );
-        if (!!laRes && !laRes.pr) {
-          logger.error(
-            `lightning address ${buyer.lightning_address} not available`
-          );
-          messages.unavailableLightningAddress(ctx, bot, buyer, lnInvoice);
-
-          return;
-        } else {
-          lnInvoice = laRes.pr;
-          res.invoice = parsePaymentRequest({ request: lnInvoice });
-        }
+        lnInvoice = laRes.pr;
+        res.invoice = parsePaymentRequest({ request: lnInvoice });
       } else {
         res = await isValidInvoice(ctx, lnInvoice);
         if (!res.success) return;

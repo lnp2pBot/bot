@@ -140,12 +140,13 @@ const addInvoice = async (ctx, bot, order) => {
         logger.error(
           `lightning address ${buyer.lightning_address} not available`
         );
-        messages.unavailableLightningAddress(
-          ctx,
-          bot,
-          buyer,
-          buyer.lightning_address
+        await bot.telegram.sendMessage(
+          buyer.tg_id,
+          ctx.i18n.t('unavailable_lightning_address', {
+            la: buyer.lightning_address,
+          })
         );
+
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
           order,
           seller,
