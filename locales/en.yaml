@@ -92,8 +92,7 @@ min_expiration_time: Time expiration for the invoice should be of at least ${exp
 invoice_expired: The invoice has expired
 invoice_expired_long: |
   The invoice has expired. You can use the following command to send me a new invoice to receive the satoshis 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Lightning Invoice\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: Invoice needs a receiver address
 invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
@@ -214,7 +213,7 @@ help: |
   /info - Shows additional info about the bot
   /showusername - Toggles off the username display in each new order created. Default value is set to false
   /showvolume - Shows trade volume when each order is created, default value is false
-  /setinvoice <_order id_> <_lightning invoice_> - This command allows the buyer to update the lightning invoice where to receive the sats 
+  /setinvoice - This command allows the buyer to update the lightning invoice where to receive the sats 
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
@@ -313,7 +312,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   You have exited wizard mode, you can now write down the commands and add an invoice to the order with the command /setinvoice indicating Order ID and Invoice. You may send me an invoice for ${amount} satoshis, but I also accept invoices with no amount specified:
 
-  `/setinvoice ${orderId} `\\<lightning invoice with or without amount\\>
+  /setinvoice
 wizard_community_enter_name: Pick a name for your community
 wizard_community_too_long_name: The name can have a maximum length of ${length} characters.
 wizard_community_enter_currency: Enter the code of the fiat currency(ies) with which users can operate in this community, if there is more than one you must enter each code separated by a blank space.
@@ -593,3 +592,4 @@ disclaimer: |
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
 order_frozen: You have frozen the order
 dispute_solver: 👮‍♂️ The solver @${solver} will be attending to your dispute, you can write to him/her or wait for him/her to write to you
+setinvoice_no_response: You have no orders to be paid

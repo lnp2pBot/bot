@@ -90,8 +90,7 @@ min_expiration_time: El tiempo de expiración de la factura debe ser de al menos
 invoice_expired: La factura ha expirado
 invoice_expired_long: |
   La factura ha expirado. Si deseas puedes enviarme una nueva factura para recibir los satoshis con el comando 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<factura lightning\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: La factura necesita una dirección destino
 invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
@@ -212,7 +211,7 @@ help: |
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)
   /showvolume - Permite mostrar el volumen de comercio en cada nueva orden creada, el valor predeterminado es no (falso)
-  /setinvoice <_id orden_> <_factura lightning_> - Le permite al comprador actualizar la factura lightning en la que recibirá sats
+  /setinvoice - Le permite al comprador actualizar la factura lightning en la que recibirá sats
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
   /setlang - Le permite al usuario cambiar el idioma
   /settings - Muestra la configuración actual del usuario
@@ -314,7 +313,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Has salido del modo asistente, ahora puedes escribir comandos, aún puedes ingresar una factura a la orden con el comando /setinvoice indicando Id de orden y factura, puedes enviarme una factura con un monto de ${amount} satoshis, pero tambien acepto facturas sin monto:
 
-  /setinvoice ${orderId} \\<factura lightning con o sin monto\\>
+  /setinvoice
 wizard_community_enter_name: Ingresa el nombre de tu comunidad
 wizard_community_too_long_name: El nombre debe tener un máximo de ${length} caracteres.
 wizard_community_enter_currency: Ingresa el código de la(s) moneda(s) fiat con las que los usuarios podrán operar en esta comunidad, si hay más de una debes ingresar cada código separado por un espacio en blanco.
@@ -595,3 +594,4 @@ disclaimer: |
   Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir como resultado del uso del bot.
 order_frozen: Has congelado la orden
 dispute_solver: 👮‍♂️ El solver @${solver} estará atendiendo tu disputa, puedes escribirle o esperar que te escriba
+setinvoice_no_response: No tienes ordenes a ser pagadas

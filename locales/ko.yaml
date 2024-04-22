@@ -91,8 +91,7 @@ min_expiration_time: 인보이스의 초과 시간은 최소 ${expirationTime} �
 invoice_expired: 인보이스가 만료되었습니다.
 invoice_expired_long: |
   라이트닝 인보이스가 만료되었습니다. 다음 명령어를 입력하여 비트코인을 받을 새로운 인보이스를 봇에게 보낼 수 있습니다 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<라이트닝 인보이스\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: 인보이스는 수신자의 주소를 필요로 합니다.
 invoice_require_hash: 인보이스에는 해쉬 값이 포함되어야 합니다.
 order_id_invalid: 주문 ID가 유효하지 않습니다.
@@ -213,7 +212,7 @@ help: |
   /info - 봇에 대한 추가적인 정보를 보여줍니다.
   /showusername - 새로운 주문이 생성될 때마다 사용자명을 표시할지 여부를 설정합니다. 기본값은 false입니다.
   /showvolume - 새로운 주문이 생성될 때마다 누적 거래량을 보여줄지 여부를 설정합니다. 기본값은 false입니다.
-  /setinvoice <_주문 ID_> <_라이트닝 인보이스_> - 이 명령어는 구매자가 비트코인을 받을 라이트닝 인보이스를 업데이트할 수 있게 해 줍니다.
+  /setinvoice - 이 명령어는 구매자가 비트코인을 받을 라이트닝 인보이스를 업데이트할 수 있게 해 줍니다.
   /setaddress <_라이트닝 주소 / off_> - 구매자가 정적인 결제 주소 (라이트닝 주소)를 설정할 수 있게 해 줍니다. 주소 대신 _off_를 넣으면 비활성화됩니다.
   /setlang - 사용자 언어를 변경합니다.
   /settings - 사용자의 현재 설정을 표시합니다.
@@ -309,7 +308,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   설정 메뉴에서 나오셨습니다. 이제 일반 명령어를 적으실 수 있으며, 주문 ID와 인보이스를 명시하여 /setinvoice 명령어를 통해 새로운 인보이스를 주문에 추가할 수 있습니다. ${amount} 사토시가 명시된 인보이스를 보내주시거나, 액수를 명시하지 않은 인보이스를 보내주실 수 있습니다:
 
-  `/setinvoice ${orderId} `\\<액수가 명시되거나 명시되지 않은 라이트닝 인보이스\\>
+  /setinvoice
 wizard_community_enter_name: 당신의 커뮤니티 이름을 정해주세요.
 wizard_community_too_long_name: 커뮤니티 이름은 ${length} 글자 내에서 지어야 합니다.
 wizard_community_enter_currency: 커뮤니티 안에서 사용자들이 사용할 법정화폐의 코드(들)를 입력해주세요. 하나 이상일 경우, 스페이스로 구분해 주셔야 합니다.
@@ -589,3 +588,4 @@ disclaimer: |
 
   개발자나 분쟁 해소자 모두 봇을 사용하는 사용자들이 겪는 어떠한 손실이나 손해에 대한 어떠한 책임을 지지 않습니다.
 dispute_solver: 👮‍♂️ 해결사 @${solver}가 귀하의 분쟁에 참석할 것입니다. 그/그녀에게 편지를 보내거나 그/그녀가 당신에게 편지를 보낼 때까지 기다릴 수 있습니다.
+setinvoice_no_response: 결제할 주문이 없습니다.

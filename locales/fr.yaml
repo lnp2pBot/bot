@@ -92,8 +92,7 @@ min_expiration_time: Le délai d'expiration de la facture devrait être au minim
 invoice_expired: La facture a expiré
 invoice_expired_long: |
   La facture a expiré. Tu peux utiliser la commande ci-dessous pour m'envoyer une nouvelle facture sur laquelle recevoir les satoshis 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Facture Lightning\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: La facture doit inclure l'adresse du bénéficiaire
 invoice_require_hash: La facture a besoin d'un hash
 order_id_invalid: ID de facture invalide
@@ -214,7 +213,7 @@ help: |
   /info - Affiche des informations additionnelles à propos du bot
   /showusername - Désactive l'affichage du nom d'utilisateur dans chaque offre nouvellement créée. La valeur par défaut est définie sur false
   /showvolume - Affiche le volume de transactions dans chaque offre nouvellement créée, la valeur par défaut est false
-  /setinvoice <_ID d'offre_> <_facture lightning_> - Cette commande permet à l'acheteur d'actualiser la facture lightning pour recevoir les sats 
+  /setinvoice - Cette commande permet à l'acheteur d'actualiser la facture lightning pour recevoir les sats 
   /setaddress <_addresse lightning / off_> - Permet à l'acheteur de définir une adresse de paiement statique (adresse lightning), _off_ pour désactiver 
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
@@ -313,7 +312,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Vous avez quitté le mode assistant, vous pouvez maintenant écrire les commandes et ajouter une facture à l'offre avec la commande /setinvoice indiquant l'ID de la commande et la facture. Vous pouvez m'envoyer une facture de ${amount} satoshis, mais j'accepte également les factures sans montant spécifié :
 
-  `/setinvoice ${orderId} `\\<facture Lightning avec ou sans montant\\>
+  /setinvoice
 wizard_community_enter_name: Choisissez un nom pour votre communauté
 wizard_community_too_long_name: Le nom doit avoir une longueur maximale de ${length} caractères.
 wizard_community_enter_currency: Saisissez le code de la ou des monnaies FIAT avec lesquelles les utilisateurs peuvent opérer dans cette communauté. S'il y en a plusieurs, vous devez saisir chaque code en le séparant par un espace.
@@ -593,3 +592,4 @@ disclaimer: |
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
 order_frozen: Vous avez gelé la commande
 dispute_solver: 👮‍♂️ Le solveur @${solver} s'occupera de votre litige, vous pouvez lui écrire ou attendre qu'il vous écrive
+setinvoice_no_response : Vous n'avez pas d'ordre à payer

@@ -90,8 +90,7 @@ min_expiration_time: Die Ablaufzeit für die LN-Rechnung muss mindestens ${expir
 invoice_expired: Die LN-Rechnung ist abgelaufen
 invoice_expired_long: |
   Die LN-Rechnung ist abgelaufen. Du kannst mir mit folgendem Befehl eine neue LN-Rechnung schicken, um die sats zu erhalten 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Lightning Invoice\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: Die LN-Rechnung braucht eine Empfängeradresse
 invoice_require_hash: LN-Rechnung braucht einen Hash
 order_id_invalid: Ungültige Auftrags-ID
@@ -212,7 +211,7 @@ help: |
   /info - Zeigt zusätzliche Informationen über das Bot an
   /showusername - Schaltet die Anzeige des Benutzernamens in jedem neu erstellten Auftrag aus. Der Standardwert ist *nein* (false)
   /showvolume - zeigt das Handelsvolumen an, wenn eine Auftrag erstellt wird, Standardwert ist *nein* (false)
-  /setinvoice <_order id_> <_lightning LN-Rechnung_> - Mit diesem Befehl kann der Käufer die Ligthning-Rechnung aktualisieren, mit welcher er die Sats empfangen will 
+  /setinvoice - Mit diesem Befehl kann der Käufer die Ligthning-Rechnung aktualisieren, mit welcher er die Sats empfangen will 
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
@@ -311,7 +310,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Du hast den Assistentenmodus verlassen, du kannst die Befehle aufschreiben. Du kannst immer noch eine LN-Rechnung zum Auftrag hinzufügen mit dem Befehl /setinvoice, der die Auftrags\-ID und die LN-Rechnung angibt, du kannst mir eine LN-Rechnung über ${Betrag} Sats schicken, aber ich akzeptiere auch LN-Rechnungen ohne Betrag:
 
-  `/setinvoice ${orderId} `\\<Lightning LN-Rechnung mit oder ohne Betrag\\>
+  /setinvoice
 wizard_community_enter_name: Wähle einen Namen für deine Community
 wizard_community_too_long_name: Der Name kann eine maximale Länge von ${length} Zeichen haben.
 wizard_community_enter_currency: Gib den Code der FIAT-Währung(en) ein, welche die Nutzer dieser Community verwenden können. Gibt es mehr als einen, musst du jeden Code durch ein Leerzeichen getrennt eingeben.
@@ -593,3 +592,4 @@ disclaimer: |
   Weder die Entwickler noch die Streitschlichter sind für Verluste oder Schäden verantwortlich, die dem Benutzer durch die Nutzung des Bots entstehen können.
 order_frozen: Sie haben die Bestellung eingefroren
 dispute_solver: 👮‍♂️ Der Solver @${solver} kümmert sich um Ihren Streit. Sie können ihm/ihr schreiben oder darauf warten, dass er/sie Ihnen schreibt
+setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
