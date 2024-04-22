@@ -35,6 +35,7 @@ const {
   addInvoice,
   cancelShowHoldInvoice,
   showHoldInvoice,
+  waitPayment,
   addInvoicePHI,
   cancelOrder,
   fiatSent,
@@ -44,6 +45,7 @@ const {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
+  isPendingPayment,
   subscribeInvoice,
   getInvoice,
 } = require('../ln');
@@ -51,6 +53,7 @@ const {
   validateUser,
   validateParams,
   validateObjectId,
+  validateInvoice,
   validateLightningAddress,
 } = require('./validations');
 const messages = require('./messages');
