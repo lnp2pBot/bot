@@ -90,8 +90,7 @@ min_expiration_time: La validità della invoice deve essere di almeno ${expirati
 invoice_expired: Invoice scaduta
 invoice_expired_long: |
   La invoice è scaduta. Èpossibile utilizzare il seguente comando per inviare una nuova invoice in modo da ricevere i satoshi 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Lightning Invoice\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: La invoice necessita di un indirizzo del destinatario
 invoice_require_hash: La invoice necessita un hash
 order_id_invalid: IOrder ID non valido
@@ -212,7 +211,7 @@ help: |
   /info - Mostra indo aggiuntive sul Bot
   /showusername - Disattiva la visualizzazione del nome utente in ogni nuovo ordine creato. Il valore predefinito è settato su no (false)
   /showvolume - mostra il volume degli scambi quando ogni ordine viene creato; il valore predefinito è *no* (false)
-  /setinvoice <_order id_> <_lightning invoice_> - Questo comando consente all'acquirente di aggiornare la invoice LN su cui ricevere i sats 
+  /setinvoice - Questo comando consente all'acquirente di aggiornare la invoice LN su cui ricevere i sats 
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
@@ -310,7 +309,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Sei uscito dalla modalità wizard, ora dovrai segnarti i comandi, ma puoi comunque aggiungere una invoice all'ordine con il comando  /setinvoice indicando l'ID dell'ordine e la invoice, puoi inviarmi una richiesta di pagamento pari a ${amount} satoshi, ma accetto anche fatture senza importo:
 
-  `/setinvoice ${orderId} `\\<Invoice LN con o senza importo\\>
+  /setinvoice
 wizard_community_enter_name: Scegli un nome per la community
 wizard_community_too_long_name: Il nome può avere una lunghezza massima di ${length} caratteri.
 wizard_community_enter_currency: Inserisci il fiat-code della valuta o le valute con cui gli utenti possono operare in questa community; se ce n'è più di una, è necessario inserire ogni codice separato da uno spazio vuoto.
@@ -590,3 +589,4 @@ disclaimer: |
   Né gli sviluppatori né i risolutori di controversie sono responsabili di eventuali perdite o danni che l'utente potrebbe subire a causa dell'utilizzo del bot.
 order_frozen: hai congelato l'ordine
 dispute_solver: 👮‍♂️ Il solver @${solver} si occuperà della tua controversia, puoi scrivergli/le o aspettare che ti scriva
+setinvoice_no_response: Non ci sono ordini da pagare.

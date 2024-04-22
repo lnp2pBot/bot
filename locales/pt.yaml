@@ -89,8 +89,7 @@ min_expiration_time: A expiração do tempo para a fatura deve ser de pelo menos
 invoice_expired: Fatura expirou
 invoice_expired_long: |
   Fatura expirou. Você pode usar o seguinte comando para me enviar uma nova fatura para receber os satoshis 👇
-setinvoice_cmd_order: |
-  /setinvoice ${orderId} \\<Lightning Invoice\\>
+setinvoice_cmd_order: /setinvoice
 invoice_require_destination: Fatura precisa de um endereço de receptor
 invoice_require_hash: Fatura precisa de um hash
 order_id_invalid: ID do pedido inválido
@@ -211,7 +210,7 @@ help: |
   /info - Mostra informações sobre o bot
   /showusername - Permite mostrar ou ocultar o nome de usuário em cada novo pedido criado, o valor padrão é não (falso)
   /showvolume - Permite mostrar o volume de negócios em cada novo pedido criado, o padrão é não (falso)
-  /setinvoice <ID do pedido> <Fatura Lightning> - Permite que o comprador atualize a fatura Lightning na qual receberá sats
+  /setinvoice - Permite que o comprador atualize a fatura Lightning na qual receberá sats
   /setaddress <lightning address / off> - Permite que o comprador indique um endereço de pagamento estático (lightning address), off para desativá-lo
   /setlang - Permite que o usuário altere o idioma
   /settings - Exibe as configurações atuais do usuário
@@ -310,7 +309,7 @@ wizard_add_invoice_init: |
 wizard_add_invoice_exit: |
   Você sai do modo assistente, você pode saber escrever os comandos, ainda pode adicionar uma fatura ao pedido com o comand /setinvoice Indicando o ID do pedido e a fatura, você pode me enviar uma fatura para ${amount} satoshis, mas também aceitarei faturas sem quantidade:
 
-  `/setinvoice ${orderId} `\\<fatura lightning com ou sem quantidade\\>
+  /setinvoice
 wizard_community_enter_name: Escolha um nome para sua comunidade
 wizard_community_too_long_name: O nome pode ter um comprimento máximo de ${length} caracteres.
 wizard_community_enter_currency: Digite o código da moeda(s) fiduciária com a qual os usuários podem operar nesta comunidade, se houver mais de um, você deve inserir cada código separado por um espaço em branco.
@@ -590,3 +589,4 @@ disclaimer: |
   Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
 order_frozen: Você congelou o pedido
 disputa_solver: 👮‍♂️ O solver @${solver} cuidará da sua disputa, você pode escrever para ele ou esperar que ele escreva para você
+setinvoice_no_response: Você não tem ordens a serem pagas

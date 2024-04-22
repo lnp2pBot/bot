@@ -83,6 +83,7 @@ interface OrderQuery {
 
 const askForConfirmation = async (user: UserDocument, command: string) => {
   try {
+    let orders = [];
     if (command === '/cancel') {
       const where: FilterQuery<OrderQuery> = {
         $and: [
@@ -97,14 +98,12 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
           },
         ]
       };
-      const orders = await Order.find(where);
-      return orders;
+      orders = await Order.find(where);
     } else if (command === '/fiatsent') {
       const where: FilterQuery<OrderQuery> = {
         $and: [{ buyer_id: user._id }, { status: 'ACTIVE' }]
       };
-      const orders = await Order.find(where);
-      return orders;
+      orders = await Order.find(where);
     } else if (command === '/release') {
       const where: FilterQuery<OrderQuery> = {
         $and: [
@@ -118,11 +117,18 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
           },
         ]
       };
-      const orders = await Order.find(where);
-      return orders;
+      orders = await Order.find(where);
+    } else if (command === '/setinvoice') {
+      const where: FilterQuery<OrderQuery> = {
+        $and: [
+          { buyer_id: user._id },
+          { status: 'PAID_HOLD_INVOICE' },
+        ]
+      };
+      orders = await Order.find(where);
     }
 
-    return [];
+    return orders;
   } catch (error) {
     logger.error(error);
   }
@@ -689,75 +695,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   // Only buyers can use this command
   bot.command('setinvoice', userMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId, lnInvoice] = await validateParams(
-        ctx,
-        3,
-        '\\<_order id_\\> \\<_lightning invoice_\\>'
-      );
+      const command = '/setinvoice';
+      const orders = await askForConfirmation(ctx.user, command);
+      if (!orders.length) return await ctx.reply(ctx.i18n.t('setinvoice_no_response'));
 
-      if (!orderId) return;
-      if (!(await validateObjectId(ctx, orderId))) return;
-      const invoice = await validateInvoice(ctx, lnInvoice);
-      if (!invoice) return;
-      const order = await Order.findOne({
-        _id: orderId,
-        buyer_id: ctx.user.id,
-      });
-      if (!order) return await messages.notActiveOrderMessage(ctx);
-      // We check if the old payment is on flight
-      const isPendingOldPayment = await isPendingPayment(order.buyer_invoice);
-
-      // We check if this new payment is on flight
-      const isPending = await isPendingPayment(lnInvoice);
-
-      // If one of the payments is on flight we don't do anything
-      if (isPending || isPendingOldPayment) {
-        logger.info(
-          `Buyer Id: ${order.buyer_id} is trying to add a new invoice when have a pending payment on Order id: ${order._id}`
-        );
-        return await messages.invoiceAlreadyUpdatedMessage(ctx);
-      }
-      if (order.status === 'SUCCESS')
-        return await messages.successCompleteOrderMessage(ctx, order);
-
-      if (invoice.tokens && invoice.tokens !== order.amount)
-        return await messages.incorrectAmountInvoiceMessage(ctx);
-
-      order.buyer_invoice = lnInvoice;
-      // When a seller release funds but the buyer didn't get the invoice paid
-      if (order.status === 'PAID_HOLD_INVOICE') {
-        const isScheduled = await PendingPayment.findOne({
-          order_id: order._id,
-          attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
-          is_invoice_expired: false,
-        });
-
-        if (isScheduled)
-          return await messages.invoiceAlreadyUpdatedMessage(ctx);
-
-        if (!order.paid_hold_buyer_invoice_updated) {
-          order.paid_hold_buyer_invoice_updated = true;
-          const pp = new PendingPayment({
-            amount: order.amount,
-            payment_request: lnInvoice,
-            user_id: ctx.user.id,
-            description: order.description,
-            hash: order.hash,
-            order_id: order._id,
-          });
-          await pp.save();
-          await messages.invoiceUpdatedPaymentWillBeSendMessage(ctx);
-        } else {
-          await messages.invoiceAlreadyUpdatedMessage(ctx);
-        }
-      } else if (order.status === 'WAITING_BUYER_INVOICE') {
-        const seller = await User.findOne({ _id: order.seller_id });
-        await waitPayment(ctx, bot, ctx.user, seller, order, lnInvoice);
-      } else {
-        await messages.invoiceUpdatedMessage(ctx);
-      }
-
-      await order.save();
+      return await messages.showConfirmationButtons(ctx, orders, command);
     } catch (error) {
       logger.error(error);
     }
@@ -792,6 +734,14 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
+    await addInvoicePHI(ctx, bot, ctx.match[1]);
+  });
+
+  bot.action(/^setinvoice_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+    if (ctx.match === null) {
+      throw new Error("ctx.match should not be null");
+    }
+    ctx.deleteMessage();
     await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
