@@ -710,17 +710,6 @@ const invalidLightningAddress = async (ctx: MainContext) => {
   }
 };
 
-const unavailableLightningAddress = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, la: string) => {
-  try {
-    await bot.telegram.sendMessage(
-      user.tg_id,
-      ctx.i18n.t('unavailable_lightning_address', { la })
-    );
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 const helpMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('help'), { parse_mode: 'Markdown' });
@@ -1650,7 +1639,6 @@ module.exports = {
   checkOrderMessage,
   mustBeValidCurrency,
   mustBeANumberOrRange,
-  unavailableLightningAddress,
   invalidLightningAddress,
   helpMessage,
   disclaimerMessage,
