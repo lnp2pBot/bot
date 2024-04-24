@@ -593,3 +593,4 @@ disclaimer: |
 order_frozen: Vous avez gelé la commande
 dispute_solver: 👮‍♂️ Le solveur @${solver} s'occupera de votre litige, vous pouvez lui écrire ou attendre qu'il vous écrive
 setinvoice_no_response : Vous n'avez pas d'ordre à payer
+already_cancelled: L'offre a déjà été annulée !

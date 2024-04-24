@@ -593,3 +593,4 @@ disclaimer: |
 order_frozen: Sie haben die Bestellung eingefroren
 dispute_solver: 👮‍♂️ Der Solver @${solver} kümmert sich um Ihren Streit. Sie können ihm/ihr schreiben oder darauf warten, dass er/sie Ihnen schreibt
 setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
+already_cancelled: Die Bestellung wurde bereits storniert!
