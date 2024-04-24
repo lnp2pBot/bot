@@ -15,7 +15,9 @@ const validateUser = async (ctx, start) => {
       : ctx.update.message.from;
     // We need to make sure the user has a username
     if (!tgUser.username) {
-      return await messages.nonHandleErrorMessage(ctx);
+      await ctx.telegram.sendMessage(tgUser.id, ctx.i18n.t('non_handle_error'));
+
+      return false;
     }
     let user = await User.findOne({ tg_id: tgUser.id });
 

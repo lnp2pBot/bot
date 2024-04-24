@@ -198,10 +198,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         throw new Error(ctxUpdateAssertMsg);
       }
       const tgUser = ctx.update.message.from;
-      if (!tgUser.username) return await messages.nonHandleErrorMessage(ctx);
 
-      messages.startMessage(ctx);
-      await validateUser(ctx, true);
+      await messages.startMessage(ctx);
     } catch (error) {
       logger.error(error);
     }
