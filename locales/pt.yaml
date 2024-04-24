@@ -590,3 +590,4 @@ disclaimer: |
 order_frozen: Você congelou o pedido
 disputa_solver: 👮‍♂️ O solver @${solver} cuidará da sua disputa, você pode escrever para ele ou esperar que ele escreva para você
 setinvoice_no_response: Você não tem ordens a serem pagas
+already_cancelled: A oferta já foi cancelada!
