@@ -3,6 +3,7 @@ const { cancelShowHoldInvoice, cancelAddInvoice } = require('../bot/commands');
 const messages = require('../bot/messages');
 const { getUserI18nContext, holdInvoiceExpirationInSecs } = require('../util');
 const { logger } = require('../logger');
+const OrderEvents = require('../bot/modules/events/orders');
 
 const cancelOrders = async bot => {
   try {
@@ -97,6 +98,7 @@ const cancelOrders = async bot => {
     for (const order of expiredOrders) {
       order.status = 'EXPIRED';
       await order.save();
+      OrderEvents.orderUpdated(order);
       logger.info(`Order Id ${order.id} expired!`);
     }
   } catch (error) {

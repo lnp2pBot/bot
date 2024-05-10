@@ -9,6 +9,7 @@ const lnd = require('./connect');
 const { handleReputationItems, getUserI18nContext } = require('../util');
 const messages = require('../bot/messages');
 const { logger } = require('../logger');
+const OrderEvents = require('../bot/modules/events/orders');
 
 const payRequest = async ({ request, amount }) => {
   try {
@@ -74,6 +75,7 @@ const payToBuyer = async (bot, order) => {
       order.routing_fee = payment.fee;
 
       await order.save();
+      OrderEvents.orderUpdated(order);
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(
         bot,

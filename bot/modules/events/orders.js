@@ -3,7 +3,7 @@ const Events = require('./index');
 
 const TYPES = (exports.TYPES = {
   ORDER_CREATED: 'ORDER_CREATED',
-  ORDER_TAKEN: 'ORDER_TAKEN',
+  ORDER_UPDATED: 'ORDER_UPDATED',
 });
 
 exports.orderCreated = order => {
@@ -14,10 +14,10 @@ exports.orderCreated = order => {
 };
 exports.onOrderCreated = fn => Events.subscribe(TYPES.ORDER_CREATED, fn);
 
-exports.orderTaken = order => {
+exports.orderUpdated = order => {
   Events.dispatch({
-    type: TYPES.ORDER_TAKEN,
+    type: TYPES.ORDER_UPDATED,
     payload: order,
   });
 };
-exports.onOrderTaken = fn => Events.subscribe(TYPES.ORDER_TAKEN, fn);
+exports.onOrderUpdated = fn => Events.subscribe(TYPES.ORDER_UPDATED, fn);

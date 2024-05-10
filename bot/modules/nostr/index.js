@@ -1,8 +1,7 @@
-// @ts-check
 require('websocket-polyfill');
 const { logger } = require('../../../logger');
 const Config = require('./config');
-const { orderCreated } = require('./events');
+const { createOrderEvent } = require('./events');
 const Commands = require('./commands');
 
 exports.configure = bot => {
@@ -20,25 +19,17 @@ exports.configure = bot => {
   });
 
   const OrderEvents = require('../events/orders');
-  OrderEvents.onOrderCreated(async order => {
+
+  OrderEvents.onOrderUpdated(async order => {
     try {
-      const event = await orderCreated(order);
-      await publish(event);
+      const event = await createOrderEvent(order);
+      if (event) {
+        await Promise.any(Config.pool.publish(Config.getRelays(), event));
+      }
+
       return event;
     } catch (err) {
       logger.error(err);
     }
   });
-  OrderEvents.onOrderTaken(order => {
-    // todo: notify creator
-  });
 };
-
-async function publish(event) {
-  const p = new Promise((resolve, reject) => {
-    const pub = Config.pool.publish(Config.getRelays(), event);
-    pub.on('ok', () => resolve(event));
-    pub.on('failed', reject);
-  });
-  return p;
-}
