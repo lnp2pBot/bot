@@ -99,7 +99,7 @@ const createOrder = async (
     }
     await order.save();
 
-    OrderEvents.orderCreated(order);
+    OrderEvents.orderUpdated(order);
 
     return order;
   } catch (error) {

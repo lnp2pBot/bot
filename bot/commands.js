@@ -17,6 +17,7 @@ const {
   getFee,
 } = require('../util');
 const ordersActions = require('./ordersActions');
+const OrderEvents = require('./modules/events/orders');
 
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
@@ -81,6 +82,8 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();
+    // We update the nostr event
+    OrderEvents.orderUpdated(order);
   } catch (error) {
     logger.error(`Error in waitPayment: ${error}`);
   }
@@ -330,6 +333,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
+      OrderEvents.orderUpdated(order);
     }
   } catch (error) {
     logger.error(error);
@@ -503,6 +507,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
+      OrderEvents.orderUpdated(order);
     }
   } catch (error) {
     logger.error(error);
@@ -561,6 +566,7 @@ const cancelOrder = async (ctx, orderId, user) => {
       order.status = 'CANCELED';
       order.canceled_by = user._id;
       await order.save();
+      OrderEvents.orderUpdated(order);
       // we sent a private message to the user
       await messages.successCancelOrderMessage(ctx, user, order, ctx.i18n);
       // We delete the messages related to that order from the channel
@@ -651,6 +657,7 @@ const cancelOrder = async (ctx, orderId, user) => {
       );
     }
     await order.save();
+    OrderEvents.orderUpdated(order);
   } catch (error) {
     logger.error(error);
   }
@@ -674,6 +681,7 @@ const fiatSent = async (ctx, orderId, user) => {
     order.status = 'FIAT_SENT';
     const seller = await User.findOne({ _id: order.seller_id });
     await order.save();
+    OrderEvents.orderUpdated(order);
     // We sent messages to both parties
     // We need to create i18n context for each user
     const i18nCtxBuyer = await getUserI18nContext(user);

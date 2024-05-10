@@ -6,6 +6,7 @@ const { logger } = require('../logger');
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
+const { orderUpdated } = require('../bot/modules/events/orders');
 
 exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
@@ -106,6 +107,7 @@ exports.attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<voi
       logger.error(`attemptPendingPayments catch error: ${message}`);
     } finally {
       await order.save();
+      orderUpdated(order);
       await pending.save();
     }
   }

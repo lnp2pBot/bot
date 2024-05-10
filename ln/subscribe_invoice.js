@@ -6,6 +6,7 @@ const messages = require('../bot/messages');
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
 const { logger } = require('../logger');
+const OrderEvents = require('../bot/modules/events/orders');
 
 const subscribeInvoice = async (bot, id, resub) => {
   try {
@@ -49,6 +50,7 @@ const subscribeInvoice = async (bot, id, resub) => {
         }
         order.invoice_held_at = Date.now();
         order.save();
+        OrderEvents.orderUpdated(order);
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: id });
@@ -74,6 +76,7 @@ const payHoldInvoice = async (bot, order) => {
   try {
     order.status = 'PAID_HOLD_INVOICE';
     await order.save();
+    OrderEvents.orderUpdated(order);
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     const sellerUser = await User.findOne({ _id: order.seller_id });
     // We need two i18n contexts to send messages to each user

@@ -11,6 +11,7 @@ const {
   validateObjectId,
   validateTakeBuyOrder,
 } = require('../../validations');
+const OrderEvents = require('../../modules/events/orders');
 
 exports.takeOrderActionValidation = async (ctx, next) => {
   try {
@@ -58,6 +59,7 @@ exports.takebuy = async (ctx, bot, orderId) => {
     order.seller_id = user._id;
     order.taken_at = Date.now();
     await order.save();
+    OrderEvents.orderUpdated(order);
     // We delete the messages related to that order from the channel
     await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
@@ -80,6 +82,7 @@ exports.takesell = async (ctx, bot, orderId) => {
     order.taken_at = Date.now();
 
     await order.save();
+    OrderEvents.orderUpdated(order);
     // We delete the messages related to that order from the channel
     await deleteOrderFromChannel(order, bot.telegram);
     await messages.beginTakeSellMessage(ctx, bot, user, order);
