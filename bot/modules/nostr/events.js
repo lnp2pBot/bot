@@ -13,7 +13,7 @@ const orderToTags = async order => {
     Math.floor(Date.now() / 1000) +
     parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
   let fiat_amount = order.fiat_amount;
-  if (order.amount === 0) {
+  if (order.fiat_amount === undefined) {
     fiat_amount = `${order.min_amount}-${order.max_amount}`;
   }
   const tags = [];
