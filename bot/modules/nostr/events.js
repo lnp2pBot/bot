@@ -8,7 +8,7 @@ const { toKebabCase } = require('../../../util');
 /// the event kind must be between 30000 and 39999
 const kind = 38383;
 
-const orderToTags = order => {
+const orderToTags = async order => {
   const expiration =
     Math.floor(Date.now() / 1000) +
     parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
@@ -24,6 +24,12 @@ const orderToTags = order => {
   tags.push(['y', 'lnp2pbot']);
   tags.push(['z', 'order']);
   tags.push(['expiration', expiration.toString()]);
+  if (order.community_id) {
+    const community = await Community.findById(order.community_id);
+    if (community.public) {
+      tags.push(['community_id', order.community_id]);
+    }
+  }
 
   return tags;
 };
@@ -32,7 +38,7 @@ exports.createOrderEvent = async order => {
   const myPrivKey = Config.getPrivateKey();
 
   const created_at = Math.floor(Date.now() / 1000);
-  const tags = orderToTags(order);
+  const tags = await orderToTags(order);
 
   const event = finalizeEvent(
     {
@@ -43,13 +49,6 @@ exports.createOrderEvent = async order => {
     },
     myPrivKey
   );
-
-  if (order.community_id) {
-    const community = await Community.findById(order.community_id);
-    if (community.public) {
-      event.tags.push(['community_id', order.community_id]);
-    }
-  }
 
   const ok = verifyEvent(event);
   if (!ok) {
