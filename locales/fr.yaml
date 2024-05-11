@@ -517,7 +517,7 @@ community_admin_help: |
   <strong>Mode Admin de la Communauté</strong>
   # commands
 
-  /setnpub &lt;npub&gt; - Configurer la clé publique de la communauté. Les événements de Nostr seront marqués avec cette clé publique.
+  /setnpub &lt;npub&gt; - Configurer la clé publique de la communauté.
 community_npub_updated: Vous avez ajouté la clé publique de la communauté ${npub} avec succès !
 # END modules/community
 
@@ -556,7 +556,7 @@ user_settings: |
     <code>${lightning_address || '🛇'}</code>
 
   <strong># AIDE</strong>
-  /setnpub &lt;npub&gt; - Configurer la clé publique de l'utilisateur. Les événements Nostr seront marqués avec cette clé publique.
+  /setnpub &lt;npub&gt; - Configurer la clé publique de l'utilisateur.
   /exit - pour quitter l'assistant.
 # END modules/user
 # check hold invoice
