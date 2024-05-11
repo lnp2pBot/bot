@@ -12,13 +12,17 @@ const orderToTags = async order => {
   const expiration =
     Math.floor(Date.now() / 1000) +
     parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
+  let fiat_amount = order.fiat_amount;
+  if (order.amount === 0) {
+    fiat_amount = `${order.min_amount}-${order.max_amount}`;
+  }
   const tags = [];
   tags.push(['d', order.id]);
   tags.push(['k', order.type]);
   tags.push(['f', order.fiat_code]);
   tags.push(['s', toKebabCase(order.status)]);
   tags.push(['amt', order.amount.toString()]);
-  tags.push(['fa', order.fiat_amount.toString()]);
+  tags.push(['fa', fiat_amount.toString()]);
   tags.push(['pm', order.payment_method]);
   tags.push(['premium', order.price_margin.toString()]);
   tags.push(['y', 'lnp2pbot']);
