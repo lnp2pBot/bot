@@ -1,58 +1,60 @@
-const Nostr = require('nostr-tools');
+const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
 const Config = require('./config');
 
 const { Community } = require('../../../models');
+const { toKebabCase } = require('../../../util');
 
-const KIND = {
-  ORDER_CREATED: 20100,
-};
+/// All events broadcasted are Parameterized Replaceable Events,
+/// the event kind must be between 30000 and 39999
+const kind = 38383;
 
-exports.orderCreated = async order => {
-  const sk = Config.getPrivateKey();
-  const pubkey = Config.getPublicKey();
-
-  const event = Nostr.getBlankEvent();
-  event.kind = KIND.ORDER_CREATED;
-  event.pubkey = pubkey;
-  event.created_at = Math.floor(Date.now() / 1000);
-
-  event.tags.push(['ev', 'order_created']);
-  event.tags.push(['ot', order.type]);
-  event.tags.push(['of', order.fiat_code]);
-
-  const evData = (order => {
-    const {
-      id,
-      type,
-      amount,
-      max_amount,
-      min_amount,
-      fiat_code,
-      fiat_amount,
-      price_margin,
-    } = order;
-    return {
-      id,
-      type,
-      amount,
-      max_amount,
-      min_amount,
-      fiat_code,
-      fiat_amount,
-      price_margin,
-    };
-  })(order);
-  event.content = JSON.stringify(evData);
+const orderToTags = async order => {
+  const expiration =
+    Math.floor(Date.now() / 1000) +
+    parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
+  const tags = [];
+  tags.push(['d', order.id]);
+  tags.push(['k', order.type]);
+  tags.push(['f', order.fiat_code]);
+  tags.push(['s', toKebabCase(order.status)]);
+  tags.push(['amt', order.amount.toString()]);
+  tags.push(['fa', order.fiat_amount.toString()]);
+  tags.push(['pm', order.payment_method]);
+  tags.push(['premium', order.price_margin.toString()]);
+  tags.push(['y', 'lnp2pbot']);
+  tags.push(['z', 'order']);
+  tags.push(['expiration', expiration.toString()]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
     if (community.public) {
-      if (community.nostr_public_key) {
-        event.tags.push(['p', community.nostr_public_key]);
-      }
-      event.tags.push(['com', order.community_id]);
+      tags.push(['community_id', order.community_id]);
     }
   }
-  event.id = Nostr.getEventHash(event);
-  event.sig = Nostr.signEvent(event, sk);
+
+  return tags;
+};
+
+exports.createOrderEvent = async order => {
+  const myPrivKey = Config.getPrivateKey();
+
+  const created_at = Math.floor(Date.now() / 1000);
+  const tags = await orderToTags(order);
+
+  const event = finalizeEvent(
+    {
+      kind,
+      created_at,
+      tags,
+      content: '',
+    },
+    myPrivKey
+  );
+
+  const ok = verifyEvent(event);
+  if (!ok) {
+    console.log('Event not verified');
+    return;
+  }
+
   return event;
 };

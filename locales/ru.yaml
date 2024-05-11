@@ -534,7 +534,7 @@ community_admin_help: |
   <strong>Community Admin Mode</strong>
   # commands
 
-  /setnpub &lt;npub&gt; - Configure community's public key. Nostr events will be tagged with this public key.
+  /setnpub &lt;npub&gt; - Configure community's Nostr public key.
 community_npub_updated: You added the community's pubkey ${npub} successfully!
 # END modules/community
 
@@ -556,7 +556,7 @@ user_settings: |
     <code>${lightning_address || '🛇'}</code>
 
   <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user public key. Nostr events will be tagged with this public key.
+  /setnpub &lt;npub&gt; - Configure user public key.
   /exit - to exit the wizard.
 # END modules/user
 # check hold invoice

@@ -3,6 +3,7 @@ import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram'
 import { UserDocument } from '../models/user'
 import { FilterQuery } from 'mongoose';
+const OrderEvents = require('./modules/events/orders');
 
 const { limit } = require('@grammyjs/ratelimiter');
 const schedule = require('node-schedule');
@@ -302,6 +303,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.status = 'FROZEN';
       order.action_by = ctx.admin._id;
       await order.save();
+      OrderEvents.orderUpdated(order);
 
       if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
@@ -364,6 +366,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
+      OrderEvents.orderUpdated(order);
       // we sent a private message to the admin
       await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
       // we sent a private message to the seller
@@ -412,6 +415,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
+        OrderEvents.orderUpdated(order);
         // We delete the messages related to that order from the channel
         await deleteOrderFromChannel(order, bot.telegram);
       }
@@ -463,6 +467,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
+      OrderEvents.orderUpdated(order);
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);
       // we sent a private message to the seller

@@ -174,6 +174,12 @@ exports.getCurrenciesWithPrice = () => {
   return withPrice;
 };
 
+exports.toKebabCase = string =>
+  string
+    .replace(/([a-z])([A-Z])/g, '$1-$2')
+    .replace(/[\s_]+/g, '-')
+    .toLowerCase();
+
 const getEmojiRate = rate => {
   const star = '⭐';
   const roundedRate = Math.round(rate);

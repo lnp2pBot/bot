@@ -7,6 +7,7 @@ const {
 const messages = require('./messages');
 const globalMessages = require('../../messages');
 const { logger } = require('../../../logger');
+const OrderEvents = require('../../modules/events/orders');
 
 const dispute = async ctx => {
   try {
@@ -35,6 +36,7 @@ const dispute = async ctx => {
     order[`${initiator}_dispute`] = true;
     order.status = 'DISPUTE';
     await order.save();
+    OrderEvents.orderUpdated(order);
 
     // If this is a non community order, we may ban the user globally
     if (order.community_id) {
