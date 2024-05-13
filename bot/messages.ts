@@ -13,6 +13,7 @@ const {
   getUserAge,
   getStars,
 } = require('../util');
+const OrderEvents = require('./modules/events/orders');
 const { logger } = require('../logger');
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
@@ -601,6 +602,8 @@ const publishBuyOrderMessage = async (
       message1 && (message1.message_id).toString() ? (message1.message_id).toString() : null;
 
     await order.save();
+    // We can publish the order on nostr now becase we have the message id
+    OrderEvents.orderUpdated(order);
     if (messageToUser) {
       // Message to user let know the order was published
       await pendingBuyMessage(bot, user, order, channel, i18n);
@@ -634,6 +637,8 @@ const publishSellOrderMessage = async (
       message1 && (message1.message_id).toString() ? (message1.message_id).toString() : null;
 
     await order.save();
+    // We can publish the order on nostr now becase we have the message id
+    OrderEvents.orderUpdated(order);
     // Message to user let know the order was published
     if (messageToUser)
       await pendingSellMessage(ctx, user, order, channel, i18n);
