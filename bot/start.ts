@@ -121,6 +121,7 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
         $and: [
           { buyer_id: user._id },
           { status: 'PAID_HOLD_INVOICE' },
+          { status: 'FROZEN' },
         ]
       };
       orders = await Order.find(where);
