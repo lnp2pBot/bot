@@ -16,6 +16,11 @@ const orderToTags = async order => {
   if (order.fiat_amount === undefined) {
     fiat_amount = `${order.min_amount}-${order.max_amount}`;
   }
+  const channel =
+    process.env.CHANNEL[0] === '@'
+      ? process.env.CHANNEL.slice(1)
+      : process.env.CHANNEL;
+  let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
   const tags = [];
   tags.push(['d', order.id]);
   tags.push(['k', order.type]);
@@ -25,21 +30,24 @@ const orderToTags = async order => {
   tags.push(['fa', fiat_amount.toString()]);
   tags.push(['pm', order.payment_method]);
   tags.push(['premium', order.price_margin.toString()]);
+  if (order.community_id) {
+    const community = await Community.findById(order.community_id);
+    source = `https://t.me/${community.group}/${order.tg_channel_message1}`;
+    tags.push(['community_id', order.community_id]);
+  }
+  tags.push(['source', source]);
   tags.push(['y', 'lnp2pbot']);
   tags.push(['z', 'order']);
   tags.push(['expiration', expiration.toString()]);
-  if (order.community_id) {
-    const community = await Community.findById(order.community_id);
-    if (community.public) {
-      tags.push(['community_id', order.community_id]);
-    }
-  }
 
   return tags;
 };
 
 exports.createOrderEvent = async order => {
   const myPrivKey = Config.getPrivateKey();
+  if (order.is_public === false) {
+    return;
+  }
 
   const created_at = Math.floor(Date.now() / 1000);
   const tags = await orderToTags(order);

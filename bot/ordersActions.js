@@ -99,7 +99,9 @@ const createOrder = async (
     }
     await order.save();
 
-    OrderEvents.orderUpdated(order);
+    if (order.status !== 'PENDING') {
+      OrderEvents.orderUpdated(order);
+    }
 
     return order;
   } catch (error) {
