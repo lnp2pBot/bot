@@ -488,3 +488,7 @@ exports.getStars = (rate, totalReviews) => {
 
   return `${roundedRating} ${stars} (${totalReviews})`;
 };
+
+exports.removeAtSymbol = text => {
+  return text[0] === '@' ? text.slice(1) : text;
+};

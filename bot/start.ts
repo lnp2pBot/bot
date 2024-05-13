@@ -15,7 +15,7 @@ const {
   Dispute,
   Config,
 } = require('../models');
-const { getCurrenciesWithPrice, deleteOrderFromChannel } = require('../util');
+const { getCurrenciesWithPrice, deleteOrderFromChannel, removeAtSymbol } = require('../util');
 const {
   commandArgsMiddleware,
   stageMiddleware,
@@ -65,7 +65,6 @@ const {
   nodeInfo,
 } = require('../jobs');
 const { logger } = require('../logger');
-
 export interface MainContext extends Context {
   match: Array<string> | null;
   i18n: I18nContext;
@@ -591,7 +590,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!username) return;
 
-      username = username[0] == '@' ? username.slice(1) : username;
+      username = removeAtSymbol(username);
       const user = await User.findOne({
         $or: [{ username }, { tg_id: username }],
       });
@@ -634,7 +633,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       if (!username) return;
 
-      username = username[0] == '@' ? username.slice(1) : username;
+      username = removeAtSymbol(username);
       const user = await User.findOne({
         $or: [{ username }, { tg_id: username }],
       });

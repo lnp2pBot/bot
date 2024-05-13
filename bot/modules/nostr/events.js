@@ -2,7 +2,7 @@ const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
 const Config = require('./config');
 
 const { Community } = require('../../../models');
-const { toKebabCase } = require('../../../util');
+const { toKebabCase, removeAtSymbol } = require('../../../util');
 
 /// All events broadcasted are Parameterized Replaceable Events,
 /// the event kind must be between 30000 and 39999
@@ -16,10 +16,7 @@ const orderToTags = async order => {
   if (order.fiat_amount === undefined) {
     fiat_amount = `${order.min_amount}-${order.max_amount}`;
   }
-  const channel =
-    process.env.CHANNEL[0] === '@'
-      ? process.env.CHANNEL.slice(1)
-      : process.env.CHANNEL;
+  const channel = removeAtSymbol(process.env.CHANNEL);
   let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
   const tags = [];
   tags.push(['d', order.id]);
@@ -32,7 +29,8 @@ const orderToTags = async order => {
   tags.push(['premium', order.price_margin.toString()]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
-    source = `https://t.me/${community.group}/${order.tg_channel_message1}`;
+    const group = removeAtSymbol(community.group);
+    source = `https://t.me/${group}/${order.tg_channel_message1}`;
     tags.push(['community_id', order.community_id]);
   }
   tags.push(['source', source]);
