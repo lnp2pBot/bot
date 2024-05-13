@@ -2,7 +2,11 @@ const { Scenes } = require('telegraf');
 const { logger } = require('../../../logger');
 const { Community, User, PendingPayment } = require('../../../models');
 const { isPendingPayment } = require('../../../ln');
-const { isGroupAdmin, itemsFromMessage } = require('../../../util');
+const {
+  isGroupAdmin,
+  itemsFromMessage,
+  removeAtSymbol,
+} = require('../../../util');
 const messages = require('../../messages');
 const { isValidInvoice } = require('../../validations');
 const {
@@ -351,8 +355,7 @@ const createCommunitySteps = {
       const usernames = itemsFromMessage(text);
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
-          const username =
-            usernames[i][0] == '@' ? usernames[i].slice(1) : usernames[i];
+          const username = removeAtSymbol(usernames[i]);
           const user = await User.findOne({ username });
           if (user) {
             solvers.push({
@@ -699,8 +702,7 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
 
       if (usernames.length > 0 && usernames.length < 10) {
         for (let i = 0; i < usernames.length; i++) {
-          const username =
-            usernames[i][0] == '@' ? usernames[i].slice(1) : usernames[i];
+          const username = removeAtSymbol(usernames[i]);
           const user = await User.findOne({ username });
           if (user) {
             solvers.push({

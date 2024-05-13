@@ -8,6 +8,7 @@ const messages = require('./messages');
 const globalMessages = require('../../messages');
 const { logger } = require('../../../logger');
 const OrderEvents = require('../../modules/events/orders');
+const { removeAtSymbol } = require('../../../util');
 
 const dispute = async ctx => {
   try {
@@ -98,7 +99,7 @@ const deleteDispute = async ctx => {
     if (!order) {
       return await globalMessages.notActiveOrderMessage(ctx);
     }
-    username = username[0] == '@' ? username.slice(1) : username;
+    username = removeAtSymbol(username);
     const user = await User.findOne({ username });
     if (!user) {
       return await globalMessages.notFoundUserMessage(ctx);
