@@ -119,7 +119,12 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
       const where: FilterQuery<OrderQuery> = {
         $and: [
           { buyer_id: user._id },
-          { status: 'PAID_HOLD_INVOICE' },
+          {
+            $or: [
+              { status: 'PAID_HOLD_INVOICE' },
+              { status: 'FROZEN' },
+            ],
+          },
         ]
       };
       orders = await Order.find(where);
