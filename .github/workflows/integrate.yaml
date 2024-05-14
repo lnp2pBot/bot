@@ -64,7 +64,7 @@ jobs:
         env:
           DB_USER: ''
           DB_PASS: ''
-          DB_HOST: 'localhost'
+          DB_HOST: '127.0.0.1'
           DB_PORT: '27017'
           DB_NAME: 'lnp2pbot'
         run: npm test
