@@ -526,7 +526,7 @@ const addInvoicePHI = async (ctx, bot, orderId) => {
     ctx.deleteMessage();
     const order = await Order.findOne({ _id: orderId });
     // orders with status PAID_HOLD_INVOICE are released payments
-    if (order.status !== 'PAID_HOLD_INVOICE') {
+    if (order.status !== 'PAID_HOLD_INVOICE' && order.status !== 'FROZEN') {
       return;
     }
 
