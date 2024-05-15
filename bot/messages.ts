@@ -1,5 +1,5 @@
-const { TelegramError } = require('telegraf');
-const QR = require('qrcode');
+import { TelegramError } from 'telegraf'
+import QR from 'qrcode';
 const {
   getCurrency,
   numberFormat,
@@ -14,7 +14,7 @@ const {
   getStars,
 } = require('../util');
 const OrderEvents = require('./modules/events/orders');
-const { logger } = require('../logger');
+import { logger } from "../logger";
 import { MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
@@ -103,7 +103,7 @@ const invoicePaymentRequestMessage = async (
   }
 };
 
-const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
+const pendingSellMessage = async (ctx: Telegraf<MainContext>, user: UserDocument, order: IOrder, channel: string, i18n: I18nContext) => {
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
@@ -614,7 +614,7 @@ const publishBuyOrderMessage = async (
 };
 
 const publishSellOrderMessage = async (
-  ctx: MainContext,
+  ctx: Telegraf<MainContext>,
   user: UserDocument,
   order: IOrder,
   i18n: I18nContext,
@@ -1553,7 +1553,7 @@ const currencyNotSupportedMessage = async (ctx: MainContext, currencies: Array<s
   }
 };
 
-const notAuthorized = async (ctx: MainContext, tgId: string) => {
+const notAuthorized = async (ctx: MainContext, tgId?: string) => {
   try {
     if (tgId) {
       await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
@@ -1610,7 +1610,7 @@ const showConfirmationButtons = async (ctx: MainContext, orders: Array<IOrder>, 
   }
 };
 
-module.exports = {
+export {
   startMessage,
   initBotErrorMessage,
   invoicePaymentRequestMessage,

@@ -54,7 +54,7 @@ const {
   validateObjectId,
   validateLightningAddress,
 } = require('./validations');
-const messages = require('./messages');
+import * as messages from './messages';
 const {
   attemptPendingPayments,
   cancelOrders,
