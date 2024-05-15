@@ -12,19 +12,20 @@ on:
 jobs:
   ci_to_main:
     runs-on: ubuntu-latest
+    container:
+      image: 'ubuntu:24.04'
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 18.x
+
       - name: Update apt and install required packages
         run: |
-          sudo apt update
-          sudo apt install --yes --no-install-recommends curl
-          sudo apt-get install --yes gnupg
+          apt update --yes
+          apt install --yes sudo
+          sudo apt install --yes --no-install-recommends npm
 
-      - name: Import the public key used by the package management system
+      - name: Import MongoDB's public key for the package management system
         run: |
+          sudo apt install --yes --no-install-recommends curl gnupg
           sudo rm -f /etc/ssl/certs/ca-bundle.crt
           sudo apt reinstall --yes ca-certificates
           sudo update-ca-certificates
@@ -40,9 +41,7 @@ jobs:
       - name: Check Mongo version
         run: mongod --version
       - name: Start MongoDB
-        run: sudo service mongod start
-      - name: Verify that MongoDB has started successfully
-        run: sudo service mongod status
+        run: sudo nohup mongod --quiet --config /etc/mongod.conf &
 
       - name: Create database
         run: |
