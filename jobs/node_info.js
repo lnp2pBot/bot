@@ -4,7 +4,10 @@ const { logger } = require('../logger');
 
 const info = async bot => {
   try {
-    const config = await Config.findOne({});
+    let config = await Config.findOne({});
+    if (!config) {
+      config = new Config();
+    }
     const info = await getInfo();
     if (info.is_synced_to_chain) {
       config.node_status = 'up';
