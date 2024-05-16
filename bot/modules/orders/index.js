@@ -5,7 +5,10 @@ const ordersActions = require('../../ordersActions');
 
 const commands = require('./commands');
 const messages = require('./messages');
-const { tooManyPendingOrdersMessage } = require('../../messages');
+const {
+  tooManyPendingOrdersMessage,
+  notOrdersMessage,
+} = require('../../messages');
 const {
   takeOrderActionValidation,
   takeOrderValidation,
@@ -54,8 +57,10 @@ exports.configure = bot => {
 
   bot.command('listorders', userMiddleware, async ctx => {
     try {
-      const orders = await ordersActions.getOrders(ctx, ctx.user);
-      if (!orders) return false;
+      const orders = await ordersActions.getOrders(ctx.user);
+      if (orders && orders.length === 0) {
+        return await notOrdersMessage(ctx);
+      }
 
       const { text, extra } = await messages.listOrdersResponse(
         orders,
