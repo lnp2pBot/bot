@@ -202,7 +202,6 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       if (!('message' in ctx.update) || !('text' in ctx.update.message)){
         throw new Error(ctxUpdateAssertMsg);
       }
-      const tgUser = ctx.update.message.from;
 
       await validateUser(ctx, true);
       await messages.startMessage(ctx);
