@@ -204,6 +204,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       }
       const tgUser = ctx.update.message.from;
 
+      await validateUser(ctx, true);
       await messages.startMessage(ctx);
     } catch (error) {
       logger.error(error);
