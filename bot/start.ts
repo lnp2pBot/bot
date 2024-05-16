@@ -411,13 +411,15 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   // pending orders are the ones that are not taken by another user
   bot.command('cancelall', userMiddleware, async (ctx: MainContext) => {
     try {
-      const pending_orders = await ordersActions.getOrders(ctx, ctx.user, 'PENDING');
-      const seller_orders = await ordersActions.getOrders(ctx, ctx.user, 'WAITING_BUYER_INVOICE');
-      const buyer_orders = await ordersActions.getOrders(ctx, ctx.user, 'WAITING_PAYMENT');
+      const pending_orders = await ordersActions.getOrders(ctx.user, 'PENDING');
+      const seller_orders = await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE');
+      const buyer_orders = await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT');
 
       const orders = [...pending_orders, ...seller_orders, ...buyer_orders]
 
-      if (!orders) return;
+      if (orders.length === 0) {
+        return await messages.notOrdersMessage(ctx);
+      };
 
       for (const order of orders) {
 

@@ -225,7 +225,7 @@ const getOrder = async (ctx, user, orderId) => {
   }
 };
 
-const getOrders = async (ctx, user, status) => {
+const getOrders = async (user, status) => {
   try {
     const where = {
       $and: [
@@ -249,14 +249,8 @@ const getOrders = async (ctx, user, status) => {
       ];
       where.$and.push({ $or });
     }
-    const orders = await Order.find(where);
 
-    if (orders.length === 0) {
-      await messages.notOrdersMessage(ctx);
-      return false;
-    }
-
-    return orders;
+    return await Order.find(where);
   } catch (error) {
     logger.error(error);
   }
