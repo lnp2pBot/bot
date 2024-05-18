@@ -21,17 +21,30 @@ exports.listOrdersResponse = async (orders, i18n) => {
 
     if (typeof order.amount !== 'undefined') amount = order.amount;
     const timeToExpire = getTimeToExpirationOrder(order, i18n);
+    if (status !== "PENDING") {
     return [
-      [''].join(''),
-      ['`Id      `: ', '`', order.id, '`'].join(''),
-      ['`Status  `: ', '`', status, '`'].join(''),
-      ['`Time rem`: ', '`', timeToExpire, '`'].join(''),
-      ['`Sats amt`: ', '`', amount, '`'].join(''),
-      ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),
-      ['`Fiat    `: ', '`', order.fiat_code, '`'].join(''),
-      ['`Channel `: ', '`', sanitizeMD(channel), '`'].join(''),
-      ['`_________________________________`'].join(''),
-    ].join('\n');
+      [""].join(""),
+      ["`Id      `: ", "`", order.id, "`"].join(""),
+      ["`Status  `: ", "`", status, "`"].join(""),
+      ["`Sats amt`: ", "`", amount, "`"].join(""),
+      ["`Fiat amt`: ", "`", fiatAmount, "`"].join(""),
+      ["`Fiat    `: ", "`", order.fiat_code, "`"].join(""),
+      ["`Channel `: ", "`", sanitizeMD(channel), "`"].join(""),
+      ["`_________________________________`"].join(""),
+      ].join("\n");
+    } else {
+      return [
+        [""].join(""),
+        ["`Id      `: ", "`", order.id, "`"].join(""),
+        ["`Status  `: ", "`", status, "`"].join(""),
+        ["`Time rem`: ", "`", timeToExpire, "`"].join(""),
+        ["`Sats amt`: ", "`", amount, "`"].join(""),
+        ["`Fiat amt`: ", "`", fiatAmount, "`"].join(""),
+        ["`Fiat    `: ", "`", order.fiat_code, "`"].join(""),
+        ["`Channel `: ", "`", sanitizeMD(channel), "`"].join(""),
+        ["`_________________________________`"].join(""),
+      ].join("\n");
+    }
   });
   const lines = await Promise.all(tasks);
   const body = lines.join('\n');
