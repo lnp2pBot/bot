@@ -21,17 +21,20 @@ exports.listOrdersResponse = async (orders, i18n) => {
 
     if (typeof order.amount !== 'undefined') amount = order.amount;
     const timeToExpire = getTimeToExpirationOrder(order, i18n);
-    return [
+    const details = [
       [''].join(''),
       ['`Id      `: ', '`', order.id, '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
-      ['`Time rem`: ', '`', timeToExpire, '`'].join(''),
       ['`Sats amt`: ', '`', amount, '`'].join(''),
       ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),
       ['`Fiat    `: ', '`', order.fiat_code, '`'].join(''),
       ['`Channel `: ', '`', sanitizeMD(channel), '`'].join(''),
       ['`_________________________________`'].join(''),
-    ].join('\n');
+    ];
+    if (status === 'PENDING') {
+      details.splice(3, 0, ['`Time rem`: ', '`', timeToExpire, '`'].join(''));
+    }
+    return details.join('\n');
   });
   const lines = await Promise.all(tasks);
   const body = lines.join('\n');
