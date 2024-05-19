@@ -21,7 +21,7 @@ exports.listOrdersResponse = async (orders, i18n) => {
 
     if (typeof order.amount !== 'undefined') amount = order.amount;
     const timeToExpire = getTimeToExpirationOrder(order, i18n);
-    let details = [
+    const details = [
       [''].join(''),
       ['`Id      `: ', '`', order.id, '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
