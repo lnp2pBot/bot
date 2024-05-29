@@ -3,36 +3,29 @@
 **El siguiente documento tiene como próposito brindar la información necesaria para poder preparar el ambiente de trabajo para el desarrolo del bot brindando las características técnicas y físicas de cada elemento.**
 
 ## Tabla de contenido
-- [Próposito](#proposito)
+- [Próposito](#prop%C3%B3sito) 
 - [Objetivo](#objetivo)
-- [Alcance](#alcance)
-- [Requerimientos técnicos](#requerimientos-tecnicos)
-- [Preparar el ambiente de trabajo](#preparar-el-ambiente-de-trabajo)
-- [Docker](#docker)
-- [MongoDB](#mongodb)
-- [P2plnbot](#p2plnbot)
-- [Conectar con el nodo Lightning](#conectar-con-el-nodo-lightning)
+- [Alcance del sistema](#alcance-del-sistema)
+- [Requerimientos técnicos](#requerimientos-t%C3%A9cnicos)
+- [Instalación](#instalaci%C3%B3n-1)
+- [Usar el bot](#usar-el-bot)
 
+## Propósito
 
-## Proposito.
+Permitir a las personas comerciar usando la red _Lightning_ con otras personas en Telegram. El bot _lnp2pbot_ está desarrollado en nodejs y se conecta con un nodo LND (Lightning Network Daemon) es una implementación completa de un nodo Lightning Network. 
 
-Permitir a las personas comerciar usando la red _Lightning_ con otras personas en Telegram. El bot _p2plnbot_ está desarrollado en nodejs y se conecta con un nodo LND (Lightning Network Daem
-on) es una implementación completa de un nodo Lightning Network. 
+## Objetivo
 
-## Objetivo.
+Lograr que el bot de telegram sea capaz de recibir pagos _Lightning_ sin ser custodio, el usuario no necesitará permiso para usar el servicio, ni proporcionar datos personales que puedan comprometer su privacidad, logrando con ello conservar toda la custodia de sus bienes en todo momento, para ello el bot usará facturas retenidas y sólo liquidará dichas facturas del vendedor cuando cada parte está de acuerdo con ello y justo después de ese momento el bot pagará la factura del comprador. 
 
-Lograr que el bot de telegram sea capaz de recibir pagos _Lightning_ sin ser custodio, es decir; que el usuario no necesitará permiso para usar el servicio, ni proporcionar datos personales 
-que puedan comprometer su privacidad logrando con ello conservar toda la custodia de sus bienes en todo momento, para ello el bot usará facturas retenidas y sólo liquidará dichas facturas de
-l vendedor cuando cada parte está de acuerdo con ello y justo después de ese momento el bot pagará la factura del comprador. 
-
-## Alcance del sistema.
+## Alcance del sistema
 
 Llegar a todos los usuarios que requieran adquirir satoshis de Bitcoin sin custodia por medio de un bot en Telegram.
 
-## Requerimientos tecnicos. 
+## Requerimientos técnicos 
 
 1) Computadora con acceso a internet. 
-2) Sistema de gestión de nodos [Polar.](https://lightningpolar.com/)
+2) Sistema de gestión de nodos [Polar](https://lightningpolar.com/), o nodo LND.
 
 ![polar](images/polar.jpg)
 
@@ -40,9 +33,10 @@ Llegar a todos los usuarios que requieran adquirir satoshis de Bitcoin sin custo
 3) [Docker](https://www.docker.com/): automatización de implementación de aplicaciones como contenedores portátiles y autosuficientes que se pueden ejecutar en la nube o localmente.
 4) [MogoDB](https://www.mongodb.com/) como gestor de bases de datos.
 
-## Preparar el ambiente.
+## Instalación
+### Preparar el ambiente.
 
-1) Verificar si tiene instalado Nodejs.
+#### 1. Verificar si tienes instalado Nodejs.
 
 ```
 $ node -v
@@ -50,30 +44,26 @@ $ node -v
 
 En caso de no tenerlo instalado:
 
-* En Mac ejecute la siguiente instrucción:
+* En Mac ejecuta la siguiente instrucción:
 ```
 $ brew install node
 ```
 
-* En Windows ir al siguiente [enlace.](https://nodejs.org/en/download/)
-* En Linux:
+* En Linux y Windows ir al siguiente [enlace](https://nodejs.org/en/download/).
 
-```
-$ sudo apt install npm
-```
+### Configuración de MongoDB con Docker Compose
 
-## Docker
+#### 2. Crear el directorio y el archivo de configuración
 
-2) Crear un directorio donde colocara el archivo `docker-compose.yml` para MongoDB con los siguientes valores:
+Crea un directorio donde colocarás el archivo `mongo.yml` para MongoDB:
 
 ```
 mkdir mongodb
 cd mongodb
-mkdir db-data
-vi docker-compose.yml
+nano mongo.yml
 ```
-
-El archivo debe contener lo siguiente:
+#### 3. Contenido del archivo mongo.yml
+El archivo mongo.yml debe contener lo siguiente:
 
 ```
 version: "3.7"
@@ -85,143 +75,123 @@ services:
       MONGO_INITDB_ROOT_USERNAME: mongoadmin
       MONGO_INITDB_ROOT_PASSWORD: secret
     volumes:
-      - ./db-data/:/data/db
+      - ./mongodb-data/:/data/db
     ports:
       - 27017:27017
-```
-
-3) Verificar si está levantado Docker con la siguiente instrucción:
 
 ```
-$ docker ps –a
-```
 
-_Nota: Al ejecutar el primer comando verás la imagen que has creado._
-
-* Levantar el contenedor.
+#### 4. Iniciar MongoDB
+Para iniciar MongoDB, ejecuta el siguiente comando:  
 
 ```
-$ docker-compose up –d
+$ docker compose -f mongo.yml up
 ```
 
-* Entrar al contenedor, para ello deberá ejecutar las siguientes instrucciones: 
+### Lnp2pbot
+
+#### 5. Clonar el repositorio del bot
+Clona el [repositorio](https://github.com/lnp2pBot/bot) del bot y navega al directorio del proyecto:
 
 ```
-$ docker ps –a
-```
-
-* Este comando le mostrará el ID que se ha creado para posteriormente entrar al contenedor:
-
-```
-$ docker exec -it <container id> /bin/bash
-```
-
-_Nota: Entrar al contenedor te permitirá entrar a la BD._
-
-## MongoDB
-
-4) Entrar a MongoDB
-
-```
-$ mongo admin -u mongoadmin –p secret
-$ show dbs
-$ use nueva_db ej.
-```
-
-## P2plnbot
-
-5) Clonar el [repositorio](https://github.com/grunch/p2plnbot.git) del bot:
-
-```
-$ git clone https://github.com/grunch/p2plnbot.git
-$ cd p2plnbot
+$ git clone https://github.com/lnp2pBot/bot.git
+$ cd bot
 $ npm install
 ```
-6) Crear un archivo `.env`, en el directorio raíz del proyecto, viene uno de ejemplo, así que solo necesitara copiarlo y rellenar algunos datos:
 
-• Ejecute las siguientes instrucciones:
+#### 6. Crear y Configurar el archivo `.env`
+En el directorio raíz del proyecto, encontrarás un archivo de ejemplo `.env-sample`. Copia este archivo y edítalo para configurar tus variables de entorno:
 
 ```
 $ cp .env-sample .env
-$ vi .env
+$ nano .env
 ```
 
-## Conectar con el nodo Lightning. 
+#### Conectar con el nodo Lightning
 
-• Para conectar con un nodo `lnd`, necesitamos establecer algunas variables:
+Para conectar con un nodo `lnd`, necesitas establecer algunas variables dentro del archivo `.env` creado en el paso anterior:
 
-**LND_CERT_BASE64:** Certificado TLS del nodo LND en formato base64, puede obtenerlo base64 `~/.lnd/tls.cert | tr -d '\n'` en el nodo lnd.
+- _LND_CERT_BASE64:_ Certificado TLS del nodo LND en formato base64, puede obtenerlo base64 `~/.lnd/tls.cert | tr -d '\n'` en el nodo lnd.
 
-**LND_MACAROON_BASE64:** Archivo macarrón en formato base64, el archivo macarrón contiene permiso para realizar acciones en el nodo lnd, puede obtenerlo con base64 `~/.lnd/data/chain/bitcoin
+- _LND_MACAROON_BASE64:_ Archivo macarrón en formato base64, el archivo macarrón contiene permiso para realizar acciones en el nodo lnd, puede obtenerlo con base64 `~/.lnd/data/chain/bitcoin
 /mainnet/admin.macaroon | tr -d '\n',`
 
-* Si está usando Polar los datos los obtiene como se muestra en la siguiente imagen:
+- _LND_GRPC_HOST:_ dirección IP o el nombre de dominio desde el nodo LND y el puerto separado por dos puntos, ej: `192.168.0.2:10009.`
+
+Si estás usando [Polar](https://lightningpolar.com/) los datos los obtienes como se muestra en la siguiente imagen:
 
 ![polarVariables](images/polarVariables.jpg)
 
+#### Terminar la configuración del archivo `.env`
 
-**LND_GRPC_HOST:** dirección IP o el nombre de dominio desde el nodo LND y el puerto separado por dos puntos, ej: `192.168.0.2:10009.`
+A continuación están las variables que debes modificar en el archivo `.env`. El resto pueden mantener el valor por defecto o ser modificadas a tu consideración:
 
-**BOT_TOKEN:** Deberá entrar a Telegram y buscar `BotFather.` Ejecutar el menú y elegir `Create a new bot` donde elegirá el nombre del bot y el usuario, una vez generado le mostrará un númer
-o de token que es que se colocará en este campo. 
+```
+LND_CERT_BASE64=''
+LND_MACAROON_BASE64=''
+LND_GRPC_HOST='' 
+BOT_TOKEN=''
 
-**CHANNEL:** Cree un canal en Telegram, para ello pulse el botón de escribir nuevo mensaje. En Android está en la esquina inferior derecha con un icono redondo con un lápiz, y en iOS está en
- la superior derecha con un icono bastante pequeño con la forma de un lápiz. Pulse sobre la opción `Nuevo canal`.
+DB_USER='mongoadmin'
+DB_PASS='secret'
+DB_HOST='127.0.0.1'
+DB_PORT='27017'
+DB_NAME='lnp2pbot'
 
-**ADMIN_CHANNEL:** Este dato será el ID de su canal, para obtenerlo escriba un mensaje en su canal, reenvíelo al bot `@JsonDumpBot` y le mostrara un JSON con el ID del canal. 
+MONGO_URI='mongodb://mongoadmin:secret@localhost/lnp2pbot?authSource=admin'
+
+CHANNEL='@tu-canal-de-ofertas' 
+ADMIN_CHANNEL='-10*****46' 
+HELP_GROUP='@tu-grupo-de-soporte' 
+
+FIAT_RATE_EP='https://api.yadio.io/rate'
+
+DISPUTE_CHANNEL='@tu-canal-de-disputas' 
+
+NOSTR_SK=''
+
+RELAYS=''
+
+```
+Detalles de algunas variables:   
+
+- _BOT_TOKEN:_ Deberás entrar a Telegram y abrir [@BotFather](https://t.me/BotFather). Ejecuta el menú y elige `Create a new bot` donde elegirás el nombre del bot y el usuario, una vez generado te mostrará un token que colocarás en este campo. 
+
+- _CHANNEL:_ En ese canal el bot publica las ofertas. Crea un canal en Telegram, para ello pulsa el botón de escribir nuevo mensaje. En Android está en la esquina inferior derecha con un icono redondo con un lápiz, y en iOS está en la superior derecha con un icono bastante pequeño con la forma de un lápiz. Pulsa sobre la opción `Nuevo canal`. Luego pon al bot como administrador del canal (abrir el bot y seleccionar: _Añadir a un grupo o canal_). 
+
+- _ADMIN_CHANNEL:_ A ese canal el bot envía información relevante para los administradores, como el fallo del pago de facturas, cuando un usuario toma una orden y no continúa, entre otras. En este campo debes poner el ID del canal, para obtenerlo escribe un mensaje en el canal, reenvíalo al bot `@JsonDumpBot` y te mostrará un JSON con el ID del canal. Más información [aquí](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35). Debes añadir al bot como administrador del canal. 
 
 ![telegram_bot](images/telegram_bot.jpg)
 
-* Más información [aquí.](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35)
+- _HELP_GROUP:_ Grupo donde darás soporte del bot. Puedes crear un nuevo grupo o utilizar uno que tengas creado previamente.
 
-* Archivo `.env`
+- _DISPUTE_CHANNEL:_ En ese canal el bot publica las disputas para que los solvers las tomen (no es un canal para resolver disputas, sino para tomarlas). Debes crear este canal en Telegram y añadir al bot como administrador.
 
-```
-LND_CERT_BASE64=
-LND_GRPC_HOST='127.0.0.1:10001'
-BOT_TOKEN=''
-FEE=.001
-DB_USER='mongoadmin'
-DB_PASS='secret'
-DB_HOST='localhost'
-DB_PORT='27017'
-DB_NAME='p2plnbot'
+- _NOSTR_SK:_ Clave privada de [Nostr](https://nostr.com/) que publicará las ofertas del bot como un [evento parametrizado remplazable tipo 38383](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds). Si no quieres que tu bot publique las ofertas en [Nostr](https://nostr.com/), comenta esa variable.
 
-INVOICE_EXPIRATION_WINDOW=60000
-HOLD_INVOICE_EXPIRATION_WINDOW=60
-CHANNEL='@tunuevocanal' # Canal creado por ti, el bot debe ser admin aquí
-ADMIN_CHANNEL='-10*****46' # Canal o grupo donde el bot envía info a admins, el bot debe ser admin
+- _RELAYS:_ Relays de [Nostr](https://nostr.com/) a los que se conectará el usuario de [Nostr](https://nostr.com/) de tu bot para publicar las ofertas. Si no quieres que tu bot publique las ofertas en [Nostr](https://nostr.com/), comenta esa variable.
 
-MAX_DISPUTES=8
-HOLD_INVOICE_CLTV_DELTA=144
-HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW=12
-
-PENDING_PAYMENT_WINDOW=5
-
-FIAT_RATE_EP='https://api.yadio.io/rate'
-```
-• Una vez editado el archivo ejecutar la siguiente instrucción:
+### 7. Ejecutar el bot
 
 ```
 $ npm start
 ```
 
-• Para hacer pruebas:
+- Para hacer pruebas:
 
 ```
 $ npm test
 ```
 
-## Comenzar con el bot.
+## Usar el bot
 
-• Será necesario haber creado ya un bot con `BotFather`, tener otra número para usar con Telegram y haber abierto canales en Polar.
+Luego de completar los pasos de la [Instalación](#instalaci%C3%B3n-1):
 
-1) Debe iniciar el bot con esa misma cuanta con el comando:
+1) Inicia el bot con el comando:
 
 ```
 /start 
 ```
-
 Mostrará un menú, elegiremos la opción de `/sell` para vender con los requerimientos necesarios.
 
 ![telegram](images/telegram.jpg)
@@ -281,7 +251,6 @@ Llegará una solicitud de pago al vendedor que se verá en el `bot.`
 13) El `bot` indicará que el usuario ya envió el dinero fiat.
 
 ![confirmar_envio](images/confirmar_envio.jpg)
-
 
 14) El usuario debe liberar los fondos con el comando `/release`, para ello debe copiar y pegar con el `id`
 
