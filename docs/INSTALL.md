@@ -7,75 +7,67 @@
 ## Table of contents
 - [Purpose](#purpose)
 - [Target](#target)
-- [Scope](#scope-of-the-system)
+- [System Scope](#system-scope)
 - [Technical requirements](#technical-requirements)
-- [Prepare the environment](#prepare-the-environment)
-- [Docker](#docker)
-- [MongoDB](#mongodb)
-- [P2plnbot](#p2plnbot)
-- [Connect to the Lightning node](#connect-to-the-lightning-node)
+- [Installation](#installation-1)
+- [Using the bot](#using-the-bot)
 
+## Purpose
 
-## Purpose.
+Allow people to trade with other people on Telegram using the _Lightning Network_. The _lnp2pbot_ is developed in Node.js and connects to an LND (Lightning Network Daemon) node is a full implementation of a Lightning Network node. 
 
-To allow people to trade with other people on Telegram using the _Lightning_ network. The _p2plnbot_ bot is developed in nodejs and connects to a LND (Lightning Network Daemon) node is a full implementation of a Lightning Network node. 
+## Target
 
-## Target.
+Achieving that the telegram bot is able to receive payments _Lightning_ without being custodian. Users won't need permission to use the service or provide personal data that could compromise their privacy, thus maintaining full custody of their assets at all times. The bot will use hold invoices and will only settle the seller's invoices when both parties agree. Immediately after this, the bot will pay the buyer's invoice.
 
-Achieving that the telegram bot is able to receive payments _Lightning_ without being custodian, that is; that the user will not need permission to use the service, or provide personal data 
-that may compromise their privacy thereby achieving retain full custody of their goods at all times, for this the bot will use withheld invoices and only settle such invoices from the seller
- when each party agrees to it and just after that time the bot will pay the buyer's invoice. 
+## System Scope
 
-## Scope of the system.
+Reach all users who want to acquire non-custodial Bitcoin satoshis through a Telegram bot.
 
-Reach all users who require to acquire Bitcoin satoshis without custody through a bot on Telegram.
-
-## Technical requirements. 
+## Technical requirements
 
 1) Computer with internet access. 
-2) Node Management System [Polar.](https://lightningpolar.com/)
+2) Node management system [Polar](https:/lightningpolar.com/) or LND node.
 
 ![polar](images/polar.jpg)
 
+3) [Docker](https://www.docker.com/): automation of application deployment as portable, self-sufficient containers that can run in the cloud or locally.
 
-3) [Docker](https://www.docker.com/): deployment automation of applications as portable, self-contained containers that can be run in the cloud or locally.
-4) [MogoDB](https://www.mongodb.com/) as a database manager.
+4) [MogoDB](https://www.mongodb.com/): database manager system.
 
-## Prepare the environment.
+## Installation
 
-1) Check if you have Nodejs installed.
+### Prepare the environment.
+
+#### 1) Check if Node.js is installed.
 
 ```
 $ node -v
 ```
+In case it's not installed:
 
-In case you do not have it installed:
-
-* On Mac run the following instruction:
+* On Mac run the following command:
 ```
 $ brew install node
 ```
 
-* On Windows go to the following [link](https://nodejs.org/en/download/)
-* On Linux:
+* On Linux and Windows, go to the following [link](https://nodejs.org/en/download/).
+
+
+### MongoDB Configuration with Docker Compose
+
+#### 2. Create the Directory and Configuration File
+
+Create a directory where you will place the `mongo.yml` file for MongoDB:
 
 ```
-$ sudo apt install npm
+$ mkdir mongodb
+$ cd mongodb
+$ nano mongo.yml
 ```
 
-## Docker
-
-2) Create a directory where you will place the `docker-compose.yml` file for MongoDB with the following values:
-
-```
-mkdir mongodb
-cd mongodb
-mkdir db-data
-vi docker-compose.yml
-```
-
-The file must contain the following:
-
+#### 3. Content of the mongo.yml file
+The contents of the `mongo.yml` file must be:
 ```
 version: "3.7"
 
@@ -86,138 +78,114 @@ services:
       MONGO_INITDB_ROOT_USERNAME: mongoadmin
       MONGO_INITDB_ROOT_PASSWORD: secret
     volumes:
-      - ./db-data/:/data/db
+      - ./mongodb-data/:/data/db
     ports:
       - 27017:27017
-```
-
-3) Check if Docker is up with the following instruction:
 
 ```
-$ docker ps –a
+
+#### 4. Start MongoDB
+To start MongoDB, run the following command:
+```
+$ docker compose -f mongo.yml up
 ```
 
-_Note: When executing the first command you will see the image you have created._
-
-* Lift the container.
-
+### Lnp2pbot
+#### 5. Clone the Bot Repository
+Clone the bot [repository](https://github.com/lnp2pBot/bot) and navigate to the project directory:
 ```
-$ docker-compose up –d
-```
-
-* To enter the container, you must execute the following instructions: 
-
-```
-$ docker ps –a
-```
-
-* This command will show you the ID that has been created to later enter the container:
-
-```
-$ docker exec -it <container id> /bin/bash
-```
-
-_Note: Entering the container will allow you to enter the DB._
-
-## MongoDB
-
-4) Login to MongoDB
-
-```
-$ mongo admin -u mongoadmin –p secret
-$ show dbs
-$ use nueva_db ej.
-```
-
-## P2plnbot
-
-5) Clone the [repository](https://github.com/grunch/p2plnbot.git) of the bot:
-
-```
-$ git clone https://github.com/grunch/p2plnbot.git
-$ cd p2plnbot
+$ git clone https://github.com/lnp2pBot/bot.git
+$ cd bot
 $ npm install
 ```
-6) Create a `.env` file, in the root directory of the project, there is a sample file, so you only need to copy it and fill in some data:
 
-* Execute the following instructions:
-
+#### 6. Create and Configure the .env file
+In the root directory of the project, you will find a sample `.env-sample` file. Copy that file and edit it to configure your environment variables:
 ```
 $ cp .env-sample .env
-$ vi .env
+$ nano .env
 ```
 
-## Connect to the Lightning node. 
+#### Connect to the Lightning Node
+To connect to an `LND` node, you need to set several variables in the `.env` file created in the previous step:
 
-• To connect to an `lnd` node, we need to set some variables:
+- _LND_CERT_BASE64:_ TLS certificate of the LND node in base64 format. You can obtain it with the command: `~/.lnd/tls.cert | tr -d '\n'`.
 
-**LND_CERT_BASE64:** TLS certificate of the LND node in base64 format, you can get it in base64 format. `~/.lnd/tls.cert | tr -d '\n'` in the lnd node.
+- _LND_MACAROON_BASE64:_ Macaroon file in base64 format. This file contains permissions to perform actions on the LND node. You can obtain it with the command:`~/.lnd/data/chain/bitcoin
+/mainnet/admin.macaroon | tr -d '\n',`
 
-**LND_MACAROON_BASE64:** Macaron file in base64 format, the macaron file contains permission to perform actions on the lnd node, you can get it with base64 `~/.lnd/data/chain/bitcoin/mainnet
-/admin.macaroon | tr -d '\n',`
+- _LND_GRPC_HOST:_ IP address or domain name of the LND node and the port, separated by a colon. Example: `192.168.0.2:10009`.
 
-* If you are using Polar you get the data as shown in the following image:
+If you are using [Polar](https://lightningpolar.com/), you can obtain the necessary information as shown in the following image:
 
 ![polarVariables](images/polarVariables.jpg)
 
+#### Complete the configuration of the `.env` file
 
-**LND_GRPC_HOST:** IP address or the domain name from the LND node and the port separated by a colon, e.g: `192.168.0.2:10009.`
+Here are the variables you need to modify in the `.env` file. The remaining variables can either keep their default values or be adjusted as you see fit:
 
-**BOT_TOKEN:** u will need to log in to Telegram and search for `BotFather.` Execute the menu and select `Create a new bot` where you will choose the name of the bot and the user, once gener
-ated it will show a token number that will be placed in this field. 
 
-**CHANNEL:** Create a channel in Telegram, to do this press the write new message button. On Android it is in the lower right corner with a round icon with a pencil, and on iOS it is in the 
-upper right corner with a rather small icon in the shape of a pencil. Tap on the `New channel` option.
+```
+LND_CERT_BASE64=''
+LND_MACAROON_BASE64=''
+LND_GRPC_HOST='' 
+BOT_TOKEN=''
 
-**ADMIN_CHANNEL:** This data will be the ID of your channel, to get it write a message in your channel, forward it to the bot `@JsonDumpBot` and it will show you a JSON with the channel ID. 
+DB_USER='mongoadmin'
+DB_PASS='secret'
+DB_HOST='127.0.0.1'
+DB_PORT='27017'
+DB_NAME='lnp2pbot'
+
+MONGO_URI='mongodb://mongoadmin:secret@localhost/lnp2pbot?authSource=admin'
+
+CHANNEL='@your-offers-channel' 
+ADMIN_CHANNEL='-10*****46' 
+HELP_GROUP='@your-support-group' 
+
+FIAT_RATE_EP='https://api.yadio.io/rate'
+
+DISPUTE_CHANNEL='@your-dispute-channel' 
+
+NOSTR_SK=''
+
+RELAYS=''
+
+```
+
+Details of some variables:
+
+- _BOT_TOKEN:_ You will need to go to Telegram and open [@BotFather](https://t.me/BotFather). Run the menu and choose `Create a new bot` where you will select the bot's name and username. Once generated, it will show you a token that you will place in this field.
+
+- _CHANNEL:_ This is the channel where the bot posts offers. Create a channel on Telegram by pressing the button to write a new message. On Android, it is in the bottom right corner with a round icon featuring a pencil, and on iOS, it is in the top right corner with a small pencil-shaped icon. Press the `New Channel` option. Then, set the bot as a channel's administrator (open the bot and select: _Add to a group or channel_).
+
+- _ADMIN_CHANNEL:_ This channel is where the bot sends relevant information to administrators, such as payments failures, when a user takes an order but doesn't proceed, among other things. In this field, you need to enter the channel ID. To obtain it, write a message in the channel, forward it to the `@JsonDumpBot`, and it will show you a JSON with the channel ID. More information can be found [here](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35). You need to add the bot as a channel's administrator.
 
 ![telegram_bot](images/telegram_bot.jpg)
 
-* More information [aquí.](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35)
+- _HELP_GROUP:_ This is the group where you will provide bot support. You can create a new group or use an existing one.
 
-* File `.env`
+- _DISPUTE_CHANNEL:_ This channel is where the bot posts disputes for solvers to take on (it's not a channel for resolving disputes, just for claiming them). You need to create this channel on Telegram and add the bot as an administrator.
 
-```
-LND_CERT_BASE64=
-LND_GRPC_HOST='127.0.0.1:10001'
-BOT_TOKEN=''
-FEE=.001
-DB_USER='mongoadmin'
-DB_PASS='secret'
-DB_HOST='localhost'
-DB_PORT='27017'
-DB_NAME='p2plnbot'
+- _NOSTR_SK:_ The private key for [Nostr](https://nostr.com/) that will publish the bot's offers as a [replaceable parameterized event type 38383](https://github.com/nostr-protocol/nips/blob/master/01.md#kinds). If you do not want your bot to publish offers on [Nostr](https://nostr.com/), comment out this variable.
 
-INVOICE_EXPIRATION_WINDOW=60000
-HOLD_INVOICE_EXPIRATION_WINDOW=60
-CHANNEL='@yournewchannel' # channel created by you, the bot must be admin here
-ADMIN_CHANNEL='-10******46' # Info dumped from the bot @JsonDumpBot
+- _RELAYS:_ The Nostr relays that the [Nostr](https://nostr.com/) user of your bot will connect to in order to publish offers. If you do not want your bot to publish offers on [Nostr](https://nostr.com/), comment out this variable.
 
-MAX_DISPUTES=8
-HOLD_INVOICE_CLTV_DELTA=144
-HOLD_INVOICE_CLTV_DELTA_SAFETY_WINDOW=12
-
-PENDING_PAYMENT_WINDOW=5
-
-FIAT_RATE_EP='https://api.yadio.io/rate'
-```
-• Once the file has been edited, execute the following instruction:
-
+### 7. Running the bot
 ```
 $ npm start
 ```
 
-• For testing purposes:
-
+- For testing purposes:
 ```
 $ npm test
 ```
 
-## Start with the bot.
+## Using the bot
 
-• It will be necessary to have already created a bot with `BotFather`, to have another number to use with Telegram and to have opened channels in Polar.
+After completing the [Installation](#installation-1) steps:
 
-1) You must start the bot with the same account with the command:
+Start the bot with the command:
 
 ```
 /start 
