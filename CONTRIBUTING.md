@@ -13,7 +13,7 @@ Most communication about @lnp2pbot happens on the main [Telegram group](https://
 All @lnp2pbot contributors submit changes via pull requests. The workflow is as follows:
 
  - Fork the repository
- - Create a topic branch from the `master` branch
+ - Create a topic branch from the `main` branch
  - Commit patches
  - Squash redundant or unnecessary commits
  - Submit a pull request from your topic branch back to the `main` branch of the main repository
