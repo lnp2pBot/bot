@@ -12,9 +12,11 @@ const orderToTags = async order => {
   const expiration =
     Math.floor(Date.now() / 1000) +
     parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
-  let fiat_amount = order.fiat_amount;
+  const fiat_amount = ['fa'];
   if (order.fiat_amount === undefined) {
-    fiat_amount = `${order.min_amount}-${order.max_amount}`;
+    fiat_amount.push(order.min_amount.toString(), order.max_amount.toString());
+  } else {
+    fiat_amount.push(order.fiat_amount.toString());
   }
   const channel = removeAtSymbol(process.env.CHANNEL);
   let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
@@ -24,7 +26,7 @@ const orderToTags = async order => {
   tags.push(['f', order.fiat_code]);
   tags.push(['s', toKebabCase(order.status)]);
   tags.push(['amt', order.amount.toString()]);
-  tags.push(['fa', fiat_amount.toString()]);
+  tags.push(fiat_amount);
   tags.push(['pm', order.payment_method]);
   tags.push(['premium', order.price_margin.toString()]);
   if (order.community_id) {
