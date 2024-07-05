@@ -36,9 +36,11 @@ const orderToTags = async order => {
     tags.push(['community_id', order.community_id]);
   }
   tags.push(['source', source]);
+  tags.push(['network', 'mainnet']);
+  tags.push(['layer', 'lightning']);
+  tags.push(['expiration', expiration.toString()]);
   tags.push(['y', 'lnp2pbot']);
   tags.push(['z', 'order']);
-  tags.push(['expiration', expiration.toString()]);
 
   return tags;
 };
