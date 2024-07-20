@@ -198,10 +198,10 @@ dispute_started_channel: |
 
   @${initiatorUser.username} a été impliqué.e dans ${initiatorUser.disputes} litiges
   @${counterPartyUser.username} a été impliqué.e dans ${counterPartyUser.disputes} litiges
-you_started_dispute_to_buyer: 🥴 Tu as initié un litige à propos de ton offre d'achat, nous allons te contacter toi et ta contrepartie en vue de l'arbitrage.
-buyer_started_dispute_to_seller: "🥴 L'acheteur a initié un litige concernant l'offre ID: ${orderId}, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème."
-you_started_dispute_to_seller: 🥴 Tu as initié un litige à propos de ton offre de vente, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème.
-seller_started_dispute_to_buyer: '🥴 Le vendeur a initié un ilitige concernant ton offre ID: ${orderId}, nous allons te contacter toi et ta contrepartie en vue de résoudre le problème.'
+you_started_dispute_to_buyer: 🥴 Tu as initié un litige à propos de ton offre d'achat. Attendez que le bot vous communique le nom d'utilisateur du Solver assigné, seul Lui/Elle pourra vous aider. Écrivez-Lui/Elle. S'il/Elle vous contacte en premier, vérifiez que son nom d'utilisateur correspond à celui que le bot vous a donné.
+buyer_started_dispute_to_seller: '🥴 L'acheteur a initié un litige concernant l'offre ID: ${orderId}. Attendez que le bot vous communique le nom d'utilisateur du Solver assigné, seul Lui/Elle pourra vous aider. Écrivez-Lui/Elle. S'il/Elle vous contacte en premier, vérifiez que son nom d'utilisateur correspond à celui que le bot vous a donné.'
+you_started_dispute_to_seller: 🥴 Tu as initié un litige à propos de ton offre de vente. Attendez que le bot vous communique le nom d'utilisateur du Solver assigné, seul Lui/Elle pourra vous aider. Écrivez-Lui/Elle. S'il/Elle vous contacte en premier, vérifiez que son nom d'utilisateur correspond à celui que le bot vous a donné.
+seller_started_dispute_to_buyer: '🥴 Le vendeur a initié un ilitige concernant ton offre ID: ${orderId}. Attendez que le bot vous communique le nom d'utilisateur du Solver assigné, seul Lui/Elle pourra vous aider. Écrivez-Lui/Elle. S'il/Elle vous contacte en premier, vérifiez que son nom d'utilisateur correspond à celui que le bot vous a donné.'
 must_be_valid_currency: 'Le code FIAT doit être valide, par exemple : XOF, XAF, EUR, USD... Tu peux afficher la liste complète des codes FIAT avec la commande /listcurrencies'
 must_be_number_or_range: 'Le montant fiat doit être un nombre entier ou une plage de valeur entières dans le format <minimum>-<maximum>'
 invalid_lightning_address: Adresse Lightning invalide !
