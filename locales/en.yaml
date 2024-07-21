@@ -198,10 +198,10 @@ dispute_started_channel: |
 
   @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
   @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
-you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order, we will contact you and your counterparty to sort it out.
-buyer_started_dispute_to_seller: '🥴 The buyer has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
-you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order, we will contact you and your counterparty to sort it out.
-seller_started_dispute_to_buyer: '🥴 The Seller has initiated a dispute for your order with ID: ${orderId}, we will contact you and your counterparty to resolve it.'
+you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order. Wait for the bot to tell you the username of the assigned solver, only He/She can assist you. Write to Him/Her. If He/She contacts you first, verify that His/Her username matches the one the bot gave you.
+buyer_started_dispute_to_seller: '🥴 The buyer has initiated a dispute for your order with ID: ${orderId}. Wait for the bot to tell you the username of the assigned solver, only He/She can assist you. Write to Him/Her. If He/She contacts you first, verify that His/Her username matches the one the bot gave you.'
+you_started_dispute_to_seller: 🥴 You have started a dispute for your sell order. Wait for the bot to tell you the username of the assigned solver, only He/She can assist you. Write to Him/Her. If He/She contacts you first, verify that His/Her username matches the one the bot gave you.
+seller_started_dispute_to_buyer: '🥴 The Seller has initiated a dispute for your order with ID: ${orderId}. Wait for the bot to tell you the username of the assigned solver, only He/She can assist you. Write to Him/Her. If He/She contacts you first, verify that His/Her username matches the one the bot gave you.'
 must_be_valid_currency: 'Fiat_code must be a valid code, for example: USD, EUR. Check the full list with the command /listcurrencies'
 must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format'
 invalid_lightning_address: Invalid lightning address

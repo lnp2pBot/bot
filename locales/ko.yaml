@@ -197,10 +197,10 @@ dispute_started_channel: |
 
   ${initiatorUser.disputes} 분쟁 조정에 @${initiatorUser.username}님께서 참여하셨습니다.
   ${counterPartyUser.disputes} 분쟁 조정에 @${counterPartyUser.username}님께서 참여하셨습니다.
-you_started_dispute_to_buyer: 🥴 당신의 구매 주문에 대해 분쟁 조정을 시작하였습니다. 조정자가 상황 타개를 위해 거래 참여자들에게 연락을 할 것입니다.
-buyer_started_dispute_to_seller: '🥴 구매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 조정자가 해결을 위해 거래 참여자들에게 연락을 할 것입니다.'
-you_started_dispute_to_seller: 🥴 당신의 판매 주문에 대해 분쟁 조정을 시작하였습니다. 조정자가 상황 타개를 위해 거래 참여자들에게 연락을 할 것입니다.
-seller_started_dispute_to_buyer: '🥴 판매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 조정자가 해결을 위해 거래 참여자들에게 연락을 할 것입니다.'
+you_started_dispute_to_buyer: 🥴 당신의 구매 주문에 대해 분쟁 조정을 시작하였습니다. 봇이 지정된 관리자(혹은 어드민)의 사용자 이름을 알려줄 때까지 기다리세요. 오직 그/그녀만이 당신을 도울 수 있습니다. 그/그녀에게 메시지를 보내세요. 만약 그/그녀가 먼저 연락을 해오면, 그/그녀의 사용자 이름이 봇이 당신에게 준 이름과 일치하는지 확인하세요.
+buyer_started_dispute_to_seller: '🥴 구매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 봇이 지정된 관리자(혹은 어드민)의 사용자 이름을 알려줄 때까지 기다리세요. 오직 그/그녀만이 당신을 도울 수 있습니다. 그/그녀에게 메시지를 보내세요. 만약 그/그녀가 먼저 연락을 해오면, 그/그녀의 사용자 이름이 봇이 당신에게 준 이름과 일치하는지 확인하세요.'
+you_started_dispute_to_seller: 🥴 당신의 판매 주문에 대해 분쟁 조정을 시작하였습니다. 봇이 지정된 관리자(혹은 어드민)의 사용자 이름을 알려줄 때까지 기다리세요. 오직 그/그녀만이 당신을 도울 수 있습니다. 그/그녀에게 메시지를 보내세요. 만약 그/그녀가 먼저 연락을 해오면, 그/그녀의 사용자 이름이 봇이 당신에게 준 이름과 일치하는지 확인하세요..
+seller_started_dispute_to_buyer: '🥴 판매자가 당신의 주문 (ID: ${orderId})에 분쟁 조정을 시작하였습니다. 봇이 지정된 관리자(혹은 어드민)의 사용자 이름을 알려줄 때까지 기다리세요. 오직 그/그녀만이 당신을 도울 수 있습니다. 그/그녀에게 메시지를 보내세요. 만약 그/그녀가 먼저 연락을 해오면, 그/그녀의 사용자 이름이 봇이 당신에게 준 이름과 일치하는지 확인하세요.'
 must_be_valid_currency: 'Fiat_code (법정화폐 코드)는 반드시 유효한 값을 넣어야 합니다. 예시: KRW, USD, EUR. /listcurrencies 명령어를 통해 입력 가능한 전체 통화 목록을 확인할 수 있습니다.'
 must_be_number_or_range: 'Fiat_amount는 반드시 숫자나 <최소>-<최대> 형태의 범위형 숫자로 입력되어야 합니다.'
 invalid_lightning_address: 유효하지 않은 라이트닝 주소입니다.

@@ -196,10 +196,10 @@ dispute_started_channel: |
 
   @${initiatorUser.username} è stato coinvolto in ${initiatorUser.disputes} dispute
   @${counterPartyUser.username} è stato coinvolto in in ${counterPartyUser.disputes} disputee
-you_started_dispute_to_buyer: 🥴 Hai avviato una disputa per l'ordine di acquisto; ci metteremo in contatto con te e con la controparte per risolverla.
-buyer_started_dispute_to_seller: "🥴 L'acquirente ha aperto una controversia per il tuo ordine con Id: ${orderId}, ci metteremo in contatto con te e con la controparte per risolverla."
-you_started_dispute_to_seller: 🥴 Hai avviato una disputa per l'ordine di vendita; ci metteremo in contatto con te e con la controparte per risolverla.
-seller_started_dispute_to_buyer: '🥴 Il venditore ha aperto una controversia per il tuo ordine con Id: ${orderId}, ci metteremo in contatto con te e con la controparte per risolverla.'
+you_started_dispute_to_buyer: 🥴 Hai avviato una disputa per l'ordine di acquisto. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.
+buyer_started_dispute_to_seller: "🥴 L'acquirente ha aperto una controversia per il tuo ordine con Id: ${orderId}. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot."
+you_started_dispute_to_seller: 🥴 Hai avviato una disputa per l'ordine di vendita. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.
+seller_started_dispute_to_buyer: '🥴 Il venditore ha aperto una controversia per il tuo ordine con Id: ${orderId}. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.'
 must_be_valid_currency: 'Fiat_code deve essere un codice valido ad esempio: USD, EUR, puoi vedere una lista completa dei codici con /listcurrencies'
 must_be_number_or_range: 'Importo in fiat deve essere un numero o un range numerico nel formato <minimo>-<massimo>'
 invalid_lightning_address: Invalid lightning adress

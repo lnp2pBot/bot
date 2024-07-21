@@ -196,10 +196,10 @@ dispute_started_channel: |
 
   @${buyer.username} ya tiene ${buyerDisputes} disputas
   @${seller.username} ya tiene ${sellerDisputes} disputas
-you_started_dispute_to_buyer: 🥴 Has iniciado una disputa por tu compra, nos comunicaremos contigo y tu contraparte para resolverla
-buyer_started_dispute_to_seller: '🥴 El comprador ha iniciado una disputa por tu orden con Id: ${orderId}, nos comunicaremos contigo y tu contraparte para resolverla'
-you_started_dispute_to_seller: 🥴 Has iniciado una disputa por tu venta, nos comunicaremos contigo y tu contraparte para resolverla
-seller_started_dispute_to_buyer: '🥴 El vendedor ha iniciado una disputa por tu orden con Id: ${orderId}, nos comunicaremos contigo y tu contraparte para resolverla'
+you_started_dispute_to_buyer: 🥴 Has iniciado una disputa por tu compra. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.
+buyer_started_dispute_to_seller: '🥴 El comprador ha iniciado una disputa por tu orden con Id: ${orderId}. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.'
+you_started_dispute_to_seller: 🥴 Has iniciado una disputa por tu venta. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.
+seller_started_dispute_to_buyer: '🥴 El vendedor ha iniciado una disputa por tu orden con Id: ${orderId}. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.'
 must_be_valid_currency: 'codigo_fiat debe ser un código de moneda válido, ejemplo: USD, EUR, puedes ver una lista completa ejecutando /listcurrencies'
 must_be_number_or_range: 'monto_en_fiat debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>.'
 invalid_lightning_address: Dirección lightning no válida

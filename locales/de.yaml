@@ -196,10 +196,10 @@ dispute_started_channel: |
 
   @${initiatorUser.username} war an ${initiatorUser.disputes} Streitfällen beteiligt
   @${counterPartyUser.username} war an ${counterPartyUser.disputes} Streitfällen beteiligt
-you_started_dispute_to_buyer: 🥴 Du hast einen Streitfall für deinen Kaufauftrag ausgelöst. Wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um das Problem zu lösen.
-buyer_started_dispute_to_seller: '🥴 Der Käufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet, wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um die Angelegenheit zu klären.'
-you_started_dispute_to_seller: 🥴 Du hast einen Streitfall für deinen Verkaufsauftrag ausgelöst. Wir werden uns mit dir und deiner Gegenpartei in Verbindung setzen, um das Problem zu lösen.
-seller_started_dispute_to_buyer: '🥴 Der Verkäufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet, wir werden uns mit dir und deinem Vertragspartner in Verbindung setzen, um die Angelegenheit zu klären.'
+you_started_dispute_to_buyer: 🥴 Du hast einen Streitfall für deinen Kaufauftrag ausgelöst. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.
+buyer_started_dispute_to_seller: '🥴 Der Käufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.'
+you_started_dispute_to_seller: 🥴 Du hast einen Streitfall für deinen Verkaufsauftrag ausgelöst. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.
+seller_started_dispute_to_buyer: '🥴 Der Verkäufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.'
 must_be_valid_currency: 'Fiat_code muss ein gültiger Code sein, zum Beispiel: USD, EUR, eine vollständige Liste kannst du unter /listcurrencies sehen.'
 must_be_number_or_range: 'Fiat_amount muss eine Zahl oder ein numerischer Bereich im Format <minimum>-<maximum> sein'
 invalid_lightning_address: Ungültige Lightning-Adresse
