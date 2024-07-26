@@ -72,6 +72,9 @@ exports.disputeData = async (
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
+    const sellerToken = Math.floor(Math.random() * 899 + 100);
+    const buyerToken = Math.floor(Math.random() * 899 + 100);
+
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
     await ctx.telegram.sendMessage(
       solver.tg_id,
@@ -84,6 +87,8 @@ exports.disputeData = async (
         sellerDisputes,
         detailedOrder,
         type,
+        sellerToken,
+        buyerToken,
       }),
       { parse_mode: 'MarkdownV2' }
     );
@@ -93,12 +98,14 @@ exports.disputeData = async (
       buyer.tg_id,
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
+        token: buyerToken,
       })
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
+        token: sellerToken,
       })
     );
   } catch (error) {
