@@ -193,6 +193,9 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${initiatorUser.username} esteve envolvido em ${initiatorUser.disputes} disputas
   @${counterPartyUser.username} esteve envolvido em ${counterPartyUser.disputes} disputas
 you_started_dispute_to_buyer: 🥴 Você iniciou uma disputa para o seu pedido de compra. Aguarde até que o bot lhe diga o nome de usuário do Solver designado, somente Ele/Ela poderá atendê-lo. Escreva para Ele/Ela. Se Ele/Ela entrar em contato com você primeiro, verifique se o nome de usuário dele/dela corresponde ao que o bot lhe forneceu.
@@ -588,6 +591,6 @@ disclaimer: |
 
   Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
 order_frozen: Você congelou o pedido
-disputa_solver: 👮‍♂️ O solver @${solver} cuidará da sua disputa, você pode escrever para ele ou esperar que ele escreva para você
+dispute_solver: 👮‍♂️ Um solucionador atenderá sua disputa. Você pode escrever para ele diretamente tocando no nome de usuário dele => @${solver} <=, se o solucionador escrever para você primeiro, você deve pedir a ele que lhe diga qual é o token de sua disputa, seu token é ${token}.
 setinvoice_no_response: Você não tem ordens a serem pagas
 already_cancelled: A oferta já foi cancelada!

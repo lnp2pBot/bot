@@ -196,6 +196,9 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${initiatorUser.username} a été impliqué.e dans ${initiatorUser.disputes} litiges
   @${counterPartyUser.username} a été impliqué.e dans ${counterPartyUser.disputes} litiges
 you_started_dispute_to_buyer: "🥴 Tu as initié un litige à propos de ton offre d'achat. Attendez que le bot vous communique le nom d'utilisateur du Solver assigné, seul Lui/Elle pourra vous aider. Écrivez-Lui/Elle. S'il/Elle vous contacte en premier, vérifiez que son nom d'utilisateur correspond à celui que le bot vous a donné."
@@ -591,6 +594,6 @@ disclaimer: |
 
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
 order_frozen: Vous avez gelé la commande
-dispute_solver: 👮‍♂️ Le solveur @${solver} s'occupera de votre litige, vous pouvez lui écrire ou attendre qu'il vous écrive
+dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
 setinvoice_no_response : Vous n'avez pas d'ordre à payer
 already_cancelled: L'offre a déjà été annulée !

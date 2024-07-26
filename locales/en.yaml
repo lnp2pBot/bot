@@ -196,6 +196,9 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
   @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
 you_started_dispute_to_buyer: 🥴 You have started a dispute for your buy order. Wait for the bot to tell you the username of the assigned solver, only He/She can assist you. Write to Him/Her. If He/She contacts you first, verify that His/Her username matches the one the bot gave you.
@@ -592,5 +595,5 @@ disclaimer: |
 
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
 order_frozen: You have frozen the order
-dispute_solver: 👮‍♂️ The solver @${solver} will be attending to your dispute, you can write to him/her or wait for him/her to write to you
+dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can write to him/her directly by tapping his/her username => @${solver} <=, if the solver writes to you first, you should ask him/her to tell you what is the token of your dispute, your token is ${token}.
 setinvoice_no_response: You have no orders to be paid

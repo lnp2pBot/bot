@@ -194,6 +194,9 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${initiatorUser.username} war an ${initiatorUser.disputes} Streitfällen beteiligt
   @${counterPartyUser.username} war an ${counterPartyUser.disputes} Streitfällen beteiligt
 you_started_dispute_to_buyer: 🥴 Du hast einen Streitfall für deinen Kaufauftrag ausgelöst. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.
@@ -591,6 +594,6 @@ disclaimer: |
 
   Weder die Entwickler noch die Streitschlichter sind für Verluste oder Schäden verantwortlich, die dem Benutzer durch die Nutzung des Bots entstehen können.
 order_frozen: Sie haben die Bestellung eingefroren
-dispute_solver: 👮‍♂️ Der Solver @${solver} kümmert sich um Ihren Streit. Sie können ihm/ihr schreiben oder darauf warten, dass er/sie Ihnen schreibt
+dispute_solver: 👮‍♂️ Ein Löser wird sich um Ihren Streitfall kümmern, Sie können ihn/sie direkt anschreiben, indem Sie auf seinen/ihren Benutzernamen tippen => @${solver} <=, wenn der Löser Sie zuerst anschreibt, sollten Sie ihn/sie bitten, Ihnen mitzuteilen, was das Token Ihres Streitfalls ist, Ihr Token ist ${token}.
 setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
 already_cancelled: Die Bestellung wurde bereits storniert!
