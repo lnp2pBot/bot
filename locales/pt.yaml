@@ -198,10 +198,9 @@ dispute_started_channel: |
 
   @${initiatorUser.username} esteve envolvido em ${initiatorUser.disputes} disputas
   @${counterPartyUser.username} esteve envolvido em ${counterPartyUser.disputes} disputas
-you_started_dispute_to_buyer: 🥴 Você iniciou uma disputa para o seu pedido de compra. Aguarde até que o bot lhe diga o nome de usuário do Solver designado, somente Ele/Ela poderá atendê-lo. Escreva para Ele/Ela. Se Ele/Ela entrar em contato com você primeiro, verifique se o nome de usuário dele/dela corresponde ao que o bot lhe forneceu.
-buyer_started_dispute_to_seller: '🥴 O comprador iniciou uma disputa para o seu pedido com ID: ${orderId}. Aguarde até que o bot lhe diga o nome de usuário do Solver designado, somente Ele/Ela poderá atendê-lo. Escreva para Ele/Ela. Se Ele/Ela entrar em contato com você primeiro, verifique se o nome de usuário dele/dela corresponde ao que o bot lhe forneceu.'
-you_started_dispute_to_seller: 🥴 Você iniciou uma disputa para o seu pedido de venda. Aguarde até que o bot lhe diga o nome de usuário do Solver designado, somente Ele/Ela poderá atendê-lo. Escreva para Ele/Ela. Se Ele/Ela entrar em contato com você primeiro, verifique se o nome de usuário dele/dela corresponde ao que o bot lhe forneceu.
-seller_started_dispute_to_buyer: '🥴 O vendedor iniciou uma disputa para o seu pedido com ID: ${orderId}. Aguarde até que o bot lhe diga o nome de usuário do Solver designado, somente Ele/Ela poderá atendê-lo. Escreva para Ele/Ela. Se Ele/Ela entrar em contato com você primeiro, verifique se o nome de usuário dele/dela corresponde ao que o bot lhe forneceu.'
+you_started: '🥴 Você iniciou uma disputa em seu pedido Id: ${orderId}.'
+counterpart_started: '🥴 Sua contraparte iniciou uma disputa em seu pedido Id: ${orderId}.'
+dispute_started: '${who} Um solucionador o atenderá em breve. Quando ele for designado para sua disputa, o bot informará seu nome de usuário e somente ele poderá atendê-lo. Você pode escrever diretamente para ele/ela, mas se ele/ela entrar em contato com você primeiro, você deve pedir a ele/ela que lhe diga qual é o token de sua disputa, seu token é: ${token}.'
 must_be_valid_currency: 'Fiat_code deve ser um código válido, por exemplo: USD, EUR, você pode ver uma lista completa executando /listcurrencies'
 must_be_number_or_range: 'Fiat_amount deve ser um número ou intervalo numérico no <mínima>-<máxima> formato'
 invalid_lightning_address: Inválida lightning address

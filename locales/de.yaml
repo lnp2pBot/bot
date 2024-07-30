@@ -199,10 +199,9 @@ dispute_started_channel: |
 
   @${initiatorUser.username} war an ${initiatorUser.disputes} Streitfällen beteiligt
   @${counterPartyUser.username} war an ${counterPartyUser.disputes} Streitfällen beteiligt
-you_started_dispute_to_buyer: 🥴 Du hast einen Streitfall für deinen Kaufauftrag ausgelöst. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.
-buyer_started_dispute_to_seller: '🥴 Der Käufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.'
-you_started_dispute_to_seller: 🥴 Du hast einen Streitfall für deinen Verkaufsauftrag ausgelöst. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.
-seller_started_dispute_to_buyer: '🥴 Der Verkäufer hat einen Streitfall für deinen Auftrag mit der Id: ${orderId} eröffnet. Warten Sie, bis der Bot Ihnen den Benutzernamen des zugewiesenen Lösers mitteilt. Nur Er/Sie kann Ihnen helfen. Schreiben Sie Ihm/Ihr. Wenn Er/Sie Sie zuerst kontaktiert, überprüfen Sie, ob Sein/Ihr Benutzername mit dem übereinstimmt, den der Bot Ihnen gegeben hat.'
+you_started: '🥴 Sie haben einen Streitfall zu Ihrer Bestellnummer begonnen: ${orderId}.'
+counterpart_started: '🥴 Ihre Gegenpartei hat einen Streit über Ihre Bestellungsnummer begonnen: ${orderId}.'
+dispute_started: '${who} Wenn er/sie Ihrem Streitfall zugewiesen wird, teilt der Bot Ihnen seinen/ihren Benutzernamen mit, und nur er/sie kann Sie betreuen. Sie können ihm/ihr direkt schreiben, aber wenn er/sie Sie zuerst kontaktiert, müssen Sie ihn/sie bitten, Ihnen den Token Ihres Streitfalls mitzuteilen, Ihr Token ist: ${token}.'
 must_be_valid_currency: 'Fiat_code muss ein gültiger Code sein, zum Beispiel: USD, EUR, eine vollständige Liste kannst du unter /listcurrencies sehen.'
 must_be_number_or_range: 'Fiat_amount muss eine Zahl oder ein numerischer Bereich im Format <minimum>-<maximum> sein'
 invalid_lightning_address: Ungültige Lightning-Adresse

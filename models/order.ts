@@ -15,6 +15,8 @@ export interface IOrder extends Document {
   seller_id: string;
   buyer_id: string;
   buyer_invoice: string;
+  buyer_dispute_token: string;
+  seller_dispute_token: string;
   buyer_dispute: boolean
   seller_dispute: boolean
   buyer_cooperativecancel: boolean;
@@ -82,6 +84,8 @@ const orderSchema = new Schema<IOrder>({
   seller_id: { type: String },
   buyer_id: { type: String },
   buyer_invoice: { type: String },
+  buyer_dispute_token: { type: String },
+  seller_dispute_token: { type: String },
   buyer_dispute: { type: Boolean, default: false },
   seller_dispute: { type: Boolean, default: false },
   buyer_cooperativecancel: { type: Boolean, default: false },

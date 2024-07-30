@@ -22,7 +22,7 @@ const dispute = async ctx => {
 
     if (!order) return;
     // Users can't initiate a dispute before this time
-    const secsUntilDispute = 1800;
+    const secsUntilDispute = parseInt(process.env.DISPUTE_START_WINDOW);
     const time = new Date();
     time.setSeconds(time.getSeconds() - secsUntilDispute);
     if (order.taken_at > time) {
@@ -36,6 +36,10 @@ const dispute = async ctx => {
 
     order[`${initiator}_dispute`] = true;
     order.status = 'DISPUTE';
+    const sellerToken = Math.floor(Math.random() * 899 + 100);
+    const buyerToken = Math.floor(Math.random() * 899 + 100);
+    order.buyer_dispute_token = buyerToken;
+    order.seller_dispute_token = sellerToken;
     await order.save();
     OrderEvents.orderUpdated(order);
 
