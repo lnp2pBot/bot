@@ -5,6 +5,7 @@ exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
     let initiatorUser = buyer;
     let counterPartyUser = seller;
+
     if (initiator === 'seller') {
       initiatorUser = seller;
       counterPartyUser = buyer;
@@ -12,20 +13,32 @@ exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
     if (initiator === 'buyer') {
       await ctx.telegram.sendMessage(
         initiatorUser.tg_id,
-        ctx.i18n.t('you_started_dispute_to_buyer')
+        ctx.i18n.t('dispute_started', {
+          who: ctx.i18n.t('you_started', { orderId: order._id }),
+          token: order.buyer_dispute_token,
+        })
       );
       await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
-        ctx.i18n.t('buyer_started_dispute_to_seller', { orderId: order._id })
+        ctx.i18n.t('dispute_started', {
+          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
+          token: order.seller_dispute_token,
+        })
       );
     } else {
       await ctx.telegram.sendMessage(
         initiatorUser.tg_id,
-        ctx.i18n.t('you_started_dispute_to_seller')
+        ctx.i18n.t('dispute_started', {
+          who: ctx.i18n.t('you_started', { orderId: order._id }),
+          token: order.seller_dispute_token,
+        })
       );
       await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
-        ctx.i18n.t('seller_started_dispute_to_buyer', { orderId: order._id })
+        ctx.i18n.t('dispute_started', {
+          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
+          token: order.buyer_dispute_token,
+        })
       );
     }
   } catch (error) {
@@ -72,6 +85,7 @@ exports.disputeData = async (
       initiatorUser = seller;
       counterPartyUser = buyer;
     }
+
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
     await ctx.telegram.sendMessage(
       solver.tg_id,
@@ -84,6 +98,8 @@ exports.disputeData = async (
         sellerDisputes,
         detailedOrder,
         type,
+        sellerToken: order.seller_dispute_token,
+        buyerToken: order.buyer_dispute_token,
       }),
       { parse_mode: 'MarkdownV2' }
     );
@@ -93,12 +109,14 @@ exports.disputeData = async (
       buyer.tg_id,
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
+        token: order.buyer_dispute_token,
       })
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
+        token: order.seller_dispute_token,
       })
     );
   } catch (error) {

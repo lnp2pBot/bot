@@ -194,12 +194,14 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${buyer.username} ya tiene ${buyerDisputes} disputas
   @${seller.username} ya tiene ${sellerDisputes} disputas
-you_started_dispute_to_buyer: 🥴 Has iniciado una disputa por tu compra. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.
-buyer_started_dispute_to_seller: '🥴 El comprador ha iniciado una disputa por tu orden con Id: ${orderId}. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.'
-you_started_dispute_to_seller: 🥴 Has iniciado una disputa por tu venta. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.
-seller_started_dispute_to_buyer: '🥴 El vendedor ha iniciado una disputa por tu orden con Id: ${orderId}. Espera a que el bot te diga el username de El/La solver asignado/a, solo Él/Ella podrá atenderte. Escríbele, si Él/Ella te contacta primero, verifica que su nombre de usuario coincida con el que te dio el bot.'
+you_started: '🥴 Has iniciado una disputa en tu orden con Id: ${orderId}.'
+counterpart_started: '🥴 Tu contraparte ha iniciado una disputa en tu orden con Id: ${orderId}.'
+dispute_started: '${who} Un solver te atenderá pronto, cuando él/la solver sea asignado a tu disputa el bot te dirá su username, solo él/ella podrá atenderte. Puedes escribirle directamente, pero si él/ella te contacta primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es: ${token}.'
 must_be_valid_currency: 'codigo_fiat debe ser un código de moneda válido, ejemplo: USD, EUR, puedes ver una lista completa ejecutando /listcurrencies'
 must_be_number_or_range: 'monto_en_fiat debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>.'
 invalid_lightning_address: Dirección lightning no válida
@@ -593,6 +595,6 @@ disclaimer: |
 
   Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir como resultado del uso del bot.
 order_frozen: Has congelado la orden
-dispute_solver: 👮‍♂️ El solver @${solver} estará atendiendo tu disputa, puedes escribirle o esperar que te escriba
+dispute_solver: 👮‍♂️ Un solver estará atendiendo tu disputa, puedes escribirle directamente tocando su username => @${solver} <=, si el/la solver te escribe primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es ${token}.
 setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!

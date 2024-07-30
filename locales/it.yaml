@@ -194,12 +194,14 @@ dispute_started_channel: |
 
   ${detailedOrder}
 
+  Seller Token: ${sellerToken}
+  Buyer Token: ${buyerToken}
+
   @${initiatorUser.username} è stato coinvolto in ${initiatorUser.disputes} dispute
   @${counterPartyUser.username} è stato coinvolto in in ${counterPartyUser.disputes} disputee
-you_started_dispute_to_buyer: 🥴 Hai avviato una disputa per l'ordine di acquisto. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.
-buyer_started_dispute_to_seller: "🥴 L'acquirente ha aperto una controversia per il tuo ordine con Id: ${orderId}. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot."
-you_started_dispute_to_seller: 🥴 Hai avviato una disputa per l'ordine di vendita. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.
-seller_started_dispute_to_buyer: '🥴 Il venditore ha aperto una controversia per il tuo ordine con Id: ${orderId}. Aspetta che il bot ti comunichi il nome utente del Solver assegnato, solo Lui/Lei potrà aiutarti. Scrivigli/Le. Se Lui/Lei ti contatta per primo, verifica che il suo nome utente corrisponda a quello che ti ha dato il bot.'
+you_started: '🥴 Hai aperto una controversia per il tuo ordine Id: ${orderId}.'
+counterpart_started: '🥴 La tua controparte ha aperto una controversia sul tuo ordine Id: ${orderId}.'
+dispute_started: '${who} Un risolutore ti assisterà presto, quando sarà assegnato alla tua controversia il bot ti dirà il suo nome utente, solo lui potrà assisterti. Potete scrivergli direttamente, ma se vi contatta prima, dovete chiedergli di dirvi qual è il token della vostra controversia, il vostro token è: ${token}.'
 must_be_valid_currency: 'Fiat_code deve essere un codice valido ad esempio: USD, EUR, puoi vedere una lista completa dei codici con /listcurrencies'
 must_be_number_or_range: 'Importo in fiat deve essere un numero o un range numerico nel formato <minimo>-<massimo>'
 invalid_lightning_address: Invalid lightning adress
@@ -588,6 +590,6 @@ disclaimer: |
 
   Né gli sviluppatori né i risolutori di controversie sono responsabili di eventuali perdite o danni che l'utente potrebbe subire a causa dell'utilizzo del bot.
 order_frozen: hai congelato l'ordine
-dispute_solver: 👮‍♂️ Il solver @${solver} si occuperà della tua controversia, puoi scrivergli/le o aspettare che ti scriva
+dispute_solver: 👮‍♂️ Un solutore si occuperà della vostra controversia, potete scrivergli direttamente toccando il suo nome utente => @${solver} <=, se il solutore vi scrive per primo, dovreste chiedergli di dirvi qual è il token della vostra controversia, il vostro token è ${token}.
 setinvoice_no_response: Non ci sono ordini da pagare.
 already_cancelled: L'offerta è già stata annullata!
