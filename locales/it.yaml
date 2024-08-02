@@ -40,9 +40,9 @@ invoice_payment_request: |
 
   Si prega di procedere al pagamento di questa invoice per avviare il processo di vendita, la invoice scadrà tra ${expirationTime} minuti
 pending_sell: |
-  📝 La tua offerta è stata pubblicata nel canale ${channel},
+  📝 La tua offerta è stata pubblicata nel canale ${channel}.
 
-  È necessario attendere che un altro utente scelga il tuo ordine, che sarà disponibile nel canale per ${ordineExpirationWindow} ore,
+  È necessario attendere che un altro utente prenda in carico l'ordine, che scadrà tra ${orderExpirationWindow} ore.
 
   È possibile annullare l'ordine prima che un altro utente lo prenda eseguendo il comando 👇
 cancel_order_cmd: |
