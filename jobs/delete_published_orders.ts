@@ -1,13 +1,16 @@
-const { Order } = require('../models');
-const { deleteOrderFromChannel } = require('../util');
-const { logger } = require('../logger');
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
 
-const deleteOrders = async bot => {
+import { Order } from '../models';
+const { deleteOrderFromChannel } = require('../util');
+import { logger } from '../logger';
+
+const deleteOrders = async (bot: Telegraf<MainContext>) => {
   try {
     const windowTime = new Date();
     windowTime.setSeconds(
       windowTime.getSeconds() -
-        parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW)
+        Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW)
     );
     // We get the pending orders where time is expired
     const pendingOrders = await Order.find({
@@ -25,9 +28,9 @@ const deleteOrders = async bot => {
       await deleteOrderFromChannel(orderCloned, bot.telegram);
     }
   } catch (error) {
-    const message = error.toString();
+    const message = String(error);
     logger.error(`deleteOrders catch error: ${message}`);
   }
 };
 
-module.exports = deleteOrders;
+export default deleteOrders;
