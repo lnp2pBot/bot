@@ -1,26 +1,22 @@
-const { Scenes } = require('telegraf');
-const { logger } = require('../../../logger');
-const { Community, User, PendingPayment } = require('../../../models');
+import { Scenes } from 'telegraf';
+import { logger } from '../../../logger';
+import { Community, User, PendingPayment } from '../../../models';
+import { IOrderChannel, IUsernameId } from '../../../models/community';
 const { isPendingPayment } = require('../../../ln');
-const {
-  isGroupAdmin,
-  itemsFromMessage,
-  removeAtSymbol,
-} = require('../../../util');
-const messages = require('../../messages');
-const { isValidInvoice } = require('../../validations');
-const {
-  createCommunityWizardStatus,
-  wizardCommunityWrongPermission,
-} = require('./messages');
+import { isGroupAdmin, itemsFromMessage, removeAtSymbol } from '../../../util';
+import * as messages from '../../messages';
+import { isValidInvoice } from '../../validations';
+import { createCommunityWizardStatus, wizardCommunityWrongPermission } from './messages';
+import { CommunityContext } from './communityContext';
+import * as commAdmin from './scenes.communityAdmin';
 
 const CURRENCIES = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 
-exports.communityAdmin = require('./scenes.communityAdmin')();
+export const communityAdmin = commAdmin.communityAdmin();
 
-exports.communityWizard = new Scenes.WizardScene(
+export const communityWizard = new Scenes.WizardScene<CommunityContext>(
   'COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
 
@@ -37,27 +33,27 @@ exports.communityWizard = new Scenes.WizardScene(
       } = ctx.wizard.state;
 
       if (!statusMessage) {
-        const { text } = createCommunityWizardStatus(
+        const status = createCommunityWizardStatus(
           ctx.i18n,
           ctx.wizard.state
         );
-        const res = await ctx.reply(text);
-        ctx.wizard.state.currentStatusText = text;
+        const res = await ctx.reply(status!.text);
+        ctx.wizard.state.currentStatusText = status!.text;
         ctx.wizard.state.statusMessage = res;
         ctx.wizard.state.updateUI = async () => {
           try {
-            const { text } = createCommunityWizardStatus(
+            const status = createCommunityWizardStatus(
               ctx.i18n,
               ctx.wizard.state
             );
-            if (ctx.wizard.state.currentStatusText === text) return;
+            if (ctx.wizard.state.currentStatusText === status!.text) return;
             await ctx.telegram.editMessageText(
               res.chat.id,
               res.message_id,
-              null,
-              text
+              undefined,
+              status!.text
             );
-            ctx.wizard.state.currentStatusText = text;
+            ctx.wizard.state.currentStatusText = status!.text;
           } catch (err) {
             logger.error(err);
           }
@@ -91,7 +87,7 @@ exports.communityWizard = new Scenes.WizardScene(
       );
 
       return ctx.scene.leave();
-    } catch (error) {
+    } catch (error: any) {
       const errString = error.toString();
       logger.error(error);
       ctx.scene.leave();
@@ -108,7 +104,8 @@ exports.communityWizard = new Scenes.WizardScene(
         delete ctx.wizard.state.handler;
       }
       ctx.wizard.selectStep(0);
-      return ctx.wizard.steps[ctx.wizard.cursor](ctx);
+      // use ['steps'] syntax as steps is private property and TypeScript would complain
+      return ctx.wizard['steps'][ctx.wizard.cursor](ctx);
     } catch (err) {
       logger.error(err);
       return ctx.scene.leave();
@@ -117,11 +114,11 @@ exports.communityWizard = new Scenes.WizardScene(
 );
 
 const createCommunitySteps = {
-  async name(ctx) {
+  async name(ctx: CommunityContext) {
     const prompt = await createCommunityPrompts.name(ctx);
 
-    ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
+    ctx.wizard.state.handler = async (ctx: CommunityContext) => {
+      const text = ctx?.message?.text;
       if (!text) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -129,13 +126,13 @@ const createCommunitySteps = {
       ctx.wizard.state.error = null;
       const name = text.trim();
       if (!name) {
-        ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+        ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_enter_name');
         return await ctx.wizard.state.updateUI();
       }
       const length = 30;
       if (name.length > length) {
-        ctx.telegram.deleteMessage(ctx.chat.id, ctx.message.message_id);
+        ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
         ctx.wizard.state.error = ctx.i18n.t(
           ctx.i18n.t('wizard_community_too_long_name', { length })
         );
@@ -144,19 +141,19 @@ const createCommunitySteps = {
       ctx.wizard.state.name = name;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     };
 
     return ctx.wizard.next();
   },
-  async currencies(ctx) {
+  async currencies(ctx: CommunityContext) {
     const prompt = await createCommunityPrompts.currencies(ctx);
 
     ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
+      const { text } = ctx.message!;
       if (!text) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -167,8 +164,8 @@ const createCommunitySteps = {
       const max = CURRENCIES;
       if (currencies.length > max) {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         ctx.wizard.state.error = ctx.i18n.t('max_allowed', { max });
         return await ctx.wizard.state.updateUI();
@@ -176,20 +173,20 @@ const createCommunitySteps = {
       ctx.wizard.state.currencies = currencies;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     };
 
     return ctx.wizard.next();
   },
-  async group(ctx) {
+  async group(ctx: CommunityContext) {
     const prompt = await createCommunityPrompts.group(ctx);
 
     ctx.wizard.state.handler = async ctx => {
       try {
-        const group = ctx.message.text.trim();
+        const group = ctx.message?.text.trim();
         if (!group) {
           await ctx.deleteMessage();
           return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -201,8 +198,8 @@ const createCommunitySteps = {
 
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
-            ctx.message.chat.id,
-            ctx.message.message_id
+            ctx.message!.chat.id,
+            ctx.message!.message_id
           );
           await wizardCommunityWrongPermission(ctx, group, isGroupOk.message);
 
@@ -212,11 +209,11 @@ const createCommunitySteps = {
         ctx.wizard.state.group = group;
         await ctx.wizard.state.updateUI();
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
-      } catch (error) {
+      } catch (error: any) {
         ctx.wizard.state.error = error.toString();
         return await ctx.wizard.state.updateUI();
       }
@@ -224,33 +221,33 @@ const createCommunitySteps = {
 
     return ctx.wizard.next();
   },
-  async channels(ctx) {
+  async channels(ctx: CommunityContext) {
     ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
+      const text = ctx.message?.text;
       if (!text) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
       }
       const { bot, user } = ctx.wizard.state;
       const chan = itemsFromMessage(text);
-      ctx.wizard.state.channels = chan;
+      //ctx.wizard.state.channels = chan; // ???
       if (chan.length > 2) {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         ctx.wizard.state.error = ctx.i18n.t(
           'wizard_community_one_or_two_channels'
         );
         return await ctx.wizard.state.updateUI();
       }
-      const orderChannels = [];
+      const orderChannels: IOrderChannel[] = [];
       if (chan.length === 1) {
         const isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
-            ctx.message.chat.id,
-            ctx.message.message_id
+            ctx.message!.chat.id,
+            ctx.message!.message_id
           );
           await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
 
@@ -259,14 +256,14 @@ const createCommunitySteps = {
         const channel = {
           name: chan[0],
           type: 'mixed',
-        };
+        } as IOrderChannel;
         orderChannels.push(channel);
       } else {
         let isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
-            ctx.message.chat.id,
-            ctx.message.message_id
+            ctx.message!.chat.id,
+            ctx.message!.message_id
           );
           await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
 
@@ -275,8 +272,8 @@ const createCommunitySteps = {
         isGroupOk = await isGroupAdmin(chan[1], user, bot.telegram);
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
-            ctx.message.chat.id,
-            ctx.message.message_id
+            ctx.message!.chat.id,
+            ctx.message!.message_id
           );
           await wizardCommunityWrongPermission(ctx, chan[1], isGroupOk.message);
 
@@ -285,19 +282,19 @@ const createCommunitySteps = {
         const channel1 = {
           name: chan[0],
           type: 'buy',
-        };
+        } as IOrderChannel;
         const channel2 = {
           name: chan[1],
           type: 'sell',
-        };
+        } as IOrderChannel;
         orderChannels.push(channel1);
         orderChannels.push(channel2);
       }
       ctx.wizard.state.channels = orderChannels;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
@@ -307,34 +304,35 @@ const createCommunitySteps = {
     const prompt = await createCommunityPrompts.channels(ctx);
     return ctx.wizard.next();
   },
-  async fee(ctx) {
+  async fee(ctx: CommunityContext) {
     ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
+      const text = ctx.message?.text;
       if (!text) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
       }
-      if (isNaN(text)) {
+      const num = Number(text);
+      if (isNaN(num)) {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         ctx.wizard.state.error = ctx.i18n.t('not_number');
         return await ctx.wizard.state.updateUI();
       }
-      if (text < 0 || text > 100) {
+      if (num < 0 || num > 100) {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_wrong_percent');
         return await ctx.wizard.state.updateUI();
       }
-      ctx.wizard.state.fee = text;
+      ctx.wizard.state.fee = num;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
@@ -344,9 +342,9 @@ const createCommunitySteps = {
     const prompt = await createCommunityPrompts.fee(ctx);
     return ctx.wizard.next();
   },
-  async solvers(ctx) {
+  async solvers(ctx: CommunityContext) {
     ctx.wizard.state.handler = async ctx => {
-      const { text } = ctx.message;
+      const text = ctx.message?.text;
       if (!text) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -361,13 +359,13 @@ const createCommunitySteps = {
             solvers.push({
               id: user._id,
               username: user.username,
-            });
+            } as IUsernameId);
           }
         }
       } else {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         ctx.wizard.state.error = ctx.i18n.t(
           'wizard_community_must_enter_names'
@@ -378,8 +376,8 @@ const createCommunitySteps = {
 
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
@@ -389,9 +387,9 @@ const createCommunitySteps = {
     const prompt = await createCommunityPrompts.solvers(ctx);
     return ctx.wizard.next();
   },
-  async disputeChannel(ctx) {
+  async disputeChannel(ctx: CommunityContext) {
     ctx.wizard.state.handler = async ctx => {
-      const channel = ctx.message.text.trim();
+      const channel = ctx.message!.text.trim();
       if (!channel) {
         await ctx.deleteMessage();
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
@@ -401,8 +399,8 @@ const createCommunitySteps = {
       const isGroupOk = await isGroupAdmin(channel, user, bot.telegram);
       if (!isGroupOk.success) {
         await ctx.telegram.deleteMessage(
-          ctx.message.chat.id,
-          ctx.message.message_id
+          ctx.message!.chat.id,
+          ctx.message!.message_id
         );
         await wizardCommunityWrongPermission(ctx, channel, isGroupOk.message);
 
@@ -411,8 +409,8 @@ const createCommunitySteps = {
       ctx.wizard.state.disputeChannel = channel;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
-        ctx.message.chat.id,
-        ctx.message.message_id
+        ctx.message!.chat.id,
+        ctx.message!.message_id
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
@@ -425,32 +423,32 @@ const createCommunitySteps = {
 };
 
 const createCommunityPrompts = {
-  async name(ctx) {
+  async name(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
   },
-  async currencies(ctx) {
+  async currencies(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
   },
-  async group(ctx) {
+  async group(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_group'));
   },
-  async channels(ctx) {
+  async channels(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_order_channels'));
   },
-  async fee(ctx) {
+  async fee(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_fee_percent'));
   },
-  async solvers(ctx) {
+  async solvers(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_solvers'));
   },
-  async disputeChannel(ctx) {
+  async disputeChannel(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_solvers_channel'));
   },
 };
 
-exports.updateNameCommunityWizard = new Scenes.WizardScene(
+export const updateNameCommunityWizard = new Scenes.WizardScene(
   'UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       let message = ctx.i18n.t('name') + ': ' + community.name + '\n\n';
@@ -464,7 +462,7 @@ exports.updateNameCommunityWizard = new Scenes.WizardScene(
       ctx.scene.leave();
     }
   },
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
 
@@ -490,9 +488,9 @@ exports.updateNameCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateGroupCommunityWizard = new Scenes.WizardScene(
+export const updateGroupCommunityWizard = new Scenes.WizardScene(
   'UPDATE_GROUP_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       let message = ctx.i18n.t('group') + ': ' + community.group + '\n\n';
@@ -534,9 +532,9 @@ exports.updateGroupCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateCurrenciesCommunityWizard = new Scenes.WizardScene(
+export const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
   'UPDATE_CURRENCIES_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       const currencies = community.currencies.join(', ');
@@ -551,7 +549,7 @@ exports.updateCurrenciesCommunityWizard = new Scenes.WizardScene(
       ctx.scene.leave();
     }
   },
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) {
         return ctx.scene.leave();
@@ -576,9 +574,9 @@ exports.updateCurrenciesCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
+export const updateChannelsCommunityWizard = new Scenes.WizardScene(
   'UPDATE_CHANNELS_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       const channels = community.order_channels
@@ -605,7 +603,7 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
 
       const { community, bot, user } = ctx.wizard.state;
 
-      const orderChannels = [];
+      const orderChannels: IOrderChannel[] = [];
       if (chan.length === 1) {
         const isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
 
@@ -620,7 +618,7 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         const channel = {
           name: chan[0],
           type: 'mixed',
-        };
+        } as IOrderChannel;
         orderChannels.push(channel);
       } else {
         let isGroupOk = await isGroupAdmin(chan[0], user, bot.telegram);
@@ -646,11 +644,11 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         const channel1 = {
           name: chan[0],
           type: 'buy',
-        };
+        } as IOrderChannel;
         const channel2 = {
           name: chan[1],
           type: 'sell',
-        };
+        } as IOrderChannel;
         orderChannels.push(channel1);
         orderChannels.push(channel2);
       }
@@ -660,7 +658,7 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
         }
       });
 
-      community.order_channels = orderChannels;
+      community.order_channels = orderChannels as any;
       await community.save();
       await ctx.reply(ctx.i18n.t('operation_successful'));
 
@@ -672,9 +670,9 @@ exports.updateChannelsCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateSolversCommunityWizard = new Scenes.WizardScene(
+export const updateSolversCommunityWizard = new Scenes.WizardScene(
   'UPDATE_SOLVERS_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       const solvers = community.solvers
@@ -691,11 +689,11 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
       ctx.scene.leave();
     }
   },
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
 
-      const solvers = [];
+      const solvers: IUsernameId[] = [];
       const botUsers = [];
       const notBotUsers = [];
       const usernames = itemsFromMessage(ctx.message.text);
@@ -704,11 +702,13 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
         for (let i = 0; i < usernames.length; i++) {
           const username = removeAtSymbol(usernames[i]);
           const user = await User.findOne({ username });
+          if(user == null)
+            throw new Error("user not found");
           if (user) {
             solvers.push({
               id: user._id,
               username: user.username,
-            });
+            } as IUsernameId);
             botUsers.push(username);
           } else {
             notBotUsers.push(username);
@@ -726,7 +726,7 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
         );
         const { community } = ctx.wizard.state;
 
-        community.solvers = solvers;
+        community.solvers = solvers as any;
         await community.save();
       }
 
@@ -743,9 +743,9 @@ exports.updateSolversCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateFeeCommunityWizard = new Scenes.WizardScene(
+export const updateFeeCommunityWizard = new Scenes.WizardScene(
   'UPDATE_FEE_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       let message = ctx.i18n.t('fee') + ': ' + community.fee + '\n\n';
@@ -765,7 +765,7 @@ exports.updateFeeCommunityWizard = new Scenes.WizardScene(
         return ctx.scene.leave();
       }
 
-      const fee = ctx.message.text.trim();
+      const fee = Number(ctx.message.text.trim());
 
       if (isNaN(fee)) {
         return await messages.mustBeANumber(ctx);
@@ -788,9 +788,9 @@ exports.updateFeeCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
+export const updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
   'UPDATE_DISPUTE_CHANNEL_COMMUNITY_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       let message =
@@ -808,7 +808,7 @@ exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
       ctx.scene.leave();
     }
   },
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
 
@@ -837,9 +837,9 @@ exports.updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
   }
 );
 
-exports.addEarningsInvoiceWizard = new Scenes.WizardScene(
+export const addEarningsInvoiceWizard = new Scenes.WizardScene(
   'ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID',
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       const { community } = ctx.wizard.state;
       if (community.earnings === 0) return ctx.scene.leave();
@@ -853,7 +853,7 @@ exports.addEarningsInvoiceWizard = new Scenes.WizardScene(
       logger.error(error);
     }
   },
-  async ctx => {
+  async (ctx: CommunityContext) => {
     try {
       if (ctx.message === undefined) return ctx.scene.leave();
       const lnInvoice = ctx.message.text.trim();
@@ -877,6 +877,8 @@ exports.addEarningsInvoiceWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
       const user = await User.findById(community.creator_id);
+      if(user === null)
+        throw new Error("user was not found");
       logger.debug(`Creating pending payment for community ${community.id}`);
       const pp = new PendingPayment({
         amount: community.earnings,

@@ -1,15 +1,13 @@
 // @ts-check
+import { Telegraf } from 'telegraf';
 const { userMiddleware } = require('../../middleware/user');
-const actions = require('./actions');
-const commands = require('./commands');
-const {
-  earningsMessage,
-  updateCommunityMessage,
-  sureMessage,
-} = require('./messages');
-exports.Scenes = require('./scenes');
+import * as actions from './actions';
+import * as commands from './commands';
+import { earningsMessage, updateCommunityMessage, sureMessage } from './messages';
+import { CommunityContext } from './communityContext';
+import * as Scenes from './scenes';
 
-exports.configure = bot => {
+export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('mycomm', userMiddleware, commands.communityAdmin);
   bot.command('mycomms', userMiddleware, commands.myComms);
   bot.command('community', userMiddleware, async ctx => {
@@ -89,3 +87,5 @@ exports.configure = bot => {
     commands.changeVisibility
   );
 };
+
+export { Scenes };
