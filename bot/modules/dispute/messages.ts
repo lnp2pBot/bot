@@ -1,11 +1,16 @@
-const {
-  getDisputeChannel,
-  getDetailedOrder,
-  sanitizeMD,
-} = require('../../../util');
-const { logger } = require('../../../logger');
+import { getDisputeChannel, getDetailedOrder, sanitizeMD } from '../../../util';
+import { logger } from '../../../logger';
+import { MainContext } from '../../start';
+import { IOrder } from '../../../models/order';
+import { UserDocument } from '../../../models/user';
 
-exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
+export const beginDispute = async (
+  ctx: MainContext, 
+  initiator: ('seller' | 'buyer'), 
+  order: IOrder, 
+  buyer: UserDocument, 
+  seller: UserDocument
+) => {
   try {
     let initiatorUser = buyer;
     let counterPartyUser = seller;
@@ -50,9 +55,11 @@ exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   }
 };
 
-exports.takeDisputeButton = async (ctx, order) => {
+export const takeDisputeButton = async (ctx: MainContext, order: IOrder) => {
   try {
     const disputeChannel = await getDisputeChannel(order);
+    if(disputeChannel === undefined)
+      throw new Error("disputeChannel is undefined")
     await ctx.telegram.sendMessage(disputeChannel, ctx.i18n.t('new_dispute'), {
       reply_markup: {
         inline_keyboard: [
@@ -70,15 +77,15 @@ exports.takeDisputeButton = async (ctx, order) => {
   }
 };
 
-exports.disputeData = async (
-  ctx,
-  buyer,
-  seller,
-  order,
-  initiator,
-  solver,
-  buyerDisputes,
-  sellerDisputes
+export const disputeData = async (
+  ctx: MainContext,
+  buyer: UserDocument,
+  seller: UserDocument,
+  order: IOrder,
+  initiator: ('seller' | 'buyer'),
+  solver: UserDocument,
+  buyerDisputes: any,
+  sellerDisputes: any
 ) => {
   try {
     const type =
@@ -135,7 +142,7 @@ exports.disputeData = async (
   }
 };
 
-exports.notFoundDisputeMessage = async ctx => {
+export const notFoundDisputeMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('not_found_dispute'));
   } catch (error) {
@@ -143,7 +150,7 @@ exports.notFoundDisputeMessage = async ctx => {
   }
 };
 
-exports.sellerReleased = async (ctx, solver) => {
+export const sellerReleased = async (ctx: MainContext, solver: UserDocument) => {
   try {
     await ctx.telegram.sendMessage(
       solver.tg_id,
@@ -154,7 +161,7 @@ exports.sellerReleased = async (ctx, solver) => {
   }
 };
 
-exports.disputeTooSoonMessage = async ctx => {
+export const disputeTooSoonMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('dispute_too_soon'));
   } catch (error) {
