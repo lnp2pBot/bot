@@ -25,6 +25,8 @@ export interface CommunityWizardState {
   bot: Telegraf<CommunityContext>;
   message: Message.TextMessage | undefined;
   error?: any;
+  feedback?: any;
+  language: string;
   updateUI: (() => Promise<void>);
   handler?: ((ctx: CommunityContext) => Promise<any>);
 }
