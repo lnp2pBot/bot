@@ -1,8 +1,9 @@
-const Nostr = require('nostr-tools');
-const { logger } = require('../../../logger');
-const Config = require('./config');
+import Nostr from 'nostr-tools';
+import { logger } from '../../../logger';
+import * as Config from './config';
+import { MainContext } from '../../start';
 
-exports.info = async ctx => {
+export const info = async (ctx: MainContext) => {
   try {
     const publicKey = Config.getPublicKey();
     if (!publicKey) return;
