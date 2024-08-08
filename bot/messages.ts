@@ -15,7 +15,7 @@ const {
 } = require('../util');
 const OrderEvents = require('./modules/events/orders');
 import { logger } from "../logger";
-import { MainContext } from './start';
+import { HasTelegram, MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
 import { Telegraf } from 'telegraf';
@@ -268,7 +268,7 @@ const invoiceInvalidMessage = async (ctx: MainContext) => {
   }
 };
 
-const invalidOrderMessage = async (ctx: MainContext, bot: MainContext, user: UserDocument) => {
+const invalidOrderMessage = async (ctx: MainContext, bot: HasTelegram, user: UserDocument) => {
   try {
     await bot.telegram.sendMessage(user.tg_id, ctx.i18n.t('order_id_invalid'));
   } catch (error) {
@@ -276,7 +276,7 @@ const invalidOrderMessage = async (ctx: MainContext, bot: MainContext, user: Use
   }
 };
 
-const invalidTypeOrderMessage = async (ctx: MainContext, bot: MainContext, user: UserDocument, type: IOrder["type"]) => {
+const invalidTypeOrderMessage = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, type: IOrder["type"]) => {
   try {
     await bot.telegram.sendMessage(
       user.tg_id,
@@ -287,7 +287,7 @@ const invalidTypeOrderMessage = async (ctx: MainContext, bot: MainContext, user:
   }
 };
 
-const alreadyTakenOrderMessage = async (ctx: MainContext, bot: MainContext, user: UserDocument) => {
+const alreadyTakenOrderMessage = async (ctx: MainContext, bot: HasTelegram, user: UserDocument) => {
   try {
     await bot.telegram.sendMessage(
       user.tg_id,
@@ -314,7 +314,7 @@ const genericErrorMessage = async (bot: MainContext, user: UserDocument, i18n: I
   }
 };
 
-const beginTakeBuyMessage = async (ctx: MainContext, bot: MainContext, seller: UserDocument, order: IOrder) => {
+const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: UserDocument, order: IOrder) => {
   try {
     const expirationTime =
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
@@ -423,7 +423,7 @@ const onGoingTakeBuyMessage = async (
   }
 };
 
-const beginTakeSellMessage = async (ctx: MainContext, bot: MainContext, buyer: UserDocument, order: IOrder) => {
+const beginTakeSellMessage = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocument, order: IOrder) => {
   try {
     const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
     const orderExpiration =
@@ -869,7 +869,7 @@ const sendBuyerInfo2SellerMessage = async (bot: MainContext, buyer: UserDocument
   }
 };
 
-const cantTakeOwnOrderMessage = async (ctx: MainContext, bot: MainContext, user: UserDocument) => {
+const cantTakeOwnOrderMessage = async (ctx: MainContext, bot: HasTelegram, user: UserDocument) => {
   try {
     await bot.telegram.sendMessage(
       user.tg_id,
