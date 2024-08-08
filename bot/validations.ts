@@ -434,7 +434,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
 };
 
 
-const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
+const validateTakeSellOrder = async (ctx: MainContext, bot: MainContext, user: UserDocument, order: IOrder) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -463,7 +463,7 @@ const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext
   }
 };
 
-const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
+const validateTakeBuyOrder = async (ctx: MainContext, bot: MainContext, user: UserDocument, order: IOrder) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -649,7 +649,7 @@ const validateObjectId = async (ctx: MainContext, id: string) => {
   }
 };
 
-const validateUserWaitingOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument) => {
+const validateUserWaitingOrder = async (ctx: MainContext, bot: MainContext, user: UserDocument) => {
   try {
     // If is a seller
     let where: FilterQuery<OrderQuery> = {
