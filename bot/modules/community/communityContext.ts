@@ -12,12 +12,18 @@ export interface CommunityContext extends MainContext {
   message: (Update.New & Update.NonChannel & Message.TextMessage) | undefined;
 }
 
+// This type is catch-all for any wizard state and probably should be split into several
+// more specialized types.
 export interface CommunityWizardState {
   name: string;
-  currencies: any;
+  currency: string;
+  currencies: string[];
   group: any;
   channels: IOrderChannel[];
   fee: number;
+  sats: number;
+  fiatAmount: number[];
+  priceMargin: number;
   solvers: IUsernameId[];
   disputeChannel: any;
   user: any;
@@ -27,6 +33,8 @@ export interface CommunityWizardState {
   order: IOrder;
   buyer: UserDocument;
   seller: UserDocument;
+  type: string;
+  method: string;
   bot: CommunityContext;
   message: Message.TextMessage | undefined;
   error?: any;
