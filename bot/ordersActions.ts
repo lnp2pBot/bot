@@ -13,15 +13,15 @@ const OrderEvents = require('./modules/events/orders');
 
 interface CreateOrderArguments {
   type: string;
-  amount: string;
+  amount: number;
   fiatAmount: number[];
   fiatCode: string;
   paymentMethod: string;
   status: string;
   priceMargin: any; // ?
-  range_parent_id: string;
-  tgChatId: string;
-  tgOrderMessage: string;
+  range_parent_id?: string;
+  tgChatId?: string;
+  tgOrderMessage?: string;
   community_id: string;
 }
 
@@ -62,7 +62,7 @@ const createOrder = async (
   }: CreateOrderArguments
 ) => {
   try {
-    const amountAsNumber = parseInt(amount);
+    amount = Math.floor(amount);
     let isPublic = true;
     if (community_id) {
       const community = await Community.findById(community_id);
@@ -70,7 +70,7 @@ const createOrder = async (
         throw new Error("community is null");
       isPublic = community.public;
     }
-    const fee = await getFee(amountAsNumber, community_id);
+    const fee = await getFee(amount, community_id);
     if(process.env.MAX_FEE === undefined)
       throw new Error("Environment variable MAX_FEE is not defined");
     if(process.env.FEE_PERCENT === undefined)
@@ -82,7 +82,7 @@ const createOrder = async (
     const currency = getCurrency(fiatCode);
     if(currency == null)
       throw new Error("currency is null");
-    const priceFromAPI = !amountAsNumber;
+    const priceFromAPI = !amount;
 
     if (priceFromAPI && !currency.price) {
       await messages.notRateForCurrency(bot, user, i18n);
@@ -93,7 +93,7 @@ const createOrder = async (
 
     const baseOrderData = {
       ...fiatAmountData,
-      amountAsNumber,
+      amount,
       fee,
       bot_fee: botFee,
       community_fee: communityFee,
@@ -109,7 +109,7 @@ const createOrder = async (
       description: buildDescription(i18n, {
         user,
         type,
-        amount: amountAsNumber,
+        amount,
         fiatAmount,
         fiatCode,
         paymentMethod,
@@ -269,7 +269,7 @@ const getOrder = async (ctx: MainContext, user: UserDocument, orderId: string) =
   }
 };
 
-const getOrders = async (user: UserDocument, status: string) => {
+const getOrders = async (user: UserDocument, status?: string) => {
   try {
     const where: any = {
       $and: [
