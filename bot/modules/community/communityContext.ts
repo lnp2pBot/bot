@@ -3,6 +3,8 @@ import { SceneContextScene, WizardContextWizard, WizardSessionData } from 'teleg
 import { Update, Message } from 'telegraf/typings/core/types/typegram';
 import { Scenes, Telegraf } from 'telegraf';
 import { ICommunity, IOrderChannel, IUsernameId } from '../../../models/community';
+import { IOrder } from '../../../models/order';
+import { UserDocument } from '../../../models/user';
 
 export interface CommunityContext extends MainContext {
   scene: SceneContextScene<CommunityContext, WizardSessionData>;
@@ -22,7 +24,10 @@ export interface CommunityWizardState {
   statusMessage: any;
   currentStatusText: string;
   community: ICommunity;
-  bot: Telegraf<CommunityContext>;
+  order: IOrder;
+  buyer: UserDocument;
+  seller: UserDocument;
+  bot: CommunityContext;
   message: Message.TextMessage | undefined;
   error?: any;
   feedback?: any;
