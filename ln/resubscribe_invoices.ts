@@ -1,13 +1,15 @@
-const { getInvoices } = require('lightning');
-const lnd = require('./connect');
-const { subscribeInvoice } = require('./subscribe_invoice');
-const { Order } = require('../models');
-const { logger } = require('../logger');
+import { getInvoices, GetInvoicesResult } from 'lightning';
+import lnd from './connect';
+import { subscribeInvoice } from './subscribe_invoice';
+import { Order } from '../models';
+import { logger } from '../logger';
+import { CommunityContext } from '../bot/modules/community/communityContext';
+import { Telegraf } from 'telegraf';
 
-const resubscribeInvoices = async bot => {
+const resubscribeInvoices = async (bot: Telegraf<CommunityContext>) => {
   try {
     let invoicesReSubscribed = 0;
-    const isHeld = invoice => !!invoice.is_held;
+    
     const unconfirmedInvoices = (
       await getInvoices({
         lnd,
@@ -15,7 +17,7 @@ const resubscribeInvoices = async bot => {
       })
     ).invoices;
     if (Array.isArray(unconfirmedInvoices) && unconfirmedInvoices.length > 0) {
-      const heldInvoices = unconfirmedInvoices.filter(isHeld);
+      const heldInvoices = unconfirmedInvoices.filter(invoice => !!invoice.is_held);
       for (const invoice of heldInvoices) {
         const orderInDB = await Order.findOne({ hash: invoice.id });
         if (orderInDB) {
@@ -28,10 +30,10 @@ const resubscribeInvoices = async bot => {
       }
     }
     logger.info(`Invoices resubscribed: ${invoicesReSubscribed}`);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`ResubscribeInvoice catch: ${error.toString()}`);
     return false;
   }
 };
 
-module.exports = resubscribeInvoices;
+export { resubscribeInvoices };

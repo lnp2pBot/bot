@@ -2,7 +2,7 @@ import "dotenv/config";
 import { SocksProxyAgent } from "socks-proxy-agent";
 import { start } from "./bot/start";
 import { connect as mongoConnect } from './db_connect'
-const { resubscribeInvoices } = require('./ln');
+import { resubscribeInvoices } from './ln';
 import { logger } from "./logger";
 import { Telegraf } from "telegraf";
 import { delay } from './util';

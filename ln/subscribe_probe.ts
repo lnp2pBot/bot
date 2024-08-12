@@ -1,8 +1,8 @@
-const { subscribeToProbeForRoute } = require('lightning');
-const lnd = require('./connect');
-const { logger } = require('../logger');
+import { subscribeToProbeForRoute } from 'lightning';
+import lnd from './connect';
+import { logger } from '../logger';
 
-const subscribeProbe = async (destination, tokens) => {
+const subscribeProbe = async (destination: string, tokens: number) => {
   try {
     const sub = subscribeToProbeForRoute({ destination, lnd, tokens });
     sub.on('probe_success', async route =>
@@ -18,4 +18,4 @@ const subscribeProbe = async (destination, tokens) => {
   }
 };
 
-module.exports = subscribeProbe;
+export { subscribeProbe };
