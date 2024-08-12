@@ -1,7 +1,7 @@
 import { Scenes } from 'telegraf';
 import { CommunityContext } from './communityContext';
 
-const CommunityEvents = require('../events/community');
+import * as CommunityEvents from '../events/community';
 
 const communityAdmin = () => {
   const scene = new Scenes.WizardScene('COMMUNITY_ADMIN', async (ctx: CommunityContext) => {
