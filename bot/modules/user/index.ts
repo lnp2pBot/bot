@@ -1,5 +1,5 @@
 // @ts-check
-const { userMiddleware } = require('../../middleware/user');
+import { userMiddleware } from '../../middleware/user';
 
 import { Telegraf } from 'telegraf';
 import Scenes from './scenes';

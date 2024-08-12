@@ -13,7 +13,7 @@ export const middleware = () => {
   return stage.middleware();
 };
 
-const createOrder = (exports.createOrder = new Scenes.WizardScene(
+export const createOrder = new Scenes.WizardScene(
   CREATE_ORDER,
   async (ctx: CommunityContext) => {
     try {
@@ -100,7 +100,7 @@ const createOrder = (exports.createOrder = new Scenes.WizardScene(
       return ctx.scene.leave();
     }
   }
-));
+);
 
 const createOrderSteps = {
   async currency(ctx: CommunityContext) {

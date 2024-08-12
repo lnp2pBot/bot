@@ -1,14 +1,10 @@
 // @ts-check
 import { Scenes } from 'telegraf';
 import * as CommunityModule from '../modules/community';
-const OrdersModule = require('../modules/orders');
+import * as OrdersModule from '../modules/orders';
 import * as UserModule from '../modules/user';
 import { CommunityContext } from '../modules/community/communityContext';
-const {
-  addInvoiceWizard,
-  addFiatAmountWizard,
-  addInvoicePHIWizard,
-} = require('../scenes');
+import { addInvoiceWizard, addFiatAmountWizard, addInvoicePHIWizard } from '../scenes';
 
 export const stageMiddleware = () => {
   const scenes = [

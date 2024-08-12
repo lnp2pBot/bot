@@ -9,7 +9,7 @@ const { isPendingPayment } = require('../ln');
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
-const OrderEvents = require('./modules/events/orders');
+import * as OrderEvents from './modules/events/orders';
 
 interface InvoiceParseResult { 
   invoice?: any;

@@ -2,7 +2,7 @@ import { User, Order, Dispute } from '../../../models';
 import { MainContext } from '../../start';
 import * as messages from './messages';
 import { validateAdmin } from '../../validations';
-const globalMessages = require('../../messages');
+import * as globalMessages from '../../messages';
 
 export const takeDispute = async (ctx: MainContext) : Promise<void> => {
   const tgId: string = (ctx.update as any).callback_query.from.id;

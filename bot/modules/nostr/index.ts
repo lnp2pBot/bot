@@ -4,10 +4,10 @@ import * as Config from './config';
 import { createOrderEvent } from './events';
 import * as Commands from './commands';
 import { Telegraf } from 'telegraf';
-import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
+import { CommunityContext } from '../community/communityContext';
 
-export const configure = (bot: Telegraf<MainContext>) => {
+export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('/nostr', Commands.info);
 
   if (!Config.getRelays().length) {

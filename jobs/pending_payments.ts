@@ -6,9 +6,10 @@ import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../bot/start';
 const { payRequest, isPendingPayment } = require('../ln');
 import { getUserI18nContext } from '../util';
-const { orderUpdated } = require('../bot/modules/events/orders');
+import { CommunityContext } from '../bot/modules/community/communityContext';
+import { orderUpdated } from '../bot/modules/events/orders';
 
-export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -118,7 +119,7 @@ export const attemptPendingPayments = async (bot: Telegraf<MainContext>): Promis
   }
 };
 
-export const attemptCommunitiesPendingPayments = async (bot: Telegraf<MainContext>): Promise<void> => {
+export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
