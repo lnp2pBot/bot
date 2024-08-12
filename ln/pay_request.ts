@@ -1,27 +1,41 @@
-const {
+import {
   payViaPaymentRequest,
   getPayment,
   deleteForwardingReputations,
-} = require('lightning');
+  AuthenticatedLnd,
+} from 'lightning';
 const { parsePaymentRequest } = require('invoices');
-const { User, PendingPayment } = require('../models');
-const lnd = require('./connect');
-const { handleReputationItems, getUserI18nContext } = require('../util');
-const messages = require('../bot/messages');
-const { logger } = require('../logger');
-const OrderEvents = require('../bot/modules/events/orders');
+import { User, PendingPayment } from '../models';
+import lnd from './connect';
+import { handleReputationItems, getUserI18nContext } from '../util';
+import * as messages from '../bot/messages';
+import { logger } from '../logger';
+import * as OrderEvents from '../bot/modules/events/orders';
+import { IOrder } from '../models/order';
+import { HasTelegram } from '../bot/start';
 
-const payRequest = async ({ request, amount }) => {
+interface PayViaPaymentRequestParams {
+  lnd: AuthenticatedLnd;
+  request: string;
+  pathfinding_timeout: number;
+  tokens?: number;
+  max_fee?: number;
+}
+
+const payRequest = async ({ request, amount }: { request: string, amount: number }) => {
   try {
     const invoice = parsePaymentRequest({ request });
     if (!invoice) return false;
     // If the invoice is expired we return is_expired = true
     if (invoice.is_expired) return invoice;
 
+    let maxRoutingFee = process.env.MAX_ROUTING_FEE;
+    if (maxRoutingFee === undefined)
+      throw new Error("Environment variable MAX_ROUTING_FEE is not defined");
     // We need to set a max fee amount
-    const maxFee = amount * parseFloat(process.env.MAX_ROUTING_FEE);
+    const maxFee = amount * parseFloat(maxRoutingFee);
 
-    const params = {
+    const params : PayViaPaymentRequestParams = {
       lnd,
       request,
       pathfinding_timeout: 60000,
@@ -45,7 +59,7 @@ const payRequest = async ({ request, amount }) => {
   }
 };
 
-const payToBuyer = async (bot, order) => {
+const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   try {
     // We check if the payment is on flight we don't do anything
     const isPending = await isPendingPayment(order.buyer_invoice);
@@ -57,6 +71,8 @@ const payToBuyer = async (bot, order) => {
       amount: order.amount,
     });
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    if (buyerUser === null)
+      throw new Error("buyerUser was not found");
     // If the buyer's invoice is expired we let it know and don't try to pay again
     const i18nCtx = await getUserI18nContext(buyerUser);
     if (!!payment && payment.is_expired) {
@@ -69,6 +85,8 @@ const payToBuyer = async (bot, order) => {
       return;
     }
     const sellerUser = await User.findOne({ _id: order.seller_id });
+    if (sellerUser === null)
+      throw new Error("sellerUser was not found");
     if (!!payment && !!payment.confirmed_at) {
       logger.info(`Order ${order._id} - Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
@@ -101,20 +119,20 @@ const payToBuyer = async (bot, order) => {
   }
 };
 
-const isPendingPayment = async request => {
+const isPendingPayment = async (request: string) => {
   try {
     const { id } = parsePaymentRequest({ request });
     const { is_pending } = await getPayment({ lnd, id });
 
     return !!is_pending;
-  } catch (error) {
+  } catch (error: any) {
     const message = error.toString();
     logger.error(`isPendingPayment catch error: ${message}`);
     return false;
   }
 };
 
-module.exports = {
+export {
   payRequest,
   payToBuyer,
   isPendingPayment,

@@ -5,7 +5,7 @@ import { getCurrency, numberFormat, getBtcExchangePrice, getFee, getUserAge, get
 import { logger } from '../logger';
 import { I18nContext } from '@grammyjs/i18n';
 import { UserDocument } from '../models/user';
-import { MainContext } from './start';
+import { HasTelegram, MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
 
@@ -45,7 +45,7 @@ interface FiatAmountData {
 
 const createOrder = async (
   i18n: I18nContext,
-  bot: MainContext,
+  bot: HasTelegram,
   user: UserDocument,
   {
     type,

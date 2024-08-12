@@ -1,9 +1,7 @@
-const fs = require('fs');
-const path = require('path');
-const lightning = require('lightning');
-const { logger } = require('../logger');
-
-const { authenticatedLndGrpc } = lightning;
+import fs from 'fs';
+import path from 'path';
+import { authenticatedLndGrpc } from 'lightning';
+import { logger } from '../logger';
 
 // Trying to load TLS certificate and admin macaroon from environment variables first
 let cert = process.env.LND_CERT_BASE64;
@@ -47,4 +45,4 @@ const { lnd } = authenticatedLndGrpc({
   socket,
 });
 
-module.exports = lnd;
+export default lnd;
