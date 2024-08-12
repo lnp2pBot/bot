@@ -139,8 +139,10 @@ buyer_took_your_order: |
   🤖 Order Id: #${orderId}
 
   @${buyerUsername} hat deinen Auftrag angenommen und möchte deine Sats kaufen. Nimm Kontakt mit ihm auf und sag ihm, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann.
+  
+  Ich werde dich benachrichtigen, sobald der Käufer mir mitteilt, dass er das Fiat-Geld gesendet hat. Danach musst du überprüfen, ob es angekommen ist.
 
-  Sobald du überprüft hast, dass du den vollen Betrag erhalten hast, musst du die Sats freigeben
+  Wenn der Käufer nicht antwortet, kannst du eine Stornierung oder eine Streitigkeit einleiten. Denk daran, dass dich ein Administrator NIE kontaktieren wird, um deine Bestellung zu klären, es sei denn, du öffnest zuerst eine Streitigkeit.
 waiting_seller_to_pay: 'Ich habe eine Zahlungsaufforderung an den Verkäufer geschickt, damit er deine Sats für die #${orderId} schickt, sobald die Zahlung erfolgt ist, werde ich euch beide in Kontakt setzen'
 sell_success: Dein Verkauf von Sats wurde abgeschlossen, nachdem die Zahlung von @${buyerUsername} bestätigt wurde. ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kannst jederzeit mit der Bezahlung deiner LN-Rechnung rechnen, aber denke daran, dass deine Wallet online sein muss, um über das Lightning-Netzwerk zu empfangen.
@@ -247,8 +249,13 @@ help: |
   /help - Hilfe
 must_be_gt_or_eq: ${fieldName} muss ${qty} oder mehr entsprechen
 you_have_been_banned: Du wurdest gesperrt!
-I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Sobald der Verkäufer bestätigt, dass das Geld eingegangen ist, sollten die Sats an dich geschickt werden.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} hat mitgeteilt, dass er dir das FIAT-Geld geschickt hat. Sobald du den Erhalt bestätigt hast, gib die Sats bitte frei. Du kannst keinen weiteren Auftrag erstellen, bis du die Sats freigibst.
+I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Wenn der Verkäufer bestätigt, dass er dein Geld erhalten hat, muss er die Mittel freigeben. Falls er sich weigert, kannst du eine Streitigkeit eröffnen.
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} hat mitgeteilt, dass er dir das FIAT-Geld geschickt hat. Sobald du den Erhalt des Geldes bestätigst, bitte gib die Mittel frei. Beachte, dass du bis zur Freigabe der Mittel keine neue Bestellung erstellen oder übernehmen kannst.
+  
+  Nachdem du freigegeben hast, geht das Geld an den Käufer und es gibt kein Zurück mehr. Daher führe diesen Prozess nur durch, wenn du dir 💯 sicher bist.
+  
+  Drücke den folgenden Befehl, wenn du die Sats für den Käufer freigeben möchtest 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der Käufer dir mitteilt, dass das Geld an dich geschickt wurde, du es aber noch nicht freigegeben hast. Du kannst keine neuen Aufträge erstellen, bis du das Geld freigibst.
 user_banned: Gesperrter Benutzer!
@@ -280,8 +287,16 @@ order_cancelled_by_counterparty: 'Ihr Kontrahent hat die Bestell-ID storniert: $
 have_to_wait_for_counterpart: 🕒 Du hast diesen Vorgang bereits durchgeführt, du musst warten, bis die andere Partei handelt
 ok_cooperativecancel: '👍 Die Gegenpartei hat zugestimmt und der Auftrag mit der Id ${orderId} wurde storniert'
 refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen
-init_cooperativecancel: '🕒 Du hast mit der Stornierung des Auftrages mit der Id ${orderId} gestartet. Deine Gegenpartei muss der Stornierung ebenfalls zustimmen.'
-counterparty_wants_cooperativecancel: '😳 Deine Gegenpartei möchte den Auftrag mit der Id ${orderId} stornieren. Wenn du mit der Stornierung einverstanden bist, führe bitte den folgenden Befehl aus 👇'
+init_cooperativecancel: |
+  🕒 Du hast mit der Stornierung des Auftrages mit der Id ${orderId} gestartet. Dein Gegenüber muss mir ebenfalls mitteilen, dass er die Stornierung wünscht. Falls er/sie nicht antwortet, kannst du eine Streitigkeit eröffnen.
+  
+  Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
+counterparty_wants_cooperativecancel: |
+  😳 Deine Gegenpartei möchte den Auftrag mit der Id ${orderId} stornieren.
+  
+  Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
+  
+  Wenn du einverstanden bist, benutze den Befehl 👇
 invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner LN-Rechnung ist fehlgeschlagen. Ich werde es noch ${attempts} weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
 cant_take_more_orders: ⛔ Sorry! Du kannst keinen weiteren Auftrag annehmen, während andere auf dich warten
 seller_released: 💸 Der Verkäufer hat die Sats bereits freigegeben, du musst warten, bis deine LN-Rechnung bezahlt ist.

@@ -378,7 +378,7 @@ expired_order_to_buyer: |
 
   Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 expired_order_to_seller: |
-  🚨🚨🚨 Esta orden está por expirar y debe ser completada o cancelada inmediátamente, si aún no has recibido el dinero fiat aún puedes cancelar con el comando /cancel.
+  🚨🚨🚨 Esta orden está por expirar y debe ser completada o cancelada inmediatamente, si aún no has recibido el dinero fiat aún puedes cancelar con el comando /cancel.
 
   Si recibiste el dinero fiat por favor libera los fondos con el comando /release de lo contrario te arriesgas a que el comprador abra una disputa lo cual afectaría tu reputación.
 

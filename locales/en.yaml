@@ -141,8 +141,10 @@ buyer_took_your_order: |
   🤖 Order ID: #${orderId}
 
   @${buyerUsername} has taken your order and wants to buy your sats. Get in touch and tell him how to send you ${currency} ${fiatAmount} through ${paymentMethod}.
+  
+  I will notify you when the buyer indicates that they have sent the fiat. After that, you should check if it has arrived.
 
-  Once you verify you have received the full amount, you have to release the sats
+  If the buyer does not respond, you can initiate a cancellation or a dispute. Remember, an administrator will NEVER contact you to resolve your order unless you open a dispute first.
 waiting_seller_to_pay: 'I have sent a payment request to the seller so he sends your sats for the order ID #${orderId}, as soon as payment is made I will put you both in touch'
 sell_success: Your sats sale has been completed after confirming the payment from @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} already released the sats, expect your invoice to be paid any time, remember your wallet needs to be online to receive through Lightning Network.
@@ -249,8 +251,13 @@ help: |
   /help - Help messages
 must_be_gt_or_eq: ${fieldName} Must be greater or equal to ${qty}
 you_have_been_banned: You have been banned!
-I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. Once the seller confirms the money was received, the sats should be sent to you.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} has informed that he already sent you the fiat money. Once you confirm the reception, please release funds. You will not be able to create another order until you release funds.
+I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. When the seller confirms that they have received your money, they should release the funds. If they refuse, you can open a dispute.
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} has informed that he already sent you the fiat money. Once you confirm the reception, please release funds. You will not be able to create another order until you release funds.
+  
+  After releasing, the money will go to the buyer and there will be no turning back, so only proceed with this process if you are 💯 sure.
+
+  Press the following command if you want to release the sats to the buyer 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 you have one or more orders where the buyer informs that the fiat money was sent to you but you haven't released the sats yet. You will not be able to create new orders until you release such funds.
 user_banned: Banned user!
@@ -283,8 +290,17 @@ order_cancelled_by_counterparty: 'Your counterparty cancelled the order ID: ${or
 have_to_wait_for_counterpart: 🕒 You have already made this operation, you must wait for the other party to take action
 ok_cooperativecancel: '👍 Counterparty agreed and the order ID: ${orderId} has been cancelled'
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make
-init_cooperativecancel: '🕒 You have started the cancellation of the order ID: ${orderId}, your counterparty must agree on the cancellation too.'
-counterparty_wants_cooperativecancel: '😳 Your counterparty wants to cancel order ID: ${orderId}. If you agree on such cancellation, please execute the following command 👇'
+init_cooperativecancel: |
+  🕒 You have started the cancellation of the order ID: ${orderId}, your counterparty must agree on the cancellation too. If they do not respond, you can open a dispute.
+  
+  No administrator will contact you to cancel your order unless you open a dispute first.  
+  
+counterparty_wants_cooperativecancel: |
+  😳 Your counterparty wants to cancel order ID: ${orderId}.
+  
+  No administrator will contact you to cancel your order unless you open a dispute first.
+  
+  If you agree on such cancellation, please execute the following command 👇  
 invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try ${attempts} more times in ${pendingPaymentWindow} minutes window, please check your node/wallet is online
 cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
 seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.

@@ -140,7 +140,9 @@ buyer_took_your_order: |
 
   @${buyerUsername} ha preso in carico il tuo ordine e vuole acquistare i tuoi sats. Mettiti in contatto con lui e digli come mandarti  ${currency} ${fiatAmount} tramite ${paymentMethod}.
 
-  Una volta confermata la ricezione dell'importo totale, è necessario sbloccare i satoshi
+  Ti avviserò quando il compratore mi dirà che ha inviato il fiat, poi dovrai controllare se è arrivato.
+
+  Se il compratore non risponde, puoi avviare una cancellazione o una disputa. Ricorda che un amministratore NON ti contatterà mai per risolvere il tuo ordine, a meno che tu non apra prima una disputa.
 waiting_seller_to_pay: "Ho inviato una richiesta di pagamento al venditore in modo che invii i sats per l' #${orderId}, Non appena il pagamento sarà effettuato, vi metterò in contatto"
 sell_success: La vendita di sats è stata completata dopo la conferma del pagamento da parte di @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ha rilasciato i satoshi, la vostra invoice verrà pagata da un momento all'altro. Ricordata che il tuo wallet deve essere online per ricevere attraverso la rete Lightning.
@@ -247,8 +249,13 @@ help: |
   /help - messaggi di aiuto
 must_be_gt_or_eq: ${fieldName} Deve essere superiore o uguale a ${qty}
 you_have_been_banned: Sei stato bannato!
-I_told_seller_you_sent_fiat: 🤖 Ho detto a @${sellerUsername} che hai inviato i fondi una volta che il venditore conferma che il denaro è stato ricevuto, i sats dovrebbero essere inviati a te.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} mi ha informato che ti ha già inviato i fondi, una volta confermata la ricezione, ti preghiamo di rilasciare i fondi. Non potrai creare un altro ordine fino a quando non si sbloccherai i fondi.
+I_told_seller_you_sent_fiat: 🤖 Ho avvisato @${sellerUsername} che hai inviato il denaro fiat, quando il venditore confermerà di aver ricevuto il tuo denaro dovrà liberare i fondi. Se si rifiuta, puoi aprire una disputa.
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} mi ha indicato che ha già inviato il denaro fiat, una volta confermata la ricezione del denaro per favore libera i fondi, devi sapere che finché non liberi i fondi non potrai creare o prendere un altro ordine.
+
+  Dopo aver liberato, il denaro andrà al compratore e non ci sarà ritorno, quindi esegui questo processo solo se sei 💯 sicuro.
+
+  Premi il comando seguente se vuoi liberare i Sats per il compratore 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 hai uno o più ordini in cui l'acquirente comunica che il denaro ti è stato inviato ma non hai ancora rilasciato i sats. Non ti sarà possibile creare nuovi ordini fino a quando non si sbloccherai tali fondi..
 user_banned: Utente bannato!
@@ -280,8 +287,16 @@ order_completed_by_admin: "Un amministratore ha completato l'ordine ID: ${orderI
 have_to_wait_for_counterpart: 🕒 Hai già effettuato questa operazione, devi attendere l'azione della controparte.
 ok_cooperativecancel: "👍 La controparte ha accettato e l'ordine ID: ${orderId} has been cancelled"
 refund_cooperativecancel: 💰 Hai ricevuto il rimborso del pagamento LN, non ci sono altre azioni da eseguire.
-init_cooperativecancel: "🕒 Hai avviato la cancellazione dell'ordine ID: ${orderId}, anche la controparte deve essere d'accordo sulla cancellazione."
-counterparty_wants_cooperativecancel: "😳 La controparte vuole annullare l'ordine ID: ${orderId}, Se anche ti sei d'accordo con questa cancellazione, premi questo comando 👇"
+init_cooperativecancel: | 
+  "🕒 Hai avviato la cancellazione dell'ordine Id: ${orderId}, anche la tua controparte deve indicarmi che desidera annullarlo. Se lui/lei non risponde, puoi aprire una disputa.
+
+  Nessun amministratore ti contatterà per cancellare il tuo ordine, a meno che tu non apra prima una disputa."
+counterparty_wants_cooperativecancel: |
+  "😳 La tua controparte vuole cancellare l'ordine Id: ${orderId}
+
+  Nessun amministratore ti contatterà per cancellare il tuo ordine, a meno che tu non apra prima una disputa.
+
+  Se sei d'accordo utilizza il comando 👇"
 invoice_payment_failed: ⛔ Ho cercato di inviarti i dati, ma il pagamento della invoice non è andato a buon fine, proverò a farlo ${attempts} volte in ${pendingPaymentWindow} finestra di minuti, verifica che il tuo nodo/wallet sia online
 cant_take_more_orders: ⛔ Mi dispiace! Non è possibile accettare un altro ordine mentre ce ne sono altri in attesa.
 seller_released: 💸 Il venditore ha già rilasciato i satoshi, è necessario attendere il pagamento della invoice.

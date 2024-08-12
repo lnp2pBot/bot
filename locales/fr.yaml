@@ -138,11 +138,13 @@ get_in_touch_with_buyer: |
 
   Dès que tu as vérifié que le paiement est arrivé, tu dois débloquer les sats.
 buyer_took_your_order: |
-  🤖 ID d'offre : #${orderId}
+  "🤖 ID d'offre : #${orderId}
 
   @${buyerUsername} a récupéré ton offre et veut acheter tes sats. Contacte-le pour lui indiquer comment t'envoyer ${fiatAmount} ${currency} via ${paymentMethod}.
 
-  Dès que tu as vérifié que le paiement est arrivé en totalité, tu dois débloquer les sats
+  Je te préviendrai lorsque l'acheteur me dira qu'il a envoyé le fiat, ensuite tu devras vérifier si l'argent est arrivé.
+
+  Si l'acheteur ne répond pas, tu peux initier une annulation ou un litige. N'oublie pas qu'un administrateur ne te contactera JAMAIS pour résoudre ta commande, sauf si tu ouvres un litige d'abord."
 waiting_seller_to_pay: "J'ai envoyé une requête de paiement au vendeur pour qu'il envoie tes sats concernant l'offre dont la référence est #${orderId}, dès que le paiement est fait je vous informerai tous les deux."
 sell_success: Ta vente de sats a été effectuée avec succès suite à la confirmation de paiement de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} a déjà débloqué les sats, ta facture sera payée incessamment, rappelle-toi que ton portefeuille doit être connecté pour la réception via Lightning Network.
@@ -249,8 +251,12 @@ help: |
   /help - Messages d'aide
 must_be_gt_or_eq: ${fieldName} Doit être supérieur ou égal à ${qty}
 you_have_been_banned: Tu as été banni !
-I_told_seller_you_sent_fiat: 🤖 J'ai dit à @${sellerUsername} que tu as envoyé le paiement fiat. Une fois que le vendeur confirme que l'argent a été reçu, les sats te seront envoyés.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} a informé qu'il vous a déjà envoyé la monnaie fiat. Une fois que tu as confirmé la réception, veuille débloquer des fonds. Tu ne pourras pas créer une autre commande tant que tu n'as pas débloqué des fonds.
+I_told_seller_you_sent_fiat: "🤖 J'ai dit à @${sellerUsername} que tu as envoyé le paiement fiat. Lorsque le vendeur confirmera avoir reçu ton argent, il devra libérer les fonds. S'il refuse, tu peux ouvrir un litige."
+buyer_told_me_that_sent_fiat: |
+  "🤖 @${buyerUsername} a informé qu'il vous a déjà envoyé la monnaie fiat. Une fois que tu as confirmé la réception, veuille débloquer des fonds. Tu ne pourras pas créer une autre commande tant que tu n'as pas débloqué des fonds.
+  Après avoir libéré les fonds, l'argent ira à l'acheteur et il n'y aura pas de retour en arrière, donc ne réalise ce processus que si tu es 💯 sûr.
+
+  Appuie sur la commande suivante si tu veux libérer les Sats pour l'acheteur 👇"
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Tu as une ou plusieurs commandes pour lesquelles l'acheteur informe que la monnaie fiduciaire t'a été envoyée, mais tu n'as pas encore libéré les sat. Tu ne seras pas en mesure de créer de nouvelles commandes tant que tu n'auras pas libéré ces fonds.
 user_banned: Utilisateur banni!
@@ -282,8 +288,16 @@ order_cancelled_by_counterparty: "Ta contrepartie a annulé l'offre ID : ${order
 have_to_wait_for_counterpart: 🕒 Vous avez déjà effectué cette opération, vous devez attendre que l'autre partie agisse
 ok_cooperativecancel: "👍 La contrepartie a accepté et l'offre ID : ${orderId} a été annulée"
 refund_cooperativecancel: 💰 Vous avez reçu le remboursement de votre paiement lightning, il n'y a pas d'autre action à faire
-init_cooperativecancel: "🕒 Vous avez lancé l'annulation de l'offre ID : ${orderId}, votre contrepartie doit également accepter l'annulation."
-counterparty_wants_cooperativecancel: "😳 Votre contrepartie souhaite annuler l'offre ID : ${orderId}. Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇"
+init_cooperativecancel: |
+  "🕒 Vous avez lancé l'annulation de l'offre ID : ${orderId}, votre contrepartie doit également accepter l'annulation. S'il/elle ne répond pas, tu peux ouvrir un litige.
+
+  Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord."
+counterparty_wants_cooperativecancel: |
+  "😳 Votre contrepartie souhaite annuler l'offre ID : ${orderId}. 
+  
+  Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord.
+
+  Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇"
 invoice_payment_failed: ⛔ J'ai essayé de vous envoyer les données mais le paiement de votre facture a échoué, je vais essayer ${attempts} fois de plus dans une fenêtre de  ${pendingPaymentWindow} minutes, veuillez vérifier que votre nœud/portefeuille est en ligne.
 cant_take_more_orders: ⛔ Désolé ! Vous ne pouvez pas lancer d'autres offres alors que d'autres vous attendent.
 seller_released: 💸 Le vendeur a déjà débloqué les satoshis, vous devez attendre le paiement de votre facture.
