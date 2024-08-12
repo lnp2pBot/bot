@@ -127,7 +127,7 @@ get_in_touch_with_seller: |
 
   Ponte en contacto con el usuario @${sellerUsername} para que te diga cómo enviarle el dinero, debes enviarle ${currency} ${fiatAmount} por ${paymentMethod}.
 
-  Una vez hayas enviado el dinero fiat hazmelo saber con el comando 👇
+  Una vez hayas enviado el dinero fiat házmelo saber con el comando 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Orden Id: #${orderId}
@@ -249,7 +249,7 @@ help: |
   /help - Mensaje de ayuda
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
-I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos. Si se niega, puedes abrir una disputa con el comando
+I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos. Si se niega, puedes abrir una disputa.
 buyer_told_me_that_sent_fiat: |
   🤖 @${buyerUsername} me ha indicado que ya te envió el dinero fiat, una vez confirmes la recepción del dinero por favor libera los fondos, debes saber que hasta que no liberes los fondos no podrás crear o tomar otra orden.
 
