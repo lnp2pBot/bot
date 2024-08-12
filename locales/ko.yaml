@@ -162,9 +162,17 @@ order_detail: |
 
   구매자 평판: ${buyerReputation}
 
+  Days in operation \\(buyer\\): ${buyerAge}
+
+  Successful trades \\(buyer\\): ${buyerTrades}
+
   판매자: @${sellerUsername || ''}
 
   판매자 평판: ${sellerReputation}
+
+  Days in operation \\(seller\\): ${sellerAge}
+
+  Successful trades \\(seller\\): ${sellerTrades}
 
   주문 수량 \\(sats\\): ${order.amount}
 

@@ -159,11 +159,19 @@ order_detail: |
 
   Comprador: @${buyerUsername || ''}
 
-  Reputación del comprador: ${buyerReputation}
+  Reputación \\(comprador\\): ${buyerReputation}
+
+  Días operando \\(comprador\\): ${buyerAge}
+
+  Operaciones exitosas \\(comprador\\): ${buyerTrades}
 
   Vendedor: @${sellerUsername || ''}
 
-  Reputación del vendedor: ${sellerReputation}
+  Reputación \\(vendedor\\): ${sellerReputation}
+
+  Días operando \\(vendedor\\): ${sellerAge}
+
+  Operaciones exitosas \\(vendedor\\): ${sellerTrades}
 
   Monto \\(sats\\): ${order.amount}
 
