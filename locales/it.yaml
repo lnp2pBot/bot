@@ -161,9 +161,17 @@ order_detail: |
 
   Reputazione dell'acquirente: ${buyerReputation}
 
+  Days in operation \\(buyer\\): ${buyerAge}
+
+  Successful trades \\(buyer\\): ${buyerTrades}
+
   Venditore: @${sellerUsername || ''}
 
   Reputazione del venditore: ${sellerReputation}
+
+  Days in operation \\(seller\\): ${sellerAge}
+
+  Successful trades \\(seller\\): ${sellerTrades}
 
   Importo \\(sats\\): ${order.amount}
 

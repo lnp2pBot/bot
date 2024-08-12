@@ -159,11 +159,19 @@ order_detail: |
 
   Käufer: @${buyerUsername || ''}
 
-  Käufer Ruf: ${buyerReputation}
+  Reputation \\(buyer\\): ${buyerReputation}
+
+  Days in operation \\(buyer\\): ${buyerAge}
+
+  Successful trades \\(buyer\\): ${buyerTrades}
 
   Verkäufer: @${sellerUsername || ''}
 
-  Ruf des Verkäufers: ${sellerReputation}
+  Reputation \\(seller\\): ${sellerReputation}
+
+  Days in operation \\(seller\\): ${sellerAge}
+
+  Successful trades \\(seller\\): ${sellerTrades}
 
   Bestellwert \\(sats\\): ${order.amount}
 

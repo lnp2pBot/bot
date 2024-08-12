@@ -365,6 +365,10 @@ exports.getDetailedOrder = (i18n, order, buyer, seller) => {
     const fee = order.fee ? parseInt(order.fee) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
+    const buyerAge = getUserAge(buyer);
+    const sellerAge = getUserAge(seller);
+    const buyerTrades = buyer ? buyer.trades_completed : 0;
+    const sellerTrades = seller ? seller.trades_completed : 0;
     const message = i18n.t('order_detail', {
       order,
       creator,
@@ -378,6 +382,10 @@ exports.getDetailedOrder = (i18n, order, buyer, seller) => {
       priceMargin,
       buyerReputation,
       sellerReputation,
+      buyerAge,
+      sellerAge,
+      buyerTrades,
+      sellerTrades,
     });
 
     return message;
@@ -447,7 +455,7 @@ exports.holdInvoiceExpirationInSecs = () => {
 };
 
 // Returns the user age in days
-exports.getUserAge = user => {
+const getUserAge = user => {
   const userCreationDate = new Date(user.created_at);
   const today = new Date();
   const ageInDays = Math.floor(
@@ -455,6 +463,8 @@ exports.getUserAge = user => {
   );
   return ageInDays;
 };
+
+exports.getUserAge = getUserAge;
 
 /**
  * Returns order expiration time text

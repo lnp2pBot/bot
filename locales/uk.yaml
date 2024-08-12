@@ -160,9 +160,17 @@ order_detail: |
 
   репутація покупця: ${buyerReputation}
 
+  Days in operation \\(buyer\\): ${buyerAge}
+
+  Successful trades \\(buyer\\): ${buyerTrades}
+
   Продавець: @${sellerUsername || ''}
 
   репутація продавця: ${sellerReputation}
+
+  Days in operation \\(seller\\): ${sellerAge}
+
+  Successful trades \\(seller\\): ${sellerTrades}
 
   Сума \\(сатоші\\): ${order.amount}
 
