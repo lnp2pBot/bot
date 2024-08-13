@@ -170,7 +170,11 @@ async function enterWizard(ctx, user, type) {
     if (comm.currencies.length === 1) {
       state.currency = comm.currencies[0];
     }
+    // We verify if the user is not banned on this community
+    if (await isBannedFromCommunity(user, user.default_community_id))
+      return await messages.bannedUserErrorMessage(ctx, user);
   }
+
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }
 
