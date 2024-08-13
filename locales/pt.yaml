@@ -139,7 +139,9 @@ buyer_took_your_order: |
 
   @${buyerUsername} fez seu pedido e deseja comprar seus sats. Entre em contato e diga a ele como mandar você ${currency} ${fiatAmount} através dos ${paymentMethod}.
 
-  Depois de verificar se você recebeu o valor total, você precisa liberar os sats
+  Avisarei quando o comprador me informar que enviou o fiat, depois você deverá verificar se o valor chegou.
+
+  Se o comprador não responder, você pode iniciar um cancelamento ou uma disputa. Lembre-se de que um administrador NUNCA o contactará para resolver seu pedido, a menos que você abra uma disputa primeiro.
 waiting_seller_to_pay: 'Enviei uma solicitação de pagamento ao vendedor para que ele envie seus sats para o #${orderId}, Assim que o pagamento for feito, vou colocar vocês em contato'
 sell_success: Sua venda de SATs foi concluída após a confirmação do pagamento de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} Já lançou os Satoshis, espere que sua fatura seja paga a qualquer momento, lembre-se de que sua carteira precisa estar online para receber através da Lightning Network.
@@ -254,8 +256,13 @@ help: |
   /help - mensagem de ajuda
 must_be_gt_or_eq: ${fieldName} Deve ser mais ou igual a ${qty}
 you_have_been_banned: Você foi banido!
-I_told_seller_you_sent_fiat: 🤖 Eu disse @${sellerUsername} que você enviou dinheiro fiduciário depois que o vendedor confirmar que o dinheiro foi recebido, os sats devem ser enviados a você.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername} informou que já enviou o dinheiro fiduciário, depois de confirmar que você o recebeu, libere fundos. Você não poderá criar outro pedido até lançar fundos.
+I_told_seller_you_sent_fiat: 🤖 Informei a @${sellerUsername} que você enviou o dinheiro fiat, quando o vendedor confirmar que recebeu seu dinheiro, ele deverá liberar os fundos. Se ele se recusar, você pode abrir uma disputa.
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} informou que já enviou o dinheiro fiduciário, depois de confirmar que você o recebeu, libere fundos.  
+  
+  Após liberar, o dinheiro irá para o comprador e não há volta, então só realize este processo se estiver 💯 certo.
+
+  Pressione o seguinte comando se quiser liberar os Sats para o comprador 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Você tem um ou mais pedidos em que o comprador informa que o dinheiro fiduciário foi enviado a você, mas você não lançou os SATs.Você não poderá criar novos pedidos até lançar esses fundos.
 user_banned: Usuário proibido!
@@ -287,8 +294,16 @@ order_cancelled_by_counterparty: 'Sua contraparte cancelou o ID do pedido: ${ord
 have_to_wait_for_counterpart: 🕒 Você já fez esta operação, deve esperar a outra parte agir
 ok_cooperativecancel: '👍 Contraparte concordou e o pedido Id: ${orderId} foi cancelado'
 refund_cooperativecancel: 💰 Você recebeu um reembolso do seu pagamento de lightning, não há mais ações para fazer
-init_cooperativecancel: '🕒 Você começou o cancelamento do pedido Id: ${orderId}, Sua contraparte também deve concordar com o cancelamento.'
-counterparty_wants_cooperativecancel: '😳 Sua contraparte quer cancelar o pedido Id: ${orderId}, Se você concorda com esse cancelamento, execute o seguinte comando 👇'
+init_cooperativecancel: |
+  🕒 Você iniciou o cancelamento do pedido Id: ${orderId}, sua contraparte também deve me informar que deseja cancelá-lo. Se ele/ela não responder, você pode abrir uma disputa.
+
+  Nenhum administrador o contatará para cancelar seu pedido, a menos que você abra uma disputa primeiro.
+counterparty_wants_cooperativecancel: |
+  😳 Sua contraparte quer cancelar o pedido Id: ${orderId}
+
+  Nenhum administrador o contatará para cancelar seu pedido, a menos que você abra uma disputa primeiro.
+
+  Se você concorda, utilize o comando 👇
 invoice_payment_failed: ⛔ Eu tentei enviar -lhe os sats, mas o pagamento da sua fatura falhou, vou tentar ${attempts} mais vezes em ${pendingPaymentWindow} janela de minutos, verifique seu nó/carteira está online
 cant_take_more_orders: ⛔ Desculpe!Você não pode fazer outro pedido enquanto tem outras pessoas esperando por você
 seller_released: 💸 O vendedor já lançou os Satoshis, você deve esperar que sua fatura seja paga.

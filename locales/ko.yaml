@@ -137,11 +137,13 @@ get_in_touch_with_buyer: |
   
   법정화폐 입금을 확인한 후에, 당신은 비트코인의 잠금을 해제해 주어야 합니다.
 buyer_took_your_order: |
-  🤖 주문 ID: #${orderId}
+  "🤖 주문 ID: #${orderId}
 
-  @${buyerUsername}가 당신의 주문을 수락하여 당신에게서 비트코인을 구매하기를 원합니다. 구매자와 연락해서 @${buterUsername}와 연락해서 어떻게 당신에게 ${paymentMethod}를 사용해서 ${currency} ${fiatAmount}를 보내야 하는지에 대해 알려주세요.
+  @${buyerUsername} 가 당신의 주문을 수락하여 당신에게서 비트코인을 구매하기를 원합니다. 구매자와 연락해서 @${buterUsername} 와 연락해서 어떻게 당신에게 ${paymentMethod} 를 사용해서 ${currency} ${fiatAmount} 를 보내야 하는지에 대해 알려주세요.
 
-  법정화폐 입금을 확인한 후에는 비트코인을 release해주어야 합니다.
+  구매자가 fiat를 송금했다고 알려주면 알림을 보낼 것입니다. 그 후, 입금 여부를 확인해야 합니다.
+
+  구매자가 응답하지 않는 경우, 취소 또는 분쟁을 시작할 수 있습니다. 관리자가 당신의 주문을 해결하기 위해 연락하지 않으며, 먼저 분쟁을 열어야 합니다."
 waiting_seller_to_pay: '판매자에게 결제 요청을 보냈고, 판매자는 주문 ID #${orderId}에 사토시를 보낼 것입니다. 결제가 이루어지는 대로, 거래자들 모두에게 알려드리겠습니다.'
 sell_success: 당신의 비트코인 판매가 @${buyerUsername}의 결제를 확인함으로써 완료되었습니다. ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} 님이 비트코인의 락업을 해제했고, 제공된 인보이스로 곧 결제가 완료될 것입니다. 비수탁형 지갑의 경우, 지갑을 온라인 상태로 유지해서 결제를 받을 수 있게 해주세요.
@@ -255,8 +257,12 @@ help: |
   /help - 도움말을 보여줍니다.
 must_be_gt_or_eq: ${fieldName}은 최소 ${qty}보다 크거나 같아야 합니다.
 you_have_been_banned: 당신은 추방되었습니다!
-I_told_seller_you_sent_fiat: 🤖 @${sellerUsername}님에게 당신이 법정화폐를 보냈음을 전달했습니다. 판매자가 입금을 확인한 후에 당신에게 사토시를 보내줄 것입니다.
-buyer_told_me_that_sent_fiat: 🤖 @${buyerUsername}님이 당신에게 법정화폐를 보냈다는 것을 알려왔습니다. 입금을 확인한 후에 자금에 걸린 잠금을 해제해주세요. 잠금을 해제하기 전까지는 다른 주문을 생성할 수 없습니다.
+I_told_seller_you_sent_fiat: 🤖 @${sellerUsername}에게 당신이 fiat를 송금했다고 알렸습니다. 판매자가 돈을 받았다고 확인하면 자금을 해제해야 합니다. 만약 거부하면 분쟁을 열 수 있습니다.
+buyer_told_me_that_sent_fiat: |
+  🤖 @${buyerUsername} 님이 당신에게 법정화폐를 보냈다는 것을 알려왔습니다. 입금을 확인한 후에 자금에 걸린 잠금을 해제해주세요. 잠금을 해제하기 전까지는 다른 주문을 생성할 수 없습니다.
+  자금을 해제한 후, 돈은 구매자에게 전달되며 되돌릴 수 없으니 💯 확신할 때만 이 과정을 진행하세요.
+
+  구매자를 위해 Sats를 해제하고 싶다면 아래 명령어를 눌러주세요 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 법정화폐 입금을 받았지만 아직 자금에 걸린 잠금을 해제하지 않은 한 개 이상의 주문이 있습니다. 해당 잠금들을 해제하기 전까지는 다른 주문을 생성할 수 없습니다.
 user_banned: 사용자를 추방하였습니다!
@@ -286,8 +292,16 @@ order_cancelled_by_counterparty: '거래 상대방이 주문 ID: ${orderId}를 �
 have_to_wait_for_counterpart: 🕒 이미 해당 작업을 수행하였습니다. 거래 상대방이 반응을 보일 때까지 기다려주세요.
 ok_cooperativecancel: '👍 거래 상대방이 동의하였으므로, 거래 ID: ${orderId}가 성공적으로 취소되었습니다'
 refund_cooperativecancel: 💰 라이트닝 결제를 환불 받았습니다. 더 이상 취할 행동은 없습니다.
-init_cooperativecancel: '🕒 거래 ID: ${orderId}의 취소 절차를 시작하였습니다. 거래 상대방이 취소에 동의해야 취소가 완료됩니다.'
-counterparty_wants_cooperativecancel: '😳 거래 상대방이 주문 ID: ${orderId}를 취소하기를 희망합니다. 취소에 동의하실 경우, 다음 명령어를 실행해주세요 👇'
+init_cooperativecancel: |
+  🕒 주문 ID: ${orderId} 의 취소를 시작했습니다. 당신의 상대방도 취소를 원한다고 알려야 합니다. 만약 응답하지 않으면 분쟁을 열 수 있습니다.
+
+  주문을 취소하기 위해 관리자에게 연락하지 않으며, 먼저 분쟁을 열어야 합니다.
+counterparty_wants_cooperativecancel: |
+  '😳 당신의 상대방이 주문 ID: ${orderId}의 취소를 원합니다.
+
+  주문을 취소하기 위해 관리자에게 연락하지 않으며, 먼저 분쟁을 열어야 합니다.
+
+  동의하시면 아래 명령어를 사용하세요 👇'
 invoice_payment_failed: ⛔ 당신의 인보이스로 결제를 시도했으나 실패하였습니다. 앞으로 ${pendingPaymentWindow} 분 동안 ${attempts} 회 더 시도할 예정이니, 노드/지갑이 온라인 상태인지 다시 한 번 확인해 주세요.
 cant_take_more_orders: ⛔ 죄송합니다! 진행 중인 주문이 있을 때에는 다른 주문을 수락할 수 없습니다.
 seller_released: 💸 판매자가 이미 사토시의 잠금을 해제했습니다. 결제가 완료될 때까지 잠시만 기다려주세요.
