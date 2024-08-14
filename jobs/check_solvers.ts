@@ -5,7 +5,7 @@ import { logger } from '../logger';
 
 const MESSAGES: number = parseInt(process.env.COMMUNITY_MESSAGES || '5');
 
-exports.checkSolvers = async (ctx: MainContext, bot: Telegraf<MainContext>): Promise<void> => {
+const checkSolvers = async (ctx: MainContext, bot: Telegraf<MainContext>): Promise<void> => {
     try {
         const communities = await Community.find({ isDisabled: false });
 
@@ -35,3 +35,5 @@ exports.checkSolvers = async (ctx: MainContext, bot: Telegraf<MainContext>): Pro
         logger.error(error);
     }
 };
+
+module.exports = { checkSolvers };
