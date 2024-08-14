@@ -620,3 +620,7 @@ disclaimer: |
 order_frozen: You have frozen the order
 dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can write to him/her directly by tapping his/her username => @${solver} <=, if the solver writes to you first, you should ask him/her to tell you what is the token of your dispute, your token is ${token}.
 setinvoice_no_response: You have no orders to be paid
+
+# START jobs/check_solvers
+check_solvers: Your community ${community.name} doesn't have any solvers. Please add at least one solver.
+# END jobs/check_solvers

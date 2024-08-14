@@ -618,3 +618,7 @@ order_frozen: Has congelado la orden
 dispute_solver: 👮‍♂️ Un solver estará atendiendo tu disputa, puedes escribirle directamente tocando su username => @${solver} <=, si el/la solver te escribe primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es ${token}.
 setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!
+
+# START jobs/check_solvers
+check_solvers: Your community ${community.name} doesn't have any solvers. Please add at least one solver.
+# END jobs/check_solvers

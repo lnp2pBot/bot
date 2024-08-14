@@ -5,7 +5,7 @@ import { logger } from '../logger';
 
 const MESSAGES: number = parseInt(process.env.COMMUNITY_MESSAGES || '5');
 
-exports.checkSolvers = async (bot: Telegraf<MainContext>): Promise<void> => {
+exports.checkSolvers = async (ctx: MainContext, bot: Telegraf<MainContext>): Promise<void> => {
     try {
         const communities = await Community.find({ isDisabled: false });
 
@@ -23,10 +23,7 @@ exports.checkSolvers = async (bot: Telegraf<MainContext>): Promise<void> => {
                     await community.save();
                     const admin = await User.findOne({ tg_id: community.creator_id, admin: true });
                     if (admin) {
-                        await bot.telegram.sendMessage(
-                            admin.tg_id,
-                            `Your community ${community.name} doesn't have any solvers. Please add at least one solver.`
-                        );
+                        await bot.telegram.sendMessage(admin.tg_id, ctx.i18n.t('check_solvers'));
                     }
                 }
             } else {
