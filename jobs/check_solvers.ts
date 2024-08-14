@@ -3,7 +3,7 @@ import { Telegraf } from 'telegraf';
 import { MainContext } from '../bot/start';
 import { logger } from '../logger';
 
-const MAX_MESSAGES = 5; // Number of messages before disabling the community
+const MESSAGES: number = parseInt(process.env.COMMUNITY_MESSAGES || '5');
 
 exports.checkSolvers = async (bot: Telegraf<MainContext>): Promise<void> => {
     try {
@@ -15,7 +15,7 @@ exports.checkSolvers = async (bot: Telegraf<MainContext>): Promise<void> => {
             if (solvers.length === 0) {
                 community.messagesSent += 1;
 
-                if (community.messagesSent >= MAX_MESSAGES) {
+                if (community.messagesSent >= MESSAGES) {
                     community.isDisabled = true;
                     await community.save();
                     logger.info(`Community ${community._id} has been disabled due to lack of solvers.`);
