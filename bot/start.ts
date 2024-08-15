@@ -459,6 +459,13 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
+       // Check if the order status is already PAID_HOLD_INVOICE
+       if (order.status === 'PAID_HOLD_INVOICE') {
+        const seller = await User.findOne({ _id: order.seller_id });
+        await messages.sellerPaidHoldMessage(ctx, seller);
+        return;
+      }
+
       // We look for a dispute for this order
       const dispute = await Dispute.findOne({ order_id: order._id });
 
