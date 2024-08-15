@@ -95,6 +95,7 @@ invoice_require_hash: Fatura precisa de um hash
 order_id_invalid: ID do pedido inválido
 order_invalid_type: Este ${type} pedido é inválido
 order_already_taken: Este pedido já foi feito por outro usuário.
+order_already_settled: Esta ordem já foi liquidada e a fatura retida foi paga.
 invalid_data: Você enviou dados inválidos, tente novamente.
 begin_take_buy: |
   🤖 Pressione Continue aceitando a oferta, se você pressionar cancelar, será liberado do pedido e ela será republicada. Você tem ${expirationTime} minutos antes que esse pedido expire. 👇

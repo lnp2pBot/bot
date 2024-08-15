@@ -96,6 +96,7 @@ invoice_require_hash: La invoice necessita un hash
 order_id_invalid: IOrder ID non valido
 order_invalid_type: Questo ${type} ordine non è valido
 order_already_taken: Quest'ordine è già stato preso da un altro utente.
+order_already_settled: Questo ordine è già stato regolato e la fattura di trattenuta è stata pagata.
 invalid_data: I dati inviati non sono validi, riprovare.
 begin_take_buy: |
   🤖 Premere Continua per accettare l'ordine, se premi Cancella verrai svincolato dall'ordine e sarà ripubblicato. Hai ${expirationTime} minuti prima che l'ordine scada. 👇

@@ -460,10 +460,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       if (!order) return;
 
        // Check if the order status is already PAID_HOLD_INVOICE
-       if (order.status === 'PAID_HOLD_INVOICE') {
-        const seller = await User.findOne({ _id: order.seller_id });
-        await messages.sellerPaidHoldMessage(ctx, seller);
-        return;
+      if (order.status === 'PAID_HOLD_INVOICE') {
+      await ctx.reply(ctx.i18n.t('order_already_settled'));
+      return;
       }
 
       // We look for a dispute for this order
