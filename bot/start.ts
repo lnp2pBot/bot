@@ -434,7 +434,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
           return await cancelShowHoldInvoice(ctx, order);
         }
-
+        
+        // If a buyer wants cancel but the seller already pay the hold invoice
+        if (order.type === 'buy' && order.status === 'WAITING_BUYER_INVOICE') {
+          if (order.hash) await cancelHoldInvoice({ hash: order.hash });        
+        }
+          
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
