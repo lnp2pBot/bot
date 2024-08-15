@@ -618,3 +618,7 @@ order_frozen: Vous avez gelé la commande
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
 setinvoice_no_response : Vous n'avez pas d'ordre à payer
 already_cancelled: L'offre a déjà été annulée !
+
+# START jobs/check_solvers
+check_solvers: Your community ${community.name} doesn't have any solvers. Please add at least one solver.
+# END jobs/check_solvers

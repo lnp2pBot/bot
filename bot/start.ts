@@ -63,6 +63,7 @@ const {
   attemptCommunitiesPendingPayments,
   deleteCommunity,
   nodeInfo,
+  checkSolvers,
 } = require('../jobs');
 const { logger } = require('../logger');
 export interface MainContext extends Context {
@@ -195,6 +196,10 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   schedule.scheduleJob(`* * * * *`, async () => {
     await nodeInfo(bot);
+  });
+
+  schedule.scheduleJob('0 0 * * *', async () => {
+    await checkSolvers(bot);
   });
 
   bot.start(async (ctx: MainContext) => {

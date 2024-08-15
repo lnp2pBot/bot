@@ -49,6 +49,8 @@ export interface ICommunity extends Document {
     currencies: Array<string>;
     created_at: Date;
     nostr_public_key: string;
+    messagesSent: number;
+    isDisabled: boolean;
 }
 
 const CommunitySchema = new Schema<ICommunity>({
@@ -81,6 +83,8 @@ const CommunitySchema = new Schema<ICommunity>({
     },
     created_at: { type: Date, default: Date.now },
     nostr_public_key: { type: String },
+    messagesSent: { type: Number, default: 0 },
+    isDisabled: { type: Boolean, default: false },
 });
 
 

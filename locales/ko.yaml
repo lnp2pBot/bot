@@ -614,3 +614,7 @@ disclaimer: |
 dispute_solver: 👮‍♂️ 분쟁 해결사가 분쟁에 참석할 것이며, 사용자 아이디 => @${해결사} <=를 눌러 해결사에게 직접 편지를 보낼 수 있으며, 해결사가 먼저 편지를 보내면 분쟁의 토큰이 무엇인지 물어봐야 하며, 토큰은 ${토큰}입니다.
 setinvoice_no_response: 결제할 주문이 없습니다.
 already_cancelled: 오퍼가 이미 취소되었습니다!
+
+# START jobs/check_solvers
+check_solvers: Your community ${community.name} doesn't have any solvers. Please add at least one solver.
+# END jobs/check_solvers
