@@ -723,6 +723,14 @@ const disclaimerMessage = async (ctx: MainContext) => {
   }
 };
 
+const privacyMessage = async (ctx: MainContext) => {
+  try {
+    await ctx.reply(ctx.i18n.t('privacy'), { parse_mode: 'Markdown' });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const mustBeGreatherEqThan = async (ctx: MainContext, fieldName: string, qty: number) => {
   try {
     await ctx.reply(
@@ -1646,6 +1654,7 @@ export {
   invalidLightningAddress,
   helpMessage,
   disclaimerMessage,
+  privacyMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,
   fiatSentMessages,
