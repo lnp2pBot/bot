@@ -96,6 +96,7 @@ invoice_require_hash: LN-Rechnung braucht einen Hash
 order_id_invalid: Ungültige Auftrags-ID
 order_invalid_type: Der ${type} Auftrag ist ungültig
 order_already_taken: Dieser Auftrag wurde bereits von einem anderen Nutzer übernommen.
+order_already_settled: Diese Bestellung wurde bereits abgewickelt und die Halte-Rechnung wurde bezahlt. 
 invalid_data: Du hast ungültige Daten gesendet, versuche es erneut.
 begin_take_buy: |
   🤖 Drücke auf Weiter, um das Angebot anzunehmen. Wenn du auf Abbrechen drückst, wird der Auftrag freigegeben und neu veröffentlicht. Du hast ${expirationTime} Minuten, bevor dieser Auftrag abläuft.

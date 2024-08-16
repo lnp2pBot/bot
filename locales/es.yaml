@@ -96,6 +96,7 @@ invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
 order_invalid_type: Esta orden es una ${type}
 order_already_taken: Esta orden ya ha sido tomada por otro usuario
+order_already_settled: Esta orden ya ha sido liquidada y la factura retenida ha sido pagada. 
 invalid_data: Has enviado datos incorrectos, inténtalo nuevamente.
 begin_take_buy: |
   🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
