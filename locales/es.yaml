@@ -155,7 +155,9 @@ sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
   Id: `${order._id}`
-
+  
+  Status previo a disputa: ${previousDisputeStatus}
+  
   Status: ${status}
 
   Creador: @${creator || ''}
