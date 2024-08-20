@@ -156,6 +156,8 @@ buy_sats: Kaufe Sats
 order_detail: |
   Id: `${order._id}`
 
+  Status previous to dispute: ${previousDisputeStatus}
+
   Status: ${status}
 
   Ersteller: @${creator || ''}

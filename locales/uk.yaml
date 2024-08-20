@@ -154,6 +154,8 @@ sell_sats: Продати сатоші
 buy_sats: Купити сатоші
 order_detail: |
   Id: `${order._id}`
+  
+  Status previous to dispute: ${previousDisputeStatus}
 
   Статус: ${status}
 
