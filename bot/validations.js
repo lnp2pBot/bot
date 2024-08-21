@@ -5,7 +5,7 @@ const { Order, User, Community } = require('../models');
 const { isIso4217, isDisputeSolver } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
-const { removeLightningPrefix } = require('./bot_utils');
+const { removeLightningPrefix } = require('../util/valitationUtils');
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user

@@ -21,7 +21,7 @@ const OrderEvents = require('./modules/events/orders');
 
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
-const { removeLightningPrefix } = require('./bot_utils');
+const { removeLightningPrefix } = require('../util/valitationUtils');
 
 const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
   try {
