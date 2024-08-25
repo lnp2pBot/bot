@@ -35,6 +35,7 @@ const dispute = async ctx => {
     if (user._id == order.buyer_id) initiator = 'buyer';
 
     order[`${initiator}_dispute`] = true;
+    order.previous_dispute_status = order.status
     order.status = 'DISPUTE';
     const sellerToken = Math.floor(Math.random() * 899 + 100);
     const buyerToken = Math.floor(Math.random() * 899 + 100);

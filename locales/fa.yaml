@@ -158,6 +158,8 @@ buy_sats: خرید ساتوشی
 order_detail: |
   ID: `${order._id}`
 
+  Status previous to dispute: ${previousDisputeStatus}
+
   Status: ${status}
 
   Creator: @${creator || ''}

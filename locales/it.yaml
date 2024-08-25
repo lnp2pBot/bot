@@ -156,6 +156,8 @@ buy_sats: Compra satoshis
 order_detail: |
   Id: `${order._id}`
 
+  Stato precedente alla controversia: ${previousDisputeStatus}
+
   Stato: ${status}
 
   Creato da: @${creator || ''}

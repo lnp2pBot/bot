@@ -361,6 +361,7 @@ exports.getDetailedOrder = (i18n, order, buyer, seller) => {
     let takenAt = order.taken_at ? order.taken_at.toISOString() : '';
     createdAt = sanitizeMD(createdAt);
     takenAt = sanitizeMD(takenAt);
+    const previousDisputeStatus = sanitizeMD(order.previous_dispute_status);
     const status = sanitizeMD(order.status);
     const fee = order.fee ? parseInt(order.fee) : '';
     const creator =
@@ -376,6 +377,7 @@ exports.getDetailedOrder = (i18n, order, buyer, seller) => {
       sellerUsername,
       createdAt,
       takenAt,
+      previousDisputeStatus,
       status,
       fee,
       paymentMethod,

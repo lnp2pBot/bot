@@ -155,6 +155,8 @@ buy_sats: Compre Satoshis
 order_detail: |
   Id: `${order._id}`
 
+  Situação anterior ao litígio: ${previousDisputeStatus}
+
   Status: ${status}
 
   Criadora: @${creator || ''}

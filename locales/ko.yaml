@@ -157,6 +157,8 @@ buy_sats: 비트코인 구매
 order_detail: |
   ID: `${order._id}`
 
+  Status previous to dispute: ${previousDisputeStatus}
+
   상태: ${status}
 
   생성자: @${creator || ''}
