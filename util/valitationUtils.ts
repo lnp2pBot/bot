@@ -1,4 +1,4 @@
-const removeLightningPrefix = function (invoice) {
+export const removeLightningPrefix = (invoice: string): string => {
     const prefix = 'lightning:';
 
     // Check if the invoice starts with the prefix
@@ -8,8 +8,4 @@ const removeLightningPrefix = function (invoice) {
 
     // Return the invoice as is if no prefix is found
     return invoice;
-};
-
-module.exports = {
-    removeLightningPrefix
 };
