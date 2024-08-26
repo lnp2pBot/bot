@@ -23,6 +23,7 @@ export interface IOrder extends Document {
   seller_cooperativecancel: boolean;
   canceled_by: string
   action_by: string
+  previous_dispute_status: string;
   status: string;
   type: string;
   fiat_amount: number;
@@ -92,6 +93,13 @@ const orderSchema = new Schema<IOrder>({
   seller_cooperativecancel: { type: Boolean, default: false },
   canceled_by: { type: String },
   action_by: { type: String },
+  previous_dispute_status: {
+    type: String,
+    enum: [
+      'ACTIVE', //  order taken
+      'FIAT_SENT', // buyer indicates the fiat payment is already done
+    ],
+  },
   status: {
     type: String,
     enum: [

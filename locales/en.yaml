@@ -98,6 +98,7 @@ invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
 order_invalid_type: This ${type} order is invalid
 order_already_taken: This order has already been taken by another user.
+order_already_settled: This order has already been settled and the hold invoice has been paid.
 invalid_data: You have sent invalid data, try again.
 begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
@@ -157,6 +158,8 @@ buy_sats: Buy satoshis
 order_detail: |
   ID: `${order._id}`
 
+  Status previous to dispute: ${previousDisputeStatus}
+  
   Status: ${status}
 
   Creator: @${creator || ''}
@@ -620,3 +623,15 @@ disclaimer: |
 order_frozen: You have frozen the order
 dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can write to him/her directly by tapping his/her username => @${solver} <=, if the solver writes to you first, you should ask him/her to tell you what is the token of your dispute, your token is ${token}.
 setinvoice_no_response: You have no orders to be paid
+privacy: |
+  *Privacy Policy*
+  
+  Your privacy is important to us, and we are committed to protecting your personal information. This Privacy Policy explains what information we collect, how, and for what purpose.
+
+  *1. Information We Collect:*  
+    - _User Information:_ Your username and Telegram ID, obtained through the Telegram API.
+    - _Bot Activity Data:_ Includes the number of completed transactions, the number of days you have used the bot, the total trading volume, the counterpart's rating, and the dispute record, if any.
+
+  *2. How We Use the Information:* 
+    - _Reputation System:_ To build and maintain the reputation system for each user.
+    - _Dispute Resolution:_ In case of a dispute, we provide the mediator (solver) with the following information: your username, Telegram ID, number of completed transactions, counterpart's rating, number of days using the bot, and the number of accumulated disputes.

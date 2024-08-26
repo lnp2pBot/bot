@@ -96,6 +96,7 @@ invoice_require_hash: LN-Rechnung braucht einen Hash
 order_id_invalid: Ungültige Auftrags-ID
 order_invalid_type: Der ${type} Auftrag ist ungültig
 order_already_taken: Dieser Auftrag wurde bereits von einem anderen Nutzer übernommen.
+order_already_settled: Diese Bestellung wurde bereits abgewickelt und die Halte-Rechnung wurde bezahlt. 
 invalid_data: Du hast ungültige Daten gesendet, versuche es erneut.
 begin_take_buy: |
   🤖 Drücke auf Weiter, um das Angebot anzunehmen. Wenn du auf Abbrechen drückst, wird der Auftrag freigegeben und neu veröffentlicht. Du hast ${expirationTime} Minuten, bevor dieser Auftrag abläuft.
@@ -154,6 +155,8 @@ sell_sats: Verkaufe Sats
 buy_sats: Kaufe Sats
 order_detail: |
   Id: `${order._id}`
+
+  Status previous to dispute: ${previousDisputeStatus}
 
   Status: ${status}
 
@@ -619,3 +622,15 @@ order_frozen: Sie haben die Bestellung eingefroren
 dispute_solver: 👮‍♂️ Ein Löser wird sich um Ihren Streitfall kümmern, Sie können ihn/sie direkt anschreiben, indem Sie auf seinen/ihren Benutzernamen tippen => @${solver} <=, wenn der Löser Sie zuerst anschreibt, sollten Sie ihn/sie bitten, Ihnen mitzuteilen, was das Token Ihres Streitfalls ist, Ihr Token ist ${token}.
 setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
 already_cancelled: Die Bestellung wurde bereits storniert!
+privacy: |
+  *Datenschutzrichtlinie*
+  
+  Ihre Privatsphäre ist uns wichtig, und wir sind verpflichtet, Ihre persönlichen Daten zu schützen. Diese Datenschutzrichtlinie erklärt, welche Informationen wir sammeln, wie und zu welchem Zweck.
+
+  *1. Informationen, die wir sammeln:*  
+    - _Benutzerinformationen:_ Ihr Benutzername und Ihre Telegram-ID, die über die Telegram-API erfasst werden.
+    - _Bot-Aktivitätsdaten:_ Dazu gehören die Anzahl der abgeschlossenen Transaktionen, die Anzahl der Tage, an denen Sie den Bot verwendet haben, das gesamte Handelsvolumen, die Bewertung des Gegenübers und das Streitprotokoll, falls vorhanden.
+
+  *2. Wie wir die Informationen verwenden:* 
+    - _Reputationssystem:_ Um das Reputationssystem für jeden Benutzer aufzubauen und zu pflegen.
+    - _Streitbeilegung:_ Im Falle eines Streits stellen wir dem Mediator (Löser) die folgenden Informationen zur Verfügung: Ihren Benutzernamen, Ihre Telegram-ID, die Anzahl der abgeschlossenen Transaktionen, die Bewertung des Gegenübers, die Anzahl der Tage, an denen Sie den Bot verwendet haben, und die Anzahl der angesammelten Streitfälle.

@@ -96,6 +96,7 @@ invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
 order_invalid_type: Esta orden es una ${type}
 order_already_taken: Esta orden ya ha sido tomada por otro usuario
+order_already_settled: Esta orden ya ha sido liquidada y la factura retenida ha sido pagada. 
 invalid_data: Has enviado datos incorrectos, inténtalo nuevamente.
 begin_take_buy: |
   🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
@@ -154,7 +155,9 @@ sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
   Id: `${order._id}`
-
+  
+  Status previo a disputa: ${previousDisputeStatus}
+  
   Status: ${status}
 
   Creador: @${creator || ''}
@@ -236,6 +239,7 @@ help: |
   /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
   /disclaimer - Muestra los términos y condiciones al usar el bot
+  /privacy - Muestra la Política de Privacidad
 
   Nostr:
   /setnpub <_nostr npub_> - Actualiza tu nostr pubkey, este comando solo es ejecutable en el asistente de /settings
@@ -618,3 +622,15 @@ order_frozen: Has congelado la orden
 dispute_solver: 👮‍♂️ Un solver estará atendiendo tu disputa, puedes escribirle directamente tocando su username => @${solver} <=, si el/la solver te escribe primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es ${token}.
 setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!
+privacy: |
+  *Política de Privacidad*
+  
+  Tu privacidad es importante para nosotros, y estamos comprometidos a proteger tu información personal. Esta Política de Privacidad explica qué información recopilamos, cómo, y con qué propósito.
+
+  *1. Información que Recopilamos:*  
+    - _Información del Usuario:_ Tu nombre de usuario e ID de Telegram, obtenidos a través de la API de Telegram.
+    - _Datos de Actividad en el Bot:_ Incluyen el número de transacciones concretadas, la cantidad de días que has usado el bot, el volumen total comerciado, la calificación de la contraparte y el registro de disputas, si las hubiera.
+
+  *2. Cómo Utilizamos la Información:* 
+    - _Sistema de Reputación:_ Para construir y mantener el sistema de reputación de cada usuario.
+    - _Resolución de Disputas:_ En caso de una disputa, proporcionamos al mediador (solver) la siguiente información: tu nombre de usuario, ID de Telegram, número de transacciones concretadas, calificación de la contraparte, cantidad de días usando el bot y el número de disputas acumuladas.

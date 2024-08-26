@@ -434,7 +434,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
           return await cancelShowHoldInvoice(ctx, order);
         }
-
+        
+        // If a buyer wants cancel but the seller already pay the hold invoice
+        if (order.type === 'buy' && order.status === 'WAITING_BUYER_INVOICE') {
+          if (order.hash) await cancelHoldInvoice({ hash: order.hash });        
+        }
+          
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
@@ -458,6 +463,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
+
+       // Check if the order status is already PAID_HOLD_INVOICE
+      if (order.status === 'PAID_HOLD_INVOICE') {
+      await ctx.reply(ctx.i18n.t('order_already_settled'));
+      return;
+      }
 
       // We look for a dispute for this order
       const dispute = await Dispute.findOne({ order_id: order._id });
@@ -575,6 +586,14 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   bot.command('disclaimer', userMiddleware, async (ctx: MainContext) => {
     try {
       await messages.disclaimerMessage(ctx);
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+  
+    bot.command('privacy', userMiddleware, async (ctx: MainContext) => {
+    try {
+      await messages.privacyMessage(ctx);
     } catch (error) {
       logger.error(error);
     }

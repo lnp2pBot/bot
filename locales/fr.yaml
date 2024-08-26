@@ -98,6 +98,7 @@ invoice_require_hash: La facture a besoin d'un hash
 order_id_invalid: ID de facture invalide
 order_invalid_type: Cette offre ${type} est invalide
 order_already_taken: Cette offre a déjà été pris par un autre utilisateur.
+order_already_settled: Cette commande a déjà été réglée et la facture de retenue a été payée.
 invalid_data: Tu as envoyé des données invalides, merci de réessayer.
 begin_take_buy: |
   🤖 Appuie sur Continuer pour prendre l'offre, si tu clique sur Annuler, tu seras libéré.e de l'offre et elle sera publiée de nouveau. Tu as ${expirationTime} minutes avant que cette offre n'expire. 👇
@@ -156,6 +157,8 @@ sell_sats: Vends des satoshis
 buy_sats: Achète des satoshis
 order_detail: |
   ID : `${order._id}`
+
+  Situation antérieure au litige: ${previousDisputeStatus}
 
   Statut : ${status}
 
@@ -618,3 +621,15 @@ order_frozen: Vous avez gelé la commande
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
 setinvoice_no_response : Vous n'avez pas d'ordre à payer
 already_cancelled: L'offre a déjà été annulée !
+privacy: |
+  *Politique de Confidentialité*
+  
+  Votre vie privée est importante pour nous, et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité explique quelles informations nous collectons, comment, et à quelle fin.
+
+  *1. Informations que nous collectons:*  
+    - _Informations sur l'utilisateur:_ Votre nom d'utilisateur et votre identifiant Telegram, obtenus via l'API Telegram.
+    - _Données d'activité du bot:_ Inclut le nombre de transactions effectuées, le nombre de jours pendant lesquels vous avez utilisé le bot, le volume total des échanges, la note de la contrepartie et l'historique des litiges, le cas échéant.
+
+  *2. Comment nous utilisons les informations:* 
+    - _Système de réputation:_ Pour construire et maintenir le système de réputation de chaque utilisateur.
+    - _Résolution des litiges:_ En cas de litige, nous fournissons au médiateur (solver) les informations suivantes : votre nom d'utilisateur, votre identifiant Telegram, le nombre de transactions effectuées, la note de la contrepartie, le nombre de jours d'utilisation du bot et le nombre de litiges accumulés.

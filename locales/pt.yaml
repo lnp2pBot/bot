@@ -95,6 +95,7 @@ invoice_require_hash: Fatura precisa de um hash
 order_id_invalid: ID do pedido inválido
 order_invalid_type: Este ${type} pedido é inválido
 order_already_taken: Este pedido já foi feito por outro usuário.
+order_already_settled: Esta ordem já foi liquidada e a fatura retida foi paga.
 invalid_data: Você enviou dados inválidos, tente novamente.
 begin_take_buy: |
   🤖 Pressione Continue aceitando a oferta, se você pressionar cancelar, será liberado do pedido e ela será republicada. Você tem ${expirationTime} minutos antes que esse pedido expire. 👇
@@ -153,6 +154,8 @@ sell_sats: Venda Satoshis
 buy_sats: Compre Satoshis
 order_detail: |
   Id: `${order._id}`
+
+  Situação anterior ao litígio: ${previousDisputeStatus}
 
   Status: ${status}
 
@@ -616,3 +619,15 @@ order_frozen: Você congelou o pedido
 dispute_solver: 👮‍♂️ Um solucionador atenderá sua disputa. Você pode escrever para ele diretamente tocando no nome de usuário dele => @${solver} <=, se o solucionador escrever para você primeiro, você deve pedir a ele que lhe diga qual é o token de sua disputa, seu token é ${token}.
 setinvoice_no_response: Você não tem ordens a serem pagas
 already_cancelled: A oferta já foi cancelada!
+privacy: |
+  *Política de Privacidade*
+  
+  Sua privacidade é importante para nós, e estamos comprometidos em proteger suas informações pessoais. Esta Política de Privacidade explica quais informações coletamos, como, e com qual propósito.
+
+  *1. Informações que Coletamos:*  
+    - _Informações do Usuário:_ Seu nome de usuário e ID do Telegram, obtidos por meio da API do Telegram.
+    - _Dados de Atividade no Bot:_ Incluem o número de transações concluídas, o número de dias que você usou o bot, o volume total negociado, a classificação da contraparte e o registro de disputas, se houver.
+
+  *2. Como Usamos as Informações:* 
+    - _Sistema de Reputação:_ Para construir e manter o sistema de reputação de cada usuário.
+    - _Resolução de Disputas:_ Em caso de uma disputa, fornecemos ao mediador (solver) as seguintes informações: seu nome de usuário, ID do Telegram, número de transações concluídas, classificação da contraparte, número de dias usando o bot e o número de disputas acumuladas.
