@@ -1,11 +1,14 @@
-const { Config } = require('../models');
+import { Telegraf } from "telegraf";
+import { MainContext } from "../bot/start";
+
+import { Config } from '../models';
 const { getInfo } = require('../ln');
 const { logger } = require('../logger');
 
-const info = async bot => {
+const info = async (bot: Telegraf<MainContext>) => {
   try {
     let config = await Config.findOne({});
-    if (!config) {
+    if (config === null) {
       config = new Config();
     }
     const info = await getInfo();
@@ -15,9 +18,9 @@ const info = async bot => {
     config.node_uri = info.uris[0];
     await config.save();
   } catch (error) {
-    const message = error.toString();
+    const message = String(error);
     logger.error(`node info catch error: ${message}`);
   }
 };
 
-module.exports = info;
+export default info;
