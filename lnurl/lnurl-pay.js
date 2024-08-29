@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { logger } from "../logger";
+const axios = require('axios').default;
+const { logger } = require('../logger');
 
 // {
 //	pr: String, // bech32-serialized lightning invoice
 //	routes: [], // an empty array
 // }
-const resolvLightningAddress = async (address: string, amountMsat: number) => {
+const resolvLightningAddress = async (address, amountMsat) => {
   const [user, domain] = address.split('@');
   const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
@@ -17,7 +17,7 @@ const resolvLightningAddress = async (address: string, amountMsat: number) => {
   }
 
   if (
-    (lnAddressRes.minSendable > amountMsat) ||
+    (lnAddressRes.minSendable > amountMsat) |
     (lnAddressRes.maxSendable < amountMsat)
   ) {
     logger.info('lnAddress invalid amount');
@@ -31,7 +31,7 @@ const resolvLightningAddress = async (address: string, amountMsat: number) => {
   return res;
 };
 
-const existLightningAddress = async (address: string) => {
+const existLightningAddress = async address => {
   const [user, domain] = address.split('@');
   const lnAddressQuery = `https://${domain}/.well-known/lnurlp/${user}`;
 
@@ -48,4 +48,7 @@ const existLightningAddress = async (address: string) => {
   }
 };
 
-export { resolvLightningAddress, existLightningAddress }
+module.exports = {
+  resolvLightningAddress,
+  existLightningAddress,
+};

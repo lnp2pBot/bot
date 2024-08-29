@@ -10,7 +10,3 @@ export interface IFiat {
     price?: boolean;
     locale?: string;
 }
-
-export interface IFiatCurrencies {
-    [key: string]: IFiat;
-}
