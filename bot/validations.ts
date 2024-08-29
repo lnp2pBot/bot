@@ -12,7 +12,6 @@ import { Order, User, Community } from '../models';
 import { isIso4217, isDisputeSolver } from '../util';
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 import { logger } from '../logger';
-import { removeLightningPrefix } from '../util/valitationUtils';
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
@@ -327,9 +326,7 @@ const validateLightningAddress = async (lightningAddress: string) => {
 
 const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
   try {
-    // ISSUE: 542
-    const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
-    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     );
@@ -369,9 +366,7 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
 
 const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
   try {
-    // ISSUE: 542
-    const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
-    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    const invoice = parsePaymentRequest({ request: lnInvoice });
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     ).toISOString();
