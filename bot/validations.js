@@ -2,7 +2,11 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 const messages = require('./messages');
 const { Order, User, Community } = require('../models');
-const { isIso4217, isDisputeSolver } = require('../util');
+const {
+  isIso4217,
+  isDisputeSolver,
+  removeLightningPrefix,
+} = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
 
@@ -305,7 +309,8 @@ const validateLightningAddress = async lightningAddress => {
 
 const validateInvoice = async (ctx, lnInvoice) => {
   try {
-    const invoice = parsePaymentRequest({ request: lnInvoice });
+    const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
+    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
       Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
     ).toISOString();
@@ -344,7 +349,8 @@ const validateInvoice = async (ctx, lnInvoice) => {
 
 const isValidInvoice = async (ctx, lnInvoice) => {
   try {
-    const invoice = parsePaymentRequest({ request: lnInvoice });
+    const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
+    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
       Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
     ).toISOString();
