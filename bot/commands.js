@@ -18,6 +18,7 @@ const {
 } = require('../util');
 const ordersActions = require('./ordersActions');
 const OrderEvents = require('./modules/events/orders');
+const { removeLightningPrefix } = require('../util');
 
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
@@ -32,7 +33,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       return;
     }
 
-    order.buyer_invoice = buyerInvoice;
+    order.buyer_invoice = removeLightningPrefix(buyerInvoice);
     // We need the i18n context to send the message with the correct language
     const i18nCtx = await getUserI18nContext(seller);
     // If the buyer is the creator, at this moment the seller already paid the hold invoice
