@@ -97,7 +97,7 @@ invoice_require_hash: 인보이스에는 해쉬 값이 포함되어야 합니다
 order_id_invalid: 주문 ID가 유효하지 않습니다.
 order_invalid_type: 이런 ${type} 형태의 주문은 유효하지 않습니다.
 order_already_taken: 이 주문은 이미 다른 사용자가 수락하였습니다.
-order_already_settled: 이 주문은 이미 정산되었으며 보류 송장이 지불되었습니다.
+order_already_settled: 이 주문은 이미 정산되었습니다.
 invalid_data: 유효하지 않은 데이터를 보냈습니다. 다시 시도해보세요.
 begin_take_buy: |
   🤖 주문을 수락하려면 `계속` 버튼을 눌러 주세요. `취소` 버튼을 누르면, 당신은 해당 주문에서 나오게 되고, 주문은 마켓 채널에 재등록됩니다. 주문이 만료되기까지 ${expirationTime}분 남았습니다. 👇
