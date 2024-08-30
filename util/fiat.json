@@ -878,6 +878,17 @@
     "price": true,
     "locale": "es-MX"
   },
+  "MWK": {
+    "symbol": "K",
+    "name": "Malawian Kwacha",
+    "symbol_native": "K",
+    "decimal_digits": 2,
+    "rounding": 0,
+    "code": "MWK",
+    "emoji": "🇲🇼",
+    "name_plural": "Malawian kwachas",
+    "price": true
+  },
   "MYR": {
     "symbol": "RM",
     "name": "Malaysian Ringgit",
