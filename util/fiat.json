@@ -311,7 +311,7 @@
   "CUP": {
     "symbol": "CU$",
     "name": "Peso cubano",
-    "symbol_native": "$",
+    "symbol_native": "CUP",
     "decimal_digits": 2,
     "rounding": 0,
     "code": "CUP",
