@@ -98,7 +98,7 @@ invoice_require_hash: Invoice needs a hash
 order_id_invalid: Invalid order ID
 order_invalid_type: This ${type} order is invalid
 order_already_taken: This order has already been taken by another user.
-order_already_settled: This order has already been settled and the hold invoice has been paid.
+order_already_settled: This order has already been settled.
 invalid_data: You have sent invalid data, try again.
 begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
