@@ -307,7 +307,6 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.status = 'FROZEN';
       order.action_by = ctx.admin._id;
       await order.save();
-      OrderEvents.orderUpdated(order);
 
       if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
@@ -370,6 +369,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
+      order.status = 'CANCELED';
       OrderEvents.orderUpdated(order);
       // we sent a private message to the admin
       await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
@@ -501,6 +501,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
+      order.status = 'SUCCESS';
       OrderEvents.orderUpdated(order);
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);

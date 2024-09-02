@@ -83,6 +83,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
     await order.save();
+    order.status = 'in-progress';
     // We update the nostr event
     OrderEvents.orderUpdated(order);
   } catch (error) {
@@ -334,6 +335,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
+      logger.info('cancelAddInvoice => OrderEvents.orderUpdated(order);');
       OrderEvents.orderUpdated(order);
     }
   } catch (error) {
@@ -508,6 +510,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
+      logger.info('cancelShowHoldInvoice => OrderEvents.orderUpdated(order);');
       OrderEvents.orderUpdated(order);
     }
   } catch (error) {
@@ -648,6 +651,8 @@ const cancelOrder = async (ctx, orderId, user) => {
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${order._id} was cancelled cooperatively!`);
+      logger.info('cancelOrder => OrderEvents.orderUpdated(order);');
+      OrderEvents.orderUpdated(order);
     } else {
       await messages.initCooperativeCancelMessage(ctx, order);
       await messages.counterPartyWantsCooperativeCancelMessage(
@@ -658,7 +663,6 @@ const cancelOrder = async (ctx, orderId, user) => {
       );
     }
     await order.save();
-    OrderEvents.orderUpdated(order);
   } catch (error) {
     logger.error(error);
   }
@@ -682,7 +686,6 @@ const fiatSent = async (ctx, orderId, user) => {
     order.status = 'FIAT_SENT';
     const seller = await User.findOne({ _id: order.seller_id });
     await order.save();
-    OrderEvents.orderUpdated(order);
     // We sent messages to both parties
     // We need to create i18n context for each user
     const i18nCtxBuyer = await getUserI18nContext(user);

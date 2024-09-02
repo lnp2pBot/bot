@@ -7,7 +7,6 @@ const {
 const messages = require('./messages');
 const globalMessages = require('../../messages');
 const { logger } = require('../../../logger');
-const OrderEvents = require('../../modules/events/orders');
 const { removeAtSymbol } = require('../../../util');
 
 const dispute = async ctx => {
@@ -35,14 +34,13 @@ const dispute = async ctx => {
     if (user._id == order.buyer_id) initiator = 'buyer';
 
     order[`${initiator}_dispute`] = true;
-    order.previous_dispute_status = order.status
+    order.previous_dispute_status = order.status;
     order.status = 'DISPUTE';
     const sellerToken = Math.floor(Math.random() * 899 + 100);
     const buyerToken = Math.floor(Math.random() * 899 + 100);
     order.buyer_dispute_token = buyerToken;
     order.seller_dispute_token = sellerToken;
     await order.save();
-    OrderEvents.orderUpdated(order);
 
     // If this is a non community order, we may ban the user globally
     if (order.community_id) {
