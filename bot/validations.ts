@@ -13,6 +13,8 @@ import { isIso4217, isDisputeSolver, removeLightningPrefix } from '../util';
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 import { logger } from '../logger';
 
+const ctxUpdateMessageFromAssertMsg = "ctx.update.message.from is not available";
+
 // We look in database if the telegram user exists,
 // if not, it creates a new user
 const validateUser = async (ctx: MainContext, start: boolean) => {
@@ -63,16 +65,19 @@ const validateUser = async (ctx: MainContext, start: boolean) => {
 
 const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
   try {
-    if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
-      throw new Error(ctxUpdateAssertMsg);
+    let tgUserId = id;
+    if (!tgUserId) {
+      if (!('message' in ctx.update) || !('from' in ctx.update.message)) {
+        throw new Error(ctxUpdateMessageFromAssertMsg);
+      }
+      tgUserId = ctx.update.message.from.id.toString();
     }
-    const tgUserId = id || ctx.update.message.from.id;
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
     if (user === null) return;
 
-    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId.toString());
+    if (!user.admin) return await messages.notAuthorized(ctx, tgUserId);
 
     return user;
   } catch (error) {
@@ -83,10 +88,13 @@ const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
 
 const validateAdmin = async (ctx: MainContext, id?: string) => {
   try {
-    if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
-      throw new Error(ctxUpdateAssertMsg);
+    let tgUserId = id;
+    if (!tgUserId) {
+      if (!('message' in ctx.update) || !('from' in ctx.update.message)) {
+        throw new Error(ctxUpdateMessageFromAssertMsg);
+      }
+      tgUserId = ctx.update.message.from.id.toString();
     }
-    const tgUserId = id || ctx.update.message.from.id;
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
@@ -100,7 +108,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     const isSolver = isDisputeSolver(community, user);
 
     if (!user.admin && !isSolver)
-      return await messages.notAuthorized(ctx, tgUserId.toString());
+      return await messages.notAuthorized(ctx, tgUserId);
 
     return user;
   } catch (error) {
