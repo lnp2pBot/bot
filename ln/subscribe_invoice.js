@@ -6,7 +6,6 @@ const messages = require('../bot/messages');
 const ordersActions = require('../bot/ordersActions');
 const { getUserI18nContext, getEmojiRate, decimalRound } = require('../util');
 const { logger } = require('../logger');
-const OrderEvents = require('../bot/modules/events/orders');
 
 const subscribeInvoice = async (bot, id, resub) => {
   try {
