@@ -2,7 +2,9 @@ const { getDisputeChannel, getDetailedOrder } = require('../../../util');
 const { logger } = require('../../../logger');
 
 const escapeMarkdown = function(text) {
-  return text.replace(/_/g, "\\_");
+  const toScape = /_/g;
+  const scaped = '\\_';
+  return text.replace(toScape, scaped);
 }
 
 exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
