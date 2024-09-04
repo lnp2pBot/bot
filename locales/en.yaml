@@ -204,8 +204,8 @@ order_detail: |
 seller: seller
 buyer: buyer
 dispute_started_channel: |
-  User ${type} @${initiatorUser.username} 
-  has started a dispute with @${counterPartyUser.username} for the order
+  User ${type} @${initiatorUser.username} with the id: ${initiatorUser.tg_id}
+  has started a dispute with @${counterPartyUser.username} with the id: ${counterPartyUser.tg_id} for the order
 
   ${detailedOrder}
 
