@@ -93,12 +93,14 @@ exports.disputeData = async (
     // Fix Issue 543: Escape underscores in usernames
     const escapedInitiatorUsername = escapeMarkdown(initiatorUser.username);
     const escapedCounterPartyUsername = escapeMarkdown(counterPartyUser.username);
-
+    
     await ctx.telegram.sendMessage(
       solver.tg_id,
       ctx.i18n.t('dispute_started_channel', {
         initiatorUser: { ...initiatorUser, username: escapedInitiatorUsername },
+        initiatorTgId: initiatorUser.tg_id,
         counterPartyUser: { ...counterPartyUser, username: escapedCounterPartyUsername },
+        counterPartyUserTgId: counterPartyUser.tg_id,
         buyer,
         seller,
         buyerDisputes,
