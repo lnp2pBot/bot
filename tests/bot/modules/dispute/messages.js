@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { assert } = require('chai');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 
@@ -61,11 +61,11 @@ describe('disputeData', () => {
       3
     );
 
-    expect(mockTelegram.sendMessage.calledWith(
+    assert.isTrue(mockTelegram.sendMessage.calledWith(
       mockSolver.tg_id,
       sinon.match(/buyer\\_user/),
       sinon.match({ parse_mode: 'MarkdownV2' })
-    )).to.be.true;
+    ));
   });
 
   it('should send a message without underscores in usernames', async () => {
@@ -80,11 +80,11 @@ describe('disputeData', () => {
       3
     );
 
-    expect(mockTelegram.sendMessage.calledWith(
+    assert.isTrue(mockTelegram.sendMessage.calledWith(
       mockSolver.tg_id,
       sinon.match('buyer-user'),
       sinon.match({ parse_mode: 'MarkdownV2' })
-    )).to.be.true;
+    ));
   });
 
   it('should swap initiator and counterparty if initiator is seller', async () => {
@@ -99,10 +99,10 @@ describe('disputeData', () => {
       3
     );
 
-    expect(mockTelegram.sendMessage.calledWith(
+    assert.isTrue(mockTelegram.sendMessage.calledWith(
       mockSolver.tg_id,
       sinon.match(/seller\\_user/),
       sinon.match({ parse_mode: 'MarkdownV2' })
-    )).to.be.true;
+    ));
   });
 });
