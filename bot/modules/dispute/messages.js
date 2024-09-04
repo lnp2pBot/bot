@@ -2,10 +2,11 @@ const { getDisputeChannel, getDetailedOrder } = require('../../../util');
 const { logger } = require('../../../logger');
 
 const escapeMarkdown = function(text) {
-  const toScape = /_/g;
-  const scaped = '\\_';
-  return text.replace(toScape, scaped);
-}
+  const characterToEscape = '_';
+  const regex = new RegExp(characterToEscape, 'g');
+
+  return text.replace(regex, '\\_');
+};
 
 exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
