@@ -402,7 +402,7 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
 };
 
 // We need to know if this user is a dispute solver for this community
-const isDisputeSolver = (community: ICommunity, user: UserDocument) => {
+const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
   if (!community || !user) {
     return false;
   }

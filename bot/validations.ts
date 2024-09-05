@@ -103,8 +103,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     let community = null;
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
-
-    if (community === null) throw Error("Community was not found in DB");
+    
     const isSolver = isDisputeSolver(community, user);
 
     if (!user.admin && !isSolver)
