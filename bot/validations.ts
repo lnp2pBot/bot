@@ -378,7 +378,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
-    ).toISOString();
+    );
     if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.invoiceMustBeLargerMessage(ctx);
       return {
@@ -386,7 +386,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
       };
     }
 
-    if (new Date(invoice.expires_at).toISOString() < latestDate) {
+    if (new Date(invoice.expires_at) < latestDate) {
       await messages.invoiceExpiryTooShortMessage(ctx);
       return {
         success: false,
