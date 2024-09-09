@@ -1,12 +1,5 @@
-const { getDisputeChannel, getDetailedOrder } = require('../../../util');
+const { getDisputeChannel, getDetailedOrder, sanitizeMD } = require('../../../util');
 const { logger } = require('../../../logger');
-
-const escapeMarkdown = function(text) {
-  const characterToEscape = '_';
-  const regex = new RegExp(characterToEscape, 'g');
-
-  return text.replace(regex, '\\_');
-};
 
 exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
   try {
@@ -94,10 +87,10 @@ exports.disputeData = async (
     }
 
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
-    
+
     // Fix Issue 543: Escape underscores in usernames
-    const escapedInitiatorUsername = escapeMarkdown(initiatorUser.username);
-    const escapedCounterPartyUsername = escapeMarkdown(counterPartyUser.username);
+    const escapedInitiatorUsername = sanitizeMD(initiatorUser.username);
+    const escapedCounterPartyUsername = sanitizeMD(counterPartyUser.username);
     
     await ctx.telegram.sendMessage(
       solver.tg_id,
@@ -122,14 +115,14 @@ exports.disputeData = async (
     await ctx.telegram.sendMessage(
       buyer.tg_id,
       ctx.i18n.t('dispute_solver', {
-        solver: solver.username,
+        solver: sanitizeMD(solver.username),
         token: order.buyer_dispute_token,
       })
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
       ctx.i18n.t('dispute_solver', {
-        solver: solver.username,
+        solver: sanitizeMD(solver.username),
         token: order.seller_dispute_token,
       })
     );

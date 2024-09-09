@@ -16,7 +16,16 @@ const mockI18n = {
   t: sinon.stub((key, params) => {
     switch (key) {
       case 'dispute_started_channel':
-        return `Dispute started by ${params.initiatorUser.username} against ${params.counterPartyUser.username} with tokens ${params.sellerToken} and ${params.buyerToken}`;
+        return `User ${params.type} @${params.initiatorUser.username} TG ID: ${params.initiatorTgId}
+                has started a dispute with @${params.counterPartyUser.username} TG ID: ${params.counterPartyUserTgId} for the order
+
+                ${params.detailedOrder}
+
+                Seller Token: ${params.sellerToken}
+                Buyer Token: ${params.buyerToken}
+
+                @${params.initiatorUser.username} has been involved in ${params.buyerDisputes} disputes
+                @${params.counterPartyUser.username} has been involved in ${params.sellerDisputes} disputes`;
       case 'seller':
         return 'seller';
       case 'buyer':
@@ -40,7 +49,8 @@ const mockOrder = {
 };
 
 const mockBuyerUnderscore = { username: 'buyer_user', tg_id: '246802' };
-const mockBuyerNormal = { username: 'buyer-user', tg_id: '246802' };
+const mockBuyerNormal = { username: 'buyeruser', tg_id: '246802' };
+const mockBuyerSpecial = { username: 'buyer-user', tg_id: '246802' };
 const mockSeller = { username: 'seller_user', tg_id: '567890' };
 const mockSolver = { username: 'solver', tg_id: '123456' };
 
@@ -49,7 +59,7 @@ describe('disputeData', () => {
     sinon.restore();
   });
 
-  it('should send a message with escaped underscores in usernames', async () => {
+  it('should send a message with escaped underscores in username', async () => {
     await disputeData(
       mockCtx,
       mockBuyerUnderscore,
@@ -68,6 +78,25 @@ describe('disputeData', () => {
     ));
   });
 
+  it('should send a message with another escaped character in username', async () => {
+    await disputeData(
+      mockCtx,
+      mockBuyerSpecial,
+      mockSeller,
+      mockOrder,
+      'buyer',
+      mockSolver,
+      5,
+      3
+    );
+
+    assert.isTrue(mockTelegram.sendMessage.calledWith(
+      mockSolver.tg_id,
+      sinon.match(/buyer\\-user/),
+      sinon.match({ parse_mode: 'MarkdownV2' })
+    ));
+  });
+
   it('should send a message without underscores in usernames', async () => {
     await disputeData(
       mockCtx,
@@ -82,7 +111,7 @@ describe('disputeData', () => {
 
     assert.isTrue(mockTelegram.sendMessage.calledWith(
       mockSolver.tg_id,
-      sinon.match('buyer-user'),
+      sinon.match('buyeruser'),
       sinon.match({ parse_mode: 'MarkdownV2' })
     ));
   });
