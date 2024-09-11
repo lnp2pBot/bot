@@ -204,8 +204,8 @@ order_detail: |
 seller: seller
 buyer: buyer
 dispute_started_channel: |
-  کاربر ${type} @${initiatorUser.username} 
-  بابت سفارش زیر یک مشاجره را با کاربر @${counterPartyUser.username}آغاز کرده 
+  کاربر ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
+  بابت سفارش زیر یک مشاجره را با کاربر @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} آغاز کرده 
 
   ${detailedOrder}
 

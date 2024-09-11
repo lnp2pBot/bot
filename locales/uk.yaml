@@ -201,8 +201,8 @@ order_detail: |
 seller: продавець
 buyer: покупець
 dispute_started_channel: |
-  ${type} @${initiatorUser.username}
-  ініціював диспут з @${counterPartyUser.username} щодо заявки:
+  ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
+  ініціював диспут з @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} щодо заявки:
 
   ${detailedOrder}
 

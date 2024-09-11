@@ -202,8 +202,8 @@ order_detail: |
 seller: Käufer
 buyer: Verkäufer
 dispute_started_channel: |
-  Benutzer ${type} @${initiatorUser.username} 
-  hat einen Streitfall mit @${counterPartyUser.username} für den folgenden Auftrag eröffnet 
+  Benutzer ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
+  hat einen Streitfall mit @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} für den folgenden Auftrag eröffnet 
 
   ${detailedOrder}
 

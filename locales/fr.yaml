@@ -204,8 +204,8 @@ order_detail: |
 seller: vendeur
 buyer: acheteur
 dispute_started_channel: |
-  L'utilisateur ${type} @${initiatorUser.username} 
-  à déclenché un litige avec @${counterPartyUser.username} concernant l'offre 
+  L'utilisateur ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
+  à déclenché un litige avec @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} concernant l'offre 
 
   ${detailedOrder}
 
