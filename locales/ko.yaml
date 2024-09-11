@@ -203,8 +203,8 @@ order_detail: |
 seller: 판매자
 buyer: 구매자
 dispute_started_channel: |
-  사용자 ${type} @${initiatorUser.username} 
-  님께서 @${counterPartyUser.username}와의 분쟁 조정을 시작하였습니다. 주문 상세 내역은 다음과 같습니다.
+  사용자 ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
+  님께서 @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} 와의 분쟁 조정을 시작하였습니다. 주문 상세 내역은 다음과 같습니다.
 
   ${detailedOrder}
 
