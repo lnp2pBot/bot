@@ -92,22 +92,24 @@ exports.disputeData = async (
     const escapedInitiatorUsername = sanitizeMD(initiatorUser.username);
     const escapedCounterPartyUsername = sanitizeMD(counterPartyUser.username);
     
+    const message = ctx.i18n.t('dispute_started_channel', {
+      initiatorUser: { ...initiatorUser, username: escapedInitiatorUsername },
+      initiatorTgId: initiatorUser.tg_id,
+      counterPartyUser: { ...counterPartyUser, username: escapedCounterPartyUsername },
+      counterPartyUserTgId: counterPartyUser.tg_id,
+      buyer,
+      seller,
+      buyerDisputes,
+      sellerDisputes,
+      detailedOrder,
+      type,
+      sellerToken: order.seller_dispute_token,
+      buyerToken: order.buyer_dispute_token,
+    });
+    console.log(`Contens of message:\n${message}`);
     await ctx.telegram.sendMessage(
       solver.tg_id,
-      ctx.i18n.t('dispute_started_channel', {
-        initiatorUser: { ...initiatorUser, username: escapedInitiatorUsername },
-        initiatorTgId: initiatorUser.tg_id,
-        counterPartyUser: { ...counterPartyUser, username: escapedCounterPartyUsername },
-        counterPartyUserTgId: counterPartyUser.tg_id,
-        buyer,
-        seller,
-        buyerDisputes,
-        sellerDisputes,
-        detailedOrder,
-        type,
-        sellerToken: order.seller_dispute_token,
-        buyerToken: order.buyer_dispute_token,
-      }),
+      message,
       { parse_mode: 'MarkdownV2' }
     );
     // message to both parties letting them know the dispute
