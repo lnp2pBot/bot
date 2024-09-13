@@ -366,8 +366,8 @@ exports.getDetailedOrder = (i18n, order, buyer, seller) => {
     const fee = order.fee ? parseInt(order.fee) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
-    const buyerAge = getUserAge(buyer);
-    const sellerAge = getUserAge(seller);
+    const buyerAge = buyer? getUserAge(buyer) : '';
+    const sellerAge = seller? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
     const message = i18n.t('order_detail', {
