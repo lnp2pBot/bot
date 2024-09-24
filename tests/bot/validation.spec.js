@@ -20,7 +20,7 @@ const {
 const messages = require('../../bot/messages');
 const { Order, User, Community } = require('../../models');
 
-describe.only('Validations', () => {
+describe('Validations', () => {
     let ctx;
     let replyStub;
     let sandbox;
