@@ -6,6 +6,7 @@ const {
   isIso4217,
   isDisputeSolver,
   removeLightningPrefix,
+  isOrderCreator,
 } = require('../util');
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 const { logger } = require('../logger');
@@ -82,6 +83,7 @@ const validateAdmin = async (ctx, id) => {
 
     const isSolver = isDisputeSolver(community, user);
 
+    //TODO this validation does not return anything
     if (!user.admin && !isSolver)
       return await messages.notAuthorized(ctx, tgUserId);
 
@@ -169,6 +171,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
+    // TODO, this validation could be amount > 0?
     if (amount !== 0 && amount < process.env.MIN_PAYMENT_AMT) {
       await messages.mustBeGreatherEqThan(
         ctx,
@@ -319,7 +322,9 @@ const validateInvoice = async (ctx, lnInvoice) => {
       return false;
     }
 
-    if (new Date(invoice.expires_at) < latestDate) {
+    // This is a bug discovered by the test, new Date(invoice.expires_at) was an Object
+    // and latestDate is a string
+    if (new Date(invoice.expires_at).toISOString() < latestDate) {
       await messages.minimunExpirationTimeInvoiceMessage(ctx);
       return false;
     }
@@ -361,7 +366,9 @@ const isValidInvoice = async (ctx, lnInvoice) => {
       };
     }
 
-    if (new Date(invoice.expires_at) < latestDate) {
+    // This is a bug discovered by the test, new Date(invoice.expires_at) was an Object
+    // and latestDate is a string
+    if (new Date(invoice.expires_at).toISOString() < latestDate) {
       await messages.invoiceExpiryTooShortMessage(ctx);
       return {
         success: false,
@@ -401,14 +408,7 @@ const isValidInvoice = async (ctx, lnInvoice) => {
   }
 };
 
-const isOrderCreator = (user, order) => {
-  try {
-    return user._id == order.creator_id;
-  } catch (error) {
-    logger.error(error);
-    return false;
-  }
-};
+
 
 const validateTakeSellOrder = async (ctx, bot, user, order) => {
   try {

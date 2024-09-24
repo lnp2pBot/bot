@@ -24,6 +24,17 @@ const isIso4217 = code => {
 
 exports.isIso4217 = isIso4217;
 
+const isOrderCreator = (user, order) => {
+  try {
+    return user._id == order.creator_id;
+  } catch (error) {
+    logger.error(error);
+    return false;
+  }
+};
+
+exports.isOrderCreator = isOrderCreator;
+
 const getCurrency = code => {
   if (!isIso4217(code)) return false;
   const currency = currencies[code];
