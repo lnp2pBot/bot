@@ -5,7 +5,7 @@ const { parsePaymentRequest } = require('invoices');
 const { mockCreateHodlResponseForLightning } = require('./mocks/lightningResponse');
 const { createHoldInvoice } = require('../../ln');
 
-describe('Testing lighting network', () => {
+describe('Lighting network', () => {
   it('Should create hold invoice', async () => {
     // We spy on the lighting service call
     const stub = sinon.stub(lightning, 'createHodlInvoice');
