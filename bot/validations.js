@@ -83,7 +83,7 @@ const validateAdmin = async (ctx, id) => {
 
     const isSolver = isDisputeSolver(community, user);
 
-    //TODO this validation does not return anything
+    // TODO this validation does not return anything
     if (!user.admin && !isSolver)
       return await messages.notAuthorized(ctx, tgUserId);
 

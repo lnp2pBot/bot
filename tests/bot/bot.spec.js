@@ -4,7 +4,6 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const { initialize } = require('../../bot');
 const { User, Order } = require('../../models');
-const ordersActions = require('../../bot/ordersActions');
 const { getCurrenciesWithPrice } = require('../../util');
 const { mockUpdatesResponseForCurrencies } = require('./mocks/currenciesResponse');
 const { mockUpdatesResponseForLanguages } = require('./mocks/languagesResponse');
@@ -133,7 +132,6 @@ describe('Telegram bot', () => {
 
   it('should create a /sell', async () => {
     const client = server.getClient(token, { timeout: 5000 });
-    const createOrderStub = sandbox.stub(ordersActions, 'createOrder').returns(order);
     const command = client.makeCommand('/sell 100 1 ves Pagomovil');
     const res = await client.sendCommand(command);
     expect(res.ok).to.be.equal(true);

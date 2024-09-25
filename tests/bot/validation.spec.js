@@ -58,11 +58,6 @@ describe('Validations', () => {
                 sendMessage: sinon.stub(),
             },
             reply: () => { },
-            state: {
-                command: {
-                    args: [],
-                },
-            },
             botInfo: {
                 username: 'testbot',
             },
@@ -109,42 +104,42 @@ describe('Validations', () => {
         it('should return false if args length is less than 4', async () => {
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return false if amount is not a number', async () => {
             ctx.state.command.args = ['test', '100', 'USD', 'zelle'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return false if fiat amount is not a number', async () => {
             ctx.state.command.args = ['10000', 'test', 'USD', 'zelle'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return false if fiat code is not valid, fiat code less than 3 characters', async () => {
             ctx.state.command.args = ['10000', '100', 'US', 'zelle'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return false if fiat code is not valid, fiat code more than 5 characters', async () => {
             ctx.state.command.args = ['10000', '100', 'USSDDD', 'zelle'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return false if amount is less than minimum', async () => {
             ctx.state.command.args = ['1', '100', 'USD', 'zelle'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.equal(true);
         });
 
         it('should return object if validation success', async () => {
@@ -164,7 +159,7 @@ describe('Validations', () => {
             ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
             const result = await validateSellOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should work with ranges', async () => {
@@ -197,28 +192,28 @@ describe('Validations', () => {
         it('should return false if args length is less than 4', async () => {
             const result = await validateBuyOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should return false if amount is not a number', async () => {
             ctx.state.command.args = ['test', '100', 'USD', 'zelle'];
             const result = await validateBuyOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should return false if fiat amount is not a number', async () => {
             ctx.state.command.args = ['10000', 'test', 'USD', 'zelle'];
             const result = await validateBuyOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should return false if amount is less than minimum', async () => {
             ctx.state.command.args = ['1', '100', 'USD', 'zelle'];
             const result = await validateBuyOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should return object if validation success', async () => {
@@ -238,7 +233,7 @@ describe('Validations', () => {
             ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
             const result = await validateBuyOrder(ctx);
             expect(result).to.equal(false);
-            expect(replyStub.calledOnce).to.be.true;
+            expect(replyStub.calledOnce).to.be.equal(true);
         });
 
         it('should work with ranges', async () => {
@@ -271,13 +266,13 @@ describe('Validations', () => {
         it('should return true for a valid lightning address', async () => {
             existLightningAddressStub.withArgs('test@ln.com').returns(true);
             const result = await validations.validateLightningAddress('test@ln.com');
-            expect(result).to.be.true;
+            expect(result).to.equal(true);
         });
 
         it('should return false for an invalid lightning address (existence)', async () => {
             existLightningAddressStub.withArgs('test@invalid.com').returns(false);
             const result = await validations.validateLightningAddress('test@invalid.com');
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
         });
     });
 
@@ -287,15 +282,11 @@ describe('Validations', () => {
                 username: 'testuser',
                 id: '1'
             };
-            const newUser = new User({
-                tg_id: ctx.update.callback_query.from.id,
-                username: ctx.update.callback_query.from.username,
-            });
-
+            
             sinon.stub(User, 'findOne').resolves(null);
             sinon.stub(User.prototype, 'save').resolves();
             const user = await validateUser(ctx, true);
-            expect(user.save.calledOnce).to.be.true;
+            expect(user.save.calledOnce).to.equal(true);
             expect(user).to.be.an('object');
             expect(user.tg_id).to.be.equal(ctx.update.callback_query.from.id);
             expect(user.username).to.be.equal(ctx.update.callback_query.from.username);
@@ -303,7 +294,7 @@ describe('Validations', () => {
 
         it('should return false if user does not exist and start is false', async () => {
             const user = await validateUser(ctx, false);
-            expect(user).to.be.false;
+            expect(user).to.equal(false);
         });
 
         it('should return the user if it exists', async () => {
@@ -356,7 +347,7 @@ describe('Validations', () => {
             sinon.stub(User, 'findOne').resolves(newUser);
 
             const user = await validateUser(ctx, false);
-            expect(user).to.be.false;
+            expect(user).to.equal(false);
         });
     });
 
@@ -377,7 +368,7 @@ describe('Validations', () => {
             const user = await validateSuperAdmin(ctx);
             expect(user).to.be.an('object');
             expect(user.tg_id).to.be.equal(newUser.tg_id);
-            expect(user.admin).to.be.true;
+            expect(user.admin).to.equal(true);
         });
 
         it('should return false if the user is not a superadmin', async () => {
@@ -394,7 +385,7 @@ describe('Validations', () => {
             sinon.stub(User, 'findOne').resolves(newUser);
 
             const user = await validateSuperAdmin(ctx);
-            expect(user).to.be.undefined;
+            expect(user).to.equal(undefined);
         });
     });
 
@@ -416,14 +407,14 @@ describe('Validations', () => {
             const user = await validateAdmin(ctx);
             expect(user).to.be.an('object');
             expect(user.tg_id).to.be.equal(newUser.tg_id);
-            expect(user.admin).to.be.true;
+            expect(user.admin).to.equal(true);
         });
 
         it('should return undefined if the user is not exist', async () => {
             sinon.stub(User, 'findOne').resolves(null);
 
             const user = await validateAdmin(ctx);
-            expect(user).to.be.undefined;
+            expect(user).to.equal(undefined);
         });
 
         it('should return undefined if the user is not dispute solver and it is not an admin', async () => {
@@ -442,7 +433,7 @@ describe('Validations', () => {
             isDisputeSolverStub.withArgs(newCommunity, newUser).returns(false);
 
             const user = await validateAdmin(ctx);
-            expect(user).to.be.undefined;
+            expect(user).to.equal(undefined);
         });
     });
 
@@ -450,19 +441,19 @@ describe('Validations', () => {
         it('should return false if the amount is not a number', async () => {
             ctx.state.command.args = ['test', '100', 'USD', 'zelle'];
             const order = await validateSellOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return false if the fiat amount is not a number', async () => {
             ctx.state.command.args = ['10000', 'test', 'USD', 'zelle'];
             const order = await validateSellOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return false if the fiat code is not valid', async () => {
             ctx.state.command.args = ['10000', '100', 'invalid', 'zelle'];
             const order = await validateSellOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return the order data if the order is valid', async () => {
@@ -480,19 +471,19 @@ describe('Validations', () => {
         it('should return false if the amount is not a number', async () => {
             ctx.state.command.args = ['test', '100', 'USD', 'zelle'];
             const order = await validateBuyOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return false if the fiat amount is not a number', async () => {
             ctx.state.command.args = ['10000', 'test', 'USD', 'zelle'];
             const order = await validateBuyOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return false if the fiat code is not valid', async () => {
             ctx.state.command.args = ['10000', '100', 'invalid', 'zelle'];
             const order = await validateBuyOrder(ctx);
-            expect(order).to.be.false;
+            expect(order).to.equal(false);
         });
 
         it('should return the order data if the order is valid', async () => {
@@ -506,12 +497,12 @@ describe('Validations', () => {
         });
     });
 
-    //TODO possible duplicated of isValidInvoice
+    // TODO possible duplicated of isValidInvoice
     describe('validateInvoice', () => {
         // This test goes to the catch
         it('should return false if the invoice is not valid', async () => {
             const invoice = await validateInvoice(ctx, 'invalid-invoice');
-            expect(invoice).to.be.false;
+            expect(invoice).to.equal(false);
         });
 
         it('should return false if the invoice amount is too low', async () => {
@@ -545,8 +536,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.minimunAmountInvoiceMessage.calledOnce).to.be.true;
-            expect(invoice).to.be.false;
+            expect(messages.minimunAmountInvoiceMessage.calledOnce).to.equal(true);
+            expect(invoice).to.equal(false);
         });
 
         it('should return false if the invoice is expired with an expired date', async () => {
@@ -580,8 +571,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.minimunExpirationTimeInvoiceMessage.calledOnce).to.be.true;
-            expect(invoice).to.be.false;
+            expect(messages.minimunExpirationTimeInvoiceMessage.calledOnce).to.equal(true);
+            expect(invoice).to.equal(false);
         });
 
         it('should return false if the invoice is expired with is_expired true', async () => {
@@ -615,8 +606,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.expiredInvoiceMessage.calledOnce).to.be.true;
-            expect(invoice).to.be.false;
+            expect(messages.expiredInvoiceMessage.calledOnce).to.equal(true);
+            expect(invoice).to.equal(false);
         });
         it('should return false if the invoice does not have a destination address', async () => {
             const minPaymentAmount = 2000;
@@ -649,8 +640,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.requiredAddressInvoiceMessage.calledOnce).to.be.true;
-            expect(invoice).to.be.false;
+            expect(messages.requiredAddressInvoiceMessage.calledOnce).to.equal(true);
+            expect(invoice).to.equal(false);
         });
         it('should return false if the invoice does not have an id', async () => {
             const minPaymentAmount = 2000;
@@ -683,8 +674,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.requiredHashInvoiceMessage.calledOnce).to.be.true;
-            expect(invoice).to.be.false;
+            expect(messages.requiredHashInvoiceMessage.calledOnce).to.equal(true);
+            expect(invoice).to.equal(false);
         });
         it('should return the invoice if it is valid', async () => {
             const resInvoice = {
@@ -725,8 +716,8 @@ describe('Validations', () => {
             sinon.stub(messages, 'invoiceInvalidMessage');
 
             const { success } = await isValidInvoice(ctx, 'invalid-invoice');
-            expect(success).to.be.false;
-            expect(messages.invoiceInvalidMessage.calledOnce).to.be.true;
+            expect(success).to.equal(false);
+            expect(messages.invoiceInvalidMessage.calledOnce).to.equal(true);
         });
 
         it('should return false if the invoice amount is too low', async () => {
@@ -760,8 +751,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.invoiceMustBeLargerMessage.calledOnce).to.be.true;
-            expect(success).to.be.false;
+            expect(messages.invoiceMustBeLargerMessage.calledOnce).to.equal(true);
+            expect(success).to.equal(false);
         });
 
         it('should return false if the invoice is expired with an expired date', async () => {
@@ -795,8 +786,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.invoiceExpiryTooShortMessage.calledOnce).to.be.true;
-            expect(success).to.be.false;
+            expect(messages.invoiceExpiryTooShortMessage.calledOnce).to.equal(true);
+            expect(success).to.equal(false);
         });
 
         it('should return false if the invoice is expired with is_expired true', async () => {
@@ -830,8 +821,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.invoiceHasExpiredMessage.calledOnce).to.be.true;
-            expect(success).to.be.false;
+            expect(messages.invoiceHasExpiredMessage.calledOnce).to.equal(true);
+            expect(success).to.equal(false);
         });
         it('should return false if the invoice does not have a destination address', async () => {
             const minPaymentAmount = 2000;
@@ -864,8 +855,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.invoiceHasWrongDestinationMessage.calledOnce).to.be.true;
-            expect(success).to.be.false;
+            expect(messages.invoiceHasWrongDestinationMessage.calledOnce).to.equal(true);
+            expect(success).to.equal(false);
         });
         it('should return false if the invoice does not have an id', async () => {
             const minPaymentAmount = 2000;
@@ -898,8 +889,8 @@ describe('Validations', () => {
                 lnInvoice
             );
 
-            expect(messages.requiredHashInvoiceMessage.calledOnce).to.be.true;
-            expect(success).to.be.false;
+            expect(messages.requiredHashInvoiceMessage.calledOnce).to.equal(true);
+            expect(success).to.equal(false);
         });
         it('should return the invoice if it is valid', async () => {
             const resInvoice = {
@@ -943,8 +934,8 @@ describe('Validations', () => {
 
             const isValid = await validateTakeSellOrder(ctx, {}, user, order);
 
-            expect(messages.invalidOrderMessage.calledOnce).to.be.true;
-            expect(isValid).to.be.false;
+            expect(messages.invalidOrderMessage.calledOnce).to.equal(true);
+            expect(isValid).to.equal(false);
         });
 
         it('should return false if the user is the order creator', async () => {
@@ -959,8 +950,8 @@ describe('Validations', () => {
 
             const isValid = await validateTakeSellOrder(ctx, {}, user, order);
 
-            expect(messages.cantTakeOwnOrderMessage.calledOnce).to.be.true;
-            expect(isValid).to.be.false;
+            expect(messages.cantTakeOwnOrderMessage.calledOnce).to.equal(true);
+            expect(isValid).to.equal(false);
         });
 
         it('should return false if the order type is not sell', async () => {
@@ -975,8 +966,8 @@ describe('Validations', () => {
 
             const isValid = await validateTakeSellOrder(ctx, {}, user, order);
 
-            expect(messages.invalidTypeOrderMessage.calledOnce).to.be.true;
-            expect(isValid).to.be.false;
+            expect(messages.invalidTypeOrderMessage.calledOnce).to.equal(true);
+            expect(isValid).to.equal(false);
         });
 
         it('should return false if the order status is not PENDING', async () => {
@@ -991,8 +982,8 @@ describe('Validations', () => {
 
             const isValid = await validateTakeSellOrder(ctx, {}, user, order);
 
-            expect(messages.alreadyTakenOrderMessage.calledOnce).to.be.true;
-            expect(isValid).to.be.false;
+            expect(messages.alreadyTakenOrderMessage.calledOnce).to.equal(true);
+            expect(isValid).to.equal(false);
         });
     });
 
@@ -1003,15 +994,15 @@ describe('Validations', () => {
             sinon.stub(messages, 'customMessage').resolves();
 
             const result = await validateParams(ctx, 3, 'errOutputString');
-            expect(result).to.be.an('array').that.is.empty;
-            expect(messages.customMessage.calledOnce).to.be.true;
+            expect(result).to.be.an('array').to.have.lengthOf(0);
+            expect(messages.customMessage.calledOnce).to.equal(true);
         });
 
         it('should return sliced array if params length is equal to paramNumber', async () => {
             ctx.update.message.text = '/command param1 param2';
             const result = await validateParams(ctx, 3, 'errOutputString');
             expect(result).to.deep.equal(['param1', 'param2']);
-            expect(ctx.reply.notCalled).to.be.true;
+            expect(ctx.reply.notCalled).to.equal(true);
         });
     });
 
@@ -1019,15 +1010,15 @@ describe('Validations', () => {
         it('should return true if id is valid', async () => {
             const validId = new ObjectId();
             const result = await validateObjectId(ctx, validId.toString());
-            expect(result).to.be.true;
-            expect(ctx.reply.notCalled).to.be.true;
+            expect(result).to.equal(true);
+            expect(ctx.reply.notCalled).to.equal(true);
         });
 
         it('should return false if id is invalid', async () => {
             const invalidId = 'invalidId';
             const result = await validateObjectId(ctx, invalidId);
-            expect(result).to.be.false;
-            expect(ctx.reply.calledOnce).to.be.true;
+            expect(result).to.equal(false);
+            expect(ctx.reply.calledOnce).to.equal(true);
         });
     });
 
@@ -1043,7 +1034,7 @@ describe('Validations', () => {
         it('should return true if user has no waiting orders', async () => {
             Order.find.returns([]);
             const result = await validateUserWaitingOrder(ctx, bot, user);
-            expect(result).to.be.true;
+            expect(result).to.equal(true);
         });
 
         it('should return false and send message if user has a waiting sell order', async () => {
@@ -1056,10 +1047,10 @@ describe('Validations', () => {
             Order.find.onCall(1).returns([]);
             sinon.stub(messages, 'userCantTakeMoreThanOneWaitingOrderMessage').resolves();
             const result = await validateUserWaitingOrder(ctx, bot, user);
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
             expect(
                 messages.userCantTakeMoreThanOneWaitingOrderMessage.calledOnce
-            ).to.be.true;
+            ).to.equal(true);
         });
 
         it('should return false and send message if user has a waiting buy order', async () => {
@@ -1072,10 +1063,10 @@ describe('Validations', () => {
             Order.find.onCall(1).returns([order]);
             sinon.stub(messages, 'userCantTakeMoreThanOneWaitingOrderMessage').resolves();
             const result = await validateUserWaitingOrder(ctx, bot, user);
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
             expect(
                 messages.userCantTakeMoreThanOneWaitingOrderMessage.calledOnce
-            ).to.be.true;
+            ).to.equal(true);
         });
     });
 
@@ -1094,26 +1085,26 @@ describe('Validations', () => {
 
         it('should return false if communityId is null', async () => {
             const result = await isBannedFromCommunity(user, null);
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
         });
 
         it('should return false if community is not found', async () => {
             Community.findOne.returns(null);
             const result = await isBannedFromCommunity(user, community._id);
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
         });
 
         it('should return false if user is not banned', async () => {
             Community.findOne.returns(community);
             const result = await isBannedFromCommunity(user, community._id);
-            expect(result).to.be.false;
+            expect(result).to.equal(false);
         });
 
         it('should return true if user is banned', async () => {
             community.banned_users.push({ id: user._id });
             Community.findOne.returns(community);
             const result = await isBannedFromCommunity(user, community._id);
-            expect(result).to.be.true;
+            expect(result).to.equal(true);
         });
     });
 });
