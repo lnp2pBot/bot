@@ -204,16 +204,16 @@ order_detail: |
 seller: seller
 buyer: buyer
 dispute_started_channel: |
-  User ${type} @${initiatorUser.username} TG ID: ${initiatorTgId}
-  has started a dispute with @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} for the order
+  User ${type} @${initiatorUser} TG ID: ${initiatorTgId}
+  has started a dispute with @${counterPartyUser} TG ID: ${counterPartyUserTgId} for the order
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  @${initiatorUser.username} has been involved in ${initiatorUser.disputes} disputes
-  @${counterPartyUser.username} has been involved in ${counterPartyUser.disputes} disputes
+  @${initiatorUser} has been involved in ${buyerDisputes} disputes
+  @${counterPartyUser} has been involved in ${sellerDisputes} disputes
 you_started: '🥴 You have started a dispute on your order Id: ${orderId}.'
 counterpart_started: '🥴 Your counterparty started a dispute on your order Id: ${orderId}.'
 dispute_started: '${who} A solver will attend you soon, when he/she is assigned to your dispute the bot will tell you his/her username, only he/she will be able to attend you. You can write to him/her directly, but if he/she contacts you first, you must ask him/her to tell you what is the token of your dispute, your token is: ${token}.'

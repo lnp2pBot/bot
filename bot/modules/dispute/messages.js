@@ -1,4 +1,8 @@
-const { getDisputeChannel, getDetailedOrder, sanitizeMD } = require('../../../util');
+const {
+  getDisputeChannel,
+  getDetailedOrder,
+  sanitizeMD,
+} = require('../../../util');
 const { logger } = require('../../../logger');
 
 exports.beginDispute = async (ctx, initiator, order, buyer, seller) => {
@@ -91,25 +95,25 @@ exports.disputeData = async (
     // Fix Issue 543: Escape underscores in usernames
     const escapedInitiatorUsername = sanitizeMD(initiatorUser.username);
     const escapedCounterPartyUsername = sanitizeMD(counterPartyUser.username);
-    
-    await ctx.telegram.sendMessage(
-      solver.tg_id,
-      ctx.i18n.t('dispute_started_channel', {
-        initiatorUser: { ...initiatorUser, username: escapedInitiatorUsername },
-        initiatorTgId: initiatorUser.tg_id,
-        counterPartyUser: { ...counterPartyUser, username: escapedCounterPartyUsername },
-        counterPartyUserTgId: counterPartyUser.tg_id,
-        buyer,
-        seller,
-        buyerDisputes,
-        sellerDisputes,
-        detailedOrder,
-        type,
-        sellerToken: order.seller_dispute_token,
-        buyerToken: order.buyer_dispute_token,
-      }),
-      { parse_mode: 'MarkdownV2' }
-    );
+
+    const message = ctx.i18n.t('dispute_started_channel', {
+      initiatorUser: escapedInitiatorUsername,
+      initiatorTgId: initiatorUser.tg_id,
+      counterPartyUser: escapedCounterPartyUsername,
+      counterPartyUserTgId: counterPartyUser.tg_id,
+      buyer,
+      seller,
+      buyerDisputes,
+      sellerDisputes,
+      detailedOrder,
+      type,
+      sellerToken: order.seller_dispute_token,
+      buyerToken: order.buyer_dispute_token,
+    });
+    console.log(`Contens of message:\n${message}`);
+    await ctx.telegram.sendMessage(solver.tg_id, message, {
+      parse_mode: 'MarkdownV2',
+    });
     // message to both parties letting them know the dispute
     // has been taken by a solver
     await ctx.telegram.sendMessage(

@@ -204,16 +204,16 @@ order_detail: |
 seller: seller
 buyer: buyer
 dispute_started_channel: |
-  کاربر ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
-  بابت سفارش زیر یک مشاجره را با کاربر @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} آغاز کرده 
+  کاربر ${type} @${initiatorUser} TG ID: ${initiatorTgId} 
+  بابت سفارش زیر یک مشاجره را با کاربر @${counterPartyUser} TG ID: ${counterPartyUserTgId} آغاز کرده 
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  کابر@${initiatorUser.username} بابت ${initiatorUser.disputes} به اختلاف خورده
-  کاربر@${counterPartyUser.username} بابت ${counterPartyUser.disputes} به اختلاف خورده
+  کابر@${initiatorUser} بابت ${buyerDisputes} به اختلاف خورده
+  کاربر@${counterPartyUser} بابت ${sellerDisputes} به اختلاف خورده
 you_started: '🥴 شما در مورد شناسه سفارش خود اختلاف نظر شروع کرده اید: ${orderId}.'
 counterpart_started: '🥴 طرف مقابل شما یک اختلاف بر سر شناسه سفارش شما شروع کرد: ${orderId}.'
 dispute_started: '${who} یک حل کننده به زودی در شما حضور خواهد یافت، هنگامی که او به منازعه شما منصوب شد، ربات نام کاربری خود را به شما می گوید، فقط او می تواند در شما حضور داشته باشد. شما می توانید مستقیماً برای او نامه بنویسید، اما اگر ابتدا با شما تماس گرفت، باید از او بخواهید که به شما بگوید نشانه اختلاف شما چیست، رمز شما این است: ${token}.'
