@@ -368,7 +368,7 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
     takenAt = sanitizeMD(takenAt);
     const previousDisputeStatus = sanitizeMD(order.previous_dispute_status);
     const status = sanitizeMD(order.status);
-    const fee = order.fee ? Number(order.fee) : '';
+    const fee = order.fee ? sanitizeMD(Number(order.fee)) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
     const buyerAge = buyer? getUserAge(buyer) : '';

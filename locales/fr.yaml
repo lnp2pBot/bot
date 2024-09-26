@@ -204,16 +204,16 @@ order_detail: |
 seller: vendeur
 buyer: acheteur
 dispute_started_channel: |
-  L'utilisateur ${type} @${initiatorUser.username} TG ID: ${initiatorTgId} 
-  à déclenché un litige avec @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} concernant l'offre 
+  L'utilisateur ${type} @${initiatorUser} TG ID: ${initiatorTgId} 
+  à déclenché un litige avec @${counterPartyUser} TG ID: ${counterPartyUserTgId} concernant l'offre 
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  @${initiatorUser.username} a été impliqué.e dans ${initiatorUser.disputes} litiges
-  @${counterPartyUser.username} a été impliqué.e dans ${counterPartyUser.disputes} litiges
+  @${initiatorUser} a été impliqué.e dans ${buyerDisputes} litiges
+  @${counterPartyUser} a été impliqué.e dans ${sellerDisputes} litiges
 you_started : '🥴 Vous avez commencé un litige sur votre commande Id : ${orderId}.'
 counterpart_started : '🥴 Votre contrepartie a démarré un litige sur votre commande Id : ${orderId}.'
 dispute_started : "${who} Un solver va bientôt venir vous voir, lorsqu'il/elle sera assigné(e) à votre litige, le bot vous indiquera son nom d'utilisateur, il/elle seul(e) sera en mesure de venir vous voir. Vous pouvez lui écrire directement, mais s'il vous contacte en premier, vous devez lui demander de vous dire quel est le jeton de votre litige, votre jeton est : ${token}."
