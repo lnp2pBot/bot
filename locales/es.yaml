@@ -202,16 +202,16 @@ order_detail: |
 seller: vendedor
 buyer: comprador
 dispute_started_channel: |
-  El ${type} @${initiatorUser.username}
-  ha iniciado una disputa con @${counterPartyUser.username} en la orden:
+  El ${type} @${initiatorUser.username} TG ID: ${initiatorTgId}
+  ha iniciado una disputa con @${counterPartyUser.username} TG ID: ${counterPartyUserTgId} en la orden:
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  @${buyer.username} ya tiene ${buyerDisputes} disputas
-  @${seller.username} ya tiene ${sellerDisputes} disputas
+  @${initiatorUser.username} ya tiene ${buyerDisputes} disputas
+  @${counterPartyUser.username} ya tiene ${sellerDisputes} disputas
 you_started: '🥴 Has iniciado una disputa en tu orden con Id: ${orderId}.'
 counterpart_started: '🥴 Tu contraparte ha iniciado una disputa en tu orden con Id: ${orderId}.'
 dispute_started: '${who} Un solver te atenderá pronto, cuando él/la solver sea asignado a tu disputa el bot te dirá su username, solo él/ella podrá atenderte. Puedes escribirle directamente, pero si él/ella te contacta primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es: ${token}.'

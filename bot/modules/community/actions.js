@@ -49,6 +49,18 @@ exports.onCommunityInfo = async ctx => {
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);
 
+  const creator = await User.findById(community.creator_id);
+
+  let orderChannelsText = '';
+  if (community.order_channels.length === 1) {
+    orderChannelsText = `${community.order_channels[0].name} (${community.order_channels[0].type})`;
+  } else if (community.order_channels.length === 2) {
+    orderChannelsText = `${community.order_channels[0].name} (${community.order_channels[0].type}) ${community.order_channels[1].name} (${community.order_channels[1].type})`;
+  }
+
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formatDate = community.created_at.toLocaleDateString('en-US', options);
+
   const rows = [];
   rows.push([
     { text: ctx.i18n.t('orders') + ' 24hs', callback_data: 'none' },
@@ -62,13 +74,14 @@ exports.onCommunityInfo = async ctx => {
     { text: ctx.i18n.t('users'), callback_data: 'none' },
     { text: userCount, callback_data: 'none' },
   ]);
+
   rows.push([
     {
       text: ctx.i18n.t('use_default'),
       callback_data: `setCommunity_${commId}`,
     },
   ]);
-  const text = `${community.name}\n${community.group}`;
+  const text = `${community.name}: ${community.group} \nCreator: @${creator.username} \nOrder Channels: ${orderChannelsText} \nFee: ${community.fee} \nCreated At: ${formatDate}`;
   await ctx.reply(text, {
     reply_markup: { inline_keyboard: rows },
   });
