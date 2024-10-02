@@ -16,16 +16,16 @@ const mockI18n = {
   t: sinon.stub((key, params) => {
     switch (key) {
       case 'dispute_started_channel':
-        return `User ${params.type} @${params.initiatorUser.username} TG ID: ${params.initiatorTgId}
-                has started a dispute with @${params.counterPartyUser.username} TG ID: ${params.counterPartyUserTgId} for the order
+        return `User ${params.type} @${params.initiatorUser} TG ID: ${params.initiatorTgId}
+                has started a dispute with @${params.counterPartyUser} TG ID: ${params.counterPartyUserTgId} for the order
 
                 ${params.detailedOrder}
 
                 Seller Token: ${params.sellerToken}
                 Buyer Token: ${params.buyerToken}
 
-                @${params.initiatorUser.username} has been involved in ${params.buyerDisputes} disputes
-                @${params.counterPartyUser.username} has been involved in ${params.sellerDisputes} disputes`;
+                @${params.initiatorUser} has been involved in ${params.buyerDisputes} disputes
+                @${params.counterPartyUser} has been involved in ${params.sellerDisputes} disputes`;
       case 'seller':
         return 'seller';
       case 'buyer':

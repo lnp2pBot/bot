@@ -282,7 +282,7 @@ describe('Validations', () => {
                 username: 'testuser',
                 id: '1'
             };
-            
+
             sinon.stub(User, 'findOne').resolves(null);
             sinon.stub(User.prototype, 'save').resolves();
             const user = await validateUser(ctx, true);
@@ -1101,9 +1101,13 @@ describe('Validations', () => {
         });
 
         it('should return true if user is banned', async () => {
-            community.banned_users.push({ id: user._id });
+            const user = { _id: 'userId' };
+            const communityId = 'communityId';
+            community.banned_users = [{ id: 'userId', username: 'username' }];
+
             Community.findOne.returns(community);
-            const result = await isBannedFromCommunity(user, community._id);
+            
+            const result = await isBannedFromCommunity(user, communityId);
             expect(result).to.equal(true);
         });
     });
