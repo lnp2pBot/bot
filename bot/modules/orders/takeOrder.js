@@ -57,8 +57,9 @@ exports.takebuy = async (ctx, bot, orderId) => {
     // if the user don't do anything
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
-    order.taken_at = Date.now();
+    order.taken_at = new Date(Date.now());
     await order.save();
+    order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
     // We delete the messages related to that order from the channel
     await deleteOrderFromChannel(order, bot.telegram);
@@ -79,9 +80,10 @@ exports.takesell = async (ctx, bot, orderId) => {
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
     order.buyer_id = user._id;
-    order.taken_at = Date.now();
+    order.taken_at = new Date(Date.now());
 
     await order.save();
+    order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
     // We delete the messages related to that order from the channel
     await deleteOrderFromChannel(order, bot.telegram);

@@ -29,7 +29,7 @@ const resubscribeInvoices = async bot => {
     }
     logger.info(`Invoices resubscribed: ${invoicesReSubscribed}`);
   } catch (error) {
-    logger.error(`ResubcribeInvoice catch: ${error.toString()}`);
+    logger.error(`ResubscribeInvoice catch: ${error.toString()}`);
     return false;
   }
 };
