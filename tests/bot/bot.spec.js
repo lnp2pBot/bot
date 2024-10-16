@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const proxyquire = require('proxyquire');
 
 const { initialize } = require('../../bot');
-const { User, Order, Config } = require('../../models');
+const { User, Order } = require('../../models');
 const { getCurrenciesWithPrice } = require('../../util');
 const { mockUpdatesResponseForCurrencies } = require('./mocks/currenciesResponse');
 const { mockUpdatesResponseForLanguages } = require('./mocks/languagesResponse');
@@ -235,7 +235,6 @@ describe('Bot Initialization', () => {
 
     validateUserStub = sinon.stub().resolves();
     startMessageStub = sinon.stub().resolves();
-    userMiddlewareStub = sinon.stub().resolves();
     attemptPendingPaymentsStub = sinon.stub();
 
     // Replace the real modules with the stubs
@@ -532,8 +531,8 @@ describe('Bot Initialization', () => {
       message: ctx.update.message,
     });
 
-    expect(ConfigStub.findOne.calledOnceWithExactly({ maintenance: true })).to.be.true;
-    expect(ctx.reply.calledOnceWithExactly('maintenance')).to.be.true;
+    expect(ConfigStub.findOne.calledOnceWithExactly({ maintenance: true })).to.be.equal(true);
+    expect(ctx.reply.calledOnceWithExactly('maintenance')).to.be.equal(true);
   });
 
   it('should handle text messages that are not commands using the second text handler', async () => {
@@ -588,7 +587,7 @@ describe('Bot Initialization', () => {
       message: ctx.message,
     });
 
-    expect(ctx.reply.calledOnce).to.be.true;
-    expect(ctx.reply.calledWithExactly('This is an unknown command.')).to.be.true;
+    expect(ctx.reply.calledOnce).to.be.equal(true);
+    expect(ctx.reply.calledWithExactly('This is an unknown command.')).to.be.equal(true);
   });
 });
