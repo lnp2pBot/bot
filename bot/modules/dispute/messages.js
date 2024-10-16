@@ -119,14 +119,14 @@ exports.disputeData = async (
     await ctx.telegram.sendMessage(
       buyer.tg_id,
       ctx.i18n.t('dispute_solver', {
-        solver: sanitizeMD(solver.username),
+        solver: solver.username,
         token: order.buyer_dispute_token,
       })
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
       ctx.i18n.t('dispute_solver', {
-        solver: sanitizeMD(solver.username),
+        solver: solver.username,
         token: order.seller_dispute_token,
       })
     );
