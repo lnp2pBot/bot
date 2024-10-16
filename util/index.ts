@@ -31,6 +31,15 @@ const isIso4217 = (code: string): boolean => {
   });
 };
 
+const isOrderCreator = (user: UserDocument, order: IOrder) => {
+  try {
+    return user._id == order.creator_id;
+  } catch (error) {
+    logger.error(error);
+    return false;
+  }
+};
+
 const getCurrency = (code: string): (IFiat | null) => {
   if (!isIso4217(code)) return null;
   const currency = currencies[code];
@@ -545,5 +554,6 @@ export {
   holdInvoiceExpirationInSecs,
   getUserAge,
   getTimeToExpirationOrder,
-  toKebabCase
+  toKebabCase,
+  isOrderCreator
 };
