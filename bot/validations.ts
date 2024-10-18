@@ -1,22 +1,34 @@
+import { MainContext, OrderQuery, ctxUpdateAssertMsg } from "./start";
+import { ICommunity, IUsernameId } from "../models/community";
+import { FilterQuery } from "mongoose";
+import { UserDocument } from "../models/user";
+import { IOrder } from "../models/order";
+import { Telegraf } from "telegraf";
+
 const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
-const messages = require('./messages');
-const { Order, User, Community } = require('../models');
-const {
-  isIso4217,
-  isDisputeSolver,
-  removeLightningPrefix,
-} = require('../util');
+import * as messages from './messages';
+import { Order, User, Community } from '../models';
+import { isIso4217, isDisputeSolver, removeLightningPrefix, isOrderCreator } from '../util';
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
-const { logger } = require('../logger');
+import { logger } from '../logger';
+
+const ctxUpdateMessageFromAssertMsg = "ctx.update.message.from is not available";
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
-const validateUser = async (ctx, start) => {
+const validateUser = async (ctx: MainContext, start: boolean) => {
   try {
-    const tgUser = ctx.update.callback_query
-      ? ctx.update.callback_query.from
-      : ctx.update.message.from;
+    let tgUser = null;
+    if (("callback_query" in ctx.update) && ctx.update.callback_query) {
+      tgUser = ctx.update.callback_query.from;
+    }
+    else if (("message" in ctx.update) && ctx.update.message) {
+      tgUser = ctx.update.message.from;
+    }
+    else {
+      throw new Error(ctxUpdateAssertMsg);
+    }
     // We need to make sure the user has a username
     if (!tgUser.username) {
       await ctx.telegram.sendMessage(tgUser.id, ctx.i18n.t('non_handle_error'));
@@ -51,13 +63,19 @@ const validateUser = async (ctx, start) => {
   }
 };
 
-const validateSuperAdmin = async (ctx, id) => {
+const validateSuperAdmin = async (ctx: MainContext, id?: string) => {
   try {
-    const tgUserId = id || ctx.update.message.from.id;
+    let tgUserId = id;
+    if (!tgUserId) {
+      if (!('message' in ctx.update) || !('from' in ctx.update.message)) {
+        throw new Error(ctxUpdateMessageFromAssertMsg);
+      }
+      tgUserId = ctx.update.message.from.id.toString();
+    }
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
-    if (!user) return;
+    if (user === null) return;
 
     if (!user.admin) return await messages.notAuthorized(ctx, tgUserId);
 
@@ -68,20 +86,27 @@ const validateSuperAdmin = async (ctx, id) => {
   }
 };
 
-const validateAdmin = async (ctx, id) => {
+const validateAdmin = async (ctx: MainContext, id?: string) => {
   try {
-    const tgUserId = id || ctx.update.message.from.id;
+    let tgUserId = id;
+    if (!tgUserId) {
+      if (!('message' in ctx.update) || !('from' in ctx.update.message)) {
+        throw new Error(ctxUpdateMessageFromAssertMsg);
+      }
+      tgUserId = ctx.update.message.from.id.toString();
+    }
     const user = await User.findOne({ tg_id: tgUserId });
     // If the user never started the bot we can't send messages
     // to that user, so we do nothing
-    if (!user) return;
+    if (user === null) return;
 
     let community = null;
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
-
+    
     const isSolver = isDisputeSolver(community, user);
 
+    // TODO this validation does not return anything
     if (!user.admin && !isSolver)
       return await messages.notAuthorized(ctx, tgUserId);
 
@@ -92,7 +117,7 @@ const validateAdmin = async (ctx, id) => {
   }
 };
 
-const processParameters = args => {
+const processParameters = (args: string[]) => {
   const correctedArgs = [];
   let isGrouping = false;
   let groupedString = '';
@@ -124,7 +149,7 @@ const processParameters = args => {
   return correctedArgs;
 };
 
-const validateSellOrder = async ctx => {
+const validateSellOrder = async (ctx: MainContext) => {
   try {
     let args = ctx.state.command.args;
     if (args.length < 4) {
@@ -168,12 +193,13 @@ const validateSellOrder = async ctx => {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
-
-    if (amount !== 0 && amount < process.env.MIN_PAYMENT_AMT) {
+    
+    // TODO, this validation could be amount > 0?
+    if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        process.env.MIN_PAYMENT_AMT
+        Number(process.env.MIN_PAYMENT_AMT)
       );
       return false;
     }
@@ -188,7 +214,7 @@ const validateSellOrder = async ctx => {
       return false;
     }
 
-    if (fiatAmount.some(x => x < 1)) {
+    if (fiatAmount.some((x: number) => x < 1)) {
       await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
@@ -213,7 +239,7 @@ const validateSellOrder = async ctx => {
   }
 };
 
-const validateBuyOrder = async ctx => {
+const validateBuyOrder = async (ctx: MainContext) => {
   try {
     let args = ctx.state.command.args;
     if (args.length < 4) {
@@ -257,11 +283,11 @@ const validateBuyOrder = async ctx => {
       return false;
     }
 
-    if (amount !== 0 && amount < process.env.MIN_PAYMENT_AMT) {
+    if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        process.env.MIN_PAYMENT_AMT
+        Number(process.env.MIN_PAYMENT_AMT)
       );
       return false;
     }
@@ -276,7 +302,7 @@ const validateBuyOrder = async ctx => {
       return false;
     }
 
-    if (fiatAmount.some(x => x < 1)) {
+    if (fiatAmount.some((x: number) => x < 1)) {
       await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
       return false;
     }
@@ -300,21 +326,27 @@ const validateBuyOrder = async ctx => {
     return false;
   }
 };
-const validateLightningAddress = async lightningAddress => {
+const validateLightningAddress = async (lightningAddress: string) => {
   const pattern = /^[\w-.]+@(?:[\w-]+(?<!-)\.)+(?:[A-Za-z]{2,63})$/;
   const lnExists = await existLightningAddress(lightningAddress);
 
   return pattern.test(lightningAddress) && lnExists;
 };
 
-const validateInvoice = async (ctx, lnInvoice) => {
+const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
   try {
     const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
-    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    let invoice;
+    try {
+      invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    } catch (error) {
+      return false;
+    }
     const latestDate = new Date(
-      Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
-    ).toISOString();
-    if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+    );
+    if (!("MIN_PAYMENT_AMT" in process.env)) throw Error("MIN_PAYMENT_AMT not found, please check .env file");
+    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.minimunAmountInvoiceMessage(ctx);
       return false;
     }
@@ -347,14 +379,14 @@ const validateInvoice = async (ctx, lnInvoice) => {
   }
 };
 
-const isValidInvoice = async (ctx, lnInvoice) => {
+const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
   try {
     const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
     const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
-      Date.now() + parseInt(process.env.INVOICE_EXPIRATION_WINDOW)
-    ).toISOString();
-    if (!!invoice.tokens && invoice.tokens < process.env.MIN_PAYMENT_AMT) {
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+    );
+    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.invoiceMustBeLargerMessage(ctx);
       return {
         success: false,
@@ -401,16 +433,8 @@ const isValidInvoice = async (ctx, lnInvoice) => {
   }
 };
 
-const isOrderCreator = (user, order) => {
-  try {
-    return user._id == order.creator_id;
-  } catch (error) {
-    logger.error(error);
-    return false;
-  }
-};
 
-const validateTakeSellOrder = async (ctx, bot, user, order) => {
+const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -439,10 +463,10 @@ const validateTakeSellOrder = async (ctx, bot, user, order) => {
   }
 };
 
-const validateTakeBuyOrder = async (ctx, bot, user, order) => {
+const validateTakeBuyOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
   try {
     if (!order) {
-      await messages.invalidOrderMessage(bot, user);
+      await messages.invalidOrderMessage(ctx, bot, user);
       return false;
     }
     if (isOrderCreator(user, order) && process.env.NODE_ENV === 'production') {
@@ -464,9 +488,9 @@ const validateTakeBuyOrder = async (ctx, bot, user, order) => {
   }
 };
 
-const validateReleaseOrder = async (ctx, user, orderId) => {
+const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
   try {
-    let where = {
+    let where: FilterQuery<OrderQuery> = {
       seller_id: user._id,
       status: 'WAITING_BUYER_INVOICE',
       _id: orderId,
@@ -495,7 +519,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
     }
     order = await Order.findOne(where);
 
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
@@ -507,7 +531,7 @@ const validateReleaseOrder = async (ctx, user, orderId) => {
   }
 };
 
-const validateDisputeOrder = async (ctx, user, orderId) => {
+const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
   try {
     const where = {
       $and: [
@@ -519,7 +543,7 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
 
     const order = await Order.findOne(where);
 
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
@@ -531,9 +555,9 @@ const validateDisputeOrder = async (ctx, user, orderId) => {
   }
 };
 
-const validateFiatSentOrder = async (ctx, user, orderId) => {
+const validateFiatSentOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
   try {
-    const where = {
+    const where: FilterQuery<OrderQuery> = {
       $and: [
         { buyer_id: user._id },
         { $or: [{ status: 'ACTIVE' }, { status: 'PAID_HOLD_INVOICE' }] },
@@ -544,7 +568,7 @@ const validateFiatSentOrder = async (ctx, user, orderId) => {
       where._id = orderId;
     }
     const order = await Order.findOne(where);
-    if (!order) {
+    if (order === null) {
       await messages.notActiveOrderMessage(ctx);
       return false;
     }
@@ -567,7 +591,7 @@ const validateFiatSentOrder = async (ctx, user, orderId) => {
 };
 
 // If a seller have an order with status FIAT_SENT, return false
-const validateSeller = async (ctx, user) => {
+const validateSeller = async (ctx: MainContext, user: UserDocument) => {
   try {
     const where = {
       seller_id: user._id,
@@ -588,10 +612,13 @@ const validateSeller = async (ctx, user) => {
   }
 };
 
-const validateParams = async (ctx, paramNumber, errOutputString) => {
+const validateParams = async (ctx: MainContext, paramNumber: number, errOutputString: string): Promise<null | Array<string>> => {
   try {
+    if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
+      throw new Error(ctxUpdateAssertMsg);
+    }
     const paramsArray = ctx.update.message.text.split(' ');
-    const params = paramsArray.filter(el => el !== '');
+    const params = paramsArray.filter((el: string) => el !== '');
     if (params.length !== paramNumber) {
       await messages.customMessage(
         ctx,
@@ -604,11 +631,11 @@ const validateParams = async (ctx, paramNumber, errOutputString) => {
     return params.slice(1);
   } catch (error) {
     logger.error(error);
-    return false;
+    return null;
   }
 };
 
-const validateObjectId = async (ctx, id) => {
+const validateObjectId = async (ctx: MainContext, id: string) => {
   try {
     if (!ObjectId.isValid(id)) {
       await messages.notValidIdMessage(ctx);
@@ -622,10 +649,10 @@ const validateObjectId = async (ctx, id) => {
   }
 };
 
-const validateUserWaitingOrder = async (ctx, bot, user) => {
+const validateUserWaitingOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument) => {
   try {
     // If is a seller
-    let where = {
+    let where: FilterQuery<OrderQuery> = {
       seller_id: user._id,
       status: 'WAITING_PAYMENT',
     };
@@ -652,12 +679,12 @@ const validateUserWaitingOrder = async (ctx, bot, user) => {
 };
 
 // We check if the user is banned from the community in the order
-const isBannedFromCommunity = async (user, communityId) => {
+const isBannedFromCommunity = async (user: UserDocument, communityId: string) => {
   try {
     if (!communityId) return false;
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
-    return community.banned_users.some(buser => buser.id == user._id);
+    return community.banned_users.some((buser: IUsernameId) => buser.id == user._id);
   } catch (error) {
     logger.error(error);
     return false;

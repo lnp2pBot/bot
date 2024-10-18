@@ -202,16 +202,16 @@ order_detail: |
 seller: Käufer
 buyer: Verkäufer
 dispute_started_channel: |
-  Benutzer ${type} @${initiatorUser.username} 
-  hat einen Streitfall mit @${counterPartyUser.username} für den folgenden Auftrag eröffnet 
+  Benutzer ${type} @${initiatorUser} TG ID: ${initiatorTgId} 
+  hat einen Streitfall mit @${counterPartyUser} TG ID: ${counterPartyUserTgId} für den folgenden Auftrag eröffnet 
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  @${initiatorUser.username} war an ${initiatorUser.disputes} Streitfällen beteiligt
-  @${counterPartyUser.username} war an ${counterPartyUser.disputes} Streitfällen beteiligt
+  @${initiatorUser} war an ${buyerDisputes} Streitfällen beteiligt
+  @${counterPartyUser} war an ${sellerDisputes} Streitfällen beteiligt
 you_started: '🥴 Sie haben einen Streitfall zu Ihrer Bestellnummer begonnen: ${orderId}.'
 counterpart_started: '🥴 Ihre Gegenpartei hat einen Streit über Ihre Bestellungsnummer begonnen: ${orderId}.'
 dispute_started: '${who} Wenn er/sie Ihrem Streitfall zugewiesen wird, teilt der Bot Ihnen seinen/ihren Benutzernamen mit, und nur er/sie kann Sie betreuen. Sie können ihm/ihr direkt schreiben, aber wenn er/sie Sie zuerst kontaktiert, müssen Sie ihn/sie bitten, Ihnen den Token Ihres Streitfalls mitzuteilen, Ihr Token ist: ${token}.'

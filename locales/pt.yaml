@@ -3,144 +3,144 @@ start: |
 
   ${disclaimer}
   ---———— DISCLAIMER ————---
-  Este bot ajudará você a preencher as transações de Bitcoin P2P por meio da Rede Lightning.
+  Este bot vai te ajudar a completar transações P2P usando Bitcoin via Lightning Network.
 
   Depois de iniciar o bot, você pode usar os seguintes comandos:
 
-  1. Publique seu pedido usando o comando /buy ou /sell e siga as instruções.
+  1. Publique sua oferta usando o comando /buy ou /sell e siga as instruções.
 
-  2. Espere que outro usuário escolha sua solicitação usando o "Buy" ou "Sell" botões. Você também pode escolher outros usuários pedidos com esses botões!
+  2. Espere que outro usuário ative sua oferta usando os botões "Buy" ou "Sell". Você também pode aceitar as ofertas de outros usuários usando esses botões!
 
-  3. Suas ordens e reputação são visíveis no ${channel} canal.
+  3. Suas ordens e reputação são visíveis no canal ${channel} .
 
-  4. Se você estiver vendendo o bot, publicará a ordem no ${channel} canal na expectativa de que outro usuário aceite o pedido. Você pode cancelar esse pedido de venda a qualquer momento ANTES que outro usuário o leve com o comando /cancel.
+  4. Se você estiver vendendo o bot, publicará a oferta no canal ${channel} na expectativa de que outro usuário aceite o pedido. Você pode cancelar essa oferta de venda a qualquer momento ANTES que outro usuário a aceite com o comando /cancel.
 
-  5. Uma vez que alguém aceite seu pedido, o bot solicitará que você pague a fatura da rede Lightning, Esse pagamento será realizado, o pedido expirará em um lapso máximo de ${orderExpiration} horas começando quando o pedido foi realizado. O bot revelará quem é o comprador que você pode enviar para o pagamento da Fiat. Depois de receber o pagamento fiduciário, você deve enviar fundos ao comprador usando o comando /release.
+  5. Uma vez que alguém aceite sua oferta, o bot solicitará que você pague a fatura da rede Lightning, Esse pagamento será retido, o pedido expirará em um tempo máximo de ${orderExpiration} horas a partir do momento em que foi aceito. O bot informará quem é o comprador para que você forneça a informação para receber o pagamento. Depois de receber o pagamento, você deve liberar os fundos para que os sats cheguem ao invoice do comprador usando o comando /release.
 
-  6. Se você quiser comprar, precisa publicar seu pedido usando o comando /buy E espere até que um vendedor o leve. Você pode cancelar o pedido a qualquer momento usando o comando /cancel.
+  6. Se você quiser comprar, precisa publicar sua oferta usando o comando /buy e esperar até que um vendedor a aceite. Você pode cancelar o pedido a qualquer momento usando o comando /cancel.
 
-  7. Depois que alguém leva seu pedido de compra, você precisa criar uma fatura de rede Lightning e enviá-la para o bot, depois disso você precisa entrar em contato com o vendedor para obter as instruções de pagamento da Fiat. Depois de pagar, o vendedor deve usar o comando /release, O bot enviará os sats para sua fatura de rede de Lightning.
+  7. Depois que alguém aceite seu pedido de compra, você precisa criar uma fatura (invoice) na rede Lightning e enviá-la para o bot, envie a fatura como texto o bot não aceita QR code. Depois disso você deve entrar em contato com o vendedor para receber as instruções e informação para realizar o de pagamento. Depois de pagar, o vendedor deve usar o comando /release. O bot enviará os sats para sua fatura de rede de Lightning.
 
-  8. Se você está fazendo um pedido de venda, ou seja, você compra, Você deve criar uma fatura do LN para obter seus sats e pedir ao vendedor que forneça as instruções de pagamento da Fiat. Depois que o vendedor receber o pagamento fiduciário, ele usará o comando /release para enviar os sats à sua carteira.
+  8. Se você está aceitando uma oferta de venda, ou seja, você está comprando, deve criar uma fatura na rede Lightning para receber seus sats e pedir ao vendedor que forneça as instruções de pagamento. Depois que o vendedor receber o pagamento fiduciário, ele usará o comando /release para enviar os sats à sua wallet LN.
 
-  9. Se você estiver fazendo um pedido de compra, ou seja, vende sats. Você deve pagar a fatura do LN. Este sats será mantido até que o comprador efetue o pagamento da Fiat. Você deve entrar em contato com o comprador e fornecer a ele as informações necessárias para prosseguir com o pagamento da Fiat. Depois de receber o pagamento fiduciário, você deve liberar o fundo mantido pelo bot, você deve usar o comando /release e os SATs serão enviados automaticamente para a carteira do comprador.
+  9. Se você estiver aceitando uma oferta de compra, ou seja, você está vendendo sats, deve pagar a fatura do na rede Lightning enviado pelo bot. Estes sats serão retidos até que o comprador efetue o pagamento e envie o comando /fiatsent. Você deve entrar em contato com o comprador e fornecer a informação necessária para receber o pagamento. Depois de receber o pagamento fiduciário, você deve liberar os sats retidos pelo bot usando o comando /release. Os sats serão enviados automaticamente para a wallet LN do comprador.
 
-  Você pode encontrar mais informações sobre como usar este bot aqui 👇
+  Mais informação sobre como usar o bot aqui 👇
 
-  https://lnp2pbot.com/learn
+  https://lnp2pbot.com/aprenda
 
-  Faça uma transação rápida e segura!
-init_bot_error: Para usar este bot, você precisa primeiro inicializar a inicialização com o comando /start
-non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram, para ativá-lo, abra o menu de hambúrguer no canto superior esquerdo e selecione Configurações -> editar Perfil -> nome de usuário
+  Faça transações rápidas e seguras!
+init_bot_error: Para usar este bot, você deve iniciar com o comando /start
+non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram, para ativá-lo, abra as configurações e selecione Meu Perfil -> Editar -> Nome de Usuário
 invoice_payment_request: |
-  Alguém quer te comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
+  Alguém quer comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
   Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
-  Por favor, pague esta fatura para iniciar seu processo de venda, esta fatura expirará ${expirationTime} minutos
+  Por favor, pague esta fatura para iniciar seu processo de venda, a fatura expirará em ${expirationTime} minutos
 pending_sell: |
-  📝 Sua oferta foi publicada no ${channel} canal
+  📝 Oferta publicada no canal ${channel} 
 
-  Você tem que esperar até que outro usuário escolha seu pedido, ele estará disponível para ${orderExpirationWindow} horas no canal
+  Você tem que esperar até que outro usuário aceite sua oferta, ela estará disponível por ${orderExpirationWindow} horas no canal
 
-  Você pode cancelar este pedido antes que outro usuário o retire executando o comando 👇
+  Você pode cancelar a oferta antes que outro usuário a aceite executando o comando 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
-  📝 Você oferece para comprar sats é ativo no ${channel} canal.
+  📝 Oferta publicada no canal ${channel} 
 
-  Você precisa esperar até que outro usuário retire o pedido, esse pedido expirará ${orderExpirationWindow} horas.
+  Você tem que esperar até que outro usuário aceite sua oferta, ela estará disponível por ${orderExpirationWindow} horas no canal
 
-  Você pode cancelar este pedido antes que outro usuário o retire executando o comando 👇
-must_be_int: ${fieldName} deve ser um número
+  Você pode cancelar a oferta antes que outro usuário a aceite executando o comando 👇
+must_be_int: ${fieldName} deve ser um número enteiro
 must_be_numeric: ${fieldName} deve ser numérico
 sats_amount: quantidade de sats
 fiat_amount: quantidade fiduciária
 sell_correct_format: |
   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
 
-  Para criar uma ordem de venda de 1000 Satoshis por 2 dólares americanos \(USD\) e indicar que o pagamento fiduciário é por transferência ou depósito de caixa eletrônico, você deve evitar \<\> e \[\]\.
+  Para criar uma oferta de venda de 1000 satoshis por 2 dólares americanos \(USD\) e indicar que o pagamento fiduciário é por transferência ou depósito no caixa eletrônico, você deve evitar \<\> e \[\]\.
 
-  `/sell 1000 2 USD "transferência ou depósito de caixa eletrônico"`
+  `/sell 1000 2 USD "transferência ou depósito no caixa eletrônico"`
 
-  Para criar uma venda com um excedente no preço de 3% \(premium\) Você precisa adicionar o parâmetro 0 indicando a quantidade fiduciária\. O bot calculará o preço de venda usando o preço de mercado do Bitcoin e aplicando o superávit indicado, você precisa adicionar 3 como o último parâmetro
+  Para criar uma oferta de venda com um acréscimo no preço de 3% \(premium\) Você precisa adicionar o parâmetro 0 indicando a quantidade fiduciária\. O bot calculará o preço de venda usando o preço de mercado do Bitcoin e aplicando o acréscimo indicado, você precisa adicionar 3 como o último parâmetro
 
   `/sell 0 2 USD "forma de pagamento" 3`
 
-  Para criar uma venda por intervalo, em vez de indicar uma quantidade fiduciária fixa, você pode indicar um miminum e uma quantidade máxima para transações separadas por um hífen *\-*
+  Para criar uma oferta de venda por faixa, em vez de indicar uma quantidade fiduciária fixa, você pode indicar um valor mínimo e máximo para suas transações separados por um hífen *\-*
 
   `/sell 0 100\-500 USD "forma de pagamento" 3`
 buy_correct_format: |
   /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
 
-  Para criar e pedir 1000 Satoshis para 2 \(USD\) e indicar que o pagamento fiduciário é através da transferência, você deve omitir os dois \<\> e \[\]\.
+  Para criar uma oferta e pedir 1000 Satoshis por 2 \(USD\) e indicar que o pagamento fiduciário é através de transferência, você deve omitir os dois \<\> e \[\]\.
 
   `/buy 1000 2 USD "transferência online"`
 
-  Se você não deseja estabelecer uma quantidade fixa de satoshis e deseja comprar com um preço sob valor de mercado, você pode fazer um pedido de compra estabelecendo um determinado desconto, Essa taxa é a porcentagem que será incluída no preço de mercado quando seu pedido for publicado\. Você precisa especificar 0 no \<_sats amount_\> campo, o bot calculará o preço\. Se você quiser comprar com um desconto de 2% no mercado de preços, você deve escrever \-2 como o último parâmetro
+  Se você não deseja estabelecer uma quantidade fixa de satoshis e deseja comprar com um preço debaixo do valor de mercado, você pode fazer um pedido de compra estabelecendo um determinado desconto. Essa taxa é a porcentagem que será subtraída do preço de mercado quando sua ordem for aceita. Basta colocar 0 no campo \<_sats amount_\> , o bot calculará o preço. Se você quiser comprar com um desconto de 2% deve escrever \-2 como último parâmetro
 
   `/buy 0 2 USD "forma de pagamento" \-2`
 
-  Se você deseja criar o pedido de compra por intervalo, em vez de indicar uma quantidade fiduciária fixa, pode definir o mínimo e o máximo para transações separadas por um hífen *\-*
+  Se você deseja criar uma oferta de compra numa faixa de valores, em vez de indicar uma quantidade fiduciária fixa, pode definir o valor mínimo e máximo para suas transações separados por um hífen *\-*
 
   `/buy 0 100\-500 USD "forma de pagamento" \-2`
-min_invoice_amount: fatura precisa ser igual ou superior a que ${minPaymentAmount} satoshis
-min_expiration_time: A expiração do tempo para a fatura deve ser de pelo menos ${expirationTime} minutos
+min_invoice_amount: fatura precisa ser igual ou maior a ${minPaymentAmount} satoshis
+min_expiration_time: A expiração do tempo da fatura deve ser de pelo menos ${expirationTime} minutos
 invoice_expired: Fatura expirou
 invoice_expired_long: |
-  Fatura expirou. Você pode usar o seguinte comando para me enviar uma nova fatura para receber os satoshis 👇
+  Fatura expirou. Você pode usar o seguinte comando para enviar uma nova fatura e receber os satoshis 👇
 setinvoice_cmd_order: /setinvoice
-invoice_require_destination: Fatura precisa de um endereço de receptor
+invoice_require_destination: Fatura precisa de um endereço de destino
 invoice_require_hash: Fatura precisa de um hash
 order_id_invalid: ID do pedido inválido
 order_invalid_type: Este ${type} pedido é inválido
-order_already_taken: Este pedido já foi feito por outro usuário.
+order_already_taken: Este pedido já foi aceito por outro usuário.
 order_already_settled: Esta ordem já foi liquidada.
 invalid_data: Você enviou dados inválidos, tente novamente.
 begin_take_buy: |
-  🤖 Pressione Continue aceitando a oferta, se você pressionar cancelar, será liberado do pedido e ela será republicada. Você tem ${expirationTime} minutos antes que esse pedido expire. 👇
+  🤖 Pressione Continue para aceitar a oferta, se você pressionar Cancel, desvincularei você do pedido e ele será publicado novamente. Você tem ${expirationTime} minutos ou o pedido expirará. 👇
 continue: Continuar
 cancel: Cancelar
-pay_invoice: Por favor, pague esta fatura de ${amount} sats para ${currency} ${fiatAmount} para iniciar a operação.
+pay_invoice: Por favor, pague esta fatura de ${amount} sats por ${currency} ${fiatAmount} para iniciar a operação.
 payment_received: |
   🤑 Pagamento recebido!
 
-  Agora eu preciso que o comprador envie uma fatura para que eu possa enviar Satoshis para sua carteira. Assim que o comprador enviar a fatura, colocarei vocês dois em contato.
+  Agora eu preciso que o comprador envie uma fatura para que eu possa enviar satoshis para sua wallet LN. Assim que o comprador enviar a fatura, colocarei vocês dois em contato.
 
-  Espere um pouco.Se o comprador não cooperar, a garantia será devolvida a você.
+  Paciência. Se o comprador não aparecer, a garantia retornará à sua wallet LN.
 someone_took_your_order: |
-  🤖 Alguém recebeu seu pedido e já me enviou os SATs, use um processador de pagamento da Fiat que permita enviar o dinheiro imediatamente e no qual não há risco de congelar fundos.
+  🤖 Alguém aceitou sua oferta e já enviou os sats, use um processador de pagamentos que permita enviar o dinheiro imediatamente e no qual não há risco de congelar os fundos.
 
-  Se por algum motivo o seu processador de pagamento coloca o pagamento em pausa e os fundos não chegam em menos de ${expirationTime}, Os SATs retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente.
+  Se por algum motivo a plataforma coloca o pagamento em pausa e os fundos não chegarem em menos de ${expirationTime}, Os sats retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente.
 
   Reputação do vendedor: ${rate}, dias usando o bot: ${days}
 
   Se você concorda com o exposto acima, pressione o botão para continuar 👇
 you_took_someone_order: |
-  🤖 Você tomou esse pedido de venda, use um processador de pagamento fiduciário que permita enviar o dinheiro imediatamente e no qual não há risco de congelar fundos\\.
+  🤖 Você aceitou uma oferta de venda, use um processador de pagamentos que permita enviar o dinheiro imediatamente e no qual não há risco de congelar os fundos\\.
 
-  *Se por algum motivo o seu processador de pagamento coloca o pagamento em pausa e os fundos não chegam em menos de ${expirationTime}, os sats voltarão ao vendedor, Colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente\\.*
+  *Se por algum motivo a plataforma coloca o pagamento em pausa e os fundos não chegarem em menos de ${expirationTime}, Os sats retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente\\.*
 
   Se você concorda com o exposto acima, pressione o botão para continuar 👇
 get_in_touch_with_seller: |
   🤖 Order Id: #${orderId}
 
-  Entre em contato com o vendedor, usuário @${sellerUsername} Para obter os detalhes sobre como enviar o dinheiro que você deve enviar ${currency} ${fiatAmount} usando ${paymentMethod}.
+  Entre em contato com o vendedor, usuário @${sellerUsername} para receber informação sobre como enviar o pagamento de ${currency} ${fiatAmount} usando ${paymentMethod}.
 
   Depois de enviar o dinheiro, por favor me avise com o comando 👇
 fiatsent_order_cmd: /fiatsent
 get_in_touch_with_buyer: |
   🤖 Order Id: #${orderId}
 
-  Entre em contato com  @${buyerUsername} para fornecer informações sobre como enviar você ${currency} ${fiatAmount} através dos ${paymentMethod}. Não libere esses SATs até verificar se o comprador pagou o Fiat.
+  Entre em contato com o comprador, usuário @${buyerUsername} para enviar informação sobre como você receberá ${currency} ${fiatAmount} usando ${paymentMethod}. Não libere os sats até verificar que recebeu o pagamento.
 
-  Depois de confirmar a recepção do dinheiro, você deve desbloquear os sats.
+  Depois de confirmar a recepção do pagamento, você deve liberar os sats.
 buyer_took_your_order: |
   🤖 Order Id: #${orderId}
 
-  @${buyerUsername} fez seu pedido e deseja comprar seus sats. Entre em contato e diga a ele como mandar você ${currency} ${fiatAmount} através dos ${paymentMethod}.
+  @${buyerUsername} aceitou sua oferta e deseja comprar seus sats. Entre em contato e envie a informação sobre como você receberá ${currency} ${fiatAmount} usando ${paymentMethod}.
 
-  Avisarei quando o comprador me informar que enviou o fiat, depois você deverá verificar se o valor chegou.
+  Avisarei quando o comprador informar que enviou o pagamento, depois você deverá verificar se os fundos chegaram.
 
   Se o comprador não responder, você pode iniciar um cancelamento ou uma disputa. Lembre-se de que um administrador NUNCA o contactará para resolver seu pedido, a menos que você abra uma disputa primeiro.
 waiting_seller_to_pay: 'Enviei uma solicitação de pagamento ao vendedor para que ele envie seus sats para o #${orderId}, Assim que o pagamento for feito, vou colocar vocês em contato'
@@ -201,16 +201,16 @@ order_detail: |
 seller: vendedora
 buyer: compradora
 dispute_started_channel: |
-  Usuário ${type} @${initiatorUser.username} 
-  iniciou uma disputa com @${counterPartyUser.username} para o pedido
+  Usuário ${type} @${initiatorUser} TG ID: ${initiatorTgId} 
+  iniciou uma disputa com @${counterPartyUser} TG ID: ${counterPartyUserTgId} para o pedido
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  @${initiatorUser.username} esteve envolvido em ${initiatorUser.disputes} disputas
-  @${counterPartyUser.username} esteve envolvido em ${counterPartyUser.disputes} disputas
+  @${initiatorUser} esteve envolvido em ${buyerDisputes} disputas
+  @${counterPartyUser} esteve envolvido em ${sellerDisputes} disputas
 you_started: '🥴 Você iniciou uma disputa em seu pedido Id: ${orderId}.'
 counterpart_started: '🥴 Sua contraparte iniciou uma disputa em seu pedido Id: ${orderId}.'
 dispute_started: '${who} Um solucionador o atenderá em breve. Quando ele for designado para sua disputa, o bot informará seu nome de usuário e somente ele poderá atendê-lo. Você pode escrever diretamente para ele/ela, mas se ele/ela entrar em contato com você primeiro, você deve pedir a ele/ela que lhe diga qual é o token de sua disputa, seu token é: ${token}.'

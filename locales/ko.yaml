@@ -203,16 +203,16 @@ order_detail: |
 seller: 판매자
 buyer: 구매자
 dispute_started_channel: |
-  사용자 ${type} @${initiatorUser.username} 
-  님께서 @${counterPartyUser.username}와의 분쟁 조정을 시작하였습니다. 주문 상세 내역은 다음과 같습니다.
+  사용자 ${type} @${initiatorUser} TG ID: ${initiatorTgId} 
+  님께서 @${counterPartyUser} TG ID: ${counterPartyUserTgId} 와의 분쟁 조정을 시작하였습니다. 주문 상세 내역은 다음과 같습니다.
 
   ${detailedOrder}
 
   Seller Token: ${sellerToken}
   Buyer Token: ${buyerToken}
 
-  ${initiatorUser.disputes} 분쟁 조정에 @${initiatorUser.username}님께서 참여하셨습니다.
-  ${counterPartyUser.disputes} 분쟁 조정에 @${counterPartyUser.username}님께서 참여하셨습니다.
+  ${buyerDisputes} 분쟁 조정에 @${initiatorUser}님께서 참여하셨습니다.
+  ${sellerDisputes} 분쟁 조정에 @${counterPartyUser}님께서 참여하셨습니다.
 you_started: '🥴 주문 ID에 대한 분쟁이 시작되었습니다: ${orderId}'
 counterpart_started: '🥴 거래 상대방이 주문 ID에 대해 분쟁을 시작했습니다: ${orderId}'
 dispute_started: '${who} 해결사가 분쟁에 배정되면 봇이 자신의 사용자 아이디를 알려주며, 해당 해결사만 분쟁에 참석할 수 있습니다. 해결사에게 직접 편지를 보낼 수도 있지만, 해결사가 먼저 연락하는 경우 분쟁의 토큰이 무엇인지 알려달라고 요청해야 합니다(토큰은 ${토큰}입니다).'
