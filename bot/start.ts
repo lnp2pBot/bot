@@ -501,8 +501,6 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       await order.save();
-      order.status = 'SUCCESS';
-      OrderEvents.orderUpdated(order);
       // we sent a private message to the admin
       await messages.successCompleteOrderMessage(ctx, order);
       // we sent a private message to the seller

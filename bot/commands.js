@@ -82,10 +82,7 @@ const waitPayment = async (ctx, bot, buyer, seller, order, buyerInvoice) => {
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
-    await order.save();
-    order.status = 'in-progress';
-    // We update the nostr event
-    OrderEvents.orderUpdated(order);
+    await order.save();    
   } catch (error) {
     logger.error(`Error in waitPayment: ${error}`);
   }
@@ -334,9 +331,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
         }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
-      }
-      logger.info('cancelAddInvoice => OrderEvents.orderUpdated(order);');
-      OrderEvents.orderUpdated(order);
+      }      
     }
   } catch (error) {
     logger.error(error);
@@ -509,9 +504,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
         }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
-      }
-      logger.info('cancelShowHoldInvoice => OrderEvents.orderUpdated(order);');
-      OrderEvents.orderUpdated(order);
+      }     
     }
   } catch (error) {
     logger.error(error);
