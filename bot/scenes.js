@@ -8,7 +8,6 @@ const messages = require('./messages');
 const { isPendingPayment } = require('../ln');
 const { logger } = require('../logger');
 const { resolvLightningAddress } = require('../lnurl/lnurl-pay');
-const OrderEvents = require('./modules/events/orders');
 
 const addInvoiceWizard = new Scenes.WizardScene(
   'ADD_INVOICE_WIZARD_SCENE_ID',
@@ -23,10 +22,8 @@ const addInvoiceWizard = new Scenes.WizardScene(
         order.fiat_code,
         expirationTime
       );
-
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();
-      OrderEvents.orderUpdated(order);
 
       return ctx.wizard.next();
     } catch (error) {

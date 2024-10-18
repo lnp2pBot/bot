@@ -309,7 +309,6 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.status = 'FROZEN';
       order.action_by = ctx.admin._id;
       await order.save();
-      OrderEvents.orderUpdated(order);
 
       if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
@@ -370,6 +369,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
       order.status = 'CANCELED_BY_ADMIN';
       order.canceled_by = ctx.admin._id;
       await order.save();
+      order.status = 'CANCELED';
       OrderEvents.orderUpdated(order);
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
@@ -502,7 +502,6 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       order.status = 'COMPLETED_BY_ADMIN';
       await order.save();
-      OrderEvents.orderUpdated(order);
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       if (buyer === null || seller === null) throw Error("buyer and/or seller were not found in DB");
