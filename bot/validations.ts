@@ -336,7 +336,12 @@ const validateLightningAddress = async (lightningAddress: string) => {
 const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
   try {
     const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
-    const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    let invoice;
+    try {
+      invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
+    } catch (error) {
+      return false;
+    }
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     );
@@ -389,9 +394,6 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
     }
 
     if (new Date(invoice.expires_at) < latestDate) {
-      console.debug(`Date(invoice.expires_at) = ${new Date(invoice.expires_at)}`);
-      console.debug(`latestDate = ${latestDate}`);
-      console.debug(`INVOICE_EXPIRATION_WINDOW = ${Number(process.env.INVOICE_EXPIRATION_WINDOW)}`);
       await messages.invoiceExpiryTooShortMessage(ctx);
       return {
         success: false,
