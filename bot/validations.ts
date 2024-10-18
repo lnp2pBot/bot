@@ -1,5 +1,5 @@
 import { MainContext, OrderQuery, ctxUpdateAssertMsg } from "./start";
-import { ICommunity } from "../models/community";
+import { ICommunity, IUsernameId } from "../models/community";
 import { FilterQuery } from "mongoose";
 import { UserDocument } from "../models/user";
 import { IOrder } from "../models/order";
@@ -9,7 +9,7 @@ const { parsePaymentRequest } = require('invoices');
 const { ObjectId } = require('mongoose').Types;
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
-import { isIso4217, isDisputeSolver, removeLightningPrefix } from '../util';
+import { isIso4217, isDisputeSolver, removeLightningPrefix, isOrderCreator } from '../util';
 const { existLightningAddress } = require('../lnurl/lnurl-pay');
 import { logger } from '../logger';
 
@@ -106,6 +106,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     
     const isSolver = isDisputeSolver(community, user);
 
+    // TODO this validation does not return anything
     if (!user.admin && !isSolver)
       return await messages.notAuthorized(ctx, tgUserId);
 
@@ -192,7 +193,8 @@ const validateSellOrder = async (ctx: MainContext) => {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
-
+    
+    // TODO, this validation could be amount > 0?
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
@@ -338,7 +340,7 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const latestDate = new Date(
       Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
     );
-    if (!("MAIN_PAYMENT_AMT" in process.env)) throw Error("MIN_PAYMENT_AMT not found, please check .env file");
+    if (!("MIN_PAYMENT_AMT" in process.env)) throw Error("MIN_PAYMENT_AMT not found, please check .env file");
     if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.minimunAmountInvoiceMessage(ctx);
       return false;
@@ -429,14 +431,6 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
   }
 };
 
-const isOrderCreator = (user: UserDocument, order: IOrder) => {
-  try {
-    return user._id == order.creator_id;
-  } catch (error) {
-    logger.error(error);
-    return false;
-  }
-};
 
 const validateTakeSellOrder = async (ctx: MainContext, bot: Telegraf<MainContext>, user: UserDocument, order: IOrder) => {
   try {
@@ -688,7 +682,7 @@ const isBannedFromCommunity = async (user: UserDocument, communityId: string) =>
     if (!communityId) return false;
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
-    return community.banned_users.toObject().some((buser: ICommunity) => buser.id == user._id);
+    return community.banned_users.some((buser: IUsernameId) => buser.id == user._id);
   } catch (error) {
     logger.error(error);
     return false;

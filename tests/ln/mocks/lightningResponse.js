@@ -1,4 +1,4 @@
-const createHodlInvoiceResponse = {
+const mockCreateHodlResponseForLightning = {
   chain_address: undefined,
   created_at: '2021-08-09T17:32:02.000Z',
   description: 'Venta por @P2PLNBot',
@@ -11,5 +11,5 @@ const createHodlInvoiceResponse = {
 };
 
 module.exports = {
-  createHodlInvoiceResponse,
+  mockCreateHodlResponseForLightning,
 };

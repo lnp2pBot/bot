@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "format": "prettier --write '**/*.js'",
     "pretest": "npx tsc",
-    "test": "export NODE_ENV=test && mocha --exit 'tests/**/*.js'"
+    "test": "export NODE_ENV=test && mocha --exit tests/**/*.spec.js"
   },
   "license": "MIT",
   "dependencies": {
