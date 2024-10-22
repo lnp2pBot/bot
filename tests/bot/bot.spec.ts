@@ -1,19 +1,19 @@
-const path = require('path');
-const fs = require('fs');
+import path from 'path';
+import fs from 'fs';
 const sinon = require('sinon');
 const { expect } = require('chai');
 const proxyquire = require('proxyquire');
 
 const { initialize } = require('../../bot');
-const { User, Order } = require('../../models');
-const { getCurrenciesWithPrice } = require('../../util');
-const { mockUpdatesResponseForCurrencies } = require('./mocks/currenciesResponse');
-const { mockUpdatesResponseForLanguages } = require('./mocks/languagesResponse');
+import { User, Order } from '../../models';
+import { getCurrenciesWithPrice } from '../../util';
+import { mockUpdatesResponseForCurrencies } from './mocks/currenciesResponse';
+import { mockUpdatesResponseForLanguages } from './mocks/languagesResponse';
 
 describe('Telegram bot', () => {
   const token = '123456';
-  let server;
-  let sandbox;
+  let server: any;
+  let sandbox: any;
   let order, user;
 
   beforeEach(() => {
@@ -194,7 +194,7 @@ describe('Telegram bot', () => {
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
     let flags = 0;
-    updates.result[0].message.reply_markup.inline_keyboard.forEach(flag => {
+    updates.result[0].message.reply_markup.inline_keyboard.forEach((flag: any) => {
       flags += flag.length;
     });
     let langs = 0;
@@ -206,12 +206,12 @@ describe('Telegram bot', () => {
 });
 
 describe('Bot Initialization', () => {
-  let initialize;
-  let botStub;
-  let scheduleStub;
-  let validateUserStub;
-  let startMessageStub;
-  let attemptPendingPaymentsStub;
+  let initialize: any;
+  let botStub: any;
+  let scheduleStub: any;
+  let validateUserStub: any;
+  let startMessageStub: any;
+  let attemptPendingPaymentsStub: any;
 
   beforeEach(() => {
     botStub = {
@@ -501,7 +501,7 @@ describe('Bot Initialization', () => {
       },
     };
 
-    botStub.on = sinon.stub().callsFake((event, middleware, handler) => {
+    botStub.on = sinon.stub().callsFake((event: string, middleware: any, handler: any) => {
       if (event === 'text') {
         const capturedHandler = handler;
         capturedHandler(ctx);
@@ -563,7 +563,7 @@ describe('Bot Initialization', () => {
       },
     };
 
-    botStub.on = sinon.stub().callsFake((event, middleware, handler) => {
+    botStub.on = sinon.stub().callsFake((event: string, middleware: any, handler: any) => {
       if (event === 'text') {
         const capturedHandler = handler;
         capturedHandler(ctx);

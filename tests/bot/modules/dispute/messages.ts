@@ -13,7 +13,7 @@ const mockTelegram = {
 };
 
 const mockI18n = {
-  t: sinon.stub((key, params) => {
+  t: sinon.stub((key: string, params: any) => {
     switch (key) {
       case 'dispute_started_channel':
         return `User ${params.type} @${params.initiatorUser} TG ID: ${params.initiatorTgId}
