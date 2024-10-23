@@ -41,6 +41,8 @@ Please note that Pull Requests marked `NACK` and/or GitHub's `Change requested` 
 
 We ~~try to~~ use [Airbnb javascript style guide](https://github.com/airbnb/javascript) in order to have a cleaner code.
 
+All new code should be TypeScript. The use of `any` type is discouraged, except in the tests.
+
 ### Configure Git user name and email metadata
 
 See https://help.github.com/articles/setting-your-username-in-git/ for instructions.

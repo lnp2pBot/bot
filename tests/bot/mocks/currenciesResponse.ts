@@ -112,6 +112,6 @@ const mockUpdatesResponseForCurrencies = {
     ]
 };
 
-module.exports = {
+export {
     mockUpdatesResponseForCurrencies,
 };

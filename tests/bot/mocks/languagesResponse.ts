@@ -28,6 +28,6 @@ const mockUpdatesResponseForLanguages = {
         }]
 };
 
-module.exports = {
+export {
     mockUpdatesResponseForLanguages,
 };
