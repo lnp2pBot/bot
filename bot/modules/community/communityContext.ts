@@ -1,7 +1,7 @@
 import { MainContext } from '../../start';
 import { SceneContextScene, WizardContextWizard, WizardSessionData } from 'telegraf/typings/scenes';
 import { Update, Message } from 'telegraf/typings/core/types/typegram';
-import { Scenes, Telegraf } from 'telegraf';
+import { Telegraf } from 'telegraf';
 import { ICommunity, IOrderChannel, IUsernameId } from '../../../models/community';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';

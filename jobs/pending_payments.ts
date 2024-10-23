@@ -3,7 +3,6 @@ import * as messages from '../bot/messages';
 import { logger } from "../logger";
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
-import { MainContext } from '../bot/start';
 import { payRequest, isPendingPayment } from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
@@ -36,7 +35,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      let payment = await payRequest({
+      const payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });

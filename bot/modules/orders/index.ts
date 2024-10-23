@@ -9,7 +9,6 @@ import { takeOrderActionValidation, takeOrderValidation, takesell, takebuyValida
 import { extractId } from '../../../util';
 import { Telegraf } from 'telegraf';
 import { CommunityContext } from '../community/communityContext';
-import { MainContext } from '../../start';
 export * as Scenes from './scenes';
 
 export const configure = (bot: Telegraf<CommunityContext>) => {

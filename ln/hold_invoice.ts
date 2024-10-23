@@ -1,4 +1,4 @@
-import { BinaryLike, createHash, randomBytes } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 import lightning from 'lightning';
 import lnd from './connect';
 import { logger } from '../logger';

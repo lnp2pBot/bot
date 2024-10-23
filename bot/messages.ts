@@ -1,5 +1,4 @@
 import { TelegramError, Telegraf } from 'telegraf'
-import QR from 'qrcode';
 import {
   getCurrency,
   numberFormat,
@@ -12,6 +11,7 @@ import {
   decimalRound,
   getUserAge,
   getStars,
+  generateQRWithImage,
 } from '../util';
 import * as OrderEvents from './modules/events/orders';
 import { logger } from "../logger";
@@ -23,7 +23,6 @@ import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';
 import { PayViaPaymentRequestResult } from 'lightning';
 import { IFiat } from '../util/fiatModel';
-import { generateQRWithImage } from '../util';
 import { CommunityContext } from './modules/community/communityContext';
 
 const startMessage = async (ctx: MainContext) => {
@@ -362,7 +361,7 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
     const expirationTime =
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
     
-    let caption = ctx.i18n.t('begin_take_buy', { expirationTime });
+    const caption = ctx.i18n.t('begin_take_buy', { expirationTime });
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
       type: 'photo',

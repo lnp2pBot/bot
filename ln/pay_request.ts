@@ -30,7 +30,7 @@ const payRequest = async ({ request, amount }: { request: string, amount: number
     // If the invoice is expired we return is_expired = true
     if (invoice.is_expired) return invoice;
 
-    let maxRoutingFee = process.env.MAX_ROUTING_FEE;
+    const maxRoutingFee = process.env.MAX_ROUTING_FEE;
     if (maxRoutingFee === undefined)
       throw new Error("Environment variable MAX_ROUTING_FEE is not defined");
     // We need to set a max fee amount
