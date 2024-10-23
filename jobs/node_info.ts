@@ -2,8 +2,9 @@ import { Telegraf } from "telegraf";
 
 import { Config } from '../models';
 import { CommunityContext } from "../bot/modules/community/communityContext";
-const { getInfo } = require('../ln');
 import { logger } from '../logger';
+
+const { getInfo } = require('../ln');
 
 const info = async (bot: Telegraf<CommunityContext>) => {
   try {

@@ -4,7 +4,6 @@ import {
   deleteForwardingReputations,
   AuthenticatedLnd,
 } from 'lightning';
-const { parsePaymentRequest } = require('invoices');
 import { User, PendingPayment } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
@@ -13,6 +12,8 @@ import { logger } from '../logger';
 import * as OrderEvents from '../bot/modules/events/orders';
 import { IOrder } from '../models/order';
 import { HasTelegram } from '../bot/start';
+
+const { parsePaymentRequest } = require('invoices');
 
 interface PayViaPaymentRequestParams {
   lnd: AuthenticatedLnd;

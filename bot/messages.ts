@@ -1,4 +1,4 @@
-import { TelegramError } from 'telegraf'
+import { TelegramError, Telegraf } from 'telegraf'
 import QR from 'qrcode';
 import {
   getCurrency,
@@ -18,7 +18,6 @@ import { logger } from "../logger";
 import { HasTelegram, MainContext } from './start';
 import { UserDocument } from '../models/user'
 import { IOrder } from '../models/order'
-import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';

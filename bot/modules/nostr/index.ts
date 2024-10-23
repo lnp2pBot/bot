@@ -1,4 +1,3 @@
-require('websocket-polyfill');
 import { logger } from '../../../logger';
 import * as Config from './config';
 import { createOrderEvent } from './events';
@@ -7,6 +6,8 @@ import { Telegraf } from 'telegraf';
 import { IOrder } from '../../../models/order';
 import * as CommunityEvents from '../events/community';
 import { CommunityContext } from '../community/communityContext';
+
+require('websocket-polyfill'); // is it needed?
 
 export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('/nostr', Commands.info);
