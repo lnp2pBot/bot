@@ -1,10 +1,4 @@
 import { validateFiatSentOrder, validateReleaseOrder } from './validations';
-const {
-  createHoldInvoice,
-  subscribeInvoice,
-  cancelHoldInvoice,
-  settleHoldInvoice,
-} = require('../ln');
 import { Order, User, Dispute } from '../models';
 import * as messages from './messages';
 import { getBtcFiatPrice, deleteOrderFromChannel, getUserI18nContext, getFee, removeLightningPrefix } from '../util';
@@ -13,12 +7,17 @@ import * as OrderEvents from './modules/events/orders';
 
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
-import { Telegraf } from 'telegraf';
 import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
-import { Types } from 'mongoose';
+
+const {
+  createHoldInvoice,
+  subscribeInvoice,
+  cancelHoldInvoice,
+  settleHoldInvoice,
+} = require('../ln');
 
 const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocument, seller: UserDocument, order: IOrder, buyerInvoice: any) => {
   try {

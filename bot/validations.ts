@@ -1,17 +1,17 @@
 import { HasTelegram, MainContext, OrderQuery, ctxUpdateAssertMsg } from "./start";
-import { ICommunity, IUsernameId } from "../models/community";
+import { IUsernameId } from "../models/community";
 import { FilterQuery } from "mongoose";
 import { UserDocument } from "../models/user";
 import { IOrder } from "../models/order";
-import { Telegraf } from "telegraf";
 
-const { parsePaymentRequest } = require('invoices');
-const { ObjectId } = require('mongoose').Types;
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
 import { isIso4217, isDisputeSolver, removeLightningPrefix, isOrderCreator } from '../util';
-const { existLightningAddress } = require('../lnurl/lnurl-pay');
+import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
+
+const { parsePaymentRequest } = require('invoices');
+const { ObjectId } = require('mongoose').Types;
 
 const ctxUpdateMessageFromAssertMsg = "ctx.update.message.from is not available";
 

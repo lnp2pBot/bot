@@ -1,9 +1,9 @@
-const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
 import * as Config from './config';
-
 import { Community } from '../../../models';
 import { toKebabCase, removeAtSymbol } from '../../../util';
 import { IOrder } from '../../../models/order';
+
+const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
 
 /// All events broadcasted are Parameterized Replaceable Events,
 /// the event kind must be between 30000 and 39999

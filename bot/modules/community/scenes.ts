@@ -2,13 +2,14 @@ import { Scenes } from 'telegraf';
 import { logger } from '../../../logger';
 import { Community, User, PendingPayment } from '../../../models';
 import { IOrderChannel, IUsernameId } from '../../../models/community';
-const { isPendingPayment } = require('../../../ln');
 import { isGroupAdmin, itemsFromMessage, removeAtSymbol } from '../../../util';
 import * as messages from '../../messages';
 import { isValidInvoice } from '../../validations';
 import { createCommunityWizardStatus, wizardCommunityWrongPermission } from './messages';
 import { CommunityContext } from './communityContext';
 import * as commAdmin from './scenes.communityAdmin';
+
+const { isPendingPayment } = require('../../../ln');
 
 const CURRENCIES = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 

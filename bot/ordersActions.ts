@@ -1,4 +1,3 @@
-const { ObjectId } = require('mongoose').Types;
 import { Order, Community } from '../models';
 import * as messages from './messages';
 import { getCurrency, numberFormat, getBtcExchangePrice, getFee, getUserAge, getStars } from '../util';
@@ -8,8 +7,9 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
-
 import * as OrderEvents from './modules/events/orders';
+
+const { ObjectId } = require('mongoose').Types;
 
 interface CreateOrderArguments {
   type: string;

@@ -40,13 +40,6 @@ import {
   fiatSent,
   release,
 } from './commands';
-const {
-  settleHoldInvoice,
-  cancelHoldInvoice,
-  payToBuyer,
-  subscribeInvoice,
-  getInvoice,
-} = require('../ln');
 import {
   validateUser,
   validateParams,
@@ -66,6 +59,14 @@ import {
 import { logger } from "../logger";
 import { ICommunity, IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
+
+const {
+  settleHoldInvoice,
+  cancelHoldInvoice,
+  payToBuyer,
+  subscribeInvoice,
+  getInvoice,
+} = require('../ln');
 
 export interface MainContext extends Context {
   match: Array<string> | null;

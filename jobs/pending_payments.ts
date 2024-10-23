@@ -3,11 +3,11 @@ import * as messages from '../bot/messages';
 import { logger } from "../logger";
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
-import { MainContext } from '../bot/start';
-const { payRequest, isPendingPayment } = require('../ln');
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
+
+const { payRequest, isPendingPayment } = require('../ln');
 
 export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
