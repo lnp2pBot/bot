@@ -6,11 +6,13 @@ import { ICommunity, IOrderChannel, IUsernameId } from '../../../models/communit
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
 
+/* eslint-disable no-use-before-define */
 export interface CommunityContext extends MainContext {
   scene: SceneContextScene<CommunityContext, WizardSessionData>;
   wizard: CommunityWizard;
   message: (Update.New & Update.NonChannel & Message.TextMessage) | undefined;
 }
+/* eslint-enable no-use-before-define */
 
 // This type is catch-all for any wizard state and probably should be split into several
 // more specialized types.

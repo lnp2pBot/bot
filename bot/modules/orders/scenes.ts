@@ -94,6 +94,7 @@ export const createOrder = new Scenes.WizardScene(
       }
       await ctx.wizard.selectStep(0);
       // use ["steps"] syntax as steps is private property
+      // eslint-disable-next-line dot-notation
       return ctx.wizard["steps"][ctx.wizard.cursor](ctx);
     } catch (err) {
       logger.error(err);
