@@ -105,6 +105,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
       }
       ctx.wizard.selectStep(0);
       // use ['steps'] syntax as steps is private property and TypeScript would complain
+      // eslint-disable-next-line dot-notation
       return ctx.wizard['steps'][ctx.wizard.cursor](ctx);
     } catch (err) {
       logger.error(err);
@@ -230,7 +231,7 @@ const createCommunitySteps = {
       }
       const { bot, user } = ctx.wizard.state;
       const chan = itemsFromMessage(text);
-      //ctx.wizard.state.channels = chan; // ???
+      // ctx.wizard.state.channels = chan; // ???
       if (chan.length > 2) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
