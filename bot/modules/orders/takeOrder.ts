@@ -1,5 +1,4 @@
 // @ts-check
-import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
 import { Order } from '../../../models';
 import { deleteOrderFromChannel } from '../../../util';

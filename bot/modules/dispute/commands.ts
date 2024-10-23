@@ -5,7 +5,6 @@ import { validateParams, validateObjectId, validateDisputeOrder } from '../../va
 import * as messages from './messages';
 import * as globalMessages from '../../messages';
 import { logger } from '../../../logger';
-import * as OrderEvents from '../../modules/events/orders';
 import { removeAtSymbol } from '../../../util';
 
 const dispute = async (ctx: MainContext) => {

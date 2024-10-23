@@ -36,7 +36,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
 
-      let payment = await payRequest({
+      const payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
       });

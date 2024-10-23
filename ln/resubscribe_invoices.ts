@@ -1,4 +1,4 @@
-import { getInvoices, GetInvoicesResult } from 'lightning';
+import { getInvoices } from 'lightning';
 import lnd from './connect';
 import { subscribeInvoice } from './subscribe_invoice';
 import { Order } from '../models';

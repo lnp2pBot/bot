@@ -57,7 +57,7 @@ import {
   nodeInfo,
 } from '../jobs';
 import { logger } from "../logger";
-import { ICommunity, IUsernameId } from '../models/community';
+import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
 
 const {
