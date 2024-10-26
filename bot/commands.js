@@ -282,8 +282,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
             sellerUser,
             order,
             i18nCtx
-          );
-      const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+          );      
       await messages.counterPartyCancelOrderMessage(
             ctx,
             buyerUser,
@@ -462,8 +461,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
             buyerUser,
             order,
             i18nCtx
-          );
-      const i18nCtxSeller = await getUserI18nContext(sellerUser);
+          );      
       await messages.counterPartyCancelOrderMessage(
             ctx,
             sellerUser,
