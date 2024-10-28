@@ -233,12 +233,12 @@ const saveUserReview = async (targetUser, rating) => {
 const cancelAddInvoice = async (ctx, order, job) => {
   try {
     let userAction = false;
-    let userTelId = false;
+    let userTgId = false;
     if (!job) {
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
-      userTelId = ctx.from.id;
+      userTgId = ctx.from.id;
       if (!order) {
         const orderId = !!ctx && ctx.update.callback_query.message.text;
         if (!orderId) return;
@@ -274,7 +274,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
         order,
         i18nCtxSeller
       );
-    } else if (order.creator_id === order.seller_id && userTelId == sellerTgId) {
+    } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
       order.status = 'CLOSED';
       await order.save();
       await messages.successCancelOrderMessage(
@@ -415,12 +415,12 @@ const showHoldInvoice = async (ctx, bot, order) => {
 const cancelShowHoldInvoice = async (ctx, order, job) => {
   try {
     let userAction = false;
-    let userTelId = false;
+    let userTgId = false;
     if (!job) {
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
-      userTelId = ctx.from.id;
+      userTgId = ctx.from.id;
       if (!order) {
         const orderId = !!ctx && ctx.update.callback_query.message.text;
         if (!orderId) return;
@@ -453,7 +453,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
         order,
         i18nCtx
       );
-    } else if (order.creator_id === order.buyer_id && userTelId == buyerTgId) {
+    } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
       await order.save();
       await messages.successCancelOrderMessage(
