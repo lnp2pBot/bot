@@ -289,6 +289,7 @@ invoice_already_being_paid: Você já enviou uma fatura para este pedido e estou
 lightning_address_saved: Lightning address foi salvo
 cancel_error: Esta ordem não pode ser cancelada neste momento
 cancel_success: 'Você cancelou o pedido Id: ${orderId}!'
+cancel_invoice: 'A encomenda ${orderId} foi cancelada, não é necessário criar uma fatura.'
 cancelall_success: Você cancelou todos os seus pedidos publicados!
 order_cancelled_by_admin: 'Admin cancelou o pedido Id: ${orderId}!'
 order_completed: 'Você concluiu o pedido Id: ${orderId}!'

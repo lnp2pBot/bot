@@ -291,6 +291,7 @@ invoice_already_being_paid: Tu as déjà envoyé une facture pour cette commande
 lightning_address_saved: L'adresse Lightning a été enregistrée
 cancel_error: Cette commande ne peut pas être annulée pour le moment
 cancel_success: "Tu as annulé l'offre ID : ${orderId}!"
+cancel_invoice: "La commande ${orderId} a été annulée, il n'est pas nécessaire de créer une facture."
 cancelall_success: Tu as annulé toutes tes commandes publiées !
 order_cancelled_by_admin: "Un Admin a annulé l'offre ID : ${orderId}!"
 order_completed: "Tu as terminé l'offre ID : ${orderId}!"

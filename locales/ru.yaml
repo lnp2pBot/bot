@@ -289,6 +289,7 @@ invoice_already_being_paid: Вы уже отправили счет за эту 
 lightning_address_saved: Aдрес Lightning успешно сохранен.
 cancel_error: Этот заказ не может быть отменен в данный момент
 cancel_success: 'Вы отменили заявку номер ${orderId}!'
+cancel_invoice: 'Заказ ${orderId} был отменен, не нужно создавать счет-фактуру.'
 cancelall_success: Вы отменили все свои размещенные заявки!
 order_cancelled_by_admin: 'Администраторы отменили заявку номер ${orderId}!'
 order_cancelled_by_counterparty: 'Идентификатор отмены заказа вашим контрагентом: ${orderId}!'

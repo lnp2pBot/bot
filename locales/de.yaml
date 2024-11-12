@@ -290,6 +290,7 @@ invoice_already_being_paid: Du hast bereits eine LN-Rechnung für diesen Auftrag
 lightning_address_saved: Lightning-Adresse wurde gespeichert
 cancel_error: Dieser Auftrag kann im Moment nicht storniert werden
 cancel_success: 'Du hast den Auftrag mit der Id ${orderId} storniert!'
+cancel_invoice: 'Die Bestellung ${orderId} wurde storniert, eine Rechnung muss nicht erstellt werden.'
 cancelall_success: Du hast alle deine veröffentlichten Aufträge storniert!
 order_cancelled_by_admin: 'Der Administrator hat den Auftrag mit der ID ${orderId} storniert!'
 order_completed: 'Du hast den Auftrag mit der Id ${orderId} erfolgreich ausgeführt!'

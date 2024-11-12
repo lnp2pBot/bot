@@ -291,6 +291,7 @@ invoice_already_being_paid: Ya has enviado una factura para esta orden y estoy i
 lightning_address_saved: Dirección lightning guardada con éxito
 cancel_error: Esta orden no puede ser cancelada en este momento
 cancel_success: '¡Has cancelado la orden Id: ${orderId}!'
+cancel_invoice: 'La orden ${orderId} se ha cancelado, no es necesarioi crear una factura.'
 cancelall_success: ¡Has cancelado todas tus órdenes publicadas!
 order_cancelled_by_admin: '¡El admin ha cancelado la orden Id: ${orderId}!'
 order_cancelled_by_counterparty: '¡Tu contraparte ha cancelado la orden Id: ${orderId}!'

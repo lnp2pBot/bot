@@ -287,6 +287,7 @@ invoice_already_being_paid: 이 주문에 대해 이미 인보이스를 보내�
 lightning_address_saved: 라이트닝 주소가 등록되었습니다.
 cancel_error: 이 주문은 지금은 취소될 수 없습니다.
 cancel_success: '주문 ID: ${orderId}를 취소하였습니다!'
+cancel_invoice: '주문 ${orderId}가 취소되었으므로 인보이스를 생성할 필요가 없습니다.'
 cancelall_success: 등록한 모든 주문들을 취소하였습니다!
 order_cancelled_by_admin: '관리자가 주문 ID: ${orderId}ㄹㄹ 취소하였습니다!'
 order_completed: '주문 ID: ${orderId}가 완료되었습니다!'

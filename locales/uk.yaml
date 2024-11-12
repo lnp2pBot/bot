@@ -289,6 +289,7 @@ invoice_already_being_paid: Ви вже відправили рахунок за
 lightning_address_saved: Адреса Lightning успішно збережена.
 cancel_error: На даний момент це замовлення неможливо скасувати
 cancel_success: 'Ви успішно відмінили заявку на номер ${orderId}!'
+cancel_invoice: 'Замовлення ${orderId} було скасовано, немає необхідності створювати інвойс.'
 cancelall_success: 'Ви успішно відмінили всі свої розміщені заявки!'
 order_cancelled_by_admin: 'Адміністратори відмінили заявку за номером ${orderId}!'
 order_cancelled_by_counterparty: 'Ваш контрагент скасував замовлення з ідентифікатором: ${orderId}!'
