@@ -233,10 +233,12 @@ const saveUserReview = async (targetUser, rating) => {
 const cancelAddInvoice = async (ctx, order, job) => {
   try {
     let userAction = false;
+    let userTgId = false;
     if (!job) {
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      userTgId = ctx.from.id;
       if (!order) {
         const orderId = !!ctx && ctx.update.callback_query.message.text;
         if (!orderId) return;
@@ -258,6 +260,9 @@ const cancelAddInvoice = async (ctx, order, job) => {
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const sellerUser = await User.findOne({ _id: order.seller_id });
+    const buyerUser = await User.findOne({ _id: order.buyer_id });
+    const sellerTgId = sellerUser.tg_id;
+    // If order creator cancels it, it will not be republished
     if (order.creator_id === order.buyer_id) {
       order.status = 'CLOSED';
       await order.save();
@@ -269,6 +274,21 @@ const cancelAddInvoice = async (ctx, order, job) => {
         order,
         i18nCtxSeller
       );
+    } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
+      order.status = 'CLOSED';
+      await order.save();
+      await messages.successCancelOrderMessage(
+            ctx,
+            sellerUser,
+            order,
+            i18nCtx
+          );      
+      await messages.counterPartyCancelOrderMessage(
+            ctx,
+            buyerUser,
+            order,
+            i18nCtx
+          );
     } else {
       // Re-publish order
       if (userAction) {
@@ -315,20 +335,7 @@ const cancelAddInvoice = async (ctx, order, job) => {
             order,
             i18nCtx
           );
-        } else {
-          await messages.successCancelOrderMessage(
-            ctx,
-            sellerUser,
-            order,
-            i18nCtx
-          );
-          await messages.counterPartyCancelOrderMessage(
-            ctx,
-            user,
-            order,
-            i18nCtx
-          );
-        }
+        } 
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }      
@@ -408,10 +415,12 @@ const showHoldInvoice = async (ctx, bot, order) => {
 const cancelShowHoldInvoice = async (ctx, order, job) => {
   try {
     let userAction = false;
+    let userTgId = false;
     if (!job) {
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      userTgId = ctx.from.id;
       if (!order) {
         const orderId = !!ctx && ctx.update.callback_query.message.text;
         if (!orderId) return;
@@ -431,6 +440,9 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    const sellerUser = await User.findOne({ _id: order.seller_id });
+    const buyerTgId = buyerUser.tg_id;
+    // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {
       order.status = 'CLOSED';
       await order.save();
@@ -441,6 +453,22 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
         order,
         i18nCtx
       );
+    } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
+      order.status = 'CLOSED';
+      await order.save();
+      await messages.successCancelOrderMessage(
+            ctx,
+            buyerUser,
+            order,
+            i18nCtx
+          );      
+      await messages.counterPartyCancelOrderMessage(
+            ctx,
+            sellerUser,
+            order,
+            i18nCtx
+          );
+              
     } else {
       // Re-publish order
       if (userAction) {
@@ -488,20 +516,7 @@ const cancelShowHoldInvoice = async (ctx, order, job) => {
             order,
             i18nCtx
           );
-        } else {
-          await messages.successCancelOrderMessage(
-            ctx,
-            buyerUser,
-            order,
-            i18nCtx
-          );
-          await messages.counterPartyCancelOrderMessage(
-            ctx,
-            user,
-            order,
-            i18nCtx
-          );
-        }
+        } 
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }     
