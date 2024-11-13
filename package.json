@@ -1,6 +1,6 @@
 {
   "name": "lnp2pbot",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
   "main": "app.js",
@@ -40,9 +40,10 @@
     "network"
   ],
   "devDependencies": {
+    "@types/mocha": "^10.0.9",
     "@types/node": "^20.5.0",
-    "@types/qrcode": "^1.5.2",
     "@types/node-schedule": "^2.1.0",
+    "@types/qrcode": "^1.5.2",
     "chai": "^4.3.4",
     "chokidar": "^3.5.3",
     "eslint": "^8.15.0",
