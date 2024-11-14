@@ -41,6 +41,7 @@ export interface ICommunity extends Document {
     order_channels: Types.DocumentArray<IOrderChannel>;
     fee: number;
     earnings: number;
+    orders: number;
     orders_to_redeem: number;
     dispute_channel: string;
     solvers: Types.DocumentArray<IUsernameId>;
