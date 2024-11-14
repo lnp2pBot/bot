@@ -1,8 +1,23 @@
 {
   "compilerOptions": {
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "downlevelIteration": true
-  }
+    "downlevelIteration": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "allowJs": true,
+    "moduleResolution": "node"
+  },
+  "include": [
+    "app.ts",
+    "bot/**/*",
+    "jobs/**/*",
+    "ln/**/*",
+    "lnurl/**/*",
+    "models/**/*",
+    "util/**/*",
+    "locales/**/*",
+  ],
+  "exclude": ["node_modules", "dist", "tests", "locales"]
 }
