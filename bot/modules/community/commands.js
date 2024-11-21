@@ -22,8 +22,9 @@ async function findCommunities(currency) {
   });
   const orderCount = await getOrderCountByCommunity();
   return communities.map(comm => {
-    comm.orders = orderCount[comm.id] || 0;
-    return comm;
+    const plainCommunity = comm.toObject();
+    plainCommunity.orders = orderCount[comm.id] || 0;
+    return plainCommunity;
   });
 }
 

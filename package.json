@@ -3,16 +3,16 @@
   "version": "0.11.1",
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
-  "main": "app.js",
+  "main": "dist/app.js",
   "scripts": {
     "prestart": "npx tsc",
-    "start": "node ./app",
+    "start": "node ./dist/app",
     "predev": "npx tsc",
-    "dev": "nodemon ./app",
+    "dev": "nodemon ./dist/app",
     "lint": "eslint .",
-    "format": "prettier --write '**/*.js'",
-    "pretest": "npx tsc",
-    "test": "export NODE_ENV=test && mocha --exit tests/**/*.spec.js"
+    "format": "prettier --write '**/*.{js,ts}'",
+    "pretest": "tsc -p tsconfig.test.json",
+    "test": "export NODE_ENV=test && mocha --exit 'dist/tests/**/*.spec.js'"
   },
   "license": "MIT",
   "dependencies": {

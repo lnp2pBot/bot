@@ -198,7 +198,7 @@ describe('Telegram bot', () => {
       flags += flag.length;
     });
     let langs = 0;
-    fs.readdirSync(path.join(__dirname, '../../locales')).forEach(file => {
+    fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
       langs++;
     });
     expect(flags).to.be.equal(langs);
