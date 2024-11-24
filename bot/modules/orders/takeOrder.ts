@@ -43,6 +43,18 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
+
+    const userOffer = await User.findOne({_id: order.buyer_id});
+
+    const userOfferIsBlocked = await Block.exists({ blocker_tg_id: user.tg_id, blocked_tg_id: userOffer.tg_id });
+    const takerIsBlocked = await Block.exists({blocker_tg_id: userOffer.tg_id, blocked_tg_id: user.tg_id});
+
+    if (userOfferIsBlocked)
+      return await messages.userOrderIsBlockedByUserTaker(ctx, user);
+
+    if (takerIsBlocked)
+      return await messages.userTakerIsBlockedByUserOrder(ctx, user);
+
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
@@ -69,6 +81,17 @@ export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: stri
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
+    const seller = await User.findOne({_id: order.seller_id});
+
+    const sellerIsBlocked = await Block.exists({ blocker_tg_id: user.tg_id, blocked_tg_id: seller.tg_id });
+    const buyerIsBlocked = await Block.exists({blocker_tg_id: seller.tg_id, blocked_tg_id: user.tg_id});
+
+    if (sellerIsBlocked)
+      return await messages.userOrderIsBlockedByUserTaker(ctx, user);
+
+    if (buyerIsBlocked)
+      return await messages.userTakerIsBlockedByUserOrder(ctx, user);
+
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
