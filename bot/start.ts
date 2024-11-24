@@ -267,6 +267,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
   NostrModule.configure(bot);
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
+  BlockModule.configure(bot);
 
   bot.command('release', userMiddleware, async ctx => {
     try {
