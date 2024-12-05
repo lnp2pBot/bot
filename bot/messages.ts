@@ -1567,7 +1567,7 @@ const currencyNotSupportedMessage = async (ctx: MainContext, currencies: Array<s
   }
 };
 
-const notAuthorized = async (ctx: MainContext, tgId?: string) => {
+const notAuthorized = async (ctx: MainContext, tgId?: string) : Promise<undefined> => {
   try {
     if (tgId) {
       await ctx.telegram.sendMessage(tgId, ctx.i18n.t('not_authorized'));
