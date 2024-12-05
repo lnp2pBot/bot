@@ -246,6 +246,8 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      if (ctx.from === undefined)
+        throw new Error("ctx.from is undefined");
       userTgId = String(ctx.from.id);
       if (order === null) {
         const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
@@ -271,6 +273,8 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
     if(sellerUser === null)
       throw new Error("sellerUser was not found");
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    if(buyerUser === null)
+      throw new Error("buyerUser was not found");
     const sellerTgId = sellerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.buyer_id) {
@@ -432,6 +436,8 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      if (ctx.from === undefined)
+        throw new Error("ctx.from is undefined");
       userTgId = String(ctx.from.id);
       if (order === null) {
         const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
@@ -455,6 +461,8 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
     if(buyerUser === null)
       throw new Error("buyerUser was not found");
     const sellerUser = await User.findOne({ _id: order.seller_id });
+    if(sellerUser === null)
+      throw new Error("sellerUser was not found");
     const buyerTgId = buyerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {

@@ -434,7 +434,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
 };
 
 
-const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder) => {
+const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder | null) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
