@@ -588,7 +588,7 @@ const generateRandomImage = async (nonce: string) => {
     
     if (!wasHoneybadgerSelected) {
       const files = await fs.readdir('images');
-      const imageFiles = files.filter(file => 
+      const imageFiles = files.filter((file: string) => 
         ['.png'].includes(path.extname(file).toLowerCase()) && 
         file !== honeybadgerFilename
       );
@@ -608,7 +608,7 @@ const generateRandomImage = async (nonce: string) => {
   return { randomImage, isGoldenHoneyBadger };
 };
 
-const generateQRWithImage = async (request, randomImage) => {
+const generateQRWithImage = async (request: string, randomImage: string) => {
   const canvas = createCanvas(400, 400);
   await QRCode.toCanvas(canvas, request, {
     margin: 2,

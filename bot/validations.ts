@@ -3,7 +3,7 @@ import { IUsernameId } from "../models/community";
 import { FilterQuery } from "mongoose";
 import { UserDocument } from "../models/user";
 import { IOrder } from "../models/order";
-
+// @ts-ignore
 import { parsePaymentRequest } from 'invoices';
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
@@ -434,7 +434,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
 };
 
 
-const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder) => {
+const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder | null) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);

@@ -208,7 +208,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
   });
 
   schedule.scheduleJob(`0 0 * * *`, async () => {
-    await checkSolvers(bot);
+    await checkSolvers(bot as any as Telegraf<MainContext>);
   });
 
   bot.start(async (ctx: MainContext) => {
@@ -567,12 +567,15 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       if (!order.hash) return;
 
       const invoice = await getInvoice({ hash: order.hash });
+      if (invoice === undefined){
+        throw new Error("invoice is undefined");
+      }
 
       await messages.checkInvoiceMessage(
         ctx,
         invoice.is_confirmed,
-        invoice.is_canceled,
-        invoice.is_held
+        invoice.is_canceled!,
+        invoice.is_held!
       );
     } catch (error) {
       logger.error(error);

@@ -1,5 +1,6 @@
 import { logger } from '../../../logger';
 import { Block, Order, User } from '../../../models';
+import { UserDocument } from '../../../models/user';
 import { deleteOrderFromChannel, generateRandomImage } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
@@ -105,6 +106,9 @@ export const takesell = async (
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
     const seller = await User.findOne({ _id: order.seller_id });
+    if(seller === null) {
+      throw new Error("seller is null");
+    }
 
     const sellerIsBlocked = await Block.exists({
       blocker_tg_id: user.tg_id,
@@ -140,7 +144,7 @@ export const takesell = async (
   }
 };
 
-const checkBlockingStatus = async (ctx, user, otherUser) => {
+const checkBlockingStatus = async (ctx: MainContext, user: UserDocument, otherUser: UserDocument) => {
   const userIsBlocked = await Block.exists({
     blocker_tg_id: user.tg_id,
     blocked_tg_id: otherUser.tg_id,
