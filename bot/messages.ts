@@ -412,7 +412,7 @@ const showHoldInvoiceMessage = async (
     await ctx.reply(
       ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
-        fiatAmount: numberFormat(fiatCode, fiatAmount),
+        fiatAmount: numberFormat(fiatCode, fiatAmount!),
         currency: currencySymbol,
       })
     );

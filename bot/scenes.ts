@@ -1,4 +1,5 @@
 import { Scenes } from 'telegraf';
+// @ts-ignore
 import { parsePaymentRequest } from 'invoices';
 import { isValidInvoice, validateLightningAddress } from './validations';
 import { Order, PendingPayment } from '../models';

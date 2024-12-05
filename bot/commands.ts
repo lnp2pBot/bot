@@ -54,10 +54,14 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
         fiatAmount: order.fiat_amount,
       });
       const amount = Math.floor(order.amount + order.fee);
-      const { hash, secret } = await createHoldInvoice({
+      const createHoldInvoiceResult = await createHoldInvoice({
         amount,
         description,
       });
+      if (createHoldInvoiceResult === undefined) {
+        throw new Error("createHoldInvoice() returned undefined");
+      }
+      const { hash, secret } = createHoldInvoiceResult;
       order.hash = hash;
       order.secret = secret;
       order.taken_at = new Date();
@@ -245,6 +249,8 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      if (ctx.from === undefined)
+        throw new Error("ctx.from is undefined");
       userTgId = String(ctx.from.id);
       if (order === null) {
         const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
@@ -255,6 +261,9 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
     if (order === null) return;
 
     // We make sure the seller can't send us sats now
+    if (order.hash === null){
+      throw new Error("order.hash is null");
+    }
     await cancelHoldInvoice({ hash: order.hash });
 
     const user = await User.findOne({ _id: order.buyer_id });
@@ -270,6 +279,8 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
     if(sellerUser === null)
       throw new Error("sellerUser was not found");
     const buyerUser = await User.findOne({ _id: order.buyer_id });
+    if(buyerUser === null)
+      throw new Error("buyerUser was not found");
     const sellerTgId = sellerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.buyer_id) {
@@ -362,7 +373,7 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: 
       const orderId = (ctx.update as any).callback_query?.message?.text;
       if (!orderId) return;
       order = await Order.findOne({ _id: orderId });
-      if (order === null) return;
+      if (order === null || order === undefined) return;
     }
 
     const user = await User.findOne({ _id: order.seller_id });
@@ -408,10 +419,14 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: 
              Math.floor(order.amount) : 
              Math.floor(order.amount + order.fee);
     
-    const { request, hash, secret } = await createHoldInvoice({
+    const holdInvoice = await createHoldInvoice({
       description,
       amount,
     });
+    if (holdInvoice === undefined) {
+      throw new Error("createHoldInvoice returned undefined");
+    }
+    const { request, hash, secret } = holdInvoice;
     order.hash = hash;
     order.secret = secret;
     await order.save();
@@ -441,6 +456,8 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
+      if (ctx.from === undefined)
+        throw new Error("ctx.from is undefined");
       userTgId = String(ctx.from.id);
       if (order === null) {
         const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
@@ -450,6 +467,9 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
     }
     if (order === null) return;
 
+    if (order.hash === null) {
+      throw new Error("order.hash is null");
+    }
     // We make sure the seller can't send us sats now
     await cancelHoldInvoice({ hash: order.hash });
 
@@ -464,6 +484,8 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
     if(buyerUser === null)
       throw new Error("buyerUser was not found");
     const sellerUser = await User.findOne({ _id: order.seller_id });
+    if(sellerUser === null)
+      throw new Error("sellerUser was not found");
     const buyerTgId = buyerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {
@@ -624,7 +646,7 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       if (order.type === 'sell') {
         const seller = await User.findById(order.seller_id);
         if (!seller) throw new Error('sellerUser was not found');
-        if (String(ctx.from.id) === seller.tg_id) {
+        if (String(ctx.from?.id) === seller.tg_id) {
           return cancelShowHoldInvoice(ctx, order);
         }
       }
@@ -773,6 +795,9 @@ const release = async (ctx: MainContext, orderId: string, user: UserDocument | n
       await dispute.save();
     }
 
+    if (order.secret === null) {
+      throw new Error("order.secret is null");
+    }
     await settleHoldInvoice({ secret: order.secret });
   } catch (error) {
     logger.error(error);
