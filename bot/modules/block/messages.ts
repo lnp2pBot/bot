@@ -1,7 +1,9 @@
+import { CustomContext } from './customContext';
+
 const { logger } = require('../../../logger');
 
 
-const ordersInProcess = async ctx => {
+const ordersInProcess = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('orders_in_process'));
   } catch (error) {
@@ -9,7 +11,7 @@ const ordersInProcess = async ctx => {
   }
 };
 
-const userAlreadyBlocked = async ctx => {
+const userAlreadyBlocked = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('user_already_blocked'));
   } catch (error) {
@@ -17,7 +19,7 @@ const userAlreadyBlocked = async ctx => {
   }
 };
 
-const userBlocked = async ctx => {
+const userBlocked = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('user_blocked'));
   } catch (error) {
@@ -25,7 +27,7 @@ const userBlocked = async ctx => {
   }
 };
 
-const userUnblocked = async ctx => {
+const userUnblocked = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('user_unblocked'));
   } catch (error) {
@@ -33,7 +35,7 @@ const userUnblocked = async ctx => {
   }
 };
 
-const blocklistMessage = async (ctx, usersBlocked) => {
+const blocklistMessage = async (ctx: CustomContext, usersBlocked) => {
   try {
     const userList = usersBlocked.map(block => block.username);
     ctx.reply(userList.join('\n'));
@@ -42,7 +44,7 @@ const blocklistMessage = async (ctx, usersBlocked) => {
   }
 };
 
-const blocklistEmptyMessage = async (ctx) => {
+const blocklistEmptyMessage = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('blocklist_empty'));
   } catch (error) {
