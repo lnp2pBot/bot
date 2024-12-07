@@ -1,8 +1,19 @@
+import { Context } from 'telegraf';
+
 const { User, Block, Order } = require('../../../models');
 const messages = require('./messages');
 const globalMessages = require('../../messages');
 
-const block = async (ctx, username) => {
+
+export interface CustomContext extends Context {
+  user?: {
+    id: string;
+    tg_id: string;
+  };
+}
+
+
+const block = async (ctx: CustomContext, username: string): Promise<void> => {
   const userToBlock = await User.findOne({ username });
   const user = ctx.user;
 
@@ -38,7 +49,7 @@ const block = async (ctx, username) => {
   await messages.userBlocked(ctx);
 };
 
-const unblock = async (ctx, username) => {
+const unblock = async (ctx: CustomContext, username: string): Promise<void> => {
   const userToUnblock = await User.findOne({ username });
   const user = ctx.user;
 
@@ -51,7 +62,7 @@ const unblock = async (ctx, username) => {
   }
 };
 
-const blocklist = async ctx => {
+const blocklist = async (ctx: CustomContext): Promise<void> => {
   const blocks = await Block.find({ blocker_tg_id: ctx.user.tg_id });
   const tgIdBlocks = blocks.map(blocked => blocked.blocked_tg_id)
 
