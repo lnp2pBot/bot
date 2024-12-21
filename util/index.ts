@@ -10,6 +10,8 @@ import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import { logger } from "../logger";
+const fs = require('fs').promises;
+const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 // ISO 639-1 language codes
 
@@ -225,7 +227,7 @@ const decimalRound = (value: number, exp: number): number => {
 
 const extractId = (text: string): (string | null) => {
   const matches = text.match(/:([a-f0-9]{24}):$/);
-  if (matches !== null){
+  if (matches !== null) {
     return matches?.[1];
   }
   return null;
@@ -380,8 +382,8 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
     const fee = order.fee ? sanitizeMD(Number(order.fee)) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
-    const buyerAge = buyer? getUserAge(buyer) : '';
-    const sellerAge = seller? getUserAge(seller) : '';
+    const buyerAge = buyer ? getUserAge(buyer) : '';
+    const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
     const message = i18n.t('order_detail', {
@@ -525,6 +527,38 @@ export const removeLightningPrefix = (invoice: string) => {
   return invoice;
 };
 
+const generateRandomImage = async (nonce: string) => {
+  let randomImage = '';
+  try {
+    let url = `https://picsum.photos/seed/${nonce}/400/200`;
+    const response = await axios({
+      url,
+      method: 'GET',
+      responseType: 'arraybuffer'
+    });
+
+    randomImage = Buffer.from(response.data, 'binary').toString('base64');
+
+  } catch (error) {
+    logger.error(error);
+
+    try {
+      const files = await fs.readdir('images');
+      const imageFiles = files.filter(file =>
+        ['.jpg', '.jpeg', '.png'].includes(path.extname(file).toLowerCase())
+      );
+
+      const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+      const fallbackImage = await fs.readFile(`images/${randomFile}`);
+
+      randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+    } catch (fallbackError) {
+      logger.error(fallbackError);
+    }
+  }
+  return randomImage;
+}
+
 export {
   isIso4217,
   plural,
@@ -555,5 +589,6 @@ export {
   getUserAge,
   getTimeToExpirationOrder,
   toKebabCase,
-  isOrderCreator
+  isOrderCreator,
+  generateRandomImage
 };

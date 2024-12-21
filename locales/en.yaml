@@ -40,11 +40,15 @@ invoice_payment_request: |
 
   Buyer Reputation: ${rate}, days using the bot: ${days}
 
+  Note: Confirm that the attached image matches the one sent during order creation before paying the invoice
+
   Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes
 pending_sell: |
   📝 Your offer has been published in the ${channel} channel
 
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
+
+  Note: You will see this same image at the time of paying the invoice
 
   You can cancel this order before another user picks it up by executing the command 👇
 cancel_order_cmd: |
@@ -101,10 +105,17 @@ order_already_taken: This order has already been taken by another user.
 order_already_settled: This order has already been settled.
 invalid_data: You have sent invalid data, try again.
 begin_take_buy: |
-  🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished. You have ${expirationTime} minutes before this order expires. 👇
+  🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished.
+
+  Note: You will see this same image at the time of paying the invoice
+  
+  You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue
 cancel: Cancel
-pay_invoice: Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation.
+pay_invoice: |
+  Note: Confirm that the attached image matches the one sent during order creation before paying the invoice
+
+  Please pay this invoice of ${amount} sats for ${currency} ${fiatAmount} to start the operation
 payment_received: |
   🤑 Payment received!
 

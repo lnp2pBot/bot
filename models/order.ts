@@ -44,6 +44,7 @@ export interface IOrder extends Document {
   community_id: string;
   is_frozen: boolean;
   is_public: boolean;
+  random_image: string;
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -138,6 +139,7 @@ const orderSchema = new Schema<IOrder>({
   community_id: { type: String },
   is_public: { type: Boolean, default: true },
   is_frozen: { type: Boolean, default: false },
+  random_image: { type: String },
 });
 
 export default mongoose.model<IOrder>('Order', orderSchema);

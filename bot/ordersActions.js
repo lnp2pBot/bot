@@ -8,6 +8,7 @@ const {
   getFee,
   getUserAge,
   getStars,
+  generateRandomImage,
 } = require('../util');
 const { logger } = require('../logger');
 
@@ -97,6 +98,10 @@ const createOrder = async (
         ...baseOrderData,
       });
     }
+    await order.save();
+
+    const randomImage = await generateRandomImage(order._id);
+    order.random_image = randomImage;
     await order.save();
 
     if (order.status !== 'PENDING') {

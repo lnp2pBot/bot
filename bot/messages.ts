@@ -86,7 +86,14 @@ const invoicePaymentRequestMessage = async (
       rate,
       days: ageInDays,
     });
-    await ctx.telegram.sendMessage(user.tg_id, message);
+
+    await ctx.telegram.sendMediaGroup(user.tg_id, [{
+      type: 'photo',
+      media: { source: Buffer.from(order.random_image, 'base64') },
+      caption: `${message}`,
+    }]
+    );
+
     // Create QR code
     const qrBytes = await QR.toBuffer(request);
     // Send payment request in QR and text
@@ -107,13 +114,17 @@ const pendingSellMessage = async (ctx: Telegraf<MainContext>, user: UserDocument
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
-    await ctx.telegram.sendMessage(
-      user.tg_id,
-      i18n.t('pending_sell', {
+
+    await ctx.telegram.sendMediaGroup(user.tg_id, [{
+      type: 'photo',
+      media: { source: Buffer.from(order.random_image, 'base64') },
+      caption: `${i18n.t('pending_sell', {
         channel,
         orderExpirationWindow: Math.round(orderExpirationWindow),
-      })
+      })}`,
+    }]
     );
+
     await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
@@ -318,10 +329,14 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: Telegraf<MainContext>,
   try {
     const expirationTime =
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
-    await bot.telegram.sendMessage(
-      seller.tg_id,
-      ctx.i18n.t('begin_take_buy', { expirationTime })
+
+    await bot.telegram.sendMediaGroup(seller.tg_id, [{
+      type: 'photo',
+      media: { source: Buffer.from(order.random_image, 'base64') },
+      caption: `${ctx.i18n.t('begin_take_buy', { expirationTime })}`,
+    }]
     );
+
     await bot.telegram.sendMessage(seller.tg_id, order._id, {
       reply_markup: {
         inline_keyboard: [
@@ -348,7 +363,8 @@ const showHoldInvoiceMessage = async (
   request: string,
   amount: number,
   fiatCode: IOrder["fiat_code"],
-  fiatAmount: IOrder["fiat_amount"]
+  fiatAmount: IOrder["fiat_amount"],
+  randomImage: IOrder["random_image"]
 ) => {
   try {
     let currency = getCurrency(fiatCode);
@@ -356,13 +372,16 @@ const showHoldInvoiceMessage = async (
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : fiatCode;
-    await ctx.reply(
-      ctx.i18n.t('pay_invoice', {
+    await ctx.replyWithMediaGroup([{
+      type: 'photo',
+      media: { source: Buffer.from(randomImage, 'base64') },
+      caption: `${ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
         fiatAmount: numberFormat(fiatCode, fiatAmount),
         currency,
-      })
-    );
+      })}`,
+    }]);
+
     // Create QR code
     const qrBytes = await QR.toBuffer(request);
     // Send payment request in QR and text
@@ -1597,9 +1616,8 @@ const showConfirmationButtons = async (ctx: MainContext, orders: Array<IOrder>, 
           };
         })
         .map(ord => ({
-          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${
-            ord.fiat
-          } ${ord.amount}`,
+          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${ord.fiat
+            } ${ord.amount}`,
           callback_data: `${commandString}_${ord._id}`,
         }));
       inlineKeyboard.push(lineBtn);
