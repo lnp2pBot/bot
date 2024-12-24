@@ -7,7 +7,7 @@ const { showFlagsMessage } = require('./messages');
 exports.setlang = async ctx => {
   try {
     const flags = [];
-    fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
+    fs.readdirSync(path.join(__dirname, '../../../../locales')).forEach(file => {
       const lang = file.split('.')[0];
       const flag = getLanguageFlag(lang);
       if (flag !== undefined) {
