@@ -37,11 +37,15 @@ invoice_payment_request: |
 
   Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
+  Nota: Confirme que a imagem anexada corresponde à enviada durante a criação do pedido antes de pagar a fatura
+
   Por favor, pague esta fatura para iniciar seu processo de venda, a fatura expirará em ${expirationTime} minutos
 pending_sell: |
   📝 Oferta publicada no canal ${channel} 
 
   Você tem que esperar até que outro usuário aceite sua oferta, ela estará disponível por ${orderExpirationWindow} horas no canal
+  
+  Nota: Lembre-se desta imagem porque você a verá novamente dentro da fatura a pagar
 
   Você pode cancelar a oferta antes que outro usuário a aceite executando o comando 👇
 cancel_order_cmd: |
@@ -99,9 +103,14 @@ order_already_settled: Esta ordem já foi liquidada.
 invalid_data: Você enviou dados inválidos, tente novamente.
 begin_take_buy: |
   🤖 Pressione Continue para aceitar a oferta, se você pressionar Cancel, desvincularei você do pedido e ele será publicado novamente. Você tem ${expirationTime} minutos ou o pedido expirará. 👇
+
+  Nota: Lembre-se desta imagem porque você a verá novamente dentro da fatura a pagar
 continue: Continuar
 cancel: Cancelar
-pay_invoice: Por favor, pague esta fatura de ${amount} sats por ${currency} ${fiatAmount} para iniciar a operação.
+pay_invoice: |
+  Nota: Confirme que a imagem anexada corresponde à enviada durante a criação do pedido antes de pagar a fatura
+
+  Por favor, pague esta fatura de ${amount} sats por ${currency} ${fiatAmount} para iniciar a operação.
 payment_received: |
   🤑 Pagamento recebido!
 

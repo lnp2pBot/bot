@@ -38,12 +38,16 @@ invoice_payment_request: |
   누군가 당신에게 ${order.amount} sats를 ${currency} ${order.fiat_amount}로 구매하기를 희망합니다.
 
   Buyer Reputation: ${rate}, 봇 사용일수: ${days}
+  
+  참고: 청구서 결제 전에 첨부된 이미지가 주문 생성 시 전송된 이미지와 일치하는지 확인하세요
 
   판매 프로세스를 시작하려면 이 인보이스에 결제해주세요. 이 인보이스는 ${expirationTime} 분 후에 만료됩니다.
 pending_sell: |
   📝 당신의 주문이 ${channel} 채널에 등록되었습니다.
   
   다른 사용자가 당신의 주문을 수락할 때까지 기다려야 합니다. 주문은 ${orderExpirationWindow} 시간 동안 채널에서 보여집니다.
+  
+  참고: 결제 청구서에서 다시 보게 될 이미지이므로 기억해 두세요
 
   당신은 다른 사용자가 이 주문을 수락하기 전에 아래 명령어를 입력하여 취소할 수 있습니다.👇
 cancel_order_cmd: |
@@ -101,9 +105,14 @@ order_already_settled: 이 주문은 이미 정산되었습니다.
 invalid_data: 유효하지 않은 데이터를 보냈습니다. 다시 시도해보세요.
 begin_take_buy: |
   🤖 주문을 수락하려면 `계속` 버튼을 눌러 주세요. `취소` 버튼을 누르면, 당신은 해당 주문에서 나오게 되고, 주문은 마켓 채널에 재등록됩니다. 주문이 만료되기까지 ${expirationTime}분 남았습니다. 👇
+  
+  참고: 결제 청구서에서 다시 보게 될 이미지이므로 기억해 두세요
 continue: 계속
 cancel: 취소
-pay_invoice: 거래를 시작하기 위해 ${currency} ${fiatAmount}에 해당되는 ${amount} 사토시를 이 라이트닝 인보이스에 지불해 주세요.
+pay_invoice: |
+  참고: 청구서 결제 전에 첨부된 이미지가 주문 생성 시 전송된 이미지와 일치하는지 확인하세요
+
+  거래를 시작하기 위해 ${currency} ${fiatAmount}에 해당되는 ${amount} 사토시를 이 라이트닝 인보이스에 지불해 주세요.
 payment_received: |
   🤑 결제가 확인되었습니다.
 

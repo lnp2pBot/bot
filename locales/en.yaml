@@ -48,7 +48,7 @@ pending_sell: |
 
   You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
 
-  Note: You will see this same image at the time of paying the invoice
+  Note: Remember this image because you will see it again inside the invoice to pay
 
   You can cancel this order before another user picks it up by executing the command 👇
 cancel_order_cmd: |
@@ -107,7 +107,7 @@ invalid_data: You have sent invalid data, try again.
 begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished.
 
-  Note: You will see this same image at the time of paying the invoice
+  Note: Remember this image because you will see it again inside the invoice to pay
   
   You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue

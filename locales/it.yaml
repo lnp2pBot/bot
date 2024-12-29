@@ -38,11 +38,15 @@ invoice_payment_request: |
 
   Reputazione del compratore: ${rate}, giorni di utilizzo del bot: ${days}
 
+  Nota: Conferma che l'immagine allegata corrisponda a quella inviata durante la creazione dell'ordine prima di pagare la fattura
+
   Si prega di procedere al pagamento di questa invoice per avviare il processo di vendita, la invoice scadrà tra ${expirationTime} minuti
 pending_sell: |
   📝 La tua offerta è stata pubblicata nel canale ${channel}.
 
   È necessario attendere che un altro utente prenda in carico l'ordine, che scadrà tra ${orderExpirationWindow} ore.
+
+  Nota: Ricorda questa immagine perché la rivedrai nella fattura da pagare
 
   È possibile annullare l'ordine prima che un altro utente lo prenda eseguendo il comando 👇
 cancel_order_cmd: |
@@ -99,10 +103,15 @@ order_already_taken: Quest'ordine è già stato preso da un altro utente.
 order_already_settled: Questo ordine è già stato regolato.
 invalid_data: I dati inviati non sono validi, riprovare.
 begin_take_buy: |
+  Nota: Ricorda questa immagine perché la rivedrai nella fattura da pagare
+
   🤖 Premere Continua per accettare l'ordine, se premi Cancella verrai svincolato dall'ordine e sarà ripubblicato. Hai ${expirationTime} minuti prima che l'ordine scada. 👇
 continue: Continua
 cancel: Cancella
-pay_invoice: Si prega di pagare questa invoice di ${amount} sats per ${currency} ${fiatAmount} per iniziare lo scambio.
+pay_invoice: |
+  Nota: Conferma che l'immagine allegata corrisponda a quella inviata durante la creazione dell'ordine prima di pagare la fattura
+  
+  Si prega di pagare questa invoice di ${amount} sats per ${currency} ${fiatAmount} per iniziare lo scambio.
 payment_received: |
   🤑 Pagamento ricevuto!
 

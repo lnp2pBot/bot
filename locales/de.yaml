@@ -38,11 +38,15 @@ invoice_payment_request: |
 
   Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
 
+  Hinweis: Vergewissern Sie sich vor der Zahlung der Rechnung, dass das beigefügte Bild mit dem bei der Bestellung gesendeten Bild übereinstimmt
+
   Bitte bezahle diese LN-Rechnung, um deinen Verkaufsprozess zu starten. Diese LN-Rechnung läuft in ${expirationTime} Minuten ab
 pending_sell: |
   📝 Dein Angebot wurde im Kanal ${channel} veröffentlicht
 
   Du musst warten, bis ein anderer Nutzer deinen Auftrag auswählt. Sie wird für ${orderExpirationWindow} Stunden im Kanal verfügbar sein
+
+  Hinweis: Merken Sie sich dieses Bild, da Sie es später in der Zahlungsrechnung wiedersehen werden
 
   Bevor ein anderer Benutzer dein Angebot annimmt, kannst du diesen mit dem folgenden Befehl stornieren 👇
 cancel_order_cmd: |
@@ -100,9 +104,14 @@ order_already_settled: Diese Bestellung wurde bereits abgewickelt.
 invalid_data: Du hast ungültige Daten gesendet, versuche es erneut.
 begin_take_buy: |
   🤖 Drücke auf Weiter, um das Angebot anzunehmen. Wenn du auf Abbrechen drückst, wird der Auftrag freigegeben und neu veröffentlicht. Du hast ${expirationTime} Minuten, bevor dieser Auftrag abläuft.
+
+  Hinweis: Merken Sie sich dieses Bild, da Sie es später in der Zahlungsrechnung wiedersehen werden
 continue: Weiter
 cancel: Abbrechen
-pay_invoice: Bitte bezahle diese LN-Rechnung von ${amount} sats für ${currency} ${fiatAmount}, um den Vorgang zu starten.
+pay_invoice: |
+  Hinweis: Vergewissern Sie sich vor der Zahlung der Rechnung, dass das beigefügte Bild mit dem bei der Bestellung gesendeten Bild übereinstimmt
+
+  Bitte bezahle diese LN-Rechnung von ${amount} sats für ${currency} ${fiatAmount}, um den Vorgang zu starten.
 payment_received: |
   🤑 Zahlung erhalten!
 

@@ -13,6 +13,9 @@ import { logger } from "../logger";
 const fs = require('fs').promises;
 const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
+
+const QRCode = require('qrcode');
+const { Image, createCanvas } = require('canvas');
 // ISO 639-1 language codes
 
 const languages: ILanguages = languagesJson;
@@ -530,34 +533,40 @@ export const removeLightningPrefix = (invoice: string) => {
 const generateRandomImage = async (nonce: string) => {
   let randomImage = '';
   try {
-    let url = `https://picsum.photos/seed/${nonce}/400/200`;
-    const response = await axios({
-      url,
-      method: 'GET',
-      responseType: 'arraybuffer'
-    });
+    const files = await fs.readdir('images');
+    const imageFiles = files.filter(file =>
+      ['.png'].includes(path.extname(file).toLowerCase())
+    );
 
-    randomImage = Buffer.from(response.data, 'binary').toString('base64');
+    const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+    const fallbackImage = await fs.readFile(`images/${randomFile}`);
 
-  } catch (error) {
-    logger.error(error);
-
-    try {
-      const files = await fs.readdir('images');
-      const imageFiles = files.filter(file =>
-        ['.jpg', '.jpeg', '.png'].includes(path.extname(file).toLowerCase())
-      );
-
-      const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-      const fallbackImage = await fs.readFile(`images/${randomFile}`);
-
-      randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
-    } catch (fallbackError) {
-      logger.error(fallbackError);
-    }
+    randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+  } catch (fallbackError) {
+    logger.error(fallbackError);
   }
+
   return randomImage;
 }
+
+const generateQRWithImage = async (request, randomImage) => {
+  const canvas = createCanvas(400, 400);
+  await QRCode.toCanvas(canvas, request, {
+    margin: 2,
+    width: 400,
+  });
+
+  const ctx = canvas.getContext('2d');
+  const centerImage = new Image();
+  centerImage.src = `data:image/png;base64,${randomImage}`;
+
+  const imageSize = canvas.width * 0.2;
+  const imagePos = (canvas.width - imageSize) / 2;
+
+  ctx.drawImage(centerImage, imagePos, imagePos, imageSize, imageSize);
+
+  return canvas.toBuffer();
+};
 
 export {
   isIso4217,
@@ -590,5 +599,6 @@ export {
   getTimeToExpirationOrder,
   toKebabCase,
   isOrderCreator,
-  generateRandomImage
+  generateRandomImage,
+  generateQRWithImage,
 };

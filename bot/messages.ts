@@ -24,6 +24,7 @@ import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';
 import { PayViaPaymentRequestResult } from 'lightning';
 import { IFiat } from '../util/fiatModel';
+import { generateQRWithImage } from '../util';
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -87,15 +88,10 @@ const invoicePaymentRequestMessage = async (
       days: ageInDays,
     });
 
-    await ctx.telegram.sendMediaGroup(user.tg_id, [{
-      type: 'photo',
-      media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: `${message}`,
-    }]
-    );
+    await ctx.telegram.sendMessage(user.tg_id, message);
 
     // Create QR code
-    const qrBytes = await QR.toBuffer(request);
+    const qrBytes = await generateQRWithImage(request, order.random_image);
     // Send payment request in QR and text
     await ctx.telegram.sendMediaGroup(user.tg_id, [
       {
@@ -372,18 +368,18 @@ const showHoldInvoiceMessage = async (
       !!currency && !!currency.symbol_native
         ? currency.symbol_native
         : fiatCode;
-    await ctx.replyWithMediaGroup([{
-      type: 'photo',
-      media: { source: Buffer.from(randomImage, 'base64') },
-      caption: `${ctx.i18n.t('pay_invoice', {
+
+    await ctx.reply(
+      ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
         fiatAmount: numberFormat(fiatCode, fiatAmount),
         currency,
-      })}`,
-    }]);
+      })
+    );
 
     // Create QR code
-    const qrBytes = await QR.toBuffer(request);
+    const qrBytes = await generateQRWithImage(request, randomImage);
+
     // Send payment request in QR and text
     await ctx.replyWithMediaGroup([
       {
