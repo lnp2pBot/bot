@@ -560,7 +560,7 @@ const generateQRWithImage = async (request, randomImage) => {
   const centerImage = new Image();
   centerImage.src = `data:image/png;base64,${randomImage}`;
 
-  const imageSize = canvas.width * 0.2;
+  const imageSize = canvas.width * 0.3;
   const imagePos = (canvas.width - imageSize) / 2;
 
   ctx.drawImage(centerImage, imagePos, imagePos, imageSize, imageSize);
