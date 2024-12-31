@@ -246,7 +246,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('version', async (ctx: MainContext) => {
     try {
-      const pckg = require('../package.json');
+      const pckg = require('../../package.json');
       await ctx.reply(pckg.version);
     } catch (err) {
       logger.error(err);
