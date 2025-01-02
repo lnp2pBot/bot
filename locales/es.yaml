@@ -36,6 +36,8 @@ non_handle_error: 👤 Para usar este bot debes activar tu username de telegram,
 invoice_payment_request: |
   Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
+  Id de la orden: ${order._id} 
+  Método de pago: ${order.payment_method}
   Reputación del comprador: ${rate}, días utilizando el bot: ${days}
 
   Nota: Confirme que la imagen adjunta coincide con la enviada durante la creación del pedido antes de pagar la factura
@@ -100,7 +102,7 @@ invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
 order_invalid_type: Esta orden es una ${type}
 order_already_taken: Esta orden ya ha sido tomada por otro usuario
-order_already_settled: Esta orden ya ha sido liquidada. 
+order_already_settled: Esta orden ya ha sido liquidada.
 invalid_data: Has enviado datos incorrectos, inténtalo nuevamente.
 begin_take_buy: |
   🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
@@ -119,10 +121,11 @@ payment_received: |
 
   Espera un momento. Si el comprador no coopera, se te devolverá el colateral.
 someone_took_your_order: |
-  🤖 Alguien ha tomado tu compra y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar el dinero de manera inmediata y en el cual no haya riesgo de congelamiento de fondos.
+  🤖 Alguien ha tomado tu compra con id: ${order._id} y ya me envió tus sats, por favor utiliza un procesador de pagos fiat que te permita enviar ${order.fiat_amount} ${currency} de manera inmediata y en el cual no haya riesgo de congelamiento de fondos.
 
   Si por alguna razón tu procesador de pagos pusiera el pago en pausa y los fondos no llegasen en un lapso menor a ${expirationTime}, los sats regresarán al vendedor, poniendo al comprador en riesgo y yo no podré obligar al vendedor a enviar nuevamente los sats.
 
+  Método de pago: ${order.payment_method},
   Reputación del vendedor: ${rate}, días utilizando el bot: ${days}
 
   Si estás de acuerdo con lo arriba expresado presiona el botón para continuar 👇
@@ -164,9 +167,9 @@ sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
   Id: `${order._id}`
-  
+
   Status previo a disputa: ${previousDisputeStatus}
-  
+
   Status: ${status}
 
   Creador: @${creator || ''}
@@ -537,7 +540,7 @@ maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Pública:
     ${community.public ? 'Si' : 'No'}
   Fee:
@@ -574,7 +577,6 @@ npub_not_valid: |
   Ejemplo:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/orders
 order_not_found: No se encontró la orden.
 # END modules/orders
@@ -607,7 +609,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -633,7 +635,7 @@ setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!
 privacy: |
   *Política de Privacidad*
-  
+
   Tu privacidad es importante para nosotros, y estamos comprometidos a proteger tu información personal. Esta Política de Privacidad explica qué información recopilamos, cómo, y con qué propósito.
 
   *1. Información que Recopilamos:*  

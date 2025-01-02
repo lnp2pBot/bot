@@ -35,6 +35,8 @@ non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usu�
 invoice_payment_request: |
   Alguém quer comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
+  ID do pedido: ${order._id}
+  Método de pagamento: ${order.payment_method}
   Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
   Nota: Confirme que a imagem anexada corresponde à enviada durante a criação do pedido antes de pagar a fatura
@@ -118,10 +120,11 @@ payment_received: |
 
   Paciência. Se o comprador não aparecer, a garantia retornará à sua wallet LN.
 someone_took_your_order: |
-  🤖 Alguém aceitou sua oferta e já enviou os sats, use um processador de pagamentos que permita enviar o dinheiro imediatamente e no qual não há risco de congelar os fundos.
+  🤖 Alguém aceitou sua oferta (id: ${order._id}) e já enviou os sats, use um processador de pagamentos que permita enviar ${order.fiat_amount} ${currency} imediatamente e no qual não há risco de congelar os fundos.
 
   Se por algum motivo a plataforma coloca o pagamento em pausa e os fundos não chegarem em menos de ${expirationTime}, Os sats retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente.
 
+  Método de pagamento: ${order.payment_method}
   Reputação do vendedor: ${rate}, dias usando o bot: ${days}
 
   Se você concorda com o exposto acima, pressione o botão para continuar 👇
@@ -271,7 +274,7 @@ you_have_been_banned: Você foi banido!
 I_told_seller_you_sent_fiat: 🤖 Informei a @${sellerUsername} que você enviou o dinheiro fiat, quando o vendedor confirmar que recebeu seu dinheiro, ele deverá liberar os fundos. Se ele se recusar, você pode abrir uma disputa.
 buyer_told_me_that_sent_fiat: |
   🤖 @${buyerUsername} informou que já enviou o dinheiro fiduciário, depois de confirmar que você o recebeu, libere fundos.  
-  
+
   Após liberar, o dinheiro irá para o comprador e não há volta, então só realize este processo se estiver 💯 certo.
 
   Pressione o seguinte comando se quiser liberar os Sats para o comprador 👇
@@ -547,12 +550,11 @@ npub_not_valid: |
   Exemplo:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/community
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -604,7 +606,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -630,7 +632,7 @@ setinvoice_no_response: Você não tem ordens a serem pagas
 already_cancelled: A oferta já foi cancelada!
 privacy: |
   *Política de Privacidade*
-  
+
   Sua privacidade é importante para nós, e estamos comprometidos em proteger suas informações pessoais. Esta Política de Privacidade explica quais informações coletamos, como, e com qual propósito.
 
   *1. Informações que Coletamos:*  

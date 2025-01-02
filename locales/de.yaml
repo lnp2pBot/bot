@@ -3,7 +3,7 @@ start: |
 
   ${disclaimer}
   ---———— DISCLAIMER ————---
-  
+
   Dieser Bot wird dir helfen, P2P Bitcoin-Transaktionen über das Lightning Network durchzuführen.
 
   Sobald du den Bot gestartet hast, kannst du die folgenden Befehle verwenden:
@@ -29,13 +29,15 @@ start: |
   Weitere Informationen zur Verwendung dieses Bots finden Sie hier 👇
 
   https://lnp2pbot.com/learn
-  
+
   Mache eine schnelle und sichere Transaktion!
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
 invoice_payment_request: |
   Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
 
+  Bestell-ID: ${order._id}
+  Zahlungsmethode: ${order.payment_method}
   Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
 
   Hinweis: Vergewissern Sie sich vor der Zahlung der Rechnung, dass das beigefügte Bild mit dem bei der Bestellung gesendeten Bild übereinstimmt
@@ -119,10 +121,11 @@ payment_received: |
 
   Warten Sie ein wenig. Wenn der Käufer nicht reagiert, wird der Betrag an Sie zurückgesendet.
 someone_took_your_order: |
-  🤖 Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, das Geld sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
+  🤖 Jemand hat deinen Auftrag entgegengenommen (id: ${order._id}) und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, ${order.fiat_amount} ${currency} sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
 
   Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden.
 
+  Zahlungsmethode: ${order.payment_method}
   Verkäufer Ruf: ${rate}, Tage mit dem Bot: ${days}
 
   Wenn du mit den obigen Angaben einverstanden bist, drücke den Button, um fortzufahren 👇
@@ -149,7 +152,7 @@ buyer_took_your_order: |
   🤖 Order Id: #${orderId}
 
   @${buyerUsername} hat deinen Auftrag angenommen und möchte deine Sats kaufen. Nimm Kontakt mit ihm auf und sag ihm, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann.
-  
+
   Ich werde dich benachrichtigen, sobald der Käufer mir mitteilt, dass er das Fiat-Geld gesendet hat. Danach musst du überprüfen, ob es angekommen ist.
 
   Wenn der Käufer nicht antwortet, kannst du eine Stornierung oder eine Streitigkeit einleiten. Denk daran, dass dich ein Administrator NIE kontaktieren wird, um deine Bestellung zu klären, es sei denn, du öffnest zuerst eine Streitigkeit.
@@ -272,9 +275,9 @@ you_have_been_banned: Du wurdest gesperrt!
 I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Wenn der Verkäufer bestätigt, dass er dein Geld erhalten hat, muss er die Mittel freigeben. Falls er sich weigert, kannst du eine Streitigkeit eröffnen.
 buyer_told_me_that_sent_fiat: |
   🤖 @${buyerUsername} hat mitgeteilt, dass er dir das FIAT-Geld geschickt hat. Sobald du den Erhalt des Geldes bestätigst, bitte gib die Mittel frei. Beachte, dass du bis zur Freigabe der Mittel keine neue Bestellung erstellen oder übernehmen kannst.
-  
+
   Nachdem du freigegeben hast, geht das Geld an den Käufer und es gibt kein Zurück mehr. Daher führe diesen Prozess nur durch, wenn du dir 💯 sicher bist.
-  
+
   Drücke den folgenden Befehl, wenn du die Sats für den Käufer freigeben möchtest 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der Käufer dir mitteilt, dass das Geld an dich geschickt wurde, du es aber noch nicht freigegeben hast. Du kannst keine neuen Aufträge erstellen, bis du das Geld freigibst.
@@ -309,13 +312,13 @@ ok_cooperativecancel: '👍 Die Gegenpartei hat zugestimmt und der Auftrag mit d
 refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen
 init_cooperativecancel: |
   🕒 Du hast mit der Stornierung des Auftrages mit der Id ${orderId} gestartet. Dein Gegenüber muss mir ebenfalls mitteilen, dass er die Stornierung wünscht. Falls er/sie nicht antwortet, kannst du eine Streitigkeit eröffnen.
-  
+
   Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
 counterparty_wants_cooperativecancel: |
   😳 Deine Gegenpartei möchte den Auftrag mit der Id ${orderId} stornieren.
-  
+
   Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
-  
+
   Wenn du einverstanden bist, benutze den Befehl 👇
 invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner LN-Rechnung ist fehlgeschlagen. Ich werde es noch ${attempts} weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
 cant_take_more_orders: ⛔ Sorry! Du kannst keinen weiteren Auftrag annehmen, während andere auf dich warten
@@ -550,12 +553,11 @@ npub_not_valid: |
   Beispiel:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/community
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -607,7 +609,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -633,7 +635,7 @@ setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
 already_cancelled: Die Bestellung wurde bereits storniert!
 privacy: |
   *Datenschutzrichtlinie*
-  
+
   Ihre Privatsphäre ist uns wichtig, und wir sind verpflichtet, Ihre persönlichen Daten zu schützen. Diese Datenschutzrichtlinie erklärt, welche Informationen wir sammeln, wie und zu welchem Zweck.
 
   *1. Informationen, die wir sammeln:*  
