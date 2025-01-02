@@ -40,11 +40,15 @@ invoice_payment_request: |
 
   Buyer Reputation: ${rate}, jours d'utilisation du bot: ${days}
 
+  Note : Vérifiez que l'image jointe correspond à celle envoyée lors de la création de la commande avant de payer la facture
+
   Merci de régler cette facture pour démarrer le processus de vente, elle expirera dans ${expirationTime} minutes
 pending_sell: |
   📝 Ton offre a été publiée dans le canal ${channel}
 
   Tu dois attendre jusqu'à ce que quelqu'un récupère ton offre, elle sera visible pendant ${orderExpirationWindow} heures dans le canal
+
+  Note : Mémorisez cette image car vous la reverrez dans la facture à payer
 
   Tu peux annuler cette offre avant qu'un autre utilisateur ne la prenne en exécutant la commande 👇
 cancel_order_cmd: |
@@ -102,9 +106,14 @@ order_already_settled: Cette commande a déjà été réglée.
 invalid_data: Tu as envoyé des données invalides, merci de réessayer.
 begin_take_buy: |
   🤖 Appuie sur Continuer pour prendre l'offre, si tu clique sur Annuler, tu seras libéré.e de l'offre et elle sera publiée de nouveau. Tu as ${expirationTime} minutes avant que cette offre n'expire. 👇
+
+  Note : Mémorisez cette image car vous la reverrez dans la facture à payer
 continue: Continuer
 cancel: Annuler
-pay_invoice: Merci de payer cette facture de ${amount} sats à ${fiatAmount} ${currency} pour démarrer la transaction.
+pay_invoice: |
+  Note : Vérifiez que l'image jointe correspond à celle envoyée lors de la création de la commande avant de payer la facture
+
+  Merci de payer cette facture de ${amount} sats à ${fiatAmount} ${currency} pour démarrer la transaction.
 payment_received: |
   🤑 Paiement reçu!
 

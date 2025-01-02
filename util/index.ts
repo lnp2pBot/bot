@@ -10,7 +10,12 @@ import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import { logger } from "../logger";
+const fs = require('fs').promises;
+const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
+
+const QRCode = require('qrcode');
+const { Image, createCanvas } = require('canvas');
 // ISO 639-1 language codes
 
 const languages: ILanguages = languagesJson;
@@ -225,7 +230,7 @@ const decimalRound = (value: number, exp: number): number => {
 
 const extractId = (text: string): (string | null) => {
   const matches = text.match(/:([a-f0-9]{24}):$/);
-  if (matches !== null){
+  if (matches !== null) {
     return matches?.[1];
   }
   return null;
@@ -380,8 +385,8 @@ const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument,
     const fee = order.fee ? sanitizeMD(Number(order.fee)) : '';
     const creator =
       order.creator_id === buyerId ? buyerUsername : sellerUsername;
-    const buyerAge = buyer? getUserAge(buyer) : '';
-    const sellerAge = seller? getUserAge(seller) : '';
+    const buyerAge = buyer ? getUserAge(buyer) : '';
+    const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
     const message = i18n.t('order_detail', {
@@ -525,6 +530,44 @@ export const removeLightningPrefix = (invoice: string) => {
   return invoice;
 };
 
+const generateRandomImage = async (nonce: string) => {
+  let randomImage = '';
+  try {
+    const files = await fs.readdir('images');
+    const imageFiles = files.filter(file =>
+      ['.png'].includes(path.extname(file).toLowerCase())
+    );
+
+    const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+    const fallbackImage = await fs.readFile(`images/${randomFile}`);
+
+    randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+  } catch (fallbackError) {
+    logger.error(fallbackError);
+  }
+
+  return randomImage;
+}
+
+const generateQRWithImage = async (request, randomImage) => {
+  const canvas = createCanvas(400, 400);
+  await QRCode.toCanvas(canvas, request, {
+    margin: 2,
+    width: 400,
+  });
+
+  const ctx = canvas.getContext('2d');
+  const centerImage = new Image();
+  centerImage.src = `data:image/png;base64,${randomImage}`;
+
+  const imageSize = canvas.width * 0.3;
+  const imagePos = (canvas.width - imageSize) / 2;
+
+  ctx.drawImage(centerImage, imagePos, imagePos, imageSize, imageSize);
+
+  return canvas.toBuffer();
+};
+
 export {
   isIso4217,
   plural,
@@ -555,5 +598,7 @@ export {
   getUserAge,
   getTimeToExpirationOrder,
   toKebabCase,
-  isOrderCreator
+  isOrderCreator,
+  generateRandomImage,
+  generateQRWithImage,
 };

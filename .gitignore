@@ -3,3 +3,4 @@ node_modules
 admin.macaroon
 tls.cert
 dist/
+.history/

@@ -19,6 +19,7 @@
     "@grammyjs/i18n": "^0.5.1",
     "@grammyjs/ratelimiter": "^1.1.5",
     "axios": "^1.7.4",
+    "canvas": "^3.0.0",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
