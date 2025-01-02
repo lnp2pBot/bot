@@ -31,13 +31,15 @@ start: |
   You can find more information on how to use this bot here 👇
 
   https://lnp2pbot.com/learn
-  
+
   Make a quick and safe transaction!
 init_bot_error: to use this bot, you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
 invoice_payment_request: |
   Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
 
+  Order ID: ${order._id}
+  Payment method: ${order.payment_method}
   Buyer Reputation: ${rate}, days using the bot: ${days}
 
   Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes

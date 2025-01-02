@@ -36,6 +36,8 @@ non_handle_error: 👤 Per utilizzare questo bot è necessario impostare il prop
 invoice_payment_request: |
   Qualcuno richiede di comprare da te ${order.amount} sats per ${currency} ${order.fiat_amount}.
 
+  ID ordine: ${order._id}
+  Metodo di pagamento: ${order.payment_method}
   Reputazione del compratore: ${rate}, giorni di utilizzo del bot: ${days}
 
   Si prega di procedere al pagamento di questa invoice per avviare il processo di vendita, la invoice scadrà tra ${expirationTime} minuti

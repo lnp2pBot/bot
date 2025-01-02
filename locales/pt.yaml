@@ -35,6 +35,8 @@ non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usu�
 invoice_payment_request: |
   Alguém quer comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
+  ID do pedido: ${order._id}
+  Método de pagamento: ${order.payment_method}
   Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
   Por favor, pague esta fatura para iniciar seu processo de venda, a fatura expirará em ${expirationTime} minutos

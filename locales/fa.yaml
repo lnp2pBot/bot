@@ -38,7 +38,9 @@ non_handle_error: 👤 برای استفاده از این ربات باید ن�
 invoice_payment_request: |
   یک نفر میخواهد از شما ${order.amount} ساتوشی در ازا ${currency} ${order.fiat_amount} بخرد.
 
-   Buyer Reputation: ${rate}, days using the bot: ${days}
+  شناسه سفارش: ${order._id}
+  روش پرداخت: ${order.payment_method}
+  Buyer Reputation: ${rate}, days using the bot: ${days}
 
    لطفاً برای شروع فرآیند فروش خود، این فاکتور را بپردازید، این درخواست در ${expirationTime} دقیقه منقضی می شود
 pending_sell: |

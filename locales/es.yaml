@@ -36,6 +36,8 @@ non_handle_error: 👤 Para usar este bot debes activar tu username de telegram,
 invoice_payment_request: |
   Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
+  Id de la orden: ${order._id} 
+  Método de pago: ${order.payment_method}
   Reputación del comprador: ${rate}, días utilizando el bot: ${days}
 
   Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos

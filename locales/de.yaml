@@ -29,13 +29,15 @@ start: |
   Weitere Informationen zur Verwendung dieses Bots finden Sie hier 👇
 
   https://lnp2pbot.com/learn
-  
+
   Mache eine schnelle und sichere Transaktion!
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
 invoice_payment_request: |
   Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
 
+  Bestell-ID: ${order._id}
+  Zahlungsmethode: ${order.payment_method}
   Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
 
   Bitte bezahle diese LN-Rechnung, um deinen Verkaufsprozess zu starten. Diese LN-Rechnung läuft in ${expirationTime} Minuten ab
