@@ -6,7 +6,7 @@ import { logger } from "../logger";
 
 const deleteCommunity = async (bot: Telegraf<MainContext>) => {
   try {
-    const communities = await Community.find();
+    const communities = await Community.find({ is_disabled: false });
     for (const community of communities) {
       // Delete communities with COMMUNITY_TTL days without a successful order
       const days = 86400 * Number(process.env.COMMUNITY_TTL);

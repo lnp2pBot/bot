@@ -48,13 +48,13 @@ const sell = async ctx => {
         ['^', '@' + ctx.message.chat.username, '$'].join(''),
         'i'
       );
-      community = await Community.findOne({ group: regex });
+      community = await Community.findOne({ group: regex, is_disabled: false });
       if (!community) return ctx.deleteMessage();
 
       communityId = community._id;
     } else if (user.default_community_id) {
       communityId = user.default_community_id;
-      community = await Community.findOne({ _id: communityId });
+      community = await Community.findOne({ _id: communityId, is_disabled: false });
       if (!community) {
         user.default_community_id = null;
         await user.save();
@@ -114,7 +114,7 @@ const buy = async ctx => {
         ['^', '@' + ctx.message.chat.username, '$'].join(''),
         'i'
       );
-      community = await Community.findOne({ group: regex });
+      community = await Community.findOne({ group: regex, is_disabled: false });
       if (!community) {
         ctx.deleteMessage();
         return;
@@ -122,7 +122,7 @@ const buy = async ctx => {
       communityId = community._id;
     } else if (user.default_community_id) {
       communityId = user.default_community_id;
-      community = await Community.findOne({ _id: communityId });
+      community = await Community.findOne({ _id: communityId, is_disabled: false });
       if (!community) {
         user.default_community_id = null;
         await user.save();
