@@ -4,8 +4,9 @@ import { MainContext } from '../bot/start';
 import { Community, User, } from '../models';
 import { ICommunity } from '../models/community';
 import { logger } from '../logger';
+import { I18nContext } from '@grammyjs/i18n';
+import { getUserI18nContext } from '../util';
 
-const MAX_MESSAGES = 5; // Number of messages before disabling the community
 
 const checkSolvers = async (bot: Telegraf<MainContext>) => {
   try {
@@ -27,7 +28,7 @@ const checkSolvers = async (bot: Telegraf<MainContext>) => {
 const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) => {
   community.messages_sent_count += 1;
   // The community is disabled if the admin has received the maximum notification message to add a solver
-  if (community.messages_sent_count >= MAX_MESSAGES) {
+  if (community.messages_sent_count >= Number(process.env.MAX_MESSAGES)) {
     community.is_disabled = true;
     await community.save();
 
@@ -36,12 +37,14 @@ const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) =>
   }
 
   await community.save();
-  const admin = await User.findOne({ tg_id: community.creator_id });
+  const admin = await User.findById(community.creator_id);
 
   if (admin) {
+    const i18nCtx: I18nContext = await getUserI18nContext(admin);
+
     await bot.telegram.sendMessage(
-        admin.tg_id,
-        `Your community ${community.name} doesn't have any solvers. Please add at least one solver to avoid being disabled.`
+      admin.tg_id,
+      i18nCtx.t('check_solvers', { communityName: community.name })
     );
   }
 }
