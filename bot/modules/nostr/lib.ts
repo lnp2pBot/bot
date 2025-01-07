@@ -1,11 +1,11 @@
-const Nostr = require('nostr-tools');
+import Nostr from 'nostr-tools';
 
-exports.decodeNpub = npub => {
+export const decodeNpub = (npub: string) => {
   try {
     const { type, data } = Nostr.nip19.decode(npub);
     if (type === 'npub') return data;
   } catch (err) {}
 };
-exports.encodeNpub = hex => {
+export const encodeNpub = (hex: string) => {
   return Nostr.nip19.npubEncode(hex);
 };
