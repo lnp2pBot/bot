@@ -37,7 +37,7 @@ non_handle_error: 👤 봇을 이용하기 위해서는, 당신의 텔레그램 
 invoice_payment_request: |
   누군가 당신에게 ${order.amount} sats를 ${currency} ${order.fiat_amount}로 구매하기를 희망합니다.
 
-  주문 ID: ${order._id}
+  주문 ID: #${order._id}
   결제 방법: ${order.payment_method}
   Buyer Reputation: ${rate}, 봇 사용일수: ${days}
 
@@ -113,7 +113,9 @@ payment_received: |
 
   잠시만 기다려주세요. 구매자가 응답하지 않을 경우, 결제된 담보물은 당신에게 그대로 돌아오게 됩니다.
 someone_took_your_order: |
-  🤖 누군가 당신의 주문을 수락하였고 (id: ${order._id}) 봇에게 사토시를 이미 보냈습니다. 바로 ${order.fiat_amount} ${currency}를 보낼 수 있고 자금 동결의 위험이 없는 법정화폐 결제 방법을 사용하세요.
+  🤖 주문 ID: #${order._id}
+
+  누군가 당신의 주문을 수락하였고 봇에게 사토시를 이미 보냈습니다. 바로 ${order.fiat_amount} ${currency}를 보낼 수 있고 자금 동결의 위험이 없는 법정화폐 결제 방법을 사용하세요
 
   모종의 이유로 당신의 법정화폐 결제 솔루션이 결제를 못하게 막고 있을 경우, 자금이 ${expirationTime} 시간 안에 상대방에게 도착하지 않는다면, 사토시들은 판매자에게 돌아가며 구매자는 사토시를 받지 못할 위험에 빠지게 됩니다. 봇은 판매자에게 다시 사토시를 보내도록 강제할 수 없습니다.
 

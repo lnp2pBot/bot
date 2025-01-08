@@ -38,7 +38,7 @@ non_handle_error: 👤 Pour utiliser ce bot, tu dois d'abord activer ton nom d'u
 invoice_payment_request: |
   Quelqu'un veut t'acheter ${order.amount} sats à ${order.fiat_amount} ${currency}.
 
-  ID de commande : ${order._id}
+  ID de l'offre: #${order._id}
   Méthode de paiement : ${order.payment_method}
   Buyer Reputation: ${rate}, jours d'utilisation du bot: ${days}
 
@@ -114,12 +114,14 @@ payment_received: |
 
   Un peu de patience. Le collatéral vous sera recrédité si l'acheteur ne se montre pas coopératif.
 someone_took_your_order: |
-  🤖 Quelqu'un a récupéré ton offre (id: ${order._id}) et m'a déjà envoyé les sats, merci d'utiliser un processeur de paiement fiat qui te permet d'envoyer ${order.fiat_amount} ${currency} instantanément et qui ne permet pas de geler les fonds.
+  🤖 ID de l'offre: #${order._id}
+
+  Quelqu'un a récupéré ton offre et m'a déjà envoyé les sats, merci d'utiliser un processeur de paiement fiat qui te permet d'envoyer ${order.fiat_amount} ${currency} instantanément et qui ne permet pas de geler les fonds.  
 
   Si pour une raison quelconque le processeur de paiement met le paiement en pause et que les fonds ne sont pas arrivés en moins de ${expirationTime}, les sats seront retournés au vendeur, mettant l'acheteur dans une position risquée. Je ne peux pas obliger le vendeur à vendre ses sats de nouveau.
 
   Méthode de paiement : ${order.payment_method}
-  Seller Reputation: ${rate}, jours d'utilisation du bot: ${days}
+  réputation du vendeur: ${rate}, jours d'utilisation du bot: ${days}
 
   Si tu es d'accord avec ce qui précède, clique sur le bouton pour continuer 👇
 you_took_someone_order: |

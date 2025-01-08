@@ -35,7 +35,7 @@ non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usu�
 invoice_payment_request: |
   Alguém quer comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
 
-  ID do pedido: ${order._id}
+  ID do pedido: #${order._id}
   Método de pagamento: ${order.payment_method}
   Reputação do comprador: ${rate}, dias usando o bot: ${days}
 
@@ -111,7 +111,9 @@ payment_received: |
 
   Paciência. Se o comprador não aparecer, a garantia retornará à sua wallet LN.
 someone_took_your_order: |
-  🤖 Alguém aceitou sua oferta (id: ${order._id}) e já enviou os sats, use um processador de pagamentos que permita enviar ${order.fiat_amount} ${currency} imediatamente e no qual não há risco de congelar os fundos.
+  🤖 ID do pedido: #${order._id}
+
+  Alguém aceitou sua oferta e já enviou os sats, use um processador de pagamentos que permita enviar ${order.fiat_amount} ${currency} imediatamente e no qual não há risco de congelar os fundos.  
 
   Se por algum motivo a plataforma coloca o pagamento em pausa e os fundos não chegarem em menos de ${expirationTime}, Os sats retornarão ao vendedor, colocando o comprador em risco e não poderei forçar o vendedor a enviar os sats novamente.
 

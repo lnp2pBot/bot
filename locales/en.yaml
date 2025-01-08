@@ -38,7 +38,7 @@ non_handle_error: 👤 To use this bot, you need to activate your Telegram Usern
 invoice_payment_request: |
   Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
 
-  Order ID: ${order._id}
+  Order ID: #${order._id}
   Payment method: ${order.payment_method}
   Buyer Reputation: ${rate}, days using the bot: ${days}
 
@@ -114,7 +114,9 @@ payment_received: |
 
   Wait a bit. The collateral will be returned to you if the buyer does not cooperate.
 someone_took_your_order: |
-  🤖 Someone took your order (id: ${order._id}) and already sent me the sats, please use a fiat payment processor that allows you to send ${order.fiat_amount} ${currency} immediately and in which there is no risk of freezing funds.
+  🤖 Order Id: #${order._id}
+
+  Someone took your order and already sent me the sats, please use a fiat payment processor that allows you to send ${order.fiat_amount} ${currency} immediately and in which there is no risk of freezing funds.  
 
   If, for any reason, your payment processor puts the payment on pause and the funds do not arrive in less than ${expirationTime}, the sats will return to the seller, putting the buyer at risk. I cannot force the seller to send the sats again.
 

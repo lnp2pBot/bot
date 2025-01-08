@@ -36,7 +36,7 @@ non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutze
 invoice_payment_request: |
   Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
 
-  Bestell-ID: ${order._id}
+  Bestellnummer: #${order._id}
   Zahlungsmethode: ${order.payment_method}
   Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
 
@@ -112,7 +112,9 @@ payment_received: |
 
   Warten Sie ein wenig. Wenn der Käufer nicht reagiert, wird der Betrag an Sie zurückgesendet.
 someone_took_your_order: |
-  🤖 Jemand hat deinen Auftrag entgegengenommen (id: ${order._id}) und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, ${order.fiat_amount} ${currency} sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.
+  🤖 Bestellnummer: #${order._id}
+
+  Jemand hat deinen Auftrag entgegengenommen und mir bereits die Sats geschickt. Bitte verwende einen FIAT-Zahlungsanbieter, der es dir ermöglicht, ${order.fiat_amount} ${currency} sofort zu überweisen und bei dem kein Risiko besteht, dass das Geld eingefroren wird.  
 
   Wenn dein Zahlungsabwickler die Zahlung aus irgendeinem Grund pausiert und das Geld nicht innerhalb von ${expirationTime} eintrifft, gehen die Sats an den Verkäufer zurück, wodurch der Käufer einem Risiko ausgesetzt ist und ich nicht in der Lage bin, den Verkäufer zu zwingen, die Sats erneut zu senden.
 

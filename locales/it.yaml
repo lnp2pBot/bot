@@ -36,7 +36,7 @@ non_handle_error: 👤 Per utilizzare questo bot è necessario impostare il prop
 invoice_payment_request: |
   Qualcuno richiede di comprare da te ${order.amount} sats per ${currency} ${order.fiat_amount}.
 
-  ID ordine: ${order._id}
+  Identificativo dell'ordine: #${order._id}
   Metodo di pagamento: ${order.payment_method}
   Reputazione del compratore: ${rate}, giorni di utilizzo del bot: ${days}
 
@@ -112,7 +112,9 @@ payment_received: |
 
   Attendi. Se l'acquirente non collabora, il deposito di garanzia garanzia ti verrà verrà restituito.
 someone_took_your_order: |
-  🤖 Qualcuno ha preso il tuo ordine (id: ${order._id}) e mi ha già inviato i sats, per favore usa un metodo di pagamento fiat che ti permetta di inviare ${order.fiat_amount} ${currency} immediatamente e per cui non ci sia il rischio di congelamento i fondi.
+  🤖 identificativo dell'ordine: #${order._id}
+
+  Qualcuno ha preso il tuo ordine e mi ha già inviato i sats, per favore usa un metodo di pagamento fiat che ti permetta di inviare ${order.fiat_amount} ${currency} immediatamente e per cui non ci sia il rischio di congelamento i fondi.  
 
   Se per qualche motivo il metodo di pagamento mette in pausa il trasferimento e i fondi non arrivano in meno di ${expirationTime}, i satoshi torneranno al venditore, mettendo a rischio l'acquirente e non potrò costringere il venditore a inviare di nuovo i fondi.
 
