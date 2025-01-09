@@ -1,18 +1,22 @@
-const { logger } = require('../../../logger');
-const { Community, PendingPayment } = require('../../../models');
+import { logger } from '../../../logger';
+import { Community, PendingPayment } from '../../../models';
+import { CommunityWizardState } from './communityContext';
+import { ICommunity } from '../../../models/community';
+import { I18nContext } from '@grammyjs/i18n';
+import { MainContext } from '../../start';
 
-exports.createCommunityWizardStatus = (i18n, state) => {
+export const createCommunityWizardStatus = (i18n: I18nContext, state: CommunityWizardState) => {
   try {
-    let { name, currencies, group, channels, fee, solvers } = state;
+    let { name, currencies, group } = state;
     name = state.name || '__';
     currencies = state.currencies && state.currencies.join(', ');
     currencies = currencies || '__';
     group = state.group || '__';
-    channels =
-      state.channels && state.channels.map(channel => channel.name).join(', ');
+    let channels =
+      state.channels && state.channels.map((channel: { name: string }) => channel.name).join(', ');
     channels = channels || '__';
-    fee = state.fee || '__';
-    solvers =
+    const fee = String(state.fee) || '__';
+    let solvers =
       state.solvers && state.solvers.map(solver => solver.username).join(', ');
     solvers = solvers || '__';
     const text = [
@@ -34,11 +38,13 @@ exports.createCommunityWizardStatus = (i18n, state) => {
   }
 };
 
-exports.updateCommunityMessage = async ctx => {
+export const updateCommunityMessage = async (ctx: MainContext) => {
   try {
     await ctx.deleteMessage();
-    const id = ctx.match[1];
+    const id = ctx.match?.[1];
     const community = await Community.findById(id);
+    if(community == null)
+      throw new Error("community was not found");
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
     const visibilityText = community.public
@@ -105,7 +111,7 @@ exports.updateCommunityMessage = async ctx => {
   }
 };
 
-exports.listCommunitiesMessage = async (ctx, communities) => {
+export const listCommunitiesMessage = async (ctx: MainContext, communities: ICommunity[]) => {
   try {
     let message = '';
     communities.forEach(community => {
@@ -130,9 +136,9 @@ exports.listCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-exports.earningsMessage = async ctx => {
+export const earningsMessage = async (ctx: MainContext) => {
   try {
-    const communityId = ctx.match[1];
+    const communityId = ctx.match?.[1];
     // We check if there is a payment scheduled for this community
     const isScheduled = await PendingPayment.findOne({
       community_id: communityId,
@@ -143,6 +149,8 @@ exports.earningsMessage = async ctx => {
       return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
     const community = await Community.findById(communityId);
+    if(community == null)
+      throw new Error("community was not found");
     const button =
       community.earnings > 0
         ? {
@@ -157,7 +165,7 @@ exports.earningsMessage = async ctx => {
               ],
             },
           }
-        : null;
+        : undefined;
     await ctx.reply(
       ctx.i18n.t('current_earnings', {
         ordersToRedeem: community.orders_to_redeem,
@@ -170,7 +178,7 @@ exports.earningsMessage = async ctx => {
   }
 };
 
-exports.showUserCommunitiesMessage = async (ctx, communities) => {
+export const showUserCommunitiesMessage = async (ctx: MainContext, communities: ICommunity[]) => {
   try {
     const buttons = [];
     while (communities.length > 0) {
@@ -194,7 +202,7 @@ exports.showUserCommunitiesMessage = async (ctx, communities) => {
   }
 };
 
-exports.wizardCommunityWrongPermission = async (ctx, channel, response) => {
+export const wizardCommunityWrongPermission = async (ctx: MainContext, channel: string, response: string) => {
   try {
     if (response.indexOf('bot was kicked from the supergroup chat') !== -1) {
       await ctx.reply(ctx.i18n.t('bot_kicked'));
@@ -220,10 +228,10 @@ exports.wizardCommunityWrongPermission = async (ctx, channel, response) => {
   }
 };
 
-exports.sureMessage = async ctx => {
+export const sureMessage = async (ctx: MainContext) => {
   try {
     await ctx.deleteMessage();
-    const id = ctx.match[1];
+    const id = ctx.match?.[1];
     await ctx.reply(ctx.i18n.t('are_you_sure'), {
       reply_markup: {
         inline_keyboard: [
