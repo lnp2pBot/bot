@@ -10,7 +10,7 @@ import { getUserI18nContext } from '../util';
 
 const checkSolvers = async (bot: Telegraf<MainContext>) => {
   try {
-    const communities = await Community.find({ is_disabled: false });
+    const communities = await Community.find();
 
     for (const community of communities) {
         if (community.solvers.length > 0) {
@@ -27,12 +27,13 @@ const checkSolvers = async (bot: Telegraf<MainContext>) => {
 
 const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) => {
   community.messages_sent_count += 1;
-  // The community is disabled if the admin has received the maximum notification message to add a solver
+  /**
+   * The community is disabled if the admin has received the maximum notification message (MAX_MESSAGES - 1) to add a solver.
+   */
   if (community.messages_sent_count >= Number(process.env.MAX_MESSAGES)) {
-    community.is_disabled = true;
-    await community.save();
+    await community.delete();
 
-    logger.info(`Community: ${community.name} has been disabled due to lack of solvers.`);
+    logger.info(`Community: ${community.name} has been deleted due to lack of solvers.`);
     return;
   }
 
@@ -41,10 +42,13 @@ const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) =>
 
   if (admin) {
     const i18nCtx: I18nContext = await getUserI18nContext(admin);
+    const remainingDays: number = (Number(process.env.MAX_MESSAGES) - 1) - community.messages_sent_count;
+
+    const message = remainingDays === 0 ? i18nCtx.t('check_solvers_last_warning', { communityName: community.name }) : i18nCtx.t('check_solvers', { communityName: community.name, remainingDays: remainingDays });
 
     await bot.telegram.sendMessage(
       admin.tg_id,
-      i18nCtx.t('check_solvers', { communityName: community.name })
+      message,
     );
   }
 }

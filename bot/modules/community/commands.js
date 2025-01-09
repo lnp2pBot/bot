@@ -19,7 +19,6 @@ async function findCommunities(currency) {
   const communities = await Community.find({
     currencies: currency,
     public: true,
-    is_disabled: false,
   });
   const orderCount = await getOrderCountByCommunity();
   return communities.map(comm => {
@@ -51,9 +50,9 @@ exports.setComm = async ctx => {
     if (groupName[0] == '@') {
       // Allow find communities case insensitive
       const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
-      community = await Community.findOne({ group: regex, is_disabled: false });
+      community = await Community.findOne({ group: regex });
     } else if (groupName[0] == '-') {
-      community = await Community.findOne({ group: groupName, is_disabled: false });
+      community = await Community.findOne({ group: groupName });
     }
     if (!community) {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
@@ -73,7 +72,7 @@ exports.communityAdmin = async ctx => {
     const [group] = await validateParams(ctx, 2, '\\<_community_\\>');
     if (!group) return;
     const creator_id = ctx.user.id;
-    const [community] = await Community.find({ group, creator_id, is_disabled: false });
+    const [community] = await Community.find({ group, creator_id });
     if (!community) throw new Error('CommunityNotFound');
     await ctx.scene.enter('COMMUNITY_ADMIN', { community });
   } catch (err) {
@@ -92,7 +91,7 @@ exports.myComms = async ctx => {
   try {
     const { user } = ctx;
 
-    const communities = await Community.find({ creator_id: user._id, is_disabled: false });
+    const communities = await Community.find({ creator_id: user._id });
 
     if (!communities.length)
       return await ctx.reply(ctx.i18n.t('you_dont_have_communities'));
@@ -145,7 +144,6 @@ exports.updateCommunity = async (ctx, id, field, bot) => {
     const community = await Community.findOne({
       _id: id,
       creator_id: user._id,
-      is_disabled: false,
     });
 
     if (!community) {
@@ -214,7 +212,6 @@ exports.deleteCommunity = async ctx => {
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,
-      is_disabled: false,
     });
 
     if (!community) {
@@ -237,7 +234,6 @@ exports.changeVisibility = async ctx => {
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,
-      is_disabled: false,
     });
 
     if (!community) {
