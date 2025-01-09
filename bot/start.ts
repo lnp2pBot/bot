@@ -532,7 +532,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
-      if (buyer === null || seller === null) throw Error("buyer and/or seller were not found in DB");
+      
       await messages.checkOrderMessage(ctx, order, buyer, seller);
     } catch (error) {
       logger.error(error);
