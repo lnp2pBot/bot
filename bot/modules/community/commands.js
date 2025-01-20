@@ -143,7 +143,7 @@ exports.updateCommunity = async (ctx, id, field, bot) => {
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: user._id,
+      creator_id: user._id
     });
 
     if (!community) {
@@ -211,7 +211,7 @@ exports.deleteCommunity = async ctx => {
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: ctx.user._id,
+      creator_id: ctx.user._id
     });
 
     if (!community) {
@@ -233,7 +233,7 @@ exports.changeVisibility = async ctx => {
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: ctx.user._id,
+      creator_id: ctx.user._id
     });
 
     if (!community) {
