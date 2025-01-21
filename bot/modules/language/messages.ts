@@ -1,6 +1,8 @@
-const { logger } = require('../../../logger');
+import { logger } from '../../../logger';
+import { ILanguage } from '../../../util/languagesModel';
+import { MainContext } from '../../start';
 
-exports.showFlagsMessage = async (ctx, flags, code) => {
+export const showFlagsMessage = async (ctx: MainContext, flags: ILanguage[], code: string) => {
   try {
     const buttons = [];
     while (flags.length > 0) {
