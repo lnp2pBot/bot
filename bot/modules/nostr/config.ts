@@ -1,8 +1,9 @@
-const notsrPure = require('nostr-tools/pure');
-const { SimplePool } = require('nostr-tools/pool');
+import { generateSecretKey, getPublicKey as nostrGetPublicKey } from 'nostr-tools';
+import { SimplePool } from 'nostr-tools';
 
-const sk = process.env.NOSTR_SK || notsrPure.generateSecretKey();
-const pk = notsrPure.getPublicKey(sk);
+const nostrSkEnvVar = process.env.NOSTR_SK;
+const sk = nostrSkEnvVar ? Buffer.from(nostrSkEnvVar, 'hex') : generateSecretKey();
+const pk = nostrGetPublicKey(sk);
 
 export const getPrivateKey = () => sk;
 export const getPublicKey = () => pk;

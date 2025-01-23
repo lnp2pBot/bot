@@ -1,4 +1,4 @@
-const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
+import { finalizeEvent, verifyEvent } from 'nostr-tools';
 import * as Config from './config';
 
 import { Community } from '../../../models';
