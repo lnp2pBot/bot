@@ -1,4 +1,4 @@
-require('websocket-polyfill'); // is it needed?
+require('websocket-polyfill');
 import { logger } from '../../../logger';
 import * as Config from './config';
 import { createOrderEvent } from './events';
@@ -6,6 +6,7 @@ import * as Commands from './commands';
 import { Telegraf } from 'telegraf';
 import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
+const CommunityEvents = require('../events/community');
 
 export const configure = (bot: Telegraf<MainContext>) => {
   bot.command('/nostr', Commands.info);
@@ -16,9 +17,6 @@ export const configure = (bot: Telegraf<MainContext>) => {
     );
   }
 
-  // I don't know why these requires are here and not at the top of the file, 
-  // so I leave them as they are instead of converting to imports.
-  const CommunityEvents = require('../events/community');
   CommunityEvents.onCommunityUpdated(async (community: any) => {
     // todo: notify users
   });
