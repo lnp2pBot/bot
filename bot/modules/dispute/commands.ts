@@ -37,6 +37,7 @@ const dispute = async (ctx: MainContext) => {
     let initiator: ('seller' | 'buyer') = 'seller';
     if (user._id == order.buyer_id) initiator = 'buyer';
 
+    order.previous_dispute_status = order.status;
     if(initiator === 'seller')
       order.seller_dispute = true;
     else
