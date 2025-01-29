@@ -1,27 +1,27 @@
-const { User, Dispute, Order } = require('../../../models');
-const {
-  validateParams,
-  validateObjectId,
-  validateDisputeOrder,
-} = require('../../validations');
-const messages = require('./messages');
-const globalMessages = require('../../messages');
-const { logger } = require('../../../logger');
-const { removeAtSymbol } = require('../../../util');
+import { MainContext } from "../../start";
 
-const dispute = async ctx => {
+import { User, Dispute, Order } from '../../../models';
+import { validateParams, validateObjectId, validateDisputeOrder } from '../../validations';
+import * as messages from './messages';
+const globalMessages = require('../../messages');
+import { logger } from '../../../logger';
+import { removeAtSymbol } from '../../../util';
+
+const dispute = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
 
-    const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
-
-    if (!orderId) return;
+    const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
+    
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await validateDisputeOrder(ctx, user, orderId);
 
-    if (!order) return;
+    if (order === false) return;
     // Users can't initiate a dispute before this time
-    const secsUntilDispute = parseInt(process.env.DISPUTE_START_WINDOW);
+    const disputStartWindow = process.env.DISPUTE_START_WINDOW;
+    if(disputStartWindow === undefined)
+      throw new Error("DISPUTE_START_WINDOW environment variable not defined");
+    const secsUntilDispute = parseInt(disputStartWindow);
     const time = new Date();
     time.setSeconds(time.getSeconds() - secsUntilDispute);
     if (order.taken_at > time) {
@@ -29,17 +29,24 @@ const dispute = async ctx => {
     }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
+    if(buyer === null)
+      throw new Error("buyer was not found");
     const seller = await User.findOne({ _id: order.seller_id });
-    let initiator = 'seller';
+    if(seller === null)
+      throw new Error("seller was not found");
+    let initiator: ('seller' | 'buyer') = 'seller';
     if (user._id == order.buyer_id) initiator = 'buyer';
 
-    order[`${initiator}_dispute`] = true;
     order.previous_dispute_status = order.status;
+    if(initiator === 'seller')
+      order.seller_dispute = true;
+    else
+      order.buyer_dispute = true;
     order.status = 'DISPUTE';
     const sellerToken = Math.floor(Math.random() * 899 + 100);
     const buyerToken = Math.floor(Math.random() * 899 + 100);
-    order.buyer_dispute_token = buyerToken;
-    order.seller_dispute_token = sellerToken;
+    order.buyer_dispute_token = String(buyerToken);
+    order.seller_dispute_token = String(sellerToken);
     await order.save();
 
     // If this is a non community order, we may ban the user globally
@@ -54,11 +61,14 @@ const dispute = async ctx => {
         (await Dispute.count({
           $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
         })) + 1;
-      if (buyerDisputes >= process.env.MAX_DISPUTES) {
+      const maxDisputes = Number(process.env.MAX_DISPUTES);
+      // if MAX_DISPUTES is not specified or can't be parsed as number, following
+      // maxDisputes will be NaN and following conditions will be false
+      if (buyerDisputes >= maxDisputes) {
         buyer.banned = true;
         await buyer.save();
       }
-      if (sellerDisputes >= process.env.MAX_DISPUTES) {
+      if (sellerDisputes >= maxDisputes) {
         seller.banned = true;
         await seller.save();
       }
@@ -83,15 +93,15 @@ const dispute = async ctx => {
   }
 };
 
-const deleteDispute = async ctx => {
+const deleteDispute = async (ctx: MainContext) => {
   try {
     const { admin } = ctx;
 
-    let [username, orderId] = await validateParams(
+    let [username, orderId] = (await validateParams(
       ctx,
       3,
       '\\<_username_\\> \\<_order id_\\>'
-    );
+    ))!;
 
     if (!username) return;
     if (!orderId) return;
@@ -140,4 +150,4 @@ const deleteDispute = async ctx => {
   }
 };
 
-module.exports = { dispute, deleteDispute };
+export { dispute, deleteDispute };
