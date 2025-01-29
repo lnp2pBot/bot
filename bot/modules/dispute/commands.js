@@ -24,7 +24,7 @@ const dispute = async ctx => {
     const secsUntilDispute = parseInt(process.env.DISPUTE_START_WINDOW);
     const time = new Date();
     time.setSeconds(time.getSeconds() - secsUntilDispute);
-    if (order.taken_at > time) {
+    if (order.taken_at !== null && order.taken_at > time) {
       return await messages.disputeTooSoonMessage(ctx);
     }
 
