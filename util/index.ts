@@ -363,7 +363,7 @@ const getUserI18nContext = async (user: UserDocument) => {
   return i18n.createContext(user.lang);
 };
 
-const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
+const getDetailedOrder = (i18n: I18nContext, order: IOrder, buyer: UserDocument | null, seller: UserDocument | null) => {
   try {
     const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
     const buyerReputation = buyer

@@ -670,7 +670,7 @@ const customMessage = async (ctx: MainContext, message: string) => {
   }
 };
 
-const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDocument, seller: UserDocument) => {
+const checkOrderMessage = async (ctx: MainContext, order: IOrder, buyer: UserDocument | null, seller: UserDocument | null) => {
   try {
     let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
     message += `\n\n`;
