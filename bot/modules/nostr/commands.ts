@@ -1,4 +1,4 @@
-import Nostr from 'nostr-tools';
+import { nip19 } from 'nostr-tools';
 import { logger } from '../../../logger';
 import * as Config from './config';
 import { MainContext } from '../../start';
@@ -9,7 +9,7 @@ export const info = async (ctx: MainContext) => {
     if (!publicKey) return;
     const info = {
       publicKey,
-      npub: Nostr.nip19.npubEncode(publicKey),
+      npub: nip19.npubEncode(publicKey),
       relays: Config.getRelays()
         .map(r => `<code>${r}</code>`)
         .join('\n'),
