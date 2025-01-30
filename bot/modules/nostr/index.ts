@@ -1,10 +1,14 @@
 require('websocket-polyfill');
-const { logger } = require('../../../logger');
-const Config = require('./config');
-const { createOrderEvent } = require('./events');
-const Commands = require('./commands');
+import { logger } from '../../../logger';
+import * as Config from './config';
+import { createOrderEvent } from './events';
+import * as Commands from './commands';
+import { Telegraf } from 'telegraf';
+import { MainContext } from '../../start';
+import { IOrder } from '../../../models/order';
+const CommunityEvents = require('../events/community');
 
-exports.configure = bot => {
+export const configure = (bot: Telegraf<MainContext>) => {
   bot.command('/nostr', Commands.info);
 
   if (!Config.getRelays().length) {
@@ -13,14 +17,13 @@ exports.configure = bot => {
     );
   }
 
-  const CommunityEvents = require('../events/community');
-  CommunityEvents.onCommunityUpdated(async community => {
+  CommunityEvents.onCommunityUpdated(async (community: any) => {
     // todo: notify users
   });
 
   const OrderEvents = require('../events/orders');
 
-  OrderEvents.onOrderUpdated(async order => {
+  OrderEvents.onOrderUpdated(async (order: IOrder) => {
     try {
       const event = await createOrderEvent(order);
       if (event) {
