@@ -1,24 +1,31 @@
-const { finalizeEvent, verifyEvent } = require('nostr-tools/pure');
-const Config = require('./config');
+import { finalizeEvent, verifyEvent } from 'nostr-tools';
+import * as Config from './config';
 
-const { Community } = require('../../../models');
-const { toKebabCase, removeAtSymbol } = require('../../../util');
+import { Community } from '../../../models';
+import { toKebabCase, removeAtSymbol } from '../../../util';
+import { IOrder } from '../../../models/order';
 
 /// All events broadcasted are Parameterized Replaceable Events,
 /// the event kind must be between 30000 and 39999
 const kind = 38383;
 
-const orderToTags = async order => {
+const orderToTags = async (order: IOrder) => {
+  const orderPublishedExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW;
+  if(orderPublishedExpirationWindow === undefined)
+    throw new Error("Environment variable ORDER_PUBLISHED_EXPIRATION_WINDOW is not defined");
   const expiration =
     Math.floor(Date.now() / 1000) +
-    parseInt(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW);
+    parseInt(orderPublishedExpirationWindow);
   const fiat_amount = ['fa'];
   if (order.fiat_amount === undefined) {
     fiat_amount.push(order.min_amount.toString(), order.max_amount.toString());
   } else {
     fiat_amount.push(order.fiat_amount.toString());
   }
-  const channel = removeAtSymbol(process.env.CHANNEL);
+  const channelEnvVar = process.env.CHANNEL;
+  if(channelEnvVar === undefined)
+    throw new Error("Environment variable CHANNEL is not defined")
+  const channel = removeAtSymbol(channelEnvVar);
   let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
   const tags = [];
   tags.push(['d', order.id]);
@@ -31,6 +38,8 @@ const orderToTags = async order => {
   tags.push(['premium', order.price_margin.toString()]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
+    if(community === null)
+      throw new Error("community was not found");
     const group = removeAtSymbol(community.group);
     source = `https://t.me/${group}/${order.tg_channel_message1}`;
     tags.push(['community_id', order.community_id]);
@@ -45,7 +54,7 @@ const orderToTags = async order => {
   return tags;
 };
 
-exports.createOrderEvent = async order => {
+export const createOrderEvent = async (order: IOrder) => {
   const myPrivKey = Config.getPrivateKey();
   if (order.is_public === false) {
     return;

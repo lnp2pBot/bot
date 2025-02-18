@@ -1,14 +1,15 @@
-const Nostr = require('nostr-tools');
-const { logger } = require('../../../logger');
-const Config = require('./config');
+import { nip19 } from 'nostr-tools';
+import { logger } from '../../../logger';
+import * as Config from './config';
+import { MainContext } from '../../start';
 
-exports.info = async ctx => {
+export const info = async (ctx: MainContext) => {
   try {
     const publicKey = Config.getPublicKey();
     if (!publicKey) return;
     const info = {
       publicKey,
-      npub: Nostr.nip19.npubEncode(publicKey),
+      npub: nip19.npubEncode(publicKey),
       relays: Config.getRelays()
         .map(r => `<code>${r}</code>`)
         .join('\n'),
