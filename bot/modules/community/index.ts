@@ -1,4 +1,3 @@
-// @ts-check
 import { Telegraf } from 'telegraf';
 import { userMiddleware } from '../../middleware/user';
 import * as actions from './actions';

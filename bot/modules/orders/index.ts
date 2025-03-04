@@ -1,4 +1,3 @@
-// @ts-check
 import { userMiddleware } from '../../middleware/user';
 import { logger } from '../../../logger';
 import * as ordersActions from '../../ordersActions';

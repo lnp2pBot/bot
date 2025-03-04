@@ -1,4 +1,3 @@
-// @ts-check
 import { Scenes } from 'telegraf';
 import * as CommunityModule from '../modules/community';
 import * as OrdersModule from '../modules/orders';

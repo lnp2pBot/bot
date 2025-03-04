@@ -1,4 +1,3 @@
-// @ts-check
 import { userMiddleware } from '../../middleware/user';
 
 import { Telegraf } from 'telegraf';
