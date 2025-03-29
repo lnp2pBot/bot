@@ -39,7 +39,7 @@ const blocklistMessage = async (ctx: CustomContext, usersBlocked) => {
     if (!usersBlocked?.length) {
       return await blocklistEmptyMessage(ctx);
     }
-    const userList = usersBlocked.map(block => block.username);
+    const userList = usersBlocked.map(block => '@' + block.username);
     ctx.reply(userList.join('\n'));
   } catch (error) {
     logger.error(error);
