@@ -5,7 +5,7 @@ const messages = require('./messages');
 const globalMessages = require('../../messages');
 
 const block = async (ctx: CustomContext, username: string): Promise<void> => {
-  const userToBlock = await User.findOne({ username });
+  const userToBlock = await User.findOne({ username:  username.substring(1) });
   const user = ctx.user;
 
   if (!userToBlock) {
@@ -52,7 +52,7 @@ const block = async (ctx: CustomContext, username: string): Promise<void> => {
 };
 
 const unblock = async (ctx: CustomContext, username: string): Promise<void> => {
-  const userToUnblock = await User.findOne({ username });
+  const userToUnblock = await User.findOne({ username: username.substring(1) });
   if (!userToUnblock) {
     await globalMessages.notFoundUserMessage(ctx);
     return;
