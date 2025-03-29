@@ -64,6 +64,12 @@ export const takebuy = async (
 
     const userOffer = await User.findOne({ _id: order.buyer_id });
 
+    if (!userOffer) {
+      return await messages.notFoundUserMessage(ctx);
+    } else if (await checkBlockingStatus(ctx, user, userOffer)) {
+      return;
+    }
+
     if (await checkBlockingStatus(ctx, user, userOffer)) {
       return;
     }
