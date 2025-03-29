@@ -7,9 +7,11 @@ export interface IBlock extends Document {
 }
 
 const blockSchema = new Schema<IBlock>({
-  blocker_tg_id: { type: String },
-  blocked_tg_id: { type: String },
+  blocker_tg_id: { type: String, required: true, index: true },
+  blocked_tg_id: { type: String, required: true, index: true },
   created_at: { type: Date, default: Date.now },
 });
+
+blockSchema.index({ blocker_tg_id: 1, blocked_tg_id: 1 }, { unique: true });
 
 export default mongoose.model<IBlock>('Block', blockSchema);

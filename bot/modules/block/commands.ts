@@ -53,6 +53,10 @@ const block = async (ctx: CustomContext, username: string): Promise<void> => {
 
 const unblock = async (ctx: CustomContext, username: string): Promise<void> => {
   const userToUnblock = await User.findOne({ username });
+  if (!userToUnblock) {
+    await globalMessages.notFoundUserMessage(ctx);
+    return;
+  }
   const user = ctx.user;
 
   const result = await Block.deleteOne({
@@ -80,4 +84,4 @@ const blocklist = async (ctx: CustomContext): Promise<void> => {
   await messages.blocklistMessage(ctx, usersBlocked);
 };
 
-module.exports = { block, unblock, blocklist };
+export { block, unblock, blocklist };
