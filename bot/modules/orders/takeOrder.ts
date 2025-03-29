@@ -43,17 +43,11 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
 
+    const userOffer = await User.findOne({ _id: order.buyer_id });
 
-    const userOffer = await User.findOne({_id: order.buyer_id});
-
-    const userOfferIsBlocked = await Block.exists({ blocker_tg_id: user.tg_id, blocked_tg_id: userOffer.tg_id });
-    const takerIsBlocked = await Block.exists({blocker_tg_id: userOffer.tg_id, blocked_tg_id: user.tg_id});
-
-    if (userOfferIsBlocked)
-      return await messages.userOrderIsBlockedByUserTaker(ctx, user);
-
-    if (takerIsBlocked)
-      return await messages.userTakerIsBlockedByUserOrder(ctx, user);
+    if (await checkBlockingStatus(ctx, user, userOffer)) {
+      return;
+    }
 
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
@@ -88,10 +82,16 @@ export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: stri
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
-    const seller = await User.findOne({_id: order.seller_id});
+    const seller = await User.findOne({ _id: order.seller_id });
 
-    const sellerIsBlocked = await Block.exists({ blocker_tg_id: user.tg_id, blocked_tg_id: seller.tg_id });
-    const buyerIsBlocked = await Block.exists({blocker_tg_id: seller.tg_id, blocked_tg_id: user.tg_id});
+    const sellerIsBlocked = await Block.exists({
+      blocker_tg_id: user.tg_id,
+      blocked_tg_id: seller.tg_id,
+    });
+    const buyerIsBlocked = await Block.exists({
+      blocker_tg_id: seller.tg_id,
+      blocked_tg_id: user.tg_id,
+    });
 
     if (sellerIsBlocked)
       return await messages.userOrderIsBlockedByUserTaker(ctx, user);
@@ -116,4 +116,26 @@ export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: stri
   } catch (error) {
     logger.error(error);
   }
+};
+
+const checkBlockingStatus = async (ctx, user, otherUser) => {
+  const userIsBlocked = await Block.exists({
+    blocker_tg_id: user.tg_id,
+    blocked_tg_id: otherUser.tg_id,
+  });
+  if (userIsBlocked) {
+    await messages.userOrderIsBlockedByUserTaker(ctx, user);
+    return true;
+  }
+
+  const takerIsBlocked = await Block.exists({
+    blocker_tg_id: otherUser.tg_id,
+    blocked_tg_id: user.tg_id,
+  });
+  if (takerIsBlocked) {
+    await messages.userTakerIsBlockedByUserOrder(ctx, user);
+    return true;
+  }
+
+  return false;
 };

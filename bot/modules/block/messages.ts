@@ -2,7 +2,6 @@ import { CustomContext } from './customContext';
 
 const { logger } = require('../../../logger');
 
-
 const ordersInProcess = async (ctx: CustomContext) => {
   try {
     ctx.reply(ctx.i18n.t('orders_in_process'));
@@ -37,6 +36,9 @@ const userUnblocked = async (ctx: CustomContext) => {
 
 const blocklistMessage = async (ctx: CustomContext, usersBlocked) => {
   try {
+    if (!usersBlocked?.length) {
+      return await blocklistEmptyMessage(ctx);
+    }
     const userList = usersBlocked.map(block => block.username);
     ctx.reply(userList.join('\n'));
   } catch (error) {
@@ -52,4 +54,11 @@ const blocklistEmptyMessage = async (ctx: CustomContext) => {
   }
 };
 
-module.exports = { userAlreadyBlocked, userBlocked, userUnblocked, blocklistMessage, blocklistEmptyMessage, ordersInProcess }
+export {
+  userAlreadyBlocked,
+  userBlocked,
+  userUnblocked,
+  blocklistMessage,
+  blocklistEmptyMessage,
+  ordersInProcess,
+};

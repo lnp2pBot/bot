@@ -5,5 +5,7 @@ export interface CustomContext extends Context {
     id: string;
     tg_id: string;
   },
-  i18n?: any;
+  i18n?: {
+    t: (key: string, params?: Record<string, unknown>) => string;
+  };
 }
