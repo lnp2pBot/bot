@@ -9,7 +9,7 @@ import { MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
 
-const OrderEvents = require('./modules/events/orders');
+import * as OrderEvents from './modules/events/orders';
 
 interface CreateOrderArguments {
   type: string;

@@ -1,15 +1,15 @@
 import { Scenes } from 'telegraf';
-const { parsePaymentRequest } = require('invoices');
+import { parsePaymentRequest } from 'invoices';
 import { isValidInvoice, validateLightningAddress } from './validations';
 import { Order, PendingPayment } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
-const { isPendingPayment } = require('../ln');
+import { isPendingPayment } from '../ln';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
-const OrderEvents = require('./modules/events/orders');
+import * as OrderEvents from './modules/events/orders';
 
 interface InvoiceParseResult { 
   invoice?: any;

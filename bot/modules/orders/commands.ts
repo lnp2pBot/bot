@@ -1,4 +1,3 @@
-// @ts-check
 import { logger } from '../../../logger';
 import { Community, Order } from '../../../models';
 import { isFloat } from '../../../util';

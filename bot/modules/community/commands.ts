@@ -1,5 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-// @ts-check
 import { logger } from '../../../logger';
 import { showUserCommunitiesMessage } from './messages';
 import { Community, Order } from '../../../models';

@@ -3,9 +3,9 @@ import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram'
 import { UserDocument } from '../models/user'
 import { FilterQuery } from 'mongoose';
-const OrderEvents = require('./modules/events/orders');
+import * as OrderEvents from './modules/events/orders';
 import { limit } from "@grammyjs/ratelimiter"
-const schedule = require('node-schedule');
+import schedule from 'node-schedule';
 import {
   Order,
   User,
@@ -15,21 +15,21 @@ import {
   Config,
 } from '../models';
 import { getCurrenciesWithPrice, deleteOrderFromChannel, removeAtSymbol } from '../util';
-const {
+import {
   commandArgsMiddleware,
   stageMiddleware,
   userMiddleware,
   adminMiddleware,
   superAdminMiddleware,
-} = require('./middleware');
-const ordersActions = require('./ordersActions');
-const CommunityModule = require('./modules/community');
-const LanguageModule = require('./modules/language');
-const NostrModule = require('./modules/nostr');
-const OrdersModule = require('./modules/orders');
-const UserModule = require('./modules/user');
-const DisputeModule = require('./modules/dispute');
-const {
+} from './middleware';
+import * as ordersActions from './ordersActions';
+import * as CommunityModule from './modules/community';
+import * as LanguageModule from './modules/language';
+import * as NostrModule from './modules/nostr';
+import * as OrdersModule from './modules/orders';
+import * as UserModule from './modules/user';
+import * as DisputeModule from './modules/dispute';
+import {
   rateUser,
   cancelAddInvoice,
   addInvoice,
@@ -39,20 +39,20 @@ const {
   cancelOrder,
   fiatSent,
   release,
-} = require('./commands');
-const {
+} from './commands';
+import {
   settleHoldInvoice,
   cancelHoldInvoice,
   payToBuyer,
   subscribeInvoice,
   getInvoice,
-} = require('../ln');
-const {
+} from '../ln';
+import {
   validateUser,
   validateParams,
   validateObjectId,
   validateLightningAddress,
-} = require('./validations');
+} from './validations';
 import * as messages from './messages';
 import {
   attemptPendingPayments,
@@ -65,6 +65,7 @@ import {
 } from '../jobs';
 import { logger } from "../logger";
 import { ICommunity, IUsernameId } from '../models/community';
+import { CommunityContext } from './modules/community/communityContext';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -153,14 +154,14 @@ https://github.com/telegraf/telegraf/issues/1319#issuecomment-766360594
 */
 export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
 
-const initialize = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
+const initialize = (botToken: string, options: Partial<Telegraf.Options<CommunityContext>>): Telegraf<CommunityContext> => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
     directory: 'locales',
     useSession: true,
   });
 
-  const bot = new Telegraf<MainContext>(botToken, options);
+  const bot = new Telegraf<CommunityContext>(botToken, options);
   bot.catch(err => {
     logger.error(err);
   });
@@ -218,7 +219,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('maintenance', superAdminMiddleware, async (ctx: MainContext): Promise<void> => {
     try {
-      const [val] = await validateParams(ctx, 2, '\\<_on/off_\\>');
+      const [val] = (await validateParams(ctx, 2, '\\<_on/off_\\>'))!;
       if (!val) return;
       let config = await Config.findOne();
       if (config === null) {
@@ -289,7 +290,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('freezeorder', adminMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -324,7 +325,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('cancelorder', adminMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const validatedParams = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
+      if (validatedParams == null) return;
+      const [orderId] = validatedParams;
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -391,7 +394,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   // We allow users cancel pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancel', userMiddleware, async (ctx: MainContext) => {
+  bot.command('cancel', userMiddleware, async (ctx: CommunityContext) => {
     try {
       if (!('message' in ctx.update) || !('text' in ctx.update.message)){
         throw new Error(ctxUpdateAssertMsg);
@@ -416,13 +419,13 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   // We allow users cancel all pending orders,
   // pending orders are the ones that are not taken by another user
-  bot.command('cancelall', userMiddleware, async (ctx: MainContext) => {
+  bot.command('cancelall', userMiddleware, async (ctx: CommunityContext) => {
     try {
-      const pending_orders = await ordersActions.getOrders(ctx.user, 'PENDING');
-      const seller_orders = await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE');
-      const buyer_orders = await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT');
+      const pending_orders = await ordersActions.getOrders(ctx.user, 'PENDING') || [];
+      const seller_orders = await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE') || [];
+      const buyer_orders = await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT') || [];
 
-      const orders = [...pending_orders, ...seller_orders, ...buyer_orders]
+      const orders = [...pending_orders, ...seller_orders, ...buyer_orders];
 
       if (orders.length === 0) {
         return await messages.notOrdersMessage(ctx);
@@ -452,7 +455,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
         await order.save();
         OrderEvents.orderUpdated(order);
         // We delete the messages related to that order from the channel
-        await deleteOrderFromChannel(order, bot.telegram as any);
+        await deleteOrderFromChannel(order, bot.telegram);
       }
       // we sent a private message to the user
       await messages.successCancelAllOrdersMessage(ctx);
@@ -461,9 +464,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     }
   });
 
-  bot.command('settleorder', adminMiddleware, async (ctx: MainContext) => {
+  bot.command('settleorder', adminMiddleware, async (ctx: CommunityContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
 
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
@@ -527,7 +530,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('checkorder', superAdminMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
@@ -545,7 +548,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('checkinvoice', superAdminMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({ _id: orderId });
@@ -568,7 +571,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('resubscribe', superAdminMiddleware, async (ctx: MainContext) => {
     try {
-      const [hash] = await validateParams(ctx, 2, '\\<_hash_\\>');
+      const [hash] = (await validateParams(ctx, 2, '\\<_hash_\\>'))!;
 
       if (!hash) return;
 
@@ -632,11 +635,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('ban', adminMiddleware, async (ctx: MainContext) => {
     try {
-      let [username] = await validateParams(
+      let [username] = (await validateParams(
         ctx,
         2,
         '\\<_username or telegram ID_\\>'
-      );
+      ))!;
 
       if (!username) return;
 
@@ -676,11 +679,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('unban', adminMiddleware, async (ctx: MainContext) => {
     try {
-      let [username] = await validateParams(
+      let [username] = (await validateParams(
         ctx,
         2,
         '\\<_username or telegram ID_\\>'
-      );
+      ))!;
 
       if (!username) return;
 
@@ -719,11 +722,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('setaddress', userMiddleware, async (ctx: MainContext) => {
     try {
-      const [lightningAddress] = await validateParams(
+      const [lightningAddress] = (await validateParams(
         ctx,
         2,
         '\\<_lightningAddress / off_\\>'
-      );
+      ))!;
       if (!lightningAddress) return;
 
       if (lightningAddress === 'off') {
@@ -758,37 +761,37 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   OrdersModule.configure(bot);
 
-  bot.action('addInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
+  bot.action('addInvoiceBtn', userMiddleware, async (ctx: CommunityContext) => {
     await addInvoice(ctx, bot);
   });
 
-  bot.action('cancelAddInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
+  bot.action('cancelAddInvoiceBtn', userMiddleware, async (ctx: CommunityContext) => {
     await cancelAddInvoice(ctx);
   });
 
-  bot.action('showHoldInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
+  bot.action('showHoldInvoiceBtn', userMiddleware, async (ctx: CommunityContext) => {
     await showHoldInvoice(ctx, bot);
   });
 
-  bot.action('cancelShowHoldInvoiceBtn', userMiddleware, async (ctx: MainContext) => {
+  bot.action('cancelShowHoldInvoiceBtn', userMiddleware, async (ctx: CommunityContext) => {
     await cancelShowHoldInvoice(ctx);
   });
 
-  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^showStarBtn\(([1-5]),(\w{24})\)$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
-    await rateUser(ctx, bot, ctx.match[1], ctx.match[2]);
+    await rateUser(ctx, bot, Number(ctx.match[1]), ctx.match[2]);
   });
 
-  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^addInvoicePHIBtn_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
     await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
-  bot.action(/^setinvoice_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^setinvoice_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
@@ -796,7 +799,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await addInvoicePHI(ctx, bot, ctx.match[1]);
   });
 
-  bot.action(/^cancel_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^cancel_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
@@ -804,7 +807,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await cancelOrder(ctx, ctx.match[1]);
   });
 
-  bot.action(/^fiatsent_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^fiatsent_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
@@ -812,7 +815,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
     await fiatSent(ctx, ctx.match[1]);
   });
 
-  bot.action(/^release_([0-9a-f]{24})$/, userMiddleware, async (ctx: MainContext) => {
+  bot.action(/^release_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
     if (ctx.match === null) {
       throw new Error("ctx.match should not be null");
     }
@@ -822,7 +825,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('paytobuyer', adminMiddleware, async (ctx: MainContext) => {
     try {
-      const [orderId] = await validateParams(ctx, 2, '\\<_order id_\\>');
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
       if (!(await validateObjectId(ctx, orderId))) return;
       const order = await Order.findOne({
@@ -877,12 +880,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('showusername', userMiddleware, async (ctx: MainContext) => {
     try {
-      let [show] = await validateParams(ctx, 2, '_yes/no_');
-      if (!show) return;
-      show = show === 'yes';
+      const [showString] = (await validateParams(ctx, 2, '_yes/no_'))!;
+      if (!showString) return;
+      const show = showString === 'yes';
       ctx.user.show_username = show;
       await ctx.user.save();
-      messages.updateUserSettingsMessage(ctx, 'showusername', show);
+      messages.updateUserSettingsMessage(ctx, 'showusername', String(show));
     } catch (error) {
       logger.error(error);
     }
@@ -890,12 +893,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
 
   bot.command('showvolume', userMiddleware, async (ctx: MainContext) => {
     try {
-      let [show] = await validateParams(ctx, 2, '_yes/no_');
-      if (!show) return;
-      show = show === 'yes';
+      const [showString] = (await validateParams(ctx, 2, '_yes/no_'))!;
+      if (!showString) return;
+      const show = showString === 'yes';
       ctx.user.show_volume_traded = show;
       await ctx.user.save();
-      messages.updateUserSettingsMessage(ctx, 'showvolume', show);
+      messages.updateUserSettingsMessage(ctx, 'showvolume', String(show));
     } catch (error) {
       logger.error(error);
     }
@@ -932,7 +935,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<MainCont
   return bot;
 };
 
-const start = (botToken: string, options: Partial<Telegraf.Options<MainContext>>): Telegraf<MainContext> => {
+const start = (botToken: string, options: Partial<Telegraf.Options<CommunityContext>>): Telegraf<CommunityContext> => {
   const bot = initialize(botToken, options);
 
   bot.launch();

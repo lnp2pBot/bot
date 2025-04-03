@@ -1,4 +1,3 @@
-// @ts-check
 import { IOrder } from '../../../models/order';
 import * as Events from './index';
 
