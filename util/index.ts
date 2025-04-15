@@ -532,10 +532,27 @@ export const removeLightningPrefix = (invoice: string) => {
 
 const generateRandomImage = async (nonce: string) => {
   let randomImage = '';
+  let isGoldenHoneyBadger = false;
   try {
+    const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY);
+    const luckyNumber = Math.floor(Math.random() * goldenProbability);
+    
+    if (luckyNumber === 0) {
+      isGoldenHoneyBadger = true;
+      try {
+        const goldenImage = await fs.readFile('images/honey-badger.png');
+        randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
+        logger.info(`Golden Honey Badger assigned to order with nonce: ${nonce}`);
+        return { randomImage, isGoldenHoneyBadger };
+      } catch (error) {
+        logger.error(`Error loading Golden Honey Badger image: ${error}`);
+        isGoldenHoneyBadger = false;
+      }
+    }
+    
     const files = await fs.readdir('images');
     const imageFiles = files.filter(file =>
-      ['.png'].includes(path.extname(file).toLowerCase())
+      ['.png'].includes(path.extname(file).toLowerCase()) && file !== 'honey-badger.png'
     );
 
     const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
@@ -546,7 +563,7 @@ const generateRandomImage = async (nonce: string) => {
     logger.error(fallbackError);
   }
 
-  return randomImage;
+  return { randomImage, isGoldenHoneyBadger };
 }
 
 const generateQRWithImage = async (request, randomImage) => {
