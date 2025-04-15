@@ -613,6 +613,7 @@ bot_info: |
   User info:
 
   ${user_info}
+golden_honey_badger: 🍯 ¡Tejón de Miel Dorado! ¡No se cobrará comisión! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

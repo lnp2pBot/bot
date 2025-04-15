@@ -612,6 +612,7 @@ bot_info: |
   User info:
 
   ${user_info}
+golden_honey_badger: 🍯 گورکن عسل طلایی! هیچ کارمزدی دریافت نخواهد شد! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

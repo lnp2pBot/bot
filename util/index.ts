@@ -534,37 +534,46 @@ const generateRandomImage = async (nonce: string) => {
   let randomImage = '';
   let isGoldenHoneyBadger = false;
   try {
-    const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY);
-    const luckyNumber = Math.floor(Math.random() * goldenProbability);
+    const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
+    if (isNaN(goldenProbability)) {
+      logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY is not properly configured, using default value of 100");
+    }
+    const probability = isNaN(goldenProbability) ? 100 : goldenProbability;
+    const luckyNumber = Math.floor(Math.random() * probability);
+    
+
+    const honeybadgerFilename = 'Honeybadger.png';
     
     if (luckyNumber === 0) {
-      isGoldenHoneyBadger = true;
+
       try {
-        const goldenImage = await fs.readFile('images/honey-badger.png');
+        const goldenImage = await fs.readFile(`images/${honeybadgerFilename}`);
         randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
+        isGoldenHoneyBadger = true;
         logger.info(`Golden Honey Badger assigned to order with nonce: ${nonce}`);
-        return { randomImage, isGoldenHoneyBadger };
       } catch (error) {
         logger.error(`Error loading Golden Honey Badger image: ${error}`);
         isGoldenHoneyBadger = false;
       }
     }
     
-    const files = await fs.readdir('images');
-    const imageFiles = files.filter(file =>
-      ['.png'].includes(path.extname(file).toLowerCase()) && file !== 'honey-badger.png'
-    );
+    if (!isGoldenHoneyBadger) {
+      const files = await fs.readdir('images');
+      const imageFiles = files.filter(file =>
+        ['.png'].includes(path.extname(file).toLowerCase()) && 
+        file !== honeybadgerFilename 
+      );
 
-    const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-    const fallbackImage = await fs.readFile(`images/${randomFile}`);
-
-    randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+      const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+      const fallbackImage = await fs.readFile(`images/${randomFile}`);
+      randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+    }
   } catch (fallbackError) {
     logger.error(fallbackError);
   }
 
   return { randomImage, isGoldenHoneyBadger };
-}
+};
 
 const generateQRWithImage = async (request, randomImage) => {
   const canvas = createCanvas(400, 400);

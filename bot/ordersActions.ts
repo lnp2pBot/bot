@@ -32,9 +32,10 @@ interface BuildDescriptionArguments {
   fiatAmount: number[];
   fiatCode: string;
   paymentMethod: string;
-  priceMargin: any; // ?
+  priceMargin: any;
   priceFromAPI: boolean;
   currency: IFiat;
+  isGoldenHoneyBadger?: boolean;
 }
 
 interface FiatAmountData {
@@ -91,11 +92,15 @@ const createOrder = async (
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
 
+    // Generate the random image (and check if it's a Golden Honey Badger)
+    const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
+
     const baseOrderData = {
       ...fiatAmountData,
       amount,
       fee,
-      bot_fee: botFee,
+      // If it's a Golden Honey Badger and it's a sell order, set bot_fee to 0
+      bot_fee: (isGoldenHoneyBadger && type === 'sell') ? 0 : botFee,
       community_fee: communityFee,
       creator_id: user._id,
       type,
@@ -116,6 +121,8 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
+        // Pass the Golden Honey Badger status to include it in the description
+        isGoldenHoneyBadger
       }),
       range_parent_id,
       community_id,
@@ -137,9 +144,13 @@ const createOrder = async (
     }
     await order.save();
 
-    const randomImage = await generateRandomImage(order._id);
     order.random_image = randomImage;
     await order.save();
+
+    // If this is a Golden Honey Badger order, log it
+    if (isGoldenHoneyBadger && type === 'sell') {
+      logger.info(`Golden Honey Badger order created! Order ID: ${order._id}, No fee will be charged.`);
+    }
 
     if (order.status !== 'PENDING') {
       OrderEvents.orderUpdated(order);
@@ -175,6 +186,7 @@ const buildDescription = (
     priceMargin,
     priceFromAPI,
     currency,
+    isGoldenHoneyBadger
   } : BuildDescriptionArguments
 ) => {
   try {
@@ -237,6 +249,10 @@ const buildDescription = (
     description += hashtag;
     description += tasaText;
     description += rateText;
+    
+    if (isGoldenHoneyBadger && type === 'sell') {
+      description += i18n.t('golden_honey_badger') + '\n';
+    }
 
     return description;
   } catch (error) {
