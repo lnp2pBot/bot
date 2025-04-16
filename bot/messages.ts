@@ -110,14 +110,21 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
-
+    
+    let pendingSellCaption = i18n.t('pending_sell', {
+      channel,
+      orderExpirationWindow: Math.round(orderExpirationWindow),
+    });
+    
+    if (order.bot_fee === 0 && order.type === 'sell') {
+      pendingSellCaption += '\n\n' + i18n.t('golden_honey_badger');
+      logger.info(`Notificando Golden Honey Badger al vendedor en pendingSellMessage para Order ID: ${order._id}`);
+    }
+    
     await ctx.telegram.sendMediaGroup(user.tg_id, [{
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: `${i18n.t('pending_sell', {
-        channel,
-        orderExpirationWindow: Math.round(orderExpirationWindow),
-      })}`,
+      caption: pendingSellCaption,
     }]
     );
 
@@ -325,11 +332,19 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
   try {
     const expirationTime =
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
+    
+
+    let caption = ctx.i18n.t('begin_take_buy', { expirationTime });
+    
+    if (order.bot_fee === 0) {
+      caption += '\n\n' + ctx.i18n.t('golden_honey_badger');
+      logger.info(`Notificando Golden Honey Badger al vendedor en beginTakeBuyMessage para Order ID: ${order._id}`);
+    }
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: `${ctx.i18n.t('begin_take_buy', { expirationTime })}`,
+      caption: caption,
     }]
     );
 

@@ -250,9 +250,8 @@ const buildDescription = (
     description += tasaText;
     description += rateText;
     
-    if (isGoldenHoneyBadger && type === 'sell') {
-      description += i18n.t('golden_honey_badger') + '\n';
-    }
+    // El mensaje de Golden Honey Badger ya no se añade a la descripción de la oferta
+    // Se notificará al usuario explícitamente en los mensajes de pending_sell y pay_invoice
 
     return description;
   } catch (error) {
