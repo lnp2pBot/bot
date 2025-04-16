@@ -538,13 +538,17 @@ const generateRandomImage = async (nonce: string) => {
     if (isNaN(goldenProbability)) {
       logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY is not properly configured, using default value of 100");
     }
-    const probability = isNaN(goldenProbability) ? 100 : goldenProbability;
-    const luckyNumber = Math.floor(Math.random() * probability);
+    
+    const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
     
 
+    const luckyNumber = Math.floor(Math.random() * probability) + 1;
+    const winningNumber = 1; // the winning number is always 1
+    
     const honeybadgerFilename = 'Honeybadger.png';
     
-    if (luckyNumber === 0) {
+
+    if (luckyNumber === winningNumber) {
 
       try {
         const goldenImage = await fs.readFile(`images/${honeybadgerFilename}`);
