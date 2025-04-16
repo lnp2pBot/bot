@@ -2,7 +2,7 @@
 import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
 import { Order } from '../../../models';
-import { deleteOrderFromChannel } from '../../../util';
+import { deleteOrderFromChannel, generateRandomImage } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
 import { validateUserWaitingOrder, isBannedFromCommunity, validateTakeSellOrder, validateSeller, validateObjectId, validateTakeBuyOrder } from '../../validations';
@@ -48,11 +48,27 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
       return await messages.bannedUserErrorMessage(ctx, user);
 
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
+    
+    // Generate random image and check for Golden Honey Badger
+    const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(order._id.toString());
+    
     // We change the status to trigger the expiration of this order
     // if the user don't do anything
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = new Date(Date.now());
+    
+    // Set bot_fee to 0 if this is a Golden Honey Badger
+    if (isGoldenHoneyBadger) {
+      order.bot_fee = 0;
+      // Add Golden Honey Badger message to description
+      order.description += '\n' + ctx.i18n.t('golden_honey_badger');
+      logger.info(`Golden Honey Badger assigned when taking buy order! Order ID: ${order._id}, No fee will be charged.`);
+    }
+    
+    // Add the random image to the order
+    order.random_image = randomImage;
+    
     await order.save();
     order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
