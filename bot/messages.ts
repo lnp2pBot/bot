@@ -118,7 +118,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
     
     if (order.bot_fee === 0 && order.type === 'sell') {
       pendingSellCaption += '\n\n' + i18n.t('golden_honey_badger');
-      logger.info(`Notificando Golden Honey Badger al vendedor en pendingSellMessage para Order ID: ${order._id}`);
+      logger.info(`Notifying seller of Golden Honey Badger in pendingSellMessage for Order ID: ${order._id}`);
     }
     
     await ctx.telegram.sendMediaGroup(user.tg_id, [{
