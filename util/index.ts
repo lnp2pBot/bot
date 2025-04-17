@@ -547,9 +547,16 @@ const generateRandomImage = async (nonce: string) => {
     
     const honeybadgerFilename = 'Honeybadger.png';
     
+    let honeybadgerExists = false;
+    try {
+        await fs.access(`images/${honeybadgerFilename}`);
+        honeybadgerExists = true;
+    } catch (err) {
+        logger.error(`Honeybadger image not found: ${err}`);
+        honeybadgerExists = false;
+    }
 
-    if (luckyNumber === winningNumber) {
-
+    if (luckyNumber === winningNumber && honeybadgerExists) {
       try {
         const goldenImage = await fs.readFile(`images/${honeybadgerFilename}`);
         randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
