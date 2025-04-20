@@ -101,6 +101,8 @@ const createOrder = async (
       fee,
       // If it's a Golden Honey Badger and it's a sell order, set bot_fee to 0
       bot_fee: (isGoldenHoneyBadger && type === 'sell') ? 0 : botFee,
+      // Establecer explícitamente si es Golden Honey Badger (solo para órdenes sell)
+      is_golden_honey_badger: (isGoldenHoneyBadger && type === 'sell'),
       community_fee: communityFee,
       creator_id: user._id,
       type,
@@ -250,8 +252,6 @@ const buildDescription = (
     description += tasaText;
     description += rateText;
     
-    // El mensaje de Golden Honey Badger ya no se añade a la descripción de la oferta
-    // Se notificará al usuario explícitamente en los mensajes de pending_sell y pay_invoice
 
     return description;
   } catch (error) {

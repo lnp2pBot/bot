@@ -534,53 +534,73 @@ const generateRandomImage = async (nonce: string) => {
   let randomImage = '';
   let isGoldenHoneyBadger = false;
   try {
-    const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
-    if (isNaN(goldenProbability)) {
-      logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY is not properly configured, using default value of 100");
-    }
-    
-    const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
-    
-
-    const luckyNumber = Math.floor(Math.random() * probability) + 1;
-    const winningNumber = 1; // the winning number is always 1
-    
     const honeybadgerFilename = 'Honeybadger.png';
+    const honeybadgerFullPath = `images/${honeybadgerFilename}`;
     
     let honeybadgerExists = false;
     try {
-        await fs.access(`images/${honeybadgerFilename}`);
-        honeybadgerExists = true;
+      await fs.access(honeybadgerFullPath);
+      honeybadgerExists = true;
+      logger.debug(`✅ Honeybadger image found at ${honeybadgerFullPath}`);
     } catch (err) {
-        logger.error(`Honeybadger image not found: ${err}`);
-        honeybadgerExists = false;
+      logger.error(`❌ Honeybadger image NOT FOUND at ${honeybadgerFullPath}: ${err}`);
+      honeybadgerExists = false;
     }
-
-    if (luckyNumber === winningNumber && honeybadgerExists) {
-      try {
-        const goldenImage = await fs.readFile(`images/${honeybadgerFilename}`);
-        randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
-        isGoldenHoneyBadger = true;
-        logger.info(`Golden Honey Badger assigned to order with nonce: ${nonce}`);
-      } catch (error) {
-        logger.error(`Error loading Golden Honey Badger image: ${error}`);
-        isGoldenHoneyBadger = false;
+    
+    let wasHoneybadgerSelected = false;
+    
+    if (honeybadgerExists) {
+      const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
+      if (isNaN(goldenProbability)) {
+        logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY is not properly configured, using default value of 100");
+      }
+      
+      const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
+      const luckyNumber = Math.floor(Math.random() * probability) + 1;
+      const winningNumber = 1; 
+      
+      logger.debug(`Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`);
+      
+      if (luckyNumber === winningNumber) {
+        wasHoneybadgerSelected = true;
+        
+        try {
+          const goldenImage = await fs.readFile(honeybadgerFullPath);
+          randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
+          isGoldenHoneyBadger = true;
+          logger.info(`🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`);
+        } catch (error) {
+          logger.error(`Error loading Golden Honey Badger image: ${error}`);
+          isGoldenHoneyBadger = false;
+          wasHoneybadgerSelected = false;
+        }
       }
     }
     
-    if (!isGoldenHoneyBadger) {
+    if (!wasHoneybadgerSelected) {
       const files = await fs.readdir('images');
-      const imageFiles = files.filter(file =>
+      const imageFiles = files.filter(file => 
         ['.png'].includes(path.extname(file).toLowerCase()) && 
-        file !== honeybadgerFilename 
+        file !== honeybadgerFilename
       );
-
-      const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-      const fallbackImage = await fs.readFile(`images/${randomFile}`);
-      randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+      
+      if (imageFiles.length > 0) {
+        const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+        logger.debug(`Selected random image: ${randomFile}`);
+        const fallbackImage = await fs.readFile(`images/${randomFile}`);
+        randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+      } else {
+        logger.error('No PNG images found in the images directory');
+      }
     }
   } catch (fallbackError) {
-    logger.error(fallbackError);
+    logger.error(`Error in generateRandomImage: ${fallbackError}`);
+  }
+  
+  if (isGoldenHoneyBadger) {
+    logger.info(`✨ Order ${nonce} will have ZERO FEES because it got the Golden Honey Badger!`);
+  } else {
+    logger.debug(`Order ${nonce} will have NORMAL FEES (no Golden Honey Badger assigned)`);
   }
 
   return { randomImage, isGoldenHoneyBadger };

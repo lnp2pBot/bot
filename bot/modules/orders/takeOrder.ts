@@ -61,8 +61,7 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
     // Set bot_fee to 0 if this is a Golden Honey Badger
     if (isGoldenHoneyBadger) {
       order.bot_fee = 0;
-      // Add Golden Honey Badger message to description
-      order.description += '\n' + ctx.i18n.t('golden_honey_badger');
+      order.is_golden_honey_badger = true;
       logger.info(`Golden Honey Badger assigned when taking buy order! Order ID: ${order._id}, No fee will be charged.`);
     }
     

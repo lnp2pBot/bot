@@ -129,7 +129,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
       { parse_mode: 'MarkdownV2' }
     );
     
-    if (order.bot_fee === 0 && order.type === 'sell') {
+    if (order.is_golden_honey_badger === true && order.type === 'sell') {
       await ctx.telegram.sendMessage(
         user.tg_id,
         i18n.t('golden_honey_badger')
@@ -339,9 +339,9 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
 
     let caption = ctx.i18n.t('begin_take_buy', { expirationTime });
     
-    if (order.bot_fee === 0) {
+    if (order.is_golden_honey_badger === true) {
       caption += '\n\n' + ctx.i18n.t('golden_honey_badger');
-      logger.info(`Notificando Golden Honey Badger al vendedor en beginTakeBuyMessage para Order ID: ${order._id}`);
+      logger.info(`notifying golden honey badger to seller: ${order._id}`);
     }
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
