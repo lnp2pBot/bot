@@ -1,6 +1,5 @@
-// @ts-check
 import { Telegraf } from 'telegraf';
-const { userMiddleware } = require('../../middleware/user');
+import { userMiddleware } from '../../middleware/user';
 import * as actions from './actions';
 import * as commands from './commands';
 import { earningsMessage, updateCommunityMessage, sureMessage } from './messages';

@@ -1,10 +1,6 @@
-const { initialize, start } = require('./start');
-const {
-  createOrder,
-  getOrder,
-  getNewRangeOrderPayload,
-} = require('./ordersActions');
-const {
+import { initialize, start } from './start';
+import { createOrder, getOrder, getNewRangeOrderPayload } from './ordersActions';
+import {
   validateSellOrder,
   validateBuyOrder,
   validateUser,
@@ -13,8 +9,8 @@ const {
   validateTakeBuyOrder,
   validateReleaseOrder,
   validateDisputeOrder,
-} = require('./validations');
-const {
+} from './validations';
+import {
   startMessage,
   initBotErrorMessage,
   invoicePaymentRequestMessage,
@@ -36,12 +32,11 @@ const {
   onGoingTakeBuyMessage,
   pendingSellMessage,
   pendingBuyMessage,
-  beginDisputeMessage,
   notOrderMessage,
   customMessage,
-} = require('./messages');
+} from './messages';
 
-module.exports = {
+export {
   initialize,
   start,
   createOrder,
@@ -75,7 +70,6 @@ module.exports = {
   onGoingTakeBuyMessage,
   pendingSellMessage,
   pendingBuyMessage,
-  beginDisputeMessage,
   notOrderMessage,
   customMessage,
   getNewRangeOrderPayload,

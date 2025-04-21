@@ -2,7 +2,7 @@ import { Scenes } from 'telegraf';
 import { logger } from '../../../logger';
 import { Community, User, PendingPayment } from '../../../models';
 import { IOrderChannel, IUsernameId } from '../../../models/community';
-const { isPendingPayment } = require('../../../ln');
+import { isPendingPayment } from '../../../ln';
 import { isGroupAdmin, itemsFromMessage, removeAtSymbol } from '../../../util';
 import * as messages from '../../messages';
 import { isValidInvoice } from '../../validations';

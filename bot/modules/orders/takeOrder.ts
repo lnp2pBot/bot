@@ -1,4 +1,3 @@
-// @ts-check
 import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
 import { Order } from '../../../models';
@@ -6,7 +5,7 @@ import { deleteOrderFromChannel } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
 import { validateUserWaitingOrder, isBannedFromCommunity, validateTakeSellOrder, validateSeller, validateObjectId, validateTakeBuyOrder } from '../../validations';
-const OrderEvents = require('../../modules/events/orders');
+import * as OrderEvents from '../../modules/events/orders';
 
 export const takeOrderActionValidation = async (ctx: MainContext, next: () => void) => {
   try {
