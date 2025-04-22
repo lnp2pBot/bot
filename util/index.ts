@@ -541,9 +541,8 @@ const generateRandomImage = async (nonce: string) => {
     try {
       await fs.access(honeybadgerFullPath);
       honeybadgerExists = true;
-      logger.debug(`✅ Honeybadger image found at ${honeybadgerFullPath}`);
     } catch (err) {
-      logger.error(`❌ Honeybadger image NOT FOUND at ${honeybadgerFullPath}: ${err}`);
+      logger.error(`Honeybadger image not found: ${err}`);
       honeybadgerExists = false;
     }
     
@@ -552,13 +551,14 @@ const generateRandomImage = async (nonce: string) => {
     if (honeybadgerExists) {
       const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
       if (isNaN(goldenProbability)) {
-        logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY is not properly configured, using default value of 100");
+        logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY not configured properly, using default 100");
       }
       
       const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
       const luckyNumber = Math.floor(Math.random() * probability) + 1;
       const winningNumber = 1; 
       
+      // Primer log importante: comprobación de la probabilidad
       logger.debug(`Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`);
       
       if (luckyNumber === winningNumber) {
@@ -568,6 +568,8 @@ const generateRandomImage = async (nonce: string) => {
           const goldenImage = await fs.readFile(honeybadgerFullPath);
           randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
           isGoldenHoneyBadger = true;
+          
+          // Segundo log importante: confirmación de asignación
           logger.info(`🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`);
         } catch (error) {
           logger.error(`Error loading Golden Honey Badger image: ${error}`);
@@ -586,7 +588,6 @@ const generateRandomImage = async (nonce: string) => {
       
       if (imageFiles.length > 0) {
         const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-        logger.debug(`Selected random image: ${randomFile}`);
         const fallbackImage = await fs.readFile(`images/${randomFile}`);
         randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
       } else {
@@ -595,12 +596,6 @@ const generateRandomImage = async (nonce: string) => {
     }
   } catch (fallbackError) {
     logger.error(`Error in generateRandomImage: ${fallbackError}`);
-  }
-  
-  if (isGoldenHoneyBadger) {
-    logger.info(`✨ Order ${nonce} will have ZERO FEES because it got the Golden Honey Badger!`);
-  } else {
-    logger.debug(`Order ${nonce} will have NORMAL FEES (no Golden Honey Badger assigned)`);
   }
 
   return { randomImage, isGoldenHoneyBadger };
