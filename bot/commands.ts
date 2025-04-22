@@ -575,14 +575,14 @@ const addInvoicePHI = async (ctx: CommunityContext, bot: HasTelegram, orderId: s
 
 const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDocument | null = null) => {
   try {
-    if (user === null) {
+    if (!user) {
       const tgUser = (ctx.update as any).callback_query.from;
       if (!tgUser) return;
 
       user = await User.findOne({ tg_id: tgUser.id });
 
       // If user didn't initialize the bot we can't do anything
-      if (user == null) return;
+      if (!user) return;
     }
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await ordersActions.getOrder(ctx, user, orderId);
