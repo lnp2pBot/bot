@@ -92,23 +92,18 @@ const createOrder = async (
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
 
-    // Generate the random image (and check if it's a Golden Honey Badger)
     const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
     
-    // Determinar si aplica la exención de Golden Honey Badger
     const isGoldenHoneyBadgerOrder = isGoldenHoneyBadger && type === 'sell';
     
-    // Calcular la comisión con el nuevo parámetro isGoldenHoneyBadger
     const recalculatedFee = await getFee(amount, community_id, isGoldenHoneyBadgerOrder);
     
-    // Aplicamos la exención sin logs adicionales
 
     const baseOrderData = {
       ...fiatAmountData,
       amount,
       fee: recalculatedFee,
       bot_fee: isGoldenHoneyBadgerOrder ? 0 : botFee,
-      // Establecer explícitamente si es Golden Honey Badger (solo para órdenes sell)
       is_golden_honey_badger: isGoldenHoneyBadgerOrder,
       community_fee: communityFee,
       creator_id: user._id,
@@ -130,7 +125,6 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
-        // Pass the Golden Honey Badger status to include it in the description
         isGoldenHoneyBadger
       }),
       range_parent_id,
@@ -156,7 +150,7 @@ const createOrder = async (
     order.random_image = randomImage;
     await order.save();
 
-    // No logs adicionales para Golden Honey Badger aquí
+  
 
     if (order.status !== 'PENDING') {
       OrderEvents.orderUpdated(order);
