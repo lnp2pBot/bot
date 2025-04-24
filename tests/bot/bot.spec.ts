@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const { expect } = require('chai');
 const proxyquire = require('proxyquire');
 
-const { initialize } = require('../../bot');
+import { initialize } from '../../bot';
 import { User, Order } from '../../models';
 import { getCurrenciesWithPrice } from '../../util';
 import { mockUpdatesResponseForCurrencies } from './mocks/currenciesResponse';
@@ -453,7 +453,7 @@ describe('Bot Initialization', () => {
 
     scheduledFunction();
 
-    expect(scheduleStub.scheduleJob.callCount).to.be.equal(7);
+    expect(scheduleStub.scheduleJob.callCount).to.be.equal(8);
     expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal('*/10 * * * *');
     expect(attemptPendingPaymentsStub.calledOnce).to.be.equal(true);
   });

@@ -1,10 +1,10 @@
 import * as commands from './commands';
 import * as actions from './actions';
 import { Telegraf } from 'telegraf';
-import { MainContext } from '../../start';
-const { userMiddleware, adminMiddleware } = require('../../middleware/user');
+import { userMiddleware, adminMiddleware } from '../../middleware/user';
+import { CommunityContext } from '../community/communityContext';
 
-export const configure = (bot: Telegraf<MainContext>) => {
+export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('dispute', userMiddleware, commands.dispute);
   bot.command('deldispute', adminMiddleware, commands.deleteDispute);
   bot.action(

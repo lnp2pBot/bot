@@ -1,4 +1,3 @@
-// @ts-check
 import { ICommunity } from '../../../models/community';
 import * as Events from './index';
 import { TYPES as ORDER_TYPES } from './orders';
