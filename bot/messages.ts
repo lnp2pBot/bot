@@ -135,7 +135,6 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
         user.tg_id,
         i18n.t('golden_honey_badger')
       );
-      logger.info(`Notifying Golden Honey Badger to seller as separate message for Order ID: ${order._id}`);
     }
   } catch (error) {
     logger.error(error);
@@ -342,7 +341,6 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
  
     if (order.is_golden_honey_badger === true) {
       caption += '\n\n' + ctx.i18n.t('golden_honey_badger');
-      logger.info(`notifying golden honey badger to seller: ${order._id}`);
     }
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
