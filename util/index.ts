@@ -430,23 +430,22 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
 const getFee = async (amount: number, communityId: string, isGoldenHoneyBadger = false) => {
   const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
   if (!communityId) {
-    // Si no hay comunidad pero es Golden Honey Badger, no cobramos comisión
+    // if no community, return 0 if golden honey badger, otherwise return max fee
     return isGoldenHoneyBadger ? 0 : maxFee;
   }
 
-  // Calculamos las comisiones individuales
+  // Calculate fees
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
   const community = await Community.findOne({ _id: communityId });
   if (community === null) throw Error("Community was not found in DB");
   communityFee = communityFee * (community.fee / 100);
 
-  // Si es Golden Honey Badger, solo cobramos la comisión de la comunidad
-  // Si no, cobramos ambas comisiones
+
   if (isGoldenHoneyBadger) {
-    return communityFee; // Solo comisión de comunidad
+    return communityFee; 
   } else {
-    return botFee + communityFee; // Comisión total (bot + comunidad)
+    return botFee + communityFee; 
   }
 };
 
