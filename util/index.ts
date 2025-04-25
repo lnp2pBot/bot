@@ -568,7 +568,6 @@ const generateRandomImage = async (nonce: string) => {
       const luckyNumber = Math.floor(Math.random() * probability) + 1;
       const winningNumber = 1; 
       
-      // Primer log importante: comprobación de la probabilidad
       logger.debug(`Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`);
       
       if (luckyNumber === winningNumber) {
@@ -578,8 +577,6 @@ const generateRandomImage = async (nonce: string) => {
           const goldenImage = await fs.readFile(honeybadgerFullPath);
           randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
           isGoldenHoneyBadger = true;
-          
-          // Segundo log importante: confirmación de asignación
           logger.info(`🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`);
         } catch (error) {
           logger.error(`Error loading Golden Honey Badger image: ${error}`);
