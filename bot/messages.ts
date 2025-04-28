@@ -337,11 +337,6 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
     
     let caption = ctx.i18n.t('begin_take_buy', { expirationTime });
-    
- 
-    if (order.is_golden_honey_badger === true) {
-      caption += '\n\n' + ctx.i18n.t('golden_honey_badger');
-    }
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
       type: 'photo',
