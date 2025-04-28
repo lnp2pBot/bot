@@ -92,14 +92,13 @@ const createOrder = async (
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
     
-    // Sólo generar imagen aleatoria y asignar Golden Honey Badger para órdenes de venta (/sell)
-    // Para órdenes de compra (/buy), esto se hará en takebuy cuando un vendedor tome la orden
+
     let randomImage = '';
     let isGoldenHoneyBadger = false;
     let isGoldenHoneyBadgerOrder = false;
     
     if (type === 'sell') {
-      // Solo para órdenes de venta, generar la imagen y comprobar Golden Honey Badger
+
       const result = await generateRandomImage(user._id.toString());
       randomImage = result.randomImage;
       isGoldenHoneyBadger = result.isGoldenHoneyBadger;
@@ -157,7 +156,7 @@ const createOrder = async (
     }
     await order.save();
     
-    // Solo asignar imagen aleatoria para órdenes de venta
+
     if (type === 'sell' && randomImage) {
       order.random_image = randomImage;
       await order.save();
