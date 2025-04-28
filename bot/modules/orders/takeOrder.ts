@@ -48,15 +48,12 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
 
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
     
-
     const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
     
-
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = new Date(Date.now());
-    
-    //adding random image and golden honey badger flag
+
     order.random_image = randomImage;
     order.is_golden_honey_badger = isGoldenHoneyBadger;
     
@@ -64,15 +61,14 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
     order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
     
- 
     await deleteOrderFromChannel(order, bot.telegram);
     
-
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     logger.error(error);
   }
 };
+
 export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: string) => {
   try {
     const { user } = ctx;

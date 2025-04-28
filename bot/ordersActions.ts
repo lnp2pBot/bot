@@ -91,13 +91,24 @@ const createOrder = async (
     }
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
+    
+    // Sólo generar imagen aleatoria y asignar Golden Honey Badger para órdenes de venta (/sell)
+    // Para órdenes de compra (/buy), esto se hará en takebuy cuando un vendedor tome la orden
+    let randomImage = '';
+    let isGoldenHoneyBadger = false;
+    let isGoldenHoneyBadgerOrder = false;
+    
+    if (type === 'sell') {
+      // Solo para órdenes de venta, generar la imagen y comprobar Golden Honey Badger
+      const result = await generateRandomImage(user._id.toString());
+      randomImage = result.randomImage;
+      isGoldenHoneyBadger = result.isGoldenHoneyBadger;
+      isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;
+    }
 
-    const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
-    
-    const isGoldenHoneyBadgerOrder = isGoldenHoneyBadger && type === 'sell';
-    
-    const recalculatedFee = await getFee(amount, community_id, isGoldenHoneyBadgerOrder);
-    
+    const recalculatedFee = isGoldenHoneyBadgerOrder ? 
+                            await getFee(amount, community_id, true) : 
+                            fee;
 
     const baseOrderData = {
       ...fiatAmountData,
@@ -133,7 +144,6 @@ const createOrder = async (
     };
 
     let order;
-
     if (type === 'sell') {
       order = new Order({
         seller_id: user._id,
@@ -146,11 +156,12 @@ const createOrder = async (
       });
     }
     await order.save();
-
-    order.random_image = randomImage;
-    await order.save();
-
-  
+    
+    // Solo asignar imagen aleatoria para órdenes de venta
+    if (type === 'sell' && randomImage) {
+      order.random_image = randomImage;
+      await order.save();
+    }
 
     if (order.status !== 'PENDING') {
       OrderEvents.orderUpdated(order);

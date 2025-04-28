@@ -356,15 +356,10 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
   }
 };
 
-const showHoldInvoice = async (
-  ctx: CommunityContext, 
-  bot: HasTelegram, 
-  order?: IOrder | null
-) => {
+const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: IOrder | null) => {
   try {
     ctx.deleteMessage();
     
-
     if (!order) {
       const orderId = (ctx.update as any).callback_query?.message?.text;
       if (!orderId) return;
@@ -375,7 +370,6 @@ const showHoldInvoice = async (
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
 
-    // seller can only show hold invoice for WAITING_PAYMENT orders
     if (order.status !== 'WAITING_PAYMENT') {
       await messages.invalidDataMessage(ctx, bot, user);
       return;
@@ -389,7 +383,6 @@ const showHoldInvoice = async (
       });
       return;
     }
-
 
     const description = ctx.i18n.t('hold_invoice_memo', {
       botName: ctx.botInfo.username,
@@ -425,10 +418,9 @@ const showHoldInvoice = async (
     order.secret = secret;
     await order.save();
 
-  
     await subscribeInvoice(bot, hash);
     
-  
+
     await messages.showHoldInvoiceMessage(
       ctx,
       request,
