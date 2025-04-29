@@ -111,14 +111,16 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
-
+    
+    const pendingSellCaption = i18n.t('pending_sell', {
+      channel,
+      orderExpirationWindow: Math.round(orderExpirationWindow),
+    });
+    
     await ctx.telegram.sendMediaGroup(user.tg_id, [{
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: `${i18n.t('pending_sell', {
-        channel,
-        orderExpirationWindow: Math.round(orderExpirationWindow),
-      })}`,
+      caption: pendingSellCaption,
     }]
     );
 
@@ -127,6 +129,13 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'MarkdownV2' }
     );
+    
+    if (order.is_golden_honey_badger === true && order.type === 'sell') {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        i18n.t('golden_honey_badger')
+      );
+    }
   } catch (error) {
     logger.error(error);
   }
@@ -326,11 +335,13 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
   try {
     const expirationTime =
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
+    
+    let caption = ctx.i18n.t('begin_take_buy', { expirationTime });
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: `${ctx.i18n.t('begin_take_buy', { expirationTime })}`,
+      caption: caption,
     }]
     );
 
@@ -355,33 +366,41 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
   }
 };
 
+
 const showHoldInvoiceMessage = async (
   ctx: MainContext,
   request: string,
   amount: number,
   fiatCode: IOrder["fiat_code"],
   fiatAmount: IOrder["fiat_amount"],
-  randomImage: IOrder["random_image"]
+  randomImage: string,
+  isGoldenHoneyBadger: boolean = false
 ) => {
   try {
-    const currencyObject = getCurrency(fiatCode);
-    const currency =
-      !!currencyObject && !!currencyObject.symbol_native
-        ? currencyObject.symbol_native
+    const currency = getCurrency(fiatCode);
+    const currencySymbol = 
+      (currency !== null && currency.symbol_native)
+        ? currency.symbol_native
         : fiatCode;
+
 
     await ctx.reply(
       ctx.i18n.t('pay_invoice', {
         amount: numberFormat(fiatCode, amount),
-        fiatAmount: numberFormat(fiatCode, fiatAmount!),
-        currency,
+        fiatAmount: numberFormat(fiatCode, fiatAmount),
+        currency: currencySymbol,
       })
     );
+    
+ 
+    if (isGoldenHoneyBadger) {
+      await ctx.reply(ctx.i18n.t('golden_honey_badger'));
+    }
 
-    // Create QR code
+
     const qrBytes = await generateQRWithImage(request, randomImage);
 
-    // Send payment request in QR and text
+
     await ctx.replyWithMediaGroup([
       {
         type: 'photo',

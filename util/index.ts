@@ -426,17 +426,27 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
 
 // Return the fee the bot will charge to the seller
 // this fee is a combination from the global bot fee and the community fee
-const getFee = async (amount: number, communityId: string) => {
+// When isGoldenHoneyBadger=true, only the community fee is charged (botFee=0)
+const getFee = async (amount: number, communityId: string, isGoldenHoneyBadger = false) => {
   const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
-  if (!communityId) return maxFee;
+  if (!communityId) {
+    // if no community, return 0 if golden honey badger, otherwise return max fee
+    return isGoldenHoneyBadger ? 0 : maxFee;
+  }
 
+  // Calculate fees
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
   const community = await Community.findOne({ _id: communityId });
   if (community === null) throw Error("Community was not found in DB");
   communityFee = communityFee * (community.fee / 100);
 
-  return botFee + communityFee;
+
+  if (isGoldenHoneyBadger) {
+    return communityFee; 
+  } else {
+    return botFee + communityFee; 
+  }
 };
 
 const itemsFromMessage = (str: string) => {
@@ -532,22 +542,71 @@ export const removeLightningPrefix = (invoice: string) => {
 
 const generateRandomImage = async (nonce: string) => {
   let randomImage = '';
+  let isGoldenHoneyBadger = false;
   try {
-    const files = await fs.readdir('images');
-    const imageFiles = files.filter(file =>
-      ['.png'].includes(path.extname(file).toLowerCase())
-    );
-
-    const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-    const fallbackImage = await fs.readFile(`images/${randomFile}`);
-
-    randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+    const honeybadgerFilename = 'Honeybadger.png';
+    const honeybadgerFullPath = `images/${honeybadgerFilename}`;
+    
+    let honeybadgerExists = false;
+    try {
+      await fs.access(honeybadgerFullPath);
+      honeybadgerExists = true;
+    } catch (err) {
+      logger.error(`Honeybadger image not found: ${err}`);
+      honeybadgerExists = false;
+    }
+    
+    let wasHoneybadgerSelected = false;
+    
+    if (honeybadgerExists) {
+      const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
+      if (isNaN(goldenProbability)) {
+        logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY not configured properly, using default 100");
+      }
+      
+      const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
+      const luckyNumber = Math.floor(Math.random() * probability) + 1;
+      const winningNumber = 1; 
+      
+      logger.debug(`Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`);
+      
+      if (luckyNumber === winningNumber) {
+        wasHoneybadgerSelected = true;
+        
+        try {
+          const goldenImage = await fs.readFile(honeybadgerFullPath);
+          randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
+          isGoldenHoneyBadger = true;
+          logger.info(`🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`);
+        } catch (error) {
+          logger.error(`Error loading Golden Honey Badger image: ${error}`);
+          isGoldenHoneyBadger = false;
+          wasHoneybadgerSelected = false;
+        }
+      }
+    }
+    
+    if (!wasHoneybadgerSelected) {
+      const files = await fs.readdir('images');
+      const imageFiles = files.filter(file => 
+        ['.png'].includes(path.extname(file).toLowerCase()) && 
+        file !== honeybadgerFilename
+      );
+      
+      if (imageFiles.length > 0) {
+        const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
+        const fallbackImage = await fs.readFile(`images/${randomFile}`);
+        randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
+      } else {
+        logger.error('No PNG images found in the images directory');
+      }
+    }
   } catch (fallbackError) {
-    logger.error(fallbackError);
+    logger.error(`Error in generateRandomImage: ${fallbackError}`);
   }
 
-  return randomImage;
-}
+  return { randomImage, isGoldenHoneyBadger };
+};
 
 const generateQRWithImage = async (request, randomImage) => {
   const canvas = createCanvas(400, 400);

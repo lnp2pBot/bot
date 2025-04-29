@@ -32,9 +32,10 @@ interface BuildDescriptionArguments {
   fiatAmount: number[];
   fiatCode: string;
   paymentMethod: string;
-  priceMargin: any; // ?
+  priceMargin: any;
   priceFromAPI: boolean;
   currency: IFiat;
+  isGoldenHoneyBadger?: boolean;
 }
 
 interface FiatAmountData {
@@ -90,12 +91,30 @@ const createOrder = async (
     }
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
+    
+
+    let randomImage = '';
+    let isGoldenHoneyBadger = false;
+    let isGoldenHoneyBadgerOrder = false;
+    
+    if (type === 'sell') {
+
+      const result = await generateRandomImage(user._id.toString());
+      randomImage = result.randomImage;
+      isGoldenHoneyBadger = result.isGoldenHoneyBadger;
+      isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;
+    }
+
+    const recalculatedFee = isGoldenHoneyBadgerOrder ? 
+                            await getFee(amount, community_id, true) : 
+                            fee;
 
     const baseOrderData = {
       ...fiatAmountData,
       amount,
-      fee,
-      bot_fee: botFee,
+      fee: recalculatedFee,
+      bot_fee: isGoldenHoneyBadgerOrder ? 0 : botFee,
+      is_golden_honey_badger: isGoldenHoneyBadgerOrder,
       community_fee: communityFee,
       creator_id: user._id,
       type,
@@ -116,6 +135,7 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
+        isGoldenHoneyBadger
       }),
       range_parent_id,
       community_id,
@@ -123,7 +143,6 @@ const createOrder = async (
     };
 
     let order;
-
     if (type === 'sell') {
       order = new Order({
         seller_id: user._id,
@@ -136,10 +155,12 @@ const createOrder = async (
       });
     }
     await order.save();
+    
 
-    const randomImage = await generateRandomImage(order._id);
-    order.random_image = randomImage;
-    await order.save();
+    if (type === 'sell' && randomImage) {
+      order.random_image = randomImage;
+      await order.save();
+    }
 
     if (order.status !== 'PENDING') {
       OrderEvents.orderUpdated(order);
@@ -175,6 +196,7 @@ const buildDescription = (
     priceMargin,
     priceFromAPI,
     currency,
+    isGoldenHoneyBadger
   } : BuildDescriptionArguments
 ) => {
   try {
@@ -237,6 +259,7 @@ const buildDescription = (
     description += hashtag;
     description += tasaText;
     description += rateText;
+    
 
     return description;
   } catch (error) {

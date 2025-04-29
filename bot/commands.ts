@@ -356,11 +356,12 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
   }
 };
 
-const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder | null = null) => {
+const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: IOrder | null) => {
   try {
     ctx.deleteMessage();
+    
     if (!order) {
-      const orderId = (ctx.update as any).callback_query.message.text;
+      const orderId = (ctx.update as any).callback_query?.message?.text;
       if (!orderId) return;
       order = await Order.findOne({ _id: orderId });
       if (order === null) return;
@@ -369,7 +370,6 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: I
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
 
-    // Sellers only can take orders with status WAITING_PAYMENT
     if (order.status !== 'WAITING_PAYMENT') {
       await messages.invalidDataMessage(ctx, bot, user);
       return;
@@ -384,13 +384,13 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: I
       return;
     }
 
-    // We create the hold invoice and show it to the seller
     const description = ctx.i18n.t('hold_invoice_memo', {
       botName: ctx.botInfo.username,
       orderId: order._id,
       fiatCode: order.fiat_code,
       fiatAmount: order.fiat_amount,
     });
+    
     let amount;
     if (order.amount === 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
@@ -399,10 +399,17 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: I
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
-      order.fee = await getFee(amount, order.community_id);
+      
+
+      order.fee = await getFee(amount, order.community_id, order.is_golden_honey_badger);
       order.amount = amount;
     }
-    amount = Math.floor(order.amount + order.fee);
+    
+
+    amount = order.is_golden_honey_badger ? 
+             Math.floor(order.amount) : 
+             Math.floor(order.amount + order.fee);
+    
     const { request, hash, secret } = await createHoldInvoice({
       description,
       amount,
@@ -411,15 +418,17 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: I
     order.secret = secret;
     await order.save();
 
-    // We monitor the invoice to know when the seller makes the payment
     await subscribeInvoice(bot, hash);
+    
+
     await messages.showHoldInvoiceMessage(
       ctx,
       request,
       amount,
       order.fiat_code,
       order.fiat_amount,
-      order.random_image
+      order.random_image,
+      order.is_golden_honey_badger
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);

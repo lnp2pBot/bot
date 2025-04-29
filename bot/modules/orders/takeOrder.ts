@@ -1,7 +1,7 @@
 import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
 import { Order } from '../../../models';
-import { deleteOrderFromChannel } from '../../../util';
+import { deleteOrderFromChannel, generateRandomImage } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
 import { validateUserWaitingOrder, isBannedFromCommunity, validateTakeSellOrder, validateSeller, validateObjectId, validateTakeBuyOrder } from '../../validations';
@@ -42,26 +42,33 @@ export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: strin
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
-    // We verify if the user is not banned on this community
+    
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
 
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
-    // We change the status to trigger the expiration of this order
-    // if the user don't do anything
+    
+    const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
+    
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = new Date(Date.now());
+
+    order.random_image = randomImage;
+    order.is_golden_honey_badger = isGoldenHoneyBadger;
+    
     await order.save();
     order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
-    // We delete the messages related to that order from the channel
+    
     await deleteOrderFromChannel(order, bot.telegram);
+    
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     logger.error(error);
   }
 };
+
 export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: string) => {
   try {
     const { user } = ctx;

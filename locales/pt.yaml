@@ -610,6 +610,7 @@ bot_info: |
   User info:
 
   ${user_info}
+golden_honey_badger: 🍯 Texugo de Mel Dourado! Nenhuma taxa será cobrada! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
