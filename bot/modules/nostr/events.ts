@@ -40,8 +40,18 @@ const orderToTags = async (order: IOrder) => {
     const community = await Community.findById(order.community_id);
     if(community === null)
       throw new Error("community was not found");
-    const group = removeAtSymbol(community.group);
-    source = `https://t.me/${group}/${order.tg_channel_message1}`;
+    let order_channel: string;    
+    if (community.order_channels.length === 1)
+      order_channel = removeAtSymbol(community.order_channels[0].name);
+    else if (community.order_channels.length === 2){
+      if (order.type == 'buy'){
+        order_channel = removeAtSymbol(community.order_channels[0].name);
+      }
+      else {
+        order_channel = removeAtSymbol(community.order_channels[1].name);
+      }     
+    }    
+    source = `https://t.me/${order_channel}/${order.tg_channel_message1}`;
     tags.push(['community_id', order.community_id]);
   }
   tags.push(['source', source]);
