@@ -44,7 +44,7 @@ const orderToTags = async (order: IOrder) => {
     if (community.order_channels.length === 1)
       order_channel = removeAtSymbol(community.order_channels[0].name);
     else if (community.order_channels.length === 2){
-      if (order.type == 'buy'){
+      if (order.type === 'buy'){
         order_channel = removeAtSymbol(community.order_channels[0].name);
       }
       else {
