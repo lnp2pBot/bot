@@ -3,7 +3,7 @@ start: |
 
   ${disclaimer}
   ---———— DISCLAIMER ————---
-  
+
   Ce bot vous aidera à effectuer des transactions P2P Bitcoin via le réseau Lightning Network (LN).
 
   Une fois le bot lancé, vous pouvez utiliser les commandes suivantes:
@@ -38,6 +38,8 @@ non_handle_error: 👤 Pour utiliser ce bot, tu dois d'abord activer ton nom d'u
 invoice_payment_request: |
   Quelqu'un veut t'acheter ${order.amount} sats à ${order.fiat_amount} ${currency}.
 
+  ID de l'offre: #${order._id}
+  Méthode de paiement : ${order.payment_method}
   Buyer Reputation: ${rate}, jours d'utilisation du bot: ${days}
 
   Note : Vérifiez que l'image jointe correspond à celle envoyée lors de la création de la commande avant de payer la facture
@@ -121,11 +123,14 @@ payment_received: |
 
   Un peu de patience. Le collatéral vous sera recrédité si l'acheteur ne se montre pas coopératif.
 someone_took_your_order: |
-  🤖 Quelqu'un a récupéré ton offre et m'a déjà envoyé les sats, merci d'utiliser un processeur de paiement fiat qui te permet d'envoyer le paiement instantanément et qui ne permet pas de geler les fonds.
+  🤖 ID de l'offre: #${order._id}
+
+  Quelqu'un a récupéré ton offre et m'a déjà envoyé les sats, merci d'utiliser un processeur de paiement fiat qui te permet d'envoyer ${order.fiat_amount} ${currency} instantanément et qui ne permet pas de geler les fonds.  
 
   Si pour une raison quelconque le processeur de paiement met le paiement en pause et que les fonds ne sont pas arrivés en moins de ${expirationTime}, les sats seront retournés au vendeur, mettant l'acheteur dans une position risquée. Je ne peux pas obliger le vendeur à vendre ses sats de nouveau.
 
-  Seller Reputation: ${rate}, jours d'utilisation du bot: ${days}
+  Méthode de paiement : ${order.payment_method}
+  réputation du vendeur: ${rate}, jours d'utilisation du bot: ${days}
 
   Si tu es d'accord avec ce qui précède, clique sur le bouton pour continuer 👇
 you_took_someone_order: |
@@ -223,9 +228,9 @@ dispute_started_channel: |
 
   @${initiatorUser} a été impliqué.e dans ${buyerDisputes} litiges
   @${counterPartyUser} a été impliqué.e dans ${sellerDisputes} litiges
-you_started : '🥴 Vous avez commencé un litige sur votre commande Id : ${orderId}.'
-counterpart_started : '🥴 Votre contrepartie a démarré un litige sur votre commande Id : ${orderId}.'
-dispute_started : "${who} Un solver va bientôt venir vous voir, lorsqu'il/elle sera assigné(e) à votre litige, le bot vous indiquera son nom d'utilisateur, il/elle seul(e) sera en mesure de venir vous voir. Vous pouvez lui écrire directement, mais s'il vous contacte en premier, vous devez lui demander de vous dire quel est le jeton de votre litige, votre jeton est : ${token}."
+you_started: '🥴 Vous avez commencé un litige sur votre commande Id : ${orderId}.'
+counterpart_started: '🥴 Votre contrepartie a démarré un litige sur votre commande Id : ${orderId}.'
+dispute_started: "${who} Un solver va bientôt venir vous voir, lorsqu'il/elle sera assigné(e) à votre litige, le bot vous indiquera son nom d'utilisateur, il/elle seul(e) sera en mesure de venir vous voir. Vous pouvez lui écrire directement, mais s'il vous contacte en premier, vous devez lui demander de vous dire quel est le jeton de votre litige, votre jeton est : ${token}."
 must_be_valid_currency: 'Le code FIAT doit être valide, par exemple : XOF, XAF, EUR, USD... Tu peux afficher la liste complète des codes FIAT avec la commande /listcurrencies'
 must_be_number_or_range: 'Le montant fiat doit être un nombre entier ou une plage de valeur entières dans le format <minimum>-<maximum>'
 invalid_lightning_address: Adresse Lightning invalide !
@@ -314,7 +319,7 @@ init_cooperativecancel: |
   Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord."
 counterparty_wants_cooperativecancel: |
   "😳 Votre contrepartie souhaite annuler l'offre ID : ${orderId}. 
-  
+
   Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord.
 
   Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇"
@@ -537,7 +542,7 @@ maintenance: 🚨 Bot en maintenance, veuillez réessayer plus tard 🚨
 community_admin: |
   <strong>Mode Admin de la Communauté</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Oui' : 'Non'}
   Fee:
@@ -573,7 +578,6 @@ npub_not_valid: |
   Exemple:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/orders
 order_not_found: Ordre non trouvé.
 # END modules/orders
@@ -606,7 +610,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -629,11 +633,11 @@ disclaimer: |
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
 order_frozen: Vous avez gelé la commande
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
-setinvoice_no_response : Vous n'avez pas d'ordre à payer
+setinvoice_no_response: Vous n'avez pas d'ordre à payer
 already_cancelled: L'offre a déjà été annulée !
 privacy: |
   *Politique de Confidentialité*
-  
+
   Votre vie privée est importante pour nous, et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité explique quelles informations nous collectons, comment, et à quelle fin.
 
   *1. Informations que nous collectons:*  
