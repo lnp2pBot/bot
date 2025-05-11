@@ -70,10 +70,6 @@ export const takebuy = async (
       return;
     }
 
-    if (await checkBlockingStatus(ctx, user, userOffer)) {
-      return;
-    }
-
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
