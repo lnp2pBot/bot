@@ -29,6 +29,7 @@ import * as NostrModule from './modules/nostr';
 import * as OrdersModule from './modules/orders';
 import * as UserModule from './modules/user';
 import * as DisputeModule from './modules/dispute';
+import * as BlockModule from './modules/block';
 import {
   rateUser,
   cancelAddInvoice,

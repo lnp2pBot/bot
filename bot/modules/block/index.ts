@@ -1,10 +1,10 @@
 import { Telegraf } from 'telegraf';
-import { CustomContext } from './customContext';
+import { CommunityContext } from '../community/communityContext';
 
 const commands = require('./commands');
 const { userMiddleware } = require('../../middleware/user');
 
-exports.configure = (bot: Telegraf) => {
+export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('block', userMiddleware, async (ctx, next) => {
     const args = ctx.message.text.split(' ') || [];
     if (args.length !== 2) return next();
@@ -17,7 +17,7 @@ exports.configure = (bot: Telegraf) => {
     commands.unblock(ctx, args[1]);
   });
 
-  bot.command('blocklist', userMiddleware, async (ctx: CustomContext) => {
+  bot.command('blocklist', userMiddleware, async ctx => {
     try {
       await commands.blocklist(ctx);
     } catch (error) {
