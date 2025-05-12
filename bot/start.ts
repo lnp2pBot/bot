@@ -39,6 +39,7 @@ import {
   cancelOrder,
   fiatSent,
   release,
+  showQrCode,
 } from './commands';
 import {
   settleHoldInvoice,
@@ -826,6 +827,14 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
     }
     ctx.deleteMessage();
     await release(ctx, ctx.match[1]);
+  });
+
+  bot.action(/^showqrcode_([0-9a-f]{24})$/, userMiddleware, async (ctx: CommunityContext) => {
+    if (ctx.match === null) {
+      throw new Error("ctx.match should not be null");
+    }
+    ctx.deleteMessage();
+    await showQrCode(ctx, ctx.match[1]);
   });
 
   bot.command('paytobuyer', adminMiddleware, async (ctx: MainContext) => {
