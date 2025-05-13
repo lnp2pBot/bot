@@ -601,7 +601,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
 
   bot.command('terms', userMiddleware, async (ctx: MainContext) => {
     try {
-      await messages.disclaimerMessage(ctx);
+      await messages.termsMessage(ctx);
     } catch (error) {
       logger.error(error);
     }

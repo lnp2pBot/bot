@@ -55,7 +55,7 @@ pending_sell: |
 
   *Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir si no sigue las instrucciones*
 
-  Al iniciar el bot el usuario acepta los términos y condiciones de su uso, así como la política de privacidad, para más información ve a /terms
+  Al iniciar el bot, el usuario acepta los términos y condiciones de su uso, así como la política de privacidad, para más información ve a /terms
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 cancel_order_cmd: |
