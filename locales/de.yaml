@@ -1,7 +1,7 @@
 start: |
   ---———— TERMS AND CONDITIONS ————---
 
-  ${termsAndConditions}
+  ${disclaimer}
   ---———— TERMS AND CONDITIONS ————---
 
   Dieser Bot wird dir helfen, P2P Bitcoin-Transaktionen über das Lightning Network durchzuführen.
@@ -255,7 +255,7 @@ help: |
   /dispute <_order id_> - Eröffnet einen Streitfall zwischen den beteiligten Parteien
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
-  /tos - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
+  /terms - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
 
   Nostr:
   /setnpub <_nostr npub_> - Aktualisiert Ihren nostr Pubkey, dieser Befehl ist nur im /settings Wizard ausführbar
