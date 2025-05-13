@@ -34,19 +34,28 @@ start: |
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
 non_handle_error: 👤 Para usar este bot debes activar tu username de telegram, para activarlo abre el menú de hamburguesa arriba a la izquierda, selecciona ajustes -> editar perfil -> username
 invoice_payment_request: |
-  Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}.
+  Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}
 
   Reputación del comprador: ${rate}, días utilizando el bot: ${days}
 
-  Nota: Confirme que la imagen adjunta coincide con la enviada durante la creación del pedido antes de pagar la factura
+  🚨🚨🚨 *ATENCIÓN:* 🚨🚨🚨
+  *Antes de presionar el botón "Continuar" REGRESA Y MIRA NUEVAMENTE LA IMAGEN asociada a esta orden*
 
-  Si deseas continuar por favor paga esta factura, esta factura expira en ${expirationTime} minutos
+  Al presionar el botón "Continuar" verás un código QR con una imágen en el centro, confirma que las imágenes coincidan antes de pagar la factura
+
+  *Si no coinciden, esa factura no es de @lnp2pbot, NO PAGUES la factura*
+
+  Decide cómo quieres proceder 👇
 pending_sell: |
   📝 Publicada la oferta en el canal ${channel}
 
-  Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal.
+  Espera que alguien tome tu venta, si la orden no es tomada en ${orderExpirationWindow} horas será borrada del canal
 
-  Nota: Recuerde esta imagen porque la verá nuevamente dentro de la factura a pagar
+  *🚨 RECUERDA ESTA IMAGEN porque la verás nuevamente dentro de la factura a pagar*
+
+  *Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir si no sigue las instrucciones*
+
+  Al iniciar el bot el usuario acepta los términos y condiciones de su uso, así como la política de privacidad, para más información ve a /disclaimer
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 cancel_order_cmd: |

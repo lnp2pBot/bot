@@ -36,21 +36,30 @@ start: |
 init_bot_error: to use this bot, you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
 invoice_payment_request: |
-  Somebody wants to buy you ${order.amount} sats for ${currency} ${order.fiat_amount}.
+  A user wants to buy ${order.amount} sats from you for ${currency} ${order.fiat_amount}
 
-  Buyer Reputation: ${rate}, days using the bot: ${days}
+  Buyer's reputation: ${rate}, days using the bot: ${days}
 
-  Note: Confirm that the attached image matches the one sent during order creation before paying the invoice
+  🚨🚨🚨 *ATTENTION:* 🚨🚨🚨
+  *Before pressing the "Continue" button, GO BACK AND CHECK AGAIN THE IMAGE associated with this order*
 
-  Please pay this invoice to start up your selling process, it will expire in ${expirationTime} minutes
+  By pressing the "Continue" button, you will see a QR code with an image in the center, make sure the images match before paying the invoice
+
+  *If they don't match, that invoice is not from @lnp2pbot, DO NOT PAY the invoice*
+
+  Decide how you want to proceed 👇
 pending_sell: |
-  📝 Your offer has been published in the ${channel} channel
+  📝 Offer posted in the ${channel} channel
 
-  You have to wait until another user picks your order, it will be available for ${orderExpirationWindow} hours in the channel
+  Wait for someone to take your sale, if the order is not taken within ${orderExpirationWindow} hours, it will be deleted from the channel
 
-  Note: Remember this image because you will see it again inside the invoice to pay
+  *🚨 REMEMBER THIS IMAGE because you will see it again in the invoice to be paid*
 
-  You can cancel this order before another user picks it up by executing the command 👇
+  *Neither the developers nor the dispute arbitrators are responsible for any loss or damage the user may suffer if they do not follow the instructions*
+
+  By starting the bot, the user accepts the terms and conditions of its use, as well as the privacy policy, for more information, go to /disclaimer
+
+  You can cancel this order before someone takes it by executing 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
