@@ -616,20 +616,14 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       return await cancelAddInvoice(ctx, order);
     }
 
-    // If a seller is taking a buy offer and accidentally touch continue button we
-    // let the user to cancel
-    if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
+    // let the user to cancel if the order is waiting for payment
+    if (order.status === 'WAITING_PAYMENT') {
       return await cancelShowHoldInvoice(ctx, order);
-    }    
+    }
 
-    if (order.status === 'CANCELED')
+    if (order.status === 'CANCELED') {
       return await messages.orderIsAlreadyCanceledMessage(ctx);
-
-    if (order.type === 'sell' && order.status === 'WAITING_PAYMENT') {
-      return await cancelShowHoldInvoice(ctx, order);
-    } 
-
-
+    }
 
     if (
       !(
