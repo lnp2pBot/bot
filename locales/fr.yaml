@@ -36,21 +36,30 @@ start: |
 init_bot_error: pour utiliser ce bot, tu dois d'abord initialiser le démarrage avec la commande /start
 non_handle_error: 👤 Pour utiliser ce bot, tu dois d'abord activer ton nom d'utilisateur Telegram. Pour ce faire, ouvre le menu en haut à gauche et sélectionne Paramètres -> Nom d'utilisateur
 invoice_payment_request: |
-  Quelqu'un veut t'acheter ${order.amount} sats à ${order.fiat_amount} ${currency}.
+  Un utilisateur veut vous acheter ${order.amount} sats pour ${currency} ${order.fiat_amount}
 
-  Buyer Reputation: ${rate}, jours d'utilisation du bot: ${days}
+  Réputation de l'acheteur : ${rate}, jours d'utilisation du bot : ${days}
 
-  Note : Vérifiez que l'image jointe correspond à celle envoyée lors de la création de la commande avant de payer la facture
+  🚨🚨🚨 *ATTENTION :* 🚨🚨🚨
+  *Avant de presser le bouton "Continuer", RETOURNEZ ET VÉRIFIEZ À NOUVEAU L'IMAGE associée à cette commande*
 
-  Merci de régler cette facture pour démarrer le processus de vente, elle expirera dans ${expirationTime} minutes
+  En appuyant sur le bouton "Continuer", vous verrez un code QR avec une image au centre, confirmez que les images correspondent avant de payer la facture
+
+  *Si elles ne correspondent pas, cette facture ne provient pas de @lnp2pbot, NE PAYEZ PAS la facture*
+
+  Décidez de la manière dont vous souhaitez procéder 👇
 pending_sell: |
-  📝 Ton offre a été publiée dans le canal ${channel}
+  📝 Offre publiée dans le canal ${channel}
 
-  Tu dois attendre jusqu'à ce que quelqu'un récupère ton offre, elle sera visible pendant ${orderExpirationWindow} heures dans le canal
+  Attendez qu'un utilisateur prenne votre vente, si la commande n'est pas prise dans ${orderExpirationWindow} heures, elle sera supprimée du canal
 
-  Note : Mémorisez cette image car vous la reverrez dans la facture à payer
+  *🚨 RAPPELEZ VOUS DE CETTE IMAGE car vous la verrez à nouveau dans la facture à payer*
 
-  Tu peux annuler cette offre avant qu'un autre utilisateur ne la prenne en exécutant la commande 👇
+  *Ni les développeurs ni les arbitres de litiges ne sont responsables des pertes ou dommages que l'utilisateur pourrait subir s'il ne suit pas les instructions*
+
+  En démarrant le bot, l'utilisateur accepte les termes et conditions d'utilisation, ainsi que la politique de confidentialité, pour plus d'informations, allez sur /disclaimer
+
+  Vous pouvez annuler cette commande avant qu'elle soit prise en exécutant 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |

@@ -61,7 +61,6 @@ const initBotErrorMessage = async (ctx: MainContext, bot: MainContext, user: Use
 const invoicePaymentRequestMessage = async (
   ctx: MainContext,
   user: UserDocument,
-  request: string,
   order: IOrder,
   i18n: I18nContext,
   buyer: UserDocument
@@ -77,7 +76,8 @@ const invoicePaymentRequestMessage = async (
     // We need the buyer rating
     const stars = getEmojiRate(buyer.total_rating);
     const roundedRating = decimalRound(buyer.total_rating, -1);
-    const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
+    let rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
+    rate = sanitizeMD(rate);
     // Extracting the buyer's days in the platform
     const ageInDays = getUserAge(buyer);
 
@@ -89,8 +89,34 @@ const invoicePaymentRequestMessage = async (
       days: ageInDays,
     });
 
-    await ctx.telegram.sendMessage(user.tg_id, message);
+    await ctx.telegram.sendMessage(user.tg_id, message, { parse_mode: 'MarkdownV2' });
 
+    await ctx.telegram.sendMessage(user.tg_id, order._id, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: ctx.i18n.t('continue'), callback_data: `showqrcode_${order._id}`, },
+            {
+              text: ctx.i18n.t('cancel'),
+              callback_data: `cancel_${order._id}`,
+            },
+          ],
+        ],
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const showQRCodeMessage = async (
+  ctx: MainContext,
+  order: IOrder,
+  request: string,
+  user: UserDocument
+) => {
+  try {
+    //
     // Create QR code
     const qrBytes = await generateQRWithImage(request, order.random_image);
     // Send payment request in QR and text
@@ -121,6 +147,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
       caption: pendingSellCaption,
+      parse_mode: 'MarkdownV2',
     }]
     );
 
@@ -1797,5 +1824,6 @@ export {
   counterPartyCancelOrderMessage,
   checkInvoiceMessage,
   userTakerIsBlockedByUserOrder,
-  userOrderIsBlockedByUserTaker
+  userOrderIsBlockedByUserTaker,
+  showQRCodeMessage,
 };

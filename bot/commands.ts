@@ -4,6 +4,7 @@ import {
   subscribeInvoice,
   cancelHoldInvoice,
   settleHoldInvoice,
+  getInvoice,
 } from '../ln';
 import { Order, User, Dispute } from '../models';
 import * as messages from './messages';
@@ -13,12 +14,10 @@ import * as OrderEvents from './modules/events/orders';
 
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
-import { Telegraf } from 'telegraf';
 import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
-import { Types } from 'mongoose';
 
 const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocument, seller: UserDocument, order: IOrder, buyerInvoice: any) => {
   try {
@@ -55,7 +54,7 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
         fiatAmount: order.fiat_amount,
       });
       const amount = Math.floor(order.amount + order.fee);
-      const { request, hash, secret } = await createHoldInvoice({
+      const { _request, hash, secret } = await createHoldInvoice({
         amount,
         description,
       });
@@ -74,7 +73,6 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
       await messages.invoicePaymentRequestMessage(
         ctx,
         seller,
-        request,
         order,
         i18nCtx,
         buyer
@@ -618,14 +616,14 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       return await cancelAddInvoice(ctx, order);
     }
 
-    // If a seller is taking a buy offer and accidentally touch continue button we
-    // let the user to cancel
-    if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
+    // let the user to cancel if the order is waiting for payment
+    if (order.status === 'WAITING_PAYMENT') {
       return await cancelShowHoldInvoice(ctx, order);
     }
 
-    if (order.status === 'CANCELED')
+    if (order.status === 'CANCELED') {
       return await messages.orderIsAlreadyCanceledMessage(ctx);
+    }
 
     if (
       !(
@@ -772,6 +770,38 @@ const release = async (ctx: MainContext, orderId: string, user: UserDocument | n
   }
 };
 
+const showQrCode = async (ctx: MainContext, orderId: string, user: UserDocument | null = null) => {
+  try {
+    if (!user) {
+      const tgUser = (ctx.update as any).callback_query.from;
+      if (!tgUser) return;
+
+      user = await User.findOne({ tg_id: tgUser.id });
+
+      // If user didn't initialize the bot we can't do anything
+      if (!user) return;
+    }
+    if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
+    const order = await ordersActions.getOrder(ctx, user, orderId);
+
+    if (!order) return;
+
+    if (!order.hash) return;
+
+    const invoice = await getInvoice({ hash: order.hash });
+
+    return await messages.showQRCodeMessage(
+      ctx,
+      order,
+      invoice.request,
+      user,
+    );
+
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 export {
   rateUser,
   saveUserReview,
@@ -784,4 +814,5 @@ export {
   cancelOrder,
   fiatSent,
   release,
+  showQrCode,
 };
