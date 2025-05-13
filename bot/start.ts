@@ -599,7 +599,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
     }
   });
 
-  bot.command('disclaimer', userMiddleware, async (ctx: MainContext) => {
+  bot.command('terms', userMiddleware, async (ctx: MainContext) => {
     try {
       await messages.disclaimerMessage(ctx);
     } catch (error) {
