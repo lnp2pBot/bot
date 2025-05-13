@@ -34,21 +34,30 @@ start: |
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
 invoice_payment_request: |
-  Jemand möchte ${order.amount} Sats für ${currency} ${order.fiat_amount} kaufen.
+  Ein Benutzer möchte ${order.amount} sats für ${currency} ${order.fiat_amount} von dir kaufen
 
-  Buyer Reputation: ${rate}, Tage mit dem Bot: ${days}
+  Ruf des Käufers: ${rate}, Tage der Nutzung des Bots: ${days}
 
-  Hinweis: Vergewissern Sie sich vor der Zahlung der Rechnung, dass das beigefügte Bild mit dem bei der Bestellung gesendeten Bild übereinstimmt
+  🚨🚨🚨 *ACHTUNG:* 🚨🚨🚨
+  *Bevor du auf den Button "Weiter" drückst, GEHE ZURÜCK UND ÜBERPRÜFE NOCH EINMAL DAS BILD, das mit diesem Auftrag verknüpft ist*
 
-  Bitte bezahle diese LN-Rechnung, um deinen Verkaufsprozess zu starten. Diese LN-Rechnung läuft in ${expirationTime} Minuten ab
+  Wenn du auf den Button "Weiter" drückst, wirst du einen QR Code mit einem Bild im Zentrum sehen, bestätige, dass die Bilder übereinstimmen, bevor du die Rechnung bezahlst
+
+  *Wenn sie nicht übereinstimmen, ist diese Rechnung nicht von @lnp2pbot, BEZAHLEN SIE NICHT die Rechnung*
+
+  Entscheide, wie du weiter verfahren möchtest 👇
 pending_sell: |
-  📝 Dein Angebot wurde im Kanal ${channel} veröffentlicht
+  📝 Angebot im ${channel} Kanal veröffentlicht
 
-  Du musst warten, bis ein anderer Nutzer deinen Auftrag auswählt. Sie wird für ${orderExpirationWindow} Stunden im Kanal verfügbar sein
+  Warte darauf, dass jemand deinen Verkauf übernimmt, wenn der Auftrag innerhalb von ${orderExpirationWindow} Stunden nicht übernommen wird, wird er aus dem Kanal gelöscht
 
-  Hinweis: Merken Sie sich dieses Bild, da Sie es später in der Zahlungsrechnung wiedersehen werden
+  *🚨 ERINNERE DICH AN DIESES BILD, da du es erneut in der zu bezahlenden Rechnung sehen wirst*
 
-  Bevor ein anderer Benutzer dein Angebot annimmt, kannst du diesen mit dem folgenden Befehl stornieren 👇
+  *Weder die Entwickler noch die Streitbeilegungs Schiedsrichter sind verantwortlich für Verluste oder Schäden, die dem Benutzer entstehen, wenn er die Anweisungen nicht befolgt*
+
+  Durch das Starten des Bots akzeptiert der Benutzer die Nutzungsbedingungen sowie die Datenschutzrichtlinie, weitere Informationen findest du unter /disclaimer
+
+  Du kannst diese Bestellung stornieren, bevor sie jemand übernimmt, indem du 👇 ausführst
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |

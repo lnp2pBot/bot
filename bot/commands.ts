@@ -620,10 +620,16 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
     // let the user to cancel
     if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
       return await cancelShowHoldInvoice(ctx, order);
-    }
+    }    
 
     if (order.status === 'CANCELED')
       return await messages.orderIsAlreadyCanceledMessage(ctx);
+
+    if (order.type === 'sell' && order.status === 'WAITING_PAYMENT') {
+      return await cancelShowHoldInvoice(ctx, order);
+    } 
+
+
 
     if (
       !(

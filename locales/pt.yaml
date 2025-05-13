@@ -33,21 +33,30 @@ start: |
 init_bot_error: Para usar este bot, você deve iniciar com o comando /start
 non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram, para ativá-lo, abra as configurações e selecione Meu Perfil -> Editar -> Nome de Usuário
 invoice_payment_request: |
-  Alguém quer comprar ${order.amount} sats por ${currency} ${order.fiat_amount}.
+  Um usuário quer comprar de você ${order.amount} sats por ${currency} ${order.fiat_amount}
 
-  Reputação do comprador: ${rate}, dias usando o bot: ${days}
+  Reputação do comprador: ${rate}, dias utilizando o bot: ${days}
 
-  Nota: Confirme que a imagem anexada corresponde à enviada durante a criação do pedido antes de pagar a fatura
+  🚨🚨🚨 *ATENÇÃO:* 🚨🚨🚨
+  *Antes de pressionar o botão "Continuar", VOLTE E VERIFIQUE A IMAGEM associada a este pedido*
 
-  Por favor, pague esta fatura para iniciar seu processo de venda, a fatura expirará em ${expirationTime} minutos
+  Ao pressionar o botão "Continuar", você verá um código QR com uma imagem no centro, confirme que as imagens coincidem antes de pagar a fatura
+
+  *Se não coincidirem, essa fatura não é de @lnp2pbot, NÃO PAGUE a fatura*
+
+  Decida como deseja proceder 👇
 pending_sell: |
-  📝 Oferta publicada no canal ${channel} 
+  📝 Oferta publicada no canal ${channel}
 
-  Você tem que esperar até que outro usuário aceite sua oferta, ela estará disponível por ${orderExpirationWindow} horas no canal
-  
-  Nota: Lembre-se desta imagem porque você a verá novamente dentro da fatura a pagar
+  Aguarde que alguém aceite sua venda, se o pedido não for aceito dentro de ${orderExpirationWindow} horas, será excluído do canal
 
-  Você pode cancelar a oferta antes que outro usuário a aceite executando o comando 👇
+  *🚨 LEMBRE SE DESTA IMAGEM porque você a verá novamente na fatura a ser paga*
+
+  *Nem os desenvolvedores nem os árbitros de disputas são responsáveis por perdas ou danos que o usuário possa sofrer se não seguir as instruções*
+
+  Ao iniciar o bot, o usuário aceita os termos e condições de uso, bem como a política de privacidade, para mais informações, acesse /disclaimer
+
+  Você pode cancelar este pedido antes que alguém o aceite executando 👇
 cancel_order_cmd: |
   /cancel ${orderId}
 pending_buy: |
