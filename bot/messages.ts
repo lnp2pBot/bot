@@ -783,7 +783,7 @@ const helpMessage = async (ctx: MainContext) => {
   }
 };
 
-const disclaimerMessage = async (ctx: MainContext) => {
+const termsMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('disclaimer'), { parse_mode: 'Markdown' });
   } catch (error) {
@@ -1720,7 +1720,7 @@ export {
   mustBeANumberOrRange,
   invalidLightningAddress,
   helpMessage,
-  disclaimerMessage,
+  termsMessage,
   privacyMessage,
   mustBeGreatherEqThan,
   bannedUserErrorMessage,

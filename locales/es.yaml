@@ -1,8 +1,8 @@
 start: |
-  ---———— DISCLAIMER ————---
+  ---———— TERMS AND CONDITIONS ————---
 
   ${disclaimer}
-  ---———— DISCLAIMER ————---
+  ---———— TERMS AND CONDITIONS ————---
 
   Este bot te ayudará a completar tus intercambios P2P usando Bitcoin vía Lightning Network.
 
@@ -55,7 +55,7 @@ pending_sell: |
 
   *Ni los desarrolladores ni los árbitros de disputas son responsables de las pérdidas o daños que el usuario pueda sufrir si no sigue las instrucciones*
 
-  Al iniciar el bot el usuario acepta los términos y condiciones de su uso, así como la política de privacidad, para más información ve a /disclaimer
+  Al iniciar el bot, el usuario acepta los términos y condiciones de su uso, así como la política de privacidad, para más información ve a /terms
 
   Puedes cancelar esta orden antes de que alguien la tome ejecutando 👇
 cancel_order_cmd: |
@@ -253,10 +253,9 @@ help: |
   /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
   /release <_id orden_> - El vendedor libera los satoshis
   /dispute <_id orden_> - Abre una disputa entre los participantes
-  /disclaimer - Muestra descargo de responsabilidad
   /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
-  /disclaimer - Muestra los términos y condiciones al usar el bot
+  /terms - Muestra los términos y condiciones al usar el bot
   /privacy - Muestra la Política de Privacidad
 
   Nostr:

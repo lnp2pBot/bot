@@ -1,8 +1,8 @@
 start: |
-  ---———— DISCLAIMER ————---
+  ---———— TERMS AND CONDITIONS ————---
 
   ${disclaimer}
-  ---———— DISCLAIMER ————---
+  ---———— TERMS AND CONDITIONS ————---
 
   Questo bot ti aiuterà a completare le transazioni P2P di Bitcoin attraverso la rete Lightning.
 
@@ -55,7 +55,7 @@ pending_sell: |
 
   *Né gli sviluppatori né gli arbitri delle dispute sono responsabili per perdite o danni che l'utente potrebbe subire se non segue le istruzioni*
 
-  Avviando il bot, l'utente accetta i termini e le condizioni d'uso, nonché la politica sulla privacy, per maggiori informazioni, vai su /disclaimer
+  Avviando il bot, l'utente accetta i termini e le condizioni d'uso, nonché la politica sulla privacy, per maggiori informazioni, vai su /terms
 
   Puoi annullare questo ordine prima che qualcuno lo prenda eseguendo 👇
 cancel_order_cmd: |
@@ -253,10 +253,9 @@ help: |
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
   /release <_order id_> - Il venditore rilascia i sats
   /dispute <_order id_> - Apre una disputa tra le parti
-  /disclaimer - visualizza la dichiarazione di non responsabilità
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
-  /disclaimer: mostra i termini e le condizioni quando si utilizza il bot
+  /terms: mostra i termini e le condizioni quando si utilizza il bot
 
   Nostr:
   /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey, questo comando è eseguibile solo nella procedura guidata /settings
