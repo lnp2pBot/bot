@@ -76,8 +76,7 @@ const invoicePaymentRequestMessage = async (
     // We need the buyer rating
     const stars = getEmojiRate(buyer.total_rating);
     const roundedRating = decimalRound(buyer.total_rating, -1);
-    let rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
-    rate = sanitizeMD(rate);
+    const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
     // Extracting the buyer's days in the platform
     const ageInDays = getUserAge(buyer);
 
@@ -89,7 +88,7 @@ const invoicePaymentRequestMessage = async (
       days: ageInDays,
     });
 
-    await ctx.telegram.sendMessage(user.tg_id, message, { parse_mode: 'MarkdownV2' });
+    await ctx.telegram.sendMessage(user.tg_id, message, { parse_mode: 'Markdown' });
 
     await ctx.telegram.sendMessage(user.tg_id, order._id, {
       reply_markup: {
@@ -125,7 +124,7 @@ const showQRCodeMessage = async (
         type: 'photo',
         media: { source: qrBytes },
         caption: ['`', request, '`'].join(''),
-        parse_mode: 'MarkdownV2',
+        parse_mode: 'Markdown',
       },
     ]);
   } catch (error) {
@@ -154,7 +153,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
     await ctx.telegram.sendMessage(
       user.tg_id,
       i18n.t('cancel_order_cmd', { orderId: order._id }),
-      { parse_mode: 'MarkdownV2' }
+      { parse_mode: 'Markdown' }
     );
     
     if (order.is_golden_honey_badger === true && order.type === 'sell') {
