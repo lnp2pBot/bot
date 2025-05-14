@@ -124,7 +124,6 @@ const showQRCodeMessage = async (
         type: 'photo',
         media: { source: qrBytes },
         caption: ['`', request, '`'].join(''),
-        parse_mode: 'Markdown',
       },
     ]);
   } catch (error) {
