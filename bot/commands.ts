@@ -785,15 +785,18 @@ const showQrCode = async (ctx: MainContext, orderId: string, user: UserDocument 
     const order = await ordersActions.getOrder(ctx, user, orderId);
 
     if (!order) return;
-
     if (!order.hash) return;
 
     const invoice = await getInvoice({ hash: order.hash });
+    const request = invoice?.request;
+    if (!request) {
+      return ctx.reply(ctx.i18n.t('generic_error'));
+    }
 
     return await messages.showQRCodeMessage(
       ctx,
       order,
-      invoice.request,
+      request,
       user,
     );
 
