@@ -54,7 +54,7 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
         fiatAmount: order.fiat_amount,
       });
       const amount = Math.floor(order.amount + order.fee);
-      const { _request, hash, secret } = await createHoldInvoice({
+      const { hash, secret } = await createHoldInvoice({
         amount,
         description,
       });
