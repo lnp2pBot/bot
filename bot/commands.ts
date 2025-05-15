@@ -616,9 +616,18 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       return await cancelAddInvoice(ctx, order);
     }
 
-    // let the user to cancel if the order is waiting for payment
     if (order.status === 'WAITING_PAYMENT') {
-      return await cancelShowHoldInvoice(ctx, order);
+      if (order.type === 'buy') {
+        return cancelShowHoldInvoice(ctx, order);
+      }
+      // Seller wants to cancel in WAITING_PAYMENT
+      if (order.type === 'sell') {
+        const seller = await User.findById(order.seller_id);
+        if (!seller) throw new Error('sellerUser was not found');
+        if (String(ctx.from.id) === seller.tg_id) {
+          return cancelShowHoldInvoice(ctx, order);
+        }
+      }
     }
 
     if (order.status === 'CANCELED') {
