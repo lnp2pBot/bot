@@ -616,21 +616,19 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       return await cancelAddInvoice(ctx, order);
     }
 
-    // If a seller is taking a buy offer and accidentally touch continue button we
-    // let the user to cancel
-    if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
-      return await cancelShowHoldInvoice(ctx, order);
+    if (order.status === 'WAITING_PAYMENT') {
+      if (order.type === 'buy') {
+        return cancelShowHoldInvoice(ctx, order);
+      }
+      // Seller wants to cancel in WAITING_PAYMENT
+      if (order.type === 'sell') {
+        const seller = await User.findById(order.seller_id);
+        if (!seller) throw new Error('sellerUser was not found');
+        if (String(ctx.from.id) === seller.tg_id) {
+          return cancelShowHoldInvoice(ctx, order);
+        }
+      }
     }
-    
-    // If seller wants to cancel in waiting-payment status
-    const userTgId = String(ctx.from.id);
-    const sellerUser = await User.findOne({ _id: order.seller_id });
-    if(sellerUser === null)
-      throw new Error("sellerUser was not found");
-    const sellerTgId = sellerUser.tg_id;    
-    if (order.type === 'sell' && order.status === 'WAITING_PAYMENT' && userTgId === sellerTgId) {
-      return await cancelShowHoldInvoice(ctx, order);
-    }    
 
     if (order.status === 'CANCELED') {
       return await messages.orderIsAlreadyCanceledMessage(ctx);
