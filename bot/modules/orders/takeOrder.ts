@@ -1,13 +1,25 @@
+// @ts-check
 import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
-import { Order } from '../../../models';
+import { Block, Order, User } from '../../../models';
 import { deleteOrderFromChannel, generateRandomImage } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
-import { validateUserWaitingOrder, isBannedFromCommunity, validateTakeSellOrder, validateSeller, validateObjectId, validateTakeBuyOrder } from '../../validations';
-import * as OrderEvents from '../../modules/events/orders';
+import {
+  isBannedFromCommunity,
+  validateObjectId,
+  validateSeller,
+  validateTakeBuyOrder,
+  validateTakeSellOrder,
+  validateUserWaitingOrder,
+} from '../../validations';
 
-export const takeOrderActionValidation = async (ctx: MainContext, next: () => void) => {
+const OrderEvents = require('../../modules/events/orders');
+
+export const takeOrderActionValidation = async (
+  ctx: MainContext,
+  next: () => void
+) => {
   try {
     const text = (ctx.update as any).callback_query.message.text;
     if (!text) return;
@@ -16,7 +28,10 @@ export const takeOrderActionValidation = async (ctx: MainContext, next: () => vo
     logger.error(err);
   }
 };
-export const takeOrderValidation = async (ctx: MainContext, next: () => void) => {
+export const takeOrderValidation = async (
+  ctx: MainContext,
+  next: () => void
+) => {
   try {
     const { user } = ctx;
     if (!(await validateUserWaitingOrder(ctx, ctx, user))) return;
@@ -35,46 +50,79 @@ export const takebuyValidation = async (ctx: MainContext, next: () => void) => {
     logger.error(err);
   }
 };
-export const takebuy = async (ctx: MainContext, bot: HasTelegram, orderId: string) => {
+export const takebuy = async (
+  ctx: MainContext,
+  bot: HasTelegram,
+  orderId: string
+) => {
   try {
     if (!orderId) return;
     const { user } = ctx;
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
-    
+
+    const userOffer = await User.findOne({ _id: order.buyer_id });
+
+    if (!userOffer) {
+      return await messages.notFoundUserMessage(ctx);
+    } else if (await checkBlockingStatus(ctx, user, userOffer)) {
+      return;
+    }
+
+    // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
 
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
-    
+
     const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(user._id.toString());
-    
+
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = new Date(Date.now());
 
     order.random_image = randomImage;
     order.is_golden_honey_badger = isGoldenHoneyBadger;
-    
+
     await order.save();
     order.status = 'in-progress';
     OrderEvents.orderUpdated(order);
-    
+
     await deleteOrderFromChannel(order, bot.telegram);
-    
+
     await messages.beginTakeBuyMessage(ctx, bot, user, order);
   } catch (error) {
     logger.error(error);
   }
 };
-
-export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: string) => {
+export const takesell = async (
+  ctx: MainContext,
+  bot: HasTelegram,
+  orderId: string
+) => {
   try {
     const { user } = ctx;
     if (!orderId) return;
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
+    const seller = await User.findOne({ _id: order.seller_id });
+
+    const sellerIsBlocked = await Block.exists({
+      blocker_tg_id: user.tg_id,
+      blocked_tg_id: seller.tg_id,
+    });
+    const buyerIsBlocked = await Block.exists({
+      blocker_tg_id: seller.tg_id,
+      blocked_tg_id: user.tg_id,
+    });
+
+    if (sellerIsBlocked)
+      return await messages.userOrderIsBlockedByUserTaker(ctx, user);
+
+    if (buyerIsBlocked)
+      return await messages.userTakerIsBlockedByUserOrder(ctx, user);
+
     // We verify if the user is not banned on this community
     if (await isBannedFromCommunity(user, order.community_id))
       return await messages.bannedUserErrorMessage(ctx, user);
@@ -92,4 +140,26 @@ export const takesell = async (ctx: MainContext, bot: HasTelegram, orderId: stri
   } catch (error) {
     logger.error(error);
   }
+};
+
+const checkBlockingStatus = async (ctx, user, otherUser) => {
+  const userIsBlocked = await Block.exists({
+    blocker_tg_id: user.tg_id,
+    blocked_tg_id: otherUser.tg_id,
+  });
+  if (userIsBlocked) {
+    await messages.userOrderIsBlockedByUserTaker(ctx, user);
+    return true;
+  }
+
+  const takerIsBlocked = await Block.exists({
+    blocker_tg_id: otherUser.tg_id,
+    blocked_tg_id: user.tg_id,
+  });
+  if (takerIsBlocked) {
+    await messages.userTakerIsBlockedByUserOrder(ctx, user);
+    return true;
+  }
+
+  return false;
 };
