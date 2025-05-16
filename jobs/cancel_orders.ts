@@ -1,5 +1,4 @@
-import { Telegraf } from "telegraf";
-import { HasTelegram, MainContext } from "../bot/start";
+import { HasTelegram } from "../bot/start";
 import { User, Order } from "../models";
 import { cancelShowHoldInvoice, cancelAddInvoice } from '../bot/commands';
 import * as messages from "../bot/messages";
