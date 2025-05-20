@@ -103,6 +103,7 @@ export const myComms = async (ctx: MainContext) => {
 export const findCommunity = async (ctx: CommunityContext) => {
   try {
     const [fiatCode] = (await validateParams(ctx, 2, '\\<_fiat code_\\>'))!;
+    if (!fiatCode) return;
 
     const communities = await findCommunities(fiatCode.toUpperCase());
     if (!communities.length) {

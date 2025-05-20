@@ -136,6 +136,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
   try {
     const orderExpirationWindow =
       Number(process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW) / 60 / 60;
+    channel = sanitizeMD(channel);
     
     const pendingSellCaption = i18n.t('pending_sell', {
       channel,
@@ -146,7 +147,7 @@ const pendingSellMessage = async (ctx: MainContext, user: UserDocument, order: I
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
       caption: pendingSellCaption,
-      parse_mode: 'MarkdownV2',
+      parse_mode: 'Markdown',
     }]
     );
 
