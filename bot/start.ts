@@ -259,8 +259,13 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
   bot.command('version', async (ctx: MainContext) => {
     try {
       const pckg = require('../../package.json');
-      const commitHash =  execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
-      await ctx.reply(pckg.version + '\n' + commitHash);
+      let commitHash = 'unknown';
+      try {
+        commitHash = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+      } catch (error) {
+        logger.warn(`Could not retrieve Git commit hash: ${error.message}`);
+      }
+      await ctx.reply(`${pckg.version}\n${commitHash}`);
     } catch (err) {
       logger.error(err);
     }
