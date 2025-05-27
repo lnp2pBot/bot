@@ -14,8 +14,8 @@ const fs = require('fs').promises;
 const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
-const QRCode = require('qrcode');
-const { Image, createCanvas } = require('canvas');
+import QRCode from "qrcode";
+import { Image, createCanvas } from 'canvas';
 // ISO 639-1 language codes
 
 const languages: ILanguages = languagesJson;
@@ -619,7 +619,8 @@ const generateQRWithImage = async (request, randomImage) => {
   const centerImage = new Image();
   centerImage.src = `data:image/png;base64,${randomImage}`;
 
-  const imageSize = canvas.width * 0.3;
+  const imageToQrRatio = parseFloat(process.env.IMAGE_TO_QR_RATIO?? '0.2')
+  const imageSize = canvas.width * imageToQrRatio;
   const imagePos = (canvas.width - imageSize) / 2;
 
   ctx.drawImage(centerImage, imagePos, imagePos, imageSize, imageSize);
