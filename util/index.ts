@@ -619,7 +619,15 @@ const generateQRWithImage = async (request, randomImage) => {
   const centerImage = new Image();
   centerImage.src = `data:image/png;base64,${randomImage}`;
 
-  const imageToQrRatio = parseFloat(process.env.IMAGE_TO_QR_RATIO?? '0.2');
+  const rawRatio = process.env.IMAGE_TO_QR_RATIO ?? '0.2';
+  let imageToQrRatio = parseFloat(rawRatio);
+  
+  // Validate ratio is a valid number between 0.1 and 0.5
+  if (isNaN(imageToQrRatio) || imageToQrRatio < 0.1 || imageToQrRatio > 0.5) {
+    logger.warn(`Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`);
+    imageToQrRatio = 0.2;
+  }
+  
   const imageSize = canvas.width * imageToQrRatio;
   const imagePos = (canvas.width - imageSize) / 2;
 
