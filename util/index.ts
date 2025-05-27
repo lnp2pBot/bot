@@ -619,7 +619,7 @@ const generateQRWithImage = async (request, randomImage) => {
   const centerImage = new Image();
   centerImage.src = `data:image/png;base64,${randomImage}`;
 
-  const imageToQrRatio = parseFloat(process.env.IMAGE_TO_QR_RATIO?? '0.2')
+  const imageToQrRatio = parseFloat(process.env.IMAGE_TO_QR_RATIO?? '0.2');
   const imageSize = canvas.width * imageToQrRatio;
   const imagePos = (canvas.width - imageSize) / 2;
 
