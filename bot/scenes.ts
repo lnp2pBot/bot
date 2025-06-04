@@ -9,7 +9,6 @@ import { isPendingPayment } from '../ln';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
-import * as OrderEvents from './modules/events/orders';
 
 interface InvoiceParseResult { 
   invoice?: any;
