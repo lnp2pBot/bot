@@ -29,6 +29,7 @@ import * as NostrModule from './modules/nostr';
 import * as OrdersModule from './modules/orders';
 import * as UserModule from './modules/user';
 import * as DisputeModule from './modules/dispute';
+import * as BlockModule from './modules/block';
 import {
   rateUser,
   cancelAddInvoice,
@@ -268,6 +269,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
   NostrModule.configure(bot);
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
+  BlockModule.configure(bot);
 
   bot.command('release', userMiddleware, async ctx => {
     try {
