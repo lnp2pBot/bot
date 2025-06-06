@@ -2,6 +2,9 @@ import winston from 'winston';
 
 const level = process.env.LOG_LEVEL || 'notice';
 
+// Suppress all logging during tests
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 const logger = winston.createLogger({
   format: winston.format.combine(
     winston.format.timestamp({
@@ -15,7 +18,7 @@ const logger = winston.createLogger({
   ),
   levels: winston.config.syslog.levels,
   level,
-  transports: [
+  transports: isTestEnvironment ? [] : [
     new winston.transports.Console({
       handleExceptions: true,
     }),
@@ -23,5 +26,9 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
+// If no transports in test mode, add a null transport to prevent winston warnings
+if (isTestEnvironment) {
+  logger.add(new winston.transports.Console({ silent: true }));
+}
 
 export { logger };
