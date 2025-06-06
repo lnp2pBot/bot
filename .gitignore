@@ -4,3 +4,4 @@ admin.macaroon
 tls.cert
 dist/
 .history/
+CLAUDE.md
