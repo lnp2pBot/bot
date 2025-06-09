@@ -49,6 +49,7 @@ export interface ICommunity extends Document {
   created_at: Date;
   nostr_public_key: string;
   warning_messages_count: number;
+    language: string;
 }
 
 const CommunitySchema = new Schema<ICommunity>({
@@ -82,6 +83,7 @@ const CommunitySchema = new Schema<ICommunity>({
   created_at: { type: Date, default: Date.now },
   nostr_public_key: { type: String },
   warning_messages_count: { type: Number, default: 0 },
+  language: { type: String, default: 'en' },
 });
 
 export default mongoose.model<ICommunity>('Community', CommunitySchema);

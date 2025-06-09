@@ -554,6 +554,8 @@ community_admin: |
     ${community.fee}
   Ganancias:
     ${community.earnings}
+  Idioma:
+    ${community.language || 'es'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -564,7 +566,11 @@ community_admin_help: |
   # comandos
 
   /setnpub &lt;npub&gt; - Configura la llave pública de Nostr de la comunidad.
+  /setlanguage &lt;lang&gt; - Configura el idioma de la comunidad para los mensajes publicados.
 community_npub_updated: Has configurado la pubkey ${npub} de la comunidad exitosamente!
+community_language_updated: Has configurado el idioma ${language} de la comunidad exitosamente!
+wizard_community_enter_language: Ingresa el idioma de la comunidad, ej: es, en, pt, fr, de, it, etc.
+wizard_community_invalid_language: El idioma debe ser uno de los siguientes: es, en, pt, fr, de, it, etc.
 # END modules/community
 
 # START modules/nostr

@@ -37,6 +37,27 @@ const communityAdmin = () => {
     }
   });
 
+  scene.command('/setlanguage', async (ctx: CommunityContext) => {
+    try {
+      const [, language] = ctx.message!.text.trim().split(' ');
+      const lang = language?.toLowerCase();
+      
+      // Check if language is valid
+      const validLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'uk', 'ko', 'fa'];
+      if (!lang || !validLanguages.includes(lang)) {
+        return ctx.reply(ctx.i18n.t('wizard_community_invalid_language'));
+      }
+      
+      const { community } = ctx.scene.state as any;
+      community.language = lang;
+      await community.save();
+      await ctx.reply(ctx.i18n.t('community_language_updated', { language: lang }));
+      CommunityEvents.communityUpdated(community);
+    } catch (err) {
+      return ctx.reply(ctx.i18n.t('generic_error'));
+    }
+  });
+
   return scene;
 };
 
