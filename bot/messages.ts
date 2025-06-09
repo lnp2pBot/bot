@@ -26,6 +26,8 @@ import { PayViaPaymentRequestResult } from 'lightning';
 import { IFiat } from '../util/fiatModel';
 import { generateQRWithImage } from '../util';
 import { CommunityContext } from './modules/community/communityContext';
+const { I18n } = require('@grammyjs/i18n');
+import { Community } from '../models';
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -626,11 +628,25 @@ const publishBuyOrderMessage = async (
     const channel = await getOrderChannel(order);
     if (channel === undefined)
       throw new Error("channel is undefined");
+
+    // Get the community language if available
+    let communityI18n = i18n;
+    if (order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community && community.language) {
+        communityI18n = new I18n({
+          defaultLanguageOnMissing: true,
+          locale: community.language,
+          directory: 'locales'
+        }).createContext(community.language);
+      }
+    }
+    
     // We send the message to the channel
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: i18n.t('sell_sats'), callback_data: 'takebuy' }],
+          [{ text: communityI18n.t('sell_sats'), callback_data: 'takebuy' }],
         ],
       },
     });
@@ -663,11 +679,26 @@ const publishSellOrderMessage = async (
     const channel = await getOrderChannel(order);
     if (channel === undefined)
       throw new Error("channel is undefined");
+
+    // Get the community language if available
+    let communityI18n = i18n;
+
+    if (order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community && community.language) {
+        communityI18n = new I18n({
+          defaultLanguageOnMissing: true,
+          locale: community.language,
+          directory: 'locales'
+        }).createContext(community.language);
+      }
+    }
+    
     // We send the message to the channel
     const message1 = await ctx.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
+          [{ text: communityI18n.t('buy_sats'), callback_data: 'takesell' }],
         ],
       },
     });

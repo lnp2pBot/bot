@@ -194,6 +194,12 @@ export const updateCommunity = async (ctx: CommunityContext, id: string, field: 
         user,
         community,
       });
+    } else if (field === 'language') {
+      ctx.scene.enter('UPDATE_LANGUAGE_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
     }
   } catch (error) {
     logger.error(error);
