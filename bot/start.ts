@@ -67,7 +67,7 @@ import {
   checkSolvers,
 } from '../jobs';
 import { logger } from "../logger";
-import { ICommunity, IUsernameId } from '../models/community';
+import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
 
 export interface MainContext extends Context {
@@ -285,6 +285,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
+        // eslint-disable-next-line no-useless-return
         return;
       } else {
         await release(ctx, orderId, ctx.user);
@@ -416,6 +417,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
+        // eslint-disable-next-line no-useless-return
         return;
       } else {
         await cancelOrder(ctx, orderId, ctx.user);
@@ -632,6 +634,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
 
         return await messages.showConfirmationButtons(ctx, orders, command);
       } else if (!(await validateObjectId(ctx, orderId))) {
+        // eslint-disable-next-line no-useless-return
         return;
       } else {
         await fiatSent(ctx, orderId, ctx.user);

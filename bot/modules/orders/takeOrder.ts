@@ -1,5 +1,3 @@
-// @ts-check
-import { Telegraf } from 'telegraf';
 import { logger } from '../../../logger';
 import { Block, Order, User } from '../../../models';
 import { deleteOrderFromChannel, generateRandomImage } from '../../../util';

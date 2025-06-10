@@ -1,15 +1,15 @@
-const { ObjectId } = require('mongoose').Types;
 import { Order, Community } from '../models';
 import * as messages from './messages';
 import { getCurrency, numberFormat, getBtcExchangePrice, getFee, getUserAge, getStars, generateRandomImage } from '../util';
 import { logger } from '../logger';
 import { I18nContext } from '@grammyjs/i18n';
 import { UserDocument } from '../models/user';
-import { MainContext } from './start';
+import { HasTelegram, MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
-
 import * as OrderEvents from './modules/events/orders';
+
+const { ObjectId } = require('mongoose').Types;
 
 interface CreateOrderArguments {
   type: string;
@@ -46,7 +46,7 @@ interface FiatAmountData {
 
 const createOrder = async (
   i18n: I18nContext,
-  bot: MainContext,
+  bot: HasTelegram,
   user: UserDocument,
   {
     type,
