@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import { Telegraf, session, Context, Telegram } from 'telegraf';
 import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram'
@@ -157,6 +158,15 @@ https://github.com/telegraf/telegraf/issues/1319#issuecomment-766360594
 */
 export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
 
+const COMMIT_HASH = (() => {
+  try {
+    return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+  } catch (e) {
+    logger.warning(`Could not retrieve Git commit hash: ${e.message}`);
+    return 'unknown';
+  }
+})();
+
 const initialize = (botToken: string, options: Partial<Telegraf.Options<CommunityContext>>): Telegraf<CommunityContext> => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
@@ -257,12 +267,8 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
   });
 
   bot.command('version', async (ctx: MainContext) => {
-    try {
-      const pckg = require('../../package.json');
-      await ctx.reply(pckg.version);
-    } catch (err) {
-      logger.error(err);
-    }
+    const pckg = require('../../package.json');
+    await ctx.reply(`${ctx.i18n.t('version')}: ${pckg.version}\n${ctx.i18n.t('commit_hash')}: ${COMMIT_HASH}`);
   });
 
   UserModule.configure(bot);
