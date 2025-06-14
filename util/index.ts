@@ -624,7 +624,7 @@ const generateQRWithImage = async (request, randomImage) => {
   
   // Validate ratio is a valid number between 0.1 and 0.5
   if (isNaN(imageToQrRatio) || imageToQrRatio < 0.1 || imageToQrRatio > 0.5) {
-    logger.warn(`Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`);
+    logger.warning(`Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`);
     imageToQrRatio = 0.2;
   }
   
