@@ -276,6 +276,8 @@ help: |
 
   /version - Muestra la versión actual del bot
   /help - Mensaje de ayuda
+version: Versión
+commit_hash: Hash del último commit
 must_be_gt_or_eq: ${fieldName} debe ser mayor o igual que ${qty}
 you_have_been_banned: ¡Has sido baneado!
 I_told_seller_you_sent_fiat: 🤖 Le avisé a @${sellerUsername} que has enviado el dinero fiat, cuando el vendedor confirme que recibió tu dinero deberá liberar los fondos. Si se niega, puedes abrir una disputa.

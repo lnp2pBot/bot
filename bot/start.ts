@@ -265,7 +265,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       } catch (error) {
         logger.warn(`Could not retrieve Git commit hash: ${error.message}`);
       }
-      await ctx.reply(`${pckg.version}\n${commitHash}`);
+      await ctx.reply(`${ctx.i18n.t('version')}: ${pckg.version}\n${ctx.i18n.t('commit_hash')}: ${commitHash}`);
     } catch (err) {
       logger.error(err);
     }
