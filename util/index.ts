@@ -11,8 +11,9 @@ import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import { logger } from "../logger";
 import QRCode from "qrcode";
-import { Image, createCanvas } from 'canvas';const fs = require('fs').promises;
+import { Image, createCanvas } from 'canvas';
 
+const fs = require('fs').promises;
 const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
