@@ -10,12 +10,12 @@ import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import { logger } from "../logger";
-const fs = require('fs').promises;
+import QRCode from "qrcode";
+import { Image, createCanvas } from 'canvas';const fs = require('fs').promises;
+
 const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
-import QRCode from "qrcode";
-import { Image, createCanvas } from 'canvas';
 // ISO 639-1 language codes
 
 const languages: ILanguages = languagesJson;
