@@ -40,7 +40,7 @@ const orderToTags = async (order: IOrder) => {
     const community = await Community.findById(order.community_id);
     if(community === null)
       throw new Error("community was not found");
-    let order_channel: string;    
+    let order_channel: string = "";    
     if (community.order_channels.length === 1)
       order_channel = removeAtSymbol(community.order_channels[0].name);
     else if (community.order_channels.length === 2){
