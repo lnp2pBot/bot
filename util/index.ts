@@ -10,12 +10,13 @@ import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
 import { Order, Community } from "../models";
 import { logger } from "../logger";
+import QRCode from "qrcode";
+import { Image, createCanvas } from 'canvas';
+
 const fs = require('fs').promises;
 const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
-const QRCode = require('qrcode');
-const { Image, createCanvas } = require('canvas');
 // ISO 639-1 language codes
 
 const languages: ILanguages = languagesJson;
@@ -619,7 +620,16 @@ const generateQRWithImage = async (request, randomImage) => {
   const centerImage = new Image();
   centerImage.src = `data:image/png;base64,${randomImage}`;
 
-  const imageSize = canvas.width * 0.3;
+  const rawRatio = process.env.IMAGE_TO_QR_RATIO ?? '0.2';
+  let imageToQrRatio = parseFloat(rawRatio);
+  
+  // Validate ratio is a valid number between 0.1 and 0.5
+  if (isNaN(imageToQrRatio) || imageToQrRatio < 0.1 || imageToQrRatio > 0.5) {
+    logger.warning(`Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`);
+    imageToQrRatio = 0.2;
+  }
+  
+  const imageSize = canvas.width * imageToQrRatio;
   const imagePos = (canvas.width - imageSize) / 2;
 
   ctx.drawImage(centerImage, imagePos, imagePos, imageSize, imageSize);
