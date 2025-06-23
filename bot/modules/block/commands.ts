@@ -1,10 +1,9 @@
-import { CustomContext } from './customContext';
+import { User, Block, Order } from '../../../models';
+import * as messages from './messages';
+import * as globalMessages from '../../messages';
+import { MainContext } from '../../start';
 
-const { User, Block, Order } = require('../../../models');
-const messages = require('./messages');
-const globalMessages = require('../../messages');
-
-const block = async (ctx: CustomContext, username: string): Promise<void> => {
+const block = async (ctx: MainContext, username: string): Promise<void> => {
   const userToBlock = await User.findOne({ username:  username.substring(1) });
   const user = ctx.user;
 
@@ -54,7 +53,7 @@ const block = async (ctx: CustomContext, username: string): Promise<void> => {
   await messages.userBlocked(ctx);
 };
 
-const unblock = async (ctx: CustomContext, username: string): Promise<void> => {
+const unblock = async (ctx: MainContext, username: string): Promise<void> => {
   const userToUnblock = await User.findOne({ username: username.substring(1) });
   if (!userToUnblock) {
     await globalMessages.notFoundUserMessage(ctx);
@@ -74,9 +73,9 @@ const unblock = async (ctx: CustomContext, username: string): Promise<void> => {
   }
 };
 
-const blocklist = async (ctx: CustomContext): Promise<void> => {
+const blocklist = async (ctx: MainContext): Promise<void> => {
   const blocks = await Block.find({ blocker_tg_id: ctx.user.tg_id });
-  const tgIdBlocks = blocks.map(blocked => blocked.blocked_tg_id);
+  const tgIdBlocks = blocks.map((blocked: { blocked_tg_id: any; }) => blocked.blocked_tg_id);
 
   if (!tgIdBlocks.length) {
     await messages.blocklistEmptyMessage(ctx);
