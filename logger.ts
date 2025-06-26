@@ -44,7 +44,7 @@ export const logOperationDuration = (operation: string, startTime: number, succe
   };
   
   if (duration > 30000) { // Log slow operations (>30s)
-    logger.warn(`SLOW_OPERATION: ${JSON.stringify(logData)}`);
+    logger.warning(`SLOW_OPERATION: ${JSON.stringify(logData)}`);
   } else {
     logger.info(`OPERATION_DURATION: ${JSON.stringify(logData)}`);
   }

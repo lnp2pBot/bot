@@ -99,9 +99,9 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
           pending.last_error = payment.error as string;
           
           if (payment.error === 'TIMEOUT') {
-            logger.warn(`Payment timeout for order ${order._id}, attempt ${pending.attempts}`);
+            logger.warning(`Payment timeout for order ${order._id}, attempt ${pending.attempts}`);
           } else if (payment.error === 'ROUTING_FAILED') {
-            logger.warn(`Routing failed for order ${order._id}, attempt ${pending.attempts}`);
+            logger.warning(`Routing failed for order ${order._id}, attempt ${pending.attempts}`);
           } else {
             logger.error(`Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`);
           }

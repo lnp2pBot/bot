@@ -136,10 +136,10 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
         const errorType = payment.error as string;
         
         if (errorType === 'TIMEOUT') {
-          logger.warn(`Payment timeout for order ${order._id}, will retry later`);
+          logger.warning(`Payment timeout for order ${order._id}, will retry later`);
           await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
         } else if (errorType === 'ROUTING_FAILED') {
-          logger.warn(`Routing failed for order ${order._id}, will retry with cleared reputation`);
+          logger.warning(`Routing failed for order ${order._id}, will retry with cleared reputation`);
           await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
         } else {
           logger.error(`Payment failed for order ${order._id} with error: ${errorType}`);
