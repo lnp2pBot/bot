@@ -13,6 +13,8 @@ export interface IPendingPayment extends Document {
     user_id: string;
     order_id: string;
     community_id: string;
+    last_error: string;
+    next_retry: Date;
 }
 
 
@@ -37,6 +39,8 @@ const PendingPaymentSchema = new Schema<IPendingPayment>({
     user_id: { type: String },
     order_id: { type: String },
     community_id: { type: String },
+    last_error: { type: String, default: '' },
+    next_retry: { type: Date, default: () => new Date(Date.now() + 5 * 60 * 1000) },
 });
 
 
