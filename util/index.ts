@@ -562,7 +562,7 @@ const generateRandomImage = async (nonce: string) => {
     if (honeybadgerExists) {
       const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
       if (isNaN(goldenProbability)) {
-        logger.warn("GOLDEN_HONEY_BADGER_PROBABILITY not configured properly, using default 100");
+        logger.warning("GOLDEN_HONEY_BADGER_PROBABILITY not configured properly, using default 100");
       }
       
       const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
