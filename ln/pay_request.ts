@@ -26,7 +26,9 @@ interface PayViaPaymentRequestParams {
 const payRequest = async ({ request, amount }: { request: string, amount: number }) => {
   const startTime = Date.now();
   const operationName = 'payRequest';
-  
+  // Use configurable pathfinding timeout, default to 60 seconds
+  const pathfindingTimeout = parseInt(process.env.LN_PATHFINDING_TIMEOUT || '60000');
+
   try {
     const invoice = parsePaymentRequest({ request });
     if (!invoice) return false;
@@ -38,10 +40,6 @@ const payRequest = async ({ request, amount }: { request: string, amount: number
       throw new Error("Environment variable MAX_ROUTING_FEE is not defined");
     // We need to set a max fee amount
     const maxFee = amount * parseFloat(maxRoutingFee);
-
-    // Use configurable pathfinding timeout, default to 60 seconds
-    const pathfindingTimeout = parseInt(process.env.LN_PATHFINDING_TIMEOUT || '60000');
-    
     const params : PayViaPaymentRequestParams = {
       lnd,
       request,
@@ -64,7 +62,6 @@ const payRequest = async ({ request, amount }: { request: string, amount: number
     return payment;
   } catch (error: any) {
     const errorMessage = error.toString();
-    const pathfindingTimeout = parseInt(process.env.LN_PATHFINDING_TIMEOUT || '60000');
     
     logOperationDuration(operationName, startTime, false);
     
