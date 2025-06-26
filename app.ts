@@ -25,7 +25,9 @@ import { CommunityContext } from "./bot/modules/community/communityContext";
   mongoose.connection
     .once('open', async () => {
       logger.info('Connected to Mongo instance.');
-      let options: Partial<Telegraf.Options<CommunityContext>> = { handlerTimeout: 60000 };
+      // Use configurable bot handler timeout, default to 60 seconds
+      const handlerTimeout = parseInt(process.env.BOT_HANDLER_TIMEOUT || '60000');
+      let options: Partial<Telegraf.Options<CommunityContext>> = { handlerTimeout };
       if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
         options = {

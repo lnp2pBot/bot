@@ -14,12 +14,21 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
     is_invoice_expired: false,
     community_id: null,
+    next_retry: { $lte: new Date() },
   });
   for (const pending of pendingPayments) {
     const order = await Order.findOne({ _id: pending.order_id });
     try {
       if (order === null) throw Error("Order was not found in DB");
       pending.attempts++;
+      
+      // Calculate exponential backoff delay
+      const baseDelay = 5 * 60 * 1000; // 5 minutes
+      const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
+      const maxDelay = 60 * 60 * 1000; // 1 hour max
+      const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
+      pending.next_retry = new Date(Date.now() + nextRetryDelay);
+      
       if (order.status === 'SUCCESS') {
         pending.paid = true;
         await pending.save();
@@ -85,9 +94,25 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
+        // Enhanced error handling for different payment failure types
+        if (payment && typeof payment === 'object' && 'error' in payment) {
+          pending.last_error = payment.error as string;
+          
+          if (payment.error === 'TIMEOUT') {
+            logger.warn(`Payment timeout for order ${order._id}, attempt ${pending.attempts}`);
+          } else if (payment.error === 'ROUTING_FAILED') {
+            logger.warn(`Routing failed for order ${order._id}, attempt ${pending.attempts}`);
+          } else {
+            logger.error(`Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`);
+          }
+        } else {
+          pending.last_error = 'PAYMENT_FAILED';
+          logger.error(`Payment failed for order ${order._id}, attempt ${pending.attempts}`);
+        }
+        
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
         ) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
@@ -124,11 +149,19 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
     is_invoice_expired: false,
     community_id: { $ne: null },
+    next_retry: { $lte: new Date() },
   });
 
   for (const pending of pendingPayments) {
     try {
       pending.attempts++;
+      
+      // Calculate exponential backoff delay for community payments
+      const baseDelay = 5 * 60 * 1000; // 5 minutes
+      const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
+      const maxDelay = 60 * 60 * 1000; // 1 hour max
+      const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
+      pending.next_retry = new Date(Date.now() + nextRetryDelay);
 
       // We check if this new payment is on flight
       const isPending: boolean = await isPendingPayment(pending.payment_request);
@@ -174,9 +207,22 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
           })
         );
       } else {
+        // Enhanced error handling for community payments
+        if (payment && typeof payment === 'object' && 'error' in payment) {
+          pending.last_error = payment.error as string;
+          logger.error(
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats, error: ${payment.error}`
+          );
+        } else {
+          pending.last_error = 'PAYMENT_FAILED';
+          logger.error(
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`
+          );
+        }
+        
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts === parseInt(process.env.PAYMENT_ATTEMPTS)
+          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
         ) {
           await bot.telegram.sendMessage(
             user.tg_id,
@@ -185,9 +231,6 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
             })
           );
         }
-        logger.error(
-          `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`
-        );
       }
     } catch (error) {
       logger.error(`attemptCommunitiesPendingPayments catch error: ${error}`);

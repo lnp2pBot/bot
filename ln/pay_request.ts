@@ -8,7 +8,7 @@ import { User, PendingPayment } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
 import * as messages from '../bot/messages';
-import { logger } from '../logger';
+import { logger, logTimeout, logOperationDuration } from '../logger';
 import * as OrderEvents from '../bot/modules/events/orders';
 import { IOrder } from '../models/order';
 import { HasTelegram } from '../bot/start';
@@ -24,6 +24,11 @@ interface PayViaPaymentRequestParams {
 }
 
 const payRequest = async ({ request, amount }: { request: string, amount: number }) => {
+  const startTime = Date.now();
+  const operationName = 'payRequest';
+  // Use configurable pathfinding timeout, default to 60 seconds
+  const pathfindingTimeout = parseInt(process.env.LN_PATHFINDING_TIMEOUT || '60000');
+
   try {
     const invoice = parsePaymentRequest({ request });
     if (!invoice) return false;
@@ -35,11 +40,10 @@ const payRequest = async ({ request, amount }: { request: string, amount: number
       throw new Error("Environment variable MAX_ROUTING_FEE is not defined");
     // We need to set a max fee amount
     const maxFee = amount * parseFloat(maxRoutingFee);
-
     const params : PayViaPaymentRequestParams = {
       lnd,
       request,
-      pathfinding_timeout: 60000,
+      pathfinding_timeout: pathfindingTimeout,
     };
     // If the invoice doesn't have amount we add it to the params
     if (!invoice.tokens) params.tokens = amount;
@@ -51,12 +55,35 @@ const payRequest = async ({ request, amount }: { request: string, amount: number
     // Delete all routing reputations to clear pathfinding memory
     await deleteForwardingReputations({ lnd });
 
+    logger.info(`Starting payment for ${amount} sats with ${pathfindingTimeout}ms timeout`);
     const payment = await payViaPaymentRequest(params);
-
+    
+    logOperationDuration(operationName, startTime, true);
     return payment;
-  } catch (error) {
-    logger.error(`payRequest: ${error}`);
-    return false;
+  } catch (error: any) {
+    const errorMessage = error.toString();
+    
+    logOperationDuration(operationName, startTime, false);
+    
+    // Enhanced error handling for different timeout scenarios
+    if (errorMessage.includes('TimeoutError') || errorMessage.includes('timed out')) {
+      logTimeout('payRequest', pathfindingTimeout, error);
+      logger.error(`payRequest timeout after ${pathfindingTimeout}ms: ${errorMessage}`);
+      return { error: 'TIMEOUT', message: errorMessage };
+    }
+    
+    if (errorMessage.includes('UnknownPaymentHash') || errorMessage.includes('PaymentPathfindingFailedToFindPossibleRoute')) {
+      logger.error(`payRequest routing failed: ${errorMessage}`);
+      return { error: 'ROUTING_FAILED', message: errorMessage };
+    }
+    
+    if (errorMessage.includes('InsufficientBalance')) {
+      logger.error(`payRequest insufficient balance: ${errorMessage}`);
+      return { error: 'INSUFFICIENT_BALANCE', message: errorMessage };
+    }
+    
+    logger.error(`payRequest unexpected error: ${errorMessage}`);
+    return { error: 'UNKNOWN', message: errorMessage };
   }
 };
 
@@ -104,7 +131,25 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       );
       await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
-      await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+      // Handle different types of payment failures
+      if (payment && typeof payment === 'object' && 'error' in payment) {
+        const errorType = payment.error as string;
+        
+        if (errorType === 'TIMEOUT') {
+          logger.warn(`Payment timeout for order ${order._id}, will retry later`);
+          await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+        } else if (errorType === 'ROUTING_FAILED') {
+          logger.warn(`Routing failed for order ${order._id}, will retry with cleared reputation`);
+          await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+        } else {
+          logger.error(`Payment failed for order ${order._id} with error: ${errorType}`);
+          await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+        }
+      } else {
+        await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+      }
+      
+      // Create pending payment for retry
       const pp = new PendingPayment({
         amount: order.amount,
         payment_request: order.buyer_invoice,
@@ -112,6 +157,8 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
         description: order.description,
         hash: order.hash,
         order_id: order._id,
+        attempts: 1,
+        last_error: payment && typeof payment === 'object' && 'error' in payment ? payment.error as string : 'UNKNOWN',
       });
       await pp.save();
     }

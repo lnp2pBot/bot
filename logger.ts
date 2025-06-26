@@ -23,5 +23,31 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
+// Enhanced timeout monitoring utilities
+export const logTimeout = (operation: string, timeout: number, error?: any) => {
+  const logData = {
+    operation,
+    timeout_ms: timeout,
+    timestamp: new Date().toISOString(),
+    error: error?.toString() || 'Unknown timeout error'
+  };
+  logger.error(`TIMEOUT_MONITOR: ${JSON.stringify(logData)}`);
+};
+
+export const logOperationDuration = (operation: string, startTime: number, success: boolean = true) => {
+  const duration = Date.now() - startTime;
+  const logData = {
+    operation,
+    duration_ms: duration,
+    success,
+    timestamp: new Date().toISOString()
+  };
+  
+  if (duration > 30000) { // Log slow operations (>30s)
+    logger.warn(`SLOW_OPERATION: ${JSON.stringify(logData)}`);
+  } else {
+    logger.info(`OPERATION_DURATION: ${JSON.stringify(logData)}`);
+  }
+};
 
 export { logger };
