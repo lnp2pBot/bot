@@ -18,6 +18,7 @@ export const stageMiddleware = () => {
     CommunityModule.Scenes.updateSolversCommunityWizard,
     CommunityModule.Scenes.updateFeeCommunityWizard,
     CommunityModule.Scenes.updateDisputeChannelCommunityWizard,
+    CommunityModule.Scenes.updateLanguageCommunityWizard,
     CommunityModule.Scenes.addEarningsInvoiceWizard,
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
