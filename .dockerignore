@@ -87,7 +87,8 @@ coverage/
 .yarn-integrity
 
 # Docker files
-Dockerfile*
+!Dockerfile         # keep the main Dockerfile
+Dockerfile.*        # ignore alternates like Dockerfile.dev, Dockerfile.old
 .dockerignore
 docker-compose*.yml
 
