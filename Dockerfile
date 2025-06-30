@@ -15,7 +15,8 @@ RUN apk add --no-cache \
     pkgconfig \
     python3 \
     make \
-    g++
+    g++ \
+    git
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -36,6 +37,9 @@ COPY . .
 
 # Build TypeScript
 RUN npx tsc
+
+# Capture git commit hash for version info
+RUN git rev-parse HEAD > /tmp/git-commit-hash 2>/dev/null || echo "unknown" > /tmp/git-commit-hash
 
 # Remove dev dependencies after build to reduce final image size
 RUN rm -rf node_modules && npm ci --omit=dev
@@ -66,6 +70,7 @@ WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /tmp/git-commit-hash /tmp/git-commit-hash
 
 # Copy necessary runtime files
 COPY --chown=nodeuser:nodejs locales ./locales

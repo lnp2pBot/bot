@@ -160,6 +160,12 @@ export const ctxUpdateAssertMsg = "ctx.update.message.text is not available.";
 
 const COMMIT_HASH = (() => {
   try {
+    // Try to read from pre-built commit hash file first (for Docker deployments)
+    const fs = require('fs');
+    if (fs.existsSync('/tmp/git-commit-hash')) {
+      return fs.readFileSync('/tmp/git-commit-hash', 'utf8').trim();
+    }
+    // Fallback to git command for local development
     return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
   } catch (e: any) {
     logger.warning(`Could not retrieve Git commit hash: ${e.message}`);

@@ -33,8 +33,7 @@ build/
 ehthumbs.db
 Thumbs.db
 
-# Git files
-.git/
+# Git files (keep .git for build-time commit hash capture)
 .gitignore
 .gitattributes
 
