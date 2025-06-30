@@ -31,8 +31,9 @@ import { CommunityContext } from "./bot/modules/community/communityContext";
       if (process.env.SOCKS_PROXY_HOST) {
         const agent = new SocksProxyAgent(process.env.SOCKS_PROXY_HOST);
         options = {
+          ...options,
           telegram: {
-            agent,
+            agent: agent as any,
           },
         };
       }
