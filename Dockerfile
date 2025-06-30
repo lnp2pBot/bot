@@ -23,8 +23,9 @@ WORKDIR /usr/src/app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev dependencies for build)
-RUN npm ci --ignore-scripts && \
+# Install all dependencies and rebuild native modules
+RUN npm ci && \
+    npm rebuild canvas && \
     npm cache clean --force
 
 # Copy TypeScript configuration
@@ -57,15 +58,10 @@ RUN addgroup -g 1001 -S nodejs && \
 # Create app directory
 WORKDIR /usr/src/app
 
-# Copy package files
-COPY package*.json ./
-
-# Install only production dependencies
-RUN npm ci --only=production --ignore-scripts && \
-    npm cache clean --force
-
-# Copy built application from builder stage
+# Copy built application and dependencies from builder stage
 COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/package*.json ./
 
 # Copy necessary runtime files
 COPY --chown=nodeuser:nodejs locales ./locales
