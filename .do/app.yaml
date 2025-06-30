@@ -1,0 +1,104 @@
+name: lnp2pbot
+services:
+- name: bot
+  source_dir: /
+  github:
+    repo: your-username/lnp2pbot
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: Dockerfile
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  envs:
+  # Telegram Configuration
+  - key: BOT_TOKEN
+    scope: RUN_TIME
+    type: SECRET
+  
+  # Lightning Network Configuration  
+  - key: LND_CERT_BASE64
+    scope: RUN_TIME
+    type: SECRET
+  - key: LND_MACAROON_BASE64
+    scope: RUN_TIME
+    type: SECRET
+  - key: LND_GRPC_HOST
+    scope: RUN_TIME
+    value: "your-lnd-node:10009"
+  
+  # Database Configuration
+  - key: MONGO_URI
+    scope: RUN_TIME
+    type: SECRET
+  
+  # Telegram Channels
+  - key: CHANNEL
+    scope: RUN_TIME
+    value: "@your_orders_channel"
+  - key: ADMIN_CHANNEL
+    scope: RUN_TIME
+    value: "@your_admin_channel"
+  
+  # Bot Configuration
+  - key: NODE_ENV
+    scope: RUN_TIME
+    value: "production"
+  - key: LANGUAGE
+    scope: RUN_TIME
+    value: "en"
+  - key: LNURL_PUBLIC_URL
+    scope: RUN_TIME
+    value: "https://your-app.ondigitalocean.app"
+  
+  # Lightning Network Settings
+  - key: INVOICE_EXPIRY_WINDOW
+    scope: RUN_TIME
+    value: "3600"
+  - key: HOLD_INVOICE_EXPIRY_WINDOW
+    scope: RUN_TIME
+    value: "3600"
+  - key: PENDING_PAYMENT_WINDOW
+    scope: RUN_TIME
+    value: "300"
+  - key: MAX_ROUTING_FEE
+    scope: RUN_TIME
+    value: "100"
+  - key: CLTV_DELTA
+    scope: RUN_TIME
+    value: "40"
+  
+  # Trading Configuration
+  - key: MAX_ORDERS_BY_USER
+    scope: RUN_TIME
+    value: "1"
+  - key: ORDER_EXPIRY_WINDOW
+    scope: RUN_TIME
+    value: "3600"
+  - key: FIAT_SENT_EXPIRY_WINDOW
+    scope: RUN_TIME
+    value: "7200"
+  - key: MAX_PAYMENT_ATTEMPTS
+    scope: RUN_TIME
+    value: "3"
+  - key: PAYMENT_ATTEMPTS_WINDOW
+    scope: RUN_TIME
+    value: "1800"
+  
+  # Optional: Proxy Configuration
+  # - key: SOCKS_PROXY_HOST
+  #   scope: RUN_TIME
+  #   value: "your-proxy-host:port"
+  
+  # Optional: Nostr Integration
+  # - key: NOSTR_PRIVATE_KEY
+  #   scope: RUN_TIME
+  #   type: SECRET
+  # - key: NOSTR_RELAYS
+  #   scope: RUN_TIME
+  #   value: "wss://relay1.com,wss://relay2.com"
+
+databases:
+- name: lnp2pbot-db
+  engine: MONGODB
+  version: "5"
+  size: basic-xs
