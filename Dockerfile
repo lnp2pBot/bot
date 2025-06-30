@@ -24,7 +24,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci --only=production --ignore-scripts && \
+RUN npm ci --ignore-scripts && \   # include dev deps for build
     npm cache clean --force
 
 # Copy TypeScript configuration
