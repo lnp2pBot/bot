@@ -37,6 +37,9 @@ COPY . .
 # Build TypeScript
 RUN npx tsc
 
+# Remove dev dependencies after build to reduce final image size
+RUN rm -rf node_modules && npm ci --omit=dev
+
 # Production stage
 FROM node:20-alpine AS production
 
