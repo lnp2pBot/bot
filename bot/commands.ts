@@ -261,10 +261,9 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
     if (order === null) return;
 
     // We make sure the seller can't send us sats now
-    if (order.hash === null){
-      throw new Error("order.hash is null");
+    if (order.hash) {
+      await cancelHoldInvoice({ hash: order.hash });
     }
-    await cancelHoldInvoice({ hash: order.hash });
 
     const user = await User.findOne({ _id: order.buyer_id });
 
@@ -467,11 +466,10 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
     }
     if (order === null) return;
 
-    if (order.hash === null) {
-      throw new Error("order.hash is null");
-    }
     // We make sure the seller can't send us sats now
-    await cancelHoldInvoice({ hash: order.hash });
+    if (order.hash) {
+      await cancelHoldInvoice({ hash: order.hash });
+    }
 
     const user = await User.findOne({ _id: order.seller_id });
     if (!user) return;
