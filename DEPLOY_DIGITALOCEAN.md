@@ -54,6 +54,12 @@ base64 -w0 ~/.lnd/data/chain/bitcoin/mainnet/admin.macaroon
 - **External MongoDB**: Atlas, your own server, etc.
 - **Connection String Format**: `mongodb://username:password@host:port/database_name`
 
+**Important MongoDB Connection Notes:**
+- If using DigitalOcean Managed MongoDB, use the **Private Network** connection string
+- Ensure your database allows connections from your App Platform instance
+- For MongoDB Atlas, add `0.0.0.0/0` to IP whitelist (or use VPC peering)
+- Test connection string format: `mongodb+srv://username:password@cluster.mongodb.net/database_name`
+
 ### 4. Update Configuration Values
 
 In the App Platform dashboard, update these environment variables:
@@ -149,9 +155,15 @@ The bot includes several health monitoring jobs:
 - Confirm LND node is running and accessible
 
 #### Database Connection Issues  
-- Test MongoDB connection string locally
-- Check firewall rules
-- Verify credentials
+- **Test MongoDB connection string locally first**
+- **Check MongoDB URI format**: Ensure it matches your provider's requirements
+- **Network Access**: 
+  - DigitalOcean Managed DB: Use private network connection
+  - MongoDB Atlas: Add `0.0.0.0/0` to IP whitelist or set up VPC peering
+  - Self-hosted: Ensure firewall allows DigitalOcean App Platform IPs
+- **Verify credentials**: Username, password, and database name
+- **Check database exists**: Ensure the database name in the URI exists
+- **URI encoding**: Special characters in passwords must be URL-encoded
 
 ### Debug Commands
 View application logs:

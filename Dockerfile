@@ -43,7 +43,7 @@ RUN rm -rf node_modules && npm ci --omit=dev
 # Production stage
 FROM node:20-alpine AS production
 
-# Install runtime dependencies for canvas
+# Install runtime dependencies for canvas and git for version info
 RUN apk add --no-cache \
     cairo \
     jpeg \
@@ -52,7 +52,8 @@ RUN apk add --no-cache \
     librsvg \
     pixman \
     ttf-dejavu \
-    dumb-init
+    dumb-init \
+    git
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
