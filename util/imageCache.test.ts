@@ -1,6 +1,4 @@
 import { imageCache } from './imageCache';
-import path from 'path';
-
 const sinon = require('sinon');
 const { expect } = require('chai');
 const proxyquire = require('proxyquire');

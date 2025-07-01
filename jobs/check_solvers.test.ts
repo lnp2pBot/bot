@@ -1,14 +1,13 @@
-import { describe, it, expect, jest, beforeEach, afterEach } from '@jest/globals';
+// @ts-ignore
 import { checkSolvers, validateSolverResponse, loadSolverConfig, SolverConfig, SolverResult } from './check_solvers';
 
-// Mock external dependencies
 jest.mock('axios');
 jest.mock('fs/promises');
 
-describe('checkSolvers', () => {
-  let mockAxios: jest.Mocked<typeof import('axios')>;
-  let mockFs: jest.Mocked<typeof import('fs/promises')>;
+let mockAxios: jest.Mocked<typeof import('axios')>;
+let mockFs: jest.Mocked<typeof import('fs/promises')>;
 
+describe('checkSolvers', () => {
   beforeEach(() => {
     mockAxios = require('axios');
     mockFs = require('fs/promises');
@@ -172,7 +171,7 @@ describe('checkSolvers', () => {
 
       expect(result).toHaveLength(50);
       expect(mockAxios.get).toHaveBeenCalledTimes(50);
-      expect(result.every(r => r.status === 'healthy')).toBe(true);
+      expect(result.every((r: SolverResult) => r.status === 'healthy')).toBe(true);
     });
 
     it('should handle solvers with special characters in names', async () => {
@@ -322,7 +321,7 @@ describe('checkSolvers', () => {
       let callCount = 0;
       jest.spyOn(Date, 'now').mockImplementation(() => {
         callCount++;
-        return callCount === 1 ? 1000 : 1250; // 250ms response time
+        return callCount === 1 ? 1000 : 1250;
       });
 
       mockAxios.get.mockResolvedValueOnce({ 
@@ -343,7 +342,7 @@ describe('checkSolvers', () => {
       let callCount = 0;
       jest.spyOn(Date, 'now').mockImplementation(() => {
         callCount++;
-        return callCount === 1 ? 1000 : 1500; // 500ms before failure
+        return callCount === 1 ? 1000 : 1500;
       });
 
       mockAxios.get.mockRejectedValueOnce(new Error('Request failed'));
@@ -363,14 +362,13 @@ describe('checkSolvers', () => {
         { name: 'solver3', url: 'http://solver3.com', timeout: 5000 }
       ];
 
-      // Create promises that we can control
-      let resolvePromise1: (value: any) => void;
-      let resolvePromise2: (value: any) => void;
-      let rejectPromise3: (error: any) => void;
+      let resolve1: (value: any) => void;
+      let resolve2: (value: any) => void;
+      let reject3: (error: any) => void;
 
-      const promise1 = new Promise(resolve => { resolvePromise1 = resolve; });
-      const promise2 = new Promise(resolve => { resolvePromise2 = resolve; });
-      const promise3 = new Promise((_, reject) => { rejectPromise3 = reject; });
+      const promise1 = new Promise(resolve => { resolve1 = resolve; });
+      const promise2 = new Promise(resolve => { resolve2 = resolve; });
+      const promise3 = new Promise((_, reject) => { reject3 = reject; });
 
       mockAxios.get
         .mockReturnValueOnce(promise1 as any)
@@ -379,10 +377,9 @@ describe('checkSolvers', () => {
 
       const resultPromise = checkSolvers(mockSolvers);
 
-      // Resolve/reject in different order
-      rejectPromise3!(new Error('Solver 3 failed'));
-      resolvePromise2!({ status: 200, data: { status: 'healthy' } });
-      resolvePromise1!({ status: 200, data: { status: 'healthy' } });
+      reject3!(new Error('Solver 3 failed'));
+      resolve2!({ status: 200, data: { status: 'healthy' } });
+      resolve1!({ status: 200, data: { status: 'healthy' } });
 
       const result = await resultPromise;
 
@@ -696,17 +693,14 @@ describe('Integration Tests', () => {
 
     expect(results).toHaveLength(3);
     
-    // US East - Healthy
     expect(results[0].name).toBe('solver-us-east');
     expect(results[0].status).toBe('healthy');
     expect(results[0].version).toBe('3.2.1');
     
-    // EU West - Healthy
     expect(results[1].name).toBe('solver-eu-west');
     expect(results[1].status).toBe('healthy');
     expect(results[1].version).toBe('3.2.0');
     
-    // Asia - Unhealthy
     expect(results[2].name).toBe('solver-asia');
     expect(results[2].status).toBe('unhealthy');
     expect(results[2].error).toBe('Request failed with status code 503');

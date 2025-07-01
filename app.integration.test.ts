@@ -5,7 +5,7 @@
  * These tests verify the app works correctly when components interact
  */
 
-import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
 
 describe('App Integration Tests', () => {
   beforeAll(async () => {
@@ -67,7 +67,7 @@ describe('App Integration Tests', () => {
         () => Promise.resolve('recovery success')
       ];
 
-      const results = [];
+      const results: string[] = [];
       for (const operation of operations) {
         try {
           const result = await operation();
@@ -108,7 +108,7 @@ describe('App Integration Tests', () => {
       };
 
       // Test graceful degradation
-      let result;
+      let result: any;
       try {
         result = await mockUnavailableService.call();
       } catch (error) {
@@ -126,12 +126,12 @@ describe('App Integration Tests', () => {
       const sharedState = { counter: 0 };
       
       const component1 = {
-        increment: () => sharedState.counter++,
+        increment: () => { sharedState.counter++; },
         getCount: () => sharedState.counter
       };
       
       const component2 = {
-        decrement: () => sharedState.counter--,
+        decrement: () => { sharedState.counter--; },
         getCount: () => sharedState.counter
       };
 
@@ -149,13 +149,13 @@ describe('App Integration Tests', () => {
       // Mock event system
       const eventSystem = {
         listeners: new Map<string, Function[]>(),
-        on: function(event: string, callback: Function) {
+        on(event: string, callback: Function) {
           if (!this.listeners.has(event)) {
             this.listeners.set(event, []);
           }
           this.listeners.get(event)!.push(callback);
         },
-        emit: function(event: string, data: any) {
+        emit(event: string, data: any) {
           const callbacks = this.listeners.get(event) || [];
           callbacks.forEach(callback => callback(data));
         }

