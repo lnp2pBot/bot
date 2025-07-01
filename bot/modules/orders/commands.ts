@@ -1,7 +1,7 @@
 import { logger } from '../../../logger';
-import { Community, Order } from '../../../models';
+import { Order } from '../../../models';
 import { isFloat } from '../../../util';
-import { validateBuyOrder, isBannedFromCommunity, validateSeller, validateSellOrder, validateParams } from '../../validations';
+import { validateBuyOrder, validateSeller, validateSellOrder, validateParams } from '../../validations';
 import * as messages from '../../messages';
 import * as ordersActions from '../../ordersActions';
 import { deletedCommunityMessage } from './messages';
