@@ -22,7 +22,7 @@ interface CreateOrderArguments {
   range_parent_id?: string;
   tgChatId?: string;
   tgOrderMessage?: string;
-  community_id: string;
+  community_id?: string;
 }
 
 interface BuildDescriptionArguments {
@@ -71,7 +71,7 @@ const createOrder = async (
         throw new Error("community is null");
       isPublic = community.public;
     }
-    const fee = await getFee(amount, community_id);
+    const fee = await getFee(amount, community_id || '');
     if(process.env.MAX_FEE === undefined)
       throw new Error("Environment variable MAX_FEE is not defined");
     if(process.env.FEE_PERCENT === undefined)
@@ -105,7 +105,7 @@ const createOrder = async (
     }
 
     const recalculatedFee = isGoldenHoneyBadgerOrder ? 
-                            await getFee(amount, community_id, true) : 
+                            await getFee(amount, community_id || '', true) : 
                             fee;
 
     const baseOrderData = {
