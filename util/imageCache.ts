@@ -1,7 +1,7 @@
 import { logger } from '../logger';
+import path from 'path';
 
 const fs = require('fs').promises;
-import path from 'path';
 
 interface ImageCache {
   honeybadgerImage: string | null;

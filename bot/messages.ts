@@ -366,7 +366,7 @@ const beginTakeBuyMessage = async (ctx: MainContext, bot: HasTelegram, seller: U
     await bot.telegram.sendMediaGroup(seller.tg_id, [{
       type: 'photo',
       media: { source: Buffer.from(order.random_image, 'base64') },
-      caption: caption,
+      caption,
     }]
     );
 
