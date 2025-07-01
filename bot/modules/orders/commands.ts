@@ -122,7 +122,7 @@ const buy = async (ctx: MainContext) => {
     
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
-      ctx.deleteMessage();
+      await ctx.deleteMessage();
       return;
     }
     
