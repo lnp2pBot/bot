@@ -4,7 +4,7 @@ import { logger } from '../logger';
 /**
  * Checks if an equivalent index already exists for the given index specification
  */
-const checkIndexExists = async (collection: any, indexSpec: any): Promise<boolean> => {
+const checkIndexExists = async (collection: mongoose.Collection, indexSpec: Record<string, number>): Promise<boolean> => {
   try {
     const existingIndexes = await collection.indexes();
     
@@ -30,9 +30,9 @@ const checkIndexExists = async (collection: any, indexSpec: any): Promise<boolea
  * Creates a single index with graceful handling of existing indexes
  */
 const createIndexSafely = async (
-  collection: any, 
-  indexSpec: any, 
-  options: any, 
+  collection: mongoose.Collection, 
+  indexSpec: Record<string, number>, 
+  options: mongoose.IndexOptions & { name: string }, 
   collectionName: string
 ): Promise<void> => {
   try {
@@ -50,7 +50,7 @@ const createIndexSafely = async (
     
   } catch (error: any) {
     // Handle specific "index already exists" errors gracefully
-    if (error.message && error.message.includes('already exists')) {
+    if (error?.message?.includes('already exists')) {
       logger.info(`Index ${options.name} already exists in ${collectionName} collection (with different name)`);
     } else {
       logger.error(`Error creating index ${options.name} on ${collectionName}: ${error.message}`);

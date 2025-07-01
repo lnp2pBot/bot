@@ -47,7 +47,7 @@ export const getCommunityInfo = async (
     // Check if user is banned (only if community exists)
     let isBanned = false;
     if (community && communityId) {
-      isBanned = community.banned_users.some((buser: any) => buser.id == user._id);
+      isBanned = community.banned_users.some((buser: any) => String(buser.id) === String(user._id));
     }
 
     return {
