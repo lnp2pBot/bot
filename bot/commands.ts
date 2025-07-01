@@ -583,7 +583,7 @@ const addInvoicePHI = async (ctx: CommunityContext, bot: HasTelegram, orderId: s
     if (order === null)
       throw new Error("order was not found");
     // orders with status PAID_HOLD_INVOICE are released payments
-    if (order.status !== 'PAID_HOLD_INVOICE' && order.status !== 'FROZEN') {
+    if (order.status !== 'PAID_HOLD_INVOICE') {
       return;
     }
 

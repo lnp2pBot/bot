@@ -132,7 +132,6 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
           {
             $or: [
               { status: 'PAID_HOLD_INVOICE' },
-              { status: 'FROZEN' },
             ],
           },
         ]
