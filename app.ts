@@ -6,6 +6,7 @@ import { resubscribeInvoices } from './ln';
 import { logger } from "./logger";
 import { Telegraf } from "telegraf";
 import { delay } from './util';
+import { imageCache } from './util/imageCache';
 import { CommunityContext } from "./bot/modules/community/communityContext";
 
 (async () => {
@@ -25,6 +26,10 @@ import { CommunityContext } from "./bot/modules/community/communityContext";
   mongoose.connection
     .once('open', async () => {
       logger.info('Connected to Mongo instance.');
+      
+      // Initialize image cache for faster order creation
+      await imageCache.initialize();
+      
       // Use configurable bot handler timeout, default to 60 seconds
       const handlerTimeout = parseInt(process.env.BOT_HANDLER_TIMEOUT || '60000');
       let options: Partial<Telegraf.Options<CommunityContext>> = { handlerTimeout };
