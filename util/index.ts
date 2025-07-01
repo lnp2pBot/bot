@@ -13,8 +13,6 @@ import { logger } from "../logger";
 import QRCode from "qrcode";
 import { Image, createCanvas } from 'canvas';
 
-const fs = require('fs').promises;
-const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
 // ISO 639-1 language codes
