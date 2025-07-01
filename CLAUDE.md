@@ -88,9 +88,82 @@ Copy `.env-sample` to `.env` and configure:
 ### Testing
 Tests are in TypeScript and use Mocha with Chai assertions. Test compilation uses a separate tsconfig.test.json that includes the tests directory.
 
+```bash
+npm test                    # Run all tests
+npm run pretest            # Compile tests only
+export NODE_ENV=test && mocha --exit 'dist/tests/**/*.spec.js'  # Run specific test pattern
+```
+
+### Key Architectural Details
+
+#### Lightning Network Hold Invoice Flow
+Two distinct trading patterns:
+
+**Sell Orders (Seller has Bitcoin)**:
+1. Seller creates order → Published to channel
+2. Buyer takes order → Seller pays hold invoice (funds locked)
+3. Buyer sends fiat → Seller confirms receipt
+4. Hold invoice settled → Buyer receives Bitcoin
+
+**Buy Orders (Buyer wants Bitcoin)**:
+1. Buyer creates order → Published to channel  
+2. Seller takes order → Seller pays hold invoice (funds locked)
+3. Buyer provides invoice → Seller sends fiat
+4. Buyer confirms fiat receipt → Hold invoice settled → Buyer receives Bitcoin
+
+#### Context Types and Middleware Chain
+- **MainContext**: Base context with i18n, user, admin properties
+- **CommunityContext**: Extends MainContext with wizard state for multi-step flows
+- Middleware chain: User validation → Admin checking → Context enhancement → Command routing
+
+#### Job Scheduling Intervals
+Critical background processes with specific timing:
+- **Pending payments**: Every 5 minutes (configurable via `PENDING_PAYMENT_WINDOW`)
+- **Order cancellation**: Every 20 seconds
+- **Order deletion**: Every hour at 25 minutes past
+- **Community earnings**: Every 10 minutes
+- **Node health**: Every minute
+- **Solver availability**: Daily at midnight
+
+#### Multi-language Support
+- 10 supported languages via YAML files in `locales/`
+- User-specific language preferences stored in database
+- Dynamic language switching with `@grammyjs/i18n`
+- Message templates with interpolation support
+
+### Database Schema Patterns
+
+#### Order Status Lifecycle
+Orders follow specific state transitions:
+- PENDING → ACTIVE → FIAT_SENT → COMPLETED
+- Dispute states: DISPUTE, CANCELED_BY_ADMIN
+- Failed states: EXPIRED, CANCELED
+
+#### Community Features
+- Custom fee structures per Telegram group
+- Solver assignment and dispute resolution
+- Automated earnings calculation and distribution
+- Ban management (global and community-level)
+
+### Development Patterns
+
+#### Error Handling
+- Winston logger with configurable levels and timeout monitoring
+- Global unhandled rejection handlers in app.ts
+- Try-catch blocks throughout with proper error context
+- Graceful shutdown handling (SIGINT/SIGTERM)
+
+#### TypeScript Configuration
+- Strict mode enabled for better type safety
+- Separate test configuration (tsconfig.test.json)
+- Comprehensive interface definitions for all models
+- Custom type extensions for Telegraf contexts
+
 ### Key Dependencies
-- **telegraf**: Telegram bot framework
-- **mongoose**: MongoDB ODM
-- **lightning**: LND node integration
+- **telegraf**: Telegram bot framework (4.8.0)
+- **mongoose**: MongoDB ODM (6.13.6)  
+- **lightning**: LND node integration (10.25.0)
 - **node-schedule**: Cron job scheduling
 - **@grammyjs/i18n**: Internationalization
+- **winston**: Logging with timeout monitoring
+- **canvas**: QR code generation with random backgrounds

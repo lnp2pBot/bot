@@ -98,8 +98,7 @@ const createOrder = async (
     let isGoldenHoneyBadgerOrder = false;
     
     if (type === 'sell') {
-
-      const result = await generateRandomImage(user._id.toString());
+      const result = generateRandomImage(user._id.toString());
       randomImage = result.randomImage;
       isGoldenHoneyBadger = result.isGoldenHoneyBadger;
       isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;

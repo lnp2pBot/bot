@@ -13,8 +13,6 @@ import { logger } from "../logger";
 import QRCode from "qrcode";
 import { Image, createCanvas } from 'canvas';
 
-const fs = require('fs').promises;
-const path = require('path');
 const { I18n } = require('@grammyjs/i18n');
 
 // ISO 639-1 language codes
@@ -541,72 +539,10 @@ export const removeLightningPrefix = (invoice: string) => {
   return invoice;
 };
 
-const generateRandomImage = async (nonce: string) => {
-  let randomImage = '';
-  let isGoldenHoneyBadger = false;
-  try {
-    const honeybadgerFilename = 'Honeybadger.png';
-    const honeybadgerFullPath = `images/${honeybadgerFilename}`;
-    
-    let honeybadgerExists = false;
-    try {
-      await fs.access(honeybadgerFullPath);
-      honeybadgerExists = true;
-    } catch (err) {
-      logger.error(`Honeybadger image not found: ${err}`);
-      honeybadgerExists = false;
-    }
-    
-    let wasHoneybadgerSelected = false;
-    
-    if (honeybadgerExists) {
-      const goldenProbability = parseInt(process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100');
-      if (isNaN(goldenProbability)) {
-        logger.warning("GOLDEN_HONEY_BADGER_PROBABILITY not configured properly, using default 100");
-      }
-      
-      const probability = isNaN(goldenProbability) ? 100 : Math.max(1, goldenProbability);
-      const luckyNumber = Math.floor(Math.random() * probability) + 1;
-      const winningNumber = 1; 
-      
-      logger.debug(`Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`);
-      
-      if (luckyNumber === winningNumber) {
-        wasHoneybadgerSelected = true;
-        
-        try {
-          const goldenImage = await fs.readFile(honeybadgerFullPath);
-          randomImage = Buffer.from(goldenImage, 'binary').toString('base64');
-          isGoldenHoneyBadger = true;
-          logger.info(`🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`);
-        } catch (error) {
-          logger.error(`Error loading Golden Honey Badger image: ${error}`);
-          isGoldenHoneyBadger = false;
-          wasHoneybadgerSelected = false;
-        }
-      }
-    }
-    
-    if (!wasHoneybadgerSelected) {
-      const files = await fs.readdir('images');
-      const imageFiles = files.filter((file: string) => 
-        ['.png'].includes(path.extname(file).toLowerCase()) && 
-        file !== honeybadgerFilename
-      );
-      
-      if (imageFiles.length > 0) {
-        const randomFile = imageFiles[Math.floor(Math.random() * imageFiles.length)];
-        const fallbackImage = await fs.readFile(`images/${randomFile}`);
-        randomImage = Buffer.from(fallbackImage, 'binary').toString('base64');
-      } else {
-        logger.error('No PNG images found in the images directory');
-      }
-    }
-  } catch (fallbackError) {
-    logger.error(`Error in generateRandomImage: ${fallbackError}`);
-  }
-
-  return { randomImage, isGoldenHoneyBadger };
+const generateRandomImage = (nonce: string) => {
+  // Import imageCache here to avoid circular dependency
+  const { imageCache } = require('./imageCache');
+  return imageCache.generateRandomImage(nonce);
 };
 
 const generateQRWithImage = async (request: string, randomImage: string) => {
