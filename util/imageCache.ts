@@ -26,7 +26,7 @@ class ImageCacheManager {
       // Try to load Honeybadger image
       try {
         const goldenImage = await fs.readFile(honeybadgerFullPath);
-        this.cache.honeybadgerImage = Buffer.from(goldenImage, 'binary').toString('base64');
+        this.cache.honeybadgerImage = goldenImage.toString('base64');
         logger.info('Golden Honey Badger image cached successfully');
       } catch (err) {
         logger.warning(`Honeybadger image not found: ${err}`);
@@ -44,7 +44,7 @@ class ImageCacheManager {
         for (const imageFile of imageFiles) {
           try {
             const imageData = await fs.readFile(`images/${imageFile}`);
-            const base64Image = Buffer.from(imageData, 'binary').toString('base64');
+            const base64Image = imageData.toString('base64');
             this.cache.regularImages.push(base64Image);
           } catch (error) {
             logger.error(`Error loading image ${imageFile}: ${error}`);
