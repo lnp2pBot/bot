@@ -7,6 +7,7 @@ import { logger } from "./logger";
 import { Telegraf } from "telegraf";
 import { delay } from './util';
 import { imageCache } from './util/imageCache';
+import { createIndexes } from './models/indexes';
 import { CommunityContext } from "./bot/modules/community/communityContext";
 
 (async () => {
@@ -26,6 +27,9 @@ import { CommunityContext } from "./bot/modules/community/communityContext";
   mongoose.connection
     .once('open', async () => {
       logger.info('Connected to Mongo instance.');
+      
+      // Create database indexes for optimized queries
+      await createIndexes();
       
       // Initialize image cache for faster order creation
       await imageCache.initialize();

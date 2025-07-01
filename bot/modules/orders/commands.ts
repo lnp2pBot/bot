@@ -5,6 +5,7 @@ import { validateBuyOrder, isBannedFromCommunity, validateSeller, validateSellOr
 import * as messages from '../../messages';
 import * as ordersActions from '../../ordersActions';
 import { deletedCommunityMessage } from './messages';
+import { getCommunityInfo, isCurrencySupported } from '../../../util/communityHelper';
 import { takebuy, takesell, takebuyValidation } from './takeOrder';
 
 import * as Scenes from './scenes';
@@ -44,39 +45,38 @@ const sell = async (ctx: MainContext) => {
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
-    let communityId = null;
-    let community = null;
-    // If this message came from a group
-    // We check if the there is a community for it
-    if (ctx.message?.chat.type !== 'private') {
-      // Allow find communities case insensitive
-      const regex = new RegExp(
-        ['^', '@' + (ctx.message?.chat as Chat.UserNameChat).username, '$'].join(''),
-        'i'
-      );
-      community = await Community.findOne({ group: regex });
-      if (!community) return ctx.deleteMessage();
-
-      communityId = community._id;
-    } else if (user.default_community_id) {
-      communityId = user.default_community_id;
-      community = await Community.findOne({ _id: communityId });
-      if (!community) {
-        user.default_community_id = undefined;
-        await user.save();
-        return deletedCommunityMessage(ctx);
-      }
+    
+    // Optimized community lookup - single database query instead of multiple
+    const communityInfo = await getCommunityInfo(
+      user, 
+      ctx.message?.chat.type || 'private',
+      ctx.message?.chat as Chat.UserNameChat
+    );
+    
+    const { community, communityId, isBanned } = communityInfo;
+    
+    // Handle community not found in group chat
+    if (ctx.message?.chat.type !== 'private' && !community) {
+      return ctx.deleteMessage();
     }
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, communityId))
+    
+    // Handle deleted default community
+    if (ctx.message?.chat.type === 'private' && user.default_community_id && !community) {
+      return deletedCommunityMessage(ctx);
+    }
+    
+    // Check if user is banned
+    if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
+    }
 
-    // If the user is in a community, we need to check if the currency is supported
-    if (!!community && !community.currencies.includes(fiatCode))
+    // Check if currency is supported
+    if (!isCurrencySupported(community, fiatCode)) {
       return await messages.currencyNotSupportedMessage(
         ctx,
-        community.currencies
+        community?.currencies || []
       );
+    }
 
     // @ts-ignore
     const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
@@ -110,38 +110,35 @@ const buy = async (ctx: MainContext) => {
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
-    let communityId = null;
-    let community = null;
-    // If this message came from a group
-    // We check if the there is a community for it
-    if (ctx.message?.chat.type !== 'private') {
-      // Allow find communities case insensitive
-      const regex = new RegExp(
-        ['^', '@' + (ctx.message?.chat as Chat.UserNameChat).username, '$'].join(''),
-        'i'
-      );
-      community = await Community.findOne({ group: regex });
-      if (!community) {
-        ctx.deleteMessage();
-        return;
-      }
-      communityId = community._id;
-    } else if (user.default_community_id) {
-      communityId = user.default_community_id;
-      community = await Community.findOne({ _id: communityId });
-      if (!community) {
-        user.default_community_id = undefined;
-        await user.save();
-        return deletedCommunityMessage(ctx);
-      }
+    
+    // Optimized community lookup - single database query instead of multiple
+    const communityInfo = await getCommunityInfo(
+      user, 
+      ctx.message?.chat.type || 'private',
+      ctx.message?.chat as Chat.UserNameChat
+    );
+    
+    const { community, communityId, isBanned } = communityInfo;
+    
+    // Handle community not found in group chat
+    if (ctx.message?.chat.type !== 'private' && !community) {
+      ctx.deleteMessage();
+      return;
     }
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, communityId))
+    
+    // Handle deleted default community
+    if (ctx.message?.chat.type === 'private' && user.default_community_id && !community) {
+      return deletedCommunityMessage(ctx);
+    }
+    
+    // Check if user is banned
+    if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
+    }
 
-    // If the user is in a community, we need to check if the currency is supported
-    if (!!community && !community.currencies.includes(fiatCode)) {
-      await messages.currencyNotSupportedMessage(ctx, community.currencies);
+    // Check if currency is supported
+    if (!isCurrencySupported(community, fiatCode)) {
+      await messages.currencyNotSupportedMessage(ctx, community?.currencies || []);
       return;
     }
     // @ts-ignore
@@ -170,26 +167,33 @@ async function enterWizard(ctx: CommunityContext, user: UserDocument, type: stri
     user,
   };
   if (user.default_community_id) {
-    const comm = await Community.findById(user.default_community_id);
-    if(comm === null)
-      throw new Error("comm not found");
-    state.community = comm;
-    state.currencies = comm.currencies;
-    if (comm.currencies.length === 1) {
-      state.currency = comm.currencies[0];
+    // Use optimized community lookup
+    const communityInfo = await getCommunityInfo(user, 'private');
+    const { community, isBanned } = communityInfo;
+    
+    if (!community) {
+      throw new Error("Default community not found");
     }
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, user.default_community_id))
+    
+    // Check if user is banned
+    if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
+    }
+    
+    state.community = community;
+    state.currencies = community.currencies;
+    if (community.currencies.length === 1) {
+      state.currency = community.currencies[0];
+    }
   }
 
   await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }
 
 const isMaxPending = async (user: UserDocument) => {
-  const pendingOrders = await Order.count({
-    status: 'PENDING',
+  const pendingOrders = await Order.countDocuments({
     creator_id: user._id,
+    status: 'PENDING',
   });
   const maxPendingOrders = process.env.MAX_PENDING_ORDERS;
   if(maxPendingOrders === undefined)
