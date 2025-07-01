@@ -21,7 +21,7 @@ export const getCommunityInfo = async (
 ): Promise<CommunityLookupResult> => {
   try {
     let community: ICommunity | null = null;
-    let communityId: string | undefined = undefined;
+    let communityId: string | undefined;
 
     // Determine community based on context
     if (chatType !== 'private' && chat?.username) {
