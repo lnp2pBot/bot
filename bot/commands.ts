@@ -582,8 +582,8 @@ const addInvoicePHI = async (ctx: CommunityContext, bot: HasTelegram, orderId: s
     const order = await Order.findOne({ _id: orderId });
     if (order === null)
       throw new Error("order was not found");
-    // orders with status PAID_HOLD_INVOICE are released payments
-    if (order.status !== 'PAID_HOLD_INVOICE') {
+    // orders with status PAID_HOLD_INVOICE or COMPLETED_BY_ADMIN are released payments
+    if (order.status !== 'PAID_HOLD_INVOICE' && order.status !== 'COMPLETED_BY_ADMIN') {
       return;
     }
 

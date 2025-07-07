@@ -643,6 +643,8 @@ disclaimer: |
 
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
 order_frozen: You have frozen the order
+paytobuyer_only_frozen_orders: The paytobuyer command can only be used on orders with FROZEN or PAID_HOLD_INVOICE status
+settleorder_only_dispute_orders: The settleorder command can only be used on orders with DISPUTE status
 dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can write to him/her directly by tapping his/her username => @${solver} <=, if the solver writes to you first, you should ask him/her to tell you what is the token of your dispute, your token is ${token}.
 setinvoice_no_response: You have no orders to be paid
 privacy: |
