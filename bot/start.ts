@@ -496,7 +496,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       const order = await Order.findOne({ _id: orderId });
       if (order === null) return;
 
-      // Check if order status is DISPUTE
+      // settleorder can only be used if the order status is DISPUTE
       if (order.status !== 'DISPUTE') {
         return await ctx.reply(ctx.i18n.t('settleorder_only_dispute_orders'));
       }
@@ -866,7 +866,7 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
       
-      // Check if order status is FROZEN or PAID_HOLD_INVOICE
+      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
       if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
       }
