@@ -132,6 +132,7 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
           {
             $or: [
               { status: 'PAID_HOLD_INVOICE' },
+              { status: 'COMPLETED_BY_ADMIN' },
             ],
           },
         ]
@@ -495,10 +496,9 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       const order = await Order.findOne({ _id: orderId });
       if (order === null) return;
 
-       // Check if the order status is already PAID_HOLD_INVOICE
-      if (order.status === 'PAID_HOLD_INVOICE') {
-      await ctx.reply(ctx.i18n.t('order_already_settled'));
-      return;
+      // settleorder can only be used if the order status is DISPUTE
+      if (order.status !== 'DISPUTE') {
+        return await ctx.reply(ctx.i18n.t('settleorder_only_dispute_orders'));
       }
 
       // We look for a dispute for this order
@@ -866,6 +866,11 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
       
+      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
+      if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
+        return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
+      }
+      
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
         if (!order.community_id) {
@@ -884,6 +889,12 @@ const initialize = (botToken: string, options: Partial<Telegraf.Options<Communit
       });
 
       if (isPending) return;
+
+      // Set status to PAID_HOLD_INVOICE before paying (only if not already PAID_HOLD_INVOICE)
+      if (order.status === 'FROZEN') {
+        order.status = 'PAID_HOLD_INVOICE';
+        await order.save();
+      }
 
       await payToBuyer(bot, order);
     } catch (error) {
