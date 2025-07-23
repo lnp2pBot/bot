@@ -220,11 +220,6 @@ const saveUserReview = async (targetUser: UserDocument, rating: number) => {
     totalReviews++;
 
     const oldRating = targetUser.total_rating;
-    let lastRating = targetUser.reviews.length
-      ? targetUser.reviews[targetUser.reviews.length - 1].rating
-      : 0;
-
-    lastRating = targetUser.last_rating ? targetUser.last_rating : lastRating;
 
     // newRating is an average of all the ratings given to the user.
     // Its formula is based on the iterative method to compute mean,
