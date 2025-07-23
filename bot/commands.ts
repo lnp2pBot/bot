@@ -230,7 +230,7 @@ const saveUserReview = async (targetUser: UserDocument, rating: number) => {
     // Its formula is based on the iterative method to compute mean,
     // as in:
     // https://math.stackexchange.com/questions/2148877/iterative-calculation-of-mean-and-standard-deviation
-    const newRating = oldRating + (lastRating - oldRating) / totalReviews;
+    const newRating = oldRating + (rating - oldRating) / totalReviews;
     targetUser.total_rating = newRating;
     targetUser.last_rating = rating;
     targetUser.total_reviews = totalReviews;
