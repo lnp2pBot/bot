@@ -15,17 +15,17 @@ start: |
 
   4. Se você estiver vendendo o bot, publicará a oferta no canal ${channel} na expectativa de que outro usuário aceite o pedido. Você pode cancelar essa oferta de venda a qualquer momento ANTES que outro usuário a aceite com o comando /cancel.
 
-  5. Uma vez que alguém aceite sua oferta, o bot solicitará que você pague a fatura da rede Lightning, Esse pagamento será retido, o pedido expirará em um tempo máximo de ${orderExpiration} horas a partir do momento em que foi aceito. O bot informará quem é o comprador para que você forneça a informação para receber o pagamento. Depois de receber o pagamento, você deve liberar os fundos para que os sats cheguem ao invoice do comprador usando o comando /release.
+  5. Uma vez que alguém aceite sua oferta, o bot solicitará que você pague a fatura da rede Lightning. Tal pagamento será retido, o pedido expirará em um máximo de ${orderExpiration} horas a partir do momento em que o pedido foi aceito. O bot informará quem é o comprador para que você forneça a informação para receber o pagamento. Depois de receber o pagamento, você deve liberar os fundos para que os sats cheguem ao invoice do comprador usando o comando /release.
 
   6. Se você quiser comprar, precisa publicar sua oferta usando o comando /buy e esperar até que um vendedor a aceite. Você pode cancelar o pedido a qualquer momento usando o comando /cancel.
 
-  7. Depois que alguém aceite seu pedido de compra, você precisa criar uma fatura (invoice) na rede Lightning e enviá-la para o bot, envie a fatura como texto o bot não aceita QR code. Depois disso você deve entrar em contato com o vendedor para receber as instruções e informação para realizar o de pagamento. Depois de pagar, o vendedor deve usar o comando /release. O bot enviará os sats para sua fatura de rede de Lightning.
+  7. Depois que alguém aceite seu pedido de compra, você precisa criar uma fatura (invoice) na rede Lightning e enviá-la para o bot. Envie a fatura como texto, pois o bot não aceita QR code. Depois disso você deve entrar em contato com o vendedor para receber as instruções e informação para realizar o de pagamento. Depois de pagar, o vendedor deve usar o comando /release. O bot enviará os sats para sua fatura de rede de Lightning.
 
   8. Se você está aceitando uma oferta de venda, ou seja, você está comprando, deve criar uma fatura na rede Lightning para receber seus sats e pedir ao vendedor que forneça as instruções de pagamento. Depois que o vendedor receber o pagamento fiduciário, ele usará o comando /release para enviar os sats à sua wallet LN.
 
-  9. Se você estiver aceitando uma oferta de compra, ou seja, você está vendendo sats, deve pagar a fatura do na rede Lightning enviado pelo bot. Estes sats serão retidos até que o comprador efetue o pagamento e envie o comando /fiatsent. Você deve entrar em contato com o comprador e fornecer a informação necessária para receber o pagamento. Depois de receber o pagamento fiduciário, você deve liberar os sats retidos pelo bot usando o comando /release. Os sats serão enviados automaticamente para a wallet LN do comprador.
+  9. Se você estiver aceitando uma oferta de compra, ou seja, você está vendendo sats, deve pagar a fatura na rede Lightning enviado pelo bot. Estes sats serão retidos até que o comprador efetue o pagamento e envie o comando /fiatsent. Você deve entrar em contato com o comprador e fornecer a informação necessária para receber o pagamento. Depois de receber o pagamento fiduciário, você deve liberar os sats retidos pelo bot usando o comando /release. Os sats serão enviados automaticamente para a wallet LN do comprador.
 
-  Mais informação sobre como usar o bot aqui 👇
+  Mais informações sobre como usar o bot aqui 👇
 
   https://lnp2pbot.com/aprenda
 
@@ -33,7 +33,7 @@ start: |
 version: Versão
 commit_hash: hash do último commit
 init_bot_error: Para usar este bot, você deve iniciar com o comando /start
-non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram, para ativá-lo, abra as configurações e selecione Meu Perfil -> Editar -> Nome de Usuário
+non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram. Para ativá-lo, abra as configurações e selecione Meu Perfil -> Editar -> Nome de Usuário
 invoice_payment_request: |
   Um usuário quer comprar de você ${order.amount} sats por ${currency} ${order.fiat_amount}
 
@@ -327,7 +327,7 @@ counterparty_wants_cooperativecancel: |
 
   Se você concorda, utilize o comando 👇
 invoice_payment_failed: ⛔ Eu tentei enviar -lhe os sats, mas o pagamento da sua fatura falhou, vou tentar ${attempts} mais vezes em ${pendingPaymentWindow} janela de minutos, verifique seu nó/carteira está online
-cant_take_more_orders: ⛔ Desculpe!Você não pode fazer outro pedido enquanto tem outras pessoas esperando por você
+cant_take_more_orders: ⛔ Desculpe! Você não pode fazer outro pedido enquanto tem outras pessoas esperando por você
 seller_released: 💸 O vendedor já lançou os Satoshis, você deve esperar que sua fatura seja paga.
 your_purchase_is_completed: |
   🪙 Sua compra de Satoshis foi concluída bem-sucedida, @${sellerUsername} confirmou seu pagamento fiduciário e eu paguei sua fatura, aproveite o som de dinheiro!
@@ -354,7 +354,7 @@ wizard_add_invoice_init: |
 
   Se você não enviar a fatura dentro de ${expirationTime} minutos, o pedido será cancelado
 wizard_add_invoice_exit: |
-  Você sai do modo assistente, você pode saber escrever os comandos, ainda pode adicionar uma fatura ao pedido com o comand /setinvoice Indicando o ID do pedido e a fatura, você pode me enviar uma fatura para ${amount} satoshis, mas também aceitarei faturas sem quantidade:
+  Você saiu do modo assistente, você agora pode escrever os comandos e pode adicionar uma fatura ao pedido com o comand /setinvoice indicando o ID do pedido e a fatura. Você pode me enviar uma fatura para ${amount} satoshis, mas também aceitarei faturas sem quantidade:
 
   /setinvoice
 wizard_community_enter_name: Escolha um nome para sua comunidade
@@ -436,7 +436,7 @@ selling: Vendendo
 buying: Comprando
 receive_payment: Receber pagamento
 pay: Pagar
-is: é
+is: está
 trading_volume: 'Volume de negócios: ${volume} sats'
 satoshis: satoshis
 by: por
@@ -626,15 +626,15 @@ user_info: |
   Total rating: ${total_rating}
   Disputes: ${disputes}
 disclaimer: |
-  *Ao utilizar o bot de comércio P2P, o utilizador concorda com os seguintes termos e condições*
+  *Ao utilizar o bot de comércio P2P, o usuário concorda com os seguintes termos e condições*
 
   O bot é um software de código aberto que está disponível para qualquer pessoa usar, copiar, modificar e executar. Os desenvolvedores não são responsáveis pelas ações de outros indivíduos que usam o software de qualquer maneira, seja legal ou ilegal, honesta ou desonesta.
 
   O bot é fornecido numa base "como está" e "como disponível", e os criadores não dão garantias de qualquer tipo, expressas ou implícitas, relativamente ao bot ou à sua utilização.
 
-  Os criadores e os responsáveis pela resolução de litígios envidam os seus melhores esforços para impedir que os maus actores, as fraudes e as burlas utilizem o bot, mas o utilizador reconhece que o sistema pode ser explorado e aceita toda a responsabilidade enquanto o utiliza.
+  Os criadores e os responsáveis pela resolução de litígios envidam os seus melhores esforços para impedir que os maus actores, as fraudes e as burlas utilizem o bot, mas o usuário reconhece que o sistema pode ser explorado e aceita toda a responsabilidade enquanto o utiliza.
 
-  Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
+  Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o usuário possa sofrer como resultado da utilização do bot.
 order_frozen: Você congelou o pedido
 paytobuyer_only_frozen_orders: O comando paytobuyer só pode ser usado em pedidos com status FROZEN ou PAID_HOLD_INVOICE
 settleorder_only_dispute_orders: O comando settleorder só pode ser usado em pedidos com status DISPUTE
