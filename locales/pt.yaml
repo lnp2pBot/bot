@@ -15,15 +15,15 @@ start: |
 
   4. Se você estiver vendendo o bot, publicará a oferta no canal ${channel} na expectativa de que outro usuário aceite o pedido. Você pode cancelar essa oferta de venda a qualquer momento ANTES que outro usuário a aceite com o comando /cancel.
 
-  5. Uma vez que alguém aceite sua oferta, o bot solicitará que você pague a fatura da rede Lightning. Tal pagamento será retido, o pedido expirará em um máximo de ${orderExpiration} horas a partir do momento em que o pedido foi aceito. O bot informará quem é o comprador para que você forneça a informação para receber o pagamento. Depois de receber o pagamento, você deve liberar os fundos para que os sats cheguem ao invoice do comprador usando o comando /release.
+  5. Uma vez que alguém aceite sua oferta, o bot solicitará que você pague a fatura da rede Lightning. Tal pagamento será retido, o pedido expirará em um tempo máximo de ${orderExpiration} horas a partir do momento em que foi aceito. O bot informará quem é o comprador para que você forneça a informação para receber o pagamento. Depois de receber o pagamento, você deve liberar os fundos para que os sats cheguem ao invoice do comprador usando o comando /release.
 
   6. Se você quiser comprar, precisa publicar sua oferta usando o comando /buy e esperar até que um vendedor a aceite. Você pode cancelar o pedido a qualquer momento usando o comando /cancel.
 
-  7. Depois que alguém aceite seu pedido de compra, você precisa criar uma fatura (invoice) na rede Lightning e enviá-la para o bot. Envie a fatura como texto, pois o bot não aceita QR code. Depois disso você deve entrar em contato com o vendedor para receber as instruções e informação para realizar o de pagamento. Depois de pagar, o vendedor deve usar o comando /release. O bot enviará os sats para sua fatura de rede de Lightning.
+  7. Depois que alguém aceite seu pedido de compra, você precisa criar uma fatura (invoice) na rede Lightning e enviá-la para o bot. Envie a fatura como texto, pois o bot não aceita QR code. Depois disso você deve entrar em contato com o vendedor para receber as instruções para realizar o pagamento. Depois de pagar, o vendedor deve usar o comando /release. O bot enviará os sats para sua fatura de rede de Lightning.
 
   8. Se você está aceitando uma oferta de venda, ou seja, você está comprando, deve criar uma fatura na rede Lightning para receber seus sats e pedir ao vendedor que forneça as instruções de pagamento. Depois que o vendedor receber o pagamento fiduciário, ele usará o comando /release para enviar os sats à sua wallet LN.
 
-  9. Se você estiver aceitando uma oferta de compra, ou seja, você está vendendo sats, deve pagar a fatura na rede Lightning enviado pelo bot. Estes sats serão retidos até que o comprador efetue o pagamento e envie o comando /fiatsent. Você deve entrar em contato com o comprador e fornecer a informação necessária para receber o pagamento. Depois de receber o pagamento fiduciário, você deve liberar os sats retidos pelo bot usando o comando /release. Os sats serão enviados automaticamente para a wallet LN do comprador.
+  9. Se você estiver aceitando uma oferta de compra, ou seja, você está vendendo sats, deve pagar a fatura na rede Lightning enviada pelo bot. Estes sats serão retidos até que o comprador efetue o pagamento e envie o comando /fiatsent. Você deve entrar em contato com o comprador e fornecer a informação necessária para receber o pagamento. Depois de receber o pagamento fiduciário, você deve liberar os sats retidos pelo bot usando o comando /release. Os sats serão enviados automaticamente para a wallet LN do comprador.
 
   Mais informações sobre como usar o bot aqui 👇
 
