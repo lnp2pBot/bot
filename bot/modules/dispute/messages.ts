@@ -1,8 +1,10 @@
+import { I18nContext } from '@grammyjs/i18n';
 import { getDisputeChannel, getDetailedOrder, sanitizeMD } from '../../../util';
 import { logger } from '../../../logger';
 import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
+import { CommunityWizardState } from '../community/communityContext';
 
 export const beginDispute = async (
   ctx: MainContext, 
@@ -168,3 +170,17 @@ export const disputeTooSoonMessage = async (ctx: MainContext) => {
     logger.error(error);
   }
 };
+
+export const disputeWizardStatus = (i18n: I18nContext, state: CommunityWizardState) => {
+  const orderId = state.order?.id || '_';
+  const errorText = state.error ? `\n⚠️ ${state.error}` : '';
+  const text = [
+    `🛡 ${i18n.t('dispute_wizard_title')}`,
+    `${i18n.t('order_id_prompt')}: ${orderId}`,
+    i18n.t('wizard_to_exit'),
+    errorText,
+  ].filter(Boolean).join('\n');
+  return { text };
+};
+
+

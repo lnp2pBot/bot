@@ -1,6 +1,7 @@
 import { Scenes } from 'telegraf';
 import * as CommunityModule from '../modules/community';
 import * as OrdersModule from '../modules/orders';
+import * as DisputeModule from '../modules/dispute';
 import * as UserModule from '../modules/user';
 import { CommunityContext } from '../modules/community/communityContext';
 import { addInvoiceWizard, addFiatAmountWizard, addInvoicePHIWizard } from '../scenes';
@@ -22,6 +23,7 @@ export const stageMiddleware = () => {
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
     UserModule.Scenes.Settings,
+    DisputeModule.Scenes.disputeWizard,
   ];
   scenes.forEach(addGenericCommands);
   const stage = new Scenes.Stage(scenes, {

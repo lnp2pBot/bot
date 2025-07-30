@@ -2,12 +2,27 @@ import { MainContext } from "../../start";
 
 import { User, Dispute, Order } from '../../../models';
 import { validateParams, validateObjectId, validateDisputeOrder } from '../../validations';
-import * as messages from './messages';
 import * as globalMessages from '../../messages';
+import * as messages from './messages';
 import { logger } from '../../../logger';
 import { removeAtSymbol } from '../../../util';
+import { CommunityContext } from '../community/communityContext';
+import { UserDocument } from '../../../models/user';
+import { getCommunityInfo } from '../../../util/communityHelper';
+import * as Scenes from './scenes';
+import { ICommunity } from "../../../models/community";
 
-const dispute = async (ctx: MainContext) => {
+interface EnterWizardState {
+  community?: ICommunity;
+  currency?: string;
+  currencies?: string[];
+  type: string;
+  user: UserDocument;
+}
+
+const disputeWizard = async (ctx: CommunityContext) => enterWizard(ctx, ctx.user, 'dispute');
+
+const dispute = async (ctx: MainContext) => {  
   try {
     const { user } = ctx;
 
@@ -150,4 +165,27 @@ const deleteDispute = async (ctx: MainContext) => {
   }
 };
 
-export { dispute, deleteDispute };
+async function enterWizard(ctx: CommunityContext, user: UserDocument, type: string) {
+  const state: EnterWizardState = {
+    type,
+    user,
+  };
+  if (user.default_community_id) {
+    const communityInfo = await getCommunityInfo(user, 'private');
+    const { community, isBanned } = communityInfo;
+    if (!community) {
+      throw new Error("Default community not found");
+    }
+    if (isBanned) {
+      return await globalMessages.bannedUserErrorMessage(ctx, user);
+    }
+    state.community = community;
+    state.currencies = community.currencies;
+    if (community.currencies.length === 1) {
+      state.currency = community.currencies[0];
+    }
+  }
+  await ctx.scene.enter(Scenes.DISPUTE_WIZARD, state);
+}
+
+export { dispute, deleteDispute, disputeWizard };

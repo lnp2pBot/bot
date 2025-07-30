@@ -642,6 +642,9 @@ order_frozen: Has congelado la orden
 paytobuyer_only_frozen_orders: El comando paytobuyer solo puede usarse en órdenes con estado FROZEN o PAID_HOLD_INVOICE
 settleorder_only_dispute_orders: El comando settleorder solo puede usarse en órdenes con estado DISPUTE
 dispute_solver: 👮‍♂️ Un solver estará atendiendo tu disputa, puedes escribirle directamente tocando su username => @${solver} <=, si el/la solver te escribe primero, debes pedirle que te diga cuál es el token de tu disputa, tu token es ${token}.
+dispute_wizard_title: Abrir disputa
+dispute_only_active_fiat_sent: El comando /dispute solo puede usarse en órdenes con estado ACTIVE o FIAT_SENT
+order_id_prompt: Ingresa el Id de la orden
 setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!
 privacy: |
