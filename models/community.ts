@@ -35,6 +35,7 @@ const usernameIdSchema = new Schema<IUsernameId>({
 });
 
 export interface ICommunity extends Document {
+  _id: string;
   name: string;
   creator_id: string;
   group: string;
@@ -51,6 +52,7 @@ export interface ICommunity extends Document {
   nostr_public_key: string;
   warning_messages_count: number;
   language: string;
+  orders?: number;
 }
 
 const CommunitySchema = new Schema<ICommunity>({
