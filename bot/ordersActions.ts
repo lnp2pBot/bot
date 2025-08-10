@@ -278,7 +278,7 @@ const getOrder = async (ctx: MainContext, user: UserDocument, orderId: string) =
       $or: [{ seller_id: user._id }, { buyer_id: user._id }],
     };
 
-    const order = await Order.findOne(where);
+    const order = await Order.findOne(where).exec();
     if (!order) {
       await messages.notOrderMessage(ctx);
       return false;
