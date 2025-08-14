@@ -17,11 +17,11 @@ index 6ddf32d..68255a5 100644
 -      totalRating,
 -      totalReviews,
 -    },
-+  const rating: [string, string, string] = [
-+    totalRating.toString(),
-+    days.toString(),
-+    totalReviews.toString(),
-   ];
+  const ratingPayload: [string, string, string] = [
+    Number.isFinite(totalRating) ? totalRating.toFixed(2) : '0.00',
+    String(Math.max(0, Math.floor(days))),
+    String(totalReviews ?? 0),
+  ];
    const channelEnvVar = process.env.CHANNEL;
    if(channelEnvVar === undefined)
 @@ -51,7 +48,7 @@ const orderToTags = async (order: IOrder) => {
