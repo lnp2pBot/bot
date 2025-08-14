@@ -23,15 +23,12 @@ const orderToTags = async (order: IOrder) => {
   }
   const maker = await User.findById(order.creator_id);
   const days = maker ? getUserAge(maker) : 0;
-  const totalRating = maker?.total_rating ?? 0;
+  const totalRating = Number(maker?.total_rating.toFixed(2)) ?? 0;
   const totalReviews = maker?.total_reviews ?? 0;
-  const rating: [string, { days: number; totalRating: number; totalReviews: number }] = [
-    "rating",
-    {
-      days,
-      totalRating,
-      totalReviews,
-    },
+  const rating: [string, string, string] = [
+    totalRating.toString(),
+    days.toString(),
+    totalReviews.toString(),
   ];
   const channelEnvVar = process.env.CHANNEL;
   if(channelEnvVar === undefined)
@@ -47,7 +44,7 @@ const orderToTags = async (order: IOrder) => {
   tags.push(fiat_amount);
   tags.push(['pm', order.payment_method]);
   tags.push(['premium', order.price_margin.toString()]);
-  tags.push(rating);
+  tags.push(['rating', ...rating]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
     if(community === null)
