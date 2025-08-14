@@ -22,13 +22,9 @@ const orderToTags = async (order: IOrder) => {
     fiat_amount.push(order.fiat_amount.toString());
   }
   const maker = await User.findById(order.creator_id);
-  if (!maker) {
-    throw new Error("Maker user not found");
-  }
-  const days = getUserAge(maker);
-  const totalRating = maker.total_rating;
-  const totalReviews = maker.total_reviews;
-
+  const days = maker ? getUserAge(maker) : 0;
+  const totalRating = maker?.total_rating ?? 0;
+  const totalReviews = maker?.total_reviews ?? 0;
   const rating: [string, { days: number; totalRating: number; totalReviews: number }] = [
     "rating",
     {
