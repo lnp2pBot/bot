@@ -1,8 +1,7 @@
 import { finalizeEvent, verifyEvent } from 'nostr-tools';
 import * as Config from './config';
-
-import { Community } from '../../../models';
-import { toKebabCase, removeAtSymbol } from '../../../util';
+import { Community, User } from '../../../models';
+import { getUserAge, toKebabCase, removeAtSymbol } from '../../../util';
 import { IOrder } from '../../../models/order';
 
 /// All events broadcasted are Parameterized Replaceable Events,
@@ -22,6 +21,15 @@ const orderToTags = async (order: IOrder) => {
   } else {
     fiat_amount.push(order.fiat_amount.toString());
   }
+  const maker = await User.findById(order.creator_id);
+  const days = maker ? getUserAge(maker) : 0;
+  const totalRating = Number(maker?.total_rating.toFixed(2)) ?? 0;
+  const totalReviews = maker?.total_reviews ?? 0;
+  const rating: [string, string, string] = [
+    totalRating.toString(),
+    days.toString(),
+    totalReviews.toString(),
+  ];
   const channelEnvVar = process.env.CHANNEL;
   if(channelEnvVar === undefined)
     throw new Error("Environment variable CHANNEL is not defined")
@@ -36,6 +44,7 @@ const orderToTags = async (order: IOrder) => {
   tags.push(fiat_amount);
   tags.push(['pm', order.payment_method]);
   tags.push(['premium', order.price_margin.toString()]);
+  tags.push(['rating', ...rating]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
     if(community === null)
@@ -44,7 +53,7 @@ const orderToTags = async (order: IOrder) => {
     if (community.order_channels.length === 1)
       order_channel = removeAtSymbol(community.order_channels[0].name);
     else if (community.order_channels.length === 2){
-      if (order.type === 'buy'){
+      if (order.type === 'buy') {
         order_channel = removeAtSymbol(community.order_channels[0].name);
       }
       else {
