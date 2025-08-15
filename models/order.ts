@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IOrder extends Document {
+   _id: string;
   description?: string;
   amount: number;
   max_amount: number;
@@ -48,7 +49,7 @@ export interface IOrder extends Document {
   is_golden_honey_badger?: boolean;
 }
 
-const orderSchema = new Schema<IOrder>({
+const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   description: { type: String, required: true },
   amount: {
     // amount in satoshis

@@ -31,7 +31,7 @@ const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) =>
    * The community is disabled if the admin has received the maximum notification message (MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION - 1) to add a solver.
    */
   if (community.warning_messages_count >= Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION)) {
-    await community.delete();
+    await community.deleteOne();
 
     logger.info(`Community: ${community.name} has been deleted due to lack of solvers.`);
     return;
