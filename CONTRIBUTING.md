@@ -16,6 +16,7 @@ All @lnp2pbot contributors submit changes via pull requests. The workflow is as 
  - Create a topic branch from the `main` branch
  - Commit patches
  - Squash redundant or unnecessary commits
+ - If your code introduces new English strings, please provide translations to other languages using [DeepL](https://www.deepl.com/en/translator)
  - Submit a pull request from your topic branch back to the `main` branch of the main repository
  - Make changes to the pull request if reviewers request them and request a re-review
 
