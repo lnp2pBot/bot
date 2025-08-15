@@ -23,6 +23,7 @@ jobs:
           apt install --yes sudo
           sudo apt install --yes --no-install-recommends npm
 
+          sudo apt install --yes git
       - name: Import MongoDB's public key for the package management system
         run: |
           sudo apt install --yes --no-install-recommends curl gnupg
@@ -67,3 +68,8 @@ jobs:
           DB_PORT: '27017'
           DB_NAME: 'lnp2pbot'
         run: npm test
+
+      - name: Run prettier
+        run: |
+          npm run format
+          git diff --exit-code || (echo "Formatting did not match (see above diff), please run 'npm run format'" && exit 1)
