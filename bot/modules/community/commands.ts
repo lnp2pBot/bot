@@ -37,7 +37,7 @@ export const setComm = async (ctx: MainContext) => {
     const [groupName] = (await validateParams(
       ctx,
       2,
-      '\\<_@communityGroupName \\| telegram\\-group\\-id / off_\\>'
+      '\\<_@communityGroupName \\| telegram\\-group\\-id / off_\\>',
     ))!;
 
     if (groupName === 'off') {
@@ -130,7 +130,12 @@ export const findCommunity = async (ctx: CommunityContext) => {
   }
 };
 
-export const updateCommunity = async (ctx: CommunityContext, id: string, field: string, bot?: Telegraf<CommunityContext>) => {
+export const updateCommunity = async (
+  ctx: CommunityContext,
+  id: string,
+  field: string,
+  bot?: Telegraf<CommunityContext>,
+) => {
   try {
     ctx.deleteMessage();
     if (!id) return;
@@ -146,7 +151,7 @@ export const updateCommunity = async (ctx: CommunityContext, id: string, field: 
 
     if (!community) {
       throw new Error(
-        'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID'
+        'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID',
       );
     }
 
@@ -205,8 +210,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
   try {
     ctx.deleteMessage();
     const id = ctx.match?.[1];
-    if(id === undefined)
-      throw new Error("id is undefined");
+    if (id === undefined) throw new Error('id is undefined');
 
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
@@ -229,8 +233,7 @@ export const changeVisibility = async (ctx: CommunityContext) => {
   try {
     ctx.deleteMessage();
     const id = ctx.match?.[1];
-    if(id === undefined)
-      throw new Error("id is undefined");
+    if (id === undefined) throw new Error('id is undefined');
 
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({

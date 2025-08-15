@@ -1,7 +1,11 @@
-import { MainContext } from "../../start";
+import { MainContext } from '../../start';
 
 import { User, Dispute, Order } from '../../../models';
-import { validateParams, validateObjectId, validateDisputeOrder } from '../../validations';
+import {
+  validateParams,
+  validateObjectId,
+  validateDisputeOrder,
+} from '../../validations';
 import * as messages from './messages';
 import * as globalMessages from '../../messages';
 import { logger } from '../../../logger';
@@ -12,15 +16,15 @@ const dispute = async (ctx: MainContext) => {
     const { user } = ctx;
 
     const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
-    
+
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await validateDisputeOrder(ctx, user, orderId);
 
     if (order === false) return;
     // Users can't initiate a dispute before this time
     const disputStartWindow = process.env.DISPUTE_START_WINDOW;
-    if(disputStartWindow === undefined)
-      throw new Error("DISPUTE_START_WINDOW environment variable not defined");
+    if (disputStartWindow === undefined)
+      throw new Error('DISPUTE_START_WINDOW environment variable not defined');
     const secsUntilDispute = parseInt(disputStartWindow);
     const time = new Date();
     time.setSeconds(time.getSeconds() - secsUntilDispute);
@@ -29,19 +33,15 @@ const dispute = async (ctx: MainContext) => {
     }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
-    if(buyer === null)
-      throw new Error("buyer was not found");
+    if (buyer === null) throw new Error('buyer was not found');
     const seller = await User.findOne({ _id: order.seller_id });
-    if(seller === null)
-      throw new Error("seller was not found");
-    let initiator: ('seller' | 'buyer') = 'seller';
+    if (seller === null) throw new Error('seller was not found');
+    let initiator: 'seller' | 'buyer' = 'seller';
     if (user._id == order.buyer_id) initiator = 'buyer';
 
     order.previous_dispute_status = order.status;
-    if(initiator === 'seller')
-      order.seller_dispute = true;
-    else
-      order.buyer_dispute = true;
+    if (initiator === 'seller') order.seller_dispute = true;
+    else order.buyer_dispute = true;
     order.status = 'DISPUTE';
     const sellerToken = Math.floor(Math.random() * 899 + 100);
     const buyerToken = Math.floor(Math.random() * 899 + 100);
@@ -100,7 +100,7 @@ const deleteDispute = async (ctx: MainContext) => {
     let [username, orderId] = (await validateParams(
       ctx,
       3,
-      '\\<_username_\\> \\<_order id_\\>'
+      '\\<_username_\\> \\<_order id_\\>',
     ))!;
 
     if (!username) return;

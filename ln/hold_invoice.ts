@@ -3,10 +3,17 @@ import lightning from 'lightning';
 import lnd from './connect';
 import { logger } from '../logger';
 
-const createHoldInvoice = async ({ description, amount }: { description: string, amount: number }) => {
+const createHoldInvoice = async ({
+  description,
+  amount,
+}: {
+  description: string;
+  amount: number;
+}) => {
   try {
     const randomSecret = () => randomBytes(32);
-    const sha256 = (buffer: Buffer) => createHash('sha256').update(buffer).digest('hex');
+    const sha256 = (buffer: Buffer) =>
+      createHash('sha256').update(buffer).digest('hex');
     // We create a random secret
     const secret = randomSecret();
     const expiresAt = new Date();
@@ -15,7 +22,8 @@ const createHoldInvoice = async ({ description, amount }: { description: string,
     const hash = sha256(secret);
     const holdInvoiceCltvDelta = process.env.HOLD_INVOICE_CLTV_DELTA;
     // sticking to semantics of JS code as requiring HOLD_INVOICE_CLTV_DELTA to be defined breaks tests
-    const cltv_delta = holdInvoiceCltvDelta === undefined ? NaN : parseInt(holdInvoiceCltvDelta);
+    const cltv_delta =
+      holdInvoiceCltvDelta === undefined ? NaN : parseInt(holdInvoiceCltvDelta);
     const { request, id } = await lightning.createHodlInvoice({
       cltv_delta,
       lnd,
@@ -56,9 +64,4 @@ const getInvoice = async ({ hash }: { hash: string }) => {
   }
 };
 
-export {
-  createHoldInvoice,
-  settleHoldInvoice,
-  cancelHoldInvoice,
-  getInvoice,
-};
+export { createHoldInvoice, settleHoldInvoice, cancelHoldInvoice, getInvoice };

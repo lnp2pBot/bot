@@ -1,6 +1,14 @@
 import { Order, Community } from '../models';
 import * as messages from './messages';
-import { getCurrency, numberFormat, getBtcExchangePrice, getFee, getUserAge, getStars, generateRandomImage } from '../util';
+import {
+  getCurrency,
+  numberFormat,
+  getBtcExchangePrice,
+  getFee,
+  getUserAge,
+  getStars,
+  generateRandomImage,
+} from '../util';
 import { logger } from '../logger';
 import { I18nContext } from '@grammyjs/i18n';
 import { UserDocument } from '../models/user';
@@ -60,29 +68,27 @@ const createOrder = async (
     tgChatId,
     tgOrderMessage,
     community_id,
-  }: CreateOrderArguments
+  }: CreateOrderArguments,
 ) => {
   try {
     amount = Math.floor(amount);
     let isPublic = true;
     if (community_id) {
       const community = await Community.findById(community_id);
-      if(community == null)
-        throw new Error("community is null");
+      if (community == null) throw new Error('community is null');
       isPublic = community.public;
     }
     const fee = await getFee(amount, community_id || '');
-    if(process.env.MAX_FEE === undefined)
-      throw new Error("Environment variable MAX_FEE is not defined");
-    if(process.env.FEE_PERCENT === undefined)
-      throw new Error("Environment variable FEE_PERCENT is not defined");
+    if (process.env.MAX_FEE === undefined)
+      throw new Error('Environment variable MAX_FEE is not defined');
+    if (process.env.FEE_PERCENT === undefined)
+      throw new Error('Environment variable FEE_PERCENT is not defined');
     // Global fee values at the moment of the order creation
     // We will need this to calculate the final amount
     const botFee = parseFloat(process.env.MAX_FEE);
     const communityFee = parseFloat(process.env.FEE_PERCENT);
     const currency = getCurrency(fiatCode);
-    if(currency == null)
-      throw new Error("currency is null");
+    if (currency == null) throw new Error('currency is null');
     const priceFromAPI = !amount;
 
     if (priceFromAPI && !currency.price) {
@@ -91,12 +97,11 @@ const createOrder = async (
     }
 
     const fiatAmountData = getFiatAmountData(fiatAmount);
-    
 
     let randomImage = '';
     let isGoldenHoneyBadger = false;
     let isGoldenHoneyBadgerOrder = false;
-    
+
     if (type === 'sell') {
       const result = generateRandomImage(user._id.toString());
       randomImage = result.randomImage;
@@ -104,9 +109,9 @@ const createOrder = async (
       isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;
     }
 
-    const recalculatedFee = isGoldenHoneyBadgerOrder ? 
-                            await getFee(amount, community_id || '', true) : 
-                            fee;
+    const recalculatedFee = isGoldenHoneyBadgerOrder
+      ? await getFee(amount, community_id || '', true)
+      : fee;
 
     const baseOrderData = {
       ...fiatAmountData,
@@ -134,7 +139,7 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
-        isGoldenHoneyBadger
+        isGoldenHoneyBadger,
       }),
       range_parent_id,
       community_id,
@@ -154,7 +159,6 @@ const createOrder = async (
       });
     }
     await order.save();
-    
 
     if (type === 'sell' && randomImage) {
       order.random_image = randomImage;
@@ -195,8 +199,8 @@ const buildDescription = (
     priceMargin,
     priceFromAPI,
     currency,
-    isGoldenHoneyBadger
-  } : BuildDescriptionArguments
+    isGoldenHoneyBadger,
+  }: BuildDescriptionArguments,
 ) => {
   try {
     const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
@@ -234,8 +238,7 @@ const buildDescription = (
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
       const exchangePrice = getBtcExchangePrice(fiatAmount[0], amount);
-      if (exchangePrice == null)
-        throw new Error("exchangePrice is null");
+      if (exchangePrice == null) throw new Error('exchangePrice is null');
       tasaText =
         i18n.t('price') +
         `: ${numberFormat(fiatCode, Number(exchangePrice.toFixed(2)))}\n`;
@@ -258,7 +261,6 @@ const buildDescription = (
     description += hashtag;
     description += tasaText;
     description += rateText;
-    
 
     return description;
   } catch (error) {
@@ -266,7 +268,11 @@ const buildDescription = (
   }
 };
 
-const getOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const getOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string,
+) => {
   try {
     if (!ObjectId.isValid(orderId)) {
       await messages.notValidIdMessage(ctx);
@@ -356,9 +362,4 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
   }
 };
 
-export {
-  createOrder,
-  getOrder,
-  getOrders,
-  getNewRangeOrderPayload,
-};
+export { createOrder, getOrder, getOrders, getNewRangeOrderPayload };

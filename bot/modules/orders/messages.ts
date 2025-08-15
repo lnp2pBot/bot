@@ -1,4 +1,8 @@
-import { getOrderChannel, sanitizeMD, getTimeToExpirationOrder } from '../../../util';
+import {
+  getOrderChannel,
+  sanitizeMD,
+  getTimeToExpirationOrder,
+} from '../../../util';
 import { logger } from '../../../logger';
 import { IOrder } from '../../../models/order';
 import { I18nContext } from '@grammyjs/i18n';
@@ -6,7 +10,10 @@ import { MainContext } from '../../start';
 import { ExtraReplyMessage } from 'telegraf/typings/telegram-types';
 import { CommunityWizardState } from '../community/communityContext';
 
-export const listOrdersResponse = async (orders: IOrder[], i18n: I18nContext) => {
+export const listOrdersResponse = async (
+  orders: IOrder[],
+  i18n: I18nContext,
+) => {
   const tasks = orders.map(async order => {
     const channel = await getOrderChannel(order);
     let amount = '\\-';
@@ -47,7 +54,10 @@ export const listOrdersResponse = async (orders: IOrder[], i18n: I18nContext) =>
   };
 };
 
-export const createOrderWizardStatus = (i18n: I18nContext, state: CommunityWizardState) => {
+export const createOrderWizardStatus = (
+  i18n: I18nContext,
+  state: CommunityWizardState,
+) => {
   const { type, priceMargin } = state;
   const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
   const sats = state.sats ? state.sats + ' ' : '';

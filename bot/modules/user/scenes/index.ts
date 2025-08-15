@@ -1,3 +1,3 @@
 import Settings from './settings';
 
-export default { Settings }
+export default { Settings };

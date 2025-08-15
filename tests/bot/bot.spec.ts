@@ -71,32 +71,36 @@ describe('Telegram bot', () => {
         sendCommand: sandbox.stub().resolves({ ok: true }),
         getUpdates: sandbox.stub().resolves({
           ok: true,
-          result: [{
-            update_id: 1,
-            message: {
-              message_id: 1,
-              from: {
-                id: 1,
-                is_bot: false,
-                first_name: 'Test',
-                username: 'testuser',
-                language_code: 'en',
+          result: [
+            {
+              update_id: 1,
+              message: {
+                message_id: 1,
+                from: {
+                  id: 1,
+                  is_bot: false,
+                  first_name: 'Test',
+                  username: 'testuser',
+                  language_code: 'en',
+                },
+                chat: {
+                  id: 1,
+                  first_name: 'Test',
+                  username: 'testuser',
+                  type: 'private',
+                },
+                date: 1678888888,
+                text: '/start',
+                entities: [
+                  {
+                    offset: 0,
+                    length: 6,
+                    type: 'bot_command',
+                  },
+                ],
               },
-              chat: {
-                id: 1,
-                first_name: 'Test',
-                username: 'testuser',
-                type: 'private',
-              },
-              date: 1678888888,
-              text: '/start',
-              entities: [{
-                offset: 0,
-                length: 6,
-                type: 'bot_command',
-              }],
             },
-          }],
+          ],
         }),
         sendMessage: sandbox.stub().resolves({ ok: true }),
       }),
@@ -152,7 +156,7 @@ describe('Telegram bot', () => {
         {
           update_id: 1,
           message: {
-            text: "😕 I do not understand. Please use /help to see the list of available commands"
+            text: '😕 I do not understand. Please use /help to see the list of available commands',
           },
         },
       ],
@@ -161,7 +165,9 @@ describe('Telegram bot', () => {
 
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
-    expect(updates.result[0].message.text).to.equal('😕 I do not understand. Please use /help to see the list of available commands');
+    expect(updates.result[0].message.text).to.equal(
+      '😕 I do not understand. Please use /help to see the list of available commands',
+    );
   });
 
   it('should return /buy help', async () => {
@@ -181,7 +187,7 @@ describe('Telegram bot', () => {
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
     expect(
-      (updates.result[0].message.text.match(/\n/g) || []).length - 1
+      (updates.result[0].message.text.match(/\n/g) || []).length - 1,
     ).to.be.equal(getCurrenciesWithPrice().length);
   });
 
@@ -195,9 +201,11 @@ describe('Telegram bot', () => {
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
     let flags = 0;
-    updates.result[0].message.reply_markup.inline_keyboard.forEach((flag: any) => {
-      flags += flag.length;
-    });
+    updates.result[0].message.reply_markup.inline_keyboard.forEach(
+      (flag: any) => {
+        flags += flag.length;
+      },
+    );
     let langs = 0;
     fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
       langs++;
@@ -226,7 +234,9 @@ describe('Bot Initialization', () => {
       telegram: {
         sendMessage: sinon.stub().resolves({ ok: true }),
         getMe: sinon.stub().resolves({ ok: true, result: { id: 12345 } }),
-        getChatMember: sinon.stub().resolves({ ok: true, result: { status: 'administrator' } }),
+        getChatMember: sinon
+          .stub()
+          .resolves({ ok: true, result: { status: 'administrator' } }),
       },
     };
 
@@ -240,10 +250,14 @@ describe('Bot Initialization', () => {
 
     // Replace the real modules with the stubs
     initialize = proxyquire('../../bot/start', {
-      'telegraf': { Telegraf: sinon.stub().returns(botStub) },
+      telegraf: { Telegraf: sinon.stub().returns(botStub) },
       'node-schedule': scheduleStub,
-      '@grammyjs/i18n': { I18n: sinon.stub().returns({ middleware: sinon.stub().returns(() => { }) }) },
-      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => { }) },
+      '@grammyjs/i18n': {
+        I18n: sinon
+          .stub()
+          .returns({ middleware: sinon.stub().returns(() => {}) }),
+      },
+      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => {}) },
       '../models': {
         Order: {
           findOne: sinon.stub().resolves(null),
@@ -337,7 +351,7 @@ describe('Bot Initialization', () => {
         validateFiatSentOrder: sinon.stub().resolves(true),
         validateSeller: sinon.stub().resolves(true),
         isValidInvoice: sinon.stub().resolves({ success: true }),
-        validateUser: validateUserStub
+        validateUser: validateUserStub,
       },
       '../util': {
         getCurrenciesWithPrice: sinon.stub().returns([]),
@@ -417,8 +431,8 @@ describe('Bot Initialization', () => {
         userMiddleware: sinon.stub().resolves(),
         adminMiddleware: sinon.stub().resolves(),
         superAdminMiddleware: sinon.stub().resolves(),
-        commandArgsMiddleware: sinon.stub().returns(() => { }),
-        stageMiddleware: sinon.stub().returns(() => { }),
+        commandArgsMiddleware: sinon.stub().returns(() => {}),
+        stageMiddleware: sinon.stub().returns(() => {}),
       },
       '../logger': {
         error: sinon.stub(),
@@ -445,17 +459,21 @@ describe('Bot Initialization', () => {
 
     initialize('dummy-token', {});
 
-    expect(scheduleStub.scheduleJob.calledWith(
-      `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
-      sinon.match.func
-    )).to.be.equal(true);
+    expect(
+      scheduleStub.scheduleJob.calledWith(
+        `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
+        sinon.match.func,
+      ),
+    ).to.be.equal(true);
 
     const scheduledFunction = scheduleStub.scheduleJob.getCall(0).args[1];
 
     scheduledFunction();
 
     expect(scheduleStub.scheduleJob.callCount).to.be.equal(8);
-    expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal('*/10 * * * *');
+    expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal(
+      '*/10 * * * *',
+    );
     expect(attemptPendingPaymentsStub.calledOnce).to.be.equal(true);
   });
 
@@ -502,12 +520,14 @@ describe('Bot Initialization', () => {
       },
     };
 
-    botStub.on = sinon.stub().callsFake((event: string, middleware: any, handler: any) => {
-      if (event === 'text') {
-        const capturedHandler = handler;
-        capturedHandler(ctx);
-      }
-    });
+    botStub.on = sinon
+      .stub()
+      .callsFake((event: string, middleware: any, handler: any) => {
+        if (event === 'text') {
+          const capturedHandler = handler;
+          capturedHandler(ctx);
+        }
+      });
 
     const ConfigStub = {
       findOne: sinon.stub().resolves({ maintenance: true }),
@@ -519,7 +539,7 @@ describe('Bot Initialization', () => {
     const TelegrafMock = sinon.stub().returns(botStub);
 
     const startModule = proxyquire('../../bot/start', {
-      'telegraf': { Telegraf: TelegrafMock },
+      telegraf: { Telegraf: TelegrafMock },
       '../models': { Config: ConfigStub },
     });
 
@@ -532,7 +552,9 @@ describe('Bot Initialization', () => {
       message: ctx.update.message,
     });
 
-    expect(ConfigStub.findOne.calledOnceWithExactly({ maintenance: true })).to.be.equal(true);
+    expect(
+      ConfigStub.findOne.calledOnceWithExactly({ maintenance: true }),
+    ).to.be.equal(true);
     expect(ctx.reply.calledOnceWithExactly('maintenance')).to.be.equal(true);
   });
 
@@ -557,24 +579,25 @@ describe('Bot Initialization', () => {
         },
       },
 
-
       reply: sinon.stub().resolves({ ok: true }),
       i18n: {
         t: i18nStub,
       },
     };
 
-    botStub.on = sinon.stub().callsFake((event: string, middleware: any, handler: any) => {
-      if (event === 'text') {
-        const capturedHandler = handler;
-        capturedHandler(ctx);
-      }
-    });
+    botStub.on = sinon
+      .stub()
+      .callsFake((event: string, middleware: any, handler: any) => {
+        if (event === 'text') {
+          const capturedHandler = handler;
+          capturedHandler(ctx);
+        }
+      });
 
     const TelegrafMock = sinon.stub().returns(botStub);
 
     const startModule = proxyquire('../../bot/start', {
-      'telegraf': { Telegraf: TelegrafMock },
+      telegraf: { Telegraf: TelegrafMock },
     });
 
     // Mock the Telegram API sendMessage method
@@ -589,6 +612,8 @@ describe('Bot Initialization', () => {
     });
 
     expect(ctx.reply.calledOnce).to.be.equal(true);
-    expect(ctx.reply.calledWithExactly('This is an unknown command.')).to.be.equal(true);
+    expect(
+      ctx.reply.calledWithExactly('This is an unknown command.'),
+    ).to.be.equal(true);
   });
 });
