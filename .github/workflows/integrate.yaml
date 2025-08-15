@@ -15,15 +15,19 @@ jobs:
     container:
       image: 'ubuntu:24.04'
     steps:
-      - uses: actions/checkout@v2
-
       - name: Update apt and install required packages
         run: |
           apt update --yes
           apt install --yes sudo
+
           sudo apt install --yes --no-install-recommends npm
 
           sudo apt install --yes git
+          # one time fix to avoid permission problems later on
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: actions/checkout@v2
+
       - name: Import MongoDB's public key for the package management system
         run: |
           sudo apt install --yes --no-install-recommends curl gnupg
