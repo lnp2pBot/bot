@@ -4,7 +4,7 @@ import * as globalMessages from '../../messages';
 import { MainContext } from '../../start';
 
 const block = async (ctx: MainContext, username: string): Promise<void> => {
-  const userToBlock = await User.findOne({ username:  username.substring(1) });
+  const userToBlock = await User.findOne({ username: username.substring(1) });
   const user = ctx.user;
 
   if (!userToBlock) {
@@ -26,7 +26,7 @@ const block = async (ctx: MainContext, username: string): Promise<void> => {
         'COMPLETED_BY_ADMIN',
         'SUCCESS',
         'PAID_HOLD_INVOICE',
-        'CANCELED'
+        'CANCELED',
       ],
     },
   });
@@ -75,7 +75,9 @@ const unblock = async (ctx: MainContext, username: string): Promise<void> => {
 
 const blocklist = async (ctx: MainContext): Promise<void> => {
   const blocks = await Block.find({ blocker_tg_id: ctx.user.tg_id });
-  const tgIdBlocks = blocks.map((blocked: { blocked_tg_id: any; }) => blocked.blocked_tg_id);
+  const tgIdBlocks = blocks.map(
+    (blocked: { blocked_tg_id: any }) => blocked.blocked_tg_id,
+  );
 
   if (!tgIdBlocks.length) {
     await messages.blocklistEmptyMessage(ctx);

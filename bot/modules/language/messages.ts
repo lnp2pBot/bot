@@ -2,7 +2,11 @@ import { logger } from '../../../logger';
 import { ILanguage } from '../../../util/languagesModel';
 import { MainContext } from '../../start';
 
-export const showFlagsMessage = async (ctx: MainContext, flags: ILanguage[], code: string) => {
+export const showFlagsMessage = async (
+  ctx: MainContext,
+  flags: ILanguage[],
+  code: string,
+) => {
   try {
     const buttons = [];
     while (flags.length > 0) {

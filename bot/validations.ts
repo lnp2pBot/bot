@@ -1,32 +1,41 @@
-import { HasTelegram, MainContext, OrderQuery, ctxUpdateAssertMsg } from "./start";
-import { IUsernameId } from "../models/community";
-import { FilterQuery } from "mongoose";
-import { UserDocument } from "../models/user";
-import { IOrder } from "../models/order";
+import {
+  HasTelegram,
+  MainContext,
+  OrderQuery,
+  ctxUpdateAssertMsg,
+} from './start';
+import { IUsernameId } from '../models/community';
+import { FilterQuery } from 'mongoose';
+import { UserDocument } from '../models/user';
+import { IOrder } from '../models/order';
 // @ts-ignore
 import { parsePaymentRequest } from 'invoices';
 import * as messages from './messages';
 import { Order, User, Community } from '../models';
-import { isIso4217, isDisputeSolver, removeLightningPrefix, isOrderCreator } from '../util';
+import {
+  isIso4217,
+  isDisputeSolver,
+  removeLightningPrefix,
+  isOrderCreator,
+} from '../util';
 import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
 
 const { ObjectId } = require('mongoose').Types;
 
-const ctxUpdateMessageFromAssertMsg = "ctx.update.message.from is not available";
+const ctxUpdateMessageFromAssertMsg =
+  'ctx.update.message.from is not available';
 
 // We look in database if the telegram user exists,
 // if not, it creates a new user
 const validateUser = async (ctx: MainContext, start: boolean) => {
   try {
     let tgUser = null;
-    if (("callback_query" in ctx.update) && ctx.update.callback_query) {
+    if ('callback_query' in ctx.update && ctx.update.callback_query) {
       tgUser = ctx.update.callback_query.from;
-    }
-    else if (("message" in ctx.update) && ctx.update.message) {
+    } else if ('message' in ctx.update && ctx.update.message) {
       tgUser = ctx.update.message.from;
-    }
-    else {
+    } else {
       throw new Error(ctxUpdateAssertMsg);
     }
     // We need to make sure the user has a username
@@ -103,7 +112,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     let community = null;
     if (user.default_community_id)
       community = await Community.findOne({ _id: user.default_community_id });
-    
+
     const isSolver = isDisputeSolver(community, user);
 
     // TODO this validation does not return anything
@@ -164,7 +173,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       await ctx.reply(
         ctx.i18n.t('must_be_numeric', {
           fieldName: ctx.i18n.t('premium_discount'),
-        })
+        }),
       );
       return false;
     }
@@ -172,7 +181,7 @@ const validateSellOrder = async (ctx: MainContext) => {
     amount = parseInt(amount);
     if (isNaN(amount)) {
       await ctx.reply(
-        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') }),
       );
 
       return false;
@@ -193,13 +202,13 @@ const validateSellOrder = async (ctx: MainContext) => {
       await messages.mustBeANumberOrRange(ctx);
       return false;
     }
-    
+
     // TODO, this validation could be amount > 0?
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        Number(process.env.MIN_PAYMENT_AMT)
+        Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
@@ -254,7 +263,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       await ctx.reply(
         ctx.i18n.t('must_be_numeric', {
           fieldName: ctx.i18n.t('premium_discount'),
-        })
+        }),
       );
       return false;
     }
@@ -262,7 +271,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
     amount = parseInt(amount);
     if (isNaN(amount)) {
       await ctx.reply(
-        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') }),
       );
       return false;
     }
@@ -287,7 +296,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        Number(process.env.MIN_PAYMENT_AMT)
+        Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
@@ -343,10 +352,14 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
       return false;
     }
     const latestDate = new Date(
-      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW),
     );
-    if (!("MIN_PAYMENT_AMT" in process.env)) throw Error("MIN_PAYMENT_AMT not found, please check .env file");
-    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
+    if (!('MIN_PAYMENT_AMT' in process.env))
+      throw Error('MIN_PAYMENT_AMT not found, please check .env file');
+    if (
+      !!invoice.tokens &&
+      invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)
+    ) {
       await messages.minimunAmountInvoiceMessage(ctx);
       return false;
     }
@@ -384,9 +397,12 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
     const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
-      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW),
     );
-    if (!!invoice.tokens && invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)) {
+    if (
+      !!invoice.tokens &&
+      invoice.tokens < Number(process.env.MIN_PAYMENT_AMT)
+    ) {
       await messages.invoiceMustBeLargerMessage(ctx);
       return {
         success: false,
@@ -433,8 +449,12 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
   }
 };
 
-
-const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder | null) => {
+const validateTakeSellOrder = async (
+  ctx: MainContext,
+  bot: HasTelegram,
+  user: UserDocument,
+  order: IOrder | null,
+) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -463,7 +483,12 @@ const validateTakeSellOrder = async (ctx: MainContext, bot: HasTelegram, user: U
   }
 };
 
-const validateTakeBuyOrder = async (ctx: MainContext, bot: HasTelegram, user: UserDocument, order: IOrder) => {
+const validateTakeBuyOrder = async (
+  ctx: MainContext,
+  bot: HasTelegram,
+  user: UserDocument,
+  order: IOrder,
+) => {
   try {
     if (!order) {
       await messages.invalidOrderMessage(ctx, bot, user);
@@ -488,7 +513,11 @@ const validateTakeBuyOrder = async (ctx: MainContext, bot: HasTelegram, user: Us
   }
 };
 
-const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateReleaseOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string,
+) => {
   try {
     let where: FilterQuery<OrderQuery> = {
       seller_id: user._id,
@@ -531,7 +560,11 @@ const validateReleaseOrder = async (ctx: MainContext, user: UserDocument, orderI
   }
 };
 
-const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateDisputeOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string,
+) => {
   try {
     const where = {
       $and: [
@@ -555,7 +588,11 @@ const validateDisputeOrder = async (ctx: MainContext, user: UserDocument, orderI
   }
 };
 
-const validateFiatSentOrder = async (ctx: MainContext, user: UserDocument, orderId: string) => {
+const validateFiatSentOrder = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderId: string,
+) => {
   try {
     const where: FilterQuery<OrderQuery> = {
       $and: [
@@ -612,7 +649,11 @@ const validateSeller = async (ctx: MainContext, user: UserDocument) => {
   }
 };
 
-const validateParams = async (ctx: MainContext, paramNumber: number, errOutputString: string): Promise<null | Array<string>> => {
+const validateParams = async (
+  ctx: MainContext,
+  paramNumber: number,
+  errOutputString: string,
+): Promise<null | Array<string>> => {
   try {
     if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
       throw new Error(ctxUpdateAssertMsg);
@@ -622,7 +663,7 @@ const validateParams = async (ctx: MainContext, paramNumber: number, errOutputSt
     if (params.length !== paramNumber) {
       await messages.customMessage(
         ctx,
-        `${params[0].toLowerCase()} ${errOutputString}`
+        `${params[0].toLowerCase()} ${errOutputString}`,
       );
 
       return [];
@@ -649,7 +690,11 @@ const validateObjectId = async (ctx: MainContext, id: string) => {
   }
 };
 
-const validateUserWaitingOrder = async (ctx: MainContext, bot: MainContext, user: UserDocument) => {
+const validateUserWaitingOrder = async (
+  ctx: MainContext,
+  bot: MainContext,
+  user: UserDocument,
+) => {
   try {
     // If is a seller
     let where: FilterQuery<OrderQuery> = {
@@ -679,12 +724,17 @@ const validateUserWaitingOrder = async (ctx: MainContext, bot: MainContext, user
 };
 
 // We check if the user is banned from the community in the order
-const isBannedFromCommunity = async (user: UserDocument, communityId: string) => {
+const isBannedFromCommunity = async (
+  user: UserDocument,
+  communityId: string,
+) => {
   try {
     if (!communityId) return false;
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
-    return community.banned_users.some((buser: IUsernameId) => buser.id == user._id);
+    return community.banned_users.some(
+      (buser: IUsernameId) => buser.id == user._id,
+    );
   } catch (error) {
     logger.error(error);
     return false;

@@ -9,13 +9,15 @@ import { MainContext } from '../../start';
 export const setlang = async (ctx: MainContext) => {
   try {
     const flags: ILanguage[] = [];
-    fs.readdirSync(path.join(__dirname, '../../../../locales')).forEach(file => {
-      const lang = file.split('.')[0];
-      const flag = getLanguageFlag(lang);
-      if (flag !== undefined) {
-        flags.push(flag);
-      }
-    });
+    fs.readdirSync(path.join(__dirname, '../../../../locales')).forEach(
+      file => {
+        const lang = file.split('.')[0];
+        const flag = getLanguageFlag(lang);
+        if (flag !== undefined) {
+          flags.push(flag);
+        }
+      },
+    );
     await showFlagsMessage(ctx, flags, ctx.user.lang);
   } catch (error) {
     logger.error(error);

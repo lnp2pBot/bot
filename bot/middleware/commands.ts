@@ -1,4 +1,4 @@
-import { CommunityContext } from "../modules/community/communityContext";
+import { CommunityContext } from '../modules/community/communityContext';
 
 const commandArgs = () => (ctx: CommunityContext, next: () => void) => {
   if (ctx.message && ctx.message.text) {

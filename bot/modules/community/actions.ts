@@ -9,7 +9,10 @@ interface OrderFilter {
   community_id?: string;
 }
 
-const getOrdersNDays = async (days: number, communityId: (string | undefined)) => {
+const getOrdersNDays = async (
+  days: number,
+  communityId: string | undefined,
+) => {
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - days * 24);
   const filter = {
@@ -23,7 +26,10 @@ const getOrdersNDays = async (days: number, communityId: (string | undefined)) =
   return Order.count(filter);
 };
 
-const getVolumeNDays = async (days: number, communityId: (string | undefined)) => {
+const getVolumeNDays = async (
+  days: number,
+  communityId: string | undefined,
+) => {
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - days * 24);
   const filter = {
@@ -54,15 +60,13 @@ const getVolumeNDays = async (days: number, communityId: (string | undefined)) =
 export const onCommunityInfo = async (ctx: MainContext) => {
   const commId = ctx.match?.[1];
   const community = await Community.findById(commId);
-  if(community === null)
-    throw new Error("community not found");
+  if (community === null) throw new Error('community not found');
   const userCount = await User.count({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);
 
   const creator = await User.findById(community.creator_id);
-  if(creator === null)
-    throw new Error("creator not found");
+  if (creator === null) throw new Error('creator not found');
 
   let orderChannelsText = '';
   if (community.order_channels.length === 1) {
@@ -71,7 +75,11 @@ export const onCommunityInfo = async (ctx: MainContext) => {
     orderChannelsText = `${community.order_channels[0].name} (${community.order_channels[0].type}) ${community.order_channels[1].name} (${community.order_channels[1].type})`;
   }
 
-  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
   const formatDate = community.created_at.toLocaleDateString('en-US', options);
 
   const rows = [];
@@ -105,7 +113,7 @@ export const onSetCommunity = async (ctx: CommunityContext) => {
   const defaultCommunityId = ctx.match?.[1];
   await User.findOneAndUpdate(
     { tg_id: tgId },
-    { default_community_id: defaultCommunityId }
+    { default_community_id: defaultCommunityId },
   );
   await ctx.reply(ctx.i18n.t('operation_successful'));
 };

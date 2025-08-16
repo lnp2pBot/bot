@@ -1,5 +1,5 @@
-import mongoose, { ConnectOptions } from "mongoose";
-import { logger } from "./logger";
+import mongoose, { ConnectOptions } from 'mongoose';
+import { logger } from './logger';
 
 mongoose.set('strictQuery', false);
 

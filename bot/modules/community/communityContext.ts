@@ -1,8 +1,16 @@
 import { MainContext } from '../../start';
-import { SceneContextScene, WizardContextWizard, WizardSessionData } from 'telegraf/typings/scenes';
+import {
+  SceneContextScene,
+  WizardContextWizard,
+  WizardSessionData,
+} from 'telegraf/typings/scenes';
 import { Update, Message } from 'telegraf/typings/core/types/typegram';
 import { Telegraf } from 'telegraf';
-import { ICommunity, IOrderChannel, IUsernameId } from '../../../models/community';
+import {
+  ICommunity,
+  IOrderChannel,
+  IUsernameId,
+} from '../../../models/community';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
 
@@ -42,8 +50,8 @@ export interface CommunityWizardState {
   error?: any;
   feedback?: any;
   language: string;
-  updateUI: (() => Promise<void>);
-  handler?: ((ctx: CommunityContext) => Promise<any>);
+  updateUI: () => Promise<void>;
+  handler?: (ctx: CommunityContext) => Promise<any>;
 }
 
 export interface CommunityWizard extends WizardContextWizard<CommunityContext> {

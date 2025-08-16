@@ -10,6 +10,4 @@ const mockCreateHodlResponseForLightning = {
   tokens: 200,
 };
 
-export {
-  mockCreateHodlResponseForLightning,
-};
+export { mockCreateHodlResponseForLightning };

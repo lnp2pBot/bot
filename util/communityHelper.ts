@@ -17,7 +17,7 @@ interface CommunityLookupResult {
 export const getCommunityInfo = async (
   user: UserDocument,
   chatType: string,
-  chat?: Chat.UserNameChat
+  chat?: Chat.UserNameChat,
 ): Promise<CommunityLookupResult> => {
   try {
     let community: ICommunity | null = null;
@@ -35,7 +35,7 @@ export const getCommunityInfo = async (
       // Private chat with default community
       communityId = user.default_community_id;
       community = await Community.findById(communityId);
-      
+
       // If community not found, clear the user's default
       if (!community) {
         user.default_community_id = undefined;
@@ -47,20 +47,22 @@ export const getCommunityInfo = async (
     // Check if user is banned (only if community exists)
     let isBanned = false;
     if (community && communityId) {
-      isBanned = community.banned_users.some((buser: any) => String(buser.id) === String(user._id));
+      isBanned = community.banned_users.some(
+        (buser: any) => String(buser.id) === String(user._id),
+      );
     }
 
     return {
       community,
       communityId,
-      isBanned
+      isBanned,
     };
   } catch (error) {
     logger.error(`Error in getCommunityInfo: ${error}`);
     return {
       community: null,
       communityId: undefined,
-      isBanned: false
+      isBanned: false,
     };
   }
 };
@@ -68,7 +70,10 @@ export const getCommunityInfo = async (
 /**
  * Check if a currency is supported by a community
  */
-export const isCurrencySupported = (community: ICommunity | null, fiatCode: string): boolean => {
+export const isCurrencySupported = (
+  community: ICommunity | null,
+  fiatCode: string,
+): boolean => {
   if (!community) return true; // No community restriction
   return community.currencies.includes(fiatCode);
 };

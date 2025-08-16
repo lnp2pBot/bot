@@ -1,23 +1,22 @@
 import { Telegraf } from 'telegraf';
 import { MainContext } from '../bot/start';
 
-import { Community, User, } from '../models';
+import { Community, User } from '../models';
 import { ICommunity } from '../models/community';
 import { logger } from '../logger';
 import { I18nContext } from '@grammyjs/i18n';
 import { getUserI18nContext } from '../util';
-
 
 const checkSolvers = async (bot: Telegraf<MainContext>) => {
   try {
     const communities = await Community.find();
 
     for (const community of communities) {
-        if (community.solvers.length > 0) {
-            continue;
-        } else {
-            await notifyAdmin(community, bot);
-        }
+      if (community.solvers.length > 0) {
+        continue;
+      } else {
+        await notifyAdmin(community, bot);
+      }
     }
   } catch (error) {
     const message = String(error);
@@ -25,15 +24,23 @@ const checkSolvers = async (bot: Telegraf<MainContext>) => {
   }
 };
 
-const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) => {
+const notifyAdmin = async (
+  community: ICommunity,
+  bot: Telegraf<MainContext>,
+) => {
   community.warning_messages_count += 1;
   /**
    * The community is disabled if the admin has received the maximum notification message (MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION - 1) to add a solver.
    */
-  if (community.warning_messages_count >= Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION)) {
+  if (
+    community.warning_messages_count >=
+    Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION)
+  ) {
     await community.delete();
 
-    logger.info(`Community: ${community.name} has been deleted due to lack of solvers.`);
+    logger.info(
+      `Community: ${community.name} has been deleted due to lack of solvers.`,
+    );
     return;
   }
 
@@ -42,15 +49,23 @@ const notifyAdmin = async (community: ICommunity, bot: Telegraf<MainContext>) =>
 
   if (admin) {
     const i18nCtx: I18nContext = await getUserI18nContext(admin);
-    const remainingDays: number = (Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION) - 1) - community.warning_messages_count;
+    const remainingDays: number =
+      Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION) -
+      1 -
+      community.warning_messages_count;
 
-    const message = remainingDays === 0 ? i18nCtx.t('check_solvers_last_warning', { communityName: community.name }) : i18nCtx.t('check_solvers', { communityName: community.name, remainingDays });
+    const message =
+      remainingDays === 0
+        ? i18nCtx.t('check_solvers_last_warning', {
+            communityName: community.name,
+          })
+        : i18nCtx.t('check_solvers', {
+            communityName: community.name,
+            remainingDays,
+          });
 
-    await bot.telegram.sendMessage(
-      admin.tg_id,
-      message,
-    );
+    await bot.telegram.sendMessage(admin.tg_id, message);
   }
-}
+};
 
 export default checkSolvers;

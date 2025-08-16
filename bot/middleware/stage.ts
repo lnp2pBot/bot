@@ -3,7 +3,11 @@ import * as CommunityModule from '../modules/community';
 import * as OrdersModule from '../modules/orders';
 import * as UserModule from '../modules/user';
 import { CommunityContext } from '../modules/community/communityContext';
-import { addInvoiceWizard, addFiatAmountWizard, addInvoicePHIWizard } from '../scenes';
+import {
+  addInvoiceWizard,
+  addFiatAmountWizard,
+  addInvoicePHIWizard,
+} from '../scenes';
 
 export const stageMiddleware = () => {
   const scenes = [
@@ -31,7 +35,7 @@ export const stageMiddleware = () => {
 };
 
 function addGenericCommands(scene: Scenes.WizardScene<CommunityContext>) {
-  scene.command('exit', async (ctx) => {
+  scene.command('exit', async ctx => {
     await ctx.scene.leave();
     const text = ctx.i18n.t('wizard_exit');
     await ctx.reply(text);

@@ -1,11 +1,19 @@
 import { logger } from '../../../logger';
 import { Order } from '../../../models';
 import { isFloat } from '../../../util';
-import { validateBuyOrder, validateSeller, validateSellOrder, validateParams } from '../../validations';
+import {
+  validateBuyOrder,
+  validateSeller,
+  validateSellOrder,
+  validateParams,
+} from '../../validations';
 import * as messages from '../../messages';
 import * as ordersActions from '../../ordersActions';
 import { deletedCommunityMessage } from './messages';
-import { getCommunityInfo, isCurrencySupported } from '../../../util/communityHelper';
+import {
+  getCommunityInfo,
+  isCurrencySupported,
+} from '../../../util/communityHelper';
 import { takebuy, takesell, takebuyValidation } from './takeOrder';
 
 import * as Scenes from './scenes';
@@ -23,8 +31,10 @@ interface EnterWizardState {
   user: UserDocument;
 }
 
-const buyWizard = async (ctx: CommunityContext) => enterWizard(ctx, ctx.user, 'buy');
-const sellWizard = async (ctx: CommunityContext) => enterWizard(ctx, ctx.user, 'sell');
+const buyWizard = async (ctx: CommunityContext) =>
+  enterWizard(ctx, ctx.user, 'buy');
+const sellWizard = async (ctx: CommunityContext) =>
+  enterWizard(ctx, ctx.user, 'sell');
 
 const sell = async (ctx: MainContext) => {
   try {
@@ -45,26 +55,30 @@ const sell = async (ctx: MainContext) => {
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
-    
+
     // Optimized community lookup - single database query instead of multiple
     const communityInfo = await getCommunityInfo(
-      user, 
+      user,
       ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat
+      ctx.message?.chat as Chat.UserNameChat,
     );
-    
+
     const { community, communityId, isBanned } = communityInfo;
-    
+
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
       return ctx.deleteMessage();
     }
-    
+
     // Handle deleted default community
-    if (ctx.message?.chat.type === 'private' && user.default_community_id && !community) {
+    if (
+      ctx.message?.chat.type === 'private' &&
+      user.default_community_id &&
+      !community
+    ) {
       return deletedCommunityMessage(ctx);
     }
-    
+
     // Check if user is banned
     if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
@@ -74,7 +88,7 @@ const sell = async (ctx: MainContext) => {
     if (!isCurrencySupported(community, fiatCode)) {
       return await messages.currencyNotSupportedMessage(
         ctx,
-        community?.currencies || []
+        community?.currencies || [],
       );
     }
 
@@ -110,27 +124,31 @@ const buy = async (ctx: MainContext) => {
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
-    
+
     // Optimized community lookup - single database query instead of multiple
     const communityInfo = await getCommunityInfo(
-      user, 
+      user,
       ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat
+      ctx.message?.chat as Chat.UserNameChat,
     );
-    
+
     const { community, communityId, isBanned } = communityInfo;
-    
+
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
       await ctx.deleteMessage();
       return;
     }
-    
+
     // Handle deleted default community
-    if (ctx.message?.chat.type === 'private' && user.default_community_id && !community) {
+    if (
+      ctx.message?.chat.type === 'private' &&
+      user.default_community_id &&
+      !community
+    ) {
       return deletedCommunityMessage(ctx);
     }
-    
+
     // Check if user is banned
     if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
@@ -138,7 +156,10 @@ const buy = async (ctx: MainContext) => {
 
     // Check if currency is supported
     if (!isCurrencySupported(community, fiatCode)) {
-      await messages.currencyNotSupportedMessage(ctx, community?.currencies || []);
+      await messages.currencyNotSupportedMessage(
+        ctx,
+        community?.currencies || [],
+      );
       return;
     }
     // @ts-ignore
@@ -161,7 +182,11 @@ const buy = async (ctx: MainContext) => {
   }
 };
 
-async function enterWizard(ctx: CommunityContext, user: UserDocument, type: string) {
+async function enterWizard(
+  ctx: CommunityContext,
+  user: UserDocument,
+  type: string,
+) {
   const state: EnterWizardState = {
     type,
     user,
@@ -170,16 +195,16 @@ async function enterWizard(ctx: CommunityContext, user: UserDocument, type: stri
     // Use optimized community lookup
     const communityInfo = await getCommunityInfo(user, 'private');
     const { community, isBanned } = communityInfo;
-    
+
     if (!community) {
-      throw new Error("Default community not found");
+      throw new Error('Default community not found');
     }
-    
+
     // Check if user is banned
     if (isBanned) {
       return await messages.bannedUserErrorMessage(ctx, user);
     }
-    
+
     state.community = community;
     state.currencies = community.currencies;
     if (community.currencies.length === 1) {
@@ -196,8 +221,8 @@ const isMaxPending = async (user: UserDocument) => {
     status: 'PENDING',
   });
   const maxPendingOrders = process.env.MAX_PENDING_ORDERS;
-  if(maxPendingOrders === undefined)
-    throw new Error("Environment variable MAX_PENDING_ORDERS is not defined");
+  if (maxPendingOrders === undefined)
+    throw new Error('Environment variable MAX_PENDING_ORDERS is not defined');
   // We don't let users create too PENDING many orders
   if (pendingOrders >= parseInt(maxPendingOrders)) {
     return true;
@@ -207,9 +232,13 @@ const isMaxPending = async (user: UserDocument) => {
 
 const takeOrder = async (ctx: MainContext) => {
   try {
-    const validateParamsResult = await validateParams(ctx, 2, '\\<_order id_\\>');
-    if(validateParamsResult === null || validateParamsResult.length === 0)
-      throw new Error("validateParams failed");
+    const validateParamsResult = await validateParams(
+      ctx,
+      2,
+      '\\<_order id_\\>',
+    );
+    if (validateParamsResult === null || validateParamsResult.length === 0)
+      throw new Error('validateParams failed');
     const [orderId] = validateParamsResult;
     const order = await Order.findOne({
       _id: orderId,

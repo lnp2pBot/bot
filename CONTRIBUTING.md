@@ -18,6 +18,7 @@ All @lnp2pbot contributors submit changes via pull requests. The workflow is as 
  - Squash redundant or unnecessary commits
  - If your code introduces new English strings, please provide translations to other languages using [DeepL](https://www.deepl.com/en/translator)
  - Submit a pull request from your topic branch back to the `main` branch of the main repository
+ - If CI is broken, please try to fix it; otherwise maintainers might think it's still a work in progress
  - Make changes to the pull request if reviewers request them and request a re-review
 
 Pull requests should be focused on a single change. Do not mix, for example, refactorings with a bug fix or implementation of a new feature. This practice makes it easier for fellow contributors to review each pull request.

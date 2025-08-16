@@ -5,7 +5,10 @@ import { ICommunity } from '../../../models/community';
 import { I18nContext } from '@grammyjs/i18n';
 import { MainContext } from '../../start';
 
-export const createCommunityWizardStatus = (i18n: I18nContext, state: CommunityWizardState) => {
+export const createCommunityWizardStatus = (
+  i18n: I18nContext,
+  state: CommunityWizardState,
+) => {
   try {
     let { name, group } = state;
     name = state.name || '__';
@@ -13,7 +16,10 @@ export const createCommunityWizardStatus = (i18n: I18nContext, state: CommunityW
     currencies = currencies || '__';
     group = state.group || '__';
     let channels =
-      state.channels && state.channels.map((channel: { name: string }) => channel.name).join(', ');
+      state.channels &&
+      state.channels
+        .map((channel: { name: string }) => channel.name)
+        .join(', ');
     channels = channels || '__';
     const fee = String(state.fee) || '__';
     let solvers =
@@ -43,8 +49,7 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
     await ctx.deleteMessage();
     const id = ctx.match?.[1];
     const community = await Community.findById(id);
-    if(community == null)
-      throw new Error("community was not found");
+    if (community == null) throw new Error('community was not found');
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
     const visibilityText = community.public
@@ -111,7 +116,10 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
   }
 };
 
-export const listCommunitiesMessage = async (ctx: MainContext, communities: ICommunity[]) => {
+export const listCommunitiesMessage = async (
+  ctx: MainContext,
+  communities: ICommunity[],
+) => {
   try {
     let message = '';
     communities.forEach(community => {
@@ -149,8 +157,7 @@ export const earningsMessage = async (ctx: MainContext) => {
       return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
     const community = await Community.findById(communityId);
-    if(community == null)
-      throw new Error("community was not found");
+    if (community == null) throw new Error('community was not found');
     const button =
       community.earnings > 0
         ? {
@@ -171,14 +178,17 @@ export const earningsMessage = async (ctx: MainContext) => {
         ordersToRedeem: community.orders_to_redeem,
         earnings: community.earnings,
       }),
-      button
+      button,
     );
   } catch (error) {
     logger.error(error);
   }
 };
 
-export const showUserCommunitiesMessage = async (ctx: MainContext, communities: ICommunity[]) => {
+export const showUserCommunitiesMessage = async (
+  ctx: MainContext,
+  communities: ICommunity[],
+) => {
   try {
     const buttons = [];
     while (communities.length > 0) {
@@ -202,7 +212,11 @@ export const showUserCommunitiesMessage = async (ctx: MainContext, communities: 
   }
 };
 
-export const wizardCommunityWrongPermission = async (ctx: MainContext, channel: string, response: string) => {
+export const wizardCommunityWrongPermission = async (
+  ctx: MainContext,
+  channel: string,
+  response: string,
+) => {
   try {
     if (response.indexOf('bot was kicked from the supergroup chat') !== -1) {
       await ctx.reply(ctx.i18n.t('bot_kicked'));
@@ -218,7 +232,7 @@ export const wizardCommunityWrongPermission = async (ctx: MainContext, channel: 
       await ctx.reply(
         ctx.i18n.t('wizard_community_you_are_not_admin', {
           channel,
-        })
+        }),
       );
     } else {
       await ctx.reply(ctx.i18n.t('generic_error'));

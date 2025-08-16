@@ -2,7 +2,10 @@ import { Scenes } from 'telegraf';
 import { Community } from '../../../../models';
 import { getLanguageFlag } from '../../../../util';
 import * as NostrLib from '../../nostr/lib';
-import { CommunityContext, CommunityWizardState } from '../../community/communityContext';
+import {
+  CommunityContext,
+  CommunityWizardState,
+} from '../../community/communityContext';
 import { Message } from 'telegraf/typings/core/types/typegram';
 
 function make() {
@@ -24,8 +27,7 @@ function make() {
     };
     if (user.default_community_id) {
       const community = await Community.findById(user.default_community_id);
-      if(community == null)
-        throw new Error("community not found")
+      if (community == null) throw new Error('community not found');
       data.community = community.group;
     }
     if (user.nostr_public_key) {
@@ -44,8 +46,7 @@ function make() {
       ctx.i18n.locale(state.language); // i18n locale resets if user executes unknown action
       const { message, error } = state;
 
-      if(message === undefined)
-        throw new Error("message is undefined");
+      if (message === undefined) throw new Error('message is undefined');
 
       const errorText = (error => {
         if (!error) return;
@@ -72,7 +73,7 @@ function make() {
         {
           parse_mode: 'HTML',
           link_preview_options: { is_disabled: true },
-        } as any
+        } as any,
       );
       state.message = msg as Message.TextMessage;
       state.message.text = str;
@@ -89,23 +90,26 @@ function make() {
       state.message.text = str;
     } catch (err) {}
   }
-  const scene = new Scenes.WizardScene('USER_SETTINGS', async (ctx: CommunityContext) => {
-    const state = ctx.scene.state as CommunityWizardState;
-    ctx.user = state.user;
-    if (!state.message) return initHandler(ctx);
-    await ctx.deleteMessage();
-    state.error = {
-      i18n: 'generic_error',
-    };
-    await updateMessage(ctx);
-  });
+  const scene = new Scenes.WizardScene(
+    'USER_SETTINGS',
+    async (ctx: CommunityContext) => {
+      const state = ctx.scene.state as CommunityWizardState;
+      ctx.user = state.user;
+      if (!state.message) return initHandler(ctx);
+      await ctx.deleteMessage();
+      state.error = {
+        i18n: 'generic_error',
+      };
+      await updateMessage(ctx);
+    },
+  );
 
-  scene.command('/setnpub', resetMessage, async (ctx: CommunityContext)  => {
+  scene.command('/setnpub', resetMessage, async (ctx: CommunityContext) => {
     try {
       await ctx.deleteMessage();
       const state = ctx.scene.state as CommunityWizardState;
-      if(ctx.message === undefined)
-        throw new Error("ctx.message is undefined");
+      if (ctx.message === undefined)
+        throw new Error('ctx.message is undefined');
       const [, npub] = ctx.message.text.trim().split(' ');
       const hex = NostrLib.decodeNpub(npub);
       if (!hex) throw new Error('NpubNotValid');

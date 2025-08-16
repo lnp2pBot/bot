@@ -9,9 +9,10 @@ const logger = winston.createLogger({
     }),
     winston.format.colorize(),
     winston.format.printf(info => {
-      return `[${info.timestamp}] ${info.level}: ${info.message} ${info.stack ? info.stack : ''
-        }`;
-    })
+      return `[${info.timestamp}] ${info.level}: ${info.message} ${
+        info.stack ? info.stack : ''
+      }`;
+    }),
   ),
   levels: winston.config.syslog.levels,
   level,
@@ -29,21 +30,26 @@ export const logTimeout = (operation: string, timeout: number, error?: any) => {
     operation,
     timeout_ms: timeout,
     timestamp: new Date().toISOString(),
-    error: error?.toString() || 'Unknown timeout error'
+    error: error?.toString() || 'Unknown timeout error',
   };
   logger.error(`TIMEOUT_MONITOR: ${JSON.stringify(logData)}`);
 };
 
-export const logOperationDuration = (operation: string, startTime: number, success: boolean = true) => {
+export const logOperationDuration = (
+  operation: string,
+  startTime: number,
+  success: boolean = true,
+) => {
   const duration = Date.now() - startTime;
   const logData = {
     operation,
     duration_ms: duration,
     success,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
-  
-  if (duration > 30000) { // Log slow operations (>30s)
+
+  if (duration > 30000) {
+    // Log slow operations (>30s)
     logger.warning(`SLOW_OPERATION: ${JSON.stringify(logData)}`);
   } else {
     logger.info(`OPERATION_DURATION: ${JSON.stringify(logData)}`);

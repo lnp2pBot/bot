@@ -12,7 +12,8 @@ export const orderCreated = (order: IOrder) => {
     payload: order,
   });
 };
-export const onOrderCreated = (fn: Events.SubscriptionFunction) => Events.subscribe(TYPES.ORDER_CREATED, fn);
+export const onOrderCreated = (fn: Events.SubscriptionFunction) =>
+  Events.subscribe(TYPES.ORDER_CREATED, fn);
 
 export const orderUpdated = (order: IOrder) => {
   Events.dispatch({
@@ -20,4 +21,5 @@ export const orderUpdated = (order: IOrder) => {
     payload: order,
   });
 };
-export const onOrderUpdated = (fn: Events.SubscriptionFunction) => Events.subscribe(TYPES.ORDER_UPDATED, fn);
+export const onOrderUpdated = (fn: Events.SubscriptionFunction) =>
+  Events.subscribe(TYPES.ORDER_UPDATED, fn);

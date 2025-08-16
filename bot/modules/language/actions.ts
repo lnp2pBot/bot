@@ -6,8 +6,7 @@ export const setLanguage = async (ctx: MainContext) => {
   const user = await User.findOne({ tg_id: tgId });
   if (user === null) return;
   const code = ctx.match?.[1];
-  if (code === undefined)
-    throw new Error("setLanguage: code is undefined");
+  if (code === undefined) throw new Error('setLanguage: code is undefined');
   ctx.deleteMessage();
   user.lang = code;
   ctx.i18n.locale(code);

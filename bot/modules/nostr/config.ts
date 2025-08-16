@@ -1,7 +1,13 @@
-import { generateSecretKey, getPublicKey as nostrGetPublicKey, SimplePool } from 'nostr-tools';
+import {
+  generateSecretKey,
+  getPublicKey as nostrGetPublicKey,
+  SimplePool,
+} from 'nostr-tools';
 
 const nostrSkEnvVar = process.env.NOSTR_SK;
-const sk = nostrSkEnvVar ? Buffer.from(nostrSkEnvVar, 'hex') : generateSecretKey();
+const sk = nostrSkEnvVar
+  ? Buffer.from(nostrSkEnvVar, 'hex')
+  : generateSecretKey();
 const pk = nostrGetPublicKey(sk);
 
 export const getPrivateKey = () => sk;

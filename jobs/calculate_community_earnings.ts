@@ -1,5 +1,5 @@
 import { Order, Community } from '../models';
-import { logger } from "../logger";
+import { logger } from '../logger';
 
 const calculateEarnings = async () => {
   try {
@@ -27,13 +27,13 @@ const calculateEarnings = async () => {
     }
     for (const [communityId, earnings] of earningsMap) {
       const community = await Community.findById(communityId);
-      if (community === null) throw Error("Community was not found in DB");
+      if (community === null) throw Error('Community was not found in DB');
       const amount = Math.round(earnings[0]);
       community.earnings = community.earnings + amount;
       community.orders_to_redeem = community.orders_to_redeem + earnings[1];
       await community.save();
       logger.info(
-        `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`
+        `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`,
       );
     }
   } catch (error) {

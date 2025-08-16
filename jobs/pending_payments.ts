@@ -1,6 +1,6 @@
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
-import { logger } from "../logger";
+import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { payRequest, isPendingPayment } from '../ln';
@@ -8,7 +8,9 @@ import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 
-export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): Promise<void> => {
+export const attemptPendingPayments = async (
+  bot: Telegraf<CommunityContext>,
+): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -19,16 +21,16 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
   for (const pending of pendingPayments) {
     const order = await Order.findOne({ _id: pending.order_id });
     try {
-      if (order === null) throw Error("Order was not found in DB");
+      if (order === null) throw Error('Order was not found in DB');
       pending.attempts++;
-      
+
       // Calculate exponential backoff delay
       const baseDelay = 5 * 60 * 1000; // 5 minutes
       const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
       const maxDelay = 60 * 60 * 1000; // 1 hour max
       const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
       pending.next_retry = new Date(Date.now() + nextRetryDelay);
-      
+
       if (order.status === 'SUCCESS') {
         pending.paid = true;
         await pending.save();
@@ -36,10 +38,14 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
         return;
       }
       // We check if the old payment is on flight
-      const isPendingOldPayment: boolean = await isPendingPayment(order.buyer_invoice);
+      const isPendingOldPayment: boolean = await isPendingPayment(
+        order.buyer_invoice,
+      );
 
       // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(
+        pending.payment_request,
+      );
 
       // If one of the payments is on flight we don't do anything
       if (isPending || isPendingOldPayment) return;
@@ -49,7 +55,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
         request: pending.payment_request,
       });
       const buyerUser = await User.findOne({ _id: order.buyer_id });
-      if (buyerUser === null) throw Error("buyerUser was not found in DB");
+      if (buyerUser === null) throw Error('buyerUser was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
@@ -59,7 +65,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
           bot,
           buyerUser,
           order,
-          i18nCtx
+          i18nCtx,
         );
       }
 
@@ -73,7 +79,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
         await buyerUser.save();
         // We add a new completed trade for the seller
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (sellerUser === null) throw Error("sellerUser was not found in DB");
+        if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
         sellerUser.save();
         logger.info(`Invoice with hash: ${pending.hash} paid`);
@@ -83,33 +89,41 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
           order,
           pending,
           payment,
-          i18nCtx
+          i18nCtx,
         );
         await messages.toBuyerPendingPaymentSuccessMessage(
           bot,
           buyerUser,
           order,
           payment,
-          i18nCtx
+          i18nCtx,
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
         // Enhanced error handling for different payment failure types
         if (payment && typeof payment === 'object' && 'error' in payment) {
           pending.last_error = payment.error as string;
-          
+
           if (payment.error === 'TIMEOUT') {
-            logger.warning(`Payment timeout for order ${order._id}, attempt ${pending.attempts}`);
+            logger.warning(
+              `Payment timeout for order ${order._id}, attempt ${pending.attempts}`,
+            );
           } else if (payment.error === 'ROUTING_FAILED') {
-            logger.warning(`Routing failed for order ${order._id}, attempt ${pending.attempts}`);
+            logger.warning(
+              `Routing failed for order ${order._id}, attempt ${pending.attempts}`,
+            );
           } else {
-            logger.error(`Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`);
+            logger.error(
+              `Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`,
+            );
           }
         } else {
           pending.last_error = 'PAYMENT_FAILED';
-          logger.error(`Payment failed for order ${order._id}, attempt ${pending.attempts}`);
+          logger.error(
+            `Payment failed for order ${order._id}, attempt ${pending.attempts}`,
+          );
         }
-        
+
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
           pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
@@ -119,7 +133,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
             bot,
             buyerUser,
             order,
-            i18nCtx
+            i18nCtx,
           );
         }
         await messages.toAdminChannelPendingPaymentFailedMessage(
@@ -127,7 +141,7 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
           buyerUser,
           order,
           pending,
-          i18nCtx
+          i18nCtx,
         );
       }
     } catch (error: any) {
@@ -143,7 +157,9 @@ export const attemptPendingPayments = async (bot: Telegraf<CommunityContext>): P
   }
 };
 
-export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityContext>): Promise<void> => {
+export const attemptCommunitiesPendingPayments = async (
+  bot: Telegraf<CommunityContext>,
+): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
     attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
@@ -155,7 +171,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
   for (const pending of pendingPayments) {
     try {
       pending.attempts++;
-      
+
       // Calculate exponential backoff delay for community payments
       const baseDelay = 5 * 60 * 1000; // 5 minutes
       const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
@@ -164,7 +180,9 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
       pending.next_retry = new Date(Date.now() + nextRetryDelay);
 
       // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(pending.payment_request);
+      const isPending: boolean = await isPendingPayment(
+        pending.payment_request,
+      );
 
       // If the payments is on flight we don't do anything
       if (isPending) return;
@@ -174,19 +192,19 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
         request: pending.payment_request,
       });
       const user = await User.findById(pending.user_id);
-      if (user === null) throw Error("User was not found in DB");
+      if (user === null) throw Error('User was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
         pending.is_invoice_expired = true;
         await bot.telegram.sendMessage(
           user.tg_id,
-          i18nCtx.t('invoice_expired_earnings')
+          i18nCtx.t('invoice_expired_earnings'),
         );
       }
 
       const community = await Community.findById(pending.community_id);
-      if (community === null) throw Error("Community was not found in DB");
+      if (community === null) throw Error('Community was not found in DB');
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
         pending.paid_at = new Date();
@@ -196,7 +214,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
         community.orders_to_redeem = 0;
         await community.save();
         logger.info(
-          `Community ${community.id} withdrew ${pending.amount} sats, invoice with hash: ${payment.id} was paid`
+          `Community ${community.id} withdrew ${pending.amount} sats, invoice with hash: ${payment.id} was paid`,
         );
         await bot.telegram.sendMessage(
           user.tg_id,
@@ -204,22 +222,22 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
             id: community.id,
             amount: pending.amount,
             paymentSecret: payment.secret,
-          })
+          }),
         );
       } else {
         // Enhanced error handling for community payments
         if (payment && typeof payment === 'object' && 'error' in payment) {
           pending.last_error = payment.error as string;
           logger.error(
-            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats, error: ${payment.error}`
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats, error: ${payment.error}`,
           );
         } else {
           pending.last_error = 'PAYMENT_FAILED';
           logger.error(
-            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`,
           );
         }
-        
+
         if (
           process.env.PAYMENT_ATTEMPTS !== undefined &&
           pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
@@ -228,7 +246,7 @@ export const attemptCommunitiesPendingPayments = async (bot: Telegraf<CommunityC
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {
               attempts: pending.attempts,
-            })
+            }),
           );
         }
       }
