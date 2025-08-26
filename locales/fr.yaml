@@ -566,8 +566,8 @@ community_admin_help: |
   /setnpub &lt;npub&gt; - Configurer la clé publique de la communauté.
   /setlanguage &lt;lang&gt; - Configurer la langue de la communauté pour les messages publiés.
 community_language_updated: Vous avez configuré la langue de la communauté en ${language} avec succès !
-wizard_community_enter_language: Entrez le code de la langue de votre communauté (en, es, fr, de, it, pt, ru, uk, ko, fa)
-wizard_community_invalid_language: Code de langue invalide. Veuillez entrer l'un des suivants - en, es, fr, de, it, pt, ru, uk, ko, fa
+wizard_community_enter_language: 'Entrez le code de la langue de votre communauté (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: "Code de langue invalide. Veuillez entrer l'un des suivants - en, es, fr, de, it, pt, ru, uk, ko, fa"
 community_npub_updated: Vous avez ajouté la clé publique de la communauté ${npub} avec succès !
 # END modules/community
 
