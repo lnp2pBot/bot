@@ -26,8 +26,9 @@ import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
 import { imageCache } from '../util/imageCache';
 import { ImageProcessingError } from '../util/errors';
-const { I18n } = require('@grammyjs/i18n');
 import { Community } from '../models';
+
+const { I18n } = require('@grammyjs/i18n');
 
 const startMessage = async (ctx: MainContext) => {
   try {

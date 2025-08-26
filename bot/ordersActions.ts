@@ -15,9 +15,11 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
+
 import * as OrderEvents from './modules/events/orders';
 
 const { ObjectId } = require('mongoose').Types;
+const { I18n } = require('@grammyjs/i18n');
 
 interface CreateOrderArguments {
   type: string;
@@ -84,7 +86,6 @@ const createOrder = async (
       
       // Get community language for description
       if (community.language) {
-        const { I18n } = require('@grammyjs/i18n');
         descriptionI18n = new I18n({
           defaultLanguageOnMissing: true,
           locale: community.language,

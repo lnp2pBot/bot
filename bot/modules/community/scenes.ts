@@ -12,6 +12,7 @@ import {
 } from './messages';
 import { CommunityContext } from './communityContext';
 import * as commAdmin from './scenes.communityAdmin';
+import { isValidLanguage } from '../../../util/languages';
 
 const CURRENCIES = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 
@@ -165,10 +166,8 @@ const createCommunitySteps = {
       
       ctx.wizard.state.error = null;
       const lang = text.trim().toLowerCase();
-      
-      // Check if language is valid
-      const validLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'uk', 'ko', 'fa'];
-      if (!validLanguages.includes(lang)) {
+
+      if (!isValidLanguage(lang)) {
         ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_invalid_language');
         return await ctx.wizard.state.updateUI();
@@ -896,13 +895,11 @@ export const updateLanguageCommunityWizard = new Scenes.WizardScene(
       if (ctx.message === undefined) return ctx.scene.leave();
 
       const lang = ctx.message.text.trim().toLowerCase();
-      // Check if language is valid
-      const validLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'uk', 'ko', 'fa'];
-      if (!validLanguages.includes(lang)) {
+      if (!isValidLanguage(lang)) {
         ctx.deleteMessage();
         return await ctx.reply(ctx.i18n.t('wizard_community_invalid_language'));
       }
-      
+
       const { community } = ctx.wizard.state;
       community.language = lang;
       await community.save();

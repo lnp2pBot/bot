@@ -567,8 +567,8 @@ community_admin_help: |
   /setnpub &lt;npub&gt; - کلید عمومی جامعه را پیکربندی کنید. رویدادهای ناستر با این کلید عمومی برچسب‌گذاری می‌شوند.
   /setlanguage &lt;lang&gt; - Configure community's language for published messages.
 community_language_updated: You updated the community's language to ${language} successfully!
-wizard_community_enter_language: Enter the language code for your community (en, es, fr, de, it, pt, ru, uk, ko, fa)
-wizard_community_invalid_language: Invalid language code. Please enter one of the following - en, es, fr, de, it, pt, ru, uk, ko, fa
+wizard_community_enter_language: 'Enter the language code for your community (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Invalid language code. Please enter one of the following - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: شما کلیدعمومی کامیونیتی ${npub} را با موفقیت اضافه کردید!
 # END modules/community
 

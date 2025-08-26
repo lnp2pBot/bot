@@ -564,8 +564,8 @@ community_admin_help: |
   /setnpub &lt;npub&gt; - 커뮤니티의 Nostr npub을 등록합니다. Nostr 이벤트들은 이 npub으로 등록됩니다.
   /setlanguage &lt;lang&gt; - 커뮤니티의 언어를 설정합니다.
 community_language_updated: 성공적으로 커뮤니티의 언어를 ${language}로 설정하였습니다!
-wizard_community_enter_language: 커뮤니티의 언어를 입력하세요. (en, es, fr, de, it, pt, ru, uk, ko, fa)
-wizard_community_invalid_language: 유효하지 않은 언어입니다. 다음 중 하나를 입력하세요: en, es, fr, de, it, pt, ru, uk, ko, fa
+wizard_community_enter_language: '커뮤니티의 언어를 입력하세요. (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: '유효하지 않은 언어입니다. 다음 중 하나를 입력하세요: en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: 성공적으로 커뮤니티의 공개키 ${npub}을 추가하였습니다!
 # END modules/community
 
