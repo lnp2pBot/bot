@@ -24,7 +24,7 @@
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
     "lightning": "10.25.0",
-    "mongoose": "6.13.6",
+    "mongoose": "^8.17.1",
     "node-schedule": "^2.0.0",
     "nostr-tools": "^2.5.2",
     "qrcode": "^1.5.0",

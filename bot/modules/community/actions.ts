@@ -20,7 +20,7 @@ const getOrdersNDays = async (days: number, communityId: (string | undefined)) =
   } as OrderFilter;
   if (communityId) filter.community_id = communityId;
 
-  return Order.count(filter);
+  return Order.countDocuments(filter);
 };
 
 const getVolumeNDays = async (days: number, communityId: (string | undefined)) => {
@@ -56,7 +56,7 @@ export const onCommunityInfo = async (ctx: MainContext) => {
   const community = await Community.findById(commId);
   if(community === null)
     throw new Error("community not found");
-  const userCount = await User.count({ default_community_id: commId });
+  const userCount = await User.countDocuments({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);
 
