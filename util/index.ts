@@ -442,9 +442,9 @@ const getFee = async (amount: number, communityId: string, isGoldenHoneyBadger =
 
 
   if (isGoldenHoneyBadger) {
-    return communityFee; 
+    return communityFee;
   } else {
-    return botFee + communityFee; 
+    return botFee + communityFee;
   }
 };
 
@@ -546,25 +546,29 @@ const generateRandomImage = (nonce: string) => {
 };
 
 const generateQRWithImage = async (request: string, randomImage: string) => {
+  // Import imageCache here to avoid circular dependency
+  const { imageCache } = require('./imageCache');
+
   const canvas = createCanvas(400, 400);
   await QRCode.toCanvas(canvas, request, {
     margin: 2,
     width: 400,
   });
 
+  const imageBase64 = await imageCache.convertImageToBase64(randomImage);
   const ctx = canvas.getContext('2d');
   const centerImage = new Image();
-  centerImage.src = `data:image/png;base64,${randomImage}`;
+  centerImage.src = `data:image/png;base64,${imageBase64}`;
 
   const rawRatio = process.env.IMAGE_TO_QR_RATIO ?? '0.2';
   let imageToQrRatio = parseFloat(rawRatio);
-  
+
   // Validate ratio is a valid number between 0.1 and 0.5
   if (isNaN(imageToQrRatio) || imageToQrRatio < 0.1 || imageToQrRatio > 0.5) {
     logger.warning(`Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`);
     imageToQrRatio = 0.2;
   }
-  
+
   const imageSize = canvas.width * imageToQrRatio;
   const imagePos = (canvas.width - imageSize) / 2;
 
