@@ -3,6 +3,8 @@ import path from 'path';
 
 const fs = require('fs').promises;
 
+const honeybadgerFilename = 'Honeybadger.png';
+
 interface ImageCache {
   honeybadgerImage: string | null;
   regularImages: string[];
@@ -20,25 +22,14 @@ class ImageCacheManager {
     try {
       logger.info('Initializing image cache...');
 
-      const honeybadgerFilename = 'Honeybadger.png';
-      const honeybadgerFullPath = `images/${honeybadgerFilename}`;
-
-      // Try to load Honeybadger image
-      try {
-        const goldenImage = await fs.readFile(honeybadgerFullPath);
-        this.cache.honeybadgerImage = goldenImage.toString('base64');
-        logger.info('Golden Honey Badger image cached successfully');
-      } catch (err) {
-        logger.warning(`Honeybadger image not found: ${err}`);
-        this.cache.honeybadgerImage = null;
-      }
+      this.cache.honeybadgerImage = honeybadgerFilename;
 
       // Load all regular images
       try {
         const files = await fs.readdir('images');
         const imageFiles = files.filter((file: string) =>
-          ['.png'].includes(path.extname(file).toLowerCase()) &&
-          file !== honeybadgerFilename
+          path.extname(file).toLowerCase() === '.png' &&
+          path.basename(file).toLowerCase() !== honeybadgerFilename.toLowerCase()
         );
         this.cache.regularImages = imageFiles;
 
