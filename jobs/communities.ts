@@ -1,8 +1,8 @@
-import { Telegraf } from "telegraf";
+import { Telegraf } from 'telegraf';
 
 import { Order, Community } from '../models';
-import { logger } from "../logger";
-import { CommunityContext } from "../bot/modules/community/communityContext";
+import { logger } from '../logger';
+import { CommunityContext } from '../bot/modules/community/communityContext';
 
 const deleteCommunity = async (bot: Telegraf<CommunityContext>) => {
   try {
@@ -23,7 +23,7 @@ const deleteCommunity = async (bot: Telegraf<CommunityContext>) => {
       });
       if (orders == 0) {
         logger.info(
-          `Community: ${community.name} have ${process.env.COMMUNITY_TTL} days without a successfully completed order, it's being deleted!`
+          `Community: ${community.name} have ${process.env.COMMUNITY_TTL} days without a successfully completed order, it's being deleted!`,
         );
         await community.delete();
       }

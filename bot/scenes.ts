@@ -11,9 +11,9 @@ import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
 
-interface InvoiceParseResult { 
+interface InvoiceParseResult {
   invoice?: any;
-  success?: boolean 
+  success?: boolean;
 }
 
 const addInvoiceWizard = new Scenes.WizardScene(
@@ -22,15 +22,18 @@ const addInvoiceWizard = new Scenes.WizardScene(
     try {
       const communityCtx = ctx as CommunityContext;
       const { order } = communityCtx.wizard.state;
-      const holdInvoiceExpirationWindow = process.env.HOLD_INVOICE_EXPIRATION_WINDOW;
-      if(holdInvoiceExpirationWindow === undefined)
-        throw new Error("Enviroment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined");
+      const holdInvoiceExpirationWindow =
+        process.env.HOLD_INVOICE_EXPIRATION_WINDOW;
+      if (holdInvoiceExpirationWindow === undefined)
+        throw new Error(
+          'Enviroment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined',
+        );
       const expirationTime = parseInt(holdInvoiceExpirationWindow) / 60;
       await messages.wizardAddInvoiceInitMessage(
         communityCtx,
         order,
         order.fiat_code,
-        expirationTime
+        expirationTime,
       );
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();
@@ -49,11 +52,10 @@ const addInvoiceWizard = new Scenes.WizardScene(
       let { bot, buyer, seller, order } = ctx.wizard.state;
       // We get an updated order from the DB
       const updatedOrder = await Order.findOne({ _id: order._id });
-      if(updatedOrder === null) {
+      if (updatedOrder === null) {
         await ctx.reply(ctx.i18n.t('generic_error'));
         return ctx.scene.leave();
-      }
-      else {
+      } else {
         order = updatedOrder;
       }
 
@@ -63,7 +65,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       if (isValidLN) {
         const laRes = await resolvLightningAddress(
           lnInvoice,
-          order.amount * 1000
+          order.amount * 1000,
         );
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
@@ -92,7 +94,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 const addInvoicePHIWizard = new Scenes.WizardScene(
@@ -120,8 +122,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (updatedOrder === null) {
         await ctx.reply(ctx.i18n.t('generic_error'));
         return ctx.scene.leave();
-      }
-      else {
+      } else {
         order = updatedOrder;
       }
 
@@ -131,7 +132,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (isValidLN) {
         const laRes = await resolvLightningAddress(
           lnInvoice,
-          order.amount * 1000
+          order.amount * 1000,
         );
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
@@ -178,7 +179,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 const addFiatAmountWizard = new Scenes.WizardScene(
@@ -192,7 +193,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
         ctx,
         order.fiat_code,
         action,
-        order
+        order,
       );
 
       return ctx.wizard.next();
@@ -215,12 +216,11 @@ const addFiatAmountWizard = new Scenes.WizardScene(
 
       order.fiat_amount = fiatAmount;
       const currency = getCurrency(order.fiat_code);
-      if (currency === null)
-        throw new Error("currency is null");
+      if (currency === null) throw new Error('currency is null');
       await messages.wizardAddFiatAmountCorrectMessage(
         ctx,
         currency,
-        fiatAmount
+        fiatAmount,
       );
 
       if (order.type === 'sell') {
@@ -233,11 +233,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
     } catch (error) {
       logger.error(error);
     }
-  }
+  },
 );
 
-export {
-  addInvoiceWizard,
-  addFiatAmountWizard,
-  addInvoicePHIWizard,
-};
+export { addInvoiceWizard, addFiatAmountWizard, addInvoicePHIWizard };

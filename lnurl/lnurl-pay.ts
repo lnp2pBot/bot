@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { logger } from "../logger";
+import { logger } from '../logger';
 
 // {
 //	pr: String, // bech32-serialized lightning invoice
@@ -17,8 +17,8 @@ const resolvLightningAddress = async (address: string, amountMsat: number) => {
   }
 
   if (
-    (lnAddressRes.minSendable > amountMsat) ||
-    (lnAddressRes.maxSendable < amountMsat)
+    lnAddressRes.minSendable > amountMsat ||
+    lnAddressRes.maxSendable < amountMsat
   ) {
     logger.info('lnAddress invalid amount');
     return false;
@@ -48,4 +48,4 @@ const existLightningAddress = async (address: string) => {
   }
 };
 
-export { resolvLightningAddress, existLightningAddress }
+export { resolvLightningAddress, existLightningAddress };

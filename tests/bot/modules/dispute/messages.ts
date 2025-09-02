@@ -4,7 +4,7 @@ const proxyquire = require('proxyquire');
 
 const getDetailedOrderStub = sinon.stub().returns('Mocked order detail');
 const { disputeData } = proxyquire('../../../../bot/modules/dispute/messages', {
-  '../../../util': { getDetailedOrder: getDetailedOrderStub }
+  '../../../util': { getDetailedOrder: getDetailedOrderStub },
 });
 
 // Mock dependencies
@@ -68,14 +68,16 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
-    assert.isTrue(mockTelegram.sendMessage.calledWith(
-      mockSolver.tg_id,
-      sinon.match(/buyer\\_user/),
-      sinon.match({ parse_mode: 'MarkdownV2' })
-    ));
+    assert.isTrue(
+      mockTelegram.sendMessage.calledWith(
+        mockSolver.tg_id,
+        sinon.match(/buyer\\_user/),
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
+    );
   });
 
   it('should send a message with another escaped character in username', async () => {
@@ -87,14 +89,16 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
-    assert.isTrue(mockTelegram.sendMessage.calledWith(
-      mockSolver.tg_id,
-      sinon.match(/buyer\\-user/),
-      sinon.match({ parse_mode: 'MarkdownV2' })
-    ));
+    assert.isTrue(
+      mockTelegram.sendMessage.calledWith(
+        mockSolver.tg_id,
+        sinon.match(/buyer\\-user/),
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
+    );
   });
 
   it('should send a message without underscores in usernames', async () => {
@@ -106,14 +110,16 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
-    assert.isTrue(mockTelegram.sendMessage.calledWith(
-      mockSolver.tg_id,
-      sinon.match('buyeruser'),
-      sinon.match({ parse_mode: 'MarkdownV2' })
-    ));
+    assert.isTrue(
+      mockTelegram.sendMessage.calledWith(
+        mockSolver.tg_id,
+        sinon.match('buyeruser'),
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
+    );
   });
 
   it('should swap initiator and counterparty if initiator is seller', async () => {
@@ -125,13 +131,15 @@ describe('disputeData', () => {
       'seller',
       mockSolver,
       5,
-      3
+      3,
     );
 
-    assert.isTrue(mockTelegram.sendMessage.calledWith(
-      mockSolver.tg_id,
-      sinon.match(/seller\\_user/),
-      sinon.match({ parse_mode: 'MarkdownV2' })
-    ));
+    assert.isTrue(
+      mockTelegram.sendMessage.calledWith(
+        mockSolver.tg_id,
+        sinon.match(/seller\\_user/),
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
+    );
   });
 });

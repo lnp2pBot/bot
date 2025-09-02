@@ -9,12 +9,14 @@ import { IOrder } from '../../../models/order';
 const kind = 38383;
 
 const orderToTags = async (order: IOrder) => {
-  const orderPublishedExpirationWindow = process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW;
-  if(orderPublishedExpirationWindow === undefined)
-    throw new Error("Environment variable ORDER_PUBLISHED_EXPIRATION_WINDOW is not defined");
+  const orderPublishedExpirationWindow =
+    process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW;
+  if (orderPublishedExpirationWindow === undefined)
+    throw new Error(
+      'Environment variable ORDER_PUBLISHED_EXPIRATION_WINDOW is not defined',
+    );
   const expiration =
-    Math.floor(Date.now() / 1000) +
-    parseInt(orderPublishedExpirationWindow);
+    Math.floor(Date.now() / 1000) + parseInt(orderPublishedExpirationWindow);
   const fiat_amount = ['fa'];
   if (order.fiat_amount === undefined) {
     fiat_amount.push(order.min_amount.toString(), order.max_amount.toString());
@@ -31,8 +33,8 @@ const orderToTags = async (order: IOrder) => {
     totalReviews.toString(),
   ];
   const channelEnvVar = process.env.CHANNEL;
-  if(channelEnvVar === undefined)
-    throw new Error("Environment variable CHANNEL is not defined")
+  if (channelEnvVar === undefined)
+    throw new Error('Environment variable CHANNEL is not defined');
   const channel = removeAtSymbol(channelEnvVar);
   let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
   const tags = [];
@@ -47,19 +49,17 @@ const orderToTags = async (order: IOrder) => {
   tags.push(['rating', ...rating]);
   if (order.community_id) {
     const community = await Community.findById(order.community_id);
-    if(community === null)
-      throw new Error("community was not found");
-    let order_channel: string = "";    
+    if (community === null) throw new Error('community was not found');
+    let order_channel: string = '';
     if (community.order_channels.length === 1)
       order_channel = removeAtSymbol(community.order_channels[0].name);
-    else if (community.order_channels.length === 2){
+    else if (community.order_channels.length === 2) {
       if (order.type === 'buy') {
         order_channel = removeAtSymbol(community.order_channels[0].name);
-      }
-      else {
+      } else {
         order_channel = removeAtSymbol(community.order_channels[1].name);
-      }     
-    }    
+      }
+    }
     source = `https://t.me/${order_channel}/${order.tg_channel_message1}`;
     tags.push(['community_id', order.community_id]);
   }
@@ -89,7 +89,7 @@ export const createOrderEvent = async (order: IOrder) => {
       tags,
       content: '',
     },
-    myPrivKey
+    myPrivKey,
   );
 
   const ok = verifyEvent(event);

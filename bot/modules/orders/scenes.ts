@@ -2,7 +2,10 @@ import { Scenes, Markup } from 'telegraf';
 import { logger } from '../../../logger';
 import { getCurrency } from '../../../util';
 import * as ordersActions from '../../ordersActions';
-import { publishBuyOrderMessage, publishSellOrderMessage } from '../../messages';
+import {
+  publishBuyOrderMessage,
+  publishSellOrderMessage,
+} from '../../messages';
 import * as messages from './messages';
 import { CommunityContext } from '../community/communityContext';
 
@@ -31,7 +34,7 @@ export const createOrder = new Scenes.WizardScene(
       if (!statusMessage) {
         const { text } = messages.createOrderWizardStatus(
           ctx.i18n,
-          ctx.wizard.state
+          ctx.wizard.state,
         );
         const res = await ctx.reply(text);
         ctx.wizard.state.currentStatusText = text;
@@ -40,14 +43,14 @@ export const createOrder = new Scenes.WizardScene(
           try {
             const { text } = messages.createOrderWizardStatus(
               ctx.i18n,
-              ctx.wizard.state
+              ctx.wizard.state,
             );
             if (ctx.wizard.state.currentStatusText === text) return;
             await ctx.telegram.editMessageText(
               res.chat.id,
               res.message_id,
               undefined,
-              text
+              text,
             );
             ctx.wizard.state.currentStatusText = text;
           } catch (err) {
@@ -95,12 +98,12 @@ export const createOrder = new Scenes.WizardScene(
       await ctx.wizard.selectStep(0);
       // use ["steps"] syntax as steps is private property
       // eslint-disable-next-line dot-notation
-      return ctx.wizard["steps"][ctx.wizard.cursor](ctx);
+      return ctx.wizard['steps'][ctx.wizard.cursor](ctx);
     } catch (err) {
       logger.error(err);
       return ctx.scene.leave();
     }
-  }
+  },
 );
 
 const createOrderSteps = {
@@ -135,7 +138,7 @@ const createOrderSteps = {
       await createOrderHandlers.fiatAmount(ctx);
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await createOrderPrompts.fiatAmount(ctx);
@@ -151,7 +154,7 @@ const createOrderSteps = {
       await ctx.deleteMessage();
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
@@ -175,12 +178,14 @@ const createOrderSteps = {
         ctx.wizard.state.priceMargin = Math.floor(num);
         await ctx.wizard.state.updateUI();
       } else {
-        ctx.wizard.state.priceMargin = parseInt((ctx.callbackQuery as any).data);
+        ctx.wizard.state.priceMargin = parseInt(
+          (ctx.callbackQuery as any).data,
+        );
         await ctx.wizard.state.updateUI();
       }
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     return ctx.wizard.next();
@@ -192,7 +197,7 @@ const createOrderSteps = {
       if (!ret) return;
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     return ctx.wizard.next();
@@ -219,14 +224,14 @@ const createOrderPrompts = {
     rows.splice(1, 0, noMargin);
     return ctx.reply(
       ctx.i18n.t('enter_premium_discount'),
-      Markup.inlineKeyboard(rows)
+      Markup.inlineKeyboard(rows),
     );
   },
   async currency(ctx: CommunityContext) {
     const { currencies } = ctx.wizard.state;
     if (!currencies) return ctx.reply(ctx.i18n.t('enter_currency'));
     const buttons = currencies.map(currency =>
-      Markup.button.callback(currency, currency)
+      Markup.button.callback(currency, currency),
     );
     const rows = [];
     const chunkSize = 3;
@@ -236,7 +241,7 @@ const createOrderPrompts = {
     }
     return ctx.reply(
       ctx.i18n.t('choose_currency'),
-      Markup.inlineKeyboard(rows)
+      Markup.inlineKeyboard(rows),
     );
   },
   async fiatAmount(ctx: CommunityContext) {
@@ -246,11 +251,11 @@ const createOrderPrompts = {
   async sats(ctx: CommunityContext) {
     const button = Markup.button.callback(
       ctx.i18n.t('market_price'),
-      'marketPrice'
+      'marketPrice',
     );
     return ctx.reply(
       ctx.i18n.t('enter_sats_amount'),
-      Markup.inlineKeyboard([button])
+      Markup.inlineKeyboard([button]),
     );
   },
 };

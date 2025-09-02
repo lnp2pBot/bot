@@ -1,7 +1,7 @@
-import { Telegraf } from "telegraf";
+import { Telegraf } from 'telegraf';
 
 import { Config } from '../models';
-import { CommunityContext } from "../bot/modules/community/communityContext";
+import { CommunityContext } from '../bot/modules/community/communityContext';
 import { logger } from '../logger';
 
 const { getInfo } = require('../ln');

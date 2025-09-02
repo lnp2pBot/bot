@@ -12,4 +12,5 @@ export const communityUpdated = (community: ICommunity) => {
     payload: community,
   });
 };
-export const onCommunityUpdated = (fn: Events.SubscriptionFunction) => Events.subscribe(ORDER_TYPES.ORDER_CREATED, fn);
+export const onCommunityUpdated = (fn: Events.SubscriptionFunction) =>
+  Events.subscribe(ORDER_TYPES.ORDER_CREATED, fn);

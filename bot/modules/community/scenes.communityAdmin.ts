@@ -4,11 +4,14 @@ import { CommunityContext } from './communityContext';
 import * as CommunityEvents from '../events/community';
 
 const communityAdmin = () => {
-  const scene = new Scenes.WizardScene('COMMUNITY_ADMIN', async (ctx: CommunityContext) => {
-    const { community } = ctx.scene.state as any;
-    const str = ctx.i18n.t('community_admin', { community });
-    await ctx.reply(str, { parse_mode: 'HTML' });
-  });
+  const scene = new Scenes.WizardScene(
+    'COMMUNITY_ADMIN',
+    async (ctx: CommunityContext) => {
+      const { community } = ctx.scene.state as any;
+      const str = ctx.i18n.t('community_admin', { community });
+      await ctx.reply(str, { parse_mode: 'HTML' });
+    },
+  );
 
   scene.command('/help', async ctx => {
     const str = ctx.i18n.t('community_admin_help');
@@ -35,6 +38,6 @@ const communityAdmin = () => {
   });
 
   return scene;
-}
+};
 
 export { communityAdmin };

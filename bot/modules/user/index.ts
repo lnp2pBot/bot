@@ -15,6 +15,4 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   });
 };
 
-export {
-  Scenes
-}
+export { Scenes };
