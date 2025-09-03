@@ -134,9 +134,9 @@ const createCommunitySteps = {
       const length = 30;
       if (name.length > length) {
         ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
-        ctx.wizard.state.error = ctx.i18n.t(
-          ctx.i18n.t('wizard_community_too_long_name', { length }),
-        );
+        ctx.wizard.state.error = ctx.i18n.t('wizard_community_too_long_name', {
+          length,
+        });
         return await ctx.wizard.state.updateUI();
       }
       ctx.wizard.state.name = name;
