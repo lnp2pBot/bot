@@ -1,5 +1,6 @@
 import { Telegraf } from 'telegraf';
 import { CommunityContext } from '../community/communityContext';
+import { logger } from '../../../logger';
 
 const commands = require('./commands');
 const { userMiddleware } = require('../../middleware/user');
@@ -21,7 +22,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     try {
       await commands.blocklist(ctx);
     } catch (error) {
-      console.error('Error in blocklist command:', error);
+      logger.error('Error in blocklist command:', error);
       await ctx.reply(
         ctx.i18n?.t('blocklist_error') ?? 'Failed to fetch block list',
       );
