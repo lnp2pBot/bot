@@ -29,13 +29,21 @@ const notifyAdmin = async (
   bot: Telegraf<MainContext>,
 ) => {
   community.warning_messages_count += 1;
+
+  const maxWarningsCount = Number.parseInt(
+    process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION ?? '',
+  );
+  if (!Number.isFinite(maxWarningsCount) || maxWarningsCount < 0) {
+    logger.error(
+      'Invalid MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION; skipping notifyAdmin',
+    );
+    return;
+  }
+
   /**
    * The community is disabled if the admin has received the maximum notification message (MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION - 1) to add a solver.
    */
-  if (
-    community.warning_messages_count >=
-    Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION)
-  ) {
+  if (community.warning_messages_count >= maxWarningsCount) {
     await community.delete();
 
     logger.info(
@@ -50,9 +58,7 @@ const notifyAdmin = async (
   if (admin) {
     const i18nCtx: I18nContext = await getUserI18nContext(admin);
     const remainingDays: number =
-      Number(process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION) -
-      1 -
-      community.warning_messages_count;
+      maxWarningsCount - 1 - community.warning_messages_count;
 
     const message =
       remainingDays === 0
