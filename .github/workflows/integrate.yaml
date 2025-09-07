@@ -15,13 +15,18 @@ jobs:
     container:
       image: 'ubuntu:24.04'
     steps:
-      - uses: actions/checkout@v2
-
       - name: Update apt and install required packages
         run: |
           apt update --yes
           apt install --yes sudo
+
           sudo apt install --yes --no-install-recommends npm
+
+          sudo apt install --yes git
+          # one time fix to avoid permission problems later on
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - uses: actions/checkout@v2
 
       - name: Import MongoDB's public key for the package management system
         run: |
@@ -56,7 +61,7 @@ jobs:
           
           mongosh --eval 'db.getSiblingDB("lnp2pbot").createCollection("mycollection")'
       
-      - run: npm install @types/node
+      - run: npm install
       - run: npx tsc
       - run: npm ci
       - name: Run tests
@@ -67,3 +72,8 @@ jobs:
           DB_PORT: '27017'
           DB_NAME: 'lnp2pbot'
         run: npm test
+
+      - name: Run prettier
+        run: |
+          npm run format
+          git diff --exit-code || (echo "Formatting did not match (see above diff), please run 'npm run format'" && exit 1)

@@ -35,7 +35,10 @@ const userUnblocked = async (ctx: MainContext) => {
   }
 };
 
-const blocklistMessage = async (ctx: MainContext, usersBlocked: UserDocument[]) => {
+const blocklistMessage = async (
+  ctx: MainContext,
+  usersBlocked: UserDocument[],
+) => {
   try {
     if (!usersBlocked?.length) {
       return await blocklistEmptyMessage(ctx);

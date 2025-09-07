@@ -1,5 +1,9 @@
 import { initialize, start } from './start';
-import { createOrder, getOrder, getNewRangeOrderPayload } from './ordersActions';
+import {
+  createOrder,
+  getOrder,
+  getNewRangeOrderPayload,
+} from './ordersActions';
 import {
   validateSellOrder,
   validateBuyOrder,

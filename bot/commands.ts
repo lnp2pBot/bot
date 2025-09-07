@@ -8,7 +8,13 @@ import {
 } from '../ln';
 import { Order, User, Dispute } from '../models';
 import * as messages from './messages';
-import { getBtcFiatPrice, deleteOrderFromChannel, getUserI18nContext, getFee, removeLightningPrefix } from '../util';
+import {
+  getBtcFiatPrice,
+  deleteOrderFromChannel,
+  getUserI18nContext,
+  getFee,
+  removeLightningPrefix,
+} from '../util';
 import * as ordersActions from './ordersActions';
 import * as OrderEvents from './modules/events/orders';
 
@@ -19,12 +25,19 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
 
-const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocument, seller: UserDocument, order: IOrder, buyerInvoice: any) => {
+const waitPayment = async (
+  ctx: MainContext,
+  bot: HasTelegram,
+  buyer: UserDocument,
+  seller: UserDocument,
+  order: IOrder,
+  buyerInvoice: any,
+) => {
   try {
     // If there is not fiat amount the function don't do anything
     if (order.fiat_amount === undefined) {
       logger.debug(
-        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`
+        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`,
       );
       return;
     }
@@ -43,7 +56,7 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
         buyer,
         seller,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else {
       // We create a hold invoice
@@ -59,7 +72,7 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
         description,
       });
       if (createHoldInvoiceResult === undefined) {
-        throw new Error("createHoldInvoice() returned undefined");
+        throw new Error('createHoldInvoice() returned undefined');
       }
       const { hash, secret } = createHoldInvoiceResult;
       order.hash = hash;
@@ -71,25 +84,28 @@ const waitPayment = async (ctx: MainContext, bot: HasTelegram, buyer: UserDocume
 
       // We pass the buyer for rate and age calculations
       const buyer = await User.findById(order.buyer_id);
-      if(buyer === null)
-        throw new Error("buyer was not found");
+      if (buyer === null) throw new Error('buyer was not found');
       // We send the hold invoice to the seller
       await messages.invoicePaymentRequestMessage(
         ctx,
         seller,
         order,
         i18nCtx,
-        buyer
+        buyer,
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
-    await order.save();    
+    await order.save();
   } catch (error) {
     logger.error(`Error in waitPayment: ${error}`);
   }
 };
 
-const addInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder | null = null) => {
+const addInvoice = async (
+  ctx: CommunityContext,
+  bot: HasTelegram,
+  order: IOrder | null = null,
+) => {
   try {
     ctx.deleteMessage();
     ctx.scene.leave();
@@ -106,8 +122,7 @@ const addInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder
     }
 
     const buyer = await User.findOne({ _id: order.buyer_id });
-    if (buyer === null)
-      throw new Error("buyer was not found");
+    if (buyer === null) throw new Error('buyer was not found');
 
     if (order.fiat_amount === undefined) {
       ctx.scene.enter('ADD_FIAT_AMOUNT_WIZARD_SCENE_ID', {
@@ -121,8 +136,7 @@ const addInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder
     let amount: number | undefined = order.amount;
     if (amount === 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-      if(amount === undefined)
-        throw new Error("amount is undefined");
+      if (amount === undefined) throw new Error('amount is undefined');
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
@@ -137,23 +151,22 @@ const addInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder
     }
     await order.save();
     const seller = await User.findOne({ _id: order.seller_id });
-    if (seller === null)
-      throw new Error("seller was not found");
+    if (seller === null) throw new Error('seller was not found');
 
     if (buyer.lightning_address) {
       const laRes = await resolvLightningAddress(
         buyer.lightning_address,
-        order.amount * 1000
+        order.amount * 1000,
       );
       if (!!laRes && !laRes.pr) {
         logger.error(
-          `lightning address ${buyer.lightning_address} not available`
+          `lightning address ${buyer.lightning_address} not available`,
         );
         await bot.telegram.sendMessage(
           buyer.tg_id,
           ctx.i18n.t('unavailable_lightning_address', {
             la: buyer.lightning_address,
-          })
+          }),
         );
 
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
@@ -178,7 +191,12 @@ const addInvoice = async (ctx: CommunityContext, bot: HasTelegram, order: IOrder
   }
 };
 
-const rateUser = async (ctx: CommunityContext, bot: HasTelegram, rating: number, orderId: string) => {
+const rateUser = async (
+  ctx: CommunityContext,
+  bot: HasTelegram,
+  rating: number,
+  orderId: string,
+) => {
   try {
     ctx.deleteMessage();
     ctx.scene.leave();
@@ -189,11 +207,9 @@ const rateUser = async (ctx: CommunityContext, bot: HasTelegram, rating: number,
 
     if (order === null) return;
     const buyer = await User.findOne({ _id: order.buyer_id });
-    if (buyer === null)
-      throw new Error("buyer was not found");
+    if (buyer === null) throw new Error('buyer was not found');
     const seller = await User.findOne({ _id: order.seller_id });
-    if (seller === null)
-      throw new Error("seller was not found");
+    if (seller === null) throw new Error('seller was not found');
 
     let targetUser = buyer;
     if (String(callerId) == buyer?.tg_id) {
@@ -241,7 +257,11 @@ const saveUserReview = async (targetUser: UserDocument, rating: number) => {
   }
 };
 
-const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = null, job?: any) => {
+const cancelAddInvoice = async (
+  ctx: CommunityContext,
+  order: IOrder | null = null,
+  job?: any,
+) => {
   try {
     let userAction = false;
     let userTgId = null;
@@ -249,11 +269,11 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
-      if (ctx.from === undefined)
-        throw new Error("ctx.from is undefined");
+      if (ctx.from === undefined) throw new Error('ctx.from is undefined');
       userTgId = String(ctx.from.id);
       if (order === null) {
-        const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
+        const orderId =
+          !!ctx && (ctx.update as any).callback_query.message.text;
         if (!orderId) return;
         order = await Order.findOne({ _id: orderId });
       }
@@ -275,11 +295,9 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const sellerUser = await User.findOne({ _id: order.seller_id });
-    if(sellerUser === null)
-      throw new Error("sellerUser was not found");
+    if (sellerUser === null) throw new Error('sellerUser was not found');
     const buyerUser = await User.findOne({ _id: order.buyer_id });
-    if(buyerUser === null)
-      throw new Error("buyerUser was not found");
+    if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerTgId = sellerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.buyer_id) {
@@ -291,32 +309,27 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
         ctx,
         sellerUser,
         order,
-        i18nCtxSeller
+        i18nCtxSeller,
       );
     } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.successCancelOrderMessage(
-            ctx,
-            sellerUser,
-            order,
-            i18nCtx
-          );      
+      await messages.successCancelOrderMessage(ctx, sellerUser, order, i18nCtx);
       await messages.counterPartyCancelOrderMessage(
-            ctx,
-            buyerUser,
-            order,
-            i18nCtx
-          );
+        ctx,
+        buyerUser,
+        order,
+        i18nCtx,
+      );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Buyer Id: ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
+          `Buyer Id: ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
-          `Order Id: ${order._id} expired, republishing to the channel`
+          `Order Id: ${order._id} expired, republishing to the channel`,
         );
       }
       order.taken_at = null;
@@ -346,28 +359,32 @@ const cancelAddInvoice = async (ctx: CommunityContext, order: IOrder | null = nu
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
           await messages.toBuyerDidntAddInvoiceMessage(
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
-        } 
+        }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
-      }      
+      }
     }
   } catch (error) {
     logger.error(error);
   }
 };
 
-const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: IOrder | null) => {
+const showHoldInvoice = async (
+  ctx: CommunityContext,
+  bot: HasTelegram,
+  order?: IOrder | null,
+) => {
   try {
     ctx.deleteMessage();
-    
+
     if (!order) {
       const orderId = (ctx.update as any).callback_query?.message?.text;
       if (!orderId) return;
@@ -398,32 +415,33 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: 
       fiatCode: order.fiat_code,
       fiatAmount: order.fiat_amount,
     });
-    
+
     let amount;
     if (order.amount === 0) {
       amount = await getBtcFiatPrice(order.fiat_code, order.fiat_amount);
-      if(amount === undefined)
-        throw new Error("amount is undefined");
+      if (amount === undefined) throw new Error('amount is undefined');
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
-      
 
-      order.fee = await getFee(amount, order.community_id, order.is_golden_honey_badger);
+      order.fee = await getFee(
+        amount,
+        order.community_id,
+        order.is_golden_honey_badger,
+      );
       order.amount = amount;
     }
-    
 
-    amount = order.is_golden_honey_badger ? 
-             Math.floor(order.amount) : 
-             Math.floor(order.amount + order.fee);
-    
+    amount = order.is_golden_honey_badger
+      ? Math.floor(order.amount)
+      : Math.floor(order.amount + order.fee);
+
     const holdInvoice = await createHoldInvoice({
       description,
       amount,
     });
     if (holdInvoice === undefined) {
-      throw new Error("createHoldInvoice returned undefined");
+      throw new Error('createHoldInvoice returned undefined');
     }
     const { request, hash, secret } = holdInvoice;
     order.hash = hash;
@@ -431,7 +449,6 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: 
     await order.save();
 
     await subscribeInvoice(bot, hash);
-    
 
     await messages.showHoldInvoiceMessage(
       ctx,
@@ -440,14 +457,18 @@ const showHoldInvoice = async (ctx: CommunityContext, bot: HasTelegram, order?: 
       order.fiat_code,
       order.fiat_amount,
       order.random_image,
-      order.is_golden_honey_badger
+      order.is_golden_honey_badger,
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);
   }
 };
 
-const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null = null, job?: any) => {
+const cancelShowHoldInvoice = async (
+  ctx: CommunityContext,
+  order: IOrder | null = null,
+  job?: any,
+) => {
   try {
     let userAction = false;
     let userTgId = null;
@@ -455,11 +476,11 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
       ctx.deleteMessage();
       ctx.scene.leave();
       userAction = true;
-      if (ctx.from === undefined)
-        throw new Error("ctx.from is undefined");
+      if (ctx.from === undefined) throw new Error('ctx.from is undefined');
       userTgId = String(ctx.from.id);
       if (order === null) {
-        const orderId = !!ctx && (ctx.update as any).callback_query.message.text;
+        const orderId =
+          !!ctx && (ctx.update as any).callback_query.message.text;
         if (!orderId) return;
         order = await Order.findOne({ _id: orderId });
       }
@@ -479,11 +500,9 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
     const buyerUser = await User.findOne({ _id: order.buyer_id });
-    if(buyerUser === null)
-      throw new Error("buyerUser was not found");
+    if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerUser = await User.findOne({ _id: order.seller_id });
-    if(sellerUser === null)
-      throw new Error("sellerUser was not found");
+    if (sellerUser === null) throw new Error('sellerUser was not found');
     const buyerTgId = buyerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {
@@ -494,33 +513,27 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
         ctx,
         buyerUser,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.successCancelOrderMessage(
-            ctx,
-            buyerUser,
-            order,
-            i18nCtx
-          );      
+      await messages.successCancelOrderMessage(ctx, buyerUser, order, i18nCtx);
       await messages.counterPartyCancelOrderMessage(
-            ctx,
-            sellerUser,
-            order,
-            i18nCtx
-          );
-              
+        ctx,
+        sellerUser,
+        order,
+        i18nCtx,
+      );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
+          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
-          `Order Id: ${order._id} expired, republishing to the channel`
+          `Order Id: ${order._id} expired, republishing to the channel`,
         );
       }
       order.taken_at = null;
@@ -551,18 +564,18 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
           await messages.toAdminChannelSellerDidntPayInvoiceMessage(
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
-        } 
+        }
       } else {
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
-      }     
+      }
     }
   } catch (error) {
     logger.error(error);
@@ -576,14 +589,20 @@ const cancelShowHoldInvoice = async (ctx: CommunityContext, order: IOrder | null
  * @param {*} order
  * @returns
  */
-const addInvoicePHI = async (ctx: CommunityContext, bot: HasTelegram, orderId: string) => {
+const addInvoicePHI = async (
+  ctx: CommunityContext,
+  bot: HasTelegram,
+  orderId: string,
+) => {
   try {
     ctx.deleteMessage();
     const order = await Order.findOne({ _id: orderId });
-    if (order === null)
-      throw new Error("order was not found");
+    if (order === null) throw new Error('order was not found');
     // orders with status PAID_HOLD_INVOICE or COMPLETED_BY_ADMIN are released payments
-    if (order.status !== 'PAID_HOLD_INVOICE' && order.status !== 'COMPLETED_BY_ADMIN') {
+    if (
+      order.status !== 'PAID_HOLD_INVOICE' &&
+      order.status !== 'COMPLETED_BY_ADMIN'
+    ) {
       return;
     }
 
@@ -600,7 +619,11 @@ const addInvoicePHI = async (ctx: CommunityContext, bot: HasTelegram, orderId: s
   }
 };
 
-const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDocument | null = null) => {
+const cancelOrder = async (
+  ctx: CommunityContext,
+  orderId: string,
+  user: UserDocument | null = null,
+) => {
   try {
     if (!user) {
       const tgUser = (ctx.update as any).callback_query.from;
@@ -677,22 +700,28 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
       counterParty = 'buyer';
     }
     if (counterPartyUser == null)
-      throw new Error("counterPartyUser was not found");
+      throw new Error('counterPartyUser was not found');
 
-    const initiatorCooperativeCancelProperty = 
-      initiator == 'seller' ? 'seller_cooperativecancel' : 'buyer_cooperativecancel';
-      
+    const initiatorCooperativeCancelProperty =
+      initiator == 'seller'
+        ? 'seller_cooperativecancel'
+        : 'buyer_cooperativecancel';
+
     if (order[initiatorCooperativeCancelProperty])
       return await messages.shouldWaitCooperativeCancelMessage(
         ctx,
-        initiatorUser
+        initiatorUser,
       );
 
     order[initiatorCooperativeCancelProperty] = true;
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
     // If the counter party already requested a cooperative cancel order
-    if (counterParty == 'seller' ? order.seller_cooperativecancel : order.buyer_cooperativecancel) {
+    if (
+      counterParty == 'seller'
+        ? order.seller_cooperativecancel
+        : order.buyer_cooperativecancel
+    ) {
       // If we already have a holdInvoice we cancel it and return the money
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
@@ -708,13 +737,13 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
         ctx,
         initiatorUser,
         order,
-        ctx.i18n
+        ctx.i18n,
       );
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
         order,
-        i18nCtxCP
+        i18nCtxCP,
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${order._id} was cancelled cooperatively!`);
@@ -726,7 +755,7 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
         ctx,
         counterPartyUser,
         order,
-        i18nCtxCP
+        i18nCtxCP,
       );
     }
     await order.save();
@@ -735,7 +764,11 @@ const cancelOrder = async (ctx: CommunityContext, orderId: string, user: UserDoc
   }
 };
 
-const fiatSent = async (ctx: MainContext, orderId: string, user: UserDocument | null = null) => {
+const fiatSent = async (
+  ctx: MainContext,
+  orderId: string,
+  user: UserDocument | null = null,
+) => {
   try {
     if (!user) {
       const tgUser = (ctx.update as any).callback_query.from;
@@ -752,8 +785,7 @@ const fiatSent = async (ctx: MainContext, orderId: string, user: UserDocument | 
 
     order.status = 'FIAT_SENT';
     const seller = await User.findOne({ _id: order.seller_id });
-    if (seller === null)
-      throw new Error("seller was not found");
+    if (seller === null) throw new Error('seller was not found');
     await order.save();
     // We sent messages to both parties
     // We need to create i18n context for each user
@@ -764,14 +796,18 @@ const fiatSent = async (ctx: MainContext, orderId: string, user: UserDocument | 
       user,
       seller,
       i18nCtxBuyer,
-      i18nCtxSeller
+      i18nCtxSeller,
     );
   } catch (error) {
     logger.error(error);
   }
 };
 
-const release = async (ctx: MainContext, orderId: string, user: UserDocument | null = null) => {
+const release = async (
+  ctx: MainContext,
+  orderId: string,
+  user: UserDocument | null = null,
+) => {
   try {
     if (!user) {
       const tgUser = (ctx.update as any).callback_query.from;
@@ -794,7 +830,7 @@ const release = async (ctx: MainContext, orderId: string, user: UserDocument | n
     }
 
     if (order.secret === null) {
-      throw new Error("order.secret is null");
+      throw new Error('order.secret is null');
     }
     await settleHoldInvoice({ secret: order.secret });
   } catch (error) {
@@ -802,7 +838,11 @@ const release = async (ctx: MainContext, orderId: string, user: UserDocument | n
   }
 };
 
-const showQrCode = async (ctx: MainContext, orderId: string, user: UserDocument | null = null) => {
+const showQrCode = async (
+  ctx: MainContext,
+  orderId: string,
+  user: UserDocument | null = null,
+) => {
   try {
     if (!user) {
       const tgUser = (ctx.update as any).callback_query.from;
@@ -825,13 +865,7 @@ const showQrCode = async (ctx: MainContext, orderId: string, user: UserDocument 
       return ctx.reply(ctx.i18n.t('generic_error'));
     }
 
-    return await messages.showQRCodeMessage(
-      ctx,
-      order,
-      request,
-      user,
-    );
-
+    return await messages.showQRCodeMessage(ctx, order, request, user);
   } catch (error) {
     logger.error(error);
   }

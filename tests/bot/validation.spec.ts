@@ -152,7 +152,7 @@ describe('Validations', () => {
     it('should return object if validation success with price margin', async () => {
       ctx.state.command.args = ['10000', '100', 'USD', 'zelle', '5'];
       const result = await validateSellOrder(ctx);
-      if(result === false) throw new Error("object expected");
+      if (result === false) throw new Error('object expected');
       expect(result.priceMargin).to.equal('5');
     });
 
@@ -166,7 +166,7 @@ describe('Validations', () => {
     it('should work with ranges', async () => {
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle', '5'];
       const result = await validateSellOrder(ctx);
-      if(result === false) throw new Error("object expected");
+      if (result === false) throw new Error('object expected');
       expect(result.fiatAmount).to.deep.equal([100, 200]);
     });
 
@@ -226,7 +226,7 @@ describe('Validations', () => {
     it('should return object if validation success with price margin', async () => {
       ctx.state.command.args = ['10000', '100', 'USD', 'zelle', '5'];
       const result = await validateBuyOrder(ctx);
-      if(result === false) throw new Error("object expected");
+      if (result === false) throw new Error('object expected');
       expect(result.priceMargin).to.equal('5');
     });
 
@@ -240,7 +240,7 @@ describe('Validations', () => {
     it('should work with ranges', async () => {
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle', '5'];
       const result = await validateBuyOrder(ctx);
-      if(result === false) throw new Error("object expected");
+      if (result === false) throw new Error('object expected');
       expect(result.fiatAmount).to.deep.equal([100, 200]);
     });
 
@@ -272,9 +272,8 @@ describe('Validations', () => {
 
     it('should return false for an invalid lightning address (existence)', async () => {
       existLightningAddressStub.withArgs('test@invalid.com').returns(false);
-      const result = await validations.validateLightningAddress(
-        'test@invalid.com'
-      );
+      const result =
+        await validations.validateLightningAddress('test@invalid.com');
       expect(result).to.equal(false);
     });
   });
@@ -289,12 +288,12 @@ describe('Validations', () => {
       sinon.stub(User, 'findOne').resolves(null);
       sinon.stub(User.prototype, 'save').resolves();
       const user = await validateUser(ctx, true);
-      if(user === false) throw new Error("object expected");
+      if (user === false) throw new Error('object expected');
       expect((user.save as any).calledOnce).to.equal(true);
       expect(user).to.be.an('object');
       expect(user.tg_id).to.be.equal(ctx.update.callback_query.from.id);
       expect(user.username).to.be.equal(
-        ctx.update.callback_query.from.username
+        ctx.update.callback_query.from.username,
       );
     });
 
@@ -316,7 +315,7 @@ describe('Validations', () => {
       sinon.stub(User, 'findOne').resolves(newUser);
 
       const user = await validateUser(ctx, false);
-      if(user === false) throw new Error("object expected");
+      if (user === false) throw new Error('object expected');
       expect(user.tg_id).to.be.equal(newUser.tg_id);
       expect(user.username).to.be.equal(newUser.username);
     });
@@ -334,7 +333,7 @@ describe('Validations', () => {
       sinon.stub(User, 'findOne').resolves(newUser);
 
       const user = await validateUser(ctx, false);
-      if(user === false) throw new Error("object expected");
+      if (user === false) throw new Error('object expected');
       expect(user.tg_id).to.be.equal(newUser.tg_id);
       expect(user.username).to.be.equal('testuser-updated');
     });
@@ -372,7 +371,8 @@ describe('Validations', () => {
       sinon.stub(User, 'findOne').resolves(newUser);
 
       const user = await validateSuperAdmin(ctx);
-      if(user === false || user === undefined) throw new Error("object expected");
+      if (user === false || user === undefined)
+        throw new Error('object expected');
       expect(user.tg_id).to.be.equal(newUser.tg_id);
       expect(user.admin).to.equal(true);
     });
@@ -411,7 +411,8 @@ describe('Validations', () => {
       sinon.stub(Community, 'findOne').resolves(newCommunity);
       isDisputeSolverStub.withArgs(newCommunity, newUser).returns(true);
       const user = await validateAdmin(ctx);
-      if(user === false || user === undefined) throw new Error("object expected");
+      if (user === false || user === undefined)
+        throw new Error('object expected');
       expect(user.tg_id).to.be.equal(newUser.tg_id);
       expect(user.admin).to.equal(true);
     });
@@ -465,7 +466,7 @@ describe('Validations', () => {
     it('should return the order data if the order is valid', async () => {
       ctx.state.command.args = ['10000', '100', 'USD', 'zelle'];
       const order = await validateSellOrder(ctx);
-      if(order === false) throw new Error("object expected");
+      if (order === false) throw new Error('object expected');
       expect(order.amount).to.be.equal(10000);
       expect(order.fiatAmount).to.be.an('array').to.deep.equal([100]);
       expect(order.fiatCode).to.be.equal('USD');
@@ -495,7 +496,7 @@ describe('Validations', () => {
     it('should return the order data if the order is valid', async () => {
       ctx.state.command.args = ['10000', '100', 'USD', 'zelle'];
       const order = await validateBuyOrder(ctx);
-      if(order === false) throw new Error("object expected");
+      if (order === false) throw new Error('object expected');
       expect(order.amount).to.be.equal(10000);
       expect(order.fiatAmount).to.be.an('array').to.deep.equal([100]);
       expect(order.fiatCode).to.be.equal('USD');
@@ -540,7 +541,9 @@ describe('Validations', () => {
 
       const invoice = await validateInvoice(ctx, lnInvoice);
 
-      expect((messages.minimunAmountInvoiceMessage as any).calledOnce).to.equal(true);
+      expect((messages.minimunAmountInvoiceMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(invoice).to.equal(false);
     });
 
@@ -573,9 +576,9 @@ describe('Validations', () => {
 
       const invoice = await validateInvoice(ctx, lnInvoice);
 
-      expect((messages.minimunExpirationTimeInvoiceMessage as any).calledOnce).to.equal(
-        true
-      );
+      expect(
+        (messages.minimunExpirationTimeInvoiceMessage as any).calledOnce,
+      ).to.equal(true);
       expect(invoice).to.equal(false);
     });
 
@@ -640,7 +643,9 @@ describe('Validations', () => {
 
       const invoice = await validateInvoice(ctx, lnInvoice);
 
-      expect((messages.requiredAddressInvoiceMessage as any).calledOnce).to.equal(true);
+      expect(
+        (messages.requiredAddressInvoiceMessage as any).calledOnce,
+      ).to.equal(true);
       expect(invoice).to.equal(false);
     });
     it('should return false if the invoice does not have an id', async () => {
@@ -672,7 +677,9 @@ describe('Validations', () => {
 
       const invoice = await validateInvoice(ctx, lnInvoice);
 
-      expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(true);
+      expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(invoice).to.equal(false);
     });
     it('should return the invoice if it is valid', async () => {
@@ -745,7 +752,9 @@ describe('Validations', () => {
 
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
-      expect((messages.invoiceMustBeLargerMessage as any).calledOnce).to.equal(true);
+      expect((messages.invoiceMustBeLargerMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(success).to.equal(false);
     });
 
@@ -778,7 +787,9 @@ describe('Validations', () => {
 
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
-      expect((messages.invoiceExpiryTooShortMessage as any).calledOnce).to.equal(true);
+      expect(
+        (messages.invoiceExpiryTooShortMessage as any).calledOnce,
+      ).to.equal(true);
       expect(success).to.equal(false);
     });
 
@@ -811,7 +822,9 @@ describe('Validations', () => {
 
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
-      expect((messages.invoiceHasExpiredMessage as any).calledOnce).to.equal(true);
+      expect((messages.invoiceHasExpiredMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(success).to.equal(false);
     });
     it('should return false if the invoice does not have a destination address', async () => {
@@ -843,9 +856,9 @@ describe('Validations', () => {
 
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
-      expect((messages.invoiceHasWrongDestinationMessage as any).calledOnce).to.equal(
-        true
-      );
+      expect(
+        (messages.invoiceHasWrongDestinationMessage as any).calledOnce,
+      ).to.equal(true);
       expect(success).to.equal(false);
     });
     it('should return false if the invoice does not have an id', async () => {
@@ -877,7 +890,9 @@ describe('Validations', () => {
 
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
-      expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(true);
+      expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(success).to.equal(false);
     });
     it('should return the invoice if it is valid', async () => {
@@ -918,7 +933,12 @@ describe('Validations', () => {
 
       sinon.stub(messages, 'invalidOrderMessage').resolves();
 
-      const isValid = await validateTakeSellOrder(ctx, {} as any, user as any, order);
+      const isValid = await validateTakeSellOrder(
+        ctx,
+        {} as any,
+        user as any,
+        order,
+      );
 
       expect((messages.invalidOrderMessage as any).calledOnce).to.equal(true);
       expect(isValid).to.equal(false);
@@ -934,9 +954,16 @@ describe('Validations', () => {
 
       sinon.stub(messages, 'cantTakeOwnOrderMessage').resolves();
 
-      const isValid = await validateTakeSellOrder(ctx, {} as any, user as any, order);
+      const isValid = await validateTakeSellOrder(
+        ctx,
+        {} as any,
+        user as any,
+        order,
+      );
 
-      expect((messages.cantTakeOwnOrderMessage as any).calledOnce).to.equal(true);
+      expect((messages.cantTakeOwnOrderMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(isValid).to.equal(false);
     });
 
@@ -950,9 +977,16 @@ describe('Validations', () => {
 
       sinon.stub(messages, 'invalidTypeOrderMessage').resolves();
 
-      const isValid = await validateTakeSellOrder(ctx, {} as any, user as any, order);
+      const isValid = await validateTakeSellOrder(
+        ctx,
+        {} as any,
+        user as any,
+        order,
+      );
 
-      expect((messages.invalidTypeOrderMessage as any).calledOnce).to.equal(true);
+      expect((messages.invalidTypeOrderMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(isValid).to.equal(false);
     });
 
@@ -966,9 +1000,16 @@ describe('Validations', () => {
 
       sinon.stub(messages, 'alreadyTakenOrderMessage').resolves();
 
-      const isValid = await validateTakeSellOrder(ctx, {} as any, user as any, order);
+      const isValid = await validateTakeSellOrder(
+        ctx,
+        {} as any,
+        user as any,
+        order,
+      );
 
-      expect((messages.alreadyTakenOrderMessage as any).calledOnce).to.equal(true);
+      expect((messages.alreadyTakenOrderMessage as any).calledOnce).to.equal(
+        true,
+      );
       expect(isValid).to.equal(false);
     });
   });
@@ -1037,7 +1078,7 @@ describe('Validations', () => {
       const result = await validateUserWaitingOrder(ctx, bot, user);
       expect(result).to.equal(false);
       expect(
-        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce
+        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce,
       ).to.equal(true);
     });
 
@@ -1055,7 +1096,7 @@ describe('Validations', () => {
       const result = await validateUserWaitingOrder(ctx, bot, user);
       expect(result).to.equal(false);
       expect(
-        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce
+        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce,
       ).to.equal(true);
     });
   });

@@ -16,11 +16,14 @@ describe('Lighting network', () => {
       description: 'Holis',
       amount: 200,
     });
-    if(createHoldInvoiceResult == null) throw new Error("createHoldInvoiceResult is null");
+    if (createHoldInvoiceResult == null)
+      throw new Error('createHoldInvoiceResult is null');
     const { hash, request } = createHoldInvoiceResult;
     const invoice = parsePaymentRequest({ request });
 
     expect(hash).to.be.equal(mockCreateHodlResponseForLightning.id);
-    expect(invoice.tokens).to.be.equal(mockCreateHodlResponseForLightning.tokens);
+    expect(invoice.tokens).to.be.equal(
+      mockCreateHodlResponseForLightning.tokens,
+    );
   });
 });

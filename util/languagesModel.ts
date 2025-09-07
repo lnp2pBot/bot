@@ -1,9 +1,9 @@
 export interface ILanguage {
-    name:  string;
-    emoji: string;
-    code:  string;
+  name: string;
+  emoji: string;
+  code: string;
 }
 
 export interface ILanguages {
-    [key: string]: ILanguage;
+  [key: string]: ILanguage;
 }
