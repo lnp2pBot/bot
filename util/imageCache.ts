@@ -31,7 +31,7 @@ class ImageCacheManager {
           (file: string) =>
             path.extname(file).toLowerCase() === '.png' &&
             path.basename(file).toLowerCase() !==
-              honeybadgerFilename.toLowerCase()
+              honeybadgerFilename.toLowerCase(),
         );
         this.cache.regularImages = imageFiles;
 
@@ -64,7 +64,7 @@ class ImageCacheManager {
       // Check for Golden Honey Badger
       if (this.cache.honeybadgerImage) {
         const goldenProbability = parseInt(
-          process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100'
+          process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100',
         );
         const probability = isNaN(goldenProbability)
           ? 100
@@ -73,14 +73,14 @@ class ImageCacheManager {
         const winningNumber = 1;
 
         logger.debug(
-          `Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`
+          `Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`,
         );
 
         if (luckyNumber === winningNumber) {
           randomImage = this.cache.honeybadgerImage;
           isGoldenHoneyBadger = true;
           logger.info(
-            `🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`
+            `🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`,
           );
           return { randomImage, isGoldenHoneyBadger };
         }
@@ -89,7 +89,7 @@ class ImageCacheManager {
       // Select random regular image
       if (this.cache.regularImages.length > 0) {
         const randomIndex = Math.floor(
-          Math.random() * this.cache.regularImages.length
+          Math.random() * this.cache.regularImages.length,
         );
         randomImage = this.cache.regularImages[randomIndex];
       } else {
