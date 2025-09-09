@@ -662,3 +662,4 @@ user_order_is_blocked_by_user_taker: You can't take this order because you block
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
 check_solvers: انجمن ${communityName} شما هیچ راه حلی ندارد. لطفاً حداقل یک مورد را ظرف ${remainingDays} روز اضافه کنید تا از غیرفعال شدن انجمن جلوگیری کنید.
 check_solvers_last_warning: انجمن ${communityName} شما هیچ راه حلی ندارد. لطفاً امروز حداقل یکی اضافه کنید تا از غیرفعال شدن انجمن جلوگیری کنید.
+image_processing_error: ما یک خطا در پردازش تصویر داشتیم، لطفاً چند دقیقه صبر کنید و دوباره تلاش کنید.

@@ -1,5 +1,6 @@
 import { logger } from '../logger';
 import path from 'path';
+import { ImageProcessingError } from './errors';
 
 const fs = require('fs').promises;
 
@@ -106,17 +107,18 @@ class ImageCacheManager {
    * Converts an image to base64
    * The image is from the images directory
    * @param image Image file name
-   * @returns Image base64 string, or empty string if error
+   * @returns Image base64 string
+   *
+   *  throws @ImageProcessingError
    */
   convertImageToBase64 = async (image: string) => {
-    let base64Image = '';
     try {
       const imageData = await fs.readFile(`images/${image}`);
-      base64Image = imageData.toString('base64');
+      return imageData.toString('base64');
     } catch (error) {
-      logger.error(error);
+      logger.error(`Error in convertImageToBase64: ${error}, image: ${image}`);
+      throw new ImageProcessingError(`Failed to convert image ${image}`, image);
     }
-    return base64Image;
   };
 
   getStats(): {

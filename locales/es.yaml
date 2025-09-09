@@ -663,6 +663,6 @@ blocklist_empty: No tienes ningun usuario bloqueado
 orders_in_process: Hay ordenes en proceso con este usuario
 user_order_is_blocked_by_user_taker: No puedes aceptar esta oferta porque has bloqueado a su creador
 user_taker_is_blocked_by_user_order: No puedes aceptar esta oferta porque su creador te ha bloqueado
-
+image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.

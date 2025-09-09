@@ -25,6 +25,7 @@ import { PayViaPaymentRequestResult } from 'lightning';
 import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
 import { imageCache } from '../util/imageCache';
+import { ImageProcessingError } from '../util/errors';
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -139,6 +140,12 @@ const showQRCodeMessage = async (
     ]);
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        ctx.i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -183,6 +190,12 @@ const pendingSellMessage = async (
     }
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -449,6 +462,12 @@ const beginTakeBuyMessage = async (
     });
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await bot.telegram.sendMessage(
+        seller.tg_id,
+        ctx.i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -492,6 +511,9 @@ const showHoldInvoiceMessage = async (
     ]);
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.reply(ctx.i18n.t('image_processing_error'));
+    }
   }
 };
 

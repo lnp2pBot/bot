@@ -662,3 +662,4 @@ user_order_is_blocked_by_user_taker: Vous ne pouvez pas accepter cette offre car
 user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car son créateur vous a bloqué
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
+image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.

@@ -659,3 +659,4 @@ user_order_is_blocked_by_user_taker: You can't take this order because you block
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
 check_solvers: У вашій спільноті ${communityName} немає розв’язувачів. Додайте принаймні одну протягом ${remainingDays} днів, щоб запобігти вимкненню спільноти.
 check_solvers_last_warning: У вашій спільноті ${communityName} немає розв’язувачів. Будь ласка, додайте принаймні одну сьогодні, щоб запобігти вимкненню спільноти.
+image_processing_error: У нас виникла помилка при обробці зображення, будь ласка, почекайте кілька хвилин і спробуйте знову.
