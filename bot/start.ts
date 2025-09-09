@@ -286,7 +286,9 @@ const initialize = (
   bot.command('version', async (ctx: MainContext) => {
     const pckg = require('../../package.json');
     await ctx.reply(
-      `${ctx.i18n.t('version')}: ${pckg.version}\n${ctx.i18n.t('commit_hash')}: ${COMMIT_HASH}`,
+      `${ctx.i18n.t('version')}: ${pckg.version}\n${ctx.i18n.t(
+        'commit_hash',
+      )}: ${COMMIT_HASH}`,
     );
   });
 
@@ -759,7 +761,7 @@ const initialize = (
           if (community === null) throw Error('Community was not found in DB');
           community.banned_users = community.banned_users
             .toObject()
-            .filter((el: IUsernameId) => el.id !== user.id);
+            .filter((el: IUsernameId) => el.id !== user.id.toString());
           await community.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));
