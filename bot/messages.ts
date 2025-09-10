@@ -24,6 +24,8 @@ import { IPendingPayment } from '../models/pending_payment';
 import { PayViaPaymentRequestResult } from 'lightning';
 import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
+import { imageCache } from '../util/imageCache';
+import { ImageProcessingError } from '../util/errors';
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -138,6 +140,12 @@ const showQRCodeMessage = async (
     ]);
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        ctx.i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -158,10 +166,14 @@ const pendingSellMessage = async (
       orderExpirationWindow: Math.round(orderExpirationWindow),
     });
 
+    const imageBase64 = await imageCache.convertImageToBase64(
+      order.random_image,
+    );
+
     await ctx.telegram.sendMediaGroup(user.tg_id, [
       {
         type: 'photo',
-        media: { source: Buffer.from(order.random_image, 'base64') },
+        media: { source: Buffer.from(imageBase64, 'base64') },
         caption: pendingSellCaption,
         parse_mode: 'Markdown',
       },
@@ -178,6 +190,12 @@ const pendingSellMessage = async (
     }
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -414,11 +432,14 @@ const beginTakeBuyMessage = async (
       Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW) / 60;
 
     const caption = ctx.i18n.t('begin_take_buy', { expirationTime });
+    const imageBase64 = await imageCache.convertImageToBase64(
+      order.random_image,
+    );
 
     await bot.telegram.sendMediaGroup(seller.tg_id, [
       {
         type: 'photo',
-        media: { source: Buffer.from(order.random_image, 'base64') },
+        media: { source: Buffer.from(imageBase64, 'base64') },
         caption,
       },
     ]);
@@ -441,6 +462,12 @@ const beginTakeBuyMessage = async (
     });
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await bot.telegram.sendMessage(
+        seller.tg_id,
+        ctx.i18n.t('image_processing_error'),
+      );
+    }
   }
 };
 
@@ -484,6 +511,9 @@ const showHoldInvoiceMessage = async (
     ]);
   } catch (error) {
     logger.error(error);
+    if (error instanceof ImageProcessingError) {
+      await ctx.reply(ctx.i18n.t('image_processing_error'));
+    }
   }
 };
 

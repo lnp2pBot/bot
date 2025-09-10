@@ -563,15 +563,19 @@ const generateRandomImage = (nonce: string) => {
 };
 
 const generateQRWithImage = async (request: string, randomImage: string) => {
+  // Import imageCache here to avoid circular dependency
+  const { imageCache } = require('./imageCache');
+
   const canvas = createCanvas(400, 400);
   await QRCode.toCanvas(canvas, request, {
     margin: 2,
     width: 400,
   });
 
+  const imageBase64 = await imageCache.convertImageToBase64(randomImage);
   const ctx = canvas.getContext('2d');
   const centerImage = new Image();
-  centerImage.src = `data:image/png;base64,${randomImage}`;
+  centerImage.src = `data:image/png;base64,${imageBase64}`;
 
   const rawRatio = process.env.IMAGE_TO_QR_RATIO ?? '0.2';
   let imageToQrRatio = parseFloat(rawRatio);

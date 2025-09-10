@@ -1,7 +1,10 @@
 import { logger } from '../logger';
 import path from 'path';
+import { ImageProcessingError } from './errors';
 
 const fs = require('fs').promises;
+
+const honeybadgerFilename = 'Honeybadger.png';
 
 interface ImageCache {
   honeybadgerImage: string | null;
@@ -20,37 +23,18 @@ class ImageCacheManager {
     try {
       logger.info('Initializing image cache...');
 
-      const honeybadgerFilename = 'Honeybadger.png';
-      const honeybadgerFullPath = `images/${honeybadgerFilename}`;
-
-      // Try to load Honeybadger image
-      try {
-        const goldenImage = await fs.readFile(honeybadgerFullPath);
-        this.cache.honeybadgerImage = goldenImage.toString('base64');
-        logger.info('Golden Honey Badger image cached successfully');
-      } catch (err) {
-        logger.warning(`Honeybadger image not found: ${err}`);
-        this.cache.honeybadgerImage = null;
-      }
+      this.cache.honeybadgerImage = honeybadgerFilename;
 
       // Load all regular images
       try {
         const files = await fs.readdir('images');
         const imageFiles = files.filter(
           (file: string) =>
-            ['.png'].includes(path.extname(file).toLowerCase()) &&
-            file !== honeybadgerFilename,
+            path.extname(file).toLowerCase() === '.png' &&
+            path.basename(file).toLowerCase() !==
+              honeybadgerFilename.toLowerCase(),
         );
-
-        for (const imageFile of imageFiles) {
-          try {
-            const imageData = await fs.readFile(`images/${imageFile}`);
-            const base64Image = imageData.toString('base64');
-            this.cache.regularImages.push(base64Image);
-          } catch (error) {
-            logger.error(`Error loading image ${imageFile}: ${error}`);
-          }
-        }
+        this.cache.regularImages = imageFiles;
 
         logger.info(`Cached ${this.cache.regularImages.length} regular images`);
       } catch (error) {
@@ -118,6 +102,24 @@ class ImageCacheManager {
 
     return { randomImage, isGoldenHoneyBadger };
   }
+
+  /**
+   * Converts an image to base64
+   * The image is from the images directory
+   * @param image Image file name
+   * @returns Image base64 string
+   *
+   *  throws @ImageProcessingError
+   */
+  convertImageToBase64 = async (image: string) => {
+    try {
+      const imageData = await fs.readFile(`images/${image}`);
+      return imageData.toString('base64');
+    } catch (error) {
+      logger.error(`Error in convertImageToBase64: ${error}, image: ${image}`);
+      throw new ImageProcessingError(`Failed to convert image ${image}`, image);
+    }
+  };
 
   getStats(): {
     honeybadgerCached: boolean;
