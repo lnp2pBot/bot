@@ -272,9 +272,8 @@ describe('Validations', () => {
 
     it('should return false for an invalid lightning address (existence)', async () => {
       existLightningAddressStub.withArgs('test@invalid.com').returns(false);
-      const result = await validations.validateLightningAddress(
-        'test@invalid.com'
-      );
+      const result =
+        await validations.validateLightningAddress('test@invalid.com');
       expect(result).to.equal(false);
     });
   });
@@ -294,7 +293,7 @@ describe('Validations', () => {
       expect(user).to.be.an('object');
       expect(user.tg_id).to.be.equal(ctx.update.callback_query.from.id);
       expect(user.username).to.be.equal(
-        ctx.update.callback_query.from.username
+        ctx.update.callback_query.from.username,
       );
     });
 
@@ -543,7 +542,7 @@ describe('Validations', () => {
       const invoice = await validateInvoice(ctx, lnInvoice);
 
       expect((messages.minimunAmountInvoiceMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(invoice).to.equal(false);
     });
@@ -578,7 +577,7 @@ describe('Validations', () => {
       const invoice = await validateInvoice(ctx, lnInvoice);
 
       expect(
-        (messages.minimunExpirationTimeInvoiceMessage as any).calledOnce
+        (messages.minimunExpirationTimeInvoiceMessage as any).calledOnce,
       ).to.equal(true);
       expect(invoice).to.equal(false);
     });
@@ -645,7 +644,7 @@ describe('Validations', () => {
       const invoice = await validateInvoice(ctx, lnInvoice);
 
       expect(
-        (messages.requiredAddressInvoiceMessage as any).calledOnce
+        (messages.requiredAddressInvoiceMessage as any).calledOnce,
       ).to.equal(true);
       expect(invoice).to.equal(false);
     });
@@ -679,7 +678,7 @@ describe('Validations', () => {
       const invoice = await validateInvoice(ctx, lnInvoice);
 
       expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(invoice).to.equal(false);
     });
@@ -754,7 +753,7 @@ describe('Validations', () => {
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
       expect((messages.invoiceMustBeLargerMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(success).to.equal(false);
     });
@@ -789,7 +788,7 @@ describe('Validations', () => {
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
       expect(
-        (messages.invoiceExpiryTooShortMessage as any).calledOnce
+        (messages.invoiceExpiryTooShortMessage as any).calledOnce,
       ).to.equal(true);
       expect(success).to.equal(false);
     });
@@ -824,7 +823,7 @@ describe('Validations', () => {
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
       expect((messages.invoiceHasExpiredMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(success).to.equal(false);
     });
@@ -858,7 +857,7 @@ describe('Validations', () => {
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
       expect(
-        (messages.invoiceHasWrongDestinationMessage as any).calledOnce
+        (messages.invoiceHasWrongDestinationMessage as any).calledOnce,
       ).to.equal(true);
       expect(success).to.equal(false);
     });
@@ -892,7 +891,7 @@ describe('Validations', () => {
       const { success } = await isValidInvoice(ctx, lnInvoice);
 
       expect((messages.requiredHashInvoiceMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(success).to.equal(false);
     });
@@ -938,7 +937,7 @@ describe('Validations', () => {
         ctx,
         {} as any,
         user as any,
-        order
+        order,
       );
 
       expect((messages.invalidOrderMessage as any).calledOnce).to.equal(true);
@@ -959,11 +958,11 @@ describe('Validations', () => {
         ctx,
         {} as any,
         user as any,
-        order
+        order,
       );
 
       expect((messages.cantTakeOwnOrderMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(isValid).to.equal(false);
     });
@@ -982,11 +981,11 @@ describe('Validations', () => {
         ctx,
         {} as any,
         user as any,
-        order
+        order,
       );
 
       expect((messages.invalidTypeOrderMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(isValid).to.equal(false);
     });
@@ -1005,11 +1004,11 @@ describe('Validations', () => {
         ctx,
         {} as any,
         user as any,
-        order
+        order,
       );
 
       expect((messages.alreadyTakenOrderMessage as any).calledOnce).to.equal(
-        true
+        true,
       );
       expect(isValid).to.equal(false);
     });
@@ -1079,7 +1078,7 @@ describe('Validations', () => {
       const result = await validateUserWaitingOrder(ctx, bot, user);
       expect(result).to.equal(false);
       expect(
-        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce
+        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce,
       ).to.equal(true);
     });
 
@@ -1097,7 +1096,7 @@ describe('Validations', () => {
       const result = await validateUserWaitingOrder(ctx, bot, user);
       expect(result).to.equal(false);
       expect(
-        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce
+        (messages.userCantTakeMoreThanOneWaitingOrderMessage as any).calledOnce,
       ).to.equal(true);
     });
   });

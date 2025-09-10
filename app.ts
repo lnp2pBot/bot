@@ -36,7 +36,7 @@ import { CommunityContext } from './bot/modules/community/communityContext';
 
       // Use configurable bot handler timeout, default to 60 seconds
       const handlerTimeout = parseInt(
-        process.env.BOT_HANDLER_TIMEOUT || '60000'
+        process.env.BOT_HANDLER_TIMEOUT || '60000',
       );
       let options: Partial<Telegraf.Options<CommunityContext>> = {
         handlerTimeout,
@@ -56,6 +56,6 @@ import { CommunityContext } from './bot/modules/community/communityContext';
       await resubscribeInvoices(bot);
     })
     .on('error', (error: Error) =>
-      logger.error(`Error connecting to Mongo: ${error}`)
+      logger.error(`Error connecting to Mongo: ${error}`),
     );
 })();

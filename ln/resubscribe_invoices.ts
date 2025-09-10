@@ -18,13 +18,13 @@ const resubscribeInvoices = async (bot: Telegraf<CommunityContext>) => {
     ).invoices;
     if (Array.isArray(unconfirmedInvoices) && unconfirmedInvoices.length > 0) {
       const heldInvoices = unconfirmedInvoices.filter(
-        invoice => !!invoice.is_held
+        invoice => !!invoice.is_held,
       );
       for (const invoice of heldInvoices) {
         const orderInDB = await Order.findOne({ hash: invoice.id });
         if (orderInDB) {
           logger.info(
-            `Re-subscribing Order ${orderInDB._id} - Invoice with hash ${invoice.id} is being held!`
+            `Re-subscribing Order ${orderInDB._id} - Invoice with hash ${invoice.id} is being held!`,
           );
           await subscribeInvoice(bot, invoice.id, true);
           invoicesReSubscribed++;

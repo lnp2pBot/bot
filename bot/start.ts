@@ -179,7 +179,7 @@ const COMMIT_HASH = (() => {
 
 const initialize = (
   botToken: string,
-  options: Partial<Telegraf.Options<CommunityContext>>
+  options: Partial<Telegraf.Options<CommunityContext>>,
 ): Telegraf<CommunityContext> => {
   const i18n = new I18n({
     defaultLanguageOnMissing: true, // implies allowMissing = true
@@ -203,7 +203,7 @@ const initialize = (
     `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
     async (): Promise<void> => {
       await attemptPendingPayments(bot);
-    }
+    },
   );
 
   schedule.scheduleJob(`*/20 * * * * *`, async () => {
@@ -267,7 +267,7 @@ const initialize = (
       } catch (error) {
         logger.error(error);
       }
-    }
+    },
   );
 
   bot.on('text', userMiddleware, async (ctx: MainContext, next: () => void) => {
@@ -287,8 +287,8 @@ const initialize = (
     const pckg = require('../../package.json');
     await ctx.reply(
       `${ctx.i18n.t('version')}: ${pckg.version}\n${ctx.i18n.t(
-        'commit_hash'
-      )}: ${COMMIT_HASH}`
+        'commit_hash',
+      )}: ${COMMIT_HASH}`,
     );
   });
 
@@ -365,7 +365,7 @@ const initialize = (
       const validatedParams = (await validateParams(
         ctx,
         2,
-        '\\<_order id_\\>'
+        '\\<_order id_\\>',
       ))!;
       if (validatedParams == null) return;
       const [orderId] = validatedParams;
@@ -383,14 +383,14 @@ const initialize = (
       if (!ctx.admin.admin) {
         if (!order.community_id) {
           logger.debug(
-            `cancelorder ${order._id}: The order is not in a community`
+            `cancelorder ${order._id}: The order is not in a community`,
           );
           return await messages.notAuthorized(ctx);
         }
 
         if (order.community_id != ctx.admin.default_community_id) {
           logger.debug(
-            `cancelorder ${order._id}: The community and the default user community are not the same`
+            `cancelorder ${order._id}: The community and the default user community are not the same`,
           );
           return await messages.notAuthorized(ctx);
         }
@@ -399,7 +399,7 @@ const initialize = (
         // the solver is running this command
         if (dispute && dispute.solver_id != ctx.admin._id) {
           logger.debug(
-            `cancelorder ${order._id}: @${ctx.admin.username} is not the solver of this dispute`
+            `cancelorder ${order._id}: @${ctx.admin.username} is not the solver of this dispute`,
           );
           return await messages.notAuthorized(ctx);
         }
@@ -566,7 +566,7 @@ const initialize = (
         ctx,
         bot,
         seller,
-        order
+        order,
       );
       // we sent a private message to the buyer
       await messages.successCompleteOrderByAdminMessage(ctx, bot, buyer, order);
@@ -615,12 +615,12 @@ const initialize = (
           ctx,
           invoice.is_confirmed,
           invoice.is_canceled!,
-          invoice.is_held!
+          invoice.is_held!,
         );
       } catch (error) {
         logger.error(error);
       }
-    }
+    },
   );
 
   bot.command('resubscribe', superAdminMiddleware, async (ctx: MainContext) => {
@@ -694,7 +694,7 @@ const initialize = (
       let [username] = (await validateParams(
         ctx,
         2,
-        '\\<_username or telegram ID_\\>'
+        '\\<_username or telegram ID_\\>',
       ))!;
 
       if (!username) return;
@@ -712,7 +712,7 @@ const initialize = (
       if (!ctx.admin.admin) {
         if (ctx.admin.default_community_id) {
           const community = await Community.findById(
-            ctx.admin.default_community_id
+            ctx.admin.default_community_id,
           );
           if (community === null) throw Error('Community was not found in DB');
           community.banned_users.push({
@@ -738,7 +738,7 @@ const initialize = (
       let [username] = (await validateParams(
         ctx,
         2,
-        '\\<_username or telegram ID_\\>'
+        '\\<_username or telegram ID_\\>',
       ))!;
 
       if (!username) return;
@@ -756,7 +756,7 @@ const initialize = (
       if (!ctx.admin.admin) {
         if (ctx.admin.default_community_id) {
           const community = await Community.findById(
-            ctx.admin.default_community_id
+            ctx.admin.default_community_id,
           );
           if (community === null) throw Error('Community was not found in DB');
           community.banned_users = community.banned_users
@@ -781,7 +781,7 @@ const initialize = (
       const [lightningAddress] = (await validateParams(
         ctx,
         2,
-        '\\<_lightningAddress / off_\\>'
+        '\\<_lightningAddress / off_\\>',
       ))!;
       if (!lightningAddress) return;
 
@@ -827,7 +827,7 @@ const initialize = (
     userMiddleware,
     async (ctx: CommunityContext) => {
       await cancelAddInvoice(ctx);
-    }
+    },
   );
 
   bot.action(
@@ -835,7 +835,7 @@ const initialize = (
     userMiddleware,
     async (ctx: CommunityContext) => {
       await showHoldInvoice(ctx, bot);
-    }
+    },
   );
 
   bot.action(
@@ -843,7 +843,7 @@ const initialize = (
     userMiddleware,
     async (ctx: CommunityContext) => {
       await cancelShowHoldInvoice(ctx);
-    }
+    },
   );
 
   bot.action(
@@ -854,7 +854,7 @@ const initialize = (
         throw new Error('ctx.match should not be null');
       }
       await rateUser(ctx, bot, Number(ctx.match[1]), ctx.match[2]);
-    }
+    },
   );
 
   bot.action(
@@ -865,7 +865,7 @@ const initialize = (
         throw new Error('ctx.match should not be null');
       }
       await addInvoicePHI(ctx, bot, ctx.match[1]);
-    }
+    },
   );
 
   bot.action(
@@ -877,7 +877,7 @@ const initialize = (
       }
       ctx.deleteMessage();
       await addInvoicePHI(ctx, bot, ctx.match[1]);
-    }
+    },
   );
 
   bot.action(
@@ -889,7 +889,7 @@ const initialize = (
       }
       ctx.deleteMessage();
       await cancelOrder(ctx, ctx.match[1]);
-    }
+    },
   );
 
   bot.action(
@@ -901,7 +901,7 @@ const initialize = (
       }
       ctx.deleteMessage();
       await fiatSent(ctx, ctx.match[1]);
-    }
+    },
   );
 
   bot.action(
@@ -913,7 +913,7 @@ const initialize = (
       }
       ctx.deleteMessage();
       await release(ctx, ctx.match[1]);
-    }
+    },
   );
 
   bot.action(
@@ -925,7 +925,7 @@ const initialize = (
       }
       ctx.deleteMessage();
       await showQrCode(ctx, ctx.match[1]);
-    }
+    },
   );
 
   bot.command('paytobuyer', adminMiddleware, async (ctx: MainContext) => {
@@ -1053,7 +1053,7 @@ const initialize = (
 
 const start = (
   botToken: string,
-  options: Partial<Telegraf.Options<CommunityContext>>
+  options: Partial<Telegraf.Options<CommunityContext>>,
 ): Telegraf<CommunityContext> => {
   const bot = initialize(botToken, options);
 

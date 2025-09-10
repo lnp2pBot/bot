@@ -60,7 +60,7 @@ const sell = async (ctx: MainContext) => {
     const communityInfo = await getCommunityInfo(
       user,
       ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat
+      ctx.message?.chat as Chat.UserNameChat,
     );
 
     const { community, communityId, isBanned } = communityInfo;
@@ -88,7 +88,7 @@ const sell = async (ctx: MainContext) => {
     if (!isCurrencySupported(community, fiatCode)) {
       return await messages.currencyNotSupportedMessage(
         ctx,
-        community?.currencies || []
+        community?.currencies || [],
       );
     }
 
@@ -129,7 +129,7 @@ const buy = async (ctx: MainContext) => {
     const communityInfo = await getCommunityInfo(
       user,
       ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat
+      ctx.message?.chat as Chat.UserNameChat,
     );
 
     const { community, communityId, isBanned } = communityInfo;
@@ -158,7 +158,7 @@ const buy = async (ctx: MainContext) => {
     if (!isCurrencySupported(community, fiatCode)) {
       await messages.currencyNotSupportedMessage(
         ctx,
-        community?.currencies || []
+        community?.currencies || [],
       );
       return;
     }
@@ -185,7 +185,7 @@ const buy = async (ctx: MainContext) => {
 async function enterWizard(
   ctx: CommunityContext,
   user: UserDocument,
-  type: string
+  type: string,
 ) {
   const state: EnterWizardState = {
     type,
@@ -235,7 +235,7 @@ const takeOrder = async (ctx: MainContext) => {
     const validateParamsResult = await validateParams(
       ctx,
       2,
-      '\\<_order id_\\>'
+      '\\<_order id_\\>',
     );
     if (validateParamsResult === null || validateParamsResult.length === 0)
       throw new Error('validateParams failed');

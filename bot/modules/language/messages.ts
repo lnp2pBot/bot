@@ -5,7 +5,7 @@ import { MainContext } from '../../start';
 export const showFlagsMessage = async (
   ctx: MainContext,
   flags: ILanguage[],
-  code: string
+  code: string,
 ) => {
   try {
     const buttons = [];

@@ -14,7 +14,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
   if (!Config.getRelays().length) {
     ['wss://nostr-pub.wellorder.net', 'wss://relay.damus.io'].map(
-      Config.addRelay
+      Config.addRelay,
     );
   }
 

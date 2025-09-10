@@ -26,14 +26,14 @@ const addInvoiceWizard = new Scenes.WizardScene(
         process.env.HOLD_INVOICE_EXPIRATION_WINDOW;
       if (holdInvoiceExpirationWindow === undefined)
         throw new Error(
-          'Enviroment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined'
+          'Enviroment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined',
         );
       const expirationTime = parseInt(holdInvoiceExpirationWindow) / 60;
       await messages.wizardAddInvoiceInitMessage(
         communityCtx,
         order,
         order.fiat_code,
-        expirationTime
+        expirationTime,
       );
       order.status = 'WAITING_BUYER_INVOICE';
       await order.save();
@@ -65,7 +65,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       if (isValidLN) {
         const laRes = await resolvLightningAddress(
           lnInvoice,
-          order.amount * 1000
+          order.amount * 1000,
         );
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
@@ -94,7 +94,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 const addInvoicePHIWizard = new Scenes.WizardScene(
@@ -132,7 +132,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (isValidLN) {
         const laRes = await resolvLightningAddress(
           lnInvoice,
-          order.amount * 1000
+          order.amount * 1000,
         );
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
@@ -179,7 +179,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 const addFiatAmountWizard = new Scenes.WizardScene(
@@ -193,7 +193,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
         ctx,
         order.fiat_code,
         action,
-        order
+        order,
       );
 
       return ctx.wizard.next();
@@ -220,7 +220,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
       await messages.wizardAddFiatAmountCorrectMessage(
         ctx,
         currency,
-        fiatAmount
+        fiatAmount,
       );
 
       if (order.type === 'sell') {
@@ -233,7 +233,7 @@ const addFiatAmountWizard = new Scenes.WizardScene(
     } catch (error) {
       logger.error(error);
     }
-  }
+  },
 );
 
 export { addInvoiceWizard, addFiatAmountWizard, addInvoicePHIWizard };

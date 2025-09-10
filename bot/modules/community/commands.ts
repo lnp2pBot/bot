@@ -38,7 +38,7 @@ export const setComm = async (ctx: MainContext) => {
     const [groupName] = (await validateParams(
       ctx,
       2,
-      '\\<_@communityGroupName \\| telegram\\-group\\-id / off_\\>'
+      '\\<_@communityGroupName \\| telegram\\-group\\-id / off_\\>',
     ))!;
 
     if (groupName === 'off') {
@@ -136,7 +136,7 @@ export const updateCommunity = async (
   ctx: CommunityContext,
   id: string,
   field: string,
-  bot?: Telegraf<CommunityContext>
+  bot?: Telegraf<CommunityContext>,
 ) => {
   try {
     ctx.deleteMessage();
@@ -154,7 +154,7 @@ export const updateCommunity = async (
 
     if (!community) {
       throw new Error(
-        'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID'
+        'Community not found in UPDATE_NAME_COMMUNITY_WIZARD_SCENE_ID',
       );
     }
 

@@ -16,7 +16,7 @@ export const setlang = async (ctx: MainContext) => {
         if (flag !== undefined) {
           flags.push(flag);
         }
-      }
+      },
     );
     await showFlagsMessage(ctx, flags, ctx.user.lang);
   } catch (error) {

@@ -12,7 +12,7 @@ import { IOrder } from '../models/order';
 const subscribeInvoice = async (
   bot: HasTelegram,
   id: string,
-  resub: boolean = false
+  resub: boolean = false,
 ) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
@@ -21,7 +21,7 @@ const subscribeInvoice = async (
         const order = await Order.findOne({ hash: invoice.id });
         if (order === null) throw new Error('order was not found');
         logger.info(
-          `Order ${order._id} Invoice with hash: ${id} is being held!`
+          `Order ${order._id} Invoice with hash: ${id} is being held!`,
         );
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         if (buyerUser === null) throw new Error('buyerUser was not found');
@@ -38,7 +38,7 @@ const subscribeInvoice = async (
             buyerUser,
             order,
             i18nCtxBuyer,
-            i18nCtxSeller
+            i18nCtxSeller,
           );
         } else if (order.type === 'buy') {
           order.status = 'WAITING_BUYER_INVOICE';
@@ -53,7 +53,7 @@ const subscribeInvoice = async (
             order,
             i18nCtxBuyer,
             i18nCtxSeller,
-            rate
+            rate,
           );
         }
         order.invoice_held_at = new Date();
@@ -63,11 +63,11 @@ const subscribeInvoice = async (
         const order = await Order.findOne({ hash: id });
         if (order === null) throw new Error('order was not found');
         logger.info(
-          `Order ${order._id} - Invoice with hash: ${id} was settled!`
+          `Order ${order._id} - Invoice with hash: ${id} was settled!`,
         );
         if (order.status === 'FROZEN' && order.is_frozen) {
           logger.info(
-            `Order ${order._id} - Order was frozen by ${order.action_by}!`
+            `Order ${order._id} - Order was frozen by ${order.action_by}!`,
           );
           return;
         }
@@ -96,7 +96,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
       sellerUser,
       buyerUser,
       i18nCtxBuyer,
-      i18nCtxSeller
+      i18nCtxSeller,
     );
     // If this is a range order, probably we need to created a new child range order
     const orderData = await ordersActions.getNewRangeOrderPayload(order);
@@ -115,7 +115,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
         i18nCtx,
         bot,
         user,
-        orderData
+        orderData,
       );
 
       if (newOrder) {
@@ -125,7 +125,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
             user,
             newOrder,
             i18nCtx,
-            true
+            true,
           );
         } else {
           await messages.publishBuyOrderMessage(
@@ -133,7 +133,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
             user,
             newOrder,
             i18nCtx,
-            true
+            true,
           );
         }
       }

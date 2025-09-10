@@ -9,7 +9,7 @@ import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 
 export const attemptPendingPayments = async (
-  bot: Telegraf<CommunityContext>
+  bot: Telegraf<CommunityContext>,
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
@@ -39,12 +39,12 @@ export const attemptPendingPayments = async (
       }
       // We check if the old payment is on flight
       const isPendingOldPayment: boolean = await isPendingPayment(
-        order.buyer_invoice
+        order.buyer_invoice,
       );
 
       // We check if this new payment is on flight
       const isPending: boolean = await isPendingPayment(
-        pending.payment_request
+        pending.payment_request,
       );
 
       // If one of the payments is on flight we don't do anything
@@ -65,7 +65,7 @@ export const attemptPendingPayments = async (
           bot,
           buyerUser,
           order,
-          i18nCtx
+          i18nCtx,
         );
       }
 
@@ -89,14 +89,14 @@ export const attemptPendingPayments = async (
           order,
           pending,
           payment,
-          i18nCtx
+          i18nCtx,
         );
         await messages.toBuyerPendingPaymentSuccessMessage(
           bot,
           buyerUser,
           order,
           payment,
-          i18nCtx
+          i18nCtx,
         );
         await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
@@ -106,21 +106,21 @@ export const attemptPendingPayments = async (
 
           if (payment.error === 'TIMEOUT') {
             logger.warning(
-              `Payment timeout for order ${order._id}, attempt ${pending.attempts}`
+              `Payment timeout for order ${order._id}, attempt ${pending.attempts}`,
             );
           } else if (payment.error === 'ROUTING_FAILED') {
             logger.warning(
-              `Routing failed for order ${order._id}, attempt ${pending.attempts}`
+              `Routing failed for order ${order._id}, attempt ${pending.attempts}`,
             );
           } else {
             logger.error(
-              `Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`
+              `Payment failed for order ${order._id}, attempt ${pending.attempts}, error: ${payment.error}`,
             );
           }
         } else {
           pending.last_error = 'PAYMENT_FAILED';
           logger.error(
-            `Payment failed for order ${order._id}, attempt ${pending.attempts}`
+            `Payment failed for order ${order._id}, attempt ${pending.attempts}`,
           );
         }
 
@@ -133,7 +133,7 @@ export const attemptPendingPayments = async (
             bot,
             buyerUser,
             order,
-            i18nCtx
+            i18nCtx,
           );
         }
         await messages.toAdminChannelPendingPaymentFailedMessage(
@@ -141,7 +141,7 @@ export const attemptPendingPayments = async (
           buyerUser,
           order,
           pending,
-          i18nCtx
+          i18nCtx,
         );
       }
     } catch (error: any) {
@@ -158,7 +158,7 @@ export const attemptPendingPayments = async (
 };
 
 export const attemptCommunitiesPendingPayments = async (
-  bot: Telegraf<CommunityContext>
+  bot: Telegraf<CommunityContext>,
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
@@ -181,7 +181,7 @@ export const attemptCommunitiesPendingPayments = async (
 
       // We check if this new payment is on flight
       const isPending: boolean = await isPendingPayment(
-        pending.payment_request
+        pending.payment_request,
       );
 
       // If the payments is on flight we don't do anything
@@ -199,7 +199,7 @@ export const attemptCommunitiesPendingPayments = async (
         pending.is_invoice_expired = true;
         await bot.telegram.sendMessage(
           user.tg_id,
-          i18nCtx.t('invoice_expired_earnings')
+          i18nCtx.t('invoice_expired_earnings'),
         );
       }
 
@@ -214,7 +214,7 @@ export const attemptCommunitiesPendingPayments = async (
         community.orders_to_redeem = 0;
         await community.save();
         logger.info(
-          `Community ${community.id} withdrew ${pending.amount} sats, invoice with hash: ${payment.id} was paid`
+          `Community ${community.id} withdrew ${pending.amount} sats, invoice with hash: ${payment.id} was paid`,
         );
         await bot.telegram.sendMessage(
           user.tg_id,
@@ -222,19 +222,19 @@ export const attemptCommunitiesPendingPayments = async (
             id: community.id,
             amount: pending.amount,
             paymentSecret: payment.secret,
-          })
+          }),
         );
       } else {
         // Enhanced error handling for community payments
         if (payment && typeof payment === 'object' && 'error' in payment) {
           pending.last_error = payment.error as string;
           logger.error(
-            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats, error: ${payment.error}`
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats, error: ${payment.error}`,
           );
         } else {
           pending.last_error = 'PAYMENT_FAILED';
           logger.error(
-            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`
+            `Community ${community.id}: Withdraw failed after ${pending.attempts} attempts, amount ${pending.amount} sats`,
           );
         }
 
@@ -246,7 +246,7 @@ export const attemptCommunitiesPendingPayments = async (
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {
               attempts: pending.attempts,
-            })
+            }),
           );
         }
       }

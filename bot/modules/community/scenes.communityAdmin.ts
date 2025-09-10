@@ -10,7 +10,7 @@ const communityAdmin = () => {
       const { community } = ctx.scene.state as any;
       const str = ctx.i18n.t('community_admin', { community });
       await ctx.reply(str, { parse_mode: 'HTML' });
-    }
+    },
   );
 
   scene.command('/help', async ctx => {

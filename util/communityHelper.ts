@@ -17,7 +17,7 @@ interface CommunityLookupResult {
 export const getCommunityInfo = async (
   user: UserDocument,
   chatType: string,
-  chat?: Chat.UserNameChat
+  chat?: Chat.UserNameChat,
 ): Promise<CommunityLookupResult> => {
   try {
     let community: ICommunity | null = null;
@@ -49,7 +49,7 @@ export const getCommunityInfo = async (
     let isBanned = false;
     if (community && communityId) {
       isBanned = community.banned_users.some(
-        (buser: any) => String(buser.id) === String(user._id)
+        (buser: any) => String(buser.id) === String(user._id),
       );
     }
 
@@ -73,7 +73,7 @@ export const getCommunityInfo = async (
  */
 export const isCurrencySupported = (
   community: ICommunity | null,
-  fiatCode: string
+  fiatCode: string,
 ): boolean => {
   if (!community) return true; // No community restriction
   return community.currencies.includes(fiatCode);
