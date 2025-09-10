@@ -22,7 +22,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     'takeorder',
     userMiddleware,
     takeOrderValidation,
-    commands.takeOrder
+    commands.takeOrder,
   );
   bot.command(
     'buy',
@@ -36,7 +36,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
       commands.buyWizard(ctx);
     },
-    commands.buy
+    commands.buy,
   );
   bot.command(
     'sell',
@@ -50,7 +50,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
       commands.sellWizard(ctx);
     },
-    commands.sell
+    commands.sell,
   );
 
   bot.command('listorders', userMiddleware, async ctx => {
@@ -63,7 +63,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
       const { text, extra } = await messages.listOrdersResponse(
         orders,
-        ctx.i18n
+        ctx.i18n,
       );
       return ctx.reply(text, extra);
     } catch (error) {
@@ -81,7 +81,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       const orderId = extractId(text);
       if (!orderId) return;
       await takesell(ctx, bot, orderId);
-    }
+    },
   );
   bot.action(
     'takebuy',
@@ -94,6 +94,6 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       const orderId = extractId(text);
       if (orderId === null) return;
       await takebuy(ctx, bot, orderId);
-    }
+    },
   );
 };

@@ -180,7 +180,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       await ctx.reply(
         ctx.i18n.t('must_be_numeric', {
           fieldName: ctx.i18n.t('premium_discount'),
-        })
+        }),
       );
       return false;
     }
@@ -188,7 +188,7 @@ const validateSellOrder = async (ctx: MainContext) => {
     amount = parseInt(amount);
     if (isNaN(amount)) {
       await ctx.reply(
-        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') }),
       );
 
       return false;
@@ -215,7 +215,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        Number(process.env.MIN_PAYMENT_AMT)
+        Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
@@ -270,7 +270,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       await ctx.reply(
         ctx.i18n.t('must_be_numeric', {
           fieldName: ctx.i18n.t('premium_discount'),
-        })
+        }),
       );
       return false;
     }
@@ -278,7 +278,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
     amount = parseInt(amount);
     if (isNaN(amount)) {
       await ctx.reply(
-        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') })
+        ctx.i18n.t('must_be_int', { fieldName: ctx.i18n.t('sats_amount') }),
       );
       return false;
     }
@@ -303,7 +303,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       await messages.mustBeGreatherEqThan(
         ctx,
         'monto_en_sats',
-        Number(process.env.MIN_PAYMENT_AMT)
+        Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
@@ -359,7 +359,7 @@ const validateInvoice = async (ctx: MainContext, lnInvoice: string) => {
       return false;
     }
     const latestDate = new Date(
-      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW),
     );
     if (!('MIN_PAYMENT_AMT' in process.env))
       throw Error('MIN_PAYMENT_AMT not found, please check .env file');
@@ -404,7 +404,7 @@ const isValidInvoice = async (ctx: MainContext, lnInvoice: string) => {
     const checkedPrefixlnInvoice = removeLightningPrefix(lnInvoice);
     const invoice = parsePaymentRequest({ request: checkedPrefixlnInvoice });
     const latestDate = new Date(
-      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW)
+      Date.now() + Number(process.env.INVOICE_EXPIRATION_WINDOW),
     );
     if (
       !!invoice.tokens &&
@@ -460,7 +460,7 @@ const validateTakeSellOrder = async (
   ctx: MainContext,
   bot: HasTelegram,
   user: UserDocument,
-  order: IOrder | null
+  order: IOrder | null,
 ) => {
   try {
     if (!order) {
@@ -494,7 +494,7 @@ const validateTakeBuyOrder = async (
   ctx: MainContext,
   bot: HasTelegram,
   user: UserDocument,
-  order: IOrder
+  order: IOrder,
 ) => {
   try {
     if (!order) {
@@ -523,7 +523,7 @@ const validateTakeBuyOrder = async (
 const validateReleaseOrder = async (
   ctx: MainContext,
   user: UserDocument,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     let where: FilterQuery<OrderQuery> = {
@@ -570,7 +570,7 @@ const validateReleaseOrder = async (
 const validateDisputeOrder = async (
   ctx: MainContext,
   user: UserDocument,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     const where = {
@@ -598,7 +598,7 @@ const validateDisputeOrder = async (
 const validateFiatSentOrder = async (
   ctx: MainContext,
   user: UserDocument,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     const where: FilterQuery<OrderQuery> = {
@@ -659,7 +659,7 @@ const validateSeller = async (ctx: MainContext, user: UserDocument) => {
 const validateParams = async (
   ctx: MainContext,
   paramNumber: number,
-  errOutputString: string
+  errOutputString: string,
 ): Promise<null | Array<string>> => {
   try {
     if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
@@ -670,7 +670,7 @@ const validateParams = async (
     if (params.length !== paramNumber) {
       await messages.customMessage(
         ctx,
-        `${params[0].toLowerCase()} ${errOutputString}`
+        `${params[0].toLowerCase()} ${errOutputString}`,
       );
 
       return [];
@@ -700,7 +700,7 @@ const validateObjectId = async (ctx: MainContext, id: string) => {
 const validateUserWaitingOrder = async (
   ctx: MainContext,
   bot: MainContext,
-  user: UserDocument
+  user: UserDocument,
 ) => {
   try {
     // If is a seller
@@ -733,7 +733,7 @@ const validateUserWaitingOrder = async (
 // We check if the user is banned from the community in the order
 const isBannedFromCommunity = async (
   user: UserDocument,
-  communityId: string
+  communityId: string,
 ) => {
   try {
     if (!communityId) return false;
@@ -743,7 +743,7 @@ const isBannedFromCommunity = async (
     });
     if (!community) return false;
     return community.banned_users.some(
-      (buser: IUsernameId) => buser.id == user._id
+      (buser: IUsernameId) => buser.id == user._id,
     );
   } catch (error) {
     logger.error(error);

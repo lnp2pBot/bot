@@ -100,7 +100,7 @@ const deleteDispute = async (ctx: MainContext) => {
     let [username, orderId] = (await validateParams(
       ctx,
       3,
-      '\\<_username_\\> \\<_order id_\\>'
+      '\\<_username_\\> \\<_order id_\\>',
     ))!;
 
     if (!username) return;

@@ -17,7 +17,7 @@ const OrderEvents = require('../../modules/events/orders');
 
 export const takeOrderActionValidation = async (
   ctx: MainContext,
-  next: () => void
+  next: () => void,
 ) => {
   try {
     const text = (ctx.update as any).callback_query.message.text;
@@ -29,7 +29,7 @@ export const takeOrderActionValidation = async (
 };
 export const takeOrderValidation = async (
   ctx: MainContext,
-  next: () => void
+  next: () => void,
 ) => {
   try {
     const { user } = ctx;
@@ -52,7 +52,7 @@ export const takebuyValidation = async (ctx: MainContext, next: () => void) => {
 export const takebuy = async (
   ctx: MainContext,
   bot: HasTelegram,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     if (!orderId) return;
@@ -76,7 +76,7 @@ export const takebuy = async (
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
 
     const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(
-      user._id.toString()
+      user._id.toString(),
     );
 
     order.status = 'WAITING_PAYMENT';
@@ -100,7 +100,7 @@ export const takebuy = async (
 export const takesell = async (
   ctx: MainContext,
   bot: HasTelegram,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     const { user } = ctx;
@@ -149,7 +149,7 @@ export const takesell = async (
 const checkBlockingStatus = async (
   ctx: MainContext,
   user: UserDocument,
-  otherUser: UserDocument
+  otherUser: UserDocument,
 ) => {
   const userIsBlocked = await Block.exists({
     blocker_tg_id: user.tg_id,

@@ -12,7 +12,7 @@ import { CommunityWizardState } from '../community/communityContext';
 
 export const listOrdersResponse = async (
   orders: IOrder[],
-  i18n: I18nContext
+  i18n: I18nContext,
 ) => {
   const tasks = orders.map(async order => {
     const channel = await getOrderChannel(order);
@@ -56,7 +56,7 @@ export const listOrdersResponse = async (
 
 export const createOrderWizardStatus = (
   i18n: I18nContext,
-  state: CommunityWizardState
+  state: CommunityWizardState,
 ) => {
   const { type, priceMargin } = state;
   const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');

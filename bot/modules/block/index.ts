@@ -24,7 +24,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     } catch (error) {
       logger.error('Error in blocklist command:', error);
       await ctx.reply(
-        ctx.i18n?.t('blocklist_error') ?? 'Failed to fetch block list'
+        ctx.i18n?.t('blocklist_error') ?? 'Failed to fetch block list',
       );
     }
   });

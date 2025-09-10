@@ -47,5 +47,5 @@ const PendingPaymentSchema = new Schema<IPendingPayment>({
 
 export default mongoose.model<IPendingPayment>(
   'PendingPayment',
-  PendingPaymentSchema
+  PendingPaymentSchema,
 );

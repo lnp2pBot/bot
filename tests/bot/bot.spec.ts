@@ -166,7 +166,7 @@ describe('Telegram bot', () => {
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
     expect(updates.result[0].message.text).to.equal(
-      '😕 I do not understand. Please use /help to see the list of available commands'
+      '😕 I do not understand. Please use /help to see the list of available commands',
     );
   });
 
@@ -187,7 +187,7 @@ describe('Telegram bot', () => {
     const updates = await client.getUpdates();
     expect(updates.ok).to.be.equal(true);
     expect(
-      (updates.result[0].message.text.match(/\n/g) || []).length - 1
+      (updates.result[0].message.text.match(/\n/g) || []).length - 1,
     ).to.be.equal(getCurrenciesWithPrice().length);
   });
 
@@ -204,7 +204,7 @@ describe('Telegram bot', () => {
     updates.result[0].message.reply_markup.inline_keyboard.forEach(
       (flag: any) => {
         flags += flag.length;
-      }
+      },
     );
     let langs = 0;
     fs.readdirSync(path.join(__dirname, '../../../locales')).forEach(file => {
@@ -455,8 +455,8 @@ describe('Bot Initialization', () => {
     expect(
       scheduleStub.scheduleJob.calledWith(
         `*/${process.env.PENDING_PAYMENT_WINDOW} * * * *`,
-        sinon.match.func
-      )
+        sinon.match.func,
+      ),
     ).to.be.equal(true);
 
     const scheduledFunction = scheduleStub.scheduleJob.getCall(0).args[1];
@@ -465,7 +465,7 @@ describe('Bot Initialization', () => {
 
     expect(scheduleStub.scheduleJob.callCount).to.be.equal(7);
     expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal(
-      '*/10 * * * *'
+      '*/10 * * * *',
     );
     expect(attemptPendingPaymentsStub.calledOnce).to.be.equal(true);
   });
@@ -546,7 +546,7 @@ describe('Bot Initialization', () => {
     });
 
     expect(
-      ConfigStub.findOne.calledOnceWithExactly({ maintenance: true })
+      ConfigStub.findOne.calledOnceWithExactly({ maintenance: true }),
     ).to.be.equal(true);
     expect(ctx.reply.calledOnceWithExactly('maintenance')).to.be.equal(true);
   });
@@ -606,7 +606,7 @@ describe('Bot Initialization', () => {
 
     expect(ctx.reply.calledOnce).to.be.equal(true);
     expect(
-      ctx.reply.calledWithExactly('This is an unknown command.')
+      ctx.reply.calledWithExactly('This is an unknown command.'),
     ).to.be.equal(true);
   });
 });

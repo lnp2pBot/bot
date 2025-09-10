@@ -23,7 +23,7 @@ const disableCommunity = async (bot: Telegraf<CommunityContext>) => {
       });
       if (orders == 0) {
         logger.info(
-          `Community: ${community.name} have ${process.env.COMMUNITY_TTL} days without a successfully completed order, it's being deleted!`
+          `Community: ${community.name} have ${process.env.COMMUNITY_TTL} days without a successfully completed order, it's being deleted!`,
         );
         community.active = false;
         await community.save();
@@ -32,7 +32,7 @@ const disableCommunity = async (bot: Telegraf<CommunityContext>) => {
         if (admin) {
           await bot.telegram.sendMessage(
             admin.id,
-            `Your community ${community.name} has been deactivated due to inactivity. Please contact support if you have any questions.`
+            `Your community ${community.name} has been deactivated due to inactivity. Please contact support if you have any questions.`,
           );
         }
       }

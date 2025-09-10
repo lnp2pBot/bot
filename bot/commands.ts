@@ -31,13 +31,13 @@ const waitPayment = async (
   buyer: UserDocument,
   seller: UserDocument,
   order: IOrder,
-  buyerInvoice: any
+  buyerInvoice: any,
 ) => {
   try {
     // If there is not fiat amount the function don't do anything
     if (order.fiat_amount === undefined) {
       logger.debug(
-        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`
+        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`,
       );
       return;
     }
@@ -56,7 +56,7 @@ const waitPayment = async (
         buyer,
         seller,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else {
       // We create a hold invoice
@@ -91,7 +91,7 @@ const waitPayment = async (
         seller,
         order,
         i18nCtx,
-        buyer
+        buyer,
       );
       await messages.takeSellWaitingSellerToPayMessage(ctx, bot, buyer, order);
     }
@@ -104,7 +104,7 @@ const waitPayment = async (
 const addInvoice = async (
   ctx: CommunityContext,
   bot: HasTelegram,
-  order: IOrder | null = null
+  order: IOrder | null = null,
 ) => {
   try {
     ctx.deleteMessage();
@@ -156,17 +156,17 @@ const addInvoice = async (
     if (buyer.lightning_address) {
       const laRes = await resolvLightningAddress(
         buyer.lightning_address,
-        order.amount * 1000
+        order.amount * 1000,
       );
       if (!!laRes && !laRes.pr) {
         logger.error(
-          `lightning address ${buyer.lightning_address} not available`
+          `lightning address ${buyer.lightning_address} not available`,
         );
         await bot.telegram.sendMessage(
           buyer.tg_id,
           ctx.i18n.t('unavailable_lightning_address', {
             la: buyer.lightning_address,
-          })
+          }),
         );
 
         ctx.scene.enter('ADD_INVOICE_WIZARD_SCENE_ID', {
@@ -195,7 +195,7 @@ const rateUser = async (
   ctx: CommunityContext,
   bot: HasTelegram,
   rating: number,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     ctx.deleteMessage();
@@ -260,7 +260,7 @@ const saveUserReview = async (targetUser: UserDocument, rating: number) => {
 const cancelAddInvoice = async (
   ctx: CommunityContext,
   order: IOrder | null = null,
-  job?: any
+  job?: any,
 ) => {
   try {
     let userAction = false;
@@ -309,7 +309,7 @@ const cancelAddInvoice = async (
         ctx,
         sellerUser,
         order,
-        i18nCtxSeller
+        i18nCtxSeller,
       );
     } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
       order.status = 'CLOSED';
@@ -319,17 +319,17 @@ const cancelAddInvoice = async (
         ctx,
         buyerUser,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Buyer Id: ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
+          `Buyer Id: ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
-          `Order Id: ${order._id} expired, republishing to the channel`
+          `Order Id: ${order._id} expired, republishing to the channel`,
         );
       }
       order.taken_at = null;
@@ -359,13 +359,13 @@ const cancelAddInvoice = async (
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
           await messages.toBuyerDidntAddInvoiceMessage(
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
         }
       } else {
@@ -380,7 +380,7 @@ const cancelAddInvoice = async (
 const showHoldInvoice = async (
   ctx: CommunityContext,
   bot: HasTelegram,
-  order?: IOrder | null
+  order?: IOrder | null,
 ) => {
   try {
     ctx.deleteMessage();
@@ -427,7 +427,7 @@ const showHoldInvoice = async (
       order.fee = await getFee(
         amount,
         order.community_id,
-        order.is_golden_honey_badger
+        order.is_golden_honey_badger,
       );
       order.amount = amount;
     }
@@ -457,7 +457,7 @@ const showHoldInvoice = async (
       order.fiat_code,
       order.fiat_amount,
       order.random_image,
-      order.is_golden_honey_badger
+      order.is_golden_honey_badger,
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);
@@ -467,7 +467,7 @@ const showHoldInvoice = async (
 const cancelShowHoldInvoice = async (
   ctx: CommunityContext,
   order: IOrder | null = null,
-  job?: any
+  job?: any,
 ) => {
   try {
     let userAction = false;
@@ -513,7 +513,7 @@ const cancelShowHoldInvoice = async (
         ctx,
         buyerUser,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
@@ -523,17 +523,17 @@ const cancelShowHoldInvoice = async (
         ctx,
         sellerUser,
         order,
-        i18nCtx
+        i18nCtx,
       );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`
+          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
-          `Order Id: ${order._id} expired, republishing to the channel`
+          `Order Id: ${order._id} expired, republishing to the channel`,
         );
       }
       order.taken_at = null;
@@ -564,13 +564,13 @@ const cancelShowHoldInvoice = async (
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
           await messages.toAdminChannelSellerDidntPayInvoiceMessage(
             ctx,
             user,
             order,
-            i18nCtx
+            i18nCtx,
           );
         }
       } else {
@@ -592,7 +592,7 @@ const cancelShowHoldInvoice = async (
 const addInvoicePHI = async (
   ctx: CommunityContext,
   bot: HasTelegram,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     ctx.deleteMessage();
@@ -622,7 +622,7 @@ const addInvoicePHI = async (
 const cancelOrder = async (
   ctx: CommunityContext,
   orderId: string,
-  user: UserDocument | null = null
+  user: UserDocument | null = null,
 ) => {
   try {
     if (!user) {
@@ -710,7 +710,7 @@ const cancelOrder = async (
     if (order[initiatorCooperativeCancelProperty])
       return await messages.shouldWaitCooperativeCancelMessage(
         ctx,
-        initiatorUser
+        initiatorUser,
       );
 
     order[initiatorCooperativeCancelProperty] = true;
@@ -737,13 +737,13 @@ const cancelOrder = async (
         ctx,
         initiatorUser,
         order,
-        ctx.i18n
+        ctx.i18n,
       );
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
         order,
-        i18nCtxCP
+        i18nCtxCP,
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${order._id} was cancelled cooperatively!`);
@@ -755,7 +755,7 @@ const cancelOrder = async (
         ctx,
         counterPartyUser,
         order,
-        i18nCtxCP
+        i18nCtxCP,
       );
     }
     await order.save();
@@ -767,7 +767,7 @@ const cancelOrder = async (
 const fiatSent = async (
   ctx: MainContext,
   orderId: string,
-  user: UserDocument | null = null
+  user: UserDocument | null = null,
 ) => {
   try {
     if (!user) {
@@ -796,7 +796,7 @@ const fiatSent = async (
       user,
       seller,
       i18nCtxBuyer,
-      i18nCtxSeller
+      i18nCtxSeller,
     );
   } catch (error) {
     logger.error(error);
@@ -806,7 +806,7 @@ const fiatSent = async (
 const release = async (
   ctx: MainContext,
   orderId: string,
-  user: UserDocument | null = null
+  user: UserDocument | null = null,
 ) => {
   try {
     if (!user) {
@@ -841,7 +841,7 @@ const release = async (
 const showQrCode = async (
   ctx: MainContext,
   orderId: string,
-  user: UserDocument | null = null
+  user: UserDocument | null = null,
 ) => {
   try {
     if (!user) {

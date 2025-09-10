@@ -33,7 +33,7 @@ const calculateEarnings = async () => {
       community.orders_to_redeem = community.orders_to_redeem + earnings[1];
       await community.save();
       logger.info(
-        `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`
+        `New earnings for community Id: ${community.id} sats: ${amount} orders calculated: ${earnings[1]}`,
       );
     }
   } catch (error) {

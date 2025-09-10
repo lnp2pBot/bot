@@ -37,7 +37,7 @@ const userUnblocked = async (ctx: MainContext) => {
 
 const blocklistMessage = async (
   ctx: MainContext,
-  usersBlocked: UserDocument[]
+  usersBlocked: UserDocument[],
 ) => {
   try {
     if (!usersBlocked?.length) {

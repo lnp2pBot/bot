@@ -68,15 +68,15 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
     assert.isTrue(
       mockTelegram.sendMessage.calledWith(
         mockSolver.tg_id,
         sinon.match(/buyer\\_user/),
-        sinon.match({ parse_mode: 'MarkdownV2' })
-      )
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
     );
   });
 
@@ -89,15 +89,15 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
     assert.isTrue(
       mockTelegram.sendMessage.calledWith(
         mockSolver.tg_id,
         sinon.match(/buyer\\-user/),
-        sinon.match({ parse_mode: 'MarkdownV2' })
-      )
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
     );
   });
 
@@ -110,15 +110,15 @@ describe('disputeData', () => {
       'buyer',
       mockSolver,
       5,
-      3
+      3,
     );
 
     assert.isTrue(
       mockTelegram.sendMessage.calledWith(
         mockSolver.tg_id,
         sinon.match('buyeruser'),
-        sinon.match({ parse_mode: 'MarkdownV2' })
-      )
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
     );
   });
 
@@ -131,15 +131,15 @@ describe('disputeData', () => {
       'seller',
       mockSolver,
       5,
-      3
+      3,
     );
 
     assert.isTrue(
       mockTelegram.sendMessage.calledWith(
         mockSolver.tg_id,
         sinon.match(/seller\\_user/),
-        sinon.match({ parse_mode: 'MarkdownV2' })
-      )
+        sinon.match({ parse_mode: 'MarkdownV2' }),
+      ),
     );
   });
 });
