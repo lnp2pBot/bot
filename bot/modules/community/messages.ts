@@ -7,7 +7,7 @@ import { MainContext } from '../../start';
 
 export const createCommunityWizardStatus = (
   i18n: I18nContext,
-  state: CommunityWizardState,
+  state: CommunityWizardState
 ) => {
   try {
     let { name, group } = state;
@@ -126,7 +126,7 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
 
 export const listCommunitiesMessage = async (
   ctx: MainContext,
-  communities: ICommunity[],
+  communities: ICommunity[]
 ) => {
   try {
     let message = '';
@@ -186,7 +186,7 @@ export const earningsMessage = async (ctx: MainContext) => {
         ordersToRedeem: community.orders_to_redeem,
         earnings: community.earnings,
       }),
-      button,
+      button
     );
   } catch (error) {
     logger.error(error);
@@ -195,7 +195,7 @@ export const earningsMessage = async (ctx: MainContext) => {
 
 export const showUserCommunitiesMessage = async (
   ctx: MainContext,
-  communities: ICommunity[],
+  communities: ICommunity[]
 ) => {
   try {
     const buttons = [];
@@ -223,7 +223,7 @@ export const showUserCommunitiesMessage = async (
 export const wizardCommunityWrongPermission = async (
   ctx: MainContext,
   channel: string,
-  response: string,
+  response: string
 ) => {
   try {
     if (response.indexOf('bot was kicked from the supergroup chat') !== -1) {
@@ -240,7 +240,7 @@ export const wizardCommunityWrongPermission = async (
       await ctx.reply(
         ctx.i18n.t('wizard_community_you_are_not_admin', {
           channel,
-        }),
+        })
       );
     } else {
       await ctx.reply(ctx.i18n.t('generic_error'));

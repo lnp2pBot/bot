@@ -11,7 +11,7 @@ interface OrderFilter {
 
 const getOrdersNDays = async (
   days: number,
-  communityId: string | undefined,
+  communityId: string | undefined
 ) => {
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - days * 24);
@@ -28,7 +28,7 @@ const getOrdersNDays = async (
 
 const getVolumeNDays = async (
   days: number,
-  communityId: string | undefined,
+  communityId: string | undefined
 ) => {
   const yesterday = new Date();
   yesterday.setHours(yesterday.getHours() - days * 24);
@@ -114,16 +114,16 @@ export const onCommunityInfo = async (ctx: MainContext) => {
 export const onSetCommunity = async (ctx: CommunityContext) => {
   const tgId = (ctx.update as any).callback_query.from.id;
   const defaultCommunityId = ctx.match?.[1];
-  
+
   // Check if the community is active before setting it as default
   const community = await Community.findById(defaultCommunityId);
   if (!community || !community.active) {
     return await ctx.reply(ctx.i18n.t('community_inactive'));
   }
-  
+
   await User.findOneAndUpdate(
     { tg_id: tgId },
-    { default_community_id: defaultCommunityId },
+    { default_community_id: defaultCommunityId }
   );
   await ctx.reply(ctx.i18n.t('operation_successful'));
 };

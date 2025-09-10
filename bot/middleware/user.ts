@@ -8,7 +8,7 @@ import {
 
 export const userMiddleware = async (
   ctx: CommunityContext,
-  next: () => void,
+  next: () => void
 ) => {
   const user = await validateUser(ctx, false);
   if (!user) return false;
@@ -20,7 +20,7 @@ export const userMiddleware = async (
 
 export const adminMiddleware = async (
   ctx: CommunityContext,
-  next: () => void,
+  next: () => void
 ) => {
   const admin = await validateAdmin(ctx);
   if (!admin) return false;
@@ -32,7 +32,7 @@ export const adminMiddleware = async (
 
 export const superAdminMiddleware = async (
   ctx: CommunityContext,
-  next: () => void,
+  next: () => void
 ) => {
   const admin = await validateSuperAdmin(ctx);
   if (!admin) return false;

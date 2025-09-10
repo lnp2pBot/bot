@@ -1,8 +1,5 @@
 export class ImageProcessingError extends Error {
-  constructor(
-    message: string,
-    public readonly imageName?: string,
-  ) {
+  constructor(message: string, public readonly imageName?: string) {
     super(message);
     this.name = 'ImageProcessingError';
 

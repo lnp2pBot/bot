@@ -13,7 +13,7 @@ const cancelOrders = async (bot: HasTelegram) => {
     const holdInvoiceTime = new Date();
     holdInvoiceTime.setSeconds(
       holdInvoiceTime.getSeconds() -
-        Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW),
+        Number(process.env.HOLD_INVOICE_EXPIRATION_WINDOW)
     );
     // We get the orders where the seller didn't pay the hold invoice before expired
     // or where the buyer didn't add the invoice
@@ -56,7 +56,7 @@ const cancelOrders = async (bot: HasTelegram) => {
     let orderTime = new Date();
     const holdInvoiceExpiration = holdInvoiceExpirationInSecs();
     orderTime.setSeconds(
-      orderTime.getSeconds() - holdInvoiceExpiration.expirationTimeInSecs,
+      orderTime.getSeconds() - holdInvoiceExpiration.expirationTimeInSecs
     );
     const activeOrders = await Order.find({
       invoice_held_at: { $lte: orderTime },
@@ -80,14 +80,14 @@ const cancelOrders = async (bot: HasTelegram) => {
         order,
         buyerUser,
         sellerUser,
-        i18nCtxBuyer,
+        i18nCtxBuyer
       );
       // We send messages about the expired order to each party
       await messages.toBuyerExpiredOrderMessage(bot, buyerUser, i18nCtxBuyer);
       await messages.toSellerExpiredOrderMessage(
         bot,
         sellerUser,
-        i18nCtxSeller,
+        i18nCtxSeller
       );
       order.admin_warned = true;
       await order.save();
@@ -97,7 +97,7 @@ const cancelOrders = async (bot: HasTelegram) => {
     // ==============================
     orderTime = new Date();
     let orderExpirationTime = Number(
-      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW,
+      process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW
     );
     orderExpirationTime = orderExpirationTime + orderExpirationTime * 0.2;
     orderTime.setSeconds(orderTime.getSeconds() - orderExpirationTime);

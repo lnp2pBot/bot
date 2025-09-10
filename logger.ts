@@ -12,7 +12,7 @@ const logger = winston.createLogger({
       return `[${info.timestamp}] ${info.level}: ${info.message} ${
         info.stack ? info.stack : ''
       }`;
-    }),
+    })
   ),
   levels: winston.config.syslog.levels,
   level,
@@ -38,7 +38,7 @@ export const logTimeout = (operation: string, timeout: number, error?: any) => {
 export const logOperationDuration = (
   operation: string,
   startTime: number,
-  success: boolean = true,
+  success: boolean = true
 ) => {
   const duration = Date.now() - startTime;
   const logData = {

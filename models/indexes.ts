@@ -6,7 +6,7 @@ import { logger } from '../logger';
  */
 const checkIndexExists = async (
   collection: mongoose.Collection,
-  indexSpec: Record<string, number>,
+  indexSpec: Record<string, number>
 ): Promise<boolean> => {
   try {
     const existingIndexes = await collection.indexes();
@@ -36,7 +36,7 @@ const createIndexSafely = async (
   collection: mongoose.Collection,
   indexSpec: Record<string, number>,
   options: mongoose.IndexOptions & { name: string },
-  collectionName: string,
+  collectionName: string
 ): Promise<void> => {
   try {
     // Check if equivalent index already exists
@@ -44,7 +44,9 @@ const createIndexSafely = async (
 
     if (indexExists) {
       logger.info(
-        `Index on ${JSON.stringify(indexSpec)} already exists in ${collectionName} collection`,
+        `Index on ${JSON.stringify(
+          indexSpec
+        )} already exists in ${collectionName} collection`
       );
       return;
     }
@@ -52,17 +54,17 @@ const createIndexSafely = async (
     // Create the index
     await collection.createIndex(indexSpec, options);
     logger.info(
-      `Created index: ${options.name} on ${collectionName} collection`,
+      `Created index: ${options.name} on ${collectionName} collection`
     );
   } catch (error: any) {
     // Handle specific "index already exists" errors gracefully
     if (error?.message?.includes('already exists')) {
       logger.info(
-        `Index ${options.name} already exists in ${collectionName} collection (with different name)`,
+        `Index ${options.name} already exists in ${collectionName} collection (with different name)`
       );
     } else {
       logger.error(
-        `Error creating index ${options.name} on ${collectionName}: ${error.message}`,
+        `Error creating index ${options.name} on ${collectionName}: ${error.message}`
       );
     }
   }
@@ -75,7 +77,7 @@ const createIndexSafely = async (
 export const createIndexes = async (): Promise<void> => {
   try {
     logger.info(
-      'Checking and creating database indexes for performance optimization...',
+      'Checking and creating database indexes for performance optimization...'
     );
 
     // Order collection indexes
@@ -89,7 +91,7 @@ export const createIndexes = async (): Promise<void> => {
         name: 'creator_status_idx',
         background: true,
       },
-      'orders',
+      'orders'
     );
 
     // Index for order lookups by ID and status: { _id: 1, status: 1 }
@@ -100,7 +102,7 @@ export const createIndexes = async (): Promise<void> => {
         name: 'id_status_idx',
         background: true,
       },
-      'orders',
+      'orders'
     );
 
     // Community collection indexes
@@ -115,7 +117,7 @@ export const createIndexes = async (): Promise<void> => {
         background: true,
         collation: { locale: 'en', strength: 2 }, // Case insensitive
       },
-      'communities',
+      'communities'
     );
 
     // Index for banned users lookup: { _id: 1, 'banned_users.id': 1 }
@@ -126,7 +128,7 @@ export const createIndexes = async (): Promise<void> => {
         name: 'community_banned_users_idx',
         background: true,
       },
-      'communities',
+      'communities'
     );
 
     // User collection index for default community lookups
@@ -141,7 +143,7 @@ export const createIndexes = async (): Promise<void> => {
         background: true,
         unique: true,
       },
-      'users',
+      'users'
     );
 
     logger.info('Database index creation check completed successfully');
