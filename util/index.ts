@@ -298,7 +298,7 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
   try {
     let channel = process.env.CHANNEL;
     if (order.community_id) {
-      const community = await Community.findOne({ _id: order.community_id });
+      const community = await Community.findOne({ _id: order.community_id, active: true });
       if (!community) {
         return channel;
       }
@@ -321,7 +321,7 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
 const getOrderChannel = async (order: IOrder) => {
   let channel = process.env.CHANNEL;
   if (order.community_id) {
-    const community = await Community.findOne({ _id: order.community_id });
+    const community = await Community.findOne({ _id: order.community_id, active: true });
     if (!community) {
       return channel;
     }
@@ -342,7 +342,7 @@ const getOrderChannel = async (order: IOrder) => {
 const getDisputeChannel = async (order: IOrder) => {
   let channel = process.env.DISPUTE_CHANNEL;
   if (order.community_id) {
-    const community = await Community.findOne({ _id: order.community_id });
+    const community = await Community.findOne({ _id: order.community_id, active: true });
     if (community === null) throw Error('Community was not found in DB');
     channel = community.dispute_channel;
   }
@@ -454,7 +454,7 @@ const getFee = async (
   // Calculate fees
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
   let communityFee = Math.round(maxFee - botFee);
-  const community = await Community.findOne({ _id: communityId });
+  const community = await Community.findOne({ _id: communityId, active: true });
   if (community === null) throw Error('Community was not found in DB');
   communityFee = communityFee * (community.fee / 100);
 

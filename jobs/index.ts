@@ -5,7 +5,7 @@ import {
 import cancelOrders from './cancel_orders';
 import deleteOrders from './delete_published_orders';
 import calculateEarnings from './calculate_community_earnings';
-import deleteCommunity from './communities';
+import disableCommunity from './communities';
 import nodeInfo from './node_info';
 import checkSolvers from './check_solvers';
 
@@ -15,7 +15,7 @@ export {
   deleteOrders,
   calculateEarnings,
   attemptCommunitiesPendingPayments,
-  deleteCommunity,
+  disableCommunity,
   nodeInfo,
   checkSolvers,
 };

@@ -61,6 +61,9 @@ export const onCommunityInfo = async (ctx: MainContext) => {
   const commId = ctx.match?.[1];
   const community = await Community.findById(commId);
   if (community === null) throw new Error('community not found');
+  if (!community.active) {
+    return await ctx.reply(ctx.i18n.t('community_inactive'));
+  }
   const userCount = await User.count({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);
@@ -111,6 +114,13 @@ export const onCommunityInfo = async (ctx: MainContext) => {
 export const onSetCommunity = async (ctx: CommunityContext) => {
   const tgId = (ctx.update as any).callback_query.from.id;
   const defaultCommunityId = ctx.match?.[1];
+  
+  // Check if the community is active before setting it as default
+  const community = await Community.findById(defaultCommunityId);
+  if (!community || !community.active) {
+    return await ctx.reply(ctx.i18n.t('community_inactive'));
+  }
+  
   await User.findOneAndUpdate(
     { tg_id: tgId },
     { default_community_id: defaultCommunityId },
@@ -121,6 +131,9 @@ export const onSetCommunity = async (ctx: CommunityContext) => {
 export const withdrawEarnings = async (ctx: CommunityContext) => {
   ctx.deleteMessage();
   const community = await Community.findById(ctx.match?.[1]);
+  if (!community || !community.active) {
+    return await ctx.reply(ctx.i18n.t('community_inactive'));
+  }
   ctx.scene.enter('ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID', {
     community,
   });
