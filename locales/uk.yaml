@@ -465,6 +465,7 @@ channels: Канали
 dispute_solvers: Вирішення
 no_default_community: У вас більше немає спільноти за замовчуванням
 community_not_found: Спільнота не знайдено
+community_inactive: Ця спільнота зараз неактивна і не може використовуватися для торгівлі
 currency: Валюта
 currencies: Валюти
 currency_not_supported: |

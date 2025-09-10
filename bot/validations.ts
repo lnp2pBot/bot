@@ -110,8 +110,15 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
     if (user === null) return;
 
     let community = null;
-    if (user.default_community_id)
+    if (user.default_community_id) {
       community = await Community.findOne({ _id: user.default_community_id });
+      // If default community exists but is inactive, clear it
+      if (community && !community.active) {
+        user.default_community_id = undefined;
+        await user.save();
+        community = null;
+      }
+    }
 
     const isSolver = isDisputeSolver(community, user);
 
@@ -730,7 +737,7 @@ const isBannedFromCommunity = async (
 ) => {
   try {
     if (!communityId) return false;
-    const community = await Community.findOne({ _id: communityId });
+    const community = await Community.findOne({ _id: communityId, active: true });
     if (!community) return false;
     return community.banned_users.some(
       (buser: IUsernameId) => buser.id == user._id,

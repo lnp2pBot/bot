@@ -27,8 +27,13 @@ function make() {
     };
     if (user.default_community_id) {
       const community = await Community.findById(user.default_community_id);
-      if (community == null) throw new Error('community not found');
-      data.community = community.group;
+      // If default community exists but is inactive, clear it
+      if (community && !community.active) {
+        user.default_community_id = undefined;
+        await user.save();
+      } else if (community) {
+        data.community = community.group;
+      }
     }
     if (user.nostr_public_key) {
       data.npub = NostrLib.encodeNpub(user.nostr_public_key);

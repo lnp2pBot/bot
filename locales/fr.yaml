@@ -467,6 +467,7 @@ channels: Canaux
 dispute_solvers: Mediateurs
 no_default_community: Vous n'avez plus de communauté par défaut
 community_not_found: Communauté non trouvée
+community_inactive: Cette communauté est actuellement inactive et ne peut pas être utilisée pour le commerce
 currency: Devise
 currencies: Devises
 currency_not_supported: |

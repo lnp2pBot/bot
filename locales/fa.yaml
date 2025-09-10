@@ -468,6 +468,7 @@ channels: کانال‌ها
 dispute_solvers: حل کننده‌ها
 no_default_community: شما دیگر به صورت پیش فرض کامیونیتی ندارید
 community_not_found: کامیونیتی پیدا نشد
+community_inactive: این کامیونیتی در حال حاضر غیرفعال است و نمی‌تواند برای معاملات استفاده شود
 currency: ارز
 currencies: ارزها
 currency_not_supported: |

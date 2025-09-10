@@ -469,6 +469,7 @@ channels: Canales
 dispute_solvers: Solvers
 no_default_community: Ya no tienes comunidad por defecto
 community_not_found: Comunidad no encontrada
+community_inactive: Esta comunidad está actualmente inactiva y no puede ser usada para operaciones
 currency: Moneda
 currencies: Monedas
 currency_not_supported: |

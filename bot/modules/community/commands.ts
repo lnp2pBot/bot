@@ -21,6 +21,7 @@ async function findCommunities(currency: string) {
   const communities = await Community.find({
     currencies: currency,
     public: true,
+    active: true,
   });
   const orderCount = await getOrderCountByCommunity();
   return communities.map(comm => {
@@ -49,9 +50,9 @@ export const setComm = async (ctx: MainContext) => {
     if (groupName[0] == '@') {
       // Allow find communities case insensitive
       const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
-      community = await Community.findOne({ group: regex });
+      community = await Community.findOne({ group: regex, active: true });
     } else if (groupName[0] == '-') {
-      community = await Community.findOne({ group: groupName });
+      community = await Community.findOne({ group: groupName, active: true });
     }
     if (!community) {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
@@ -70,6 +71,7 @@ export const communityAdmin = async (ctx: CommunityContext) => {
   try {
     const [group] = (await validateParams(ctx, 2, '\\<_community_\\>'))!;
     const creator_id = ctx.user.id;
+    // Allow creators to access admin panel even for inactive communities
     const [community] = await Community.find({ group, creator_id });
     if (!community) throw new Error('CommunityNotFound');
     await ctx.scene.enter('COMMUNITY_ADMIN', { community });
@@ -144,6 +146,7 @@ export const updateCommunity = async (
     const { user } = ctx;
 
     if (!(await validateObjectId(ctx, id))) return;
+    // Allow admin to update even inactive communities
     const community = await Community.findOne({
       _id: id,
       creator_id: user._id,
@@ -219,6 +222,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
     if (id === undefined) throw new Error('id is undefined');
 
     if (!(await validateObjectId(ctx, id))) return;
+    // Allow admin to delete even inactive communities
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,
@@ -242,6 +246,7 @@ export const changeVisibility = async (ctx: CommunityContext) => {
     if (id === undefined) throw new Error('id is undefined');
 
     if (!(await validateObjectId(ctx, id))) return;
+    // Allow admin to change visibility even for inactive communities
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,

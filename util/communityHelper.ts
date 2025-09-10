@@ -27,7 +27,7 @@ export const getCommunityInfo = async (
     if (chatType !== 'private' && chat?.username) {
       // Group chat - find community by group name
       const regex = new RegExp(`^@${chat.username}$`, 'i');
-      community = await Community.findOne({ group: regex });
+      community = await Community.findOne({ group: regex, active: true });
       if (community) {
         communityId = community._id;
       }
@@ -36,11 +36,12 @@ export const getCommunityInfo = async (
       communityId = user.default_community_id;
       community = await Community.findById(communityId);
 
-      // If community not found, clear the user's default
-      if (!community) {
+      // If community not found or inactive, clear the user's default
+      if (!community || !community.active) {
         user.default_community_id = undefined;
         await user.save();
         communityId = undefined;
+        community = null;
       }
     }
 
