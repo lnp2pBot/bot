@@ -26,16 +26,16 @@ const checkSolvers = async (bot: Telegraf<MainContext>) => {
 
 const notifyAdmin = async (
   community: ICommunity,
-  bot: Telegraf<MainContext>,
+  bot: Telegraf<MainContext>
 ) => {
   community.warning_messages_count += 1;
 
   const maxWarningsCount = Number.parseInt(
-    process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION ?? '',
+    process.env.MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION ?? ''
   );
   if (!Number.isFinite(maxWarningsCount) || maxWarningsCount < 0) {
     logger.error(
-      'Invalid MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION; skipping notifyAdmin',
+      'Invalid MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION; skipping notifyAdmin'
     );
     return;
   }
@@ -48,7 +48,7 @@ const notifyAdmin = async (
     await community.save();
 
     logger.info(
-      `Community: ${community.name} has been deactivated due to lack of solvers.`,
+      `Community: ${community.name} has been deactivated due to lack of solvers.`
     );
     return;
   }

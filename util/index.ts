@@ -82,7 +82,7 @@ const numberFormat = (code: string, number: number) => {
 const handleReputationItems = async (
   buyer: UserDocument,
   seller: UserDocument,
-  amount: number,
+  amount: number
 ) => {
   try {
     const yesterday = new Date(Date.now() - 86400000).toISOString();
@@ -225,7 +225,7 @@ const decimalRound = (value: number, exp: number): number => {
   // Shift
   let valueArr = value.toString().split('e');
   value = Math.round(
-    +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] - exp : -exp)),
+    +(valueArr[0] + 'e' + (valueArr[1] ? +valueArr[1] - exp : -exp))
   );
   // Shift back
   valueArr = value.toString().split('e');
@@ -262,7 +262,7 @@ const secondsToTime = (secs: number) => {
 const isGroupAdmin = async (
   groupId: string,
   user: UserDocument,
-  telegram: Telegram,
+  telegram: Telegram
 ) => {
   try {
     const member = await telegram.getChatMember(groupId, Number(user.tg_id));
@@ -298,7 +298,10 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
   try {
     let channel = process.env.CHANNEL;
     if (order.community_id) {
-      const community = await Community.findOne({ _id: order.community_id, active: true });
+      const community = await Community.findOne({
+        _id: order.community_id,
+        active: true,
+      });
       if (!community) {
         return channel;
       }
@@ -321,7 +324,10 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
 const getOrderChannel = async (order: IOrder) => {
   let channel = process.env.CHANNEL;
   if (order.community_id) {
-    const community = await Community.findOne({ _id: order.community_id, active: true });
+    const community = await Community.findOne({
+      _id: order.community_id,
+      active: true,
+    });
     if (!community) {
       return channel;
     }
@@ -342,7 +348,10 @@ const getOrderChannel = async (order: IOrder) => {
 const getDisputeChannel = async (order: IOrder) => {
   let channel = process.env.DISPUTE_CHANNEL;
   if (order.community_id) {
-    const community = await Community.findOne({ _id: order.community_id, active: true });
+    const community = await Community.findOne({
+      _id: order.community_id,
+      active: true,
+    });
     if (community === null) throw Error('Community was not found in DB');
     channel = community.dispute_channel;
   }
@@ -375,7 +384,7 @@ const getDetailedOrder = (
   i18n: I18nContext,
   order: IOrder,
   buyer: UserDocument | null,
-  seller: UserDocument | null,
+  seller: UserDocument | null
 ) => {
   try {
     const buyerUsername = buyer ? sanitizeMD(buyer.username) : '';
@@ -443,7 +452,7 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
 const getFee = async (
   amount: number,
   communityId: string,
-  isGoldenHoneyBadger = false,
+  isGoldenHoneyBadger = false
 ) => {
   const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
   if (!communityId) {
@@ -502,7 +511,7 @@ const getUserAge = (user: UserDocument) => {
   const userCreationDate = new Date(user.created_at);
   const today = new Date();
   const ageInDays = Math.floor(
-    (today.getTime() - userCreationDate.getTime()) / (1000 * 3600 * 24),
+    (today.getTime() - userCreationDate.getTime()) / (1000 * 3600 * 24)
   );
   return ageInDays;
 };
@@ -583,7 +592,7 @@ const generateQRWithImage = async (request: string, randomImage: string) => {
   // Validate ratio is a valid number between 0.1 and 0.5
   if (isNaN(imageToQrRatio) || imageToQrRatio < 0.1 || imageToQrRatio > 0.5) {
     logger.warning(
-      `Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`,
+      `Invalid IMAGE_TO_QR_RATIO value: ${rawRatio}, using default 0.2`
     );
     imageToQrRatio = 0.2;
   }

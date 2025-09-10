@@ -34,7 +34,7 @@ const payRequest = async ({
   const operationName = 'payRequest';
   // Use configurable pathfinding timeout, default to 60 seconds
   const pathfindingTimeout = parseInt(
-    process.env.LN_PATHFINDING_TIMEOUT || '60000',
+    process.env.LN_PATHFINDING_TIMEOUT || '60000'
   );
 
   try {
@@ -64,7 +64,7 @@ const payRequest = async ({
     await deleteForwardingReputations({ lnd });
 
     logger.info(
-      `Starting payment for ${amount} sats with ${pathfindingTimeout}ms timeout`,
+      `Starting payment for ${amount} sats with ${pathfindingTimeout}ms timeout`
     );
     const payment = await payViaPaymentRequest(params);
 
@@ -82,7 +82,7 @@ const payRequest = async ({
     ) {
       logTimeout('payRequest', pathfindingTimeout, error);
       logger.error(
-        `payRequest timeout after ${pathfindingTimeout}ms: ${errorMessage}`,
+        `payRequest timeout after ${pathfindingTimeout}ms: ${errorMessage}`
       );
       return { error: 'TIMEOUT', message: errorMessage };
     }
@@ -125,7 +125,7 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
         bot,
         buyerUser,
         order,
-        i18nCtx,
+        i18nCtx
       );
       return;
     }
@@ -143,7 +143,7 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
         bot,
         buyerUser,
         sellerUser,
-        i18nCtx,
+        i18nCtx
       );
       await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
@@ -153,17 +153,17 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
 
         if (errorType === 'TIMEOUT') {
           logger.warning(
-            `Payment timeout for order ${order._id}, will retry later`,
+            `Payment timeout for order ${order._id}, will retry later`
           );
           await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
         } else if (errorType === 'ROUTING_FAILED') {
           logger.warning(
-            `Routing failed for order ${order._id}, will retry with cleared reputation`,
+            `Routing failed for order ${order._id}, will retry with cleared reputation`
           );
           await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
         } else {
           logger.error(
-            `Payment failed for order ${order._id} with error: ${errorType}`,
+            `Payment failed for order ${order._id} with error: ${errorType}`
           );
           await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
         }

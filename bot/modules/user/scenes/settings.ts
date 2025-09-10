@@ -78,7 +78,7 @@ function make() {
         {
           parse_mode: 'HTML',
           link_preview_options: { is_disabled: true },
-        } as any,
+        } as any
       );
       state.message = msg as Message.TextMessage;
       state.message.text = str;
@@ -106,7 +106,7 @@ function make() {
         i18n: 'generic_error',
       };
       await updateMessage(ctx);
-    },
+    }
   );
 
   scene.command('/setnpub', resetMessage, async (ctx: CommunityContext) => {

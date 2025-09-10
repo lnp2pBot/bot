@@ -9,7 +9,7 @@ export const beginDispute = async (
   initiator: 'seller' | 'buyer',
   order: IOrder,
   buyer: UserDocument,
-  seller: UserDocument,
+  seller: UserDocument
 ) => {
   try {
     let initiatorUser = buyer;
@@ -25,14 +25,14 @@ export const beginDispute = async (
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('you_started', { orderId: order._id }),
           token: order.buyer_dispute_token,
-        }),
+        })
       );
       await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
           token: order.seller_dispute_token,
-        }),
+        })
       );
     } else {
       await ctx.telegram.sendMessage(
@@ -40,14 +40,14 @@ export const beginDispute = async (
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('you_started', { orderId: order._id }),
           token: order.seller_dispute_token,
-        }),
+        })
       );
       await ctx.telegram.sendMessage(
         counterPartyUser.tg_id,
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
           token: order.buyer_dispute_token,
-        }),
+        })
       );
     }
   } catch (error) {
@@ -85,7 +85,7 @@ export const disputeData = async (
   initiator: 'seller' | 'buyer',
   solver: UserDocument,
   buyerDisputes: any,
-  sellerDisputes: any,
+  sellerDisputes: any
 ) => {
   try {
     const type =
@@ -128,14 +128,14 @@ export const disputeData = async (
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
         token: order.buyer_dispute_token,
-      }),
+      })
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
       ctx.i18n.t('dispute_solver', {
         solver: solver.username,
         token: order.seller_dispute_token,
-      }),
+      })
     );
   } catch (error) {
     logger.error(error);
@@ -152,12 +152,12 @@ export const notFoundDisputeMessage = async (ctx: MainContext) => {
 
 export const sellerReleased = async (
   ctx: MainContext,
-  solver: UserDocument,
+  solver: UserDocument
 ) => {
   try {
     await ctx.telegram.sendMessage(
       solver.tg_id,
-      ctx.i18n.t('seller_already_released'),
+      ctx.i18n.t('seller_already_released')
     );
   } catch (error) {
     logger.error(error);

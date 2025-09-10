@@ -13,7 +13,7 @@ const orderToTags = async (order: IOrder) => {
     process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW;
   if (orderPublishedExpirationWindow === undefined)
     throw new Error(
-      'Environment variable ORDER_PUBLISHED_EXPIRATION_WINDOW is not defined',
+      'Environment variable ORDER_PUBLISHED_EXPIRATION_WINDOW is not defined'
     );
   const expiration =
     Math.floor(Date.now() / 1000) + parseInt(orderPublishedExpirationWindow);
@@ -89,7 +89,7 @@ export const createOrderEvent = async (order: IOrder) => {
       tags,
       content: '',
     },
-    myPrivKey,
+    myPrivKey
   );
 
   const ok = verifyEvent(event);

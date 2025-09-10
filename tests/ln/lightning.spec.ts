@@ -23,7 +23,7 @@ describe('Lighting network', () => {
 
     expect(hash).to.be.equal(mockCreateHodlResponseForLightning.id);
     expect(invoice.tokens).to.be.equal(
-      mockCreateHodlResponseForLightning.tokens,
+      mockCreateHodlResponseForLightning.tokens
     );
   });
 });

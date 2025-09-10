@@ -50,6 +50,6 @@ export const takeDispute = async (ctx: MainContext): Promise<void> => {
     initiator,
     solver,
     buyerDisputes,
-    sellerDisputes,
+    sellerDisputes
   );
 };
