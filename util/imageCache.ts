@@ -105,14 +105,22 @@ class ImageCacheManager {
 
   /**
    * Converts an image to base64
-   * The image is from the images directory
-   * @param image Image file name
+   * The image is from the images directory (if it's a filename) or returns the image if it's already base64
+   * @param image Image file name or base64 string
    * @returns Image base64 string
    *
    *  throws @ImageProcessingError
    */
   convertImageToBase64 = async (image: string) => {
     try {
+      // Check if the image is already base64 data (legacy format)
+      // Base64 strings are much longer than filenames and typically don't contain file extensions in the middle
+      if (image.length > 100 && !image.includes('.png') && !image.includes('.jpg') && !image.includes('.jpeg')) {
+        logger.debug('Image appears to be base64 data, returning as-is');
+        return image;
+      }
+      
+      // Otherwise, treat as filename and read from disk
       const imageData = await fs.readFile(`images/${image}`);
       return imageData.toString('base64');
     } catch (error) {
