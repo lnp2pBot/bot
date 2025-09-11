@@ -46,14 +46,14 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
           try {
             const status = createCommunityWizardStatus(
               ctx.i18n,
-              ctx.wizard.state
+              ctx.wizard.state,
             );
             if (ctx.wizard.state.currentStatusText === status!.text) return;
             await ctx.telegram.editMessageText(
               res.chat.id,
               res.message_id,
               undefined,
-              status!.text
+              status!.text,
             );
             ctx.wizard.state.currentStatusText = status!.text;
           } catch (err) {
@@ -87,7 +87,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
       await ctx.reply(
         ctx.i18n.t('wizard_community_success', {
           days: process.env.COMMUNITY_TTL,
-        })
+        }),
       );
 
       return ctx.scene.leave();
@@ -115,7 +115,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
       logger.error(err);
       return ctx.scene.leave();
     }
-  }
+  },
 );
 
 const createCommunitySteps = {
@@ -147,7 +147,7 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     };
@@ -170,7 +170,7 @@ const createCommunitySteps = {
       if (!isValidLanguage(lang)) {
         ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
         ctx.wizard.state.error = ctx.i18n.t(
-          'wizard_community_invalid_language'
+          'wizard_community_invalid_language',
         );
         return await ctx.wizard.state.updateUI();
       }
@@ -179,7 +179,7 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     };
@@ -202,7 +202,7 @@ const createCommunitySteps = {
       if (currencies.length > max) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         ctx.wizard.state.error = ctx.i18n.t('max_allowed', { max });
         return await ctx.wizard.state.updateUI();
@@ -211,7 +211,7 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
     };
@@ -236,7 +236,7 @@ const createCommunitySteps = {
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message!.chat.id,
-            ctx.message!.message_id
+            ctx.message!.message_id,
           );
           await wizardCommunityWrongPermission(ctx, group, isGroupOk.message);
 
@@ -247,7 +247,7 @@ const createCommunitySteps = {
         await ctx.wizard.state.updateUI();
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
       } catch (error: any) {
@@ -271,10 +271,10 @@ const createCommunitySteps = {
       if (chan.length > 2) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         ctx.wizard.state.error = ctx.i18n.t(
-          'wizard_community_one_or_two_channels'
+          'wizard_community_one_or_two_channels',
         );
         return await ctx.wizard.state.updateUI();
       }
@@ -284,7 +284,7 @@ const createCommunitySteps = {
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message!.chat.id,
-            ctx.message!.message_id
+            ctx.message!.message_id,
           );
           await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
 
@@ -300,7 +300,7 @@ const createCommunitySteps = {
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message!.chat.id,
-            ctx.message!.message_id
+            ctx.message!.message_id,
           );
           await wizardCommunityWrongPermission(ctx, chan[0], isGroupOk.message);
 
@@ -310,7 +310,7 @@ const createCommunitySteps = {
         if (!isGroupOk.success) {
           await ctx.telegram.deleteMessage(
             ctx.message!.chat.id,
-            ctx.message!.message_id
+            ctx.message!.message_id,
           );
           await wizardCommunityWrongPermission(ctx, chan[1], isGroupOk.message);
 
@@ -331,11 +331,11 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await createCommunityPrompts.channels(ctx);
@@ -352,7 +352,7 @@ const createCommunitySteps = {
       if (isNaN(num)) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         ctx.wizard.state.error = ctx.i18n.t('not_number');
         return await ctx.wizard.state.updateUI();
@@ -360,7 +360,7 @@ const createCommunitySteps = {
       if (num < 0 || num > 100) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_wrong_percent');
         return await ctx.wizard.state.updateUI();
@@ -369,11 +369,11 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await createCommunityPrompts.fee(ctx);
@@ -402,10 +402,10 @@ const createCommunitySteps = {
       } else {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         ctx.wizard.state.error = ctx.i18n.t(
-          'wizard_community_must_enter_names'
+          'wizard_community_must_enter_names',
         );
         return await ctx.wizard.state.updateUI();
       }
@@ -414,11 +414,11 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await createCommunityPrompts.solvers(ctx);
@@ -437,7 +437,7 @@ const createCommunitySteps = {
       if (!isGroupOk.success) {
         await ctx.telegram.deleteMessage(
           ctx.message!.chat.id,
-          ctx.message!.message_id
+          ctx.message!.message_id,
         );
         await wizardCommunityWrongPermission(ctx, channel, isGroupOk.message);
 
@@ -447,11 +447,11 @@ const createCommunitySteps = {
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
-        ctx.message!.message_id
+        ctx.message!.message_id,
       );
       return await ctx.telegram.deleteMessage(
         prompt.chat.id,
-        prompt.message_id
+        prompt.message_id,
       );
     };
     const prompt = await createCommunityPrompts.disputeChannel(ctx);
@@ -511,7 +511,7 @@ export const updateNameCommunityWizard = new Scenes.WizardScene(
       if (name.length > length) {
         ctx.deleteMessage();
         return await ctx.reply(
-          ctx.i18n.t('wizard_community_too_long_name', { length })
+          ctx.i18n.t('wizard_community_too_long_name', { length }),
         );
       }
       const { community } = ctx.wizard.state;
@@ -525,7 +525,7 @@ export const updateNameCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateGroupCommunityWizard = new Scenes.WizardScene(
@@ -556,7 +556,7 @@ export const updateGroupCommunityWizard = new Scenes.WizardScene(
         return await wizardCommunityWrongPermission(
           ctx,
           group,
-          isGroupOk.message
+          isGroupOk.message,
         );
       }
 
@@ -569,7 +569,7 @@ export const updateGroupCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
@@ -611,7 +611,7 @@ export const updateCurrenciesCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateChannelsCommunityWizard = new Scenes.WizardScene(
@@ -651,7 +651,7 @@ export const updateChannelsCommunityWizard = new Scenes.WizardScene(
           return await wizardCommunityWrongPermission(
             ctx,
             chan[0],
-            isGroupOk.message
+            isGroupOk.message,
           );
         }
 
@@ -667,7 +667,7 @@ export const updateChannelsCommunityWizard = new Scenes.WizardScene(
           return await wizardCommunityWrongPermission(
             ctx,
             chan[0],
-            isGroupOk.message
+            isGroupOk.message,
           );
         }
 
@@ -677,7 +677,7 @@ export const updateChannelsCommunityWizard = new Scenes.WizardScene(
           return await wizardCommunityWrongPermission(
             ctx,
             chan[1],
-            isGroupOk.message
+            isGroupOk.message,
           );
         }
 
@@ -707,7 +707,7 @@ export const updateChannelsCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateSolversCommunityWizard = new Scenes.WizardScene(
@@ -761,7 +761,7 @@ export const updateSolversCommunityWizard = new Scenes.WizardScene(
         await ctx.reply(
           ctx.i18n.t('users_added', {
             users: botUsers.join(', '),
-          })
+          }),
         );
         const { community } = ctx.wizard.state;
 
@@ -771,7 +771,7 @@ export const updateSolversCommunityWizard = new Scenes.WizardScene(
 
       if (notBotUsers.length)
         await ctx.reply(
-          ctx.i18n.t('users_not_added', { users: notBotUsers.join(', ') })
+          ctx.i18n.t('users_not_added', { users: notBotUsers.join(', ') }),
         );
 
       return ctx.scene.leave();
@@ -779,7 +779,7 @@ export const updateSolversCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateFeeCommunityWizard = new Scenes.WizardScene(
@@ -824,7 +824,7 @@ export const updateFeeCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
@@ -860,7 +860,7 @@ export const updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
         return await wizardCommunityWrongPermission(
           ctx,
           channel,
-          isGroupOk.message
+          isGroupOk.message,
         );
       }
 
@@ -873,7 +873,7 @@ export const updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const updateLanguageCommunityWizard = new Scenes.WizardScene(
@@ -913,7 +913,7 @@ export const updateLanguageCommunityWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );
 
 export const addEarningsInvoiceWizard = new Scenes.WizardScene(
@@ -924,7 +924,7 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
       if (community.earnings === 0) return ctx.scene.leave();
 
       await ctx.reply(
-        ctx.i18n.t('send_me_lninvoice', { amount: community.earnings })
+        ctx.i18n.t('send_me_lninvoice', { amount: community.earnings }),
       );
 
       return ctx.wizard.next();
@@ -974,5 +974,5 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
       logger.error(error);
       ctx.scene.leave();
     }
-  }
+  },
 );

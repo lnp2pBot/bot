@@ -70,7 +70,7 @@ const createOrder = async (
     tgChatId,
     tgOrderMessage,
     community_id,
-  }: CreateOrderArguments
+  }: CreateOrderArguments,
 ) => {
   try {
     amount = Math.floor(amount);
@@ -215,7 +215,7 @@ const buildDescription = (
     priceFromAPI,
     currency,
     isGoldenHoneyBadger,
-  }: BuildDescriptionArguments
+  }: BuildDescriptionArguments,
 ) => {
   try {
     const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
@@ -286,7 +286,7 @@ const buildDescription = (
 const getOrder = async (
   ctx: MainContext,
   user: UserDocument,
-  orderId: string
+  orderId: string,
 ) => {
   try {
     if (!ObjectId.isValid(orderId)) {
