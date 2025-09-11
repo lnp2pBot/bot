@@ -67,7 +67,7 @@ import {
   deleteOrders,
   calculateEarnings,
   attemptCommunitiesPendingPayments,
-  deleteCommunity,
+  disableCommunity,
   nodeInfo,
   checkSolvers,
 } from '../jobs';
@@ -223,7 +223,7 @@ const initialize = (
   });
 
   schedule.scheduleJob(`33 0 * * *`, async () => {
-    await deleteCommunity(bot);
+    await disableCommunity(bot);
   });
 
   schedule.scheduleJob(`* * * * *`, async () => {

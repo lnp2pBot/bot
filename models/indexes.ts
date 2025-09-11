@@ -44,7 +44,9 @@ const createIndexSafely = async (
 
     if (indexExists) {
       logger.info(
-        `Index on ${JSON.stringify(indexSpec)} already exists in ${collectionName} collection`,
+        `Index on ${JSON.stringify(
+          indexSpec,
+        )} already exists in ${collectionName} collection`,
       );
       return;
     }
