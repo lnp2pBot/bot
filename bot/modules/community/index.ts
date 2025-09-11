@@ -23,7 +23,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.action(
     /^updateCommunity_([0-9a-f]{24})$/,
     userMiddleware,
-    updateCommunityMessage,
+    updateCommunityMessage
   );
   bot.action(/^editNameBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     await commands.updateCommunity(ctx, ctx.match[1], 'name');
@@ -36,7 +36,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     userMiddleware,
     async ctx => {
       await commands.updateCommunity(ctx, ctx.match[1], 'currencies');
-    },
+    }
   );
   bot.action(/^editGroupBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     await commands.updateCommunity(ctx, ctx.match[1], 'group', bot);
@@ -52,26 +52,22 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     userMiddleware,
     async ctx => {
       await commands.updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
-    },
-  );
-  bot.action(
-    /^editLanguageBtn_([0-9a-f]{24})$/,
-    userMiddleware,
-    async ctx => {
-      await commands.updateCommunity(ctx, ctx.match[1], 'language');
     }
   );
+  bot.action(/^editLanguageBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
+    await commands.updateCommunity(ctx, ctx.match[1], 'language');
+  });
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
   bot.action(
     /^communityInfo_([0-9a-f]{24})$/,
     userMiddleware,
-    actions.onCommunityInfo,
+    actions.onCommunityInfo
   );
   bot.action(
     /^setCommunity_([0-9a-f]{24})$/,
     userMiddleware,
-    actions.onSetCommunity,
+    actions.onSetCommunity
   );
   bot.action('doNothingBtn', userMiddleware, async ctx => {
     await ctx.deleteMessage();
@@ -80,22 +76,22 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.action(
     /^deleteCommunityAskBtn_([0-9a-f]{24})$/,
     userMiddleware,
-    sureMessage,
+    sureMessage
   );
   bot.action(
     /^withdrawEarnings_([0-9a-f]{24})$/,
     userMiddleware,
-    actions.withdrawEarnings,
+    actions.withdrawEarnings
   );
   bot.action(
     /^deleteCommunityBtn_([0-9a-f]{24})$/,
     userMiddleware,
-    commands.deleteCommunity,
+    commands.deleteCommunity
   );
   bot.action(
     /^changeVisibilityBtn_([0-9a-f]{24})$/,
     userMiddleware,
-    commands.changeVisibility,
+    commands.changeVisibility
   );
 };
 

@@ -582,10 +582,10 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configure community's Nostr public key.
-  /setlanguage &lt;lang&gt; - Configure community's language for published messages.
-community_language_updated: You updated the community's language to ${language} successfully!
-wizard_community_enter_language: 'Enter the language code for your community (en, es, fr, de, it, pt, ru, uk, ko, fa)'
-wizard_community_invalid_language: 'Invalid language code. Please enter one of the following - en, es, fr, de, it, pt, ru, uk, ko, fa'
+  /setlanguage &lt;lang&gt; - Настройте язык сообщества для публикуемых сообщений.
+community_language_updated: Вы успешно обновили язык сообщества на ${language}!
+wizard_community_enter_language: 'Введите код языка для вашего сообщества (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Недопустимый код языка. Пожалуйста, введите один из следующих - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
 # END modules/community
 

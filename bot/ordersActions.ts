@@ -70,26 +70,26 @@ const createOrder = async (
     tgChatId,
     tgOrderMessage,
     community_id,
-  }: CreateOrderArguments,
+  }: CreateOrderArguments
 ) => {
   try {
     amount = Math.floor(amount);
     let isPublic = true;
-    
+
     // Use community language if community_id is provided
     let descriptionI18n = i18n;
-    
+
     if (community_id) {
       const community = await Community.findById(community_id);
       if (community == null) throw new Error('community is null');
       isPublic = community.public;
-      
+
       // Get community language for description
       if (community.language) {
         descriptionI18n = new I18n({
           defaultLanguageOnMissing: true,
           locale: community.language,
-          directory: 'locales'
+          directory: 'locales',
         }).createContext(community.language);
       }
     }
@@ -215,7 +215,7 @@ const buildDescription = (
     priceFromAPI,
     currency,
     isGoldenHoneyBadger,
-  }: BuildDescriptionArguments,
+  }: BuildDescriptionArguments
 ) => {
   try {
     const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
@@ -286,7 +286,7 @@ const buildDescription = (
 const getOrder = async (
   ctx: MainContext,
   user: UserDocument,
-  orderId: string,
+  orderId: string
 ) => {
   try {
     if (!ObjectId.isValid(orderId)) {

@@ -49,7 +49,7 @@ export interface ICommunity extends Document {
   created_at: Date;
   nostr_public_key: string;
   warning_messages_count: number;
-    language: string;
+  language: string;
 }
 
 const CommunitySchema = new Schema<ICommunity>({
@@ -83,17 +83,28 @@ const CommunitySchema = new Schema<ICommunity>({
   created_at: { type: Date, default: Date.now },
   nostr_public_key: { type: String },
   warning_messages_count: { type: Number, default: 0 },
-  language: { 
-        type: String, 
-        default: 'en',
-        validate: {
-            validator: function(v: string) {
-                const supportedLanguages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'uk', 'ko', 'fa']; // Add all supported languages
-                return supportedLanguages.includes(v);
-            },
-            message: 'Language code {VALUE} is not supported'
-        }
-     },
+  language: {
+    type: String,
+    default: 'en',
+    validate: {
+      validator: function (v: string) {
+        const supportedLanguages = [
+          'en',
+          'es',
+          'fr',
+          'de',
+          'it',
+          'pt',
+          'ru',
+          'uk',
+          'ko',
+          'fa',
+        ]; // Add all supported languages
+        return supportedLanguages.includes(v);
+      },
+      message: 'Language code {VALUE} is not supported',
+    },
+  },
 });
 
 export default mongoose.model<ICommunity>('Community', CommunitySchema);
