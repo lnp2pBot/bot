@@ -1,5 +1,6 @@
 import { Scenes } from 'telegraf';
 import { CommunityContext } from './communityContext';
+import { isValidLanguage } from '../../../util/languages';
 
 import * as CommunityEvents from '../events/community';
 
@@ -34,6 +35,29 @@ const communityAdmin = () => {
         parse_mode: 'HTML',
         link_preview_options: { is_disabled: true },
       } as any);
+    }
+  });
+
+  scene.command('/setlanguage', async (ctx: CommunityContext) => {
+    try {
+      const [, maybeLanguage] = ctx.message!.text.split(' ');
+      if (!maybeLanguage || maybeLanguage.trim() === '') {
+        return ctx.reply(ctx.i18n.t('wizard_community_invalid_language'));
+      }
+
+      const language = maybeLanguage.trim().toLowerCase();
+      if (!isValidLanguage(language)) {
+        return ctx.reply(ctx.i18n.t('wizard_community_invalid_language'));
+      }
+
+      const { community } = ctx.scene.state as any;
+      community.language = language;
+      await community.save();
+      await ctx.reply(ctx.i18n.t('community_language_updated', { language }));
+      CommunityEvents.communityUpdated(community);
+    } catch (err) {
+      console.error('setlanguage error:', err);
+      return ctx.reply(ctx.i18n.t('generic_error'));
     }
   });
 

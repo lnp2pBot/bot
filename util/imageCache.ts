@@ -115,11 +115,16 @@ class ImageCacheManager {
     try {
       // Check if the image is already base64 data (legacy format)
       // Base64 strings are much longer than filenames and typically don't contain file extensions in the middle
-      if (image.length > 100 && !image.includes('.png') && !image.includes('.jpg') && !image.includes('.jpeg')) {
+      if (
+        image.length > 100 &&
+        !image.includes('.png') &&
+        !image.includes('.jpg') &&
+        !image.includes('.jpeg')
+      ) {
         logger.debug('Image appears to be base64 data, returning as-is');
         return image;
       }
-      
+
       // Otherwise, treat as filename and read from disk
       const imageData = await fs.readFile(`images/${image}`);
       return imageData.toString('base64');

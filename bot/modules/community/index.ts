@@ -54,6 +54,9 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       await commands.updateCommunity(ctx, ctx.match[1], 'disputeChannel', bot);
     },
   );
+  bot.action(/^editLanguageBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
+    await commands.updateCommunity(ctx, ctx.match[1], 'language');
+  });
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
   bot.action(
