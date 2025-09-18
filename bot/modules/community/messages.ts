@@ -12,6 +12,7 @@ export const createCommunityWizardStatus = (
   try {
     let { name, group } = state;
     name = state.name || '__';
+    const language = state.language || '__';
     let currencies = state.currencies && state.currencies.join(', ');
     currencies = currencies || '__';
     group = state.group || '__';
@@ -27,6 +28,7 @@ export const createCommunityWizardStatus = (
     solvers = solvers || '__';
     const text = [
       i18n.t('name') + `: ${name}`,
+      i18n.t('language') + `: ${language}`,
       i18n.t('currency') + `: ${currencies}`,
       i18n.t('group') + `: ${group}`,
       i18n.t('channels') + `: ${channels}`,
@@ -94,15 +96,21 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
               callback_data: `editDisputeChannelBtn_${id}`,
             },
             {
-              text: '💰 ' + ctx.i18n.t('earnings'),
-              callback_data: `earningsBtn_${id}`,
+              text: '✏️ ' + ctx.i18n.t('language'),
+              callback_data: `editLanguageBtn_${id}`,
             },
           ],
           [
             {
+              text: '💰 ' + ctx.i18n.t('earnings'),
+              callback_data: `earningsBtn_${id}`,
+            },
+            {
               text: visibilityText,
               callback_data: `changeVisibilityBtn_${id}`,
             },
+          ],
+          [
             {
               text: '☠️ ' + ctx.i18n.t('delete_community'),
               callback_data: `deleteCommunityAskBtn_${id}`,

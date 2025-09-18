@@ -12,6 +12,7 @@ import {
 } from './messages';
 import { CommunityContext } from './communityContext';
 import * as commAdmin from './scenes.communityAdmin';
+import { isValidLanguage } from '../../../util/languages';
 
 const CURRENCIES = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 
@@ -25,6 +26,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
 
       const {
         name,
+        language,
         currencies,
         group,
         channels,
@@ -61,6 +63,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
       }
 
       if (undefined === name) return createCommunitySteps.name(ctx);
+      if (undefined === language) return createCommunitySteps.language(ctx);
       if (undefined === currencies) return createCommunitySteps.currencies(ctx);
       if (undefined === group) return createCommunitySteps.group(ctx);
       if (undefined === channels) return createCommunitySteps.channels(ctx);
@@ -71,6 +74,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
 
       const community = new Community({
         name,
+        language,
         currencies,
         group,
         order_channels: channels,
@@ -140,6 +144,38 @@ const createCommunitySteps = {
         return await ctx.wizard.state.updateUI();
       }
       ctx.wizard.state.name = name;
+      await ctx.wizard.state.updateUI();
+      await ctx.telegram.deleteMessage(
+        ctx.message!.chat.id,
+        ctx.message!.message_id,
+      );
+      return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+    };
+
+    return ctx.wizard.next();
+  },
+  async language(ctx: CommunityContext) {
+    const prompt = await createCommunityPrompts.language(ctx);
+
+    ctx.wizard.state.handler = async (ctx: CommunityContext) => {
+      const text = ctx?.message?.text;
+      if (!text) {
+        await ctx.deleteMessage();
+        return ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+      }
+
+      ctx.wizard.state.error = null;
+      const lang = text.trim().toLowerCase();
+
+      if (!isValidLanguage(lang)) {
+        ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
+        ctx.wizard.state.error = ctx.i18n.t(
+          'wizard_community_invalid_language',
+        );
+        return await ctx.wizard.state.updateUI();
+      }
+
+      ctx.wizard.state.language = lang;
       await ctx.wizard.state.updateUI();
       await ctx.telegram.deleteMessage(
         ctx.message!.chat.id,
@@ -426,6 +462,9 @@ const createCommunitySteps = {
 const createCommunityPrompts = {
   async name(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_name'));
+  },
+  async language(ctx: CommunityContext) {
+    return ctx.reply(ctx.i18n.t('wizard_community_enter_language'));
   },
   async currencies(ctx: CommunityContext) {
     return ctx.reply(ctx.i18n.t('wizard_community_enter_currency'));
@@ -826,6 +865,46 @@ export const updateDisputeChannelCommunityWizard = new Scenes.WizardScene(
       }
 
       community.dispute_channel = channel;
+      await community.save();
+      await ctx.reply(ctx.i18n.t('operation_successful'));
+
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+export const updateLanguageCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_LANGUAGE_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx: CommunityContext) => {
+    try {
+      const { community } = ctx.wizard.state;
+      let message =
+        ctx.i18n.t('language') + ': ' + (community.language || 'en') + '\n\n';
+      message += ctx.i18n.t('wizard_community_enter_language') + '\n\n';
+      message += ctx.i18n.t('wizard_to_exit');
+      await ctx.reply(message);
+
+      return ctx.wizard.next();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx: CommunityContext) => {
+    try {
+      if (ctx.message === undefined) return ctx.scene.leave();
+
+      const lang = ctx.message.text.trim().toLowerCase();
+      if (!isValidLanguage(lang)) {
+        ctx.deleteMessage();
+        return await ctx.reply(ctx.i18n.t('wizard_community_invalid_language'));
+      }
+
+      const { community } = ctx.wizard.state;
+      community.language = lang;
       await community.save();
       await ctx.reply(ctx.i18n.t('operation_successful'));
 

@@ -15,9 +15,11 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { IOrder } from '../models/order';
 import { IFiat } from '../util/fiatModel';
+
 import * as OrderEvents from './modules/events/orders';
 
 const { ObjectId } = require('mongoose').Types;
+const { I18n } = require('@grammyjs/i18n');
 
 interface CreateOrderArguments {
   type: string;
@@ -73,10 +75,23 @@ const createOrder = async (
   try {
     amount = Math.floor(amount);
     let isPublic = true;
+
+    // Use community language if community_id is provided
+    let descriptionI18n = i18n;
+
     if (community_id) {
       const community = await Community.findById(community_id);
       if (community == null) throw new Error('community is null');
       isPublic = community.public;
+
+      // Get community language for description
+      if (community.language) {
+        descriptionI18n = new I18n({
+          defaultLanguageOnMissing: true,
+          locale: community.language,
+          directory: 'locales',
+        }).createContext(community.language);
+      }
     }
     const fee = await getFee(amount, community_id || '');
     if (process.env.MAX_FEE === undefined)
@@ -129,7 +144,7 @@ const createOrder = async (
       tg_order_message: tgOrderMessage,
       price_from_api: priceFromAPI,
       price_margin: priceMargin || 0,
-      description: buildDescription(i18n, {
+      description: buildDescription(descriptionI18n, {
         user,
         type,
         amount,
