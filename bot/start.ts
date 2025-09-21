@@ -67,7 +67,7 @@ import {
   deleteOrders,
   calculateEarnings,
   attemptCommunitiesPendingPayments,
-  deleteCommunity,
+  // deleteCommunity,
   nodeInfo,
   checkSolvers,
 } from '../jobs';
@@ -222,9 +222,10 @@ const initialize = (
     await attemptCommunitiesPendingPayments(bot);
   });
 
-  schedule.scheduleJob(`33 0 * * *`, async () => {
-    await deleteCommunity(bot);
-  });
+  // TODO: re-enable later
+  // schedule.scheduleJob(`33 0 * * *`, async () => {
+  //   await deleteCommunity(bot);
+  // });
 
   schedule.scheduleJob(`* * * * *`, async () => {
     await nodeInfo(bot);

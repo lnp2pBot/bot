@@ -310,7 +310,7 @@ describe('Bot Initialization', () => {
         deleteOrders: sinon.stub().resolves(),
         calculateEarnings: sinon.stub().resolves(),
         attemptCommunitiesPendingPayments: sinon.stub().resolves(),
-        deleteCommunity: sinon.stub().resolves(),
+        // deleteCommunity: sinon.stub().resolves(),
         nodeInfo: sinon.stub().resolves(),
       },
       './modules/community': { configure: sinon.stub() },
@@ -470,7 +470,7 @@ describe('Bot Initialization', () => {
 
     scheduledFunction();
 
-    expect(scheduleStub.scheduleJob.callCount).to.be.equal(8);
+    expect(scheduleStub.scheduleJob.callCount).to.be.equal(7);
     expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal(
       '*/10 * * * *',
     );
