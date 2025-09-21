@@ -10,8 +10,6 @@ import { HasTelegram } from '../bot/start';
 import order, { IOrder } from '../models/order';
 import {Mutex} from 'async-mutex';
 
-const subscribeToInvoiceMutex = new Mutex;
-
 type LockCountedMutex = {
   lockCount: number,
   mutex: Mutex
