@@ -10,7 +10,6 @@ import { PerOrderIdMutex } from '../ln/subscribe_invoice';
 
 const cancelOrders = async (bot: HasTelegram) => {
   try {
-    logger.info("CancelOrders job");
     const holdInvoiceTime = new Date();
     holdInvoiceTime.setSeconds(
       holdInvoiceTime.getSeconds() -
