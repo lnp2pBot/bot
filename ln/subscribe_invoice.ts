@@ -7,9 +7,8 @@ import * as ordersActions from '../bot/ordersActions';
 import { getUserI18nContext, getEmojiRate, decimalRound } from '../util';
 import { logger } from '../logger';
 import { HasTelegram } from '../bot/start';
-import order, { IOrder } from '../models/order';
-import {Mutex} from 'async-mutex';
-
+import { IOrder } from '../models/order';
+import { Mutex } from 'async-mutex';
 type LockCountedMutex = {
   lockCount: number,
   mutex: Mutex
