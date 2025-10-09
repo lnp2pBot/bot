@@ -9,6 +9,7 @@ import { logger } from '../logger';
 import { HasTelegram } from '../bot/start';
 import { IOrder } from '../models/order';
 import { Mutex } from 'async-mutex';
+
 type LockCountedMutex = {
   lockCount: number,
   mutex: Mutex
@@ -58,7 +59,7 @@ const subscribeInvoice = async (
           if (updatedOrder === null) throw new Error('order was not found after locking');
           if (updatedOrder.status !== 'WAITING_PAYMENT') {
             logger.error(`Order ${updatedOrder._id} status is not WAITING_PAYMENT on subscribeToInvoice. Actual status: ${updatedOrder.status}`);
-            throw new Error('Order status is not WAITING_PAYMENT');
+            return;
           }
           logger.info(
             `Order ${updatedOrder._id} Invoice with hash: ${id} is being held!`,
