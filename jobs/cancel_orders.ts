@@ -31,12 +31,20 @@ const cancelOrders = async (bot: HasTelegram) => {
     });
     for (const order of waitingPaymentOrders) {
       if (order.status === 'WAITING_PAYMENT') {
-        await PerOrderIdMutex.instance.runExclusive(String(order._id), async () => {
-          const updatedOrder = await Order.findById(order._id);
-          // In the case the orderId was modified then we don't cancel the order
-          if (!updatedOrder || updatedOrder.status !== 'WAITING_PAYMENT') return;
-          await cancelShowHoldInvoice(bot as CommunityContext, updatedOrder, true);
-        });
+        await PerOrderIdMutex.instance.runExclusive(
+          String(order._id),
+          async () => {
+            const updatedOrder = await Order.findById(order._id);
+            // In the case the orderId was modified then we don't cancel the order
+            if (!updatedOrder || updatedOrder.status !== 'WAITING_PAYMENT')
+              return;
+            await cancelShowHoldInvoice(
+              bot as CommunityContext,
+              updatedOrder,
+              true,
+            );
+          },
+        );
       } else {
         await cancelAddInvoice(bot as CommunityContext, order, true);
       }

@@ -11,17 +11,17 @@ import { IOrder } from '../models/order';
 import { Mutex } from 'async-mutex';
 
 type LockCountedMutex = {
-  lockCount: number,
-  mutex: Mutex
-}
+  lockCount: number;
+  mutex: Mutex;
+};
 
 class PerOrderIdMutex {
-  mutexes: Map<string, LockCountedMutex> = new Map;
+  mutexes: Map<string, LockCountedMutex> = new Map();
 
-  async runExclusive(orderId: string, callback: ()=>Promise<any>) {
+  async runExclusive(orderId: string, callback: () => Promise<any>) {
     let mtx: LockCountedMutex;
     if (!this.mutexes.has(orderId)) {
-      mtx = {lockCount: 1, mutex: new Mutex};
+      mtx = { lockCount: 1, mutex: new Mutex() };
       this.mutexes.set(orderId, mtx);
     } else {
       mtx = this.mutexes.get(orderId)!;
@@ -32,14 +32,14 @@ class PerOrderIdMutex {
       ret = await mtx.mutex.runExclusive(callback);
     } finally {
       mtx.lockCount--;
-      if (mtx.lockCount==0) {
+      if (mtx.lockCount == 0) {
         this.mutexes.delete(orderId);
       }
     }
     return ret;
   }
 
-  static instance = new PerOrderIdMutex;
+  static instance = new PerOrderIdMutex();
 }
 
 const subscribeInvoice = async (
@@ -53,54 +53,64 @@ const subscribeInvoice = async (
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
         if (order === null) throw new Error('order was not found');
-        await PerOrderIdMutex.instance.runExclusive(String(order._id), async() => {
-          // We need to get an updated version of the order because there is a chance of the cancelOrders coroutine to modify the state of the order
-          const updatedOrder = await Order.findById(order._id);
-          if (updatedOrder === null) throw new Error('order was not found after locking');
-          if (updatedOrder.status !== 'WAITING_PAYMENT') {
-            logger.error(`Order ${updatedOrder._id} status is not WAITING_PAYMENT on subscribeToInvoice. Actual status: ${updatedOrder.status}`);
-            return;
-          }
-          logger.info(
-            `Order ${updatedOrder._id} Invoice with hash: ${id} is being held!`,
-          );
-          const buyerUser = await User.findOne({ _id: updatedOrder.buyer_id });
-          if (buyerUser === null) throw new Error('buyerUser was not found');
-          const sellerUser = await User.findOne({ _id: updatedOrder.seller_id });
-          if (sellerUser === null) throw new Error('sellerUser was not found');
-          updatedOrder.status = 'ACTIVE';
-          // This is the i18n context we need to pass to the message
-          const i18nCtxBuyer = await getUserI18nContext(buyerUser);
-          const i18nCtxSeller = await getUserI18nContext(sellerUser);
-          if (updatedOrder.type === 'sell') {
-            await messages.onGoingTakeSellMessage(
-              bot,
-              sellerUser,
-              buyerUser,
-              updatedOrder,
-              i18nCtxBuyer,
-              i18nCtxSeller,
+        await PerOrderIdMutex.instance.runExclusive(
+          String(order._id),
+          async () => {
+            // We need to get an updated version of the order because there is a chance of the cancelOrders coroutine to modify the state of the order
+            const updatedOrder = await Order.findById(order._id);
+            if (updatedOrder === null)
+              throw new Error('order was not found after locking');
+            if (updatedOrder.status !== 'WAITING_PAYMENT') {
+              logger.error(
+                `Order ${updatedOrder._id} status is not WAITING_PAYMENT on subscribeToInvoice. Actual status: ${updatedOrder.status}`,
+              );
+              return;
+            }
+            logger.info(
+              `Order ${updatedOrder._id} Invoice with hash: ${id} is being held!`,
             );
-          } else if (updatedOrder.type === 'buy') {
-            updatedOrder.status = 'WAITING_BUYER_INVOICE';
-            // We need the seller rating
-            const stars = getEmojiRate(sellerUser.total_rating);
-            const roundedRating = decimalRound(sellerUser.total_rating, -1);
-            const rate = `${roundedRating} ${stars} (${sellerUser.total_reviews})`;
-            await messages.onGoingTakeBuyMessage(
-              bot,
-              sellerUser,
-              buyerUser,
-              updatedOrder,
-              i18nCtxBuyer,
-              i18nCtxSeller,
-              rate,
-            );
-          }
-          updatedOrder.invoice_held_at = new Date();
-          await updatedOrder.save();
-        
-        });
+            const buyerUser = await User.findOne({
+              _id: updatedOrder.buyer_id,
+            });
+            if (buyerUser === null) throw new Error('buyerUser was not found');
+            const sellerUser = await User.findOne({
+              _id: updatedOrder.seller_id,
+            });
+            if (sellerUser === null)
+              throw new Error('sellerUser was not found');
+            updatedOrder.status = 'ACTIVE';
+            // This is the i18n context we need to pass to the message
+            const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+            const i18nCtxSeller = await getUserI18nContext(sellerUser);
+            if (updatedOrder.type === 'sell') {
+              await messages.onGoingTakeSellMessage(
+                bot,
+                sellerUser,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+                i18nCtxSeller,
+              );
+            } else if (updatedOrder.type === 'buy') {
+              updatedOrder.status = 'WAITING_BUYER_INVOICE';
+              // We need the seller rating
+              const stars = getEmojiRate(sellerUser.total_rating);
+              const roundedRating = decimalRound(sellerUser.total_rating, -1);
+              const rate = `${roundedRating} ${stars} (${sellerUser.total_reviews})`;
+              await messages.onGoingTakeBuyMessage(
+                bot,
+                sellerUser,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+                i18nCtxSeller,
+                rate,
+              );
+            }
+            updatedOrder.invoice_held_at = new Date();
+            await updatedOrder.save();
+          },
+        );
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: id });
