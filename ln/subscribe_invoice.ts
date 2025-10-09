@@ -53,7 +53,7 @@ const subscribeInvoice = async (
         const order = await Order.findOne({ hash: invoice.id });
         if (order === null) throw new Error('order was not found');
         await PerOrderIdMutex.instance.runExclusive(String(order._id), async() => {
-          //We need to get an updated version of the order because there is a chance of the cancelOrders coroutine to modify the state of the order
+          // We need to get an updated version of the order because there is a chance of the cancelOrders coroutine to modify the state of the order
           const updatedOrder = await Order.findById(order._id);
           if (updatedOrder === null) throw new Error('order was not found after locking');
           if (updatedOrder.status !== 'WAITING_PAYMENT') {
