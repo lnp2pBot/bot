@@ -44,10 +44,11 @@ const notifyAdmin = async (
    * The community is disabled if the admin has received the maximum notification message (MAX_ADMIN_WARNINGS_BEFORE_DEACTIVATION - 1) to add a solver.
    */
   if (community.warning_messages_count >= maxWarningsCount) {
-    await community.delete();
+    community.active = false;
+    await community.save();
 
     logger.info(
-      `Community: ${community.name} has been deleted due to lack of solvers.`,
+      `Community: ${community.name} has been deactivated due to lack of solvers.`,
     );
     return;
   }

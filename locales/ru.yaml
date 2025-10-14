@@ -468,6 +468,7 @@ channels: Channels
 dispute_solvers: Solvers
 no_default_community: You no longer have a community by default
 community_not_found: Community not found
+community_inactive: Это сообщество в настоящее время неактивно и не может быть использовано для торговли
 currency: Валюта
 currencies: Currencies
 currency_not_supported: |

@@ -465,6 +465,7 @@ channels: Canali
 dispute_solvers: Arbitri
 no_default_community: Non hai più una comunità di default
 community_not_found: Community non trovata
+community_inactive: Questa community è attualmente inattiva e non può essere utilizzata per il commercio
 currency: Valuta
 currencies: Valute
 currency_not_supported: |
