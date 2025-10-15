@@ -175,8 +175,10 @@ export const calculateFinancialStats = async (
     }
 
     if (stats.totalFees > 0) {
-      stats.routingFeePercentage = (stats.routingFeesPaid / stats.totalFees) * 100;
-      stats.operationalEfficiency = ((stats.totalFees - stats.routingFeesPaid) / stats.totalFees) * 100;
+      stats.routingFeePercentage =
+        (stats.routingFeesPaid / stats.totalFees) * 100;
+      stats.operationalEfficiency =
+        ((stats.totalFees - stats.routingFeesPaid) / stats.totalFees) * 100;
     }
 
     return stats;
@@ -192,10 +194,7 @@ export const calculateFinancialStats = async (
  * @param endDate - End date
  * @returns Array of fees per community
  */
-export const getFeesByCommunity = async (
-  startDate: Date,
-  endDate: Date,
-) => {
+export const getFeesByCommunity = async (startDate: Date, endDate: Date) => {
   try {
     const transactions = await FinancialTransaction.aggregate([
       {

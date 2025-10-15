@@ -239,9 +239,12 @@ const initialize = (
   // Generate daily financial report (configurable hour in UTC)
   const dailyReportHour = parseInt(process.env.DAILY_REPORT_HOUR || '0');
   const dailyReportMinute = parseInt(process.env.DAILY_REPORT_MINUTE || '0');
-  schedule.scheduleJob(`${dailyReportMinute} ${dailyReportHour} * * *`, async () => {
-    await generateDailyFinancialReport(bot);
-  });
+  schedule.scheduleJob(
+    `${dailyReportMinute} ${dailyReportHour} * * *`,
+    async () => {
+      await generateDailyFinancialReport(bot);
+    },
+  );
 
   bot.start(async (ctx: MainContext) => {
     try {
