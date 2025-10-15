@@ -87,6 +87,7 @@ Copy `.env-sample` to `.env` and configure:
 - `ADMIN_CHANNEL`: Admin notifications
 - `RECONCILIATION_ALERT_THRESHOLD`: Alert threshold for high routing fees (default: 0.02 = 2%)
 - `DAILY_REPORT_HOUR`: Hour of day (UTC) to send daily financial report (default: 0 = midnight)
+- `DAILY_REPORT_MINUTE`: Minute of hour (UTC) to send daily financial report (default: 0)
 
 ### Testing
 Tests are in TypeScript and use Mocha with Chai assertions. Test compilation uses a separate tsconfig.test.json that includes the tests directory.
@@ -127,7 +128,7 @@ Critical background processes with specific timing:
 - **Community earnings**: Every 10 minutes
 - **Node health**: Every minute
 - **Solver availability**: Daily at midnight
-- **Financial report**: Daily at configurable hour (default: midnight UTC, set via `DAILY_REPORT_HOUR`)
+- **Financial report**: Daily at configurable hour (default: midnight UTC, set via `DAILY_REPORT_HOUR` and `DAILY_REPORT_MINUTE`)
 
 #### Multi-language Support
 - 10 supported languages via YAML files in `locales/`
