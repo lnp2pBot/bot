@@ -11,7 +11,7 @@ import * as path from 'path';
 // Initialize i18n for admin reports (English by default)
 const i18n = new I18n({
   defaultLanguageOnMissing: true,
-  directory: path.resolve(__dirname, '../locales'),
+  directory: path.resolve(__dirname, '../../locales'),
   useSession: false,
 });
 
