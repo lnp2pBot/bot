@@ -67,14 +67,17 @@ const generateDailyFinancialReport = async (
       const topCommunities = communityFees.slice(0, 5);
       const communityLines: string[] = [];
 
+      const esc = (s: string) =>
+        s.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, '\\$&');
       for (const cf of topCommunities) {
         const community = await Community.findById(cf._id);
-        const communityName = community ? community.name : cf._id;
+        const communityName = esc(community ? community.name : String(cf._id));
         communityLines.push(
-          `    │  ├─ ${communityName}: ${formatNumber(cf.communityFeesAllocated)} sats \\(${cf.totalOrders} órdenes\\)`,
+          `    │  ├─ ${communityName}: ${formatNumber(
+            cf.communityFeesAllocated,
+          )} sats \\(${cf.totalOrders} órdenes\\)`,
         );
       }
-
       const totalCommunities = communityFees.length;
       if (totalCommunities > 5) {
         communityLines.push(
