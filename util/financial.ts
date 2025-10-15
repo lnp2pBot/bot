@@ -8,19 +8,16 @@ import { logger } from '../logger';
  * @returns Bot fee in satoshis
  */
 export const calculateBotFeeEarned = (order: IOrder): number => {
-  // If no community, bot receives 100% of the fee
-  if (!order.community_id) {
-    return order.fee;
-  }
+  // Golden Honey Badger: bot earns 0 regardless of community
+  if (order.is_golden_honey_badger) return 0;
 
-  // If Golden Honey Badger, bot receives nothing (0%)
-  if (order.is_golden_honey_badger) {
-    return 0;
-  }
+  // If no community, bot receives 100% of the collected fee
+  if (!order.community_id) return order.fee;
 
   // Bot receives: maxFee * FEE_PERCENT
   // maxFee = order.amount * order.bot_fee
   // botFeeEarned = maxFee * order.community_fee
+  // NOTE: order.community_fee stores the bot's share fraction (FEE_PERCENT)
   const maxFee = order.amount * order.bot_fee;
   const botFeeEarned = maxFee * order.community_fee;
 
