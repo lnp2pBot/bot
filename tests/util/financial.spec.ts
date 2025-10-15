@@ -100,7 +100,7 @@ describe('Financial Utilities', () => {
       // maxFee = 100000 * 0.01 = 1000
       // botFee = 1000 * 0.65 = 650 (should be rounded)
       expect(botFee).to.be.a('number');
-      expect(Number.isInteger(botFee)).to.be.true;
+      expect(Number.isInteger(botFee)).to.equal(true);
       expect(botFee).to.equal(650);
     });
   });

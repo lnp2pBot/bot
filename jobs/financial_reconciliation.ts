@@ -21,13 +21,6 @@ const formatPercentage = (num: number): string => {
 };
 
 /**
- * Escape date string for MarkdownV2 format
- */
-const escapeDate = (date: Date): string => {
-  return date.toISOString().split('T')[0].replace(/-/g, '\\-');
-};
-
-/**
  * Generate daily financial report and send it to admin channel
  */
 const generateDailyFinancialReport = async (
