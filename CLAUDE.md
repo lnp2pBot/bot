@@ -76,6 +76,7 @@ Background jobs handle critical functions:
 - **Community**: Telegram groups with custom fee structures
 - **Dispute**: Conflict resolution with solver assignment
 - **PendingPayment**: Failed payment retry queue
+- **FinancialTransaction**: Financial records for completed orders with fee breakdowns and routing costs
 
 ### Environment Setup
 Copy `.env-sample` to `.env` and configure:
@@ -84,6 +85,8 @@ Copy `.env-sample` to `.env` and configure:
 - `DB_*` or `MONGO_URI`: MongoDB connection
 - `CHANNEL`: Public order announcement channel
 - `ADMIN_CHANNEL`: Admin notifications
+- `RECONCILIATION_ALERT_THRESHOLD`: Alert threshold for high routing fees (default: 0.02 = 2%)
+- `DAILY_REPORT_HOUR`: Hour of day (UTC) to send daily financial report (default: 0 = midnight)
 
 ### Testing
 Tests are in TypeScript and use Mocha with Chai assertions. Test compilation uses a separate tsconfig.test.json that includes the tests directory.
@@ -124,6 +127,7 @@ Critical background processes with specific timing:
 - **Community earnings**: Every 10 minutes
 - **Node health**: Every minute
 - **Solver availability**: Daily at midnight
+- **Financial report**: Daily at configurable hour (default: midnight UTC, set via `DAILY_REPORT_HOUR`)
 
 #### Multi-language Support
 - 10 supported languages via YAML files in `locales/`
@@ -144,6 +148,21 @@ Orders follow specific state transitions:
 - Solver assignment and dispute resolution
 - Automated earnings calculation and distribution
 - Ban management (global and community-level)
+
+#### Financial Tracking System
+The bot tracks all financial transactions for monitoring and reconciliation:
+- **Automatic recording**: Financial transactions are recorded when orders complete successfully
+- **Fee breakdown**: Tracks total fees, bot fees earned, community fees allocated
+- **Routing costs**: Records routing fees paid for Lightning Network payments
+- **Net profit calculation**: Bot fee earned minus routing fees paid
+- **Daily reports**: Automated reports sent to admin channel with:
+  - 24-hour summary of completed orders and fees collected
+  - Bot vs community fee distribution breakdown
+  - Routing fee costs and operational efficiency metrics
+  - Top 5 communities by fees earned
+  - Node balance information
+  - Alerts when routing fees exceed configured threshold
+- **Golden Honey Badger support**: Special handling for orders where bot receives 0% fee
 
 ### Development Patterns
 

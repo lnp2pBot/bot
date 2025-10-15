@@ -7,6 +7,7 @@ import {
 import { User, PendingPayment } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
+import { recordFinancialTransaction } from '../util/financial';
 import * as messages from '../bot/messages';
 import { logger, logTimeout, logOperationDuration } from '../logger';
 import * as OrderEvents from '../bot/modules/events/orders';
@@ -138,6 +139,10 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
 
       await order.save();
       OrderEvents.orderUpdated(order);
+
+      // Record financial transaction
+      await recordFinancialTransaction(order);
+
       await handleReputationItems(buyerUser, sellerUser, order.amount);
       await messages.buyerReceivedSatsMessage(
         bot,

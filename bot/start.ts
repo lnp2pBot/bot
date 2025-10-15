@@ -70,6 +70,7 @@ import {
   // deleteCommunity,
   nodeInfo,
   checkSolvers,
+  generateDailyFinancialReport,
 } from '../jobs';
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
@@ -233,6 +234,13 @@ const initialize = (
 
   schedule.scheduleJob(`0 0 * * *`, async () => {
     await checkSolvers(bot as any as Telegraf<MainContext>);
+  });
+
+  // Generate daily financial report (configurable hour in UTC)
+  const dailyReportHour = parseInt(process.env.DAILY_REPORT_HOUR || '0');
+  const dailyReportMinute = parseInt(process.env.DAILY_REPORT_MINUTE || '0');
+  schedule.scheduleJob(`${dailyReportMinute} ${dailyReportHour} * * *`, async () => {
+    await generateDailyFinancialReport(bot);
   });
 
   bot.start(async (ctx: MainContext) => {

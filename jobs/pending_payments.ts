@@ -5,6 +5,7 @@ import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { payRequest, isPendingPayment } from '../ln';
 import { getUserI18nContext } from '../util';
+import { recordFinancialTransaction } from '../util/financial';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 
@@ -74,6 +75,10 @@ export const attemptPendingPayments = async (
         order.routing_fee = payment.fee;
         pending.paid = true;
         pending.paid_at = new Date();
+
+        // Record financial transaction
+        await recordFinancialTransaction(order);
+
         // We add a new completed trade for the buyer
         buyerUser.trades_completed++;
         await buyerUser.save();
