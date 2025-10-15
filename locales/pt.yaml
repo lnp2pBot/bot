@@ -663,3 +663,38 @@ user_taker_is_blocked_by_user_order: Você não pode aceitar esta oferta porque 
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
+# Financial Report
+financial_report_title: RELATÓRIO FINANCEIRO DIÁRIO
+financial_report_period_last_24h: "Período: Últimas 24 horas"
+financial_report_fees_income: RECEITA DE TAXAS
+financial_report_orders_completed: Pedidos concluídos
+financial_report_total_fee: Taxa total coletada
+financial_report_bot_fees: "Taxas do bot (~30%)"
+financial_report_community_fees: "Taxas da comunidade (~70%)"
+financial_report_distributed_to: Distribuído para ${count} comunidades
+financial_report_orders_no_community: Pedidos sem comunidade
+financial_report_orders_with_community: Pedidos com comunidade
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... e mais ${count} comunidades"
+financial_report_operational_costs: CUSTOS OPERACIONAIS
+financial_report_routing_fees: Taxas de roteamento pagas
+financial_report_avg_per_order: Média por pedido
+financial_report_pct_amount: "% do valor transacionado"
+financial_report_pct_fees: "% das taxas coletadas"
+financial_report_net_profit: LUCRO LÍQUIDO DO BOT
+financial_report_node_balance: SALDO DO NÓ
+financial_report_current_balance: Saldo atual
+financial_report_not_available: Não disponível
+financial_report_additional_metrics: MÉTRICAS ADICIONAIS
+financial_report_avg_fee_per_order: Taxa média/pedido
+financial_report_avg_routing_fee: Taxa de roteamento média/pagamento
+financial_report_operational_efficiency: Eficiência operacional
+financial_report_auto_generated: Gerado automaticamente pelo sistema de monitoramento financeiro
+financial_report_alert_title: "ALERTA: TAXAS DE ROTEAMENTO ELEVADAS"
+financial_report_alert_message: "As taxas de roteamento estão em ${current}% das taxas coletadas, excedendo o limite de ${threshold}%."
+financial_report_alert_recommendations: |
+  Recomendações:
+  • Revisar as rotas de pagamento do nó
+  • Verificar a liquidez dos canais
+  • Considerar abrir canais diretos para nós frequentes
+financial_report_error_generating: "Erro ao gerar relatório financeiro diário: ${error}"

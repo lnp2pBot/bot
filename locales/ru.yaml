@@ -664,3 +664,38 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
+# Financial Report
+financial_report_title: ЕЖЕДНЕВНЫЙ ФИНАНСОВЫЙ ОТЧЕТ
+financial_report_period_last_24h: "Период: Последние 24 часа"
+financial_report_fees_income: ДОХОД ОТ КОМИССИЙ
+financial_report_orders_completed: Завершенные заказы
+financial_report_total_fee: Общая собранная комиссия
+financial_report_bot_fees: "Комиссии бота (~30%)"
+financial_report_community_fees: "Комиссии сообщества (~70%)"
+financial_report_distributed_to: Распределено между ${count} сообществами
+financial_report_orders_no_community: Заказы без сообщества
+financial_report_orders_with_community: Заказы с сообществом
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... и еще ${count} сообществ"
+financial_report_operational_costs: ОПЕРАЦИОННЫЕ РАСХОДЫ
+financial_report_routing_fees: Оплаченные комиссии за маршрутизацию
+financial_report_avg_per_order: Среднее на заказ
+financial_report_pct_amount: "% от суммы транзакции"
+financial_report_pct_fees: "% от собранных комиссий"
+financial_report_net_profit: ЧИСТАЯ ПРИБЫЛЬ БОТА
+financial_report_node_balance: БАЛАНС УЗЛА
+financial_report_current_balance: Текущий баланс
+financial_report_not_available: Недоступно
+financial_report_additional_metrics: ДОПОЛНИТЕЛЬНЫЕ МЕТРИКИ
+financial_report_avg_fee_per_order: Средняя комиссия/заказ
+financial_report_avg_routing_fee: Средняя комиссия за маршрутизацию/платеж
+financial_report_operational_efficiency: Операционная эффективность
+financial_report_auto_generated: Автоматически создано системой финансового мониторинга
+financial_report_alert_title: "ПРЕДУПРЕЖДЕНИЕ: ВЫСОКИЕ КОМИССИИ ЗА МАРШРУТИЗАЦИЮ"
+financial_report_alert_message: "Комиссии за маршрутизацию составляют ${current}% от собранных комиссий, превышая порог ${threshold}%."
+financial_report_alert_recommendations: |
+  Рекомендации:
+  • Проверить маршруты платежей узла
+  • Проверить ликвидность каналов
+  • Рассмотреть возможность открытия прямых каналов к частым узлам
+financial_report_error_generating: "Ошибка при создании ежедневного финансового отчета: ${error}"

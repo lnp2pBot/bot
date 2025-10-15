@@ -666,3 +666,38 @@ user_taker_is_blocked_by_user_order: No puedes aceptar esta oferta porque su cre
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+# Financial Report
+financial_report_title: REPORTE FINANCIERO DIARIO
+financial_report_period_last_24h: "Período: Últimas 24 horas"
+financial_report_fees_income: INGRESOS POR FEES
+financial_report_orders_completed: Órdenes completadas
+financial_report_total_fee: Fee total cobrado
+financial_report_bot_fees: "Bot fees (~30%)"
+financial_report_community_fees: "Community fees (~70%)"
+financial_report_distributed_to: Distribuido a ${count} comunidades
+financial_report_orders_no_community: Órdenes sin comunidad
+financial_report_orders_with_community: Órdenes con comunidad
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... y ${count} comunidades más"
+financial_report_operational_costs: COSTOS OPERATIVOS
+financial_report_routing_fees: Routing fees pagados
+financial_report_avg_per_order: Promedio por orden
+financial_report_pct_amount: "% del monto transaccionado"
+financial_report_pct_fees: "% de los fees cobrados"
+financial_report_net_profit: GANANCIA NETA DEL BOT
+financial_report_node_balance: BALANCE DEL NODO
+financial_report_current_balance: Balance actual
+financial_report_not_available: No disponible
+financial_report_additional_metrics: MÉTRICAS ADICIONALES
+financial_report_avg_fee_per_order: Fee/orden promedio
+financial_report_avg_routing_fee: Routing fee/pago
+financial_report_operational_efficiency: Eficiencia operativa
+financial_report_auto_generated: Generado automáticamente por el sistema de monitoreo financiero
+financial_report_alert_title: "ALERTA: ROUTING FEES ELEVADOS"
+financial_report_alert_message: "Los routing fees están en ${current}% de los fees cobrados, superando el umbral de ${threshold}%."
+financial_report_alert_recommendations: |
+  Recomendaciones:
+  • Revisar las rutas de pago del nodo
+  • Verificar la liquidez de los canales
+  • Considerar abrir canales directos con nodos frecuentes
+financial_report_error_generating: "Error generando reporte financiero diario: ${error}"

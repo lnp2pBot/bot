@@ -661,3 +661,38 @@ user_taker_is_blocked_by_user_order: Non puoi accettare questo ordine perché il
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+# Financial Report
+financial_report_title: RAPPORTO FINANZIARIO GIORNALIERO
+financial_report_period_last_24h: "Periodo: Ultime 24 ore"
+financial_report_fees_income: ENTRATE DALLE COMMISSIONI
+financial_report_orders_completed: Ordini completati
+financial_report_total_fee: Commissione totale raccolta
+financial_report_bot_fees: "Commissioni bot (~30%)"
+financial_report_community_fees: "Commissioni community (~70%)"
+financial_report_distributed_to: Distribuito a ${count} community
+financial_report_orders_no_community: Ordini senza community
+financial_report_orders_with_community: Ordini con community
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... e altre ${count} community"
+financial_report_operational_costs: COSTI OPERATIVI
+financial_report_routing_fees: Commissioni di routing pagate
+financial_report_avg_per_order: Media per ordine
+financial_report_pct_amount: "% dell'importo scambiato"
+financial_report_pct_fees: "% delle commissioni raccolte"
+financial_report_net_profit: PROFITTO NETTO DEL BOT
+financial_report_node_balance: SALDO DEL NODO
+financial_report_current_balance: Saldo attuale
+financial_report_not_available: Non disponibile
+financial_report_additional_metrics: METRICHE AGGIUNTIVE
+financial_report_avg_fee_per_order: Commissione media/ordine
+financial_report_avg_routing_fee: Commissione routing media/pagamento
+financial_report_operational_efficiency: Efficienza operativa
+financial_report_auto_generated: Generato automaticamente dal sistema di monitoraggio finanziario
+financial_report_alert_title: "AVVISO: COMMISSIONI DI ROUTING ELEVATE"
+financial_report_alert_message: "Le commissioni di routing sono al ${current}% delle commissioni raccolte, superando la soglia del ${threshold}%."
+financial_report_alert_recommendations: |
+  Raccomandazioni:
+  • Rivedere le rotte di pagamento del nodo
+  • Verificare la liquidità dei canali
+  • Considerare l'apertura di canali diretti verso nodi frequenti
+financial_report_error_generating: "Errore nella generazione del rapporto finanziario giornaliero: ${error}"

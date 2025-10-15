@@ -1,10 +1,22 @@
 import { Telegraf } from 'telegraf';
+import { I18n } from '@grammyjs/i18n';
 import { calculateFinancialStats, getFeesByCommunity } from '../util/financial';
 import { Community } from '../models';
 import { logger } from '../logger';
 import { getChannelBalance } from 'lightning';
 import lnd from '../ln/connect';
 import { CommunityContext } from '../bot/modules/community/communityContext';
+import * as path from 'path';
+
+// Initialize i18n for admin reports (English by default)
+const i18n = new I18n({
+  defaultLanguageOnMissing: true,
+  directory: path.resolve(__dirname, '../locales'),
+  useSession: false,
+});
+
+// Create context for 'en' locale
+const t = i18n.t.bind(i18n);
 
 /**
  * Format a number with thousands separators
@@ -18,6 +30,13 @@ const formatNumber = (num: number): string => {
  */
 const formatPercentage = (num: number): string => {
   return num.toFixed(2).replace(/\./g, '\\.');
+};
+
+/**
+ * Escape text for MarkdownV2
+ */
+const esc = (s: string): string => {
+  return s.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
 };
 
 /**
@@ -46,7 +65,7 @@ const generateDailyFinancialReport = async (
 
     // Get node balance (channel balance)
     let nodeBalance = 0;
-    let nodeBalanceStatus = '❌ No disponible';
+    let nodeBalanceStatus = `❌ ${t('en', 'financial_report_not_available')}`;
     try {
       const balanceInfo = await getChannelBalance({ lnd });
       if (balanceInfo && balanceInfo.channel_balance !== undefined) {
@@ -58,8 +77,8 @@ const generateDailyFinancialReport = async (
     }
 
     // Build node balance section (informational only)
-    const nodeBalanceSection = `⚖️ *BALANCE DEL NODO*
-└─ Balance actual: ${nodeBalanceStatus}`;
+    const nodeBalanceSection = `⚖️ *${t('en', 'financial_report_node_balance')}*
+└─ ${t('en', 'financial_report_current_balance')}: ${nodeBalanceStatus}`;
 
     // Build communities breakdown
     let communitiesSection = '';
@@ -67,21 +86,19 @@ const generateDailyFinancialReport = async (
       const topCommunities = communityFees.slice(0, 5);
       const communityLines: string[] = [];
 
-      const esc = (s: string) =>
-        s.replace(/[_*\[\]()~`>#+\-=|{}.!]/g, '\\$&');
       for (const cf of topCommunities) {
         const community = await Community.findById(cf._id);
         const communityName = esc(community ? community.name : String(cf._id));
         communityLines.push(
           `    │  ├─ ${communityName}: ${formatNumber(
             cf.communityFeesAllocated,
-          )} sats \\(${cf.totalOrders} órdenes\\)`,
+          )} sats \\(${cf.totalOrders} ${t('en', 'orders').toLowerCase()}\\)`,
         );
       }
       const totalCommunities = communityFees.length;
       if (totalCommunities > 5) {
         communityLines.push(
-          `    │  └─ \\.\\.\\. y ${totalCommunities - 5} comunidades más`,
+          `    │  └─ ${t('en', 'financial_report_and_more_communities', { count: totalCommunities - 5 })}`,
         );
       }
 
@@ -91,48 +108,48 @@ const generateDailyFinancialReport = async (
     // Detailed breakdown of bot fees
     const botFeesFromNonCommunity =
       stats.ordersWithoutCommunity > 0
-        ? `    ├─ Órdenes sin comunidad: ${formatNumber(Math.round(stats.botFeesEarned * (stats.ordersWithoutCommunity / stats.totalOrders)))} sats \\(${stats.ordersWithoutCommunity} órdenes\\)\n`
+        ? `    ├─ ${t('en', 'financial_report_orders_no_community')}: ${formatNumber(Math.round(stats.botFeesEarned * (stats.ordersWithoutCommunity / stats.totalOrders)))} sats \\(${stats.ordersWithoutCommunity} ${t('en', 'orders').toLowerCase()}\\)\n`
         : '';
     const botFeesFromCommunity =
       stats.ordersWithCommunity > 0
-        ? `    ├─ Órdenes con comunidad: ${formatNumber(Math.round(stats.botFeesEarned * (stats.ordersWithCommunity / stats.totalOrders)))} sats \\(${stats.ordersWithCommunity} órdenes\\)\n`
+        ? `    ├─ ${t('en', 'financial_report_orders_with_community')}: ${formatNumber(Math.round(stats.botFeesEarned * (stats.ordersWithCommunity / stats.totalOrders)))} sats \\(${stats.ordersWithCommunity} ${t('en', 'orders').toLowerCase()}\\)\n`
         : '';
     const goldenHoneyBadgerNote =
       stats.goldenHoneyBadgerOrders > 0
-        ? `    └─ Golden Honey Badger: 0 sats \\(${stats.goldenHoneyBadgerOrders} órdenes\\)\n`
+        ? `    └─ ${t('en', 'financial_report_golden_honey_badger')}: 0 sats \\(${stats.goldenHoneyBadgerOrders} ${t('en', 'orders').toLowerCase()}\\)\n`
         : '';
 
     // Build report message
-    const message = `📊 *REPORTE FINANCIERO DIARIO*
+    const message = `📊 *${t('en', 'financial_report_title')}*
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-📅 Período: Últimas 24 horas
+📅 ${t('en', 'financial_report_period_last_24h')}
 
-💰 *INGRESOS POR FEES*
-├─ Órdenes completadas: ${stats.totalOrders}
-├─ Fee total cobrado: ${formatNumber(stats.totalFees)} sats
+💰 *${t('en', 'financial_report_fees_income')}*
+├─ ${t('en', 'financial_report_orders_completed')}: ${stats.totalOrders}
+├─ ${t('en', 'financial_report_total_fee')}: ${formatNumber(stats.totalFees)} sats
 │
-├─ 📦 Bot fees \\(~30%\\): ${formatNumber(stats.botFeesEarned)} sats
+├─ 📦 ${t('en', 'financial_report_bot_fees')}: ${formatNumber(stats.botFeesEarned)} sats
 ${botFeesFromNonCommunity}${botFeesFromCommunity}${goldenHoneyBadgerNote}│
-└─ 🏘️ Community fees \\(~70%\\): ${formatNumber(stats.communityFeesAllocated)} sats
-    └─ Distribuido a ${communityFees.length} comunidades${communitiesSection}
+└─ 🏘️ ${t('en', 'financial_report_community_fees')}: ${formatNumber(stats.communityFeesAllocated)} sats
+    └─ ${t('en', 'financial_report_distributed_to', { count: communityFees.length })}${communitiesSection}
 
-💸 *COSTOS OPERATIVOS*
-└─ Routing fees pagados: ${formatNumber(stats.routingFeesPaid)} sats
-    ├─ Promedio por orden: ${formatNumber(stats.averageRoutingFee)} sats
-    ├─ % del monto transaccionado: ${formatPercentage(stats.routingFeePercentage / 100)}%
-    └─ % de los fees cobrados: ${formatPercentage(stats.routingFeePercentage)}%
+💸 *${t('en', 'financial_report_operational_costs')}*
+└─ ${t('en', 'financial_report_routing_fees')}: ${formatNumber(stats.routingFeesPaid)} sats
+    ├─ ${t('en', 'financial_report_avg_per_order')}: ${formatNumber(stats.averageRoutingFee)} sats
+    ├─ ${t('en', 'financial_report_pct_amount')}: ${formatPercentage(stats.routingFeePercentage / 100)}%
+    └─ ${t('en', 'financial_report_pct_fees')}: ${formatPercentage(stats.routingFeePercentage)}%
 
-💵 *GANANCIA NETA DEL BOT*
+💵 *${t('en', 'financial_report_net_profit')}*
 └─ ${formatNumber(stats.netProfit)} sats \\(bot\\_fees \\- routing\\_fees\\)
 
 ${nodeBalanceSection}
 
-📈 *MÉTRICAS ADICIONALES*
-├─ Fee\\/orden promedio: ${formatNumber(stats.averageFeePerOrder)} sats
-├─ Routing fee\\/pago: ${formatNumber(stats.averageRoutingFee)} sats
-└─ Eficiencia operativa: ${formatPercentage(stats.operationalEfficiency)}%
+📈 *${t('en', 'financial_report_additional_metrics')}*
+├─ ${t('en', 'financial_report_avg_fee_per_order')}: ${formatNumber(stats.averageFeePerOrder)} sats
+├─ ${t('en', 'financial_report_avg_routing_fee')}: ${formatNumber(stats.averageRoutingFee)} sats
+└─ ${t('en', 'financial_report_operational_efficiency')}: ${formatPercentage(stats.operationalEfficiency)}%
 
-_Generado automáticamente por el sistema de monitoreo financiero_`;
+_${t('en', 'financial_report_auto_generated')}_`;
 
     // Send message to admin channel
     await bot.telegram.sendMessage(adminChannel, message, {
@@ -146,14 +163,14 @@ _Generado automáticamente por el sistema de monitoreo financiero_`;
       process.env.RECONCILIATION_ALERT_THRESHOLD || '0.02',
     );
     if (stats.routingFeePercentage > routingFeeAlertThreshold * 100) {
-      const alertMessage = `⚠️ *ALERTA: ROUTING FEES ELEVADOS*
+      const alertMessage = `⚠️ *${t('en', 'financial_report_alert_title')}*
 
-Los routing fees están en ${formatPercentage(stats.routingFeePercentage)}% de los fees cobrados, superando el umbral de ${formatPercentage(routingFeeAlertThreshold * 100)}%\\.
+${t('en', 'financial_report_alert_message', {
+  current: formatPercentage(stats.routingFeePercentage),
+  threshold: formatPercentage(routingFeeAlertThreshold * 100)
+})}\\.
 
-Recomendaciones:
-• Revisar las rutas de pago del nodo
-• Verificar la liquidez de los canales
-• Considerar abrir canales directos con nodos frecuentes`;
+${t('en', 'financial_report_alert_recommendations')}`;
 
       await bot.telegram.sendMessage(adminChannel, alertMessage, {
         parse_mode: 'MarkdownV2',
@@ -169,7 +186,7 @@ Recomendaciones:
       if (adminChannel) {
         await bot.telegram.sendMessage(
           adminChannel,
-          `❌ Error generando reporte financiero diario: ${errorMessage}`,
+          `❌ ${t('en', 'financial_report_error_generating', { error: errorMessage })}`,
         );
       }
     } catch (notifError) {

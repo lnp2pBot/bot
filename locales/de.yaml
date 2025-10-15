@@ -664,3 +664,38 @@ user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+# Financial Report
+financial_report_title: TÄGLICHER FINANZBERICHT
+financial_report_period_last_24h: "Zeitraum: Letzte 24 Stunden"
+financial_report_fees_income: GEBÜHRENEINNAHMEN
+financial_report_orders_completed: Abgeschlossene Bestellungen
+financial_report_total_fee: Gesamte eingenommene Gebühr
+financial_report_bot_fees: "Bot-Gebühren (~30%)"
+financial_report_community_fees: "Community-Gebühren (~70%)"
+financial_report_distributed_to: Verteilt an ${count} Communities
+financial_report_orders_no_community: Bestellungen ohne Community
+financial_report_orders_with_community: Bestellungen mit Community
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... und ${count} weitere Communities"
+financial_report_operational_costs: BETRIEBSKOSTEN
+financial_report_routing_fees: Bezahlte Routing-Gebühren
+financial_report_avg_per_order: Durchschnitt pro Bestellung
+financial_report_pct_amount: "% des gehandelten Betrags"
+financial_report_pct_fees: "% der eingenommenen Gebühren"
+financial_report_net_profit: BOT-NETTOGEWINN
+financial_report_node_balance: KNOTENGUTHABEN
+financial_report_current_balance: Aktuelles Guthaben
+financial_report_not_available: Nicht verfügbar
+financial_report_additional_metrics: ZUSÄTZLICHE METRIKEN
+financial_report_avg_fee_per_order: Durchschnittliche Gebühr/Bestellung
+financial_report_avg_routing_fee: Durchschnittliche Routing-Gebühr/Zahlung
+financial_report_operational_efficiency: Betriebseffizienz
+financial_report_auto_generated: Automatisch vom Finanzüberwachungssystem generiert
+financial_report_alert_title: "WARNUNG: HOHE ROUTING-GEBÜHREN"
+financial_report_alert_message: "Routing-Gebühren liegen bei ${current}% der eingenommenen Gebühren und überschreiten den Schwellenwert von ${threshold}%."
+financial_report_alert_recommendations: |
+  Empfehlungen:
+  • Knotenzahlungsrouten überprüfen
+  • Kanalliquidität überprüfen
+  • Erwägen Sie direkte Kanäle zu häufigen Knoten
+financial_report_error_generating: "Fehler beim Erstellen des täglichen Finanzberichts: ${error}"

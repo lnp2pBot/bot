@@ -663,3 +663,38 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: انجمن ${communityName} شما هیچ راه حلی ندارد. لطفاً حداقل یک مورد را ظرف ${remainingDays} روز اضافه کنید تا از غیرفعال شدن انجمن جلوگیری کنید.
 check_solvers_last_warning: انجمن ${communityName} شما هیچ راه حلی ندارد. لطفاً امروز حداقل یکی اضافه کنید تا از غیرفعال شدن انجمن جلوگیری کنید.
 image_processing_error: ما یک خطا در پردازش تصویر داشتیم، لطفاً چند دقیقه صبر کنید و دوباره تلاش کنید.
+# Financial Report
+financial_report_title: گزارش مالی روزانه
+financial_report_period_last_24h: "دوره: 24 ساعت گذشته"
+financial_report_fees_income: درآمد کارمزد
+financial_report_orders_completed: سفارشات تکمیل شده
+financial_report_total_fee: مجموع کارمزد دریافت شده
+financial_report_bot_fees: "کارمزد ربات (~30%)"
+financial_report_community_fees: "کارمزد جامعه (~70%)"
+financial_report_distributed_to: توزیع شده بین ${count} جامعه
+financial_report_orders_no_community: سفارشات بدون جامعه
+financial_report_orders_with_community: سفارشات با جامعه
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... و ${count} جامعه دیگر"
+financial_report_operational_costs: هزینه‌های عملیاتی
+financial_report_routing_fees: کارمزد مسیریابی پرداخت شده
+financial_report_avg_per_order: میانگین هر سفارش
+financial_report_pct_amount: "درصد مبلغ معامله شده"
+financial_report_pct_fees: "درصد کارمزد دریافت شده"
+financial_report_net_profit: سود خالص ربات
+financial_report_node_balance: موجودی گره
+financial_report_current_balance: موجودی فعلی
+financial_report_not_available: در دسترس نیست
+financial_report_additional_metrics: معیارهای اضافی
+financial_report_avg_fee_per_order: میانگین کارمزد/سفارش
+financial_report_avg_routing_fee: میانگین کارمزد مسیریابی/پرداخت
+financial_report_operational_efficiency: کارایی عملیاتی
+financial_report_auto_generated: به طور خودکار توسط سیستم نظارت مالی ایجاد شده
+financial_report_alert_title: "هشدار: کارمزد مسیریابی بالا"
+financial_report_alert_message: "کارمزد مسیریابی ${current}% از کارمزدهای دریافت شده است که از آستانه ${threshold}% فراتر رفته است."
+financial_report_alert_recommendations: |
+  توصیه‌ها:
+  • مسیرهای پرداخت گره را بررسی کنید
+  • نقدینگی کانال‌ها را تأیید کنید
+  • باز کردن کانال‌های مستقیم به گره‌های مکرر را در نظر بگیرید
+financial_report_error_generating: "خطا در ایجاد گزارش مالی روزانه: ${error}"

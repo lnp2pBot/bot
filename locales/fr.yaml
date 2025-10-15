@@ -663,3 +663,38 @@ user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
+# Financial Report
+financial_report_title: RAPPORT FINANCIER QUOTIDIEN
+financial_report_period_last_24h: "Période : Dernières 24 heures"
+financial_report_fees_income: REVENUS DES FRAIS
+financial_report_orders_completed: Commandes terminées
+financial_report_total_fee: Total des frais perçus
+financial_report_bot_fees: "Frais du bot (~30%)"
+financial_report_community_fees: "Frais de communauté (~70%)"
+financial_report_distributed_to: Distribué à ${count} communautés
+financial_report_orders_no_community: Commandes sans communauté
+financial_report_orders_with_community: Commandes avec communauté
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... et ${count} autres communautés"
+financial_report_operational_costs: COÛTS OPÉRATIONNELS
+financial_report_routing_fees: Frais de routage payés
+financial_report_avg_per_order: Moyenne par commande
+financial_report_pct_amount: "% du montant traité"
+financial_report_pct_fees: "% des frais perçus"
+financial_report_net_profit: PROFIT NET DU BOT
+financial_report_node_balance: SOLDE DU NŒUD
+financial_report_current_balance: Solde actuel
+financial_report_not_available: Non disponible
+financial_report_additional_metrics: MÉTRIQUES SUPPLÉMENTAIRES
+financial_report_avg_fee_per_order: Frais moyen/commande
+financial_report_avg_routing_fee: Frais de routage moyen/paiement
+financial_report_operational_efficiency: Efficacité opérationnelle
+financial_report_auto_generated: Généré automatiquement par le système de surveillance financière
+financial_report_alert_title: "ALERTE : FRAIS DE ROUTAGE ÉLEVÉS"
+financial_report_alert_message: "Les frais de routage sont à ${current}% des frais perçus, dépassant le seuil de ${threshold}%."
+financial_report_alert_recommendations: |
+  Recommandations :
+  • Vérifier les routes de paiement du nœud
+  • Vérifier la liquidité des canaux
+  • Envisager d'ouvrir des canaux directs vers des nœuds fréquents
+financial_report_error_generating: "Erreur lors de la génération du rapport financier quotidien : ${error}"

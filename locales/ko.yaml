@@ -661,3 +661,38 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
+# Financial Report
+financial_report_title: 일일 재무 보고서
+financial_report_period_last_24h: "기간: 지난 24시간"
+financial_report_fees_income: 수수료 수입
+financial_report_orders_completed: 완료된 주문
+financial_report_total_fee: 총 징수 수수료
+financial_report_bot_fees: "봇 수수료 (~30%)"
+financial_report_community_fees: "커뮤니티 수수료 (~70%)"
+financial_report_distributed_to: ${count}개 커뮤니티에 분배
+financial_report_orders_no_community: 커뮤니티 없는 주문
+financial_report_orders_with_community: 커뮤니티 있는 주문
+financial_report_golden_honey_badger: Golden Honey Badger
+financial_report_and_more_communities: "... 및 ${count}개 커뮤니티 더"
+financial_report_operational_costs: 운영 비용
+financial_report_routing_fees: 지불된 라우팅 수수료
+financial_report_avg_per_order: 주문당 평균
+financial_report_pct_amount: "거래 금액의 %"
+financial_report_pct_fees: "징수된 수수료의 %"
+financial_report_net_profit: 봇 순이익
+financial_report_node_balance: 노드 잔액
+financial_report_current_balance: 현재 잔액
+financial_report_not_available: 사용 불가
+financial_report_additional_metrics: 추가 지표
+financial_report_avg_fee_per_order: 평균 수수료/주문
+financial_report_avg_routing_fee: 평균 라우팅 수수료/결제
+financial_report_operational_efficiency: 운영 효율성
+financial_report_auto_generated: 재무 모니터링 시스템에 의해 자동 생성됨
+financial_report_alert_title: "경고: 높은 라우팅 수수료"
+financial_report_alert_message: "라우팅 수수료가 징수된 수수료의 ${current}%로 임계값 ${threshold}%를 초과합니다."
+financial_report_alert_recommendations: |
+  권장 사항:
+  • 노드 결제 경로 검토
+  • 채널 유동성 확인
+  • 자주 사용하는 노드로 직접 채널 개설 고려
+financial_report_error_generating: "일일 재무 보고서 생성 오류: ${error}"
