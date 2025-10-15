@@ -167,7 +167,7 @@ _${t('en', 'financial_report_auto_generated')}_`;
 
 ${t('en', 'financial_report_alert_message', {
   current: formatPercentage(stats.routingFeePercentage),
-  threshold: formatPercentage(routingFeeAlertThreshold * 100)
+  threshold: formatPercentage(routingFeeAlertThreshold * 100),
 })}\\.
 
 ${t('en', 'financial_report_alert_recommendations')}`;
