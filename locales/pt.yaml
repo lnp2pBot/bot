@@ -414,10 +414,10 @@ expired_order_to_seller: |
   Se precisar de ajuda, pode escrever para o grupo ${helpGroup}
 didnt_add_invoice: '🤨 Você não enviou a fatura para receber sats para o pedido Id: ${orderId}'
 buyer_havent_add_invoice: '😔 O comprador não me enviou a fatura para receber os sats para o seu pedido Id: ${orderId}, seus sats foram enviados de volta para você'
-buyer_havent_add_invoice_to_admin_channel: 'Compradora @${username} tomou o orderId: ${orderId} mas não enviou a fatura para onde receber sats, o tempo expirou, a ordem foi republicada.'
+buyer_havent_add_invoice_to_admin_channel: 'Compradora @${username} (${tgId}) tomou o orderId: ${orderId} mas não enviou a fatura para onde receber sats, o tempo expirou, a ordem foi republicada.'
 havent_paid_invoice: '🤨 Você não pagou a fatura para vender sats para o pedido Id: ${orderId}'
 seller_havent_paid_invoice: '😔 O vendedor não pagou a fatura pela sua compra Id: ${orderId}, A operação foi cancelada.'
-seller_havent_add_invoice_to_admin_channel: 'Vendedora @${username} não pagou a fatura do pedido Id: ${orderId} O lapso do tempo terminou e o pedido foi publicado novamente.'
+seller_havent_add_invoice_to_admin_channel: 'Vendedora @${username} (${tgId}) não pagou a fatura do pedido Id: ${orderId} O lapso do tempo terminou e o pedido foi publicado novamente.'
 pending_payment_success_to_admin: |
   Usuário @${username} Tinha uma fatura pendente, eles pagam pelo pedido de compra Id: ${orderId} por ${amount} satoshis, foi finalmente executado depois ${attempts} tentativas.
 

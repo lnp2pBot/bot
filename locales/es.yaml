@@ -416,10 +416,10 @@ expired_order_to_seller: |
   Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 didnt_add_invoice: '🤨 No has enviado la factura para recibir sats por la orden Id: ${orderId}'
 buyer_havent_add_invoice: '😔 El comprador no me envió la factura para recibir sats por tu venta Id: ${orderId}, tus sats han sido devueltos'
-buyer_havent_add_invoice_to_admin_channel: 'El comprador @${username} tomó la orden Id: ${orderId} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente.'
+buyer_havent_add_invoice_to_admin_channel: 'El comprador @${username} (${tgId}) tomó la orden Id: ${orderId} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente.'
 havent_paid_invoice: '🤨 No has pagado la factura para vender sats por la orden Id: ${orderId}'
 seller_havent_paid_invoice: '😔 El vendedor no pagó la factura por tu compra Id: ${orderId}, la operación ha sido cancelada'
-seller_havent_add_invoice_to_admin_channel: 'El vendedor @${username} no ha pagado la factura correspondiente a la orden Id: ${orderId} y el tiempo ha expirado, la orden ha sido publicada nuevamente'
+seller_havent_add_invoice_to_admin_channel: 'El vendedor @${username} (${tgId}) no ha pagado la factura correspondiente a la orden Id: ${orderId} y el tiempo ha expirado, la orden ha sido publicada nuevamente'
 pending_payment_success_to_admin: |
   El usuario @${username} tenía un pago pendiente en su compra Id: ${orderId} de ${amount} satoshis, el pago se realizó luego de ${attempts} intentos.
 
