@@ -414,10 +414,10 @@ expired_order_to_seller: |
   Si vous avez besoin d'aide, vous pouvez écrire au groupe ${helpGroup}
 didnt_add_invoice: "🤨 Vous n'avez pas envoyé la facture pour recevoir des sats pour l'offre ID : ${orderId}"
 buyer_havent_add_invoice: "😔  L'acheteur ne m'a pas envoyé la facture pour recevoir les sats pour votre offre ID : ${orderId}, vos sats vous ont été renvoyés."
-buyer_havent_add_invoice_to_admin_channel: "L'acheteur @${username} a pris l'offre ID : ${orderId} mais n'a pas envoyé la facture pour recevoir les sats, le temps a expiré, la commande a été republiée."
+buyer_havent_add_invoice_to_admin_channel: "L'acheteur @${username} (${tgId}) a pris l'offre ID : ${orderId} mais n'a pas envoyé la facture pour recevoir les sats, le temps a expiré, la commande a été republiée."
 havent_paid_invoice: "🤨 Vous n'avez pas payé la facture de vente de sats pour l'offre ID : ${orderId}"
 seller_havent_paid_invoice: "😔 Le vendeur n'a pas payé la facture pour votre achat ID : ${orderId}, l'opération a été annulée."
-seller_havent_add_invoice_to_admin_channel: "Le vendeur @${username} n'a pas payé la facture de l'offre ID : ${orderId}. Le délai est terminé et la commande a été publiée à nouveau."
+seller_havent_add_invoice_to_admin_channel: "Le vendeur @${username} (${tgId}) n'a pas payé la facture de l'offre ID : ${orderId}. Le délai est terminé et la commande a été publiée à nouveau."
 pending_payment_success_to_admin: |
   L'utilisateur @${username} avait une facture en attente, le paiement de l'offre d'achat : ${orderId} pour ${amount} satoshis, a finalement été exécuté après ${attempts} tentatives.
 

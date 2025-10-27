@@ -413,10 +413,10 @@ expired_order_to_seller: |
   Wenn du Hilfe brauchst, kannst du an die Gruppe ${helpGroup} schreiben
 didnt_add_invoice: '🤨 Du hast die LN-Rechnung noch nicht gesendet, um Sats für den Auftrag zu erhalten: ${orderId}'
 buyer_havent_add_invoice: '😔 Der Käufer hat mir die LN-Rechnung für den Erhalt der Sats für deinen Auftrag nicht geschickt: Auftrag ${orderId}. Deine Sats wurden an dich zurückgeschickt.'
-buyer_havent_add_invoice_to_admin_channel: 'Käufer @${username} hat den Auftrag ${orderId} angenommen, aber keine LN-Rechnung gesendet. Die Zeit ist abgelaufen, der Auftrag wird neu veröffentlicht.'
+buyer_havent_add_invoice_to_admin_channel: 'Käufer @${username} (${tgId}) hat den Auftrag ${orderId} angenommen, aber keine LN-Rechnung gesendet. Die Zeit ist abgelaufen, der Auftrag wird neu veröffentlicht.'
 havent_paid_invoice: '🤨 Du hast die LN-Rechnung nicht bezahlt, um Sats für den Auftrag (${orderId}) zu verkaufen.'
 seller_havent_paid_invoice: '😔 Der Verkäufer hat die LN-Rechnung für deinen Auftrag (${orderId}) nicht bezahlt. Der Vorgang wurde storniert.'
-seller_havent_add_invoice_to_admin_channel: 'Verkäufer @${username} hat die LN-Rechnung des Auftrages (${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht.'
+seller_havent_add_invoice_to_admin_channel: 'Verkäufer @${username} (${tgId}) hat die LN-Rechnung des Auftrages (${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht.'
 pending_payment_success_to_admin: |
   Benutzer @${username} hatte eine ausstehende LN-Rechnung, die Zahlung für die Auftrag: ${orderId} für ${amount} Sats, wurde nach ${attempts} Versuchen endlich ausgeführt.
 

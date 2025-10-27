@@ -421,10 +421,10 @@ expired_order_to_seller: |
   If you need help, you can write to the group ${helpGroup}
 didnt_add_invoice: '🤨 You have not sent the invoice to receive sats for the order ID: ${orderId}'
 buyer_havent_add_invoice: '😔 Buyer has not sent me the invoice to receive the sats for your order ID: ${orderId}, your sats were sent back to you'
-buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} took the order ID: ${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished.'
+buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} (${tgId}) took the order ID: ${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished.'
 havent_paid_invoice: '🤨 You have not paid the invoice to sell sats for the order ID: ${orderId}'
 seller_havent_paid_invoice: '😔 Seller has not paid the invoice for your purchase ID: ${orderId}, the operation was cancelled.'
-seller_havent_add_invoice_to_admin_channel: 'Seller @${username} has not paid the invoice of order ID: ${orderId} time lapse ended and the order has been published again.'
+seller_havent_add_invoice_to_admin_channel: 'Seller @${username} (${tgId}) has not paid the invoice of order ID: ${orderId} time lapse ended and the order has been published again.'
 pending_payment_success_to_admin: |
   User @${username} had a pending invoice, the payment for buying order ID: ${orderId} for ${amount} satoshis, was finally executed after ${attempts} attempts.
 
