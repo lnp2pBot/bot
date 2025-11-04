@@ -1,4 +1,12 @@
-import { getCurrency, numberFormat, decimalRound, plural, isFloat, toKebabCase } from '../../util/index';
+/* eslint-disable no-unused-expressions */
+import {
+  getCurrency,
+  numberFormat,
+  decimalRound,
+  plural,
+  isFloat,
+  toKebabCase,
+} from '../../util/index';
 
 const { expect } = require('chai');
 
@@ -26,7 +34,7 @@ describe('Utility Functions', () => {
     it('should handle common currency codes', () => {
       const usd = getCurrency('USD');
       const eur = getCurrency('EUR');
-      
+
       expect(usd).to.not.be.null;
       expect(eur).to.not.be.null;
     });
