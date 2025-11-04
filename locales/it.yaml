@@ -412,10 +412,10 @@ expired_order_to_seller: |
   Se hai bisogno di aiuto, puoi scrivere al gruppo ${helpGroup}
 didnt_add_invoice: "🤨 Non è stata inviata la fattura per ricevere i sats relativi all'ordine ID: ${orderId}"
 buyer_havent_add_invoice: "😔 L'acquirente non mi ha inviato la fattura per ricevere i sats relativi al tuo ordine ID: ${orderId}, i sats sono stati rispediti a te"
-buyer_havent_add_invoice_to_admin_channel: "L'acquirente @${username} ha accettato l'ordine ID: ${orderId} ma non ha inviato la fattura dove ricevere sats, il tempo è scaduto e l'ordine è stato ripubblicato."
+buyer_havent_add_invoice_to_admin_channel: "L'acquirente @${username} (${tgId}) ha accettato l'ordine ID: ${orderId} ma non ha inviato la fattura dove ricevere sats, il tempo è scaduto e l'ordine è stato ripubblicato."
 havent_paid_invoice: "🤨 Non hai pagato la invoice per vendere i sats relativi all' ordineID:${orderId}"
 seller_havent_paid_invoice: "😔 Il venditore non ha pagato la invoice per il tuo ordine di acquisto ID: ${orderId}, l'operazione è stata annullata."
-seller_havent_add_invoice_to_admin_channel: "Il venditore @${username} non ha pagato la invoice per l'ordine ID: ${orderId} il termine è scaduto e l'ordine è stato ripubblicato"
+seller_havent_add_invoice_to_admin_channel: "Il venditore @${username} (${tgId}) non ha pagato la invoice per l'ordine ID: ${orderId} il termine è scaduto e l'ordine è stato ripubblicato"
 pending_payment_success_to_admin: |
   L'utente @${username} aveva una fattura in sospeso, hanno pagato per l'ordine di acquisto ID: ${orderId} per ${amount} satoshi, è stato finalmente esguito dopo ${attempts} attempts.
 

@@ -6,6 +6,7 @@ import { getUserI18nContext, holdInvoiceExpirationInSecs } from '../util';
 import { logger } from '../logger';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import * as OrderEvents from '../bot/modules/events/orders';
+import { PerOrderIdMutex } from '../ln/subscribe_invoice';
 
 const cancelOrders = async (bot: HasTelegram) => {
   try {
@@ -30,7 +31,20 @@ const cancelOrders = async (bot: HasTelegram) => {
     });
     for (const order of waitingPaymentOrders) {
       if (order.status === 'WAITING_PAYMENT') {
-        await cancelShowHoldInvoice(bot as CommunityContext, order, true);
+        await PerOrderIdMutex.instance.runExclusive(
+          String(order._id),
+          async () => {
+            const updatedOrder = await Order.findById(order._id);
+            // In the case the orderId was modified then we don't cancel the order
+            if (!updatedOrder || updatedOrder.status !== 'WAITING_PAYMENT')
+              return;
+            await cancelShowHoldInvoice(
+              bot as CommunityContext,
+              updatedOrder,
+              true,
+            );
+          },
+        );
       } else {
         await cancelAddInvoice(bot as CommunityContext, order, true);
       }

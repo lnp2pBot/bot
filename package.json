@@ -1,6 +1,6 @@
 {
   "name": "lnp2pbot",
-  "version": "0.14.1",
+  "version": "0.14.3",
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
   "main": "dist/app.js",
@@ -18,7 +18,8 @@
   "dependencies": {
     "@grammyjs/i18n": "^0.5.1",
     "@grammyjs/ratelimiter": "^1.1.5",
-    "axios": "1.9.0",
+    "async-mutex": "^0.5.0",
+    "axios": "1.12.0",
     "canvas": "^3.0.0",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
