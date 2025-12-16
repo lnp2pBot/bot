@@ -479,6 +479,7 @@ const showHoldInvoiceMessage = async (
   fiatAmount: IOrder['fiat_amount'],
   randomImage: string,
   isGoldenHoneyBadger: boolean = false,
+  orderId?: string,
 ) => {
   try {
     const currency = getCurrency(fiatCode);
@@ -509,6 +510,25 @@ const showHoldInvoiceMessage = async (
         parse_mode: 'MarkdownV2',
       },
     ]);
+
+    if (orderId) {
+      await ctx.telegram.sendMessage(ctx.from!.id, orderId, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: ctx.i18n.t('mark_as_pending'),
+                callback_data: `markPendingBtn_${orderId}`,
+              },
+              {
+                text: ctx.i18n.t('cancel'),
+                callback_data: `cancelShowHoldInvoiceBtn`,
+              },
+            ],
+          ],
+        },
+      });
+    }
   } catch (error) {
     logger.error(error);
     if (error instanceof ImageProcessingError) {

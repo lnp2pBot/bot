@@ -458,6 +458,7 @@ const showHoldInvoice = async (
       order.fiat_amount,
       order.random_image,
       order.is_golden_honey_badger,
+      order._id,
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);
@@ -577,6 +578,66 @@ const cancelShowHoldInvoice = async (
         await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
       }
     }
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const markAsPending = async (ctx: CommunityContext, orderId: string) => {
+  try {
+    ctx.deleteMessage();
+    ctx.scene.leave();
+
+    const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+
+    const user = await User.findOne({ _id: order.seller_id });
+    if (!user) return;
+
+    const i18nCtx = await getUserI18nContext(user);
+
+    // Only allow marking as pending for orders in WAITING_PAYMENT status
+    if (order.status !== 'WAITING_PAYMENT') {
+      return await messages.genericErrorMessage(ctx, user, i18nCtx);
+    }
+
+    // Cancel the hold invoice
+    if (order.hash) {
+      await cancelHoldInvoice({ hash: order.hash });
+    }
+
+    const buyerUser = await User.findOne({ _id: order.buyer_id });
+    if (!buyerUser) throw new Error('buyerUser was not found');
+
+    logger.info(
+      `Seller Id ${user.id} marked Order Id: ${order._id} as pending, republishing to the channel`,
+    );
+
+    // Reset order to PENDING status
+    order.taken_at = null;
+    order.status = 'PENDING';
+
+    if (!!order.min_amount && !!order.max_amount) {
+      order.fiat_amount = undefined;
+    }
+
+    if (order.price_from_api) {
+      order.amount = 0;
+      order.fee = 0;
+      order.hash = null;
+      order.secret = null;
+    }
+
+    if (order.type === 'buy') {
+      order.seller_id = null;
+      await messages.publishBuyOrderMessage(ctx, buyerUser, order, i18nCtx);
+    } else {
+      order.buyer_id = null;
+      await messages.publishSellOrderMessage(ctx, user, order, i18nCtx);
+    }
+
+    await order.save();
+    await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
   } catch (error) {
     logger.error(error);
   }
@@ -878,6 +939,7 @@ export {
   waitPayment,
   addInvoice,
   cancelShowHoldInvoice,
+  markAsPending,
   showHoldInvoice,
   addInvoicePHI,
   cancelOrder,
