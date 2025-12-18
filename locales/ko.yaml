@@ -567,6 +567,7 @@ community_language_updated: 성공적으로 커뮤니티의 언어를 ${language
 wizard_community_enter_language: '커뮤니티의 언어를 입력하세요. (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: '유효하지 않은 언어입니다. 다음 중 하나를 입력하세요: en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: 성공적으로 커뮤니티의 공개키 ${npub}을 추가하였습니다!
+language: "언어"
 # END modules/community
 
 # START modules/nostr

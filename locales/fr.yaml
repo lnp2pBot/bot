@@ -569,6 +569,7 @@ community_language_updated: Vous avez configuré la langue de la communauté en 
 wizard_community_enter_language: 'Entrez le code de la langue de votre communauté (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: "Code de langue invalide. Veuillez entrer l'un des suivants - en, es, fr, de, it, pt, ru, uk, ko, fa"
 community_npub_updated: Vous avez ajouté la clé publique de la communauté ${npub} avec succès !
+language: "Langue"
 # END modules/community
 
 # START modules/nostr

@@ -584,6 +584,7 @@ community_language_updated: Hai aggiornato con successo la lingua della communit
 wizard_community_enter_language: 'Inserisci il codice lingua per la tua community (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Codice lingua non valido. Inserisci uno dei seguenti - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+language: "Lingua"
 # END modules/community
 
 # START modules/orders

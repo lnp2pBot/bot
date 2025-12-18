@@ -587,6 +587,7 @@ community_npub_updated: You added the community's pubkey ${npub} successfully!
 community_language_updated: Du hast die Sprache der Community erfolgreich auf ${language} aktualisiert!
 wizard_community_enter_language: 'Gib den Sprachcode für deine Community ein (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Ungültiger Sprachcode. Bitte gib einen der folgenden ein - en, es, fr, de, it, pt, ru, uk, ko, fa'
+language: "Sprache"
 # END modules/community
 
 # START modules/orders

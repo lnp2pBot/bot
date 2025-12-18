@@ -570,6 +570,7 @@ community_language_updated: شما زبان کامیونیتی را با موف�
 wizard_community_enter_language: 'کد زبان کامیونیتی خود را وارد کنید (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'کد زبان نامعتبر است. لطفاً یکی از موارد زیر را وارد کنید - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: شما کلیدعمومی کامیونیتی ${npub} را با موفقیت اضافه کردید!
+language: "زبان"
 # END modules/community
 
 # START modules/nostr

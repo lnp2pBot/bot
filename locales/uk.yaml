@@ -583,6 +583,7 @@ community_language_updated: Ви успішно оновили мову спіл
 wizard_community_enter_language: 'Введіть код мови для вашої спільноти (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Недійсний код мови. Будь ласка, введіть один із таких - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+language: "Мова"
 # END modules/community
 
 # START modules/orders
