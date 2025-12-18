@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
+import { isValidLanguage, SUPPORTED_LANGUAGES } from '../util/languages';
 
 const CURRENCIES: number = parseInt(process.env.COMMUNITY_CURRENCIES || '10');
 
@@ -85,25 +86,11 @@ const CommunitySchema = new Schema<ICommunity>({
   warning_messages_count: { type: Number, default: 0 },
   language: {
     type: String,
+    trim: true,
+    lowercase: true,
     default: 'en',
-    validate: {
-      validator: function (v: string) {
-        const supportedLanguages = [
-          'en',
-          'es',
-          'fr',
-          'de',
-          'it',
-          'pt',
-          'ru',
-          'uk',
-          'ko',
-          'fa',
-        ]; // Add all supported languages
-        return supportedLanguages.includes(v);
-      },
-      message: 'Language code {VALUE} is not supported',
-    },
+    enum: SUPPORTED_LANGUAGES,
+    validate: [isValidLanguage, 'Language code {VALUE} is not supported'],
   },
 });
 
