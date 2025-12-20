@@ -596,6 +596,11 @@ const markAsPending = async (ctx: CommunityContext, orderId: string) => {
 
     const i18nCtx = await getUserI18nContext(user);
 
+    // Verify that the user clicking the button is the seller
+    if (order.seller_id?.toString() !== ctx.from?.id.toString()) {
+      return await messages.genericErrorMessage(ctx, user, i18nCtx);
+    }
+
     // Only allow marking as pending for orders in WAITING_PAYMENT status
     if (order.status !== 'WAITING_PAYMENT') {
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
