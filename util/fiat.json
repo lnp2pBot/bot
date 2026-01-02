@@ -594,13 +594,13 @@
   },
   "IRT": {
     "symbol": "IRT",
-    "name": "Iranian Tomen",
-    "symbol_native": "﷼",
+    "name": "Iranian Toman",
+    "symbol_native": "تومان",
     "decimal_digits": 0,
     "rounding": 0,
     "code": "IRT",
     "emoji": "🇮🇷",
-    "name_plural": "Iranian Tomen",
+    "name_plural": "Iranian Toman",
     "price": true
   },
   "ISK": {
