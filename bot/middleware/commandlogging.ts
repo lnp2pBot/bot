@@ -52,9 +52,8 @@ export function commandLogger(): MiddlewareFn<CommunityContext> {
 
 				logger.info(`User @${userName} [${userId}] ${isCommand? 'executed command:' : 'sent message:'} ${command} with args: [${args.join(', ')}]`);
 			} else if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
-				let msgText: string;
-				// Safely attempt to get message text
-				msgText = (ctx.callbackQuery?.message as any)?.text ?? '';
+				// Attempt to get message text
+				const msgText = (ctx.callbackQuery?.message as any)?.text ?? '';
 				const callbackData = ctx.callbackQuery.data;
 				const userName = ctx.callbackQuery.from?.username ?? '';
 				const userId = ctx.callbackQuery.from?.id ?? '';
