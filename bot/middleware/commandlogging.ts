@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { MiddlewareFn } from 'telegraf';
 import { CommunityContext } from '../modules/community/communityContext';
 import winston from 'winston';
@@ -10,7 +9,6 @@ const logger = winston.createLogger({
 		winston.format.timestamp({
 			format: 'YYYY-MM-DDTHH:mm:ss.SSSZ',
 		}),
-		winston.format.colorize(),
 		winston.format.printf(info => {
 			return `[${info.timestamp}] ${info.level}: ${info.message} ${
 				info.stack ? info.stack : ''
@@ -56,12 +54,7 @@ export function commandLogger(): MiddlewareFn<CommunityContext> {
 			} else if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
 				let msgText: string;
 				// Safely attempt to get message text
-				try {
-					msgText = ctx.callbackQuery.message?.text;
-				} catch {
-					msgText = '';
-				}
-
+				msgText = (ctx.callbackQuery?.message as any)?.text ?? '';
 				const callbackData = ctx.callbackQuery.data;
 				const userName = ctx.callbackQuery.from?.username ?? '';
 				const userId = ctx.callbackQuery.from?.id ?? '';
