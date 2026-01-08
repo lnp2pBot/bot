@@ -22,7 +22,7 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.File({
       filename: logFile,
-      maxsize: maxSizeGB * 1024 * 1024 * 1000, // 5GB
+      maxsize: maxSizeGB * 1024 ** 3, // 5GB
     }),
   ],
   exitOnError: false,
@@ -57,6 +57,7 @@ export function commandLogger(): MiddlewareFn<CommunityContext> {
         );
       } else if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
         // Attempt to get message text
+
         const callbackQueryMessage =
           (ctx.callbackQuery?.message as any)?.text ?? '';
         const isId = /^[a-f0-9]{24}$/.test(callbackQueryMessage);
