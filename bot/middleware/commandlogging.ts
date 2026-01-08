@@ -1,6 +1,7 @@
 import { MiddlewareFn } from 'telegraf';
 import { CommunityContext } from '../modules/community/communityContext';
 import winston from 'winston';
+import { extractId } from '../../util';
 
 const logFile = process.env.COMMAND_LOG_FILE || 'commands.log';
 const maxSizeGB = parseInt(process.env.COMMAND_LOG_SIZE_GB || '5', 10) || 5;
@@ -56,12 +57,15 @@ export function commandLogger(): MiddlewareFn<CommunityContext> {
         );
       } else if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
         // Attempt to get message text
-        const msgText = (ctx.callbackQuery?.message as any)?.text ?? '';
+        const callbackQueryMessage = (ctx.callbackQuery?.message as any)?.text ?? '';
+				const isId = /^[a-f0-9]{24}$/.test(callbackQueryMessage);
+				const orderId = isId ? callbackQueryMessage : extractId(callbackQueryMessage);
+				const msgText = orderId ? `Order ID: ${orderId}` : `Message text: '${callbackQueryMessage}'`;
         const callbackData = ctx.callbackQuery.data;
         const userName = ctx.callbackQuery.from?.username ?? '';
         const userId = ctx.callbackQuery.from?.id ?? '';
         logger.info(
-          `User @${userName} [${userId}] sent callback query with data: ${callbackData}. Message text: '${msgText}'`,
+          `User @${userName} [${userId}] sent callback query with data: ${callbackData}. '${msgText}'`,
         );
       } else {
         logger.info(`Received non-command message or update from user.`);
