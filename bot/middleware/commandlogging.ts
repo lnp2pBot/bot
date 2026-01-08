@@ -57,10 +57,15 @@ export function commandLogger(): MiddlewareFn<CommunityContext> {
         );
       } else if (ctx.callbackQuery && 'data' in ctx.callbackQuery) {
         // Attempt to get message text
-        const callbackQueryMessage = (ctx.callbackQuery?.message as any)?.text ?? '';
-				const isId = /^[a-f0-9]{24}$/.test(callbackQueryMessage);
-				const orderId = isId ? callbackQueryMessage : extractId(callbackQueryMessage);
-				const msgText = orderId ? `Order ID: ${orderId}` : `Message text: '${callbackQueryMessage}'`;
+        const callbackQueryMessage =
+          (ctx.callbackQuery?.message as any)?.text ?? '';
+        const isId = /^[a-f0-9]{24}$/.test(callbackQueryMessage);
+        const orderId = isId
+          ? callbackQueryMessage
+          : extractId(callbackQueryMessage);
+        const msgText = orderId
+          ? `Order ID: ${orderId}`
+          : `Message text: '${callbackQueryMessage}'`;
         const callbackData = ctx.callbackQuery.data;
         const userName = ctx.callbackQuery.from?.username ?? '';
         const userId = ctx.callbackQuery.from?.id ?? '';
