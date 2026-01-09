@@ -918,7 +918,7 @@ const initialize = (
     },
   );
 
-  // Acción para mostrar confirmación de liberación
+  // Action to show release confirmation
   bot.action(
     /^show_release_confirmation_([0-9a-f]{24})$/,
     userMiddleware,
@@ -931,7 +931,7 @@ const initialize = (
     },
   );
 
-  // Acción para confirmar liberación
+  // Action to confirm release
   bot.action(
     /^confirm_release_([0-9a-f]{24})$/,
     userMiddleware,
@@ -944,7 +944,7 @@ const initialize = (
     },
   );
 
-  // Acción para cancelar liberación
+  // Action to cancel release
   bot.action(
     /^cancel_release$/,
     userMiddleware,

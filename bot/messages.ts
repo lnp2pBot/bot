@@ -2001,7 +2001,7 @@ const showReleaseConfirmationMessage = async (
     const order = await Order.findOne({ _id: orderId });
     if (!order) return;
 
-    // Obtener información de los usuarios
+    // Get user information
     const seller = await User.findOne({ _id: order.seller_id });
     const buyer = await User.findOne({ _id: order.buyer_id });
 
