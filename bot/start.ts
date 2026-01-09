@@ -47,6 +47,7 @@ import {
   release,
   showQrCode,
 } from './commands';
+import { showReleaseConfirmationMessage } from './messages';
 import {
   settleHoldInvoice,
   cancelHoldInvoice,
@@ -914,6 +915,42 @@ const initialize = (
       }
       ctx.deleteMessage();
       await release(ctx, ctx.match[1]);
+    },
+  );
+
+  // Acción para mostrar confirmación de liberación
+  bot.action(
+    /^show_release_confirmation_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await showReleaseConfirmationMessage(ctx, ctx.match[1]);
+    },
+  );
+
+  // Acción para confirmar liberación
+  bot.action(
+    /^confirm_release_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await release(ctx, ctx.match[1]);
+    },
+  );
+
+  // Acción para cancelar liberación
+  bot.action(
+    /^cancel_release$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      ctx.deleteMessage();
+      await ctx.reply(ctx.i18n.t('release_operation_cancelled'));
     },
   );
 
