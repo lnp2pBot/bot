@@ -507,7 +507,21 @@ not_wizard: Non sei in modalità guidata al momento, se hai dei dubbi puoi scriv
 wizard_help: YNon sei in modalità guidata, per tornare al menu comani esegui /exit
 hold_invoice_memo: "@${botName} - L'importo del deposito a garanzia Ordine #${orderId}: VENDE BTC per ${fiatCode} ${fiatAmount} - verrà FREEZATO NEL WALLET. Si sbloccherà una volta premuto il comando /release. Verrà restituito se l'acquirente non conferma il pagamento."
 tap_button: Seleziona un ordine per eseguire l'operazione
-tap_release: Seleziona l'ordine di sblocco dei fondi; l'operazione non può essere annullata.
+tap_release: Seleziona l'ordine per sbloccare i fondi, vedrai una conferma prima di procedere.
+release_confirmation_message: |
+  Stai per rilasciare il seguente ordine:
+
+  🆔 ID Ordine: ${orderId}
+  👤 Controparte: @${counterparty}
+  ⚡ Importo: ${amount} sats
+  💰 Equivalente: ${fiatAmount} ${fiatCode}
+
+  ⚠️ Questa operazione non può essere annullata.
+
+  Vuoi confermare questa operazione?
+release_confirm_button: Conferma
+release_cancel_button: Annulla
+release_operation_cancelled: Operazione di rilascio annullata.
 earnings: Guadagni
 premium: Surplus
 discount: Sconto
