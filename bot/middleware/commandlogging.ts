@@ -24,7 +24,7 @@ const logger = winston.createLogger({
     new winston.transports.File({
       filename: logFile,
       maxsize: maxSizeMB * 1024 ** 2, // maxsize in MB
-      maxFiles: maxFiles,
+      maxFiles,
       tailable: true,
       zippedArchive: false,
     }),
