@@ -40,6 +40,7 @@ import {
   cancelAddInvoice,
   addInvoice,
   cancelShowHoldInvoice,
+  markAsPending,
   showHoldInvoice,
   addInvoicePHI,
   cancelOrder,
@@ -844,6 +845,17 @@ const initialize = (
     userMiddleware,
     async (ctx: CommunityContext) => {
       await cancelShowHoldInvoice(ctx);
+    },
+  );
+
+  bot.action(
+    /^markPendingBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      await markAsPending(ctx, ctx.match[1]);
     },
   );
 
