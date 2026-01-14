@@ -567,6 +567,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'it'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -577,7 +579,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configure community's public key.
+  /setlanguage &lt;lang&gt; - Configura la lingua della community per i messaggi pubblicati.
+community_language_updated: Hai aggiornato con successo la lingua della community a ${language}!
+wizard_community_enter_language: 'Inserisci il codice lingua per la tua community (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Codice lingua non valido. Inserisci uno dei seguenti - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+language: "Lingua"
 # END modules/community
 
 # START modules/orders

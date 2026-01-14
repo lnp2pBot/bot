@@ -570,6 +570,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'ru'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -580,7 +582,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configure community's Nostr public key.
+  /setlanguage &lt;lang&gt; - Настройте язык сообщества для публикуемых сообщений.
+community_language_updated: Вы успешно обновили язык сообщества на ${language}!
+wizard_community_enter_language: 'Введите код языка для вашего сообщества (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Недопустимый код языка. Пожалуйста, введите один из следующих - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+language: "Язык"
 # END modules/community
 
 # START modules/orders
