@@ -26,7 +26,7 @@ const logger = winston.createLogger({
       maxsize: maxSizeMB * 1024 ** 2, // maxsize in MB
       maxFiles: maxFiles,
       tailable: true,
-      zippedArchive: false
+      zippedArchive: false,
     }),
   ],
   exitOnError: false,
