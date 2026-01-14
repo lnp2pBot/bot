@@ -4,7 +4,8 @@ import winston from 'winston';
 import { extractId } from '../../util';
 
 const logFile = process.env.COMMAND_LOG_FILE || 'commands.log';
-const maxSizeGB = parseInt(process.env.COMMAND_LOG_SIZE_GB || '5', 10) || 5;
+const maxSizeMB = parseInt(process.env.COMMAND_LOG_SIZE_MB || '5', 10) || 5;
+const maxFiles = parseInt(process.env.MAX_LOG_FILES || '5', 10) || 5;
 
 const logger = winston.createLogger({
   format: winston.format.combine(
@@ -22,7 +23,10 @@ const logger = winston.createLogger({
   transports: [
     new winston.transports.File({
       filename: logFile,
-      maxsize: maxSizeGB * 1024 ** 3, // 5GB
+      maxsize: maxSizeMB * 1024 ** 2, // maxsize in MB
+      maxFiles: maxFiles,
+      tailable: true,
+      zippedArchive: false
     }),
   ],
   exitOnError: false,
