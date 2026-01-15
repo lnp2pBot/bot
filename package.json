@@ -24,7 +24,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
-    "lightning": "10.25.0",
+    "lightning": "10.27.5",
     "mongoose": "6.13.6",
     "node-schedule": "^2.0.0",
     "nostr-tools": "^2.5.2",
