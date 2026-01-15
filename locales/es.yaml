@@ -515,8 +515,8 @@ tap_release: Selecciona la orden para liberar los fondos, verás una confirmaci�
 release_confirmation_message: |
   Estás a punto de liberar la siguiente orden:
 
-  🆔 Order ID: ${orderId}
-  👤 Contraparte: @${counterparty}
+  🆔 ID de orden: ${orderId}
+  👤 Contraparte: ${counterparty}
   ⚡ Monto: ${amount} sats
   💰 Equivalente: ${fiatAmount} ${fiatCode}
 
