@@ -18,7 +18,7 @@ import { logger } from '../logger';
 import { HasTelegram, MainContext } from './start';
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
-import { Order, User } from '../models';
+import { Order, User} from '../models';
 import { I18nContext } from '@grammyjs/i18n';
 import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';
