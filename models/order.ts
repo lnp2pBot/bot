@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IOrder extends Document {
-   _id: string;
+  _id: string;
   description?: string;
   amount: number;
   max_amount: number;

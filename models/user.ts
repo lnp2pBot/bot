@@ -6,7 +6,7 @@ interface UserReview {
 }
 
 export interface UserDocument extends Document {
-   _id: string;
+  _id: string;
   tg_id: string;
   username?: string;
   lang: string;
