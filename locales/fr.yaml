@@ -434,9 +434,11 @@ pending_payment_failed_to_admin: |
   Le paiement de la facture pour l'offre d'achat ${orderId} de l'utilisateur @${username} a échoué.
 
   Tentatives de paiement : ${attempts}
-selling: Vente
-buying: Achat
+selling_sats: Vente de sats
+buying_sats: Achat de sats
 receive_payment: Réception du paiement
+showusername_buying_sats: "@${username} achète des sats"
+showusername_selling_sats: "@${username} vent des sats"
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'

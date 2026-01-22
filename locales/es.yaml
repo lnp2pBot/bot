@@ -436,8 +436,10 @@ pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: ${orderId} del usuario @${username} ha fallado!
 
   Intento de pago: ${attempts}
-selling: Vendiendo
-buying: Comprando
+selling_sats: Vendiendo sats
+buying_sats: Comprando sats
+showusername_buying_sats: '@${username} está comprando sats'
+showusername_selling_sats: '@${username} está vendiendo sats'
 receive_payment: Recibo pago
 pay: Pago
 is: está

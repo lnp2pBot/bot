@@ -511,16 +511,17 @@ pending_payment_failed: |
   گاهی اوقات کاربران شبکه لایتنینگ به دلیل ناکافی بودن ظرفیت دریافت کیف پولشان یا اتصال ناپایدار گره به شبکه، نمی‌توانند پرداخت‌ها را دریافت کنند. شاید بهتر باشد با استفاده از کیف پول دیگری یک صورتحساب ایجاد کنید.
 pending_payment_failed_to_admin: |
   پرداخت صورتحساب سفارش خرید کاربر @${username} با شناسه ${orderId} شکست خورد.
-
   تعداد تلاش‌های پرداخت: ${attempts}
-selling: فروختن
-buying: خریدن
-receive_payment: دریافت پرداخت
+selling_sats: فروش ساتوشی
+buying_sats: خرید ساتوشی
+receive_payment: دریافت وجه
 pay: پرداخت
 is: هست
-trading_volume: 'حجم معاملات: ${volume} ساتوشی'
-satoshis: ساتوشی
-by: با
+trading_volume: 'حجم معاملات: ${volume} sat'
+showusername_buying_sats: '@${username} در حال خرید ساتوشی است'
+showusername_selling_sats: '@${username} در حال فروش ساتوشی است'
+satoshis: ساتوشی‌ها
+by: توسط
 rate: نرخ
 has_successful_trades: 'دارای ${trades} معامله موفق'
 user_age: 'از ربات به مدت ${days} روز استفاده کرده است.'
