@@ -16,7 +16,7 @@ const deleteCommunity = async (bot: Telegraf<CommunityContext>) => {
       if (community.created_at > time) {
         continue;
       }
-      const orders = await Order.count({
+      const orders = await Order.countDocuments({
         created_at: { $gte: time },
         status: 'SUCCESS',
         community_id: community.id,
@@ -25,7 +25,7 @@ const deleteCommunity = async (bot: Telegraf<CommunityContext>) => {
         logger.info(
           `Community: ${community.name} have ${process.env.COMMUNITY_TTL} days without a successfully completed order, it's being deleted!`,
         );
-        await community.delete();
+        await community.deleteOne();
       }
     }
   } catch (error) {
