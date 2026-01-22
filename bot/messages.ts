@@ -18,7 +18,7 @@ import { logger } from '../logger';
 import { HasTelegram, MainContext } from './start';
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
-import { Order, User } from '../models';
+import { Order, User, Community } from '../models';
 import { I18nContext } from '@grammyjs/i18n';
 import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';
@@ -27,7 +27,6 @@ import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
 import { imageCache } from '../util/imageCache';
 import { ImageProcessingError } from '../util/errors';
-import { Community } from '../models';
 
 const { I18n } = require('@grammyjs/i18n');
 
@@ -2001,9 +2000,8 @@ const showConfirmationButtons = async (
           };
         })
         .map(ord => ({
-          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${
-            ord.fiat
-          } ${ord.amount}`,
+          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${ord.fiat
+            } ${ord.amount}`,
           callback_data:
             commandString === 'release'
               ? `show_release_confirmation_${ord._id}`
