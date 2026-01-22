@@ -29,7 +29,7 @@ const checkIndexExists = async (
   }
 };
 type SafeIndexOptions = Omit<mongoose.IndexOptions, 'unique'> & {
-  unique?: boolean; // Forzamos unique solo booleano
+  unique?: boolean;
   name: string;
 };
 /**
