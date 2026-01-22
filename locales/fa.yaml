@@ -567,6 +567,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'fa'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -577,7 +579,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - کلید عمومی جامعه را پیکربندی کنید. رویدادهای ناستر با این کلید عمومی برچسب‌گذاری می‌شوند.
+  /setlanguage &lt;lang&gt; - زبان کامیونیتی را برای پیام‌های منتشرشده پیکربندی کنید.
+community_language_updated: شما زبان کامیونیتی را با موفقیت به ${language} به‌روزرسانی کردید!
+wizard_community_enter_language: 'کد زبان کامیونیتی خود را وارد کنید (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'کد زبان نامعتبر است. لطفاً یکی از موارد زیر را وارد کنید - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: شما کلیدعمومی کامیونیتی ${npub} را با موفقیت اضافه کردید!
+language: "زبان"
 # END modules/community
 
 # START modules/nostr
