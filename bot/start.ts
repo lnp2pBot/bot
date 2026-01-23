@@ -74,6 +74,7 @@ import {
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
+import { commandLogger } from './middleware/commandlogging';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -192,6 +193,7 @@ const initialize = (
     logger.error(err);
   });
 
+  bot.use(commandLogger());
   bot.use(session());
   bot.use(limit());
   bot.use(i18n.middleware());
