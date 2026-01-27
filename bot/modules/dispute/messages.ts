@@ -1,11 +1,19 @@
-import { getDisputeChannel, getDetailedOrder, sanitizeMD, getUserI18nContext } from '../../../util';
+import {
+  getDisputeChannel,
+  getDetailedOrder,
+  sanitizeMD,
+  getUserI18nContext,
+} from '../../../util';
 import { logger } from '../../../logger';
 import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
 
-const getDisputeParties = async (initiator: 'seller' | 'buyer', buyer: UserDocument, seller: UserDocument) => {
-
+const getDisputeParties = async (
+  initiator: 'seller' | 'buyer',
+  buyer: UserDocument,
+  seller: UserDocument,
+) => {
   let initiatorUser: UserDocument;
   let counterPartyUser: UserDocument;
 
@@ -22,8 +30,14 @@ const getDisputeParties = async (initiator: 'seller' | 'buyer', buyer: UserDocum
 
   const counterpartyLanguage = await getUserI18nContext(counterPartyUser);
 
-  return { initiatorUser, counterPartyUser, buyerLanguage, sellerLanguage, counterpartyLanguage }
-}
+  return {
+    initiatorUser,
+    counterPartyUser,
+    buyerLanguage,
+    sellerLanguage,
+    counterpartyLanguage,
+  };
+};
 
 export const beginDispute = async (
   ctx: MainContext,
@@ -33,8 +47,7 @@ export const beginDispute = async (
   seller: UserDocument,
 ) => {
   try {
-
-    const parties = await getDisputeParties(initiator, buyer, seller)
+    const parties = await getDisputeParties(initiator, buyer, seller);
 
     if (initiator === 'buyer') {
       await ctx.telegram.sendMessage(
@@ -47,7 +60,9 @@ export const beginDispute = async (
       await ctx.telegram.sendMessage(
         parties.counterPartyUser.tg_id,
         parties.counterpartyLanguage.t('dispute_started', {
-          who: parties.counterpartyLanguage.t('counterpart_started', { orderId: order._id }),
+          who: parties.counterpartyLanguage.t('counterpart_started', {
+            orderId: order._id,
+          }),
           token: order.seller_dispute_token,
         }),
       );
@@ -62,7 +77,9 @@ export const beginDispute = async (
       await ctx.telegram.sendMessage(
         parties.counterPartyUser.tg_id,
         parties.counterpartyLanguage.t('dispute_started', {
-          who: parties.counterpartyLanguage.t('counterpart_started', { orderId: order._id }),
+          who: parties.counterpartyLanguage.t('counterpart_started', {
+            orderId: order._id,
+          }),
           token: order.buyer_dispute_token,
         }),
       );
@@ -108,11 +125,8 @@ export const disputeData = async (
     const type =
       initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
 
-    const { initiatorUser,
-      counterPartyUser,
-      buyerLanguage,
-      sellerLanguage
-    } = await getDisputeParties(initiator, buyer, seller);
+    const { initiatorUser, counterPartyUser, buyerLanguage, sellerLanguage } =
+      await getDisputeParties(initiator, buyer, seller);
 
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
 
