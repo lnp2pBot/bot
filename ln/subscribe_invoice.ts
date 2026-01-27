@@ -45,7 +45,7 @@ class PerOrderIdMutex {
 const subscribeInvoice = async (
   bot: HasTelegram,
   id: string,
-  resub: boolean = false,
+  resub: boolean = false
 ) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
@@ -53,54 +53,74 @@ const subscribeInvoice = async (
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
         if (order === null) throw new Error('order was not found');
-        logger.info(
-          `Order ${order._id} Invoice with hash: ${id} is being held!`,
+        await PerOrderIdMutex.instance.runExclusive(
+          String(order._id),
+          async () => {
+            // We need to get an updated version of the order because there is a chance of the cancelOrders coroutine to modify the state of the order
+            const updatedOrder = await Order.findById(order._id);
+            if (updatedOrder === null)
+              throw new Error('order was not found after locking');
+            if (updatedOrder.status !== 'WAITING_PAYMENT') {
+              logger.error(
+                `Order ${updatedOrder._id} status is not WAITING_PAYMENT on subscribeToInvoice. Actual status: ${updatedOrder.status}`,
+              );
+              return;
+            }
+            logger.info(
+              `Order ${updatedOrder._id} Invoice with hash: ${id} is being held!`,
+            );
+            const buyerUser = await User.findOne({
+              _id: updatedOrder.buyer_id,
+            });
+            if (buyerUser === null) throw new Error('buyerUser was not found');
+            const sellerUser = await User.findOne({
+              _id: updatedOrder.seller_id,
+            });
+            if (sellerUser === null)
+              throw new Error('sellerUser was not found');
+            updatedOrder.status = 'ACTIVE';
+            // This is the i18n context we need to pass to the message
+            const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+            const i18nCtxSeller = await getUserI18nContext(sellerUser);
+            if (updatedOrder.type === 'sell') {
+              await messages.onGoingTakeSellMessage(
+                bot,
+                sellerUser,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+                i18nCtxSeller,
+              );
+            } else if (updatedOrder.type === 'buy') {
+              updatedOrder.status = 'WAITING_BUYER_INVOICE';
+              // We need the seller rating
+              const stars = getEmojiRate(sellerUser.total_rating);
+              const roundedRating = decimalRound(sellerUser.total_rating, -1);
+              const rate = `${roundedRating} ${stars} (${sellerUser.total_reviews})`;
+              await messages.onGoingTakeBuyMessage(
+                bot,
+                sellerUser,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+                i18nCtxSeller,
+                rate,
+              );
+            }
+            updatedOrder.invoice_held_at = new Date();
+            await updatedOrder.save();
+          },
         );
-        const buyerUser = await User.findOne({ _id: order.buyer_id });
-        if (buyerUser === null) throw new Error('buyerUser was not found');
-        const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (sellerUser === null) throw new Error('sellerUser was not found');
-        order.status = 'ACTIVE';
-        // This is the i18n context we need to pass to the message
-        const i18nCtxBuyer = await getUserI18nContext(buyerUser);
-        const i18nCtxSeller = await getUserI18nContext(sellerUser);
-        if (order.type === 'sell') {
-          await messages.onGoingTakeSellMessage(
-            bot,
-            sellerUser,
-            buyerUser,
-            order,
-            i18nCtxBuyer,
-            i18nCtxSeller,
-          );
-        } else if (order.type === 'buy') {
-          order.status = 'WAITING_BUYER_INVOICE';
-          // We need the seller rating
-          const stars = getEmojiRate(sellerUser.total_rating);
-          const roundedRating = decimalRound(sellerUser.total_rating, -1);
-          const rate = `${roundedRating} ${stars} (${sellerUser.total_reviews})`;
-          await messages.onGoingTakeBuyMessage(
-            bot,
-            sellerUser,
-            buyerUser,
-            order,
-            i18nCtxBuyer,
-            i18nCtxSeller,
-            rate,
-          );
-        }
-        order.invoice_held_at = new Date();
-        order.save();
       }
       if (invoice.is_confirmed) {
         const order = await Order.findOne({ hash: id });
         if (order === null) throw new Error('order was not found');
         logger.info(
-          `Order ${order._id} - Invoice with hash: ${id} was settled!`,
+          `Order ${order._id} - Invoice with hash: ${id} was settled!`
         );
         if (order.status === 'FROZEN' && order.is_frozen) {
           logger.info(
-            `Order ${order._id} - Order was frozen by ${order.action_by}!`,
+            `Order ${order._id} - Order was frozen by ${order.action_by}!`
           );
           return;
         }
@@ -129,7 +149,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
       sellerUser,
       buyerUser,
       i18nCtxBuyer,
-      i18nCtxSeller,
+      i18nCtxSeller
     );
     // If this is a range order, probably we need to created a new child range order
     const orderData = await ordersActions.getNewRangeOrderPayload(order);
@@ -148,7 +168,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
         i18nCtx,
         bot,
         user,
-        orderData,
+        orderData
       );
 
       if (newOrder) {
@@ -158,7 +178,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
             user,
             newOrder,
             i18nCtx,
-            true,
+            true
           );
         } else {
           await messages.publishBuyOrderMessage(
@@ -166,7 +186,7 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
             user,
             newOrder,
             i18nCtx,
-            true,
+            true
           );
         }
       }
