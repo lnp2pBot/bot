@@ -1,8 +1,29 @@
-import { getDisputeChannel, getDetailedOrder, sanitizeMD } from '../../../util';
+import { getDisputeChannel, getDetailedOrder, sanitizeMD, getUserI18nContext } from '../../../util';
 import { logger } from '../../../logger';
 import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
+
+const getDisputeParties = async (initiator: 'seller' | 'buyer', buyer: UserDocument, seller: UserDocument) => {
+
+  let initiatorUser: UserDocument;
+  let counterPartyUser: UserDocument;
+
+  if (initiator === 'seller') {
+    initiatorUser = seller;
+    counterPartyUser = buyer;
+  } else {
+    initiatorUser = buyer;
+    counterPartyUser = seller;
+  }
+
+  const buyerLanguage = await getUserI18nContext(buyer);
+  const sellerLanguage = await getUserI18nContext(seller);
+
+  const counterpartyLanguage = await getUserI18nContext(counterPartyUser);
+
+  return { initiatorUser, counterPartyUser, buyerLanguage, sellerLanguage, counterpartyLanguage }
+}
 
 export const beginDispute = async (
   ctx: MainContext,
@@ -12,40 +33,36 @@ export const beginDispute = async (
   seller: UserDocument,
 ) => {
   try {
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
 
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
+    const parties = await getDisputeParties(initiator, buyer, seller)
+
     if (initiator === 'buyer') {
       await ctx.telegram.sendMessage(
-        initiatorUser.tg_id,
+        parties.initiatorUser.tg_id,
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('you_started', { orderId: order._id }),
           token: order.buyer_dispute_token,
         }),
       );
       await ctx.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
+        parties.counterPartyUser.tg_id,
+        parties.counterpartyLanguage.t('dispute_started', {
+          who: parties.counterpartyLanguage.t('counterpart_started', { orderId: order._id }),
           token: order.seller_dispute_token,
         }),
       );
     } else {
       await ctx.telegram.sendMessage(
-        initiatorUser.tg_id,
+        parties.initiatorUser.tg_id,
         ctx.i18n.t('dispute_started', {
           who: ctx.i18n.t('you_started', { orderId: order._id }),
           token: order.seller_dispute_token,
         }),
       );
       await ctx.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
+        parties.counterPartyUser.tg_id,
+        parties.counterpartyLanguage.t('dispute_started', {
+          who: parties.counterpartyLanguage.t('counterpart_started', { orderId: order._id }),
           token: order.buyer_dispute_token,
         }),
       );
@@ -90,12 +107,12 @@ export const disputeData = async (
   try {
     const type =
       initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
+
+    const { initiatorUser,
+      counterPartyUser,
+      buyerLanguage,
+      sellerLanguage
+    } = await getDisputeParties(initiator, buyer, seller);
 
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
 
@@ -125,14 +142,14 @@ export const disputeData = async (
     // has been taken by a solver
     await ctx.telegram.sendMessage(
       buyer.tg_id,
-      ctx.i18n.t('dispute_solver', {
+      buyerLanguage.t('dispute_solver', {
         solver: solver.username,
         token: order.buyer_dispute_token,
       }),
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
-      ctx.i18n.t('dispute_solver', {
+      sellerLanguage.t('dispute_solver', {
         solver: solver.username,
         token: order.seller_dispute_token,
       }),
