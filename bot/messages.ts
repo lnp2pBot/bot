@@ -1788,7 +1788,6 @@ const toAdminChannelBuyerDidntAddInvoiceMessage = async (
       i18n.t('buyer_havent_add_invoice_to_admin_channel', {
         orderId: order._id,
         username: user.username,
-        tgId: user.tg_id,
       }),
     );
   } catch (error) {
@@ -1840,7 +1839,6 @@ const toAdminChannelSellerDidntPayInvoiceMessage = async (
       i18n.t('seller_havent_add_invoice_to_admin_channel', {
         orderId: order._id,
         username: user.username,
-        tgId: user.tg_id,
       }),
     );
   } catch (error) {

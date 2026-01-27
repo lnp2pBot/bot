@@ -465,6 +465,7 @@ channels: 채널들
 dispute_solvers: 분쟁 해결자들
 no_default_community: 기본적으로 당신은 속한 커뮤니티가 없습니다.
 community_not_found: 커뮤니티를 찾을 수 없습니다.
+community_inactive: 이 커뮤니티는 현재 비활성 상태이며 거래에 사용할 수 없습니다
 currency: 통화
 currencies: 통화들
 currency_not_supported: |

@@ -468,6 +468,7 @@ channels: Kanäle
 dispute_solvers: Streitschlichter
 no_default_community: Du hast keine standardmäßige Community mehr
 community_not_found: Community nicht gefunden
+community_inactive: Diese Community ist derzeit inaktiv und kann nicht für den Handel verwendet werden
 currency: Währung
 currencies: Währungen
 currency_not_supported: |
