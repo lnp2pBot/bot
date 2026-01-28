@@ -167,6 +167,7 @@ waiting_seller_to_pay: '판매자에게 결제 요청을 보냈고, 판매자는
 sell_success: 당신의 비트코인 판매가 @${buyerUsername} 의 결제를 확인함으로써 완료되었습니다. ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} 님이 비트코인의 락업을 해제했고, 제공된 인보이스로 곧 결제가 완료될 것입니다. 비수탁형 지갑의 경우, 지갑을 온라인 상태로 유지해서 결제를 받을 수 있게 해주세요.
 rate_counterpart: '거래 상대방을 평가해주세요:'
+choose_order_for_dispute: '분쟁을 시작할 주문을 선택하세요:'
 cant_process_order: 이 주문은 처리될 수 없습니다. ID가 정확한지 확인해 주세요.
 cant_release_order: 이 주문은 락업 해제될 수 없습니다. 구매자가 비트코인을 받을 인보이스를 아직 보내지 않았습니다.
 no_id_related: 해당 ID로는 등록된 주문이 없습니다.

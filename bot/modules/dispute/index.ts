@@ -12,4 +12,9 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     userMiddleware,
     actions.takeDispute,
   );
+  bot.action(
+    /^initiateDispute_([0-9a-f]{24})$/,
+    userMiddleware,
+    actions.initiateDispute,
+  );
 };

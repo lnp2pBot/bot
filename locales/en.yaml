@@ -300,6 +300,7 @@ invalid_id: Invalid ID
 cant_take_own_order: You cannot take your own order.
 send_me_lninvoice: Please send me a lightning invoice for ${amount} sats, although to make things easier for you, I also accept invoices without a specified amount. I will make the payment of ${amount} sats.
 you_have_no_orders: You don't have active orders
+choose_order_for_dispute: 'Choose the order to initiate the dispute:'
 not_rate_for_currency: |
   ${fiatRateProvider} There is no exchange rate for this currency,
   if you want to use this currency, you must indicate how many satoshis you want
