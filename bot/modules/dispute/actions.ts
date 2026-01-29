@@ -59,5 +59,6 @@ export const initiateDispute = async (ctx: MainContext) => {
   const orderId = ctx.match?.[1];
   if (!orderId) return;
 
+  await ctx.deleteMessage();
   await handleDispute(ctx, orderId);
 };
