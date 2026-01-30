@@ -251,6 +251,14 @@ const initialize = (
     }
   });
 
+  bot.command('ping', async (ctx: MainContext) => {
+    try {
+      await ctx.reply('pong');
+    } catch (error) {
+      logger.error(error);
+    }
+  });
+
   bot.command(
     'maintenance',
     superAdminMiddleware,
