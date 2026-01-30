@@ -94,10 +94,10 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
 const dispute = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
-
-    console.log('Total Arguments:', ctx.state.command.args.length);
-    console.log('Argumentos:', JSON.stringify(ctx.state.command.args));
-    if (ctx.state.command.args.length > 0 && ctx.state.command.args[0] !== "undefined") {
+    if (
+      ctx.state.command.args.length > 0 &&
+      typeof ctx.state.command.args[0] !== 'undefined'
+    ) {
       const params = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!params || params.length === 0) return;
