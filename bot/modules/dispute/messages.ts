@@ -4,6 +4,32 @@ import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
 
+export const listOrdersForDispute = async (
+  ctx: MainContext,
+  orders: IOrder[],
+) => {
+  try {
+    const buttons = await Promise.all(
+      orders.map(async order => {
+        return [
+          {
+            text: `${order._id.toString().substring(0, 2)}..${order._id.toString().slice(-2)} - ${order.type} - ${order.fiat_code} ${order.fiat_amount}`,
+            callback_data: `initiateDispute_${order._id}`,
+          },
+        ];
+      }),
+    );
+
+    await ctx.reply(ctx.i18n.t('choose_order_for_dispute'), {
+      reply_markup: {
+        inline_keyboard: buttons,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 export const beginDispute = async (
   ctx: MainContext,
   initiator: 'seller' | 'buyer',
