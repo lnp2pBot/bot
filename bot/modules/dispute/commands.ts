@@ -95,9 +95,7 @@ const dispute = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
     if (
-      ctx.state.command.args.length > 0 &&
-      typeof ctx.state.command.args[0] !== 'undefined'
-    ) {
+      ctx.state.command.args.length > 0 && ctx.state.command.args[0] !== 'undefined') {
       const params = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!params || params.length === 0) return;
@@ -115,10 +113,8 @@ const dispute = async (ctx: MainContext) => {
 
     if (orders.length > 0) {
       await messages.listOrdersForDispute(ctx, orders);
-      return;
     } else {
       await ctx.reply(ctx.i18n.t('you_have_no_orders'));
-      return;
     }
   } catch (error) {
     logger.error(error);

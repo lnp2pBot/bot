@@ -1,7 +1,6 @@
 import { getDisputeChannel, getDetailedOrder, sanitizeMD } from '../../../util';
 import { logger } from '../../../logger';
 import { MainContext } from '../../start';
-import { User } from '../../../models';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
 
