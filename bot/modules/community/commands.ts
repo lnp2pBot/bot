@@ -110,7 +110,7 @@ export const findCommunity = async (ctx: CommunityContext) => {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
     }
 
-    communities.sort((a, b) => a.orders - b.orders);
+    communities.sort((a, b) => (a.orders ?? 0) - (b.orders ?? 0));
 
     const inlineKeyboard = [];
     while (communities.length > 0) {
@@ -227,7 +227,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
     if (!community) {
       return ctx.reply(ctx.i18n.t('no_permission'));
     }
-    await community.remove();
+    await community.deleteOne();
 
     return ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {
