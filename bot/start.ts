@@ -579,7 +579,7 @@ const initialize = (
     }
   });
 
-  bot.command('checkorder', superAdminMiddleware, async (ctx: MainContext) => {
+  bot.command('checkorder', adminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
@@ -599,7 +599,7 @@ const initialize = (
 
   bot.command(
     'checkinvoice',
-    superAdminMiddleware,
+    adminMiddleware,
     async (ctx: MainContext) => {
       try {
         const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
