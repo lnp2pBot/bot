@@ -25,6 +25,22 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
 
+const setCooperativeCancelFlag = async (
+  orderId: string,
+  role: 'buyer' | 'seller',
+): Promise<IOrder | null> => {
+  let propName = '';
+
+  if (role === 'buyer') {
+    propName = 'buyer_cooperativecancel';
+  } else if (role === 'seller') {
+    propName = 'seller_cooperativecancel';
+  }
+
+  const update = { [propName]: true };
+  return await Order.findOneAndUpdate({ _id: orderId }, update, { new: true });
+};
+
 const waitPayment = async (
   ctx: MainContext,
   bot: HasTelegram,
@@ -687,7 +703,7 @@ const cancelOrder = async (
       return await messages.badStatusOnCancelOrderMessage(ctx);
 
     // If the order is active we start a cooperative cancellation
-    let counterPartyUser, initiator, counterParty;
+    let counterPartyUser, initiator: 'buyer' | 'seller', counterParty;
 
     const initiatorUser = user;
     if (initiatorUser._id == order.buyer_id) {
@@ -702,30 +718,21 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    const initiatorCooperativeCancelProperty =
-      initiator == 'seller'
-        ? 'seller_cooperativecancel'
-        : 'buyer_cooperativecancel';
-
-    if (order[initiatorCooperativeCancelProperty])
-      return await messages.shouldWaitCooperativeCancelMessage(
-        ctx,
-        initiatorUser,
-      );
-
-    order[initiatorCooperativeCancelProperty] = true;
+    const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
+    if (!updateOrder) return;
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
     // If the counter party already requested a cooperative cancel order
     if (
       counterParty == 'seller'
-        ? order.seller_cooperativecancel
-        : order.buyer_cooperativecancel
+        ? updateOrder.seller_cooperativecancel
+        : updateOrder.buyer_cooperativecancel
     ) {
       // If we already have a holdInvoice we cancel it and return the money
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
-      order.status = 'CANCELED';
+      updateOrder.status = 'CANCELED';
+      await updateOrder.save();
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
       if (order.seller_id == counterPartyUser._id) {
@@ -736,17 +743,17 @@ const cancelOrder = async (
       await messages.successCancelOrderMessage(
         ctx,
         initiatorUser,
-        order,
+        updateOrder,
         ctx.i18n,
       );
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
-        order,
+        updateOrder,
         i18nCtxCP,
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
-      logger.info(`Order ${order._id} was cancelled cooperatively!`);
+      logger.info(`Order ${updateOrder._id} was cancelled cooperatively!`);
       logger.info('cancelOrder => OrderEvents.orderUpdated(order);');
       OrderEvents.orderUpdated(order);
     } else {
@@ -754,11 +761,10 @@ const cancelOrder = async (
       await messages.counterPartyWantsCooperativeCancelMessage(
         ctx,
         counterPartyUser,
-        order,
+        updateOrder,
         i18nCtxCP,
       );
     }
-    await order.save();
   } catch (error) {
     logger.error(error);
   }
