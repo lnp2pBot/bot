@@ -95,7 +95,9 @@ const dispute = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
     if (
-      ctx.state.command.args.length > 0 && ctx.state.command.args[0] !== 'undefined') {
+      ctx.state.command.args.length > 0 &&
+      ctx.state.command.args[0] !== 'undefined'
+    ) {
       const params = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!params || params.length === 0) return;
