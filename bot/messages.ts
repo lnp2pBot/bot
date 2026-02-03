@@ -91,7 +91,8 @@ const invoicePaymentRequestMessage = async (
 
     const message = i18n.t('invoice_payment_request', {
       currency,
-      order,
+      amount: Math.floor(order.amount + order.fee),
+      fiatAmount: order.fiat_amount,
       expirationTime,
       rate,
       days: ageInDays,
