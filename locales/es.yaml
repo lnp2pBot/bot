@@ -34,7 +34,7 @@ start: |
 init_bot_error: Para usar este Bot primero debes inicializar el bot con el comando /start
 non_handle_error: 👤 Para usar este bot debes activar tu username de telegram, para activarlo abre el menú de hamburguesa arriba a la izquierda, selecciona ajustes -> editar perfil -> username
 invoice_payment_request: |
-  Un usuario quiere comprarte ${order.amount} sats por ${currency} ${order.fiat_amount}
+  Un usuario quiere comprarte ${amount} sats por ${currency} ${fiatAmount}
 
   Reputación del comprador: ${rate}, días utilizando el bot: ${days}
 
