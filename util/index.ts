@@ -430,7 +430,7 @@ const getDetailedOrder = async (
       sellerAge,
       buyerTrades,
       sellerTrades,
-      communityName
+      communityName,
     });
 
     return message;

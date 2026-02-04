@@ -1699,7 +1699,12 @@ const expiredOrderMessage = async (
   i18n: I18nContext,
 ) => {
   try {
-    const detailedOrder = await getDetailedOrder(i18n, order, buyerUser, sellerUser);
+    const detailedOrder = await getDetailedOrder(
+      i18n,
+      order,
+      buyerUser,
+      sellerUser,
+    );
     await bot.telegram.sendMessage(
       String(process.env.ADMIN_CHANNEL),
       i18n.t('expired_order', {
