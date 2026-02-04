@@ -208,6 +208,8 @@ order_detail: |
 
   Surplus/sconto: ${priceMargin}
 
+  Community: ${communityName}
+
   Creato: ${createdAt}
 
   Preso: ${takenAt || ''}
@@ -682,3 +684,4 @@ user_taker_is_blocked_by_user_order: Non puoi accettare questo ordine perché il
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+community_name_default_reserved: Impossibile completare l’operazione, 'default' è un nome riservato.

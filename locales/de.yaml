@@ -208,6 +208,8 @@ order_detail: |
 
   Zuschlag/Rabatt: ${priceMargin}
 
+  Community: ${communityName}
+
   Erstellt am: ${createdAt}
 
   Ausgeführt am: ${takenAt || ''}
@@ -685,3 +687,4 @@ user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+community_name_default_reserved: Der Vorgang konnte nicht abgeschlossen werden, 'default' ist ein reservierter Name.

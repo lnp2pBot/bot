@@ -371,7 +371,7 @@ const getUserI18nContext = async (user: UserDocument) => {
   return i18n.createContext(user.lang);
 };
 
-const getDetailedOrder = (
+const getDetailedOrder = async (
   i18n: I18nContext,
   order: IOrder,
   buyer: UserDocument | null,
@@ -402,6 +402,16 @@ const getDetailedOrder = (
     const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
+
+    // Add order community name
+    let communityName = 'default';
+    if (order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community) {
+        communityName = community.name;
+      }
+    }
+
     const message = i18n.t('order_detail', {
       order,
       creator,
@@ -420,6 +430,7 @@ const getDetailedOrder = (
       sellerAge,
       buyerTrades,
       sellerTrades,
+      communityName
     });
 
     return message;

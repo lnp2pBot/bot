@@ -60,6 +60,10 @@ const CommunitySchema = new Schema<ICommunity>({
     maxlength: 30,
     trim: true,
     required: true,
+    validate: {
+      validator: (value: string) => value.toLowerCase() !== 'default',
+      message: `'default' is a reserved community name`,
+    },
   },
   creator_id: { type: String },
   group: { type: String, trim: true }, // group Id or public name

@@ -848,7 +848,7 @@ const checkOrderMessage = async (
   seller: UserDocument | null,
 ) => {
   try {
-    let message = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    let message = await getDetailedOrder(ctx.i18n, order, buyer, seller);
     if (message === undefined) throw new Error('message is undefined');
     message += `\n\n`;
     await ctx.reply(message, { parse_mode: 'MarkdownV2' });
@@ -1699,7 +1699,7 @@ const expiredOrderMessage = async (
   i18n: I18nContext,
 ) => {
   try {
-    const detailedOrder = getDetailedOrder(i18n, order, buyerUser, sellerUser);
+    const detailedOrder = await getDetailedOrder(i18n, order, buyerUser, sellerUser);
     await bot.telegram.sendMessage(
       String(process.env.ADMIN_CHANNEL),
       i18n.t('expired_order', {

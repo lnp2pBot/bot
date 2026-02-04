@@ -97,7 +97,7 @@ export const disputeData = async (
       counterPartyUser = buyer;
     }
 
-    const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    const detailedOrder = await getDetailedOrder(ctx.i18n, order, buyer, seller);
 
     // Fix Issue 543: Escape underscores in usernames
     const escapedInitiatorUsername = sanitizeMD(initiatorUser.username);
