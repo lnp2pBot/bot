@@ -207,6 +207,8 @@ order_detail: |
 
   Премия/дисконт: ${priceMargin}
 
+  Сообщество: ${communityName}
+
   Создана: ${createdAt}
 
   Исполнена: ${takenAt || ''}
@@ -685,3 +687,4 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
+community_name_default_reserved: "Операцию не удалось завершить: имя 'default' является зарезервированным."
