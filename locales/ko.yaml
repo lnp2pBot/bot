@@ -507,7 +507,21 @@ not_wizard: 설정 상태에 있지 않습니다. 더 알고 싶다면 /help 명
 wizard_help: 설정 상태에 있습니다. 되돌아가려면 /exit 명령어를 입력하세요.
 hold_invoice_memo: '@${botName} - 주문 #${orderId}에 대한 에스크로 금액: ${fiatCode} ${fiatAmount}에 BTC를 판매합니다 - 이 금액은 당신의 지갑에 락업되며, /release 명령어를 통해 해제됩니다. 구매자가 주문을 최종 확인하지 않을 시, 판매자에게 돌아오게 됩니다.'
 tap_button: 작업을 수행하기 위한 주문을 선택해주세요.
-tap_release: 자금을 해제하기 위해 주문을 선택해 주세요. 해제 이후, 해당 작업은 돌이킬 수 없습니다.
+tap_release: 자금을 해제하기 위해 주문을 선택해 주세요. 진행하기 전에 확인을 보게 됩니다.
+release_confirmation_message: |
+  다음 주문을 해제하려고 합니다:
+
+  🆔 주문 ID: ${orderId}
+  👤 상대방: @${counterparty}
+  ⚡ 금액: ${amount} sats
+  💰 환산: ${fiatAmount} ${fiatCode}
+
+  ⚠️ 이 작업은 되돌릴 수 없습니다.
+
+  이 작업을 확인하시겠습니까?
+release_confirm_button: 확인
+release_cancel_button: 취소
+release_operation_cancelled: 해제 작업이 취소되었습니다.
 earnings: 수익
 premium: 프리미엄
 discount: 할인
@@ -550,6 +564,8 @@ community_admin: |
     ${community.fee}
   수익:
     ${community.earnings}
+  Language:
+    ${community.language || 'ko'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -560,7 +576,12 @@ community_admin_help: |
   # 명령어
 
   /setnpub &lt;npub&gt; - 커뮤니티의 Nostr npub을 등록합니다. Nostr 이벤트들은 이 npub으로 등록됩니다.
+  /setlanguage &lt;lang&gt; - 커뮤니티의 언어를 설정합니다.
+community_language_updated: 성공적으로 커뮤니티의 언어를 ${language}로 설정하였습니다!
+wizard_community_enter_language: '커뮤니티의 언어를 입력하세요. (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: '유효하지 않은 언어입니다. 다음 중 하나를 입력하세요: en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: 성공적으로 커뮤니티의 공개키 ${npub}을 추가하였습니다!
+language: "언어"
 # END modules/community
 
 # START modules/nostr

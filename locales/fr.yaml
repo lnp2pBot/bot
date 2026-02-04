@@ -509,7 +509,21 @@ not_wizard: Vous n'êtes pas en mode assistant pour le moment, si vous avez des 
 wizard_help: Vous êtes en mode assistant, si vous souhaitez revenir en mode commande, exécutez /exit.
 hold_invoice_memo: "Montant du séquestre de l'offre #${orderId} : VENTE BTC pour ${fiatCode} ${fiatAmount} - CE SERA GELÉ DANS VOTRE PORTEFEUILLE. Il sera libéré une fois que vous aurez lancé la commande /release. Il vous sera remboursé si l'acheteur ne confirme pas le paiement."
 tap_button: Sélectionner une offre pour effectuer l'opération
-tap_release: Sélectionnez l'offre pour débloquer les fonds, une fois que vous avez appuyé sur le bouton, l'opération ne peut plus être annulée.
+tap_release: Sélectionnez l'offre pour débloquer les fonds, vous verrez une confirmation avant de procéder.
+release_confirmation_message: |
+  Vous êtes sur le point de libérer la commande suivante :
+
+  🆔 ID de commande : ${orderId}
+  👤 Contrepartie : @${counterparty}
+  ⚡ Montant : ${amount} sats
+  💰 Équivalent : ${fiatAmount} ${fiatCode}
+
+  ⚠️ Cette opération ne peut pas être annulée.
+
+  Voulez-vous confirmer cette opération ?
+release_confirm_button: Confirmer
+release_cancel_button: Annuler
+release_operation_cancelled: Opération de libération annulée.
 earnings: Revenus
 premium: Surcote
 discount: Décote
@@ -552,6 +566,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'fr'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -562,7 +578,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configurer la clé publique de la communauté.
+  /setlanguage &lt;lang&gt; - Configurer la langue de la communauté pour les messages publiés.
+community_language_updated: Vous avez configuré la langue de la communauté en ${language} avec succès !
+wizard_community_enter_language: 'Entrez le code de la langue de votre communauté (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: "Code de langue invalide. Veuillez entrer l'un des suivants - en, es, fr, de, it, pt, ru, uk, ko, fa"
 community_npub_updated: Vous avez ajouté la clé publique de la communauté ${npub} avec succès !
+language: "Langue"
 # END modules/community
 
 # START modules/nostr

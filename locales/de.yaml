@@ -510,7 +510,21 @@ not_wizard: Sie sind momentan nicht im Assistentenmodus. Für Hilfe verwenden Si
 wizard_help: Sie befinden sich im Assistentenmodus, wenn Sie wieder zum Befehlsmodus wollen, verwenden Sie /exit
 hold_invoice_memo: '@${botName} - Auftrag #${orderId}: BTC verkaufen für ${fiatCode} ${fiatAmount} - Der Betrag wird im gehalten, bis Sie diesen mit /release freigeben. Wenn der Käufer nicht bestätigt, wird der Betrag zurückbezahlt.'
 tap_button: Wählen Sie eine Bestellung, um den Vorgang auszuführen
-tap_release: Wählen Sie die Reihenfolge aus, um die Mittel freizugeben. Sobald Sie die Schaltfläche berühren, kann der Vorgang nicht rückgängig gemacht werden.
+tap_release: Wählen Sie die Bestellung aus, um die Mittel freizugeben. Sie sehen eine Bestätigung, bevor Sie fortfahren.
+release_confirmation_message: |
+  Sie sind dabei, die folgende Bestellung freizugeben:
+
+  🆔 Bestell-ID: ${orderId}
+  👤 Gegenpartei: @${counterparty}
+  ⚡ Betrag: ${amount} sats
+  💰 Gegenwert: ${fiatAmount} ${fiatCode}
+
+  ⚠️ Dieser Vorgang kann nicht rückgängig gemacht werden.
+
+  Möchten Sie diesen Vorgang bestätigen?
+release_confirm_button: Bestätigen
+release_cancel_button: Abbrechen
+release_operation_cancelled: Freigabe-Vorgang abgebrochen.
 earnings: Verdienste
 premium: Prämie
 discount: Rabatt
@@ -570,6 +584,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'de'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -580,7 +596,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configure Nostr community's public key.
+  /setlanguage &lt;lang&gt; - Konfiguriere die Sprache der Community für veröffentlichte Nachrichten.
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+community_language_updated: Du hast die Sprache der Community erfolgreich auf ${language} aktualisiert!
+wizard_community_enter_language: 'Gib den Sprachcode für deine Community ein (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Ungültiger Sprachcode. Bitte gib einen der folgenden ein - en, es, fr, de, it, pt, ru, uk, ko, fa'
+language: "Sprache"
 # END modules/community
 
 # START modules/orders

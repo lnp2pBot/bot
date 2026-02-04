@@ -590,7 +590,21 @@ not_wizard: 'شما در حالت راهنما نیستید؛ اگر شک دار
 wizard_help: 'شما در حالت راهنما هستید؛ اگر لازم است به حالت دستور برگردید، دستور /exit را اجرا کنید.'
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN YOUR WALLET. It will release once you run /release. It will return if buyer does not confirm the payment.'
 tap_button: سفارشی را برای اجرای دستور انتخاب کنید.
-tap_release: سفارشی که ساتوشی‌های مربوط به آن باید آزاد شوند را انتخاب کنید. پس از لمس دکمه زیر، این عملیات بازگشت‌ناپذیر خواهد بود.
+tap_release: سفارشی که ساتوشی‌های مربوط به آن باید آزاد شوند را انتخاب کنید؛ یک درخواست تأیید پیش از آزادسازی نهایی مشاهده خواهید کرد.
+release_confirmation_message: |
+  شما در آستانه آزادسازی سفارش زیر هستید:
+
+  🆔 شناسه سفارش: ${orderId}
+  👤 طرف معامله: @${counterparty}
+  ⚡ مقدار: ${amount} sats
+  💰 معادل فیات: ${fiatAmount} ${fiatCode}
+
+  ⚠️ این عملیات بازگشت‌ناپذیر است.
+
+  می‌خواهید انجام این عملیات را تأیید کنید؟
+release_confirm_button: تأیید
+release_cancel_button: لغو
+release_operation_cancelled: آزادسازی لغو گردید.
 earnings: درآمد
 premium: حباب
 discount: تخفیف
@@ -625,7 +639,7 @@ maintenance: 🚨 ربات در دست تعمیر است، لطفاً بعداً
 community_admin: |
   <strong>حالت مدیر اجتماع</strong>
   > ${community.name} (${community.group})
-
+  
   عمومی:
   ${community.public ? 'بله' : 'خیر'}
 
@@ -634,6 +648,9 @@ community_admin: |
 
   درآمد:
   ${community.earnings}
+  
+  زبان:
+    ${community.language || 'fa'}
 
   کلید عمومی:
   <code>${community.nostr_public_key || ''}</code>
@@ -643,13 +660,23 @@ community_admin: |
 
   /exit
   خروج از حالت راهنما
+
 community_admin_help: |
   <strong>حالت مدیر اجتماع</strong>
+  
   # commands
-
-  تنظیم کلید عمومی نوستر اجتماع:
-  /setnpub &lt;npub&gt; 
+  
+  /setnpub &lt;npub&gt;
+  ثبت کلید عمومی نوستر اجتماع
+  
+  /setlanguage &lt;lang&gt;
+  تعیین زبان اجتماع برای پیام‌های منتشر شده
 community_npub_updated: 'شما با موفقیت ${npub} را به عنوان کلید عمومی اجتماع اضافه کردید!'
+community_language_updated: 'شما با موفقیت زبان اجتماع را به ${language} تغییر دادید!'
+wizard_community_enter_language: 'کد زبان اجتماع خود را وارد کنید (en ،es ،fr ،de ،it ،pt ،ru ،uk ،ko ،fa).'
+wizard_community_invalid_language: 'کد زبان نامعتبر است. لطفاً یکی از این‌ها را وارد کنید: en ،es ،fr ،de ،it ،pt ،ru ،uk ،ko ،fa'
+language: زبان
+
 # END modules/community
 # START modules/nostr
 user_npub_updated: 'شما با موفقیت ${npub} را به عنوان کلید عمومی خود اضافه کردید!'

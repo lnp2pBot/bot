@@ -510,7 +510,21 @@ not_wizard: You are not in wizard mode at the moment, if you have doubts you can
 wizard_help: You are in wizard mode, if you need to go back to command mode run /exit
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
 tap_button: Select an order to perform the operation
-tap_release: Select the order to release the funds, once you touch the button the operation cannot be reversed.
+tap_release: Выберите заказ для освобождения средств, вы увидите подтверждение перед продолжением.
+release_confirmation_message: |
+  Вы собираетесь освободить следующий заказ:
+
+  🆔 ID заказа: ${orderId}
+  👤 Контрагент: @${counterparty}
+  ⚡ Сумма: ${amount} sats
+  💰 Эквивалент: ${fiatAmount} ${fiatCode}
+
+  ⚠️ Эта операция не может быть отменена.
+
+  Вы хотите подтвердить эту операцию?
+release_confirm_button: Подтвердить
+release_cancel_button: Отмена
+release_operation_cancelled: Операция освобождения отменена.
 earnings: Earnings
 premium: Premium
 discount: Discount
@@ -570,6 +584,8 @@ community_admin: |
     ${community.fee}
   Earnings:
     ${community.earnings}
+  Language:
+    ${community.language || 'ru'}
   npub:
     <code>${community.nostr_public_key || ''}</code>
 
@@ -580,7 +596,12 @@ community_admin_help: |
   # commands
 
   /setnpub &lt;npub&gt; - Configure community's Nostr public key.
+  /setlanguage &lt;lang&gt; - Настройте язык сообщества для публикуемых сообщений.
+community_language_updated: Вы успешно обновили язык сообщества на ${language}!
+wizard_community_enter_language: 'Введите код языка для вашего сообщества (en, es, fr, de, it, pt, ru, uk, ko, fa)'
+wizard_community_invalid_language: 'Недопустимый код языка. Пожалуйста, введите один из следующих - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
+language: "Язык"
 # END modules/community
 
 # START modules/orders

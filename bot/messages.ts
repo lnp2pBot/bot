@@ -18,6 +18,7 @@ import { logger } from '../logger';
 import { HasTelegram, MainContext } from './start';
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
+import { Order, User, Community } from '../models';
 import { I18nContext } from '@grammyjs/i18n';
 import { IConfig } from '../models/config';
 import { IPendingPayment } from '../models/pending_payment';
@@ -26,6 +27,8 @@ import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
 import { imageCache } from '../util/imageCache';
 import { ImageProcessingError } from '../util/errors';
+
+const { I18n } = require('@grammyjs/i18n');
 
 const startMessage = async (ctx: MainContext) => {
   try {
@@ -738,11 +741,25 @@ const publishBuyOrderMessage = async (
 
     const channel = await getOrderChannel(order);
     if (channel === undefined) throw new Error('channel is undefined');
+
+    // Get the community language if available
+    let communityI18n = i18n;
+    if (order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community && community.language) {
+        communityI18n = new I18n({
+          defaultLanguageOnMissing: true,
+          locale: community.language,
+          directory: 'locales',
+        }).createContext(community.language);
+      }
+    }
+
     // We send the message to the channel
     const message1 = await bot.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: i18n.t('sell_sats'), callback_data: 'takebuy' }],
+          [{ text: communityI18n.t('sell_sats'), callback_data: 'takebuy' }],
         ],
       },
     });
@@ -776,11 +793,26 @@ const publishSellOrderMessage = async (
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order);
     if (channel === undefined) throw new Error('channel is undefined');
+
+    // Get the community language if available
+    let communityI18n = i18n;
+
+    if (order.community_id) {
+      const community = await Community.findOne({ _id: order.community_id });
+      if (community && community.language) {
+        communityI18n = new I18n({
+          defaultLanguageOnMissing: true,
+          locale: community.language,
+          directory: 'locales',
+        }).createContext(community.language);
+      }
+    }
+
     // We send the message to the channel
     const message1 = await ctx.telegram.sendMessage(channel, publishMessage, {
       reply_markup: {
         inline_keyboard: [
-          [{ text: i18n.t('buy_sats'), callback_data: 'takesell' }],
+          [{ text: communityI18n.t('buy_sats'), callback_data: 'takesell' }],
         ],
       },
     });
@@ -1968,10 +2000,11 @@ const showConfirmationButtons = async (
           };
         })
         .map(ord => ({
-          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${
-            ord.fiat
-          } ${ord.amount}`,
-          callback_data: `${commandString}_${ord._id}`,
+          text: `${ord._id.slice(0, 2)}..${ord._id.slice(-2)} - ${ord.type} - ${ord.fiat} ${ord.amount}`,
+          callback_data:
+            commandString === 'release'
+              ? `show_release_confirmation_${ord._id}`
+              : `${commandString}_${ord._id}`,
         }));
       inlineKeyboard.push(lineBtn);
     }
@@ -1980,6 +2013,49 @@ const showConfirmationButtons = async (
       commandString === 'release'
         ? ctx.i18n.t('tap_release')
         : ctx.i18n.t('tap_button');
+
+    await ctx.reply(message, {
+      reply_markup: { inline_keyboard: inlineKeyboard },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const showReleaseConfirmationMessage = async (
+  ctx: MainContext,
+  orderId: string,
+) => {
+  try {
+    const order = await Order.findOne({ _id: orderId });
+    if (!order) return;
+
+    // Get user information
+    const seller = await User.findOne({ _id: order.seller_id });
+    const buyer = await User.findOne({ _id: order.buyer_id });
+
+    if (!seller || !buyer) return;
+
+    const message = ctx.i18n.t('release_confirmation_message', {
+      orderId: order._id,
+      counterparty: buyer.username || buyer.tg_id,
+      amount: order.amount,
+      fiatCode: order.fiat_code,
+      fiatAmount: order.fiat_amount,
+    });
+
+    const inlineKeyboard = [
+      [
+        {
+          text: ctx.i18n.t('release_confirm_button'),
+          callback_data: `confirm_release_${order._id}`,
+        },
+        {
+          text: ctx.i18n.t('release_cancel_button'),
+          callback_data: 'cancel_release',
+        },
+      ],
+    ];
 
     await ctx.reply(message, {
       reply_markup: { inline_keyboard: inlineKeyboard },
@@ -2103,6 +2179,7 @@ export {
   notAuthorized,
   mustBeANumber,
   showConfirmationButtons,
+  showReleaseConfirmationMessage,
   counterPartyCancelOrderMessage,
   checkInvoiceMessage,
   userTakerIsBlockedByUserOrder,
