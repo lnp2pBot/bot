@@ -94,10 +94,11 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
 const dispute = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
-    if (
-      ctx.state.command.args.length > 0 &&
-      ctx.state.command.args[0] !== 'undefined'
-    ) {
+
+    const rawArgs = ctx.state.command.raw.split(' '); // workaround
+
+    if (rawArgs.length > 1) {
+
       const params = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!params || params.length === 0) return;
@@ -105,6 +106,7 @@ const dispute = async (ctx: MainContext) => {
       const [orderId] = params;
       return await handleDispute(ctx, orderId);
     }
+
     const orders = await Order.find({
       $or: [
         { seller_id: user._id.toString() },
