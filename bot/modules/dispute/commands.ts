@@ -98,7 +98,6 @@ const dispute = async (ctx: MainContext) => {
     const rawArgs = ctx.state.command.raw.split(' '); // workaround
 
     if (rawArgs.length > 1) {
-
       const params = await validateParams(ctx, 2, '\\<_order id_\\>');
 
       if (!params || params.length === 0) return;
