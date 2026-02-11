@@ -386,7 +386,8 @@ const getDetailedOrder = (
     const sellerReputation = seller
       ? sanitizeMD(seller.total_rating.toFixed(2))
       : '';
-    const buyerId = buyer ? buyer._id : '';
+    const buyerId = buyer ? buyer._id.toString() : '';
+    const sellerId = seller ? seller._id.toString() : '';
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());
     let createdAt = order.created_at.toISOString();
@@ -396,8 +397,13 @@ const getDetailedOrder = (
     const previousDisputeStatus = sanitizeMD(order.previous_dispute_status);
     const status = sanitizeMD(order.status);
     const fee = order.fee ? sanitizeMD(Number(order.fee)) : '';
-    const creator =
-      order.creator_id === buyerId ? buyerUsername : sellerUsername;
+    // Determine creator by comparing creator_id with both buyer and seller IDs
+    let creator = '';
+    if (order.creator_id === buyerId) {
+      creator = buyerUsername;
+    } else if (order.creator_id === sellerId) {
+      creator = sellerUsername;
+    }
     const buyerAge = buyer ? getUserAge(buyer) : '';
     const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
