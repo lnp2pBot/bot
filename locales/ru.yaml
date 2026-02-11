@@ -207,6 +207,8 @@ order_detail: |
 
   Премия/дисконт: ${priceMargin}
 
+  Сообщество: ${communityName}
+
   Создана: ${createdAt}
 
   Исполнена: ${takenAt || ''}
@@ -347,6 +349,7 @@ published: Опубликована
 created: Создана
 yes: Да
 no: Нет
+no_community: Нет сообщества
 wizard_add_invoice_init: |
   Чтобы отправить вам сатоши, мне нужно, чтобы вы выставили мне счет на сумму ${satsAmount} сат. Это эквивалентно ${currency} ${fiatAmount}.
 

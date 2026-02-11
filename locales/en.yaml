@@ -212,6 +212,8 @@ order_detail: |
 
   Premium/discount: ${priceMargin}
 
+  Community: ${communityName}
+
   Created: ${createdAt}
 
   Taken: ${takenAt || ''}
@@ -356,6 +358,7 @@ published: Published
 created: Created
 yes: Yes
 no: No
+no_community: No community
 wizard_add_invoice_init: |
   🤖 I need you to send me an invoice for ${satsAmount} satoshis that is worth ${currency} ${fiatAmount} so I can send you the money.
 

@@ -210,6 +210,8 @@ order_detail: |
 
   Premium/discount: ${priceMargin}
 
+  Community: ${communityName}
+
   Created: ${createdAt}
 
   Taken: ${takenAt || ''}
@@ -350,6 +352,7 @@ published: منتشر شده
 created: ایجاد شده
 yes: بله
 no: خیر
+no_community: هیچ جامعه‌ای
 wizard_add_invoice_init: |
   🤖 باید یک فاکتور برای ساتوشی ${satsAmount} به ارزش ${currency} ${fiatAmount} برای ما بفرستید تا بتوانیم پول را برایتان ارسال کنیم.
 
