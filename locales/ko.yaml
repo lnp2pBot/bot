@@ -684,4 +684,4 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
-community_name_default_reserved: 작업을 완료할 수 없습니다. 'default'는 예약된 이름입니다.
+community_name_no_community_reserved: 작업을 완료할 수 없습니다. 'No community'는 예약된 이름입니다.

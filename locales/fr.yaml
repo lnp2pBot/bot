@@ -686,4 +686,4 @@ user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
-community_name_default_reserved: L'opération n'a pas pu être effectuée, 'default' est un nom réservé.
+community_name_no_community_reserved: L'opération n'a pas pu être effectuée, 'No community' est un nom réservé.

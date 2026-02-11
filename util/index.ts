@@ -404,11 +404,11 @@ const getDetailedOrder = async (
     const sellerTrades = seller ? seller.trades_completed : 0;
 
     // Add order community name
-    let communityName = 'default';
+    let communityName = 'No community';
     if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
       if (community) {
-        communityName = community.name;
+        communityName = sanitizeMD(community.name);
       }
     }
 
