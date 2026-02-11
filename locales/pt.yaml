@@ -351,6 +351,7 @@ published: Publicadas
 created: Criada
 yes: Sim
 no: Não
+no_community: Nenhuma comunidade
 wizard_add_invoice_init: |
   🤖 Eu preciso que você me envie e a fatura por ${satsAmount} satoshis que valem ${currency} ${fiatAmount} para que eu possa enviar o dinheiro.
 
@@ -686,4 +687,3 @@ user_taker_is_blocked_by_user_order: Você não pode aceitar esta oferta porque 
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
-community_name_no_community_reserved: A operação não pôde ser concluída, 'No community' é um nome reservado.

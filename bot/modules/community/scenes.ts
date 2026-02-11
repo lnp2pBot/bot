@@ -130,7 +130,7 @@ const createCommunitySteps = {
       }
       ctx.wizard.state.error = null;
       const name = text.trim();
-      if (!name || name.toLowerCase() === 'no community') {
+      if (!name) {
         ctx.telegram.deleteMessage(ctx.chat!.id, ctx.message!.message_id);
         ctx.wizard.state.error = ctx.i18n.t('wizard_community_enter_name');
         return await ctx.wizard.state.updateUI();
@@ -516,10 +516,6 @@ export const updateNameCommunityWizard = new Scenes.WizardScene(
       }
       const { community } = ctx.wizard.state;
 
-      if (name.toLowerCase() === 'no community') {
-        await ctx.reply(ctx.i18n.t('community_name_no_community_reserved'));
-        return ctx.scene.leave();
-      }
       community.name = name;
       await community.save();
       await ctx.reply(ctx.i18n.t('operation_successful'));

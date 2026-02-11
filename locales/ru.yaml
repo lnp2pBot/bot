@@ -349,6 +349,7 @@ published: Опубликована
 created: Создана
 yes: Да
 no: Нет
+no_community: Нет сообщества
 wizard_add_invoice_init: |
   Чтобы отправить вам сатоши, мне нужно, чтобы вы выставили мне счет на сумму ${satsAmount} сат. Это эквивалентно ${currency} ${fiatAmount}.
 
@@ -687,4 +688,3 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
-community_name_no_community_reserved: "Операцию не удалось завершить: имя 'No community' является зарезервированным."

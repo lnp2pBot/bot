@@ -358,6 +358,7 @@ published: Published
 created: Created
 yes: Yes
 no: No
+no_community: No community
 wizard_add_invoice_init: |
   🤖 I need you to send me an invoice for ${satsAmount} satoshis that is worth ${currency} ${fiatAmount} so I can send you the money.
 
@@ -692,4 +693,3 @@ user_taker_is_blocked_by_user_order: You can't take this order because its maker
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait few minutes and try again
-community_name_no_community_reserved: Operation could not be completed, 'No community' is a reserved name.

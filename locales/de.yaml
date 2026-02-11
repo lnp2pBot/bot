@@ -350,6 +350,7 @@ published: Veröffentlicht
 created: Erstellt
 yes: Ja
 no: Nein
+no_community: Keine Community
 wizard_add_invoice_init: |
   🤖 Du musst mir eine LN-Rechnung über ${satsAmount} Sats schicken, die ${currency} ${fiatAmount} wert ist, damit ich dir später die Sats weiterleiten kann.
 
@@ -687,4 +688,3 @@ user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
-community_name_no_community_reserved: Der Vorgang konnte nicht abgeschlossen werden, 'No community' ist ein reservierter Name.

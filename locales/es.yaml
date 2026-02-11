@@ -353,6 +353,7 @@ published: Publicada
 created: Creada
 yes: Sí
 no: No
+no_community: Ninguna comunidad
 wizard_add_invoice_init: |
   🤖 Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
 
@@ -689,4 +690,3 @@ user_taker_is_blocked_by_user_order: No puedes aceptar esta oferta porque su cre
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
-community_name_no_community_reserved: No fue posible realizar la operacion, 'No community' es un nombre reservado. 
