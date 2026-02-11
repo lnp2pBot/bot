@@ -25,9 +25,9 @@ export const orderToTags = async (order: IOrder) => {
   }
   const maker = await User.findById(order.creator_id);
   const days = maker ? getUserAge(maker) : 0;
-  const totalRating = Number(maker?.total_rating.toFixed(2)) ?? 0;
+  const totalRating = Number(maker?.total_rating?.toFixed(2)) || 0;
   const totalReviews = maker?.total_reviews ?? 0;
-  const volumeTraded = maker?.show_volume_traded ? maker.volume_traded : 0;
+  const volumeTraded = maker?.show_volume_traded ? (maker.volume_traded ?? 0) : 0;
   const tradesCompleted = maker?.trades_completed ?? 0;
   const rating: [string, string, string, string, string] = [
     totalRating.toString(),
