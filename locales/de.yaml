@@ -34,7 +34,7 @@ start: |
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
 invoice_payment_request: |
-  Ein Benutzer möchte ${order.amount} sats für ${currency} ${order.fiat_amount} von dir kaufen
+  Ein Benutzer möchte ${totalAmount} sats für ${currency} ${order.fiat_amount} von dir kaufen
 
   Ruf des Käufers: ${rate}, Tage der Nutzung des Bots: ${days}
 

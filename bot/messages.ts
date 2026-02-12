@@ -88,6 +88,8 @@ const invoicePaymentRequestMessage = async (
     const rate = `${roundedRating} ${stars} (${buyer.total_reviews})`;
     // Extracting the buyer's days in the platform
     const ageInDays = getUserAge(buyer);
+    // Calculate total amount including fees (what the buyer actually pays)
+    const totalAmount = Math.floor(order.amount + order.fee);
 
     const message = i18n.t('invoice_payment_request', {
       currency,
@@ -95,6 +97,7 @@ const invoicePaymentRequestMessage = async (
       expirationTime,
       rate,
       days: ageInDays,
+      totalAmount,
     });
 
     await ctx.telegram.sendMessage(user.tg_id, message, {
