@@ -34,7 +34,7 @@ start: |
 init_bot_error: per utilizzare questo Bot è necessario inizializzare l'avvio con il comando /start
 non_handle_error: 👤 Per utilizzare questo bot è necessario impostare il proprio nome utente di Telegram; per impostarlo, aprire il menu in alto a sinistra e selezionare impostazioni -> modifica profilo -> nome utente
 invoice_payment_request: |
-  Un utente vuole acquistarti ${order.amount} sats per ${currency} ${order.fiat_amount}
+  Un utente vuole acquistarti ${totalAmount} sats per ${currency} ${order.fiat_amount}
 
   Reputazione dell'acquirente: ${rate}, giorni di utilizzo del bot: ${days}
 

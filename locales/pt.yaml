@@ -35,7 +35,7 @@ commit_hash: hash do último commit
 init_bot_error: Para usar este bot, você deve iniciar com o comando /start
 non_handle_error: 👤 Para usar este bot, você precisa ativar seu nome de usuário do Telegram, para ativá-lo, abra as configurações e selecione Meu Perfil -> Editar -> Nome de Usuário
 invoice_payment_request: |
-  Um usuário quer comprar de você ${order.amount} sats por ${currency} ${order.fiat_amount}
+  Um usuário quer comprar de você ${totalAmount} sats por ${currency} ${order.fiat_amount}
 
   Reputação do comprador: ${rate}, dias utilizando o bot: ${days}
 
