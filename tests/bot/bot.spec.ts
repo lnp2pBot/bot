@@ -463,7 +463,7 @@ describe('Bot Initialization', () => {
 
     scheduledFunction();
 
-    expect(scheduleStub.scheduleJob.callCount).to.be.equal(7);
+    expect(scheduleStub.scheduleJob.callCount).to.be.equal(8);
     expect(scheduleStub.scheduleJob.getCall(0).args[0]).to.equal(
       '*/10 * * * *',
     );
