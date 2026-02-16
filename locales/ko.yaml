@@ -179,6 +179,8 @@ order_detail: |
 
   상태: ${status}
 
+  관리자에 의해 완료됨: ${settledByAdmin}
+
   생성자: @${creator || ''}
 
   구매자: @${buyerUsername || ''}

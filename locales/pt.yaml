@@ -179,6 +179,8 @@ order_detail: |
 
   Status: ${status}
 
+  Completado por admin: ${settledByAdmin}
+
   Criadora: @${creator || ''}
 
   Compradora: @${buyerUsername || ''}

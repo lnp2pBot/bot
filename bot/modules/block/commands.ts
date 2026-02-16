@@ -23,7 +23,6 @@ const block = async (ctx: MainContext, username: string): Promise<void> => {
         'CLOSED',
         'CANCELED_BY_ADMIN',
         'EXPIRED',
-        'COMPLETED_BY_ADMIN',
         'SUCCESS',
         'PAID_HOLD_INVOICE',
         'CANCELED',
