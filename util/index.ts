@@ -402,7 +402,9 @@ const getDetailedOrder = (
     const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
-    const settledByAdmin = order.settled_by_admin ? i18n.t('yes') : i18n.t('no');
+    const settledByAdmin = order.settled_by_admin
+      ? i18n.t('yes')
+      : i18n.t('no');
 
     const message = i18n.t('order_detail', {
       order,

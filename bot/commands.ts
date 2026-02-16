@@ -600,7 +600,6 @@ const addInvoicePHI = async (
     if (order === null) throw new Error('order was not found');
     // only orders with status PAID_HOLD_INVOICE are released payments
     if (order.status !== 'PAID_HOLD_INVOICE') return;
-    
 
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (buyer === null) return;
