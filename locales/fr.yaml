@@ -180,6 +180,8 @@ order_detail: |
 
   Statut : ${status}
 
+  Complété par l'administrateur : ${settledByAdmin}
+
   Créateur : @${creator || ''}
 
   Acheteur : @${buyerUsername || ''}

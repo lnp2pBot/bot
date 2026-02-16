@@ -177,6 +177,8 @@ order_detail: |
 
   Статус: ${status}
 
+  Завершено администратором: ${settledByAdmin}
+
   Создатель: @${creator || ''}
 
   Покупатель: @${buyerUsername || ''}

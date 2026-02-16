@@ -47,6 +47,7 @@ export interface IOrder extends Document {
   is_public: boolean;
   random_image: string;
   is_golden_honey_badger?: boolean;
+  settled_by_admin?: boolean;
 }
 
 const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
@@ -118,10 +119,10 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
       'PAID_HOLD_INVOICE', // seller released funds
       'CANCELED_BY_ADMIN',
       'EXPIRED', // Expired orders, stated changed by a job
-      'COMPLETED_BY_ADMIN',
       'FROZEN',
     ],
   },
+  settled_by_admin: { type: Boolean, default: false },
   type: { type: String },
   fiat_amount: { type: Number, min: 1 }, // amount in fiat
   fiat_code: { type: String },
