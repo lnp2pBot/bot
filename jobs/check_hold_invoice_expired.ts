@@ -1,5 +1,5 @@
 import { HasTelegram } from '../bot/start';
-import { Order, User } from '../models';
+import { Order, User, Dispute } from '../models';
 import { holdInvoiceExpirationInSecs, getUserI18nContext } from '../util';
 import { logger } from '../logger';
 import { cancelHoldInvoice } from '../ln';
@@ -15,9 +15,10 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
     const now = new Date();
     const holdExpiredBefore = new Date(now.getTime() - expirationTimeInMs);
 
-    // Orders in ACTIVE or FIAT_SENT whose hold invoice has exceeded the hold time
+    // Orders in ACTIVE, DISPUTE or FIAT_SENT whose hold invoice has exceeded the hold time
+    const orderStatuses = ['ACTIVE', 'DISPUTE', 'FIAT_SENT'];
     const ordersWithHoldInvoice = await Order.find({
-      $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }],
+      $or: orderStatuses.map(status => ({ status })),
       hash: { $ne: null },
       invoice_held_at: { $ne: null, $lte: holdExpiredBefore },
     });
@@ -31,10 +32,7 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
           async () => {
             const updatedOrder = await Order.findById(order._id);
             if (!updatedOrder) return;
-            if (
-              updatedOrder.status !== 'ACTIVE' &&
-              updatedOrder.status !== 'FIAT_SENT'
-            ) {
+            if (!orderStatuses.includes(updatedOrder.status)) {
               return;
             }
             if (!updatedOrder.hash || !updatedOrder.invoice_held_at) return;
@@ -42,6 +40,17 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
             // Cancel the hold invoice ourselves so our LND state is clean (idempotent if node already canceled via CLTV).
             try {
               await cancelHoldInvoice({ hash: updatedOrder.hash });
+
+              const isDispute = updatedOrder.status === 'DISPUTE';
+              if (isDispute) {
+                const dispute = await Dispute.findOne({
+                  order_id: String(updatedOrder._id),
+                });
+                if (dispute) {
+                  dispute.status = 'SELLER_REFUNDED';
+                  await dispute.save();
+                }
+              }
             } catch (err) {
               logger.error(
                 `checkHoldInvoiceExpired: cancelHoldInvoice for order ${updatedOrder._id}: ${err}`,
