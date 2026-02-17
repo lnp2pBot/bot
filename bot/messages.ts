@@ -1744,6 +1744,44 @@ const toSellerExpiredOrderMessage = async (
   }
 };
 
+const toBuyerHoldInvoiceExpiredMessage = async (
+  bot: HasTelegram,
+  user: UserDocument,
+  order: IOrder,
+  i18n: I18nContext,
+) => {
+  try {
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('hold_invoice_expired_to_buyer', {
+        orderId: order._id,
+        helpGroup: process.env.HELP_GROUP,
+      }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const toSellerHoldInvoiceExpiredMessage = async (
+  bot: HasTelegram,
+  user: UserDocument,
+  order: IOrder,
+  i18n: I18nContext,
+) => {
+  try {
+    await bot.telegram.sendMessage(
+      user.tg_id,
+      i18n.t('hold_invoice_expired_to_seller', {
+        orderId: order._id,
+        helpGroup: process.env.HELP_GROUP,
+      }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const toBuyerDidntAddInvoiceMessage = async (
   bot: MainContext,
   user: UserDocument,
@@ -2174,6 +2212,8 @@ export {
   refundCooperativeCancelMessage,
   toBuyerExpiredOrderMessage,
   toSellerExpiredOrderMessage,
+  toBuyerHoldInvoiceExpiredMessage,
+  toSellerHoldInvoiceExpiredMessage,
   currencyNotSupportedMessage,
   sendMeAnInvoiceMessage,
   notAuthorized,
