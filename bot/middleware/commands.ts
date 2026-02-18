@@ -13,7 +13,7 @@ const commandArgs = () => (ctx: CommunityContext, next: () => void) => {
         if (match[1]) {
           command = match[1];
         }
-        let next_arg = ['', '', match[2]];
+        let next_arg = ['', '', match[2] || ''];
         while ((next_arg = re_next_arg.exec(next_arg[2])!)) {
           let quoted_arg = next_arg[1];
           let unquoted_arg = '';

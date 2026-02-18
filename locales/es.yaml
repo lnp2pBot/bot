@@ -512,7 +512,21 @@ not_wizard: No estás en el modo asistente en este momento, si tienes dudas pued
 wizard_help: Estás en modo asistente, si necesitas volver al modo comando ejecuta /exit
 hold_invoice_memo: '@${botName} - Depósito en garantía Orden #${orderId} - VENTA x ${fiatCode} ${fiatAmount} - SE CONGELA EN BILLETERA. Se libera una vez ejecute /release. Retorna a la wallet si el comprador no confirma el pago'
 tap_button: Selecciona una orden para realizar la operación
-tap_release: Selecciona la orden para liberar los fondos, una vez toques el botón la operación no puede ser reversada.
+tap_release: Selecciona la orden para liberar los fondos, verás una confirmación antes de proceder.
+release_confirmation_message: |
+  Estás a punto de liberar la siguiente orden:
+
+  🆔 ID de orden: ${orderId}
+  👤 Contraparte: ${counterparty}
+  ⚡ Monto: ${amount} sats
+  💰 Equivalente: ${fiatAmount} ${fiatCode}
+
+  ⚠️ Esta operación no puede ser revertida.
+
+  ¿Quieres confirmar esta operación?
+release_confirm_button: Confirmar
+release_cancel_button: Cancelar
+release_operation_cancelled: Operación de liberación cancelada.
 earnings: Ganancias
 premium: Prima
 discount: Descuento

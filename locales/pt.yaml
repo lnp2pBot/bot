@@ -510,7 +510,21 @@ not_wizard: Você não está no modo assistente no momento, se tiver dúvidas, p
 wizard_help: Você está no modo Wizard, se precisar voltar ao modo de comando executar /exit
 hold_invoice_memo: '@${botName} - Ordem de quantidade de garantia #${orderId}: Venda o BTC para ${fiatCode} ${fiatAmount} - Vai congelar na carteira. Ele será lançado assim que você correr /release. Ele retornará se o comprador não confirmar o pagamento'
 tap_button: Selecione um pedido para executar a operação
-tap_release: Selecione o pedido para liberar os fundos, depois de tocar no botão, a operação não pode ser revertida.
+tap_release: Selecione o pedido para liberar os fundos, você verá uma confirmação antes de prosseguir.
+release_confirmation_message: |
+  Você está prestes a liberar a seguinte ordem:
+
+  🆔 ID do Pedido: ${orderId}
+  👤 Contraparte: @${counterparty}
+  ⚡ Valor: ${amount} sats
+  💰 Equivalente: ${fiatAmount} ${fiatCode}
+
+  ⚠️ Esta operação não pode ser revertida.
+
+  Você quer confirmar esta operação?
+release_confirm_button: Confirmar
+release_cancel_button: Cancelar
+release_operation_cancelled: Operação de liberação cancelada.
 earnings: Ganhos
 premium: Prêmio
 discount: Desconto

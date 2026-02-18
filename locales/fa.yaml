@@ -511,7 +511,21 @@ not_wizard: شما در حال حاضر در حالت wizard نیستید، اگ
 wizard_help: شما در حالت wizard هستید، اگر نیاز به بازگشت به حالت فرمان دارید، /exit را اجرا کنید
 hold_invoice_memo: '@${botName} - Escrow amount Order #${orderId}: SELL BTC for ${fiatCode} ${fiatAmount} - It WILL FREEZE IN YOUR WALLET. It will release once you run /release. It will return if buyer does not confirm the payment'
 tap_button: دستوری را برای انجام عملیات انتخاب کنید
-tap_release: سفارش را انتخاب کنید تا وجه را آزاد کنید، پس از فشار دادن دکمه، عملیات قابل برگشت نیست.
+tap_release: برای آزادسازی وجه، سفارش را انتخاب کنید؛ قبل از ادامه تأییدی مشاهده خواهید کرد.
+release_confirmation_message: |
+  شما در آستانه آزاد کردن سفارش زیر هستید:
+
+  🆔 شناسه سفارش: ${orderId}
+  👤 طرف مقابل: @${counterparty}
+  ⚡ مبلغ: ${amount} sats
+  💰 معادل: ${fiatAmount} ${fiatCode}
+
+  ⚠️ این عملیات قابل برگشت نیست.
+
+  آیا می‌خواهید این عملیات را تأیید کنید؟
+release_confirm_button: تأیید
+release_cancel_button: لغو
+release_operation_cancelled: عملیات آزادسازی لغو شد.
 earnings: درآمد
 premium: حباب
 discount: تخفیف
