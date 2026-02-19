@@ -3,6 +3,8 @@ import { MainContext } from '../../start';
 import * as messages from './messages';
 import { validateAdmin } from '../../validations';
 import * as globalMessages from '../../messages';
+import { handleDispute } from './commands';
+import { logger } from '../../../logger';
 
 export const takeDispute = async (ctx: MainContext): Promise<void> => {
   const tgId: string = (ctx.update as any).callback_query.from.id;
@@ -52,4 +54,15 @@ export const takeDispute = async (ctx: MainContext): Promise<void> => {
     buyerDisputes,
     sellerDisputes,
   );
+};
+
+export const initiateDispute = async (ctx: MainContext) => {
+  try {
+    const orderId = ctx.match?.[1];
+    if (!orderId) return;
+    await ctx.deleteMessage();
+    await handleDispute(ctx, orderId);
+  } catch (error) {
+    logger.error(error);
+  }
 };

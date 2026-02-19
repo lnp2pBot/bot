@@ -167,6 +167,7 @@ waiting_seller_to_pay: 'Enviei uma solicitação de pagamento ao vendedor para q
 sell_success: Sua venda de SATs foi concluída após a confirmação do pagamento de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} Já lançou os Satoshis, espere que sua fatura seja paga a qualquer momento, lembre-se de que sua carteira precisa estar online para receber através da Lightning Network.
 rate_counterpart: 'Por favor, qualifique sua contraparte:'
+choose_order_for_dispute: 'Escolha o pedido para iniciar a disputa:'
 cant_process_order: Este pedido não pode ser processado, verifique se o ID está correto.
 cant_release_order: Este pedido não pode ser divulgado, o comprador não enviou uma fatura para onde pagar
 no_id_related: Você não tem nenhum pedido associado a este ID.

@@ -166,6 +166,7 @@ waiting_seller_to_pay: 'Ich habe eine Zahlungsaufforderung an den Verkäufer ges
 sell_success: Dein Verkauf von Sats wurde abgeschlossen, nachdem die Zahlung von @${buyerUsername} bestätigt wurde. ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kannst jederzeit mit der Bezahlung deiner LN-Rechnung rechnen, aber denke daran, dass deine Wallet online sein muss, um über das Lightning-Netzwerk zu empfangen.
 rate_counterpart: 'Bitte bewerte deine Gegenpartei:'
+choose_order_for_dispute: 'Wählen Sie den Auftrag aus, um den Streitfall einzuleiten:'
 cant_process_order: Dieser Auftrag kann nicht bearbeitet werden. Bitte überprüfe, ob die ID korrekt ist.
 cant_release_order: Dieser Auftrag kann nicht freigegeben werden, der Käufer hat keine LN-Rechnung geschickt.
 no_id_related: Du hast keinen Auftrag, der mit dieser Id verbunden ist.
