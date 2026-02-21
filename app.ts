@@ -9,6 +9,7 @@ import { delay } from './util';
 import { imageCache } from './util/imageCache';
 import { createIndexes } from './models/indexes';
 import { CommunityContext } from './bot/modules/community/communityContext';
+import { initializeMonitoring } from './monitoring';
 
 (async () => {
   process.on('unhandledRejection', e => {
@@ -54,6 +55,9 @@ import { CommunityContext } from './bot/modules/community/communityContext';
       // Wait 1 seconds before try to resubscribe hold invoices
       await delay(1000);
       await resubscribeInvoices(bot);
+      
+      // Initialize health monitoring system
+      initializeMonitoring();
     })
     .on('error', (error: Error) =>
       logger.error(`Error connecting to Mongo: ${error}`),
