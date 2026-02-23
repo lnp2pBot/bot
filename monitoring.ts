@@ -144,7 +144,10 @@ const startMonitoring = (): void => {
   const config: MonitoringConfig = {
     monitorUrl: monitorUrl.replace(/\/$/, ''), // Remove trailing slash
     authToken: process.env.MONITOR_AUTH_TOKEN || '',
-    intervalMs: parseInt(process.env.MONITOR_INTERVAL_MS || '120000', 10),
+    intervalMs: Math.max(
+      parseInt(process.env.MONITOR_INTERVAL_MS || '120000', 10) || 120000,
+      5000,
+    ),
     botName: process.env.MONITOR_BOT_NAME || 'lnp2pBot',
   };
 

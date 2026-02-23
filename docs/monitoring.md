@@ -13,7 +13,7 @@ The heartbeat contains health data about the bot's critical subsystems:
 
 ## Architecture
 
-```
+```text
 ┌──────────────┐    heartbeat     ┌──────────────────┐    alert    ┌──────────┐
 │   lnp2pBot   │ ──── POST ────► │  Monitor Service  │ ─────────► │ Telegram │
 │ (monitoring) │   every 2 min   │ (lnp2pbot-monitor)│            │  Admins  │
