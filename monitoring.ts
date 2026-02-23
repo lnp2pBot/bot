@@ -1,7 +1,8 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
 import { logger } from './logger';
-
+// Using require to match the project's pattern (see jobs/node_info.ts)
+// and to allow test stubbing via proxyquire
 const { getInfo } = require('./ln');
 
 interface MonitoringConfig {
@@ -49,11 +50,17 @@ const DB_STATES: Record<number, string> = {
   3: 'disconnecting',
 };
 
+/** Minimum allowed heartbeat interval (5 seconds) */
+const MIN_INTERVAL_MS = 5000;
+/** Default heartbeat interval (2 minutes) */
+const DEFAULT_INTERVAL_MS = 120000;
+
 /**
  * Collect health data from the bot's subsystems
  */
 const collectHealthData = async (botName: string): Promise<HealthData> => {
   const mem = process.memoryUsage();
+  const dbReadyState = mongoose.connection.readyState;
 
   const healthData: HealthData = {
     bot: botName,
@@ -67,8 +74,8 @@ const collectHealthData = async (botName: string): Promise<HealthData> => {
       heapUsed: mem.heapUsed,
       external: mem.external,
     },
-    dbConnected: mongoose.connection.readyState === 1,
-    dbState: DB_STATES[mongoose.connection.readyState] || 'unknown',
+    dbConnected: dbReadyState === 1,
+    dbState: DB_STATES[dbReadyState] || 'unknown',
     lightningConnected: false,
   };
 
@@ -130,8 +137,14 @@ let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
 /**
  * Start the heartbeat monitoring system.
  * Call this after the bot is connected to MongoDB and ready.
+ * Idempotent: calling while already running is a no-op.
  */
 const startMonitoring = (): void => {
+  if (heartbeatInterval) {
+    logger.warning('startMonitoring called while already running; ignoring');
+    return;
+  }
+
   const monitorUrl = process.env.MONITOR_URL;
 
   if (!monitorUrl) {
@@ -141,13 +154,16 @@ const startMonitoring = (): void => {
     return;
   }
 
+  const parsed = parseInt(process.env.MONITOR_INTERVAL_MS || '', 10);
+  const intervalMs = Math.max(
+    Number.isNaN(parsed) ? DEFAULT_INTERVAL_MS : parsed,
+    MIN_INTERVAL_MS,
+  );
+
   const config: MonitoringConfig = {
     monitorUrl: monitorUrl.replace(/\/$/, ''), // Remove trailing slash
     authToken: process.env.MONITOR_AUTH_TOKEN || '',
-    intervalMs: Math.max(
-      parseInt(process.env.MONITOR_INTERVAL_MS || '120000', 10) || 120000,
-      5000,
-    ),
+    intervalMs,
     botName: process.env.MONITOR_BOT_NAME || 'lnp2pBot',
   };
 
