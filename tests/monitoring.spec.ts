@@ -1,7 +1,8 @@
-const { expect } = require('chai');
-const sinon = require('sinon');
 import axios from 'axios';
 import mongoose from 'mongoose';
+
+const { expect } = require('chai');
+const sinon = require('sinon');
 
 // We need to stub ln/connect before importing monitoring
 // to prevent LND connection errors during tests
@@ -21,16 +22,16 @@ const { collectHealthData, sendHeartbeat } = proxyquire('../monitoring', {
   },
 });
 
-const {
-  collectHealthData: collectHealthDataLnFail,
-  sendHeartbeat: sendHeartbeatLnFail,
-} = proxyquire('../monitoring', {
-  './ln': {
-    getInfo: async () => {
-      throw new Error('LND connection refused');
+const { collectHealthData: collectHealthDataLnFail } = proxyquire(
+  '../monitoring',
+  {
+    './ln': {
+      getInfo: async () => {
+        throw new Error('LND connection refused');
+      },
     },
   },
-});
+);
 
 describe('Monitoring', () => {
   let sandbox: any;
@@ -77,7 +78,7 @@ describe('Monitoring', () => {
 
       expect(data.lightningConnected).to.equal(false);
       expect(data.lastError).to.include('LND connection refused');
-      expect(data.lightningInfo).to.be.undefined;
+      expect(data.lightningInfo).to.equal(undefined);
     });
 
     it('should report correct DB state when disconnected', async () => {
@@ -105,12 +106,12 @@ describe('Monitoring', () => {
       await sendHeartbeat(config);
 
       expect(postStub.calledOnce).to.equal(true);
-      const [url, body, options] = postStub.firstCall.args as [string, any, any];
-      expect(url).to.equal('https://monitor.example.com/api/heartbeat');
-      expect(body.bot).to.equal('test-bot');
-      expect(body.timestamp).to.be.a('number');
-      expect(options.headers['Authorization']).to.equal('Bearer test-token');
-      expect(options.timeout).to.equal(10000);
+      const args = postStub.firstCall.args;
+      expect(args[0]).to.equal('https://monitor.example.com/api/heartbeat');
+      expect(args[1].bot).to.equal('test-bot');
+      expect(args[1].timestamp).to.be.a('number');
+      expect(args[2].headers.Authorization).to.equal('Bearer test-token');
+      expect(args[2].timeout).to.equal(10000);
     });
 
     it('should send without auth header when no token configured', async () => {
@@ -126,7 +127,7 @@ describe('Monitoring', () => {
 
       await sendHeartbeat(config);
 
-      const [, , options] = postStub.firstCall.args as [string, any, any];
+      const options = postStub.firstCall.args[2];
       expect(options.headers).to.not.have.property('Authorization');
     });
 
