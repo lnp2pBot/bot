@@ -20,6 +20,9 @@ const { collectHealthData, sendHeartbeat } = proxyquire('../monitoring', {
       version: '0.17.0',
     }),
   },
+  'node-schedule': {
+    scheduleJob: () => {},
+  },
 });
 
 const { collectHealthData: collectHealthDataLnFail } = proxyquire(
@@ -30,7 +33,10 @@ const { collectHealthData: collectHealthDataLnFail } = proxyquire(
         throw new Error('LND connection refused');
       },
     },
-  },
+    'node-schedule': {
+      scheduleJob: () => {},
+    },
+  }
 );
 
 describe('Monitoring', () => {
@@ -96,14 +102,11 @@ describe('Monitoring', () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
       const postStub = sandbox.stub(axios, 'post').resolves({ status: 200 });
 
-      const config = {
-        monitorUrl: 'https://monitor.example.com',
-        authToken: 'test-token',
-        intervalMs: 120000,
-        botName: 'test-bot',
-      };
-
-      await sendHeartbeat(config);
+      await sendHeartbeat(
+        'https://monitor.example.com',
+        'test-token',
+        'test-bot'
+      );
 
       expect(postStub.calledOnce).to.equal(true);
       const args = postStub.firstCall.args;
@@ -118,14 +121,7 @@ describe('Monitoring', () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
       const postStub = sandbox.stub(axios, 'post').resolves({ status: 200 });
 
-      const config = {
-        monitorUrl: 'https://monitor.example.com',
-        authToken: '',
-        intervalMs: 120000,
-        botName: 'test-bot',
-      };
-
-      await sendHeartbeat(config);
+      await sendHeartbeat('https://monitor.example.com', '', 'test-bot');
 
       const options = postStub.firstCall.args[2];
       expect(options.headers).to.not.have.property('Authorization');
@@ -135,15 +131,12 @@ describe('Monitoring', () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
       sandbox.stub(axios, 'post').rejects(new Error('ECONNREFUSED'));
 
-      const config = {
-        monitorUrl: 'https://monitor.example.com',
-        authToken: 'test-token',
-        intervalMs: 120000,
-        botName: 'test-bot',
-      };
-
       // Should not throw
-      await sendHeartbeat(config);
+      await sendHeartbeat(
+        'https://monitor.example.com',
+        'test-token',
+        'test-bot'
+      );
     });
 
     it('should handle HTTP error responses gracefully', async () => {
@@ -152,15 +145,12 @@ describe('Monitoring', () => {
       error.response = { status: 403, data: { error: 'Invalid token' } };
       sandbox.stub(axios, 'post').rejects(error);
 
-      const config = {
-        monitorUrl: 'https://monitor.example.com',
-        authToken: 'bad-token',
-        intervalMs: 120000,
-        botName: 'test-bot',
-      };
-
       // Should not throw
-      await sendHeartbeat(config);
+      await sendHeartbeat(
+        'https://monitor.example.com',
+        'bad-token',
+        'test-bot'
+      );
     });
   });
 });

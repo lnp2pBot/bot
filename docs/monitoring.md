@@ -31,7 +31,7 @@ Add the following variables to your `.env` file:
 |---|---|---|
 | `MONITOR_URL` | Monitor service URL (e.g. `https://monitor.example.com`) | _(empty = disabled)_ |
 | `MONITOR_AUTH_TOKEN` | Bearer token for authentication | _(empty = no auth)_ |
-| `MONITOR_INTERVAL_MS` | Heartbeat interval in milliseconds | `120000` (2 min) |
+| ~~`MONITOR_INTERVAL_MS`~~ | *(removed — uses node-schedule cron: every 2 min)* | — |
 | `MONITOR_BOT_NAME` | Bot identifier sent with heartbeats | `lnp2pBot` |
 
 ### Enabling monitoring
@@ -80,7 +80,7 @@ confirming monitoring is disabled and will not attempt any heartbeat requests.
 - Monitoring failures never crash the bot. All errors are caught and logged as warnings.
 - If the monitor service is unreachable, the bot continues operating normally.
 - HTTP timeouts are set to 10 seconds per request.
-- The monitoring interval timer is cleaned up on process shutdown (SIGINT/SIGTERM).
+- Heartbeat scheduling uses `node-schedule` (cron: `*/2 * * * *`), consistent with the rest of the codebase. Cleanup is handled by `node-schedule`'s `gracefulShutdown()`.
 
 ## Related
 

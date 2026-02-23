@@ -5,17 +5,6 @@ import { logger } from './logger';
 // and to allow test stubbing via proxyquire
 const { getInfo } = require('./ln');
 
-interface MonitoringConfig {
-  /** URL of the external monitor service (e.g. https://monitor.example.com) */
-  monitorUrl: string;
-  /** Authentication token for the monitor service */
-  authToken: string;
-  /** Heartbeat interval in milliseconds (default: 120000 = 2 minutes) */
-  intervalMs: number;
-  /** Bot identifier sent with each heartbeat */
-  botName: string;
-}
-
 interface HealthData {
   bot: string;
   timestamp: number;
@@ -49,11 +38,6 @@ const DB_STATES: Record<number, string> = {
   2: 'connecting',
   3: 'disconnecting',
 };
-
-/** Minimum allowed heartbeat interval (5 seconds) */
-const MIN_INTERVAL_MS = 5000;
-/** Default heartbeat interval (2 minutes) */
-const DEFAULT_INTERVAL_MS = 120000;
 
 /**
  * Collect health data from the bot's subsystems
@@ -103,21 +87,29 @@ const collectHealthData = async (botName: string): Promise<HealthData> => {
 };
 
 /**
- * Send a heartbeat to the external monitor service
+ * Send a heartbeat to the external monitor service.
+ *
+ * @param monitorUrl - Base URL of the monitor service
+ * @param authToken - Bearer token for authentication
+ * @param botName - Bot identifier sent with each heartbeat
  */
-const sendHeartbeat = async (config: MonitoringConfig): Promise<void> => {
+const sendHeartbeat = async (
+  monitorUrl: string,
+  authToken: string,
+  botName: string
+): Promise<void> => {
   try {
-    const healthData = await collectHealthData(config.botName);
+    const healthData = await collectHealthData(botName);
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
-    if (config.authToken) {
-      headers.Authorization = `Bearer ${config.authToken}`;
+    if (authToken) {
+      headers.Authorization = `Bearer ${authToken}`;
     }
 
-    await axios.post(`${config.monitorUrl}/api/heartbeat`, healthData, {
+    await axios.post(`${monitorUrl}/api/heartbeat`, healthData, {
       headers,
       timeout: 10000,
     });
@@ -132,73 +124,43 @@ const sendHeartbeat = async (config: MonitoringConfig): Promise<void> => {
   }
 };
 
-let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
-
 /**
- * Start the heartbeat monitoring system.
- * Call this after the bot is connected to MongoDB and ready.
- * Idempotent: calling while already running is a no-op.
+ * Start the heartbeat monitoring system using node-schedule.
+ *
+ * Reads configuration from environment variables:
+ * - MONITOR_URL: URL of the external monitor service (required, disabled if absent)
+ * - MONITOR_AUTH_TOKEN: Bearer token for authentication (optional)
+ * - MONITOR_BOT_NAME: Bot identifier (default: 'lnp2pBot')
+ *
+ * Schedules a heartbeat job every 2 minutes using node-schedule,
+ * consistent with the rest of the codebase's scheduling pattern.
  */
 const startMonitoring = (): void => {
-  if (heartbeatInterval) {
-    logger.warning('startMonitoring called while already running; ignoring');
-    return;
-  }
-
   const monitorUrl = process.env.MONITOR_URL;
 
   if (!monitorUrl) {
     logger.info(
-      'Monitoring disabled: MONITOR_URL not configured in environment',
+      'Monitoring disabled: MONITOR_URL not configured in environment'
     );
     return;
   }
 
-  const parsed = parseInt(process.env.MONITOR_INTERVAL_MS || '', 10);
-  const intervalMs = Math.max(
-    Number.isNaN(parsed) ? DEFAULT_INTERVAL_MS : parsed,
-    MIN_INTERVAL_MS,
-  );
-
-  const config: MonitoringConfig = {
-    monitorUrl: monitorUrl.replace(/\/$/, ''), // Remove trailing slash
-    authToken: process.env.MONITOR_AUTH_TOKEN || '',
-    intervalMs,
-    botName: process.env.MONITOR_BOT_NAME || 'lnp2pBot',
-  };
+  const url = monitorUrl.replace(/\/$/, ''); // Remove trailing slash
+  const authToken = process.env.MONITOR_AUTH_TOKEN || '';
+  const botName = process.env.MONITOR_BOT_NAME || 'lnp2pBot';
 
   logger.info(
-    `Starting monitoring: sending heartbeats every ${config.intervalMs / 1000}s to ${config.monitorUrl}`,
+    `Starting monitoring: sending heartbeats every 2 minutes to ${url}`
   );
 
   // Send first heartbeat immediately
-  sendHeartbeat(config).catch(() => {});
+  sendHeartbeat(url, authToken, botName).catch(() => {});
 
-  // Schedule periodic heartbeats
-  heartbeatInterval = setInterval(() => {
-    sendHeartbeat(config).catch(() => {});
-  }, config.intervalMs);
-
-  // Ensure cleanup on shutdown
-  const cleanup = () => {
-    if (heartbeatInterval) {
-      clearInterval(heartbeatInterval);
-      heartbeatInterval = null;
-    }
-  };
-  process.once('SIGINT', cleanup);
-  process.once('SIGTERM', cleanup);
+  // Schedule periodic heartbeats using node-schedule (every 2 minutes)
+  const schedule = require('node-schedule');
+  schedule.scheduleJob('*/2 * * * *', async () => {
+    await sendHeartbeat(url, authToken, botName).catch(() => {});
+  });
 };
 
-/**
- * Stop the heartbeat monitoring system.
- */
-const stopMonitoring = (): void => {
-  if (heartbeatInterval) {
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
-    logger.info('Monitoring stopped');
-  }
-};
-
-export { startMonitoring, stopMonitoring, collectHealthData, sendHeartbeat };
+export { startMonitoring, collectHealthData, sendHeartbeat };
