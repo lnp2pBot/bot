@@ -36,7 +36,7 @@ const { collectHealthData: collectHealthDataLnFail } = proxyquire(
     'node-schedule': {
       scheduleJob: () => {},
     },
-  }
+  },
 );
 
 describe('Monitoring', () => {
@@ -105,7 +105,7 @@ describe('Monitoring', () => {
       await sendHeartbeat(
         'https://monitor.example.com',
         'test-token',
-        'test-bot'
+        'test-bot',
       );
 
       expect(postStub.calledOnce).to.equal(true);
@@ -135,7 +135,7 @@ describe('Monitoring', () => {
       await sendHeartbeat(
         'https://monitor.example.com',
         'test-token',
-        'test-bot'
+        'test-bot',
       );
     });
 
@@ -149,7 +149,7 @@ describe('Monitoring', () => {
       await sendHeartbeat(
         'https://monitor.example.com',
         'bad-token',
-        'test-bot'
+        'test-bot',
       );
     });
   });

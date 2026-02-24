@@ -96,7 +96,7 @@ const collectHealthData = async (botName: string): Promise<HealthData> => {
 const sendHeartbeat = async (
   monitorUrl: string,
   authToken: string,
-  botName: string
+  botName: string,
 ): Promise<void> => {
   try {
     const healthData = await collectHealthData(botName);
@@ -140,7 +140,7 @@ const startMonitoring = (): void => {
 
   if (!monitorUrl) {
     logger.info(
-      'Monitoring disabled: MONITOR_URL not configured in environment'
+      'Monitoring disabled: MONITOR_URL not configured in environment',
     );
     return;
   }
@@ -150,7 +150,7 @@ const startMonitoring = (): void => {
   const botName = process.env.MONITOR_BOT_NAME || 'lnp2pBot';
 
   logger.info(
-    `Starting monitoring: sending heartbeats every 2 minutes to ${url}`
+    `Starting monitoring: sending heartbeats every 2 minutes to ${url}`,
   );
 
   // Send first heartbeat immediately
