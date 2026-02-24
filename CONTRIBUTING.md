@@ -70,3 +70,38 @@ https://help.github.com/articles/signing-commits-with-gpg/ for instructions.
 ### Keep the git history clean
 
 It's very important to keep the git history clear, light and easily browsable. This means contributors must make sure their pull requests include only meaningful commits (if they are redundant or were added after a review, they should be removed) and _no merge commits_.
+
+### Commit message prefixes
+
+We encourage using conventional prefixes in commit messages:
+
+- `feat:` — new features (bumps minor version)
+- `fix:` — bug fixes (bumps patch version)
+- `chore:` — maintenance, dependencies, CI
+- `docs:` — documentation only
+- `test:` — test additions or fixes
+- `refactor:` — code changes that don't add features or fix bugs
+
+Example: `feat: add community language support (#663)`
+
+## Quality Gates
+
+Before submitting a PR, make sure all checks pass:
+
+```bash
+npm run format   # Prettier formatting
+npm run lint     # ESLint checks
+npm test         # Mocha test suite
+```
+
+CI will run these automatically on your PR.
+
+## Release Process
+
+Releases follow [Semantic Versioning](https://semver.org/):
+
+1. Maintainer updates `version` in `package.json`
+2. Updates `CHANGELOG.md` with the new version section
+3. Commits: `chore: bump version to vX.Y.Z`
+4. Creates and pushes a git tag: `git tag vX.Y.Z && git push origin vX.Y.Z`
+5. GitHub Actions automatically creates the GitHub Release with changelog notes
