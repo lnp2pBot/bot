@@ -11,11 +11,28 @@ const mockConfigUp = {
   findOne: async () => ({
     node_status: 'up',
     node_uri: 'test-node@127.0.0.1:9735',
+    node_alias: 'test-node',
+    node_version: '0.17.0',
+    node_block_height: 800000,
+    node_channels_count: 5,
+    node_peers_count: 3,
+    node_synced_to_chain: true,
+    node_synced_to_graph: true,
   }),
 };
 
 const mockConfigDown = {
-  findOne: async () => ({ node_status: 'down', node_uri: '' }),
+  findOne: async () => ({
+    node_status: 'down',
+    node_uri: '',
+    node_alias: '',
+    node_version: '',
+    node_block_height: 0,
+    node_channels_count: 0,
+    node_peers_count: 0,
+    node_synced_to_chain: false,
+    node_synced_to_graph: false,
+  }),
 };
 
 const mockConfigFail = {
@@ -73,6 +90,13 @@ describe('Monitoring', () => {
       expect(data.dbState).to.equal('connected');
       expect(data.lightningConnected).to.equal(true);
       expect(data.lightningInfo).to.deep.include({
+        alias: 'test-node',
+        active_channels_count: 5,
+        peers_count: 3,
+        synced_to_chain: true,
+        synced_to_graph: true,
+        block_height: 800000,
+        version: '0.17.0',
         node_uri: 'test-node@127.0.0.1:9735',
       });
     });

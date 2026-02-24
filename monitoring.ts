@@ -19,6 +19,13 @@ interface HealthData {
   dbState: string;
   lightningConnected: boolean;
   lightningInfo?: {
+    alias: string;
+    active_channels_count: number;
+    peers_count: number;
+    synced_to_chain: boolean;
+    synced_to_graph: boolean;
+    block_height: number;
+    version: string;
     node_uri: string;
   };
   lastError?: string;
@@ -61,11 +68,16 @@ const collectHealthData = async (botName: string): Promise<HealthData> => {
     const config = await Config.findOne({});
     if (config) {
       healthData.lightningConnected = config.node_status === 'up';
-      if (config.node_uri) {
-        healthData.lightningInfo = {
-          node_uri: config.node_uri,
-        };
-      }
+      healthData.lightningInfo = {
+        alias: config.node_alias || '',
+        active_channels_count: config.node_channels_count || 0,
+        peers_count: config.node_peers_count || 0,
+        synced_to_chain: config.node_synced_to_chain || false,
+        synced_to_graph: config.node_synced_to_graph || false,
+        block_height: config.node_block_height || 0,
+        version: config.node_version || '',
+        node_uri: config.node_uri || '',
+      };
     }
   } catch (error) {
     healthData.lightningConnected = false;
