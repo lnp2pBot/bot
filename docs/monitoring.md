@@ -31,7 +31,7 @@ Add the following variables to your `.env` file:
 |---|---|---|
 | `MONITOR_URL` | Monitor service URL (e.g. `https://monitor.example.com`) | _(empty = disabled)_ |
 | `MONITOR_AUTH_TOKEN` | Bearer token for authentication | _(empty = no auth)_ |
-| ~~`MONITOR_INTERVAL_MS`~~ | *(removed — uses node-schedule cron: every 2 min)* | — |
+| ~~`MONITOR_INTERVAL_MS`~~ | _(removed — uses node-schedule cron: every 2 min)_ | — |
 | `MONITOR_BOT_NAME` | Bot identifier sent with heartbeats | `lnp2pBot` |
 
 ### Enabling monitoring
