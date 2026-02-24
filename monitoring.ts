@@ -1,9 +1,7 @@
 import axios from 'axios';
 import mongoose from 'mongoose';
 import { logger } from './logger';
-// Using require to match the project's pattern (see jobs/node_info.ts)
-// and to allow test stubbing via proxyquire
-const { getInfo } = require('./ln');
+import { Config } from './models';
 
 interface HealthData {
   bot: string;
@@ -21,13 +19,7 @@ interface HealthData {
   dbState: string;
   lightningConnected: boolean;
   lightningInfo?: {
-    alias: string;
-    active_channels_count: number;
-    peers_count: number;
-    synced_to_chain: boolean;
-    synced_to_graph: boolean;
-    block_height: number;
-    version: string;
+    node_uri: string;
   };
   lastError?: string;
 }
@@ -63,20 +55,17 @@ const collectHealthData = async (botName: string): Promise<HealthData> => {
     lightningConnected: false,
   };
 
-  // Check Lightning node
+  // Check Lightning node status from Config (updated every minute by jobs/node_info.ts)
+  // We reuse the existing getInfo() result stored in DB to avoid extra calls to the LN node
   try {
-    const info = await getInfo();
-    if (info) {
-      healthData.lightningConnected = true;
-      healthData.lightningInfo = {
-        alias: info.alias || '',
-        active_channels_count: info.active_channels_count || 0,
-        peers_count: info.peers_count || 0,
-        synced_to_chain: info.is_synced_to_chain || false,
-        synced_to_graph: info.is_synced_to_graph || false,
-        block_height: info.current_block_height || 0,
-        version: info.version || '',
-      };
+    const config = await Config.findOne({});
+    if (config) {
+      healthData.lightningConnected = config.node_status === 'up';
+      if (config.node_uri) {
+        healthData.lightningInfo = {
+          node_uri: config.node_uri,
+        };
+      }
     }
   } catch (error) {
     healthData.lightningConnected = false;

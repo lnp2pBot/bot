@@ -4,38 +4,44 @@ import mongoose from 'mongoose';
 const { expect } = require('chai');
 const sinon = require('sinon');
 
-// We need to stub ln/connect before importing monitoring
-// to prevent LND connection errors during tests
 const proxyquire = require('proxyquire').noCallThru();
 
+// Mock Config model
+const mockConfigUp = {
+  findOne: async () => ({
+    node_status: 'up',
+    node_uri: 'test-node@127.0.0.1:9735',
+  }),
+};
+
+const mockConfigDown = {
+  findOne: async () => ({ node_status: 'down', node_uri: '' }),
+};
+
+const mockConfigFail = {
+  findOne: async () => {
+    throw new Error('DB query failed');
+  },
+};
+
 const { collectHealthData, sendHeartbeat } = proxyquire('../monitoring', {
-  './ln': {
-    getInfo: async () => ({
-      alias: 'test-node',
-      active_channels_count: 5,
-      peers_count: 3,
-      is_synced_to_chain: true,
-      is_synced_to_graph: true,
-      current_block_height: 800000,
-      version: '0.17.0',
-    }),
-  },
-  'node-schedule': {
-    scheduleJob: () => {},
-  },
+  './models': { Config: mockConfigUp },
+  'node-schedule': { scheduleJob: () => {} },
 });
+
+const { collectHealthData: collectHealthDataLnDown } = proxyquire(
+  '../monitoring',
+  {
+    './models': { Config: mockConfigDown },
+    'node-schedule': { scheduleJob: () => {} },
+  },
+);
 
 const { collectHealthData: collectHealthDataLnFail } = proxyquire(
   '../monitoring',
   {
-    './ln': {
-      getInfo: async () => {
-        throw new Error('LND connection refused');
-      },
-    },
-    'node-schedule': {
-      scheduleJob: () => {},
-    },
+    './models': { Config: mockConfigFail },
+    'node-schedule': { scheduleJob: () => {} },
   },
 );
 
@@ -51,8 +57,7 @@ describe('Monitoring', () => {
   });
 
   describe('collectHealthData', () => {
-    it('should collect health data with Lightning info', async () => {
-      // Stub mongoose connection state
+    it('should collect health data with Lightning info from Config', async () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
 
       const data = await collectHealthData('test-bot');
@@ -68,22 +73,25 @@ describe('Monitoring', () => {
       expect(data.dbState).to.equal('connected');
       expect(data.lightningConnected).to.equal(true);
       expect(data.lightningInfo).to.deep.include({
-        alias: 'test-node',
-        active_channels_count: 5,
-        peers_count: 3,
-        synced_to_chain: true,
-        synced_to_graph: true,
-        block_height: 800000,
+        node_uri: 'test-node@127.0.0.1:9735',
       });
     });
 
-    it('should handle Lightning connection failure gracefully', async () => {
+    it('should report lightning down when Config node_status is down', async () => {
+      sandbox.stub(mongoose.connection, 'readyState').value(1);
+
+      const data = await collectHealthDataLnDown('test-bot');
+
+      expect(data.lightningConnected).to.equal(false);
+    });
+
+    it('should handle Config query failure gracefully', async () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
 
       const data = await collectHealthDataLnFail('test-bot');
 
       expect(data.lightningConnected).to.equal(false);
-      expect(data.lastError).to.include('LND connection refused');
+      expect(data.lastError).to.include('DB query failed');
       expect(data.lightningInfo).to.equal(undefined);
     });
 
@@ -131,7 +139,6 @@ describe('Monitoring', () => {
       sandbox.stub(mongoose.connection, 'readyState').value(1);
       sandbox.stub(axios, 'post').rejects(new Error('ECONNREFUSED'));
 
-      // Should not throw
       await sendHeartbeat(
         'https://monitor.example.com',
         'test-token',
@@ -145,7 +152,6 @@ describe('Monitoring', () => {
       error.response = { status: 403, data: { error: 'Invalid token' } };
       sandbox.stub(axios, 'post').rejects(error);
 
-      // Should not throw
       await sendHeartbeat(
         'https://monitor.example.com',
         'bad-token',
