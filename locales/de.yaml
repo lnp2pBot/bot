@@ -414,6 +414,14 @@ expired_order_to_seller: |
 didnt_add_invoice: '🤨 Du hast die LN-Rechnung noch nicht gesendet, um Sats für den Auftrag zu erhalten: ${orderId}'
 buyer_havent_add_invoice: '😔 Der Käufer hat mir die LN-Rechnung für den Erhalt der Sats für deinen Auftrag nicht geschickt: Auftrag ${orderId}. Deine Sats wurden an dich zurückgeschickt.'
 buyer_havent_add_invoice_to_admin_channel: 'Käufer @${username} (${tgId}) hat den Auftrag ${orderId} angenommen, aber keine LN-Rechnung gesendet. Die Zeit ist abgelaufen, der Auftrag wird neu veröffentlicht.'
+hold_invoice_expired_to_buyer: |
+  Die LN-Sperrrechnung für Auftrag ${orderId} ist abgelaufen, bevor der Handel abgeschlossen wurde. Die Sats wurden an den Verkäufer zurücküberwiesen.
+
+  Wenn du Hilfe brauchst, kannst du an die Gruppe ${helpGroup} schreiben
+hold_invoice_expired_to_seller: |
+  Die LN-Sperrrechnung für Auftrag ${orderId} ist abgelaufen, bevor der Handel abgeschlossen wurde. Deine Sats wurden dir zurücküberwiesen.
+
+  Wenn du Hilfe brauchst, kannst du an die Gruppe ${helpGroup} schreiben
 havent_paid_invoice: '🤨 Du hast die LN-Rechnung nicht bezahlt, um Sats für den Auftrag (${orderId}) zu verkaufen.'
 seller_havent_paid_invoice: '😔 Der Verkäufer hat die LN-Rechnung für deinen Auftrag (${orderId}) nicht bezahlt. Der Vorgang wurde storniert.'
 seller_havent_add_invoice_to_admin_channel: 'Verkäufer @${username} (${tgId}) hat die LN-Rechnung des Auftrages (${orderId}) nicht bezahlt. Der Auftrag ist abgelaufen und wurde wieder veröffentlicht.'

@@ -412,6 +412,14 @@ expired_order_to_seller: |
 didnt_add_invoice: '🤨 아직 주문 ID: ${orderId}에 대해 비트코인을 받기 위한 인보이스를 보내지 않으셨습니다.'
 buyer_havent_add_invoice: '😔 아직 구매자가 주문 ID: ${orderId}에 대해 비트코인을 받기 위한 인보이스를 보내지 않았습니다. 당신의 비트코인은 무사합니다!'
 buyer_havent_add_invoice_to_admin_channel: '주문자 @${username} (${tgId})님이 주문 ID: ${orderId}를 수락하였으나, 시간 내에 인보이스를 보내지 못했습니다. 주문이 채널에 재등록됩니다.'
+hold_invoice_expired_to_buyer: |
+  주문 ID ${orderId}의 홀드 인보이스가 거래 완료 전에 만료되었습니다. sats는 판매자에게 반환되었습니다.
+
+  도움이 필요하시면 ${helpGroup} 그룹에 문의하세요.
+hold_invoice_expired_to_seller: |
+  주문 ID ${orderId}의 홀드 인보이스가 거래 완료 전에 만료되었습니다. 귀하의 sats가 반환되었습니다.
+
+  도움이 필요하시면 ${helpGroup} 그룹에 문의하세요.
 havent_paid_invoice: '🤨 주문 ID: ${orderId}에 판매를 위한 인보이스에 결제를 하지 않으셨습니다.'
 seller_havent_paid_invoice: '😔 판매자가 주문 ID: ${orderId}의 결제 인보이스를 처리하지 않았습니다. 주문이 취소됩니다.'
 seller_havent_add_invoice_to_admin_channel: '판매자 @${username} (${tgId})님이 주문 ID: ${orderId}에 시간 내에 인보이스 결제를 하지 않았습니다. 주문이 채널에 재등록됩니다.'

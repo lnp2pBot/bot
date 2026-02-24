@@ -120,6 +120,7 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
       'EXPIRED', // Expired orders, stated changed by a job
       'COMPLETED_BY_ADMIN',
       'FROZEN',
+      'HOLD_INVOICE_EXPIRED', // hold invoice expired before payment was collected
     ],
   },
   type: { type: String },

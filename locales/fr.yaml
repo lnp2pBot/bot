@@ -415,6 +415,14 @@ expired_order_to_seller: |
 didnt_add_invoice: "🤨 Vous n'avez pas envoyé la facture pour recevoir des sats pour l'offre ID : ${orderId}"
 buyer_havent_add_invoice: "😔  L'acheteur ne m'a pas envoyé la facture pour recevoir les sats pour votre offre ID : ${orderId}, vos sats vous ont été renvoyés."
 buyer_havent_add_invoice_to_admin_channel: "L'acheteur @${username} (${tgId}) a pris l'offre ID : ${orderId} mais n'a pas envoyé la facture pour recevoir les sats, le temps a expiré, la commande a été republiée."
+hold_invoice_expired_to_buyer: |
+  La facture de séquestre pour l'offre ID ${orderId} a expiré avant que l'échange soit complété. Les sats ont été renvoyés au vendeur.
+
+  Si vous avez besoin d'aide, vous pouvez écrire au groupe ${helpGroup}
+hold_invoice_expired_to_seller: |
+  La facture de séquestre pour l'offre ID ${orderId} a expiré avant que l'échange soit complété. Vos sats vous ont été renvoyés.
+
+  Si vous avez besoin d'aide, vous pouvez écrire au groupe ${helpGroup}
 havent_paid_invoice: "🤨 Vous n'avez pas payé la facture de vente de sats pour l'offre ID : ${orderId}"
 seller_havent_paid_invoice: "😔 Le vendeur n'a pas payé la facture pour votre achat ID : ${orderId}, l'opération a été annulée."
 seller_havent_add_invoice_to_admin_channel: "Le vendeur @${username} (${tgId}) n'a pas payé la facture de l'offre ID : ${orderId}. Le délai est terminé et la commande a été publiée à nouveau."
