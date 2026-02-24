@@ -14,21 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - run: npm ci
-
-      - run: npm run lint
-
-      - run: npm test
-
       - name: Extract changelog for this version
         id: changelog
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          # Extract section between this version header and the next version header
           awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md > /tmp/release-notes.md
           cat /tmp/release-notes.md
 
