@@ -261,6 +261,8 @@ help: |
   /cancel <_order id_> - Скасувати заявку до її виконання
   /cancelall - Скасувати всі виставлені заявки
   /terms - Показати умови використання бота
+  Шаблони:
+  /templates - Створюйте та керуйте шаблонами замовлень
 
   Nostr:
   /setnpub <_nostr npub_> - Оновлює ваш nostr pubkey, цю команду можна виконати лише в майстрі /settings
@@ -700,3 +702,23 @@ unblock_failed: "Помилка при розблокуванні користу
 check_solvers: У вашій спільноті ${communityName} немає розв’язувачів. Додайте принаймні одну протягом ${remainingDays} днів, щоб запобігти вимкненню спільноти.
 check_solvers_last_warning: У вашій спільноті ${communityName} немає розв’язувачів. Будь ласка, додайте принаймні одну сьогодні, щоб запобігти вимкненню спільноти.
 image_processing_error: У нас виникла помилка при обробці зображення, будь ласка, почекайте кілька хвилин і спробуйте знову.
+
+# templates
+no_templates: "У вас ще немає шаблонів. Створіть один!"
+templates_list: "Ваші шаблони:"
+template_published: "✅ Замовлення опубліковано з шаблону!"
+template_saved: "✅ Шаблон збережено."
+template_deleted: "🗑 Шаблон видалено."
+confirm_delete_template: "Видалити цей шаблон?"
+enter_template_type: "Оберіть тип замовлення:"
+template_summary: "Короткий опис шаблону:\nТип: ${type}\nВалюта: ${fiatCode}\nСума: ${fiatAmount}\nЦіна: ${priceMode}\nМаржа: ${margin}%\nОплата: ${paymentMethod}"
+template_not_found: "Шаблон не знайдено."
+create_new_template: "Створити новий шаблон"
+template_publish_btn: "🚀  Опублікувати"
+template_delete_btn: "🗑  Видалити"
+template_card: "${action} ${amountStr} за ${fiatAmount} ${fiatCode}. Оплата через ${paymentMethod}.${rateStr}"
+template_rate: " Маржа: ${margin}%."
+template_new_prompt: "Створити новий шаблон:"
+buy: "Купую"
+sell: "Продаю"
+

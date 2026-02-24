@@ -262,6 +262,8 @@ help: |
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
   /terms: mostra i termini e le condizioni quando si utilizza il bot
+  Modelli:
+  /templates - Crea e gestisci i tuoi modelli di ordine
 
   Nostr:
   /setnpub <_nostr npub_> - Aggiorna la tua nostr pubkey, questo comando è eseguibile solo nella procedura guidata /settings
@@ -701,3 +703,21 @@ unblock_failed: "Errore nello sbloccare l'utente"
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+# templates
+no_templates: "Non hai ancora modelli. Creane uno!"
+templates_list: "I tuoi modelli:"
+template_published: "✅ Ordine pubblicato dal modello!"
+template_saved: "✅ Modello salvato."
+template_deleted: "🗑 Modello eliminato."
+confirm_delete_template: "Eliminare questo modello?"
+enter_template_type: "Scegli il tipo di ordine:"
+template_summary: "Riepilogo modello:\nTipo: ${type}\nValuta: ${fiatCode}\nImporto: ${fiatAmount}\nPrezzo: ${priceMode}\nMargine: ${margin}%\nPagamento: ${paymentMethod}"
+template_not_found: "Modello non trovato."
+create_new_template: "Crea nuovo modello"
+template_publish_btn: "🚀  Pubblica"
+template_delete_btn: "🗑  Elimina"
+template_card: "${action} ${amountStr} per ${fiatAmount} ${fiatCode}. Pagamento tramite ${paymentMethod}.${rateStr}"
+template_rate: " Tasso: ${margin}%."
+template_new_prompt: "Crea un nuovo modello:"
+buy: "Acquisto"
+sell: "Vendita"

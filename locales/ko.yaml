@@ -263,6 +263,9 @@ help: |
   /terms - 사용자 이용 약관 및 면책 조항을 표시합니다.
   /cancel <_주문 id_> - 아직 수락되지 않은 주문을 취소합니다.
   /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
+  템플릿:
+  /templates - 주문 템플릿을 생성하고 관리하세요
+
 
   Nostr:
   /setnpub <_노스터 npub_> - 노스터 공개키를 설정합니다. 이 명령어는 /settings 명령어 수행 중에만 사용 가능합니다.
@@ -701,3 +704,22 @@ unblock_failed: "사용자 차단 해제 중 오류 발생"
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
+
+# templates
+no_templates: "아직 템플릿이 없습니다. 하나 생성하세요!"
+templates_list: "당신의 템플릿:"
+template_published: "✅ 템플릿에서 주문이 게시되었습니다!"
+template_saved: "✅ 템플릿이 저장되었습니다."
+template_deleted: "🗑 템플릿이 삭제되었습니다."
+confirm_delete_template: "이 템플릿을 삭제할까요?"
+enter_template_type: "주문 유형을 선택하세요:"
+template_summary: "템플릿 요약:\n유형: ${type}\n통화: ${fiatCode}\n금액: ${fiatAmount}\n가격: ${priceMode}\n마진: ${margin}%\n결제: ${paymentMethod}"
+template_not_found: "템플릿을 찾을 수 없습니다."
+create_new_template: "새 템플릿 생성"
+template_publish_btn: "🚀  게시"
+template_delete_btn: "🗑  삭제"
+template_card: "${action} ${amountStr} ${fiatAmount} ${fiatCode}에 대해 결제: ${paymentMethod}.${rateStr}"
+template_rate: " 마진: ${margin}%."
+template_new_prompt: "새 템플릿 생성:"
+buy: "삽니다"
+sell: "팝니다"
