@@ -733,9 +733,11 @@ const cancelOrder = async (
       updateOrder.seller_cooperativecancel
     ) {
       // If we already have a holdInvoice we cancel it and return the money
-      if (order.hash) await cancelHoldInvoice({ hash: order.hash });
+      if (updateOrder.hash) await cancelHoldInvoice({ hash: updateOrder.hash });
 
       updateOrder.status = 'CANCELED';
+      updateOrder.canceled_by = String(user._id);
+      await updateOrder.save();
 
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
@@ -761,10 +763,9 @@ const cancelOrder = async (
       logger.info(`Order ${updateOrder._id} was cancelled cooperatively!`);
 
       // Emit updateOrder (fresh) instead of order (stale)
-      logger.info('cancelOrder => OrderEvents.orderUpdated(updateOrder);');
       OrderEvents.orderUpdated(updateOrder);
     } else {
-      await messages.initCooperativeCancelMessage(ctx, order);
+      await messages.initCooperativeCancelMessage(ctx, updateOrder);
       await messages.counterPartyWantsCooperativeCancelMessage(
         ctx,
         counterPartyUser,
