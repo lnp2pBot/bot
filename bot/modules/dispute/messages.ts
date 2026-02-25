@@ -110,11 +110,12 @@ export const disputeData = async (
   sellerDisputes: any,
 ) => {
   try {
-    const type =
-      initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
-
     const { initiatorUser, counterPartyUser, buyerLanguage, sellerLanguage } =
       await getDisputeParties(initiator, buyer, seller);
+
+    // translate the type in the solvers language (ctx.i18n)
+    const type =
+      initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
 
     const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
 
