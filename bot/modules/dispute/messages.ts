@@ -28,14 +28,16 @@ const getDisputeParties = async (
   const buyerLanguage = await getUserI18nContext(buyer);
   const sellerLanguage = await getUserI18nContext(seller);
 
-  const counterpartyLanguage = await getUserI18nContext(counterPartyUser);
+  const initiatorLanguage = initiator === 'seller' ? sellerLanguage : buyerLanguage;
+  const counterpartyLanguage = initiator === 'seller' ? buyerLanguage : sellerLanguage;
 
   return {
     initiatorUser,
     counterPartyUser,
+    initiatorLanguage,
+    counterpartyLanguage,
     buyerLanguage,
     sellerLanguage,
-    counterpartyLanguage,
   };
 };
 
