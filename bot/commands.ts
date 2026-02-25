@@ -773,7 +773,6 @@ const cancelOrder = async (
         i18nCtxCP,
       );
     }
-    await updateOrder.save();
   } catch (error) {
     logger.error(error);
   }
