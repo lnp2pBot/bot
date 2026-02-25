@@ -32,7 +32,11 @@ const setCooperativeCancelFlag = async (
   const propName =
     role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
   const update = { [propName]: true };
-  return await Order.findOneAndUpdate({ _id: orderId }, update, { new: true });
+  return await Order.findOneAndUpdate(
+    { _id: orderId, [propName]: { $ne: true } },
+    update,
+    { new: true },
+  );
 };
 
 const waitPayment = async (
@@ -710,21 +714,15 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    // Check if user already requested cancel (duplicate guard)
-    const hasRequestedCancel =
-      initiator === 'buyer'
-        ? order.buyer_cooperativecancel
-        : order.seller_cooperativecancel;
-    if (hasRequestedCancel) {
-      return await messages.shouldWaitCooperativeCancelMessage(ctx, user);
-    }
     const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
-    // Handle null case with user feedback
+
+    // If the call returns null, the flag was already set (or order is missing),
+    // so we treat it as a duplicate request.
     if (!updateOrder) {
       logger.warn(
-        `Order ${orderId} not found when setting cooperative cancel flag`,
+        `Order ${orderId} not found or duplicate request when setting cooperative cancel flag`,
       );
-      return ctx.reply(ctx.i18n.t('generic_error')); // Opción segura: respondemos un error genérico desde i18n
+      return await messages.shouldWaitCooperativeCancelMessage(ctx, user);
     }
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
