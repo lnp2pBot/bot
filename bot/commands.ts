@@ -737,7 +737,6 @@ const cancelOrder = async (
 
       updateOrder.status = 'CANCELED';
 
-
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
       if (order.seller_id == counterPartyUser._id) {
