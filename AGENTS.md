@@ -16,6 +16,7 @@
 - Prettier enforces 2-space indentation, semicolons, and single quotes; run it before committing.
 - ESLint Standard plus TypeScript rules guard the codebase; address warnings instead of disabling them.
 - Use camelCase for functions/variables, PascalCase for classes, and descriptive locale keys (`locales/*.json`).
+- **Markdown (MD049):** Use underscores for emphasis (`_text_`) instead of asterisks (`*text*`) in all `.md` files.
 
 ## Testing Guidelines
 - Write Mocha + Chai specs in `tests/**`, suffixing files with `.spec.ts` and mirroring source layout.

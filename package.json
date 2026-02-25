@@ -1,6 +1,9 @@
 {
   "name": "lnp2pbot",
-  "version": "0.14.3",
+  "version": "0.15.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
   "main": "dist/app.js",
@@ -19,13 +22,13 @@
     "@grammyjs/i18n": "^0.5.1",
     "@grammyjs/ratelimiter": "^1.1.5",
     "async-mutex": "^0.5.0",
-    "axios": "1.12.0",
+    "axios": "1.13.5",
     "canvas": "^3.0.0",
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
     "lightning": "10.25.0",
-    "mongoose": "6.13.6",
+    "mongoose": "^8.17.1",
     "node-schedule": "^2.0.0",
     "nostr-tools": "^2.5.2",
     "qrcode": "^1.5.0",

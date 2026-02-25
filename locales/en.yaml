@@ -22,7 +22,7 @@ start: |
 
   6. If you want to buy, publish your order using the /buy command and wait until a seller takes it. You can cancel the order at any time by using the /cancel command.
 
-  7. Once somebody takes your buy order, you must create a LN invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /release command. The bot will send you the sats to your LN invoice.
+  7. Once somebody takes your buy order, you must create a LN invoice and send it to the bot. After that, you need to contact your seller to get your FIAT payment instructions. Once you have paid the seller, you should use the /fiatsent command. After the seller's confirmation, the bot will send you the sats to your LN invoice.
 
   8. If you are taking a selling order, i.e. you buy sats, you must create a LN invoice to get your sats and ask the seller to give you the FIAT payment instructions. Once the seller receives the fiat payment he shall use the /release command to have the sats sent to your wallet.
 
@@ -79,7 +79,7 @@ sell_correct_format: |
 
   `/sell 1000 2 USD "transfer or ATM deposit"`
 
-  In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating fiat amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
+  In order to create a sale with a surplus in the price of 3% \(premium\) you need to add the parameter 0 indicating sats amount\. The bot will calculate the selling price using the Bitcoin market price and applying the indicated surplus, you need to add 3 as the last parameter
 
   `/sell 0 2 USD "payment method" 3`
 
@@ -692,4 +692,4 @@ user_order_is_blocked_by_user_taker: You can't take this order because you block
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
-image_processing_error: We had an error processing the image, please wait few minutes and try again
+image_processing_error: We had an error processing the image, please wait a few minutes and try again
