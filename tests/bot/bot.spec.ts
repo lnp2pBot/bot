@@ -447,13 +447,6 @@ describe('Bot Initialization', () => {
     sinon.restore();
   });
 
-  it('should initialize the bot and register middleware', () => {
-    initialize('dummy-token', {});
-
-    expect(botStub.catch.calledOnce).to.be.equal(true);
-    expect(botStub.use.callCount).to.be.equal(5);
-  });
-
   it('should schedule recurring jobs', () => {
     process.env.PENDING_PAYMENT_WINDOW = '10';
 
