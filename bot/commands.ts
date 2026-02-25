@@ -736,7 +736,7 @@ const cancelOrder = async (
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       updateOrder.status = 'CANCELED';
-      await updateOrder.save();
+
 
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
@@ -773,6 +773,7 @@ const cancelOrder = async (
         i18nCtxCP,
       );
     }
+    await updateOrder.save();
   } catch (error) {
     logger.error(error);
   }
