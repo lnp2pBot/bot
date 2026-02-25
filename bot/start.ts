@@ -47,6 +47,7 @@ import {
   release,
   showQrCode,
 } from './commands';
+import { showReleaseConfirmationMessage } from './messages';
 import {
   settleHoldInvoice,
   cancelHoldInvoice,
@@ -74,6 +75,7 @@ import {
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
+import { commandLogger } from './middleware/commandlogging';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -192,6 +194,7 @@ const initialize = (
     logger.error(err);
   });
 
+  bot.use(commandLogger());
   bot.use(session());
   bot.use(limit());
   bot.use(i18n.middleware());
@@ -914,6 +917,42 @@ const initialize = (
       }
       ctx.deleteMessage();
       await release(ctx, ctx.match[1]);
+    },
+  );
+
+  // Action to show release confirmation
+  bot.action(
+    /^show_release_confirmation_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await showReleaseConfirmationMessage(ctx, ctx.match[1]);
+    },
+  );
+
+  // Action to confirm release
+  bot.action(
+    /^confirm_release_([0-9a-f]{24})$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      if (ctx.match === null) {
+        throw new Error('ctx.match should not be null');
+      }
+      ctx.deleteMessage();
+      await release(ctx, ctx.match[1]);
+    },
+  );
+
+  // Action to cancel release
+  bot.action(
+    /^cancel_release$/,
+    userMiddleware,
+    async (ctx: CommunityContext) => {
+      ctx.deleteMessage();
+      await ctx.reply(ctx.i18n.t('release_operation_cancelled'));
     },
   );
 
