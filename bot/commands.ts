@@ -29,17 +29,11 @@ const setCooperativeCancelFlag = async (
   orderId: string,
   role: 'buyer' | 'seller',
 ): Promise<IOrder | null> => {
-  let propName = '';
-
-  if (role === 'buyer') {
-    propName = 'buyer_cooperativecancel';
-  } else if (role === 'seller') {
-    propName = 'seller_cooperativecancel';
-  }
-
+  const propName = role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
   const update = { [propName]: true };
   return await Order.findOneAndUpdate({ _id: orderId }, update, { new: true });
 };
+
 
 const waitPayment = async (
   ctx: MainContext,
@@ -718,27 +712,35 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
+    // Issue #3: Check if user already requested cancel (duplicate guard)
+    const hasRequestedCancel = initiator === 'buyer' ? order.buyer_cooperativecancel : order.seller_cooperativecancel;
+    if (hasRequestedCancel) {
+      return await messages.shouldWaitCooperativeCancelMessage(ctx, user);
+    }
     const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
-    if (!updateOrder) return;
+    // Issue #4: Handle null case with user feedback
+    if (!updateOrder) {
+      logger.warn(`Order ${orderId} not found when setting cooperative cancel flag`);
+      return ctx.reply(ctx.i18n.t('generic_error')); // Opción segura: respondemos un error genérico desde i18n
+    }
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
-    // If the counter party already requested a cooperative cancel order
-    if (
-      counterParty == 'seller'
-        ? updateOrder.seller_cooperativecancel
-        : updateOrder.buyer_cooperativecancel
-    ) {
+
+    // Issue #2: Re-check both flags after update to avoid race condition
+    if (updateOrder.buyer_cooperativecancel && updateOrder.seller_cooperativecancel) {
       // If we already have a holdInvoice we cancel it and return the money
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       updateOrder.status = 'CANCELED';
       await updateOrder.save();
+
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
       if (order.seller_id == counterPartyUser._id) {
         seller = counterPartyUser;
         i18nCtxSeller = i18nCtxCP;
       }
+
       // We sent a private message to the users
       await messages.successCancelOrderMessage(
         ctx,
@@ -754,8 +756,10 @@ const cancelOrder = async (
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${updateOrder._id} was cancelled cooperatively!`);
-      logger.info('cancelOrder => OrderEvents.orderUpdated(order);');
-      OrderEvents.orderUpdated(order);
+
+      // Issue #1: Emit updateOrder (fresh) instead of order (stale)
+      logger.info('cancelOrder => OrderEvents.orderUpdated(updateOrder);');
+      OrderEvents.orderUpdated(updateOrder);
     } else {
       await messages.initCooperativeCancelMessage(ctx, order);
       await messages.counterPartyWantsCooperativeCancelMessage(
