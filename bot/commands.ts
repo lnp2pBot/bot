@@ -697,17 +697,15 @@ const cancelOrder = async (
       return await messages.badStatusOnCancelOrderMessage(ctx);
 
     // If the order is active we start a cooperative cancellation
-    let counterPartyUser, initiator: 'buyer' | 'seller', counterParty;
+    let counterPartyUser, initiator: 'buyer' | 'seller';
 
     const initiatorUser = user;
     if (initiatorUser._id == order.buyer_id) {
       counterPartyUser = await User.findOne({ _id: order.seller_id });
       initiator = 'buyer';
-      counterParty = 'seller';
     } else {
       counterPartyUser = await User.findOne({ _id: order.buyer_id });
       initiator = 'seller';
-      counterParty = 'buyer';
     }
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
