@@ -51,45 +51,31 @@ export const beginDispute = async (
   try {
     const parties = await getDisputeParties(initiator, buyer, seller);
 
-    if (initiator === 'buyer') {
-      await ctx.telegram.sendMessage(
-        parties.initiatorUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('you_started', { orderId: order._id }),
-          token: order.buyer_dispute_token,
+    const initiatorToken = initiator === 'buyer' ? order.buyer_dispute_token : order.seller_dispute_token;
+    const counterpartyToken = initiator === 'buyer' ? order.seller_dispute_token : order.buyer_dispute_token;
+
+    await ctx.telegram.sendMessage(
+      parties.initiatorUser.tg_id,
+      parties.initiatorLanguage.t('dispute_started', {
+        who: parties.initiatorLanguage.t('you_started', { orderId: order._id }),
+        token: initiatorToken,
+      }),
+    );
+
+    await ctx.telegram.sendMessage(
+      parties.counterPartyUser.tg_id,
+      parties.counterpartyLanguage.t('dispute_started', {
+        who: parties.counterpartyLanguage.t('counterpart_started', {
+          orderId: order._id,
         }),
-      );
-      await ctx.telegram.sendMessage(
-        parties.counterPartyUser.tg_id,
-        parties.counterpartyLanguage.t('dispute_started', {
-          who: parties.counterpartyLanguage.t('counterpart_started', {
-            orderId: order._id,
-          }),
-          token: order.seller_dispute_token,
-        }),
-      );
-    } else {
-      await ctx.telegram.sendMessage(
-        parties.initiatorUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('you_started', { orderId: order._id }),
-          token: order.seller_dispute_token,
-        }),
-      );
-      await ctx.telegram.sendMessage(
-        parties.counterPartyUser.tg_id,
-        parties.counterpartyLanguage.t('dispute_started', {
-          who: parties.counterpartyLanguage.t('counterpart_started', {
-            orderId: order._id,
-          }),
-          token: order.buyer_dispute_token,
-        }),
-      );
-    }
+        token: counterpartyToken,
+      }),
+    );
   } catch (error) {
     logger.error(error);
   }
 };
+
 
 export const takeDisputeButton = async (ctx: MainContext, order: IOrder) => {
   try {
