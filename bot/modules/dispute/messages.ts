@@ -28,8 +28,10 @@ const getDisputeParties = async (
   const buyerLanguage = await getUserI18nContext(buyer);
   const sellerLanguage = await getUserI18nContext(seller);
 
-  const initiatorLanguage = initiator === 'seller' ? sellerLanguage : buyerLanguage;
-  const counterpartyLanguage = initiator === 'seller' ? buyerLanguage : sellerLanguage;
+  const initiatorLanguage =
+    initiator === 'seller' ? sellerLanguage : buyerLanguage;
+  const counterpartyLanguage =
+    initiator === 'seller' ? buyerLanguage : sellerLanguage;
 
   return {
     initiatorUser,
@@ -51,8 +53,14 @@ export const beginDispute = async (
   try {
     const parties = await getDisputeParties(initiator, buyer, seller);
 
-    const initiatorToken = initiator === 'buyer' ? order.buyer_dispute_token : order.seller_dispute_token;
-    const counterpartyToken = initiator === 'buyer' ? order.seller_dispute_token : order.buyer_dispute_token;
+    const initiatorToken =
+      initiator === 'buyer'
+        ? order.buyer_dispute_token
+        : order.seller_dispute_token;
+    const counterpartyToken =
+      initiator === 'buyer'
+        ? order.seller_dispute_token
+        : order.buyer_dispute_token;
 
     await ctx.telegram.sendMessage(
       parties.initiatorUser.tg_id,
@@ -75,7 +83,6 @@ export const beginDispute = async (
     logger.error(error);
   }
 };
-
 
 export const takeDisputeButton = async (ctx: MainContext, order: IOrder) => {
   try {
