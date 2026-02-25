@@ -29,11 +29,11 @@ const setCooperativeCancelFlag = async (
   orderId: string,
   role: 'buyer' | 'seller',
 ): Promise<IOrder | null> => {
-  const propName = role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
+  const propName =
+    role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
   const update = { [propName]: true };
   return await Order.findOneAndUpdate({ _id: orderId }, update, { new: true });
 };
-
 
 const waitPayment = async (
   ctx: MainContext,
@@ -712,22 +712,30 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    // Issue #3: Check if user already requested cancel (duplicate guard)
-    const hasRequestedCancel = initiator === 'buyer' ? order.buyer_cooperativecancel : order.seller_cooperativecancel;
+    // Check if user already requested cancel (duplicate guard)
+    const hasRequestedCancel =
+      initiator === 'buyer'
+        ? order.buyer_cooperativecancel
+        : order.seller_cooperativecancel;
     if (hasRequestedCancel) {
       return await messages.shouldWaitCooperativeCancelMessage(ctx, user);
     }
     const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
-    // Issue #4: Handle null case with user feedback
+    // Handle null case with user feedback
     if (!updateOrder) {
-      logger.warn(`Order ${orderId} not found when setting cooperative cancel flag`);
+      logger.warn(
+        `Order ${orderId} not found when setting cooperative cancel flag`,
+      );
       return ctx.reply(ctx.i18n.t('generic_error')); // Opción segura: respondemos un error genérico desde i18n
     }
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
 
-    // Issue #2: Re-check both flags after update to avoid race condition
-    if (updateOrder.buyer_cooperativecancel && updateOrder.seller_cooperativecancel) {
+    // Re-check both flags after update to avoid race condition
+    if (
+      updateOrder.buyer_cooperativecancel &&
+      updateOrder.seller_cooperativecancel
+    ) {
       // If we already have a holdInvoice we cancel it and return the money
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
@@ -757,7 +765,7 @@ const cancelOrder = async (
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
       logger.info(`Order ${updateOrder._id} was cancelled cooperatively!`);
 
-      // Issue #1: Emit updateOrder (fresh) instead of order (stale)
+      // Emit updateOrder (fresh) instead of order (stale)
       logger.info('cancelOrder => OrderEvents.orderUpdated(updateOrder);');
       OrderEvents.orderUpdated(updateOrder);
     } else {
