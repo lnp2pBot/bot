@@ -35,7 +35,11 @@ const setCooperativeCancelFlag = async (
     role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
   const update = { [propName]: true };
   return await Order.findOneAndUpdate(
-    { _id: orderId, [propName]: { $ne: true } },
+    {
+      _id: orderId,
+      [propName]: { $ne: true },
+      status: { $in: ['ACTIVE', 'FIAT_SENT', 'DISPUTE'] },
+    },
     update,
     { new: true },
   );
