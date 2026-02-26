@@ -35,7 +35,9 @@ const setCooperativeCancelFlag = async (
   role: Role,
 ): Promise<IOrder | null> => {
   const propName =
-    role === Role.BUYER ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
+    role === Role.BUYER
+      ? 'buyer_cooperativecancel'
+      : 'seller_cooperativecancel';
   const update = { [propName]: true };
   return await Order.findOneAndUpdate(
     { _id: orderId, [propName]: { $ne: true } },
