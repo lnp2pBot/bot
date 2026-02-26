@@ -25,12 +25,17 @@ import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
 
+export enum Role {
+  BUYER = 'buyer',
+  SELLER = 'seller',
+}
+
 const setCooperativeCancelFlag = async (
   orderId: string,
-  role: 'buyer' | 'seller',
+  role: Role,
 ): Promise<IOrder | null> => {
   const propName =
-    role === 'buyer' ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
+    role === Role.BUYER ? 'buyer_cooperativecancel' : 'seller_cooperativecancel';
   const update = { [propName]: true };
   return await Order.findOneAndUpdate(
     { _id: orderId, [propName]: { $ne: true } },
@@ -701,15 +706,16 @@ const cancelOrder = async (
       return await messages.badStatusOnCancelOrderMessage(ctx);
 
     // If the order is active we start a cooperative cancellation
-    let counterPartyUser, initiator: 'buyer' | 'seller';
+    let counterPartyUser;
+    let initiator: Role;
 
     const initiatorUser = user;
     if (initiatorUser._id == order.buyer_id) {
       counterPartyUser = await User.findOne({ _id: order.seller_id });
-      initiator = 'buyer';
+      initiator = Role.BUYER;
     } else {
       counterPartyUser = await User.findOne({ _id: order.buyer_id });
-      initiator = 'seller';
+      initiator = Role.SELLER;
     }
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
