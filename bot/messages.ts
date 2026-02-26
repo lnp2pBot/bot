@@ -1705,6 +1705,8 @@ const expiredOrderMessage = async (
       buyerUser,
       sellerUser,
     );
+    if (detailedOrder === undefined)
+      throw new Error('detailedOrder is undefined');
     await bot.telegram.sendMessage(
       String(process.env.ADMIN_CHANNEL),
       i18n.t('expired_order', {
