@@ -182,6 +182,8 @@ order_detail: |
   
   Status: ${status}
 
+  Settled by admin: ${settledByAdmin}
+
   Creator: @${creator || ''}
 
   Buyer: @${buyerUsername || ''}

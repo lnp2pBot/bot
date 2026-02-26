@@ -598,13 +598,8 @@ const addInvoicePHI = async (
     ctx.deleteMessage();
     const order = await Order.findOne({ _id: orderId });
     if (order === null) throw new Error('order was not found');
-    // orders with status PAID_HOLD_INVOICE or COMPLETED_BY_ADMIN are released payments
-    if (
-      order.status !== 'PAID_HOLD_INVOICE' &&
-      order.status !== 'COMPLETED_BY_ADMIN'
-    ) {
-      return;
-    }
+    // only orders with status PAID_HOLD_INVOICE are released payments
+    if (order.status !== 'PAID_HOLD_INVOICE') return;
 
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (buyer === null) return;

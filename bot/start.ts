@@ -133,16 +133,10 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
       orders = await Order.find(where);
     } else if (command === '/setinvoice') {
       const where: FilterQuery<OrderQuery> = {
-        $and: [
-          { buyer_id: user._id },
-          {
-            $or: [
-              { status: 'PAID_HOLD_INVOICE' },
-              { status: 'COMPLETED_BY_ADMIN' },
-            ],
-          },
-        ],
+        buyer_id: user._id,
+        status: 'PAID_HOLD_INVOICE',
       };
+
       orders = await Order.find(where);
     }
 
@@ -550,15 +544,17 @@ const initialize = (
         }
       }
 
-      if (order.secret) await settleHoldInvoice({ secret: order.secret });
+      if (order.secret) {
+        order.settled_by_admin = true;
+        await order.save();
+        await settleHoldInvoice({ secret: order.secret });
+      }
 
       if (dispute) {
         dispute.status = 'SETTLED';
         await dispute.save();
       }
 
-      order.status = 'COMPLETED_BY_ADMIN';
-      await order.save();
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       if (buyer === null || seller === null)

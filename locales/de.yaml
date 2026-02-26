@@ -178,6 +178,8 @@ order_detail: |
 
   Status: ${status}
 
+  Von Admin abgeschlossen: ${settledByAdmin}
+
   Ersteller: @${creator || ''}
 
   Käufer: @${buyerUsername || ''}
