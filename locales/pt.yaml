@@ -209,6 +209,8 @@ order_detail: |
 
   Prêmio/desconto: ${priceMargin}
 
+  Comunidade: ${communityName}
+
   Criada: ${createdAt}
 
   Ocupada: ${takenAt || ''}
@@ -349,6 +351,7 @@ published: Publicadas
 created: Criada
 yes: Sim
 no: Não
+no_community: Nenhuma comunidade
 wizard_add_invoice_init: |
   🤖 Eu preciso que você me envie e a fatura por ${satsAmount} satoshis que valem ${currency} ${fiatAmount} para que eu possa enviar o dinheiro.
 
