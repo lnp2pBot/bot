@@ -215,8 +215,6 @@ order_detail: |
 
   판매자 인보이스 해시값: `${order.hash || ''}`
 
-  판매자 인보이스 비밀번호: `${order.secret || ''}`
-
   구매자 결제 요청: `${order.buyer_invoice || ''}`
 seller: 판매자
 buyer: 구매자

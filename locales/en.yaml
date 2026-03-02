@@ -218,8 +218,6 @@ order_detail: |
 
   seller invoice hash: `${order.hash || ''}`
 
-  seller invoice secret: `${order.secret || ''}`
-
   buyer payment request: `${order.buyer_invoice || ''}`
 seller: seller
 buyer: buyer
