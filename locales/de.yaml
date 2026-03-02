@@ -210,6 +210,8 @@ order_detail: |
 
   Zuschlag/Rabatt: ${priceMargin}
 
+  Community: ${communityName}
+
   Erstellt am: ${createdAt}
 
   Ausgeführt am: ${takenAt || ''}
@@ -350,6 +352,7 @@ published: Veröffentlicht
 created: Erstellt
 yes: Ja
 no: Nein
+no_community: Keine Community
 wizard_add_invoice_init: |
   🤖 Du musst mir eine LN-Rechnung über ${satsAmount} Sats schicken, die ${currency} ${fiatAmount} wert ist, damit ich dir später die Sats weiterleiten kann.
 

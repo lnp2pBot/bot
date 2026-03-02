@@ -210,6 +210,8 @@ order_detail: |
 
   Surplus/sconto: ${priceMargin}
 
+  Community: ${communityName}
+
   Creato: ${createdAt}
 
   Preso: ${takenAt || ''}
@@ -349,6 +351,7 @@ published: Pubblicato
 created: Creato
 yes: Sì
 no: No
+no_community: Nessuna comunità
 wizard_add_invoice_init: |
   🤖 Ho bisogno che mi invii la invoice si ${satsAmount} satoshi che valgono ${currency} ${fiatAmount} in modo da poterti inviare il denaro.
 

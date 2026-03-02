@@ -218,6 +218,8 @@ order_detail: |
 
   حباب/تخفیف: ${priceMargin}
 
+  اجتماع: ${communityName}
+
   زمان ایجاد: ${createdAt}
 
   زمان پذیرش: ${takenAt || ''}
@@ -427,6 +429,7 @@ published: منتشر شده
 created: ایجاد شده
 yes: بله
 no: خیر
+no_community: هیچ اجتماعی
 wizard_add_invoice_init: |
   🤖 باید صورتحسابی به مبلغ ${satsAmount} ساتوشی (معادل ${currency} ${fiatAmount}) برای من ارسال کنید تا ساتوشی‌ها را برایتان بفرستم.
   اگر تا ${expirationTime} دقیقه دیگر صورتحساب را ارسال نکنید، سفارش لغو خواهد شد.

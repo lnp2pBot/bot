@@ -176,7 +176,7 @@ buy_sats: Achète des satoshis
 order_detail: |
   ID : `${order._id}`
 
-  Situation antérieure au litige: ${previousDisputeStatus}
+  Situation antérieure au litige : ${previousDisputeStatus}
 
   Statut : ${status}
 
@@ -186,19 +186,19 @@ order_detail: |
 
   Acheteur : @${buyerUsername || ''}
 
-  Réputation de l'acheteur : ${buyerReputation}
+  Réputation \\(acheteur\\) : ${buyerReputation}
 
-  Days in operation \\(buyer\\): ${buyerAge}
+  Jours d'activité \\(acheteur\\) : ${buyerAge}
 
-  Successful trades \\(buyer\\): ${buyerTrades}
+  Échanges réussis \\(acheteur\\) : ${buyerTrades}
 
   Vendeur : @${sellerUsername || ''}
 
-  Réputation du vendeur : ${sellerReputation}
+  Réputation \\(vendeur\\) : ${sellerReputation}
 
-  Days in operation \\(seller\\): ${sellerAge}
+  Jours d'activité \\(vendeur\\) : ${sellerAge}
 
-  Successful trades \\(seller\\): ${sellerTrades}
+  Échanges réussis \\(vendeur\\) : ${sellerTrades}
 
   Montant de l'offre \\(sats\\) : ${order.amount}
 
@@ -208,9 +208,11 @@ order_detail: |
 
   Montant FIAT \\(fiat\\) ${order.fiat_code} : ${order.fiat_amount}
 
-  Mode de paiement de l'offre : ${paymentMethod}
+  Mode de paiement : ${paymentMethod}
 
   Plus\\-value/remise : ${priceMargin}
+
+  Communauté : ${communityName}
 
   Créé le : ${createdAt}
 
@@ -351,6 +353,7 @@ published: Publié
 created: Créé
 yes: Oui
 no: Non
+no_community: Aucune communauté
 wizard_add_invoice_init: |
   🤖 J'ai besoin que vous m'envoyiez une facture de ${satsAmount} satoshis qui vaut ${fiatAmount} ${currency} afin que je puisse vous envoyer les fonds.
 

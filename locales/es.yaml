@@ -210,6 +210,8 @@ order_detail: |
 
   Prima/descuento: ${priceMargin}
 
+  Comunidad: ${communityName}
+
   Creada: ${createdAt}
 
   Tomada: ${takenAt || ''}
@@ -353,6 +355,7 @@ published: Publicada
 created: Creada
 yes: Sí
 no: No
+no_community: Ninguna comunidad
 wizard_add_invoice_init: |
   🤖 Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
 

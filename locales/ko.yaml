@@ -211,6 +211,8 @@ order_detail: |
 
   프리미엄/할인율: ${priceMargin}
 
+  커뮤니티: ${communityName}
+
   생성 시기: ${createdAt}
 
   수락 시기: ${takenAt || ''}
@@ -348,6 +350,7 @@ published: 등록됨
 created: 생성됨
 yes: 네
 no: 아니오
+no_community: 커뮤니티 없음
 wizard_add_invoice_init: |
   🤖 ${currency} ${fiatAmount}에 해당되는 ${satsAmount} 사토시의 인보이스를 보내주세요. 그래야 법정화폐 입금 처리가 가능합니다.
 
