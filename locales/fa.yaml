@@ -224,8 +224,6 @@ order_detail: |
 
   هش صورتحساب فروشنده: ${order.hash || ''}
 
-  راز صورتحساب فروشنده: ${order.secret || ''}
-
   درخواست پرداخت خریدار: ${order.buyer_invoice || ''}
 seller: فروشنده
 buyer: خریدار

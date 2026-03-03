@@ -217,8 +217,6 @@ order_detail: |
 
   Hash da fatura do vendedor: `${order.hash || ''}`
 
-  Secreto da fatura do vendedor: `${order.secret || ''}`
-
   Solicitação de pagamento do comprador: `${order.buyer_invoice || ''}`
 seller: vendedora
 buyer: compradora
