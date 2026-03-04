@@ -168,6 +168,7 @@ waiting_seller_to_pay: "J'ai envoyé une requête de paiement au vendeur pour qu
 sell_success: Ta vente de sats a été effectuée avec succès suite à la confirmation de paiement de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} a déjà débloqué les sats, ta facture sera payée incessamment, rappelle-toi que ton portefeuille doit être connecté pour la réception via Lightning Network.
 rate_counterpart: 'Merci de nommer ta contre-partie:'
+choose_order_for_dispute: 'Choisissez la commande pour initier la dispute:'
 cant_process_order: Cette offre ne peut pas être traitée, merci de vérifier que l'ID d'offre est correct.
 cant_release_order: Cette offre ne peut pas être débloquée, l'acheteur n'a pas fourni une facture à laquelle envoyer le paiement
 no_id_related: Tu n'as aucune offre associée à cette référence.
