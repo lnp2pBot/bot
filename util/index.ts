@@ -402,6 +402,9 @@ const getDetailedOrder = async (
     const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
+    const settledByAdmin = order.settled_by_admin
+      ? i18n.t('yes')
+      : i18n.t('no');
 
     // Add order community name
     let communityName: string | undefined;
@@ -435,6 +438,7 @@ const getDetailedOrder = async (
       sellerAge,
       buyerTrades,
       sellerTrades,
+      settledByAdmin,
       communityName,
     });
 
