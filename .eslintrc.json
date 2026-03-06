@@ -21,13 +21,12 @@
     "camelcase": "off",
     "eqeqeq": "off",
     "no-void": "off",
-    "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {
         "args": "none",
         "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^(_|err|error)"
+        "caughtErrorsIgnorePattern": "^_|err"
       }
     ]
   }

@@ -26,8 +26,8 @@ import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
 
 enum UserOrderRole {
-  BUYER = 'buyer',
-  SELLER = 'seller',
+  BUYER,
+  SELLER,
 }
 
 const setCooperativeCancelFlag = async (
