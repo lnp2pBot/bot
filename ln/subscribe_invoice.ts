@@ -49,6 +49,35 @@ const subscribeInvoice = async (
 ) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
+
+    sub.on('error', (err: Error) => {
+      logger.error(
+        `subscribeInvoice stream error for hash ${id}: ${err.message || err}`,
+      );
+      // Attempt to resubscribe after a short delay
+      setTimeout(() => {
+        logger.info(`Attempting to resubscribe invoice with hash ${id}`);
+        subscribeInvoice(bot, id, true).catch(resubErr => {
+          logger.error(
+            `Failed to resubscribe invoice ${id}: ${resubErr}`,
+          );
+        });
+      }, 5000);
+    });
+
+    sub.on('end', () => {
+      logger.warning(
+        `subscribeInvoice stream ended for hash ${id}, attempting resubscription`,
+      );
+      setTimeout(() => {
+        subscribeInvoice(bot, id, true).catch(resubErr => {
+          logger.error(
+            `Failed to resubscribe invoice ${id} after stream end: ${resubErr}`,
+          );
+        });
+      }, 5000);
+    });
+
     sub.on('invoice_updated', async invoice => {
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
@@ -135,6 +164,20 @@ const subscribeInvoice = async (
 
 const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
   try {
+    // Idempotency guard: re-read the order to check if already processed
+    // This prevents double-processing if both the subscriber and release()
+    // call this function for the same order
+    const currentOrder = await Order.findById(order._id);
+    if (
+      currentOrder &&
+      (currentOrder.status === 'PAID_HOLD_INVOICE' ||
+        currentOrder.status === 'SUCCESS')
+    ) {
+      logger.info(
+        `payHoldInvoice: order ${order._id} already in status ${currentOrder.status}, skipping`,
+      );
+      return;
+    }
     order.status = 'PAID_HOLD_INVOICE';
     await order.save();
     const buyerUser = await User.findOne({ _id: order.buyer_id });
