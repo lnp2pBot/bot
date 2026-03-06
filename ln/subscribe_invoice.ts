@@ -15,6 +15,10 @@ type LockCountedMutex = {
   mutex: Mutex;
 };
 
+// Track pending reconnects to prevent duplicate resubscriptions
+// when both 'error' and 'end' events fire for the same invoice
+const pendingReconnects: Set<string> = new Set();
+
 class PerOrderIdMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 
@@ -50,30 +54,38 @@ const subscribeInvoice = async (
   try {
     const sub = subscribeToInvoice({ id, lnd });
 
+    const scheduleResubscribe = (reason: string) => {
+      if (pendingReconnects.has(id)) {
+        logger.info(
+          `subscribeInvoice: reconnect already pending for hash ${id}, skipping (${reason})`,
+        );
+        return;
+      }
+      pendingReconnects.add(id);
+      setTimeout(() => {
+        logger.info(`Attempting to resubscribe invoice with hash ${id}`);
+        subscribeInvoice(bot, id, true)
+          .catch(resubErr => {
+            logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
+          })
+          .finally(() => {
+            pendingReconnects.delete(id);
+          });
+      }, 5000);
+    };
+
     sub.on('error', (err: Error) => {
       logger.error(
         `subscribeInvoice stream error for hash ${id}: ${err.message || err}`,
       );
-      // Attempt to resubscribe after a short delay
-      setTimeout(() => {
-        logger.info(`Attempting to resubscribe invoice with hash ${id}`);
-        subscribeInvoice(bot, id, true).catch(resubErr => {
-          logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
-        });
-      }, 5000);
+      scheduleResubscribe('error');
     });
 
     sub.on('end', () => {
       logger.warning(
         `subscribeInvoice stream ended for hash ${id}, attempting resubscription`,
       );
-      setTimeout(() => {
-        subscribeInvoice(bot, id, true).catch(resubErr => {
-          logger.error(
-            `Failed to resubscribe invoice ${id} after stream end: ${resubErr}`,
-          );
-        });
-      }, 5000);
+      scheduleResubscribe('end');
     });
 
     sub.on('invoice_updated', async invoice => {
@@ -162,22 +174,30 @@ const subscribeInvoice = async (
 
 const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
   try {
-    // Idempotency guard: re-read the order to check if already processed
-    // This prevents double-processing if both the subscriber and release()
-    // call this function for the same order
-    const currentOrder = await Order.findById(order._id);
-    if (
-      currentOrder &&
-      (currentOrder.status === 'PAID_HOLD_INVOICE' ||
-        currentOrder.status === 'SUCCESS')
-    ) {
-      logger.info(
-        `payHoldInvoice: order ${order._id} already in status ${currentOrder.status}, skipping`,
-      );
-      return;
-    }
-    order.status = 'PAID_HOLD_INVOICE';
-    await order.save();
+    // Atomic idempotency guard using PerOrderIdMutex to prevent TOCTOU race
+    // between release() and subscriber both calling payHoldInvoice
+    const lockedOrder = await PerOrderIdMutex.instance.runExclusive(
+      String(order._id),
+      async () => {
+        const currentOrder = await Order.findById(order._id);
+        if (currentOrder === null) throw new Error('order was not found');
+        if (
+          currentOrder.status === 'PAID_HOLD_INVOICE' ||
+          currentOrder.status === 'SUCCESS'
+        ) {
+          logger.info(
+            `payHoldInvoice: order ${order._id} already in status ${currentOrder.status}, skipping`,
+          );
+          return null;
+        }
+        currentOrder.status = 'PAID_HOLD_INVOICE';
+        await currentOrder.save();
+        return currentOrder;
+      },
+    );
+    if (lockedOrder === null) return;
+    // Use the locked order for the rest of the flow
+    Object.assign(order, { status: lockedOrder.status });
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerUser = await User.findOne({ _id: order.seller_id });
