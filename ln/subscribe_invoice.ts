@@ -58,9 +58,7 @@ const subscribeInvoice = async (
       setTimeout(() => {
         logger.info(`Attempting to resubscribe invoice with hash ${id}`);
         subscribeInvoice(bot, id, true).catch(resubErr => {
-          logger.error(
-            `Failed to resubscribe invoice ${id}: ${resubErr}`,
-          );
+          logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
         });
       }, 5000);
     });
