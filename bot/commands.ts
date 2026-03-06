@@ -491,45 +491,55 @@ const cancelShowHoldInvoice = async (
     if (order.hash) {
       await cancelHoldInvoice({ hash: order.hash });
     }
-
-    const user = await User.findOne({ _id: order.seller_id });
-    if (!user) return;
-    const i18nCtx = await getUserI18nContext(user);
-    // Sellers only can cancel orders with status WAITING_PAYMENT
-    if (order.status !== 'WAITING_PAYMENT')
-      return await messages.genericErrorMessage(ctx, user, i18nCtx);
-
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (sellerUser === null) throw new Error('sellerUser was not found');
+
+    const i18nCtxSeller = await getUserI18nContext(sellerUser);
+    const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+
+    // Sellers only can cancel orders with status WAITING_PAYMENT
+    if (order.status !== 'WAITING_PAYMENT')
+      return await messages.genericErrorMessage(ctx, sellerUser, i18nCtxSeller);
+
     const buyerTgId = buyerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.toSellerDidntPayInvoiceMessage(ctx, user, order, i18nCtx);
+      await messages.toSellerDidntPayInvoiceMessage(
+        ctx,
+        sellerUser,
+        order,
+        i18nCtxSeller,
+      );
       await messages.toBuyerSellerDidntPayInvoiceMessage(
         ctx,
         buyerUser,
         order,
-        i18nCtx,
+        i18nCtxBuyer,
       );
     } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.successCancelOrderMessage(ctx, buyerUser, order, i18nCtx);
+      await messages.successCancelOrderMessage(
+        ctx,
+        buyerUser,
+        order,
+        i18nCtxBuyer,
+      );
       await messages.counterPartyCancelOrderMessage(
         ctx,
         sellerUser,
         order,
-        i18nCtx,
+        i18nCtxSeller,
       );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
+          `Seller Id ${sellerUser.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
@@ -552,29 +562,44 @@ const cancelShowHoldInvoice = async (
 
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(ctx, buyerUser, order, i18nCtx);
+        await messages.publishBuyOrderMessage(
+          ctx,
+          buyerUser,
+          order,
+          i18nCtxBuyer,
+        );
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(ctx, user, order, i18nCtx);
+        await messages.publishSellOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
       await order.save();
       if (!userAction) {
         if (job) {
           await messages.toSellerDidntPayInvoiceMessage(
             ctx,
-            user,
+            sellerUser,
             order,
-            i18nCtx,
+            i18nCtxSeller,
           );
           await messages.toAdminChannelSellerDidntPayInvoiceMessage(
             ctx,
-            user,
+            sellerUser,
             order,
-            i18nCtx,
+            i18nCtxSeller,
           );
         }
       } else {
-        await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
+        await messages.successCancelOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
     }
   } catch (error) {
