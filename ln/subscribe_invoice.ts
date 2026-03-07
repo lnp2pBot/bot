@@ -19,6 +19,17 @@ type LockCountedMutex = {
 // when both 'error' and 'end' events fire for the same invoice
 const pendingReconnects: Set<string> = new Set();
 
+// Terminal order statuses where the invoice lifecycle is complete
+// and resubscription should NOT be attempted
+const TERMINAL_STATUSES = new Set([
+  'SUCCESS',
+  'PAID_HOLD_INVOICE',
+  'CANCELED',
+  'EXPIRED',
+  'COMPLETED_BY_ADMIN',
+  'CLOSED',
+]);
+
 class PerOrderIdMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 
@@ -54,13 +65,34 @@ const subscribeInvoice = async (
   try {
     const sub = subscribeToInvoice({ id, lnd });
 
-    const scheduleResubscribe = (reason: string) => {
+    const scheduleResubscribe = async (reason: string) => {
       if (pendingReconnects.has(id)) {
         logger.info(
           `subscribeInvoice: reconnect already pending for hash ${id}, skipping (${reason})`,
         );
         return;
       }
+
+      // Check if the order has reached a terminal state before resubscribing.
+      // When an invoice is settled or canceled, the gRPC stream ends normally
+      // (fires 'end' event). Without this check, we'd resubscribe in an
+      // infinite loop for invoices that are already done.
+      try {
+        const order = await Order.findOne({ hash: id });
+        if (order && TERMINAL_STATUSES.has(order.status)) {
+          logger.info(
+            `subscribeInvoice: order ${order._id} is in terminal status ${order.status}, ` +
+              `not resubscribing invoice ${id} (${reason})`,
+          );
+          return;
+        }
+      } catch (err) {
+        logger.error(
+          `subscribeInvoice: failed to check order status for hash ${id}: ${err}`,
+        );
+        // On DB error, still attempt resubscription as a safety measure
+      }
+
       pendingReconnects.add(id);
       setTimeout(() => {
         logger.info(`Attempting to resubscribe invoice with hash ${id}`);
