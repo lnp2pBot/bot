@@ -26,7 +26,7 @@
       {
         "args": "none",
         "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_|err"
+        "caughtErrorsIgnorePattern": "err"
       }
     ]
   }
