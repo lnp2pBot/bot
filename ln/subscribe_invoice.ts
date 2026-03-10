@@ -1,6 +1,7 @@
 import { subscribeToInvoice } from 'lightning';
 import { Order, User } from '../models';
 import { payToBuyer } from './pay_request';
+import { getInvoice } from './hold_invoice';
 import lnd from './connect';
 import * as messages from '../bot/messages';
 import * as ordersActions from '../bot/ordersActions';
@@ -19,16 +20,7 @@ type LockCountedMutex = {
 // when both 'error' and 'end' events fire for the same invoice
 const pendingReconnects: Set<string> = new Set();
 
-// Terminal order statuses where the invoice lifecycle is complete
-// and resubscription should NOT be attempted
-const TERMINAL_STATUSES = new Set([
-  'SUCCESS',
-  'PAID_HOLD_INVOICE',
-  'CANCELED',
-  'EXPIRED',
-  'COMPLETED_BY_ADMIN',
-  'CLOSED',
-]);
+
 
 class PerOrderIdMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
@@ -73,24 +65,31 @@ const subscribeInvoice = async (
         return;
       }
 
-      // Check if the order has reached a terminal state before resubscribing.
+      // Check the invoice state directly via LND — this is the source of truth.
       // When an invoice is settled or canceled, the gRPC stream ends normally
       // (fires 'end' event). Without this check, we'd resubscribe in an
       // infinite loop for invoices that are already done.
       try {
-        const order = await Order.findOne({ hash: id });
-        if (order && TERMINAL_STATUSES.has(order.status)) {
+        const invoice = await getInvoice({ hash: id });
+        if (!invoice) {
           logger.info(
-            `subscribeInvoice: order ${order._id} is in terminal status ${order.status}, ` +
-              `not resubscribing invoice ${id} (${reason})`,
+            `subscribeInvoice: invoice ${id} not found, not resubscribing (${reason})`,
+          );
+          return;
+        }
+        if (invoice.is_confirmed || invoice.is_canceled) {
+          logger.info(
+            `subscribeInvoice: invoice ${id} is in terminal state ` +
+              `(confirmed=${invoice.is_confirmed}, canceled=${invoice.is_canceled}), ` +
+              `not resubscribing (${reason})`,
           );
           return;
         }
       } catch (err) {
         logger.error(
-          `subscribeInvoice: failed to check order status for hash ${id}: ${err}`,
+          `subscribeInvoice: failed to check invoice status for hash ${id}: ${err}`,
         );
-        // On DB error, still attempt resubscription as a safety measure
+        // On LND error, still attempt resubscription as a safety measure
       }
 
       pendingReconnects.add(id);
@@ -106,6 +105,10 @@ const subscribeInvoice = async (
       }, 5000);
     };
 
+    // Use a single combined handler for both error and end events to prevent
+    // duplicate resubscriptions. When the gRPC stream disconnects, it may fire
+    // both 'error' and 'end'. The pendingReconnects guard ensures only one
+    // resubscription happens.
     sub.on('error', (err: Error) => {
       logger.error(
         `subscribeInvoice stream error for hash ${id}: ${err.message || err}`,
