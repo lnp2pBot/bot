@@ -420,11 +420,11 @@ didnt_add_invoice: '🤨 No has enviado la factura para recibir sats por la orde
 buyer_havent_add_invoice: '😔 El comprador no me envió la factura para recibir sats por tu venta Id: ${orderId}, tus sats han sido devueltos'
 buyer_havent_add_invoice_to_admin_channel: 'El comprador @${username} (${tgId}) tomó la orden Id: ${orderId} pero no ha ingresado la factura para recibir el pago, el tiempo ha expirado, la orden ha sido publicada nuevamente.'
 hold_invoice_expired_to_buyer: |
-  La factura de retención de la orden Id ${orderId} expiró antes de completarse el intercambio. Los sats han sido devueltos al vendedor.
+  La factura de depósito en garantía de la orden Id ${orderId} expiró antes de completarse el intercambio. Los sats han sido devueltos al vendedor.
 
   Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 hold_invoice_expired_to_seller: |
-  La factura de retención de la orden Id ${orderId} expiró antes de completarse el intercambio. Tus sats te han sido devueltos.
+  La factura de depósito en garantía de la orden Id ${orderId} expiró antes de completarse el intercambio. Tus sats te han sido devueltos.
 
   Si necesitas ayuda puedes escribir al grupo ${helpGroup}
 havent_paid_invoice: '🤨 No has pagado la factura para vender sats por la orden Id: ${orderId}'

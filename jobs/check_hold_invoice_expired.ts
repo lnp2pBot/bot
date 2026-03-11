@@ -18,7 +18,7 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
     // Orders in ACTIVE, DISPUTE or FIAT_SENT whose hold invoice has exceeded the hold time
     const orderStatuses = ['ACTIVE', 'DISPUTE', 'FIAT_SENT'];
     const ordersWithHoldInvoice = await Order.find({
-      $or: orderStatuses.map(status => ({ status })),
+      status: { $in: orderStatuses },
       hash: { $ne: null },
       invoice_held_at: { $ne: null, $lte: holdExpiredBefore },
     });
@@ -38,23 +38,18 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
             if (!updatedOrder.hash || !updatedOrder.invoice_held_at) return;
 
             // Cancel the hold invoice ourselves so our LND state is clean (idempotent if node already canceled via CLTV).
-            try {
-              await cancelHoldInvoice({ hash: updatedOrder.hash });
 
-              const isDispute = updatedOrder.status === 'DISPUTE';
-              if (isDispute) {
-                const dispute = await Dispute.findOne({
-                  order_id: String(updatedOrder._id),
-                });
-                if (dispute) {
-                  dispute.status = 'SELLER_REFUNDED';
-                  await dispute.save();
-                }
+            await cancelHoldInvoice({ hash: updatedOrder.hash });
+
+            const isDispute = updatedOrder.status === 'DISPUTE';
+            if (isDispute) {
+              const dispute = await Dispute.findOne({
+                order_id: String(updatedOrder._id),
+              });
+              if (dispute) {
+                dispute.status = 'SELLER_REFUNDED';
+                await dispute.save();
               }
-            } catch (err) {
-              logger.error(
-                `checkHoldInvoiceExpired: cancelHoldInvoice for order ${updatedOrder._id}: ${err}`,
-              );
             }
 
             updatedOrder.status = 'HOLD_INVOICE_EXPIRED';
@@ -93,6 +88,7 @@ const checkHoldInvoiceExpired = async (bot: HasTelegram) => {
     }
   } catch (error) {
     logger.error(`Error in checkHoldInvoiceExpired: ${error}`);
+    throw error;
   }
 };
 

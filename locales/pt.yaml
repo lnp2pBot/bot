@@ -418,11 +418,11 @@ didnt_add_invoice: '🤨 Você não enviou a fatura para receber sats para o ped
 buyer_havent_add_invoice: '😔 O comprador não me enviou a fatura para receber os sats para o seu pedido Id: ${orderId}, seus sats foram enviados de volta para você'
 buyer_havent_add_invoice_to_admin_channel: 'Compradora @${username} (${tgId}) tomou o orderId: ${orderId} mas não enviou a fatura para onde receber sats, o tempo expirou, a ordem foi republicada.'
 hold_invoice_expired_to_buyer: |
-  A fatura de retenção do pedido Id ${orderId} expirou antes da conclusão da troca. Os sats foram devolvidos ao vendedor.
+  A fatura de custódia do pedido Id ${orderId} expirou antes da conclusão da troca. Os sats foram devolvidos ao vendedor.
 
   Se precisar de ajuda, pode escrever ao grupo ${helpGroup}
 hold_invoice_expired_to_seller: |
-  A fatura de retenção do pedido Id ${orderId} expirou antes da conclusão da troca. Os seus sats foram-lhe devolvidos.
+  A fatura de custódia do pedido Id ${orderId} expirou antes da conclusão da troca. Os seus sats foram-lhe devolvidos.
 
   Se precisar de ajuda, pode escrever ao grupo ${helpGroup}
 havent_paid_invoice: '🤨 Você não pagou a fatura para vender sats para o pedido Id: ${orderId}'

@@ -416,11 +416,11 @@ didnt_add_invoice: "🤨 Non è stata inviata la fattura per ricevere i sats rel
 buyer_havent_add_invoice: "😔 L'acquirente non mi ha inviato la fattura per ricevere i sats relativi al tuo ordine ID: ${orderId}, i sats sono stati rispediti a te"
 buyer_havent_add_invoice_to_admin_channel: "L'acquirente @${username} (${tgId}) ha accettato l'ordine ID: ${orderId} ma non ha inviato la fattura dove ricevere sats, il tempo è scaduto e l'ordine è stato ripubblicato."
 hold_invoice_expired_to_buyer: |
-  La invoice di hold per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I sats sono stati restituiti al venditore.
+  La fattura di deposito a garanzia per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I sats sono stati restituiti al venditore.
 
   Se hai bisogno di aiuto, puoi scrivere al gruppo ${helpGroup}
 hold_invoice_expired_to_seller: |
-  La invoice di hold per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I tuoi sats ti sono stati restituiti.
+  La fattura di deposito a garanzia per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I tuoi sats ti sono stati restituiti.
 
   Se hai bisogno di aiuto, puoi scrivere al gruppo ${helpGroup}
 havent_paid_invoice: "🤨 Non hai pagato la invoice per vendere i sats relativi all' ordineID:${orderId}"
