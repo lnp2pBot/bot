@@ -2,6 +2,7 @@ import { subscribeToInvoice } from 'lightning';
 import { Order, User } from '../models';
 import { payToBuyer } from './pay_request';
 import { getInvoice } from './hold_invoice';
+import { getInfo } from './info';
 import lnd from './connect';
 import * as messages from '../bot/messages';
 import * as ordersActions from '../bot/ordersActions';
@@ -72,6 +73,25 @@ const subscribeInvoice = async (
       try {
         const invoice = await getInvoice({ hash: id });
         if (!invoice) {
+          const walletInfo = await getInfo();
+          if (!walletInfo) {
+            logger.warning(
+              `subscribeInvoice: wallet info unavailable for hash ${id}; likely LND down, retrying (${reason})`,
+            );
+            pendingReconnects.add(id);
+            setTimeout(() => {
+              logger.info(`Attempting to resubscribe invoice with hash ${id}`);
+              subscribeInvoice(bot, id, true)
+                .catch(resubErr => {
+                  logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
+                })
+                .finally(() => {
+                  pendingReconnects.delete(id);
+                });
+            }, 5000);
+            return;
+          }
+
           logger.info(
             `subscribeInvoice: invoice ${id} not found, not resubscribing (${reason})`,
           );
@@ -105,15 +125,12 @@ const subscribeInvoice = async (
       }, 5000);
     };
 
-    // Use a single combined handler for both error and end events to prevent
-    // duplicate resubscriptions. When the gRPC stream disconnects, it may fire
-    // both 'error' and 'end'. The pendingReconnects guard ensures only one
-    // resubscription happens.
+    // The stream's 'end' event is the single resubscribe trigger.
+    // 'error' is logged only to avoid duplicate scheduling from both events.
     sub.on('error', (err: Error) => {
       logger.error(
         `subscribeInvoice stream error for hash ${id}: ${err.message || err}`,
       );
-      scheduleResubscribe('error');
     });
 
     sub.on('end', () => {

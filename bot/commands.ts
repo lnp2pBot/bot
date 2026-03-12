@@ -5,7 +5,6 @@ import {
   cancelHoldInvoice,
   settleHoldInvoice,
   getInvoice,
-  payHoldInvoice,
 } from '../ln';
 import { Order, User, Dispute } from '../models';
 import * as messages from './messages';
@@ -841,25 +840,10 @@ const release = async (
         `release: settleHoldInvoice failed for order ${order._id}: ${error}`,
       );
       await ctx.reply(ctx.i18n.t('generic_error'));
-      return;
     }
 
-    // Verify the invoice was actually settled instead of relying
-    // solely on the subscribeToInvoice stream which can die silently
-    if (order.hash) {
-      const invoice = await getInvoice({ hash: order.hash });
-      if (invoice && invoice.is_confirmed) {
-        logger.info(
-          `release: invoice confirmed for order ${order._id}, proceeding with payHoldInvoice`,
-        );
-        await payHoldInvoice({ telegram: ctx.telegram }, order);
-      } else {
-        // The subscriber should pick it up, but log a warning
-        logger.warning(
-          `release: invoice not yet confirmed for order ${order._id} after settle call, relying on subscriber`,
-        );
-      }
-    }
+    // Keep release semantics unchanged: payment to buyer is handled by
+    // subscribe_invoice flow after settlement notifications are processed.
   } catch (error) {
     logger.error(`release catch: ${error}`);
   }
