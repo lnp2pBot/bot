@@ -21,8 +21,6 @@ type LockCountedMutex = {
 // when both 'error' and 'end' events fire for the same invoice
 const pendingReconnects: Set<string> = new Set();
 
-
-
 class PerOrderIdMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 
@@ -83,7 +81,9 @@ const subscribeInvoice = async (
               logger.info(`Attempting to resubscribe invoice with hash ${id}`);
               subscribeInvoice(bot, id, true)
                 .catch(resubErr => {
-                  logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
+                  logger.error(
+                    `Failed to resubscribe invoice ${id}: ${resubErr}`,
+                  );
                 })
                 .finally(() => {
                   pendingReconnects.delete(id);
@@ -127,12 +127,6 @@ const subscribeInvoice = async (
 
     // The stream's 'end' event is the single resubscribe trigger.
     // 'error' is logged only to avoid duplicate scheduling from both events.
-    sub.on('error', (err: Error) => {
-      logger.error(
-        `subscribeInvoice stream error for hash ${id}: ${err.message || err}`,
-      );
-    });
-
     sub.on('end', () => {
       logger.warning(
         `subscribeInvoice stream ended for hash ${id}, attempting resubscription`,

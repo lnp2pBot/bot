@@ -832,20 +832,9 @@ const release = async (
     if (order.secret === null) {
       throw new Error('order.secret is null');
     }
-
-    try {
-      await settleHoldInvoice({ secret: order.secret });
-    } catch (error) {
-      logger.error(
-        `release: settleHoldInvoice failed for order ${order._id}: ${error}`,
-      );
-      await ctx.reply(ctx.i18n.t('generic_error'));
-    }
-
-    // Keep release semantics unchanged: payment to buyer is handled by
-    // subscribe_invoice flow after settlement notifications are processed.
+    await settleHoldInvoice({ secret: order.secret });
   } catch (error) {
-    logger.error(`release catch: ${error}`);
+    logger.error(error);
   }
 };
 

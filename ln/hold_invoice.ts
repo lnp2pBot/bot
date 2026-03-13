@@ -44,8 +44,7 @@ const settleHoldInvoice = async ({ secret }: { secret: string }) => {
   try {
     await lightning.settleHodlInvoice({ lnd, secret });
   } catch (error) {
-    logger.error(`settleHoldInvoice failed: ${error}`);
-    throw error;
+    logger.error(error);
   }
 };
 
