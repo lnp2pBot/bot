@@ -545,9 +545,9 @@ const initialize = (
       }
 
       if (order.secret) {
+        await settleHoldInvoice({ secret: order.secret });
         order.settled_by_admin = true;
         await order.save();
-        await settleHoldInvoice({ secret: order.secret });
       }
 
       if (dispute) {
