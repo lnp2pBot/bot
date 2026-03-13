@@ -1,6 +1,8 @@
 import { subscribeToInvoice } from 'lightning';
 import { Order, User } from '../models';
 import { payToBuyer } from './pay_request';
+import { getInvoice } from './hold_invoice';
+import { getInfo } from './info';
 import lnd from './connect';
 import * as messages from '../bot/messages';
 import * as ordersActions from '../bot/ordersActions';
@@ -14,6 +16,10 @@ type LockCountedMutex = {
   lockCount: number;
   mutex: Mutex;
 };
+
+// Track pending reconnects to prevent duplicate resubscriptions
+// when both 'error' and 'end' events fire for the same invoice
+const pendingReconnects: Set<string> = new Set();
 
 class PerOrderIdMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
@@ -49,6 +55,85 @@ const subscribeInvoice = async (
 ) => {
   try {
     const sub = subscribeToInvoice({ id, lnd });
+
+    const scheduleResubscribe = async (reason: string) => {
+      if (pendingReconnects.has(id)) {
+        logger.info(
+          `subscribeInvoice: reconnect already pending for hash ${id}, skipping (${reason})`,
+        );
+        return;
+      }
+
+      // Check the invoice state directly via LND — this is the source of truth.
+      // When an invoice is settled or canceled, the gRPC stream ends normally
+      // (fires 'end' event). Without this check, we'd resubscribe in an
+      // infinite loop for invoices that are already done.
+      try {
+        const invoice = await getInvoice({ hash: id });
+        if (!invoice) {
+          const walletInfo = await getInfo();
+          if (!walletInfo) {
+            logger.warning(
+              `subscribeInvoice: wallet info unavailable for hash ${id}; likely LND down, retrying (${reason})`,
+            );
+            pendingReconnects.add(id);
+            setTimeout(() => {
+              logger.info(`Attempting to resubscribe invoice with hash ${id}`);
+              subscribeInvoice(bot, id, true)
+                .catch(resubErr => {
+                  logger.error(
+                    `Failed to resubscribe invoice ${id}: ${resubErr}`,
+                  );
+                })
+                .finally(() => {
+                  pendingReconnects.delete(id);
+                });
+            }, 5000);
+            return;
+          }
+
+          logger.info(
+            `subscribeInvoice: invoice ${id} not found, not resubscribing (${reason})`,
+          );
+          return;
+        }
+        if (invoice.is_confirmed || invoice.is_canceled) {
+          logger.info(
+            `subscribeInvoice: invoice ${id} is in terminal state ` +
+              `(confirmed=${invoice.is_confirmed}, canceled=${invoice.is_canceled}), ` +
+              `not resubscribing (${reason})`,
+          );
+          return;
+        }
+      } catch (err) {
+        logger.error(
+          `subscribeInvoice: failed to check invoice status for hash ${id}: ${err}`,
+        );
+        // On LND error, still attempt resubscription as a safety measure
+      }
+
+      pendingReconnects.add(id);
+      setTimeout(() => {
+        logger.info(`Attempting to resubscribe invoice with hash ${id}`);
+        subscribeInvoice(bot, id, true)
+          .catch(resubErr => {
+            logger.error(`Failed to resubscribe invoice ${id}: ${resubErr}`);
+          })
+          .finally(() => {
+            pendingReconnects.delete(id);
+          });
+      }, 5000);
+    };
+
+    // The stream's 'end' event is the single resubscribe trigger.
+    // 'error' is logged only to avoid duplicate scheduling from both events.
+    sub.on('end', () => {
+      logger.warning(
+        `subscribeInvoice stream ended for hash ${id}, attempting resubscription`,
+      );
+      scheduleResubscribe('end');
+    });
+
     sub.on('invoice_updated', async invoice => {
       if (invoice.is_held && !resub) {
         const order = await Order.findOne({ hash: invoice.id });
@@ -135,8 +220,30 @@ const subscribeInvoice = async (
 
 const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
   try {
-    order.status = 'PAID_HOLD_INVOICE';
-    await order.save();
+    // Atomic idempotency guard using PerOrderIdMutex to prevent TOCTOU race
+    // between release() and subscriber both calling payHoldInvoice
+    const lockedOrder = await PerOrderIdMutex.instance.runExclusive(
+      String(order._id),
+      async () => {
+        const currentOrder = await Order.findById(order._id);
+        if (currentOrder === null) throw new Error('order was not found');
+        if (
+          currentOrder.status === 'PAID_HOLD_INVOICE' ||
+          currentOrder.status === 'SUCCESS'
+        ) {
+          logger.info(
+            `payHoldInvoice: order ${order._id} already in status ${currentOrder.status}, skipping`,
+          );
+          return null;
+        }
+        currentOrder.status = 'PAID_HOLD_INVOICE';
+        await currentOrder.save();
+        return currentOrder;
+      },
+    );
+    if (lockedOrder === null) return;
+    // Use the locked order for the rest of the flow
+    Object.assign(order, { status: lockedOrder.status });
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerUser = await User.findOne({ _id: order.seller_id });
