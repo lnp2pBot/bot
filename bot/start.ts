@@ -71,6 +71,7 @@ import {
   // deleteCommunity,
   nodeInfo,
   checkSolvers,
+  checkHoldInvoiceExpired,
 } from '../jobs';
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
@@ -236,6 +237,10 @@ const initialize = (
 
   schedule.scheduleJob(`0 0 * * *`, async () => {
     await checkSolvers(bot as any as Telegraf<MainContext>);
+  });
+
+  schedule.scheduleJob(`0 * * * * *`, async () => {
+    await checkHoldInvoiceExpired(bot);
   });
 
   bot.start(async (ctx: MainContext) => {
