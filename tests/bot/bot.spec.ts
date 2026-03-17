@@ -255,9 +255,9 @@ describe('Bot Initialization', () => {
       '@grammyjs/i18n': {
         I18n: sinon
           .stub()
-          .returns({ middleware: sinon.stub().returns(() => {}) }),
+          .returns({ middleware: sinon.stub().returns(() => { }) }),
       },
-      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => {}) },
+      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => { }) },
       '../models': {
         Order: {
           findOne: sinon.stub().resolves(null),
@@ -431,8 +431,8 @@ describe('Bot Initialization', () => {
         userMiddleware: sinon.stub().resolves(),
         adminMiddleware: sinon.stub().resolves(),
         superAdminMiddleware: sinon.stub().resolves(),
-        commandArgsMiddleware: sinon.stub().returns(() => {}),
-        stageMiddleware: sinon.stub().returns(() => {}),
+        commandArgsMiddleware: sinon.stub().returns(() => { }),
+        stageMiddleware: sinon.stub().returns(() => { }),
       },
       '../logger': {
         error: sinon.stub(),
@@ -713,6 +713,6 @@ describe('Bot Initialization', () => {
     await handler(ctx);
 
     expect(orderMock.save.called).to.be.equal(false);
-    expect(orderMock.settled_by_admin).to.be.undefined;
+    expect(orderMock.settled_by_admin).to.equal(undefined);
   });
 });

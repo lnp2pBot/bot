@@ -3,96 +3,74 @@ const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 
 describe('Block Module block query', () => {
-  let sandbox: any;
-  let orderExistsStub: any;
-  let blockExistsStub: any;
-  let blockSaveStub: any;
-  let userFindOneStub: any;
-  let blockCmd: any;
+    let sandbox: any;
+    let orderExistsStub: any;
+    let blockExistsStub: any;
+    let blockSaveStub: any;
+    let userFindOneStub: any;
 
-  beforeEach(() => {
-    sandbox = sinon.createSandbox();
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
 
-    orderExistsStub = sandbox.stub();
-    blockExistsStub = sandbox.stub();
-    blockSaveStub = sandbox.stub().resolves();
+        orderExistsStub = sandbox.stub();
+        blockExistsStub = sandbox.stub();
+        blockSaveStub = sandbox.stub().resolves();
 
-    userFindOneStub = sandbox.stub().resolves({
-      id: '2',
-      tg_id: 2,
-      username: 'badguy',
+        userFindOneStub = sandbox.stub().resolves({
+            id: '2',
+            tg_id: 2,
+            username: 'badguy',
+        });
+
+        // We need to proxyquire the Block model constructor too, since `const block = new Block(...)` is used.
+        // Instead of full proxyquire, let's just test the `Order.exists` query passed to it, as requested by the review.
     });
 
-    const blockModule = proxyquire('../../../bot/modules/block/commands', {
-      '../../../models': {
-        Order: { exists: orderExistsStub },
-        Block: {
-          exists: blockExistsStub,
-        },
-        User: { findOne: userFindOneStub },
-      },
-      './messages': {
-        ordersInProcess: sandbox.stub().resolves(),
-        userAlreadyBlocked: sandbox.stub().resolves(),
-        userBlocked: sandbox.stub().resolves(),
-        blocklistEmptyMessage: sandbox.stub().resolves(),
-        blocklistMessage: sandbox.stub().resolves(),
-      },
-      '../../messages': {
-        notFoundUserMessage: sandbox.stub().resolves(),
-      },
+    afterEach(() => {
+        sandbox.restore();
     });
 
-    // We need to proxyquire the Block model constructor too, since `const block = new Block(...)` is used.
-    // Instead of full proxyquire, let's just test the `Order.exists` query passed to it, as requested by the review.
-    blockCmd = blockModule.block;
-  });
+    it('should exclude settled orders from pending count when blocking', async () => {
+        const ctx = {
+            user: {
+                id: '1',
+                tg_id: 1,
+                username: 'goodguy',
+            },
+        };
 
-  afterEach(() => {
-    sandbox.restore();
-  });
+        orderExistsStub.resolves(false);
+        blockExistsStub.resolves(false);
 
-  it('should exclude settled orders from pending count when blocking', async () => {
-    const ctx = {
-      user: {
-        id: '1',
-        tg_id: 1,
-        username: 'goodguy',
-      },
-    };
+        // We stub Block constructor for the `new Block` call at the end
+        const BlockMock = function (this: any) {
+            this.save = blockSaveStub;
+        };
+        BlockMock.exists = blockExistsStub;
 
-    orderExistsStub.resolves(false);
-    blockExistsStub.resolves(false);
+        const blockModuleFixed = proxyquire('../../../bot/modules/block/commands', {
+            '../../../models': {
+                Order: { exists: orderExistsStub },
+                Block: BlockMock,
+                User: { findOne: userFindOneStub },
+            },
+            './messages': {
+                ordersInProcess: sandbox.stub().resolves(),
+                userBlocked: sandbox.stub().resolves(),
+            },
+        });
 
-    // We stub Block constructor for the `new Block` call at the end
-    const BlockMock = function (this: any) {
-      this.save = blockSaveStub;
-    };
-    BlockMock.exists = blockExistsStub;
+        await blockModuleFixed.block(ctx, '@badguy');
 
-    const blockModuleFixed = proxyquire('../../../bot/modules/block/commands', {
-      '../../../models': {
-        Order: { exists: orderExistsStub },
-        Block: BlockMock,
-        User: { findOne: userFindOneStub },
-      },
-      './messages': {
-        ordersInProcess: sandbox.stub().resolves(),
-        userBlocked: sandbox.stub().resolves(),
-      },
+        expect(orderExistsStub.calledOnce).to.equal(true);
+
+        const queryArgs = orderExistsStub.firstCall.args[0];
+
+        // The review requires that we verify the query excludes settled orders from pending count
+        // The query excludes these statuses using $nin.
+        // PAID_HOLD_INVOICE is one of them, which now represents completed orders along with settled_by_admin: true.
+        expect(queryArgs.status.$nin).to.include('PAID_HOLD_INVOICE');
+        expect(queryArgs.status.$nin).to.not.include('COMPLETED_BY_ADMIN');
     });
-
-    await blockModuleFixed.block(ctx, '@badguy');
-
-    expect(orderExistsStub.calledOnce).to.be.true;
-
-    const queryArgs = orderExistsStub.firstCall.args[0];
-
-    // The review requires that we verify the query excludes settled orders from pending count
-    // The query excludes these statuses using $nin.
-    // PAID_HOLD_INVOICE is one of them, which now represents completed orders along with settled_by_admin: true.
-    expect(queryArgs.status.$nin).to.include('PAID_HOLD_INVOICE');
-    expect(queryArgs.status.$nin).to.not.include('COMPLETED_BY_ADMIN');
-  });
 });
-export {};
+export { };
