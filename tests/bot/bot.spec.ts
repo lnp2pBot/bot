@@ -255,9 +255,9 @@ describe('Bot Initialization', () => {
       '@grammyjs/i18n': {
         I18n: sinon
           .stub()
-          .returns({ middleware: sinon.stub().returns(() => { }) }),
+          .returns({ middleware: sinon.stub().returns(() => {}) }),
       },
-      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => { }) },
+      '@grammyjs/ratelimiter': { limit: sinon.stub().returns(() => {}) },
       '../models': {
         Order: {
           findOne: sinon.stub().resolves(null),
@@ -431,8 +431,8 @@ describe('Bot Initialization', () => {
         userMiddleware: sinon.stub().resolves(),
         adminMiddleware: sinon.stub().resolves(),
         superAdminMiddleware: sinon.stub().resolves(),
-        commandArgsMiddleware: sinon.stub().returns(() => { }),
-        stageMiddleware: sinon.stub().returns(() => { }),
+        commandArgsMiddleware: sinon.stub().returns(() => {}),
+        stageMiddleware: sinon.stub().returns(() => {}),
       },
       '../logger': {
         error: sinon.stub(),
@@ -618,7 +618,7 @@ describe('Bot Initialization', () => {
       community_id: null,
       buyer_id: 'buyer',
       seller_id: 'seller',
-      save: sinon.stub().resolves()
+      save: sinon.stub().resolves(),
     } as any;
 
     const OrderFindOneStub = sinon.stub().resolves(orderMock);
@@ -629,18 +629,23 @@ describe('Bot Initialization', () => {
       '../models': {
         Order: { findOne: OrderFindOneStub },
         User: { findOne: sinon.stub().resolves({ id: 'user' }) },
-        Dispute: { findOne: sinon.stub().resolves(null) }
+        Dispute: { findOne: sinon.stub().resolves(null) },
       },
       './validations': {
         validateParams: sinon.stub().resolves(['orderId']),
-        validateObjectId: sinon.stub().resolves(true)
+        validateObjectId: sinon.stub().resolves(true),
       },
       '../ln': { settleHoldInvoice: settleHoldInvoiceStub },
-      './messages': { successCompleteOrderMessage: sinon.stub().resolves(), successCompleteOrderByAdminMessage: sinon.stub().resolves() }
+      './messages': {
+        successCompleteOrderMessage: sinon.stub().resolves(),
+        successCompleteOrderByAdminMessage: sinon.stub().resolves(),
+      },
     });
 
     startModule.initialize('dummy-token', {});
-    const settleOrderCall = botStub.command.getCalls().find((c: any) => c.args[0] === 'settleorder');
+    const settleOrderCall = botStub.command
+      .getCalls()
+      .find((c: any) => c.args[0] === 'settleorder');
     const handler = settleOrderCall.args[2];
 
     const ctx = {
@@ -648,12 +653,14 @@ describe('Bot Initialization', () => {
       match: ['/settleorder orderId', 'orderId'],
       reply: sinon.stub().resolves(),
       i18n: { t: sinon.stub().returns('Success') },
-      telegram: { sendMessage: sinon.stub().resolves() }
+      telegram: { sendMessage: sinon.stub().resolves() },
     };
 
     await handler(ctx);
 
-    expect(settleHoldInvoiceStub.calledWith({ secret: 'secret' })).to.be.equal(true);
+    expect(settleHoldInvoiceStub.calledWith({ secret: 'secret' })).to.be.equal(
+      true,
+    );
     expect(orderMock.settled_by_admin).to.be.equal(true);
     expect(orderMock.save.called).to.be.equal(true);
   });
@@ -666,7 +673,7 @@ describe('Bot Initialization', () => {
       community_id: null,
       buyer_id: 'buyer',
       seller_id: 'seller',
-      save: sinon.stub().resolves()
+      save: sinon.stub().resolves(),
     } as any;
 
     const OrderFindOneStub = sinon.stub().resolves(orderMock);
@@ -677,25 +684,30 @@ describe('Bot Initialization', () => {
       '../models': {
         Order: { findOne: OrderFindOneStub },
         User: { findOne: sinon.stub().resolves({ id: 'user' }) },
-        Dispute: { findOne: sinon.stub().resolves(null) }
+        Dispute: { findOne: sinon.stub().resolves(null) },
       },
       './validations': {
         validateParams: sinon.stub().resolves(['orderId']),
-        validateObjectId: sinon.stub().resolves(true)
+        validateObjectId: sinon.stub().resolves(true),
       },
       '../ln': { settleHoldInvoice: settleHoldInvoiceStub },
-      './messages': { successCompleteOrderMessage: sinon.stub().resolves(), successCompleteOrderByAdminMessage: sinon.stub().resolves() }
+      './messages': {
+        successCompleteOrderMessage: sinon.stub().resolves(),
+        successCompleteOrderByAdminMessage: sinon.stub().resolves(),
+      },
     });
 
     startModule.initialize('dummy-token', {});
-    const settleOrderCall = botStub.command.getCalls().find((c: any) => c.args[0] === 'settleorder');
+    const settleOrderCall = botStub.command
+      .getCalls()
+      .find((c: any) => c.args[0] === 'settleorder');
     const handler = settleOrderCall.args[2];
 
     const ctx = {
       admin: { admin: true },
       match: ['/settleorder orderId', 'orderId'],
       reply: sinon.stub().resolves(),
-      i18n: { t: sinon.stub().returns('Success') }
+      i18n: { t: sinon.stub().returns('Success') },
     };
 
     await handler(ctx);
@@ -704,4 +716,3 @@ describe('Bot Initialization', () => {
     expect(orderMock.settled_by_admin).to.be.undefined;
   });
 });
-

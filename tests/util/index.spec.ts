@@ -145,9 +145,10 @@ describe('Utility Functions', () => {
           if (key === 'yes') return 'Yes';
           if (key === 'no') return 'No';
           if (key === 'no_community') return 'None';
-          if (key === 'order_detail') return `Settled by admin: ${props.settledByAdmin}`;
+          if (key === 'order_detail')
+            return `Settled by admin: ${props.settledByAdmin}`;
           return key;
-        }
+        },
       } as any;
 
       const order = {
@@ -173,9 +174,10 @@ describe('Utility Functions', () => {
           if (key === 'yes') return 'Yes';
           if (key === 'no') return 'No';
           if (key === 'no_community') return 'None';
-          if (key === 'order_detail') return `Settled by admin: ${props.settledByAdmin}`;
+          if (key === 'order_detail')
+            return `Settled by admin: ${props.settledByAdmin}`;
           return key;
-        }
+        },
       } as any;
 
       const order = {
