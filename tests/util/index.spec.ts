@@ -6,6 +6,7 @@ import {
   plural,
   isFloat,
   toKebabCase,
+  getDetailedOrder,
 } from '../../util/index';
 
 const { expect } = require('chai');
@@ -134,6 +135,64 @@ describe('Utility Functions', () => {
     it('should convert spaces and underscores to dashes', () => {
       expect(toKebabCase('hello world')).to.equal('hello-world');
       expect(toKebabCase('hello_world')).to.equal('hello-world');
+    });
+  });
+
+  describe('getDetailedOrder', () => {
+    it('should show "Settled by admin: Yes" when settled_by_admin = true', async () => {
+      const i18n = {
+        t: (key: string, props?: any) => {
+          if (key === 'yes') return 'Yes';
+          if (key === 'no') return 'No';
+          if (key === 'no_community') return 'None';
+          if (key === 'order_detail') return `Settled by admin: ${props.settledByAdmin}`;
+          return key;
+        }
+      } as any;
+
+      const order = {
+        _id: '123',
+        created_at: new Date(),
+        status: 'PAID_HOLD_INVOICE',
+        settled_by_admin: true,
+        payment_method: 'bank',
+        price_margin: 0,
+        fee: 0,
+      } as any;
+
+      const buyer = null;
+      const seller = null;
+
+      const result = await getDetailedOrder(i18n, order, buyer, seller);
+      expect(result).to.equal('Settled by admin: Yes');
+    });
+
+    it('should show "Settled by admin: No" when settled_by_admin = false', async () => {
+      const i18n = {
+        t: (key: string, props?: any) => {
+          if (key === 'yes') return 'Yes';
+          if (key === 'no') return 'No';
+          if (key === 'no_community') return 'None';
+          if (key === 'order_detail') return `Settled by admin: ${props.settledByAdmin}`;
+          return key;
+        }
+      } as any;
+
+      const order = {
+        _id: '123',
+        created_at: new Date(),
+        status: 'SUCCESS',
+        settled_by_admin: false,
+        payment_method: 'bank',
+        price_margin: 0,
+        fee: 0,
+      } as any;
+
+      const buyer = null;
+      const seller = null;
+
+      const result = await getDetailedOrder(i18n, order, buyer, seller);
+      expect(result).to.equal('Settled by admin: No');
     });
   });
 });
