@@ -589,7 +589,10 @@ const initialize = (
       if (order === null) return;
 
       // If the user is a community admin but not a superadmin we need to check the communities match
-      if (!ctx.admin.admin && String(order.community_id) !== String(ctx.admin.default_community_id)) {
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
         return await messages.notAuthorized(ctx, ctx.admin.tg_id);
       }
 
@@ -613,7 +616,10 @@ const initialize = (
       if (!order.hash) return;
 
       // If the user is a community admin but not a superadmin we need to check the communities match
-      if (!ctx.admin.admin && String(order.community_id) !== String(ctx.admin.default_community_id)) {
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
         return await messages.notAuthorized(ctx, ctx.admin.tg_id);
       }
 
