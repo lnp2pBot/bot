@@ -588,6 +588,11 @@ const initialize = (
 
       if (order === null) return;
 
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (!ctx.admin.admin && String(order.community_id) !== String(ctx.admin.default_community_id)) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
+      }
+
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
 
@@ -606,6 +611,11 @@ const initialize = (
 
       if (order === null) return;
       if (!order.hash) return;
+
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (!ctx.admin.admin && String(order.community_id) !== String(ctx.admin.default_community_id)) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
+      }
 
       const invoice = await getInvoice({ hash: order.hash });
       if (invoice === undefined) {
