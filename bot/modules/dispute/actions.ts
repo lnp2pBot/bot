@@ -3,6 +3,8 @@ import { MainContext } from '../../start';
 import * as messages from './messages';
 import { validateAdmin } from '../../validations';
 import * as globalMessages from '../../messages';
+import { handleDispute } from './commands';
+import { logger } from '../../../logger';
 
 export const takeDispute = async (ctx: MainContext): Promise<void> => {
   const tgId: string = (ctx.update as any).callback_query.from.id;
@@ -32,10 +34,10 @@ export const takeDispute = async (ctx: MainContext): Promise<void> => {
   const seller = await User.findOne({ _id: order.seller_id });
   if (seller === null) throw new Error('seller not found');
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
-  const buyerDisputes = await Dispute.count({
+  const buyerDisputes = await Dispute.countDocuments({
     $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
   });
-  const sellerDisputes = await Dispute.count({
+  const sellerDisputes = await Dispute.countDocuments({
     $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
   });
 
@@ -52,4 +54,15 @@ export const takeDispute = async (ctx: MainContext): Promise<void> => {
     buyerDisputes,
     sellerDisputes,
   );
+};
+
+export const initiateDispute = async (ctx: MainContext) => {
+  try {
+    const orderId = ctx.match?.[1];
+    if (!orderId) return;
+    await ctx.deleteMessage();
+    await handleDispute(ctx, orderId);
+  } catch (error) {
+    logger.error(error);
+  }
 };

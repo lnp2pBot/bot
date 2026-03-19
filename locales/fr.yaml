@@ -168,6 +168,7 @@ waiting_seller_to_pay: "J'ai envoyé une requête de paiement au vendeur pour qu
 sell_success: Ta vente de sats a été effectuée avec succès suite à la confirmation de paiement de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} a déjà débloqué les sats, ta facture sera payée incessamment, rappelle-toi que ton portefeuille doit être connecté pour la réception via Lightning Network.
 rate_counterpart: 'Merci de nommer ta contre-partie:'
+choose_order_for_dispute: 'Choisissez la commande pour initier la dispute:'
 cant_process_order: Cette offre ne peut pas être traitée, merci de vérifier que l'ID d'offre est correct.
 cant_release_order: Cette offre ne peut pas être débloquée, l'acheteur n'a pas fourni une facture à laquelle envoyer le paiement
 no_id_related: Tu n'as aucune offre associée à cette référence.
@@ -176,7 +177,7 @@ buy_sats: Achète des satoshis
 order_detail: |
   ID : `${order._id}`
 
-  Situation antérieure au litige: ${previousDisputeStatus}
+  Situation antérieure au litige : ${previousDisputeStatus}
 
   Statut : ${status}
 
@@ -184,19 +185,19 @@ order_detail: |
 
   Acheteur : @${buyerUsername || ''}
 
-  Réputation de l'acheteur : ${buyerReputation}
+  Réputation \\(acheteur\\) : ${buyerReputation}
 
-  Days in operation \\(buyer\\): ${buyerAge}
+  Jours d'activité \\(acheteur\\) : ${buyerAge}
 
-  Successful trades \\(buyer\\): ${buyerTrades}
+  Échanges réussis \\(acheteur\\) : ${buyerTrades}
 
   Vendeur : @${sellerUsername || ''}
 
-  Réputation du vendeur : ${sellerReputation}
+  Réputation \\(vendeur\\) : ${sellerReputation}
 
-  Days in operation \\(seller\\): ${sellerAge}
+  Jours d'activité \\(vendeur\\) : ${sellerAge}
 
-  Successful trades \\(seller\\): ${sellerTrades}
+  Échanges réussis \\(vendeur\\) : ${sellerTrades}
 
   Montant de l'offre \\(sats\\) : ${order.amount}
 
@@ -206,17 +207,17 @@ order_detail: |
 
   Montant FIAT \\(fiat\\) ${order.fiat_code} : ${order.fiat_amount}
 
-  Mode de paiement de l'offre : ${paymentMethod}
+  Mode de paiement : ${paymentMethod}
 
   Plus\\-value/remise : ${priceMargin}
+
+  Communauté : ${communityName}
 
   Créé le : ${createdAt}
 
   Pris à : ${takenAt || ''}
 
   seller invoice hash: `${order.hash || ''}`
-
-  seller invoice secret: `${order.secret || ''}`
 
   buyer payment request: `${order.buyer_invoice || ''}`
 seller: vendeur
@@ -349,6 +350,7 @@ published: Publié
 created: Créé
 yes: Oui
 no: Non
+no_community: Aucune communauté
 wizard_add_invoice_init: |
   🤖 J'ai besoin que vous m'envoyiez une facture de ${satsAmount} satoshis qui vaut ${fiatAmount} ${currency} afin que je puisse vous envoyer les fonds.
 

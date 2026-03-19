@@ -1,8 +1,73 @@
-import { getDisputeChannel, getDetailedOrder, sanitizeMD } from '../../../util';
+import {
+  getDisputeChannel,
+  getDetailedOrder,
+  sanitizeMD,
+  getUserI18nContext,
+} from '../../../util';
 import { logger } from '../../../logger';
 import { MainContext } from '../../start';
 import { IOrder } from '../../../models/order';
 import { UserDocument } from '../../../models/user';
+
+export const listOrdersForDispute = async (
+  ctx: MainContext,
+  orders: IOrder[],
+) => {
+  try {
+    const buttons = await Promise.all(
+      orders.map(async order => {
+        return [
+          {
+            text: `${order._id.toString().substring(0, 2)}..${order._id.toString().slice(-2)} - ${order.type} - ${order.fiat_code} ${order.fiat_amount}`,
+            callback_data: `initiateDispute_${order._id}`,
+          },
+        ];
+      }),
+    );
+
+    await ctx.reply(ctx.i18n.t('choose_order_for_dispute'), {
+      reply_markup: {
+        inline_keyboard: buttons,
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const getDisputeParties = async (
+  initiator: 'seller' | 'buyer',
+  buyer: UserDocument,
+  seller: UserDocument,
+) => {
+  let initiatorUser: UserDocument;
+  let counterPartyUser: UserDocument;
+
+  if (initiator === 'seller') {
+    initiatorUser = seller;
+    counterPartyUser = buyer;
+  } else {
+    initiatorUser = buyer;
+    counterPartyUser = seller;
+  }
+
+  const buyerLanguage = await getUserI18nContext(buyer);
+  const sellerLanguage = await getUserI18nContext(seller);
+
+  const initiatorLanguage =
+    initiator === 'seller' ? sellerLanguage : buyerLanguage;
+  const counterpartyLanguage =
+    initiator === 'seller' ? buyerLanguage : sellerLanguage;
+
+  return {
+    initiatorUser,
+    counterPartyUser,
+    initiatorLanguage,
+    counterpartyLanguage,
+    buyerLanguage,
+    sellerLanguage,
+  };
+};
 
 export const beginDispute = async (
   ctx: MainContext,
@@ -12,44 +77,34 @@ export const beginDispute = async (
   seller: UserDocument,
 ) => {
   try {
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
+    const parties = await getDisputeParties(initiator, buyer, seller);
 
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
-    if (initiator === 'buyer') {
-      await ctx.telegram.sendMessage(
-        initiatorUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('you_started', { orderId: order._id }),
-          token: order.buyer_dispute_token,
+    const initiatorToken =
+      initiator === 'buyer'
+        ? order.buyer_dispute_token
+        : order.seller_dispute_token;
+    const counterpartyToken =
+      initiator === 'buyer'
+        ? order.seller_dispute_token
+        : order.buyer_dispute_token;
+
+    await ctx.telegram.sendMessage(
+      parties.initiatorUser.tg_id,
+      parties.initiatorLanguage.t('dispute_started', {
+        who: parties.initiatorLanguage.t('you_started', { orderId: order._id }),
+        token: initiatorToken,
+      }),
+    );
+
+    await ctx.telegram.sendMessage(
+      parties.counterPartyUser.tg_id,
+      parties.counterpartyLanguage.t('dispute_started', {
+        who: parties.counterpartyLanguage.t('counterpart_started', {
+          orderId: order._id,
         }),
-      );
-      await ctx.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
-          token: order.seller_dispute_token,
-        }),
-      );
-    } else {
-      await ctx.telegram.sendMessage(
-        initiatorUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('you_started', { orderId: order._id }),
-          token: order.seller_dispute_token,
-        }),
-      );
-      await ctx.telegram.sendMessage(
-        counterPartyUser.tg_id,
-        ctx.i18n.t('dispute_started', {
-          who: ctx.i18n.t('counterpart_started', { orderId: order._id }),
-          token: order.buyer_dispute_token,
-        }),
-      );
-    }
+        token: counterpartyToken,
+      }),
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -88,16 +143,19 @@ export const disputeData = async (
   sellerDisputes: any,
 ) => {
   try {
+    const { initiatorUser, counterPartyUser, buyerLanguage, sellerLanguage } =
+      await getDisputeParties(initiator, buyer, seller);
+
+    // translate the type in the solvers language (ctx.i18n)
     const type =
       initiator === 'seller' ? ctx.i18n.t('seller') : ctx.i18n.t('buyer');
-    let initiatorUser = buyer;
-    let counterPartyUser = seller;
-    if (initiator === 'seller') {
-      initiatorUser = seller;
-      counterPartyUser = buyer;
-    }
 
-    const detailedOrder = getDetailedOrder(ctx.i18n, order, buyer, seller);
+    const detailedOrder = await getDetailedOrder(
+      ctx.i18n,
+      order,
+      buyer,
+      seller,
+    );
 
     // Fix Issue 543: Escape underscores in usernames
     const escapedInitiatorUsername = sanitizeMD(initiatorUser.username);
@@ -125,14 +183,14 @@ export const disputeData = async (
     // has been taken by a solver
     await ctx.telegram.sendMessage(
       buyer.tg_id,
-      ctx.i18n.t('dispute_solver', {
+      buyerLanguage.t('dispute_solver', {
         solver: solver.username,
         token: order.buyer_dispute_token,
       }),
     );
     await ctx.telegram.sendMessage(
       seller.tg_id,
-      ctx.i18n.t('dispute_solver', {
+      sellerLanguage.t('dispute_solver', {
         solver: solver.username,
         token: order.seller_dispute_token,
       }),

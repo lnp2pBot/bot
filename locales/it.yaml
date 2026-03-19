@@ -166,6 +166,7 @@ waiting_seller_to_pay: "Ho inviato una richiesta di pagamento al venditore in mo
 sell_success: La vendita di sats è stata completata dopo la conferma del pagamento da parte di @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ha rilasciato i satoshi, la vostra invoice verrà pagata da un momento all'altro. Ricordata che il tuo wallet deve essere online per ricevere attraverso la rete Lightning.
 rate_counterpart: 'Dai un voto alla tua controparte:'
+choose_order_for_dispute: 'Scegli l''ordine per avviare il reclamo:'
 cant_process_order: Quest'ordine non può essere elaborato, si prega di controllare che l'ID sia corretto.
 cant_release_order: L'ordine non può essere evaso, l'acquirente non ha inviato la richiesta di pagamento LN
 no_id_related: Non c'è nessun ordine associato a questo Id.
@@ -208,13 +209,13 @@ order_detail: |
 
   Surplus/sconto: ${priceMargin}
 
+  Community: ${communityName}
+
   Creato: ${createdAt}
 
   Preso: ${takenAt || ''}
 
   seller invoice hash: `${order.hash || ''}`
-
-  seller invoice secret: `${order.secret || ''}`
 
   buyer payment request: `${order.buyer_invoice || ''}`
 seller: venditore
@@ -347,6 +348,7 @@ published: Pubblicato
 created: Creato
 yes: Sì
 no: No
+no_community: Nessuna comunità
 wizard_add_invoice_init: |
   🤖 Ho bisogno che mi invii la invoice si ${satsAmount} satoshi che valgono ${currency} ${fiatAmount} in modo da poterti inviare il denaro.
 

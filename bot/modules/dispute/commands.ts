@@ -11,11 +11,9 @@ import * as globalMessages from '../../messages';
 import { logger } from '../../../logger';
 import { removeAtSymbol } from '../../../util';
 
-const dispute = async (ctx: MainContext) => {
+export const handleDispute = async (ctx: MainContext, orderId: string) => {
   try {
     const { user } = ctx;
-
-    const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
 
     if (!(await validateObjectId(ctx, orderId))) return;
     const order = await validateDisputeOrder(ctx, user, orderId);
@@ -54,11 +52,11 @@ const dispute = async (ctx: MainContext) => {
       // We increment the number of disputes on both users
       // If a user disputes is equal to MAX_DISPUTES, we ban the user
       const buyerDisputes =
-        (await Dispute.count({
+        (await Dispute.countDocuments({
           $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
         })) + 1;
       const sellerDisputes =
-        (await Dispute.count({
+        (await Dispute.countDocuments({
           $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
         })) + 1;
       const maxDisputes = Number(process.env.MAX_DISPUTES);
@@ -88,6 +86,37 @@ const dispute = async (ctx: MainContext) => {
     // Show the dispute button to solvers
     await messages.takeDisputeButton(ctx, order);
     logger.warning(`Order ${order.id}: User ${user.id} started a dispute!`);
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const dispute = async (ctx: MainContext) => {
+  try {
+    const { user } = ctx;
+
+    if (ctx.state.command.args.length > 0) {
+      const params = await validateParams(ctx, 2, '\\<_order id_\\>');
+
+      if (!params || params.length === 0) return;
+
+      const [orderId] = params;
+      return await handleDispute(ctx, orderId);
+    }
+
+    const orders = await Order.find({
+      $or: [
+        { seller_id: user._id.toString() },
+        { buyer_id: user._id.toString() },
+      ],
+      status: { $in: ['ACTIVE', 'FIAT_SENT'] },
+    });
+
+    if (orders.length > 0) {
+      await messages.listOrdersForDispute(ctx, orders);
+    } else {
+      await ctx.reply(ctx.i18n.t('you_have_no_orders'));
+    }
   } catch (error) {
     logger.error(error);
   }

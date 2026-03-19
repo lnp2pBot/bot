@@ -28,14 +28,17 @@ const checkIndexExists = async (
     return false;
   }
 };
-
+type SafeIndexOptions = Omit<mongoose.IndexOptions, 'unique'> & {
+  unique?: boolean;
+  name: string;
+};
 /**
  * Creates a single index with graceful handling of existing indexes
  */
 const createIndexSafely = async (
   collection: mongoose.Collection,
   indexSpec: Record<string, number>,
-  options: mongoose.IndexOptions & { name: string },
+  options: SafeIndexOptions,
   collectionName: string,
 ): Promise<void> => {
   try {

@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.0] - 2026-02-24
+
+### Added
+- Community language support: communities can now configure their preferred language (#663).
+- Release confirmation feature: users must confirm before releasing funds, preventing accidental releases (#723).
+- User command logging: all commands sent by users are now logged to a dedicated log file for auditing (#717).
+- Unit tests for utility functions, improving test coverage (#700).
+- External health monitoring module: push-based heartbeat system for monitoring bot health via an external service (#753).
+
+### Fixed
+- Persian (IRT) translation: corrected currency name from "ریال" to "تومان" (#716).
+- Fixed `next_arg` initialization: prevents errors when `match[2]` is undefined in command parsing (#740).
+
+### Changed
+- Updated Mongoose from 7.x to 8.17.1 (#725).
+
+### Security
+- Bumped `js-yaml` from 4.1.0 to 4.1.1 (#709).
+- Bumped `@smithy/config-resolver` from 4.0.1 to 4.4.5 (#720).
+- Bumped `axios` from 1.12.0 to 1.13.5 (#742).
+
 ## [0.14.3] - 2025-10-27
 
 ### Added

@@ -166,6 +166,7 @@ waiting_seller_to_pay: 'Le he enviado una solicitud de pago al vendedor para que
 sell_success: Tu venta de sats ha sido completada tras confirmar el pago de @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ya liberó los satoshis, debes esperar por el pago de tu factura, recuerda que para recibir en lightning tu wallet debe estar online.
 rate_counterpart: 'Califica a tu contraparte:'
+choose_order_for_dispute: 'Elige la orden para iniciar la disputa:'
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
@@ -208,13 +209,13 @@ order_detail: |
 
   Prima/descuento: ${priceMargin}
 
+  Comunidad: ${communityName}
+
   Creada: ${createdAt}
 
   Tomada: ${takenAt || ''}
 
   seller invoice hash: `${order.hash || ''}`
-
-  seller invoice secret: `${order.secret || ''}`
 
   buyer payment request: `${order.buyer_invoice || ''}`
 seller: vendedor
@@ -351,6 +352,7 @@ published: Publicada
 created: Creada
 yes: Sí
 no: No
+no_community: Ninguna comunidad
 wizard_add_invoice_init: |
   🤖 Para poder enviarte los satoshis necesito que me envíes una factura con monto ${satsAmount} satoshis equivalente a ${currency} ${fiatAmount}
 
