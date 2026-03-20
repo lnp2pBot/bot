@@ -579,7 +579,7 @@ const initialize = (
     }
   });
 
-  bot.command('checkorder', superAdminMiddleware, async (ctx: MainContext) => {
+  bot.command('checkorder', adminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
@@ -587,6 +587,14 @@ const initialize = (
       const order = await Order.findOne({ _id: orderId });
 
       if (order === null) return;
+
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
+      }
 
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
@@ -597,35 +605,39 @@ const initialize = (
     }
   });
 
-  bot.command(
-    'checkinvoice',
-    superAdminMiddleware,
-    async (ctx: MainContext) => {
-      try {
-        const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
-        if (!orderId) return;
-        if (!(await validateObjectId(ctx, orderId))) return;
-        const order = await Order.findOne({ _id: orderId });
+  bot.command('checkinvoice', adminMiddleware, async (ctx: MainContext) => {
+    try {
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
+      if (!orderId) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
 
-        if (order === null) return;
-        if (!order.hash) return;
+      if (order === null) return;
+      if (!order.hash) return;
 
-        const invoice = await getInvoice({ hash: order.hash });
-        if (invoice === undefined) {
-          throw new Error('invoice is undefined');
-        }
-
-        await messages.checkInvoiceMessage(
-          ctx,
-          invoice.is_confirmed,
-          invoice.is_canceled!,
-          invoice.is_held!,
-        );
-      } catch (error) {
-        logger.error(error);
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
       }
-    },
-  );
+
+      const invoice = await getInvoice({ hash: order.hash });
+      if (invoice === undefined) {
+        throw new Error('invoice is undefined');
+      }
+
+      await messages.checkInvoiceMessage(
+        ctx,
+        invoice.is_confirmed,
+        invoice.is_canceled!,
+        invoice.is_held!,
+      );
+    } catch (error) {
+      logger.error(error);
+    }
+  });
 
   bot.command('resubscribe', superAdminMiddleware, async (ctx: MainContext) => {
     try {
