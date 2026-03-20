@@ -416,6 +416,14 @@ didnt_add_invoice: '🤨 Вы не отправили счет на получе
 buyer_havent_add_invoice: '😔 Покупатель не прислал мне счет за вашу продажу под номером ${orderId}. Ваши сатоши были возвращены.'
 buyer_havent_add_invoice_to_admin_channel: |
   Покупатель @${username} (${tgId}) принял заявку с идентификатором ${orderId}, но не выставил счет на получение оплаты. Время истекло, заказ снова опубликован.
+hold_invoice_expired_to_buyer: |
+  Инвойс с холдом по заказу ID ${orderId} истёк до завершения сделки. Саты возвращены продавцу.
+
+  Если нужна помощь, напишите в группу ${helpGroup}
+hold_invoice_expired_to_seller: |
+  Инвойс с холдом по заказу ID ${orderId} истёк до завершения сделки. Ваши саты возвращены вам.
+
+  Если нужна помощь, напишите в группу ${helpGroup}
 havent_paid_invoice: '🤨 Вы не оплатили счет за продажу сатош для сделки с идентификатором: ${orderId}'
 seller_havent_paid_invoice: '😔 Продавец не оплатил счет за вашу покупку Id: ${orderId}, операция отменена.'
 seller_havent_add_invoice_to_admin_channel: |
