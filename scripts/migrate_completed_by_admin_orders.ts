@@ -16,7 +16,7 @@ const migrate = async () => {
     const query = { status: 'COMPLETED_BY_ADMIN' };
     const update = {
       $set: {
-        status: 'PAID_HOLD_INVOICE',
+        status: 'SUCCESS',
         settled_by_admin: true,
       },
     };

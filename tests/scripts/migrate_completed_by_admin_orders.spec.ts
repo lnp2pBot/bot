@@ -29,7 +29,7 @@ describe('Migration Script: migrate_completed_by_admin_orders', () => {
     sandbox.restore();
   });
 
-  it('should migrate COMPLETED_BY_ADMIN orders to PAID_HOLD_INVOICE + settled_by_admin', async () => {
+  it('should migrate COMPLETED_BY_ADMIN orders to SUCCESS + settled_by_admin', async () => {
     // We proxyquire the script to inject mocks
     proxyquire('../../scripts/migrate_completed_by_admin_orders', {
       '../db_connect': {
@@ -69,7 +69,7 @@ describe('Migration Script: migrate_completed_by_admin_orders', () => {
     // Verify update
     expect(update).to.deep.equal({
       $set: {
-        status: 'PAID_HOLD_INVOICE',
+        status: 'SUCCESS',
         settled_by_admin: true,
       },
     });
