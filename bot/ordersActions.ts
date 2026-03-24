@@ -241,10 +241,8 @@ const buildDescription = (
     if (currency)
       currencyString = `${fiatAmountString} ${currency.code} ${currency.emoji}`;
 
-    let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
     if (priceFromAPI) {
-      amountText = '';
       tasaText =
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
