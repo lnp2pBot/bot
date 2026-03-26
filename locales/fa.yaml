@@ -187,6 +187,8 @@ order_detail: |
 
   وضعیت: ${status}
 
+  تسویه توسط مدیر: ${settledByAdmin}
+
   ایجاد کننده: @${creator || ''}
 
   خریدار: @${buyerUsername || ''}

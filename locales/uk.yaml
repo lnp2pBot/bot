@@ -178,6 +178,8 @@ order_detail: |
 
   Статус: ${status}
 
+  Завершено адміністратором: ${settledByAdmin}
+
   Автор: @${creator || ''}
 
   Покупець: @${buyerUsername || ''}

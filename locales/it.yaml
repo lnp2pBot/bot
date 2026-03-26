@@ -179,6 +179,8 @@ order_detail: |
 
   Stato: ${status}
 
+  Completato dall'amministratore: ${settledByAdmin}
+
   Creato da: @${creator || ''}
 
   Acquirente: @${buyerUsername || ''}
