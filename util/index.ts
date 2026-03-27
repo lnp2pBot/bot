@@ -386,7 +386,7 @@ const getDetailedOrder = async (
     const sellerReputation = seller
       ? sanitizeMD(seller.total_rating.toFixed(2))
       : '';
-    const buyerId = buyer ? buyer._id : '';
+    const buyerId = buyer ? String(buyer._id) : '';
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());
     let createdAt = order.created_at.toISOString();
