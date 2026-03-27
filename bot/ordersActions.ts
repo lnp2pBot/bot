@@ -262,8 +262,7 @@ const buildDescription = (
 
     const firstLine = getOrderTitleMessage(user, type, i18n);
 
-    let description: string =
-      `${firstLine}\n`;
+    let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
     description += i18n.t('has_successful_trades', { trades }) + `\n`;
@@ -279,7 +278,11 @@ const buildDescription = (
   }
 };
 
-const getOrderTitleMessage = (user: UserDocument, type: string, i18n: I18nContext) => {
+const getOrderTitleMessage = (
+  user: UserDocument,
+  type: string,
+  i18n: I18nContext,
+) => {
   const isSell = type === 'sell';
 
   // Guard Clause: The user DOES want to show their name, we resolve and leave.
@@ -290,9 +293,7 @@ const getOrderTitleMessage = (user: UserDocument, type: string, i18n: I18nContex
   }
 
   // The user DOES NOT want to show their name.
-  return isSell
-    ? i18n.t('selling_sats')
-    : i18n.t('buying_sats');
+  return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
 };
 
 const getOrder = async (
