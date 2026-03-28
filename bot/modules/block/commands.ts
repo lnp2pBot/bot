@@ -3,8 +3,17 @@ import * as messages from './messages';
 import * as globalMessages from '../../messages';
 import { MainContext } from '../../start';
 
-const block = async (ctx: MainContext, username: string): Promise<void> => {
-  const userToBlock = await User.findOne({ username: username.substring(1) });
+const block = async (ctx: MainContext, usernameOrId: string): Promise<void> => {
+  let userToBlock;
+  if (usernameOrId.startsWith('@')) {
+    userToBlock = await User.findOne({ username: usernameOrId.substring(1) });
+  } else {
+    if (!Number.isInteger(Number(usernameOrId))) {
+      await globalMessages.notFoundUserMessage(ctx);
+      return;
+    }
+    userToBlock = await User.findOne({ tg_id: Number(usernameOrId) });
+  }
   const user = ctx.user;
 
   if (!userToBlock) {
@@ -52,8 +61,21 @@ const block = async (ctx: MainContext, username: string): Promise<void> => {
   await messages.userBlocked(ctx);
 };
 
-const unblock = async (ctx: MainContext, username: string): Promise<void> => {
-  const userToUnblock = await User.findOne({ username: username.substring(1) });
+const unblock = async (
+  ctx: MainContext,
+  usernameOrId: string,
+): Promise<void> => {
+  let userToUnblock;
+  if (usernameOrId.startsWith('@')) {
+    userToUnblock = await User.findOne({ username: usernameOrId.substring(1) });
+  } else {
+    if (!Number.isInteger(Number(usernameOrId))) {
+      await globalMessages.notFoundUserMessage(ctx);
+      return;
+    }
+    userToUnblock = await User.findOne({ tg_id: Number(usernameOrId) });
+  }
+
   if (!userToUnblock) {
     await globalMessages.notFoundUserMessage(ctx);
     return;
