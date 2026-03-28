@@ -451,8 +451,10 @@ pending_payment_failed_to_admin: |
   Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
 
   Payment attempts: ${attempts}
-selling: Selling
-buying: Buying
+selling_sats: Selling sats
+buying_sats: Buying sats
+showusername_selling_sats: '@${username} is selling sats'
+showusername_buying_sats: '@${username} is buying sats'
 receive_payment: Receive payment
 pay: Pay
 is: is

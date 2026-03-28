@@ -442,12 +442,14 @@ pending_payment_failed_to_admin: |
   Il pagamento della invoice per l'ordine di acquisto ${orderId} dell'utente @${username} è fallito.
 
   Payment attempts: ${attempts}
-selling: Vendita
-buying: Acquisto
+selling_sats: Vendita sats
+buying_sats: Acquisto sats
 receive_payment: Ricezione del pagamento
 pay: Paga
 is: è
 trading_volume: 'Volume scambio: ${volume} sats'
+showusername_buying_sats: '@${username} sta comprando sats'
+showusername_selling_sats: '@${username} sta vendendo sats'
 satoshis: satoshi
 by: da
 rate: Valutazione

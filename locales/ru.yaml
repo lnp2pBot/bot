@@ -445,9 +445,11 @@ pending_payment_failed_to_admin: |
   Платеж по счету-фактуре на покупку с идентификатором ${orderId} пользователя @${username} не выполнен!
 
   Попытка оплаты: ${attempts}
-selling: Продаю
-buying: Покупаю
+selling_sats: Продажа сат
+buying_sats: Покупка сат
 receive_payment: Расчет
+showusername_buying_sats: '@${username} покупает саты'
+showusername_selling_sats: '@${username} продает саты'
 pay: Расчет
 is: Я
 trading_volume: 'Обьем торгов: ${volume} сат'

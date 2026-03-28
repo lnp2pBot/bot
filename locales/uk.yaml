@@ -442,12 +442,14 @@ pending_payment_failed_to_admin: |
   Платіж за рахунком-фактурою на покупку з ідентифікатором ${orderId} користувача @${username} не виконаний!
 
   Спроб оплати: ${attempts}
-selling: Продаю
-buying: Купую
+selling_sats: Продаж сатоші
+buying_sats: Купівля сатоші
 receive_payment: Розрахунок
 pay: Оплата
 is: є
 trading_volume: 'Обсяг торгів: ${volume} сат'
+showusername_buying_sats: '@${username} купує сатоші'
+showusername_selling_sats: '@${username} продає сатоші'
 satoshis: сатоші
 by: за допомогою
 rate: Kурс

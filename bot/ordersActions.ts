@@ -218,7 +218,6 @@ const buildDescription = (
   }: BuildDescriptionArguments,
 ) => {
   try {
-    const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
     const paymentAction =
       type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
@@ -226,9 +225,6 @@ const buildDescription = (
     const volume = numberFormat(fiatCode, user.volume_traded);
     const totalRating = user.total_rating;
     const totalReviews = user.total_reviews;
-    const username = user.show_username
-      ? `@${user.username} ` + i18n.t('is') + ` `
-      : ``;
     const volumeTraded = user.show_volume_traded
       ? i18n.t('trading_volume', { volume }) + `\n`
       : ``;
@@ -245,10 +241,8 @@ const buildDescription = (
     if (currency)
       currencyString = `${fiatAmountString} ${currency.code} ${currency.emoji}`;
 
-    let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
     if (priceFromAPI) {
-      amountText = '';
       tasaText =
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
@@ -266,8 +260,9 @@ const buildDescription = (
 
     const ageInDays = getUserAge(user);
 
-    let description =
-      `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
+    const firstLine = getOrderTitleMessage(user, type, i18n);
+
+    let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
     description += i18n.t('has_successful_trades', { trades }) + `\n`;
@@ -281,6 +276,24 @@ const buildDescription = (
   } catch (error) {
     logger.error(error);
   }
+};
+
+const getOrderTitleMessage = (
+  user: UserDocument,
+  type: string,
+  i18n: I18nContext,
+) => {
+  const isSell = type === 'sell';
+
+  // Guard Clause: The user DOES want to show their name, we resolve and leave.
+  if (user.show_username) {
+    return isSell
+      ? i18n.t('showusername_selling_sats', { username: user.username })
+      : i18n.t('showusername_buying_sats', { username: user.username });
+  }
+
+  // The user DOES NOT want to show their name.
+  return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
 };
 
 const getOrder = async (
