@@ -61,7 +61,10 @@ const block = async (ctx: MainContext, usernameOrId: string): Promise<void> => {
   await messages.userBlocked(ctx);
 };
 
-const unblock = async (ctx: MainContext, usernameOrId: string): Promise<void> => {
+const unblock = async (
+  ctx: MainContext,
+  usernameOrId: string,
+): Promise<void> => {
   let userToUnblock;
   if (usernameOrId.startsWith('@')) {
     userToUnblock = await User.findOne({ username: usernameOrId.substring(1) });
