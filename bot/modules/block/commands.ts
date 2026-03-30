@@ -8,11 +8,12 @@ const block = async (ctx: MainContext, usernameOrId: string): Promise<void> => {
   if (usernameOrId.startsWith('@')) {
     userToBlock = await User.findOne({ username: usernameOrId.substring(1) });
   } else {
+    // Avoid querying with invalid telegram ids
     if (!Number.isInteger(Number(usernameOrId))) {
       await globalMessages.notFoundUserMessage(ctx);
       return;
     }
-    userToBlock = await User.findOne({ tg_id: Number(usernameOrId) });
+    userToBlock = await User.findOne({ tg_id: usernameOrId });
   }
   const user = ctx.user;
 
@@ -69,11 +70,12 @@ const unblock = async (
   if (usernameOrId.startsWith('@')) {
     userToUnblock = await User.findOne({ username: usernameOrId.substring(1) });
   } else {
+    // Avoid querying with invalid telegram ids
     if (!Number.isInteger(Number(usernameOrId))) {
       await globalMessages.notFoundUserMessage(ctx);
       return;
     }
-    userToUnblock = await User.findOne({ tg_id: Number(usernameOrId) });
+    userToUnblock = await User.findOne({ tg_id: usernameOrId });
   }
 
   if (!userToUnblock) {
