@@ -691,6 +691,7 @@ user_already_blocked: Benutzer ist bereits gesperrt
 user_blocked: Benutzer erfolgreich gesperrt
 user_unblocked: Benutzer erfolgreich entsperrt
 blocklist_empty: Du hast keine gesperrten Benutzer
+invalid_block_target: "Bitte gib einen gültigen @username oder eine numerische Telegram-Benutzer-ID an"
 orders_in_process: Es gibt laufende Aufträge mit diesem Benutzer
 user_order_is_blocked_by_user_taker: Du kannst diesen Auftrag nicht annehmen, da du seinen Ersteller gesperrt hast
 user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da dich sein Ersteller gesperrt hat

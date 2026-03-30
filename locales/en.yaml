@@ -696,6 +696,7 @@ user_already_blocked: User is already blocked
 user_blocked: User successfully blocked
 user_unblocked: User successfully unblocked
 blocklist_empty: You do not have any blocked user
+invalid_block_target: "Please provide a valid @username or numeric Telegram user ID"
 orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you

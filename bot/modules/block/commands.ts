@@ -3,8 +3,22 @@ import * as messages from './messages';
 import * as globalMessages from '../../messages';
 import { MainContext } from '../../start';
 
-const block = async (ctx: MainContext, username: string): Promise<void> => {
-  const userToBlock = await User.findOne({ username: username.substring(1) });
+/**
+ * Resolve a user by @username or numeric Telegram ID.
+ * Returns null if the argument format is invalid or the user is not found.
+ */
+const resolveUser = async (arg: string) => {
+  if (arg.startsWith('@')) {
+    return User.findOne({ username: arg.substring(1) });
+  }
+  if (/^\d+$/.test(arg)) {
+    return User.findOne({ tg_id: arg });
+  }
+  return null;
+};
+
+const block = async (ctx: MainContext, target: string): Promise<void> => {
+  const userToBlock = await resolveUser(target);
   const user = ctx.user;
 
   if (!userToBlock) {
@@ -52,8 +66,8 @@ const block = async (ctx: MainContext, username: string): Promise<void> => {
   await messages.userBlocked(ctx);
 };
 
-const unblock = async (ctx: MainContext, username: string): Promise<void> => {
-  const userToUnblock = await User.findOne({ username: username.substring(1) });
+const unblock = async (ctx: MainContext, target: string): Promise<void> => {
+  const userToUnblock = await resolveUser(target);
   if (!userToUnblock) {
     await globalMessages.notFoundUserMessage(ctx);
     return;
@@ -84,7 +98,13 @@ const blocklist = async (ctx: MainContext): Promise<void> => {
   }
 
   const usersBlocked = await User.find({ tg_id: { $in: tgIdBlocks } });
-  await messages.blocklistMessage(ctx, usersBlocked);
+
+  // For tg_ids that have no matching user record, pass the raw id so the
+  // message layer can still display something meaningful.
+  const foundIds = new Set(usersBlocked.map(u => u.tg_id));
+  const unknownIds = tgIdBlocks.filter((id: string) => !foundIds.has(id));
+
+  await messages.blocklistMessage(ctx, usersBlocked, unknownIds);
 };
 
 export { block, unblock, blocklist };

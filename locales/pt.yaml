@@ -690,6 +690,7 @@ user_already_blocked: Usuário já está bloqueado
 user_blocked: Usuário bloqueado com sucesso
 user_unblocked: Usuário desbloqueado com sucesso
 blocklist_empty: Você não tem nenhum usuário bloqueado
+invalid_block_target: "Por favor, forneça um @username válido ou um ID numérico de usuário do Telegram"
 orders_in_process: Existem ordens em andamento com este usuário
 user_order_is_blocked_by_user_taker: Você não pode aceitar esta oferta porque bloqueou seu criador
 user_taker_is_blocked_by_user_order: Você não pode aceitar esta oferta porque seu criador bloqueou você

@@ -38,13 +38,17 @@ const userUnblocked = async (ctx: MainContext) => {
 const blocklistMessage = async (
   ctx: MainContext,
   usersBlocked: UserDocument[],
+  unknownIds: string[] = [],
 ) => {
   try {
-    if (!usersBlocked?.length) {
+    if (!usersBlocked?.length && !unknownIds.length) {
       return await blocklistEmptyMessage(ctx);
     }
-    const userList = usersBlocked.map(block => '@' + block.username);
-    ctx.reply(userList.join('\n'));
+    const lines: string[] = [
+      ...usersBlocked.map(u => (u.username ? '@' + u.username : `ID: ${u.tg_id}`)),
+      ...unknownIds.map(id => `ID: ${id}`),
+    ];
+    ctx.reply(lines.join('\n'));
   } catch (error) {
     logger.error(error);
   }
