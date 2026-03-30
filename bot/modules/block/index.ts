@@ -12,13 +12,21 @@ const isValidBlockTarget = (arg: string) =>
 export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('block', userMiddleware, async (ctx, next) => {
     const args = ctx.message.text.split(' ') || [];
-    if (args.length !== 2 || !isValidBlockTarget(args[1])) return next();
+    if (args.length !== 2) return next();
+    if (!isValidBlockTarget(args[1])) {
+      await ctx.reply(ctx.i18n.t('invalid_block_target'));
+      return;
+    }
     commands.block(ctx, args[1]);
   });
 
   bot.command('unblock', userMiddleware, async (ctx, next) => {
     const args = ctx.message.text.split(' ') || [];
-    if (args.length !== 2 || !isValidBlockTarget(args[1])) return next();
+    if (args.length !== 2) return next();
+    if (!isValidBlockTarget(args[1])) {
+      await ctx.reply(ctx.i18n.t('invalid_block_target'));
+      return;
+    }
     commands.unblock(ctx, args[1]);
   });
 
