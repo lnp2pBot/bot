@@ -259,6 +259,9 @@ help: |
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
+  /block <_@username/id_> - Blocks a user from interacting with your orders
+  /unblock <_@username/id_> - Unblocks a user
+  /blocklist - List of your blocked users
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
   /terms - Shows the terms and conditions when using the bot
@@ -699,6 +702,8 @@ blocklist_empty: You do not have any blocked user
 orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
+block_usage: "Usage: /block @Username or /block telegramId"
+unblock_usage: "Usage: /unblock @Username or /block telegramId"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again

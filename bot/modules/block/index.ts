@@ -3,18 +3,25 @@ import { CommunityContext } from '../community/communityContext';
 import { logger } from '../../../logger';
 
 const commands = require('./commands');
+const messages = require('./messages');
 const { userMiddleware } = require('../../middleware/user');
 
 export const configure = (bot: Telegraf<CommunityContext>) => {
-  bot.command('block', userMiddleware, async (ctx, next) => {
+  bot.command('block', userMiddleware, async ctx => {
     const args = ctx.message.text.split(' ') || [];
-    if (args.length !== 2) return next();
+    if (args.length !== 2) {
+      await messages.blockUsage(ctx);
+      return;
+    }
     commands.block(ctx, args[1]);
   });
 
-  bot.command('unblock', userMiddleware, async (ctx, next) => {
+  bot.command('unblock', userMiddleware, async ctx => {
     const args = ctx.message.text.split(' ') || [];
-    if (args.length !== 2) return next();
+    if (args.length !== 2) {
+      await messages.unblockUsage(ctx);
+      return;
+    }
     commands.unblock(ctx, args[1]);
   });
 

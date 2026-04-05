@@ -58,6 +58,22 @@ const blocklistEmptyMessage = async (ctx: MainContext) => {
   }
 };
 
+const blockUsage = async (ctx: MainContext) => {
+  try {
+    ctx.reply(ctx.i18n.t('block_usage'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const unblockUsage = async (ctx: MainContext) => {
+  try {
+    ctx.reply(ctx.i18n.t('unblock_usage'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 export {
   userAlreadyBlocked,
   userBlocked,
@@ -65,4 +81,6 @@ export {
   blocklistMessage,
   blocklistEmptyMessage,
   ordersInProcess,
+  blockUsage,
+  unblockUsage,
 };
