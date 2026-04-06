@@ -299,6 +299,15 @@ help: |
   /dispute <_order id_>
   مشاجره‌ای بین طرفین معامله را ثبت می‌‌کند.
 
+  /block <_@username/id_>
+  مسدود کردن یک کاربر برای جلوگیری از تعامل او با سفارش‌های شما.
+
+  /unblock <_@username/id_>
+  رفع مسدودیت یک کاربر.
+
+  /blocklist
+  مشاهده لیست کاربران مسدود شده شما.
+
   /cancel <_order id_>
   سفارشی که هنوز پذیرفته نشده را لغو می‌کند.
 
@@ -788,6 +797,10 @@ blocklist_empty: شما هیچ کاربر مسدود شده‌ای ندارید.
 orders_in_process: سفارش‌های در جریانی وجود دارند که این کاربر در آن‌ها دخیل است.
 user_order_is_blocked_by_user_taker: شما نمی‌توانید این سفارش را بردارید زیرا گذارنده آن را مسدود کرده‌اید.
 user_taker_is_blocked_by_user_order: شما نمی‌توانید این سفارش را بردارید زیرا توسط گذارنده آن مسدود شده‌اید.
+block_usage: "استفاده: /block @Username یا /block telegramId"
+unblock_usage: "استفاده: /unblock @Username یا /unblock telegramId"
+block_failed: "خطا در مسدود کردن کاربر"
+unblock_failed: "خطا در رفع مسدودیت کاربر"
 check_solvers: اجتماع شما ${communityName} هیچ داوری ندارد. لطفاً برای جلوگیری از غیرفعال شدن اجتماع، تا ${remainingDays} روز آینده حداقل یک داور به آن اضافه کنید.
 check_solvers_last_warning: اجتماع شما ${communityName} هیچ داوری ندارد. برای جلوگیری از غیرفعال شدن اجتماع، امروز حداقل یک داور به آن اضافه کنید.
 image_processing_error: هنگام پردازش تصویر با خطایی مواجه شدیم، لطفاً چند دقیقه صبر کرده و دوباره امتحان کنید.

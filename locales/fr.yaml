@@ -258,6 +258,9 @@ help: |
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
   /release <_order id_> - Le vendeur libère les satoshis 
   /dispute <_order id_> - Ouvre un litige entre les parties participantes
+  /block <_@username/id_> - Bloque un utilisateur pour l'empêcher d'interagir avec vos ordres
+  /unblock <_@username/id_> - Débloque un utilisateur
+  /blocklist - Liste de vos utilisateurs bloqués
   /cancel <_order id_> - Annule une commande qui n'a pas encore été prise
   /cancelall - Annule toutes les commandes validées et non prises
   /terms - Affiche les termes et conditions lors de l'utilisation du bot
@@ -693,6 +696,10 @@ blocklist_empty: Vous n'avez aucun utilisateur bloqué
 orders_in_process: Il y a des ordres en cours avec cet utilisateur
 user_order_is_blocked_by_user_taker: Vous ne pouvez pas accepter cette offre car vous avez bloqué son créateur
 user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car son créateur vous a bloqué
+block_usage: "Utilisation : /block @Username ou /block telegramId"
+unblock_usage: "Utilisation : /unblock @Username ou /unblock telegramId"
+block_failed: "Erreur lors du blocage de l'utilisateur"
+unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
