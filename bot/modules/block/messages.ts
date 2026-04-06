@@ -74,6 +74,22 @@ const unblockUsage = async (ctx: MainContext) => {
   }
 };
 
+const blockFailed = async (ctx: MainContext) => {
+  try {
+    ctx.reply(ctx.i18n.t('block_failed'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const unblockFailed = async (ctx: MainContext) => {
+  try {
+    ctx.reply(ctx.i18n.t('unblock_failed'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 export {
   userAlreadyBlocked,
   userBlocked,
@@ -83,4 +99,6 @@ export {
   ordersInProcess,
   blockUsage,
   unblockUsage,
+  blockFailed,
+  unblockFailed,
 };

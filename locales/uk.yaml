@@ -694,7 +694,9 @@ orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
 block_usage: "Використання: /block @Username або /block telegramId"
-unblock_usage: "Використання: /unblock @Username або /block telegramId"
+unblock_usage: "Використання: /unblock @Username або /unblock telegramId"
+block_failed: "Помилка при блокуванні користувача"
+unblock_failed: "Помилка при розблокуванні користувача"
 check_solvers: У вашій спільноті ${communityName} немає розв’язувачів. Додайте принаймні одну протягом ${remainingDays} днів, щоб запобігти вимкненню спільноти.
 check_solvers_last_warning: У вашій спільноті ${communityName} немає розв’язувачів. Будь ласка, додайте принаймні одну сьогодні, щоб запобігти вимкненню спільноти.
 image_processing_error: У нас виникла помилка при обробці зображення, будь ласка, почекайте кілька хвилин і спробуйте знову.

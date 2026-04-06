@@ -697,7 +697,9 @@ orders_in_process: Il y a des ordres en cours avec cet utilisateur
 user_order_is_blocked_by_user_taker: Vous ne pouvez pas accepter cette offre car vous avez bloqué son créateur
 user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car son créateur vous a bloqué
 block_usage: "Utilisation : /block @Username ou /block telegramId"
-unblock_usage: "Utilisation : /unblock @Username ou /block telegramId"
+unblock_usage: "Utilisation : /unblock @Username ou /unblock telegramId"
+block_failed: "Erreur lors du blocage de l'utilisateur"
+unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.

@@ -13,7 +13,12 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       await messages.blockUsage(ctx);
       return;
     }
-    commands.block(ctx, args[1]);
+    try {
+      await commands.block(ctx, args[1]);
+    } catch (error) {
+      logger.error('Error in block command:', error);
+      await messages.blockFailed(ctx);
+    }
   });
 
   bot.command('unblock', userMiddleware, async ctx => {
@@ -22,7 +27,12 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       await messages.unblockUsage(ctx);
       return;
     }
-    commands.unblock(ctx, args[1]);
+    try {
+      await commands.unblock(ctx, args[1]);
+    } catch (error) {
+      logger.error('Error in unblock command:', error);
+      await messages.unblockFailed(ctx);
+    }
   });
 
   bot.command('blocklist', userMiddleware, async ctx => {

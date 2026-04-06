@@ -698,7 +698,9 @@ orders_in_process: Es gibt laufende Aufträge mit diesem Benutzer
 user_order_is_blocked_by_user_taker: Du kannst diesen Auftrag nicht annehmen, da du seinen Ersteller gesperrt hast
 user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da dich sein Ersteller gesperrt hat
 block_usage: "Verwendung: /block @Username oder /block telegramId"
-unblock_usage: "Verwendung: /unblock @Username oder /block telegramId"
+unblock_usage: "Verwendung: /unblock @Username oder /unblock telegramId"
+block_failed: "Fehler beim Blockieren des Benutzers"
+unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.

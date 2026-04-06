@@ -254,7 +254,7 @@ help: |
   /settings - Exibe as configurações atuais do usuário
   /listorders - O usuário pode listar seus pedidos inacabados
   /listcurrencies - Lista as moedas que podemos usar sem indicar o valor em satoshis
-  /fiatsent <order id> - O comprador indica que já enviou o dinero Fiat para o vendedor
+  /fiatsent <order id> - O comprador indica que já enviou o dinheiro Fiat para o vendedor
   /release <ID do pedido> - O vendedor libera os satoshis
   /dispute <ID do pedido> - Abre uma disputa entre os participantes
   /block <_@username/id_> - Bloqueia um usuário para que ele não possa interagir com suas ordens
@@ -697,7 +697,9 @@ orders_in_process: Existem ordens em andamento com este usuário
 user_order_is_blocked_by_user_taker: Você não pode aceitar esta oferta porque bloqueou seu criador
 user_taker_is_blocked_by_user_order: Você não pode aceitar esta oferta porque seu criador bloqueou você
 block_usage: "Uso: /block @Username ou /block telegramId"
-unblock_usage: "Uso: /unblock @Username ou /block telegramId"
+unblock_usage: "Uso: /unblock @Username ou /unblock telegramId"
+block_failed: "Erro ao bloquear o usuário"
+unblock_failed: "Erro ao desbloquear o usuário"
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
