@@ -61,7 +61,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     try {
       if (state.listMessageIds) {
         for (const msgId of state.listMessageIds) {
-          await ctx.telegram.deleteMessage(ctx.chat!.id, msgId).catch(() => { });
+          await ctx.telegram.deleteMessage(ctx.chat!.id, msgId).catch(() => {});
         }
       }
 
@@ -84,14 +84,14 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       const data = (ctx.callbackQuery as any).data as string;
 
       if (data === 'tpl_list_create') {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         // Cleanup list messages to avoid confusion
 
         if (state.listMessageIds) {
           for (const msgId of state.listMessageIds) {
             await ctx.telegram
               .deleteMessage(ctx.chat!.id, msgId)
-              .catch(() => { });
+              .catch(() => {});
           }
           state.listMessageIds = [];
         }
@@ -100,7 +100,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       }
 
       if (data.startsWith('tpl_list_publish_')) {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         const id = data.replace('tpl_list_publish_', '');
 
         // Clear all template messages to clean the UI
@@ -108,7 +108,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
           for (const msgId of state.listMessageIds) {
             await ctx.telegram
               .deleteMessage(ctx.chat!.id, msgId)
-              .catch(() => { });
+              .catch(() => {});
           }
           state.listMessageIds = [];
         }
@@ -129,7 +129,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       }
 
       if (data.startsWith('tpl_list_delete_')) {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         const id = data.replace('tpl_list_delete_', '');
         const { text, keyboard } = templatesMessages.confirmDeleteTemplateData(
           ctx.i18n,
@@ -144,13 +144,13 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
               text,
               keyboard,
             )
-            .catch(() => { });
+            .catch(() => {});
         }
         return;
       }
 
       if (data.startsWith('tpl_list_confirm_delete_')) {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         const id = data.replace('tpl_list_confirm_delete_', '');
         await OrderTemplate.deleteOne({ _id: id, creator_id: state.user._id });
         await ctx.reply(templatesMessages.templateDeletedMessage(ctx.i18n));
@@ -159,14 +159,14 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       }
 
       if (data === 'tpl_list_back') {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         ctx.wizard.cursor = 0;
         return (ctx.wizard as any).steps[0](ctx);
       }
     }
 
     if (ctx.message) {
-      await ctx.deleteMessage().catch(() => { });
+      await ctx.deleteMessage().catch(() => {});
     }
   },
   // Step 2: Setup Creation UI
@@ -188,13 +188,13 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (ctx.callbackQuery) {
       const data = (ctx.callbackQuery as any).data as string;
       if (!data.startsWith('tpl_type_')) return;
-      await ctx.answerCbQuery().catch(() => { });
+      await ctx.answerCbQuery().catch(() => {});
       state.type = data === 'tpl_type_buy' ? 'buy' : 'sell';
 
       if (state.promptId) {
         await ctx.telegram
           .deleteMessage(ctx.chat!.id, state.promptId)
-          .catch(() => { });
+          .catch(() => {});
         delete state.promptId;
       }
 
@@ -251,7 +251,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       state.promptId = prompt.message_id;
       return ctx.wizard.next();
     }
-    if (ctx.message) await ctx.deleteMessage().catch(() => { });
+    if (ctx.message) await ctx.deleteMessage().catch(() => {});
   },
   // Step 4: Currency Handler
   async ctx => {
@@ -261,11 +261,11 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (ctx.callbackQuery) {
       const data = (ctx.callbackQuery as any).data as string;
       if (!data.startsWith('tpl_cur_')) return;
-      await ctx.answerCbQuery().catch(() => { });
+      await ctx.answerCbQuery().catch(() => {});
       currencyCode = data.replace('tpl_cur_', '');
     } else if (ctx.message && 'text' in ctx.message) {
       currencyCode = ctx.message.text.toUpperCase();
-      await ctx.deleteMessage().catch(() => { });
+      await ctx.deleteMessage().catch(() => {});
     }
 
     if (!currencyCode) return;
@@ -282,7 +282,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (state.promptId) {
       await ctx.telegram
         .deleteMessage(ctx.chat!.id, state.promptId)
-        .catch(() => { });
+        .catch(() => {});
       delete state.promptId;
     }
     await state.updateUI?.();
@@ -298,7 +298,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     const state = ctx.wizard.state as unknown as TemplateWizardState;
     if (!ctx.message || !('text' in ctx.message)) return;
     const text = ctx.message.text;
-    await ctx.deleteMessage().catch(() => { });
+    await ctx.deleteMessage().catch(() => {});
 
     const tokens = text.split('-').map(s => s.trim());
     // Reject if any token is empty (e.g. "100-", "-100", "--")
@@ -332,7 +332,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (state.promptId) {
       await ctx.telegram
         .deleteMessage(ctx.chat!.id, state.promptId)
-        .catch(() => { });
+        .catch(() => {});
       delete state.promptId;
     }
     await state.updateUI?.();
@@ -394,14 +394,14 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (ctx.callbackQuery) {
       const data = (ctx.callbackQuery as any).data as string;
       if (data === 'marketPrice') {
-        await ctx.answerCbQuery().catch(() => { });
+        await ctx.answerCbQuery().catch(() => {});
         state.amount = 0;
       } else {
         return;
       }
     } else if (ctx.message && 'text' in ctx.message) {
       const input = Number(ctx.message.text);
-      await ctx.deleteMessage().catch(() => { });
+      await ctx.deleteMessage().catch(() => {});
 
       if (!Number.isFinite(input)) {
         state.error = ctx.i18n.t('not_number');
@@ -422,7 +422,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (state.promptId) {
       await ctx.telegram
         .deleteMessage(ctx.chat!.id, state.promptId)
-        .catch(() => { });
+        .catch(() => {});
       delete state.promptId;
     }
     await state.updateUI?.();
@@ -477,11 +477,11 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (ctx.callbackQuery) {
       const data = (ctx.callbackQuery as any).data as string;
       if (!data.startsWith('tpl_margin_')) return;
-      await ctx.answerCbQuery().catch(() => { });
+      await ctx.answerCbQuery().catch(() => {});
       marginText = data.replace('tpl_margin_', '');
     } else if (ctx.message && 'text' in ctx.message) {
       marginText = ctx.message.text;
-      await ctx.deleteMessage().catch(() => { });
+      await ctx.deleteMessage().catch(() => {});
     }
 
     if (marginText === undefined) return;
@@ -498,7 +498,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (state.promptId) {
       await ctx.telegram
         .deleteMessage(ctx.chat!.id, state.promptId)
-        .catch(() => { });
+        .catch(() => {});
       delete state.promptId;
     }
     await state.updateUI?.();
@@ -512,7 +512,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     const state = ctx.wizard.state as unknown as TemplateWizardState;
     if (!ctx.message || !('text' in ctx.message)) return;
     const text = ctx.message.text;
-    await ctx.deleteMessage().catch(() => { });
+    await ctx.deleteMessage().catch(() => {});
 
     state.method = text.trim();
     if (!state.method) {
@@ -523,7 +523,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
     if (state.promptId) {
       await ctx.telegram
         .deleteMessage(ctx.chat!.id, state.promptId)
-        .catch(() => { });
+        .catch(() => {});
       delete state.promptId;
     }
     await state.updateUI?.();
@@ -545,7 +545,7 @@ export const templatesWizard = new Scenes.WizardScene<CommunityContext>(
       if (state.statusMessage) {
         await ctx.telegram
           .deleteMessage(ctx.chat!.id, state.statusMessage.message_id)
-          .catch(() => { });
+          .catch(() => {});
       }
       await ctx.reply(templatesMessages.templateSavedMessage(ctx.i18n));
     } catch (err) {
@@ -582,16 +582,16 @@ templatesWizard.use(async (ctx, next) => {
       if (state.statusMessage) {
         await ctx.telegram
           .deleteMessage(ctx.chat!.id, state.statusMessage.message_id)
-          .catch(() => { });
+          .catch(() => {});
       }
       if (state.promptId) {
         await ctx.telegram
           .deleteMessage(ctx.chat!.id, state.promptId)
-          .catch(() => { });
+          .catch(() => {});
       }
       if (state.listMessageIds) {
         for (const msgId of state.listMessageIds) {
-          await ctx.telegram.deleteMessage(ctx.chat!.id, msgId).catch(() => { });
+          await ctx.telegram.deleteMessage(ctx.chat!.id, msgId).catch(() => {});
         }
       }
       await ctx.scene.leave();
@@ -608,7 +608,7 @@ templatesWizard.use(async (ctx, next) => {
     }
 
     await ctx.reply(ctx.i18n.t('wizard_help'));
-    await ctx.deleteMessage().catch(() => { });
+    await ctx.deleteMessage().catch(() => {});
     return;
   }
   return next();

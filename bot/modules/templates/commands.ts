@@ -55,7 +55,10 @@ export const listTemplates = async (ctx: MainContext) => {
   }
 };
 
-export const publishFromTemplate = async (ctx: MainContext, template: IOrderTemplate) => {
+export const publishFromTemplate = async (
+  ctx: MainContext,
+  template: IOrderTemplate,
+) => {
   try {
     const user = ctx.user || (await User.findOne({ tg_id: ctx.from?.id }));
     if (!user) return;
@@ -92,4 +95,3 @@ export const publishFromTemplate = async (ctx: MainContext, template: IOrderTemp
     await ctx.reply(ctx.i18n.t('generic_error'));
   }
 };
-
