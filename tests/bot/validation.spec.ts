@@ -143,6 +143,71 @@ describe('Validations', () => {
       expect(replyStub.calledOnce).to.equal(true);
     });
 
+    it('should return false if amount exceeds maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['6000', '100', 'USD', 'zelle'];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
+    });
+
+    it('should allow amount equal to maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['5000', '100', 'USD', 'zelle'];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.be.an('object');
+    });
+
+    it('should skip max check when MAX_PAYMENT_AMT is not set', async () => {
+      ctx.state.command.args = ['10000', '100', 'USD', 'zelle'];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.be.an('object');
+    });
+
+    it('should allow amount 0 (market price) even with max set', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['0', '100-200', 'USD', 'zelle'];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.be.an('object');
+      if (result === false) throw new Error('object expected');
+      expect(result.amount).to.equal(0);
+    });
+
+    it('should return false if amount is exactly one above maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['5001', '100', 'USD', 'zelle'];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.equal(false);
+    });
+
     it('should return object if validation success', async () => {
       ctx.state.command.args = ['10000', '100', 'USD', 'zelle'];
       const result = await validateSellOrder(ctx);
@@ -215,6 +280,65 @@ describe('Validations', () => {
       const result = await validateBuyOrder(ctx);
       expect(result).to.equal(false);
       expect(replyStub.calledOnce).to.be.equal(true);
+    });
+
+    it('should return false if amount exceeds maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['6000', '100', 'USD', 'zelle'];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
+    });
+
+    it('should allow amount equal to maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['5000', '100', 'USD', 'zelle'];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.be.an('object');
+    });
+
+    it('should allow amount 0 (market price) even with max set', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['0', '100-200', 'USD', 'zelle'];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.be.an('object');
+      if (result === false) throw new Error('object expected');
+      expect(result.amount).to.equal(0);
+    });
+
+    it('should return false if amount is exactly one above maximum', async () => {
+      sandbox.restore();
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value({
+        MIN_PAYMENT_AMT: 100,
+        MAX_PAYMENT_AMT: 5000,
+        NODE_ENV: 'production',
+        INVOICE_EXPIRATION_WINDOW: 3600000,
+      });
+      ctx.state.command.args = ['5001', '100', 'USD', 'zelle'];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.equal(false);
     });
 
     it('should return object if validation success', async () => {
