@@ -945,6 +945,23 @@ const mustBeGreatherEqThan = async (
   }
 };
 
+const mustBeLessEqThan = async (
+  ctx: MainContext,
+  fieldName: string,
+  qty: number,
+) => {
+  try {
+    await ctx.reply(
+      ctx.i18n.t('must_be_lt_or_eq', {
+        fieldName,
+        qty,
+      }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const bannedUserErrorMessage = async (ctx: MainContext, user: UserDocument) => {
   try {
     await ctx.telegram.sendMessage(
@@ -2149,6 +2166,7 @@ export {
   termsMessage,
   privacyMessage,
   mustBeGreatherEqThan,
+  mustBeLessEqThan,
   bannedUserErrorMessage,
   fiatSentMessages,
   orderOnfiatSentStatusMessages,
