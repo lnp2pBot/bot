@@ -448,9 +448,11 @@ pending_payment_failed_to_admin: |
   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
   Zahlungsversuche: ${attempts}
-selling: Verkaufe
-buying: Kaufe
+selling_sats: Verkaufe Sats
+buying_sats: Kaufe Sats
 receive_payment: Zahlung erhalten
+showusername_buying_sats: '@${username} kauft Sats'
+showusername_selling_sats: '@${username} verkauft Sats'
 pay: Bezahlen
 is: ist
 trading_volume: 'Handelsvolumen: ${Volumen} Sats'

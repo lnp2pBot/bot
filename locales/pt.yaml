@@ -447,10 +447,12 @@ pending_payment_failed_to_admin: |
   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
 
   Tentativas de pagamento: ${attempts}
-selling: Vendendo
-buying: Comprando
+selling_sats: Vendendo sats
+buying_sats: Comprando sats
 receive_payment: Receber pagamento
 pay: Pagar
+showusername_buying_sats: '@${username} está comprando sats'
+showusername_selling_sats: '@${username} está vendendo sats'
 is: é
 trading_volume: 'Volume de negócios: ${volume} sats'
 satoshis: satoshis

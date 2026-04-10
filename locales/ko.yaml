@@ -445,12 +445,14 @@ pending_payment_failed_to_admin: |
   
   결제 시도 횟수: ${attempts}
 
-selling: 팝니다
-buying: 삽니다
+selling_sats: sats 판매
+buying_sats: sats 구매
 receive_payment: 입금
 pay: 결제
 is: is
 trading_volume: '거래량: ${volume} sats'
+showusername_buying_sats: '@${username} 님이 sats를 구매합니다'
+showusername_selling_sats: '@${username} 님이 sats를 판매합니다'
 satoshis: 사토시
 by: 방법 - 
 rate: 환율
