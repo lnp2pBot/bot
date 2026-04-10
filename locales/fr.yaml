@@ -438,7 +438,7 @@ selling_sats: Vente de sats
 buying_sats: Achat de sats
 receive_payment: Réception du paiement
 showusername_buying_sats: "@${username} achète des sats"
-showusername_selling_sats: "@${username} vent des sats"
+showusername_selling_sats: "@${username} vend des sats"
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'
