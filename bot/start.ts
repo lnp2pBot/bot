@@ -892,7 +892,6 @@ const initialize = (
       if (ctx.match === null) {
         throw new Error('ctx.match should not be null');
       }
-      ctx.deleteMessage();
       const order = await Order.findOne({ _id: ctx.match[1] });
       if (!order) return;
 
