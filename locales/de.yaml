@@ -262,6 +262,8 @@ help: |
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
   /terms - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
+  Vorlagen:
+  /templates - Erstelle und verwalte deine Auftragsvorlagen
 
   Nostr:
   /setnpub <_nostr npub_> - Aktualisiert Ihren nostr Pubkey, dieser Befehl ist nur im /settings Wizard ausführbar
@@ -706,3 +708,21 @@ unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+# templates
+no_templates: "Du hast noch keine Vorlagen. Erstelle eine!"
+templates_list: "Deine Vorlagen:"
+template_published: "✅ Auftrag aus Vorlage veröffentlicht!"
+template_saved: "✅ Vorlage gespeichert."
+template_deleted: "🗑 Vorlage gelöscht."
+confirm_delete_template: "Diese Vorlage löschen?"
+enter_template_type: "Auftragstyp wählen:"
+template_summary: "Vorlagenübersicht:\nTyp: ${type}\nWährung: ${fiatCode}\nBetrag: ${fiatAmount}\nPreis: ${priceMode}\nMarge: ${margin}%\nZahlung: ${paymentMethod}"
+template_not_found: "Vorlage nicht gefunden."
+create_new_template: "Neue Vorlage erstellen"
+template_publish_btn: "🚀  Veröffentlichen"
+template_delete_btn: "🗑  Löschen"
+template_card: "${action} ${amountStr} für ${fiatAmount} ${fiatCode}. Zahlung via ${paymentMethod}.${rateStr}"
+template_rate: " Rate: ${margin}%."
+template_new_prompt: "Neue Vorlage erstellen:"
+buy: "Kaufe"
+sell: "Verkaufe"

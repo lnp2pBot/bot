@@ -2,7 +2,9 @@ import { Scenes } from 'telegraf';
 import * as CommunityModule from '../modules/community';
 import * as OrdersModule from '../modules/orders';
 import * as UserModule from '../modules/user';
+import * as templatesScenes from '../modules/templates/scenes';
 import { CommunityContext } from '../modules/community/communityContext';
+
 import {
   addInvoiceWizard,
   addFiatAmountWizard,
@@ -27,7 +29,9 @@ export const stageMiddleware = () => {
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
     UserModule.Scenes.Settings,
+    templatesScenes.templatesWizard,
   ];
+
   scenes.forEach(addGenericCommands);
   const stage = new Scenes.Stage(scenes, {
     ttl: 1200, // All wizards live 20 minutes

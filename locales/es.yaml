@@ -263,6 +263,9 @@ help: |
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
   /terms - Muestra los términos y condiciones al usar el bot
   /privacy - Muestra la Política de Privacidad
+  Plantillas:
+
+  /templates - Crea y gestiona tus plantillas de órdenes
 
   Nostr:
   /setnpub <_nostr npub_> - Actualiza tu nostr pubkey, este comando solo es ejecutable en el asistente de /settings
@@ -708,3 +711,22 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+
+# templates
+no_templates: "No tienes plantillas aún. ¡Crea una!"
+templates_list: "Tus plantillas:"
+template_published: "✅ ¡Orden publicada desde la plantilla!"
+template_saved: "✅ Plantilla guardada."
+template_deleted: "🗑 Plantilla eliminada."
+confirm_delete_template: "¿Eliminar esta plantilla?"
+enter_template_type: "Elige el tipo de orden:"
+template_summary: "Resumen de la plantilla:\nTipo: ${type}\nMoneda: ${fiatCode}\nMonto: ${fiatAmount}\nPrecio: ${priceMode}\nMargen: ${margin}%\nPago: ${paymentMethod}"
+template_not_found: "Plantilla no encontrada."
+create_new_template: "Crear nueva plantilla"
+template_publish_btn: "🚀  Publicar"
+template_delete_btn: "🗑  Eliminar"
+template_card: "${action} ${amountStr} por ${fiatAmount} ${fiatCode}. Recibo pago por ${paymentMethod}.${rateStr}"
+template_rate: " Tasa: ${margin}%."
+template_new_prompt: "Crea una nueva plantilla:"
+buy: "Comprar"
+sell: "Vender"

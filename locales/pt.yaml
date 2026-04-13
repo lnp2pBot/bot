@@ -263,6 +263,9 @@ help: |
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
   /terms - Mostra os termos e condições ao usar o bot
+  Modelos:
+
+  /templates - Crie e gerencie seus modelos de pedidos
 
   Nostr:
   /setnpub <_nostr npub_> - Atualiza sua nostr pubkey, este comando só é executável no assistente /settings
@@ -705,3 +708,21 @@ unblock_failed: "Erro ao desbloquear o usuário"
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
+# templates
+no_templates: "Você ainda não tem modelos. Crie um!"
+templates_list: "Seus modelos:"
+template_published: "✅ Ordem publicada a partir do modelo!"
+template_saved: "✅ Modelo salvo."
+template_deleted: "🗑 Modelo excluído."
+confirm_delete_template: "Excluir este modelo?"
+enter_template_type: "Escolha o tipo de ordem:"
+template_summary: "Resumo do modelo:\nTipo: ${type}\nMoeda: ${fiatCode}\nQuantia: ${fiatAmount}\nPreço: ${priceMode}\nMargem: ${margin}%\nPagamento: ${paymentMethod}"
+template_not_found: "Modelo não encontrado."
+create_new_template: "Criar novo modelo"
+template_publish_btn: "🚀  Publicar"
+template_delete_btn: "🗑  Excluir"
+template_card: "${action} ${amountStr} por ${fiatAmount} ${fiatCode}. Pagamento via ${paymentMethod}.${rateStr}"
+template_rate: " Taxa: ${margin}%."
+template_new_prompt: "Criar novo modelo:"
+buy: "Comprando"
+sell: "Vendendo"

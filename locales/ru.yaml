@@ -261,6 +261,10 @@ help: |
   /cancel <_order id_> - Отменить заявку до ее исполнения
   /cancelall - Отменить все выставленные заявки
   /terms - показать условия использования бота
+  Шаблоны:
+  /templates - Создавайте и управляйте своими шаблонами заказов
+
+
 
   Nostr:
   /setnpub <_nostr npub_> - Обновляет ваш публичный ключ nostr, эта команда выполняется только в мастере /settings
@@ -706,3 +710,23 @@ unblock_failed: "Ошибка при разблокировке пользова
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
+
+# templates
+no_templates: "У вас еще нет шаблонов. Создайте один!"
+templates_list: "Ваши шаблоны:"
+template_published: "✅ Публикация заказа из шаблона выполнена!"
+template_saved: "✅ Шаблон сохранен."
+template_deleted: "🗑 Шаблон удален."
+confirm_delete_template: "Удалить этот шаблон?"
+enter_template_type: "Выберите тип заказа:"
+template_summary: "Краткое описание шаблона:\nТип: ${type}\nВалюта: ${fiatCode}\nСумма: ${fiatAmount}\nЦена: ${priceMode}\nМаржа: ${margin}%\nОплата: ${paymentMethod}"
+template_not_found: "Шаблон не найден."
+create_new_template: "Создать новый шаблон"
+template_publish_btn: "🚀  Публиковать"
+template_delete_btn: "🗑  Удалить"
+template_card: "${action} ${amountStr} за ${fiatAmount} ${fiatCode}. Оплата через ${paymentMethod}.${rateStr}"
+template_rate: " Маржа: ${margin}%."
+template_new_prompt: "Создать новый шаблон:"
+buy: "Покупаю"
+sell: "Продаю"
+

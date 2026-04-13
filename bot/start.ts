@@ -35,6 +35,7 @@ import * as OrdersModule from './modules/orders';
 import * as UserModule from './modules/user';
 import * as DisputeModule from './modules/dispute';
 import * as BlockModule from './modules/block';
+import * as TemplatesModule from './modules/templates';
 import {
   rateUser,
   cancelAddInvoice,
@@ -300,6 +301,7 @@ const initialize = (
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
   BlockModule.configure(bot);
+  TemplatesModule.configure(bot);
 
   bot.command('release', userMiddleware, async ctx => {
     try {

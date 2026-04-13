@@ -264,6 +264,8 @@ help: |
   /cancel <_order id_> - Annule une commande qui n'a pas encore été prise
   /cancelall - Annule toutes les commandes validées et non prises
   /terms - Affiche les termes et conditions lors de l'utilisation du bot
+  Modèles:
+  /templates - Créez et gérez vos modèles de commandes
 
   Nostr:
   /setnpub <_nostr npub_> - Met à jour ta clé publique  nostr, cette commande n'est exécutable que dans l'assistant /settings
@@ -705,3 +707,21 @@ unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
+# templates
+no_templates: "Vous n'avez pas encore de modèles. Créez-en un !"
+templates_list: "Vos modèles :"
+template_published: "✅ Ordre publié depuis le modèle !"
+template_saved: "✅ Modèle sauvegardé."
+template_deleted: "🗑 Modèle supprimé."
+confirm_delete_template: "Supprimer ce modèle ?"
+enter_template_type: "Choisissez le type d'ordre :"
+template_summary: "Résumé du modèle :\nType : ${type}\nDevise : ${fiatCode}\nMontant : ${fiatAmount}\nPrix : ${priceMode}\nMarge : ${margin}%\nPaiement : ${paymentMethod}"
+template_not_found: "Modèle introuvable."
+create_new_template: "Créer un nouveau modèle"
+template_publish_btn: "🚀  Publier"
+template_delete_btn: "🗑  Supprimer"
+template_card: "${action} ${amountStr} pour ${fiatAmount} ${fiatCode}. Paiement via ${paymentMethod}.${rateStr}"
+template_rate: " Taux : ${margin}%."
+template_new_prompt: "Créer un nouveau modèle :"
+buy: "Achat"
+sell: "Vente"
