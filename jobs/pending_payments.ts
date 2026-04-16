@@ -200,6 +200,18 @@ export const attemptCommunitiesPendingPayments = async (
         await bot.telegram.sendMessage(
           user.tg_id,
           i18nCtx.t('invoice_expired_earnings'),
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: i18nCtx.t('withdraw_earnings'),
+                    callback_data: `withdrawEarnings_${pending.community_id}`,
+                  },
+                ],
+              ],
+            },
+          },
         );
       }
 
@@ -244,9 +256,21 @@ export const attemptCommunitiesPendingPayments = async (
         ) {
           await bot.telegram.sendMessage(
             user.tg_id,
-            i18nCtx.t('pending_payment_failed', {
+            i18nCtx.t('pending_payment_failed_earnings', {
               attempts: pending.attempts,
             }),
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: i18nCtx.t('withdraw_earnings'),
+                      callback_data: `withdrawEarnings_${pending.community_id}`,
+                    },
+                  ],
+                ],
+              },
+            },
           );
         }
       }
