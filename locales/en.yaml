@@ -287,6 +287,7 @@ help: |
 version: Version
 commit_hash: Hash of last commit
 must_be_gt_or_eq: ${fieldName} Must be greater or equal to ${qty}
+must_be_lt_or_eq: ${fieldName} Must be less or equal to ${qty}
 you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. When the seller confirms that they have received your money, they should release the funds. If they refuse, you can open a dispute.
 buyer_told_me_that_sent_fiat: |
