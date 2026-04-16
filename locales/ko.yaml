@@ -440,6 +440,8 @@ pending_payment_success: |
   결제 증거: ${paymentSecret}
 pending_payment_failed: |
   🤖 봇이 당신의 인보이스를 결제하기 위해 ${attempts}회 시도하였으나 실패했습니다. 종종 라이트닝 네트워크 상에서 인바운드 유동성이 부족하거나 노드의 접속 불량으로 인해 결제를 받지 못하는 경우가 있습니다. 다른 지갑에서 인보이스 생성하는 것을 고려해보세요.
+pending_payment_failed_earnings: |
+  🤖 봇이 당신의 출금 인보이스를 결제하기 위해 ${attempts}회 시도하였으나 실패했습니다. 다른 지갑에서 새 인보이스를 생성하여 다시 시도해 주세요.
 pending_payment_failed_to_admin: |
   사용자 @${username}님의 구매 주문 ${orderId}에 대한 인보이스 결제가 실패하였습니다.
   
