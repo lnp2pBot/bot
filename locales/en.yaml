@@ -450,6 +450,8 @@ pending_payment_success: |
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
   🤖 I have tried to pay your invoice ${attempts} times and failed. Sometimes the Lightning Network users can't receive payments because their wallet has not enough inbound liquidity or the node is not well connected in the network. You might want to try to generate an invoice from another wallet.
+pending_payment_failed_earnings: |
+  🤖 I have tried to pay your withdrawal invoice ${attempts} times and failed. Please try again with a new invoice from another wallet.
 pending_payment_failed_to_admin: |
   Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
 

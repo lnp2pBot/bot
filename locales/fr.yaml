@@ -443,6 +443,8 @@ pending_payment_success: |
   Preuve de paiement : ${paymentSecret}
 pending_payment_failed: |
   🤖 J'ai essayé de payer votre facture ${attempts} fois sans succès. Il arrive que les utilisateurs du Lightning Network ne puissent pas recevoir de paiements parce que leur portefeuille ne dispose pas de suffisamment de liquidités entrantes ou que le nœud n'est pas bien connecté au réseau. Vous pouvez essayer de générer une facture à partir d'un autre portefeuille.
+pending_payment_failed_earnings: |
+  🤖 J'ai essayé de payer votre facture de retrait ${attempts} fois sans succès. Veuillez réessayer avec une nouvelle facture d'un autre portefeuille.
 pending_payment_failed_to_admin: |
   Le paiement de la facture pour l'offre d'achat ${orderId} de l'utilisateur @${username} a échoué.
 
