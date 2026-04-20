@@ -57,6 +57,13 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.action(/^editLanguageBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     await commands.updateCommunity(ctx, ctx.match[1], 'language');
   });
+  bot.action(
+    /^editPaymentMethodsBtn_([0-9a-f]{24})$/,
+    userMiddleware,
+    async ctx => {
+      await commands.updateCommunity(ctx, ctx.match[1], 'payment_methods');
+    },
+  );
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
   bot.action(
