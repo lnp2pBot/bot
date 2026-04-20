@@ -178,7 +178,10 @@ const createOrderSteps = {
 
     const buildKeyboard = (selected: string[]) => {
       const buttons = paymentMethods.map((m, i) =>
-        Markup.button.callback((selected.includes(m) ? '✓ ' : '') + m, `pm_toggle_${i}`),
+        Markup.button.callback(
+          (selected.includes(m) ? '✓ ' : '') + m,
+          `pm_toggle_${i}`,
+        ),
       );
       const rows = [];
       for (let i = 0; i < buttons.length; i += 2) {
