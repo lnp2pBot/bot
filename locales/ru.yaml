@@ -706,3 +706,10 @@ unblock_failed: "Ошибка при разблокировке пользова
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"

@@ -916,6 +916,53 @@ export const updateLanguageCommunityWizard = new Scenes.WizardScene(
   },
 );
 
+export const updatePaymentMethodsCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_PAYMENT_METHODS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx: CommunityContext) => {
+    try {
+      const { community } = ctx.wizard.state;
+      const current = community.payment_methods?.join(', ') || '';
+      let message = current
+        ? ctx.i18n.t('current_payment_methods', { methods: current }) + '\n\n'
+        : '';
+      message += ctx.i18n.t('enter_community_payment_methods') + '\n\n';
+      message += ctx.i18n.t('wizard_to_exit');
+      await ctx.reply(message);
+      return ctx.wizard.next();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx: CommunityContext) => {
+    try {
+      if (ctx.message === undefined) return ctx.scene.leave();
+      if (!('text' in ctx.message)) return;
+
+      const text = ctx.message.text.trim();
+      const methods = text
+        .split(',')
+        .map(m => m.trim())
+        .filter(m => m.length > 0);
+
+      const max = 20;
+      if (methods.length > max) {
+        return await ctx.reply(ctx.i18n.t('max_allowed', { max }));
+      }
+
+      const { community } = ctx.wizard.state;
+      community.payment_methods = methods;
+      await community.save();
+      await ctx.reply(ctx.i18n.t('payment_methods_saved'));
+
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
 export const addEarningsInvoiceWizard = new Scenes.WizardScene(
   'ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID',
   async (ctx: CommunityContext) => {

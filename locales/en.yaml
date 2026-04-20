@@ -711,3 +711,10 @@ unblock_failed: "Error unblocking the user"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"

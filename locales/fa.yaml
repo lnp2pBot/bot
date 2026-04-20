@@ -805,3 +805,10 @@ unblock_failed: "خطا در رفع مسدودیت کاربر"
 check_solvers: اجتماع شما ${communityName} هیچ داوری ندارد. لطفاً برای جلوگیری از غیرفعال شدن اجتماع، تا ${remainingDays} روز آینده حداقل یک داور به آن اضافه کنید.
 check_solvers_last_warning: اجتماع شما ${communityName} هیچ داوری ندارد. برای جلوگیری از غیرفعال شدن اجتماع، امروز حداقل یک داور به آن اضافه کنید.
 image_processing_error: هنگام پردازش تصویر با خطایی مواجه شدیم، لطفاً چند دقیقه صبر کرده و دوباره امتحان کنید.
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"
