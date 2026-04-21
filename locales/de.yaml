@@ -282,6 +282,7 @@ help: |
   /version - Zeigt die aktuelle Version des Bots
   /help - Hilfe
 must_be_gt_or_eq: ${fieldName} muss ${qty} oder mehr entsprechen
+must_be_lt_or_eq: ${fieldName} muss ${qty} oder weniger entsprechen
 you_have_been_banned: Du wurdest gesperrt!
 I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Wenn der Verkäufer bestätigt, dass er dein Geld erhalten hat, muss er die Mittel freigeben. Falls er sich weigert, kannst du eine Streitigkeit eröffnen.
 buyer_told_me_that_sent_fiat: |

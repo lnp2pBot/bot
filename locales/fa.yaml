@@ -366,6 +366,7 @@ help: |
 version: نسخه
 commit_hash: هش آخرین پرداخت وثیقه
 must_be_gt_or_eq: '${fieldName} باید بزرگ‌تر یا برابر با ${qty} باشد.'
+must_be_lt_or_eq: '${fieldName} باید کوچک‌تر یا برابر با ${qty} باشد.'
 you_have_been_banned: 'شما محروم شده‌اید!'
 I_told_seller_you_sent_fiat: '🤖 من به @${sellerUsername} خبر دادم که شما پول فیات را فرستاده‌اید. فروشنده باید ساتوشی‌ها را پس از بررسی اینکه پول شما را دریافت کرده است، آزاد کند. اگر او این کار را نکرد، می‌توانید یک مشاجره ثبت کنید.'
 buyer_told_me_that_sent_fiat: |
