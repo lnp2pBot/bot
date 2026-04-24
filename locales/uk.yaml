@@ -704,3 +704,10 @@ unblock_failed: "Помилка при розблокуванні користу
 check_solvers: У вашій спільноті ${communityName} немає розв’язувачів. Додайте принаймні одну протягом ${remainingDays} днів, щоб запобігти вимкненню спільноти.
 check_solvers_last_warning: У вашій спільноті ${communityName} немає розв’язувачів. Будь ласка, додайте принаймні одну сьогодні, щоб запобігти вимкненню спільноти.
 image_processing_error: У нас виникла помилка при обробці зображення, будь ласка, почекайте кілька хвилин і спробуйте знову.
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"

@@ -707,3 +707,10 @@ unblock_failed: "Erro ao desbloquear o usuário"
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"

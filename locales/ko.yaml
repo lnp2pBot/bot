@@ -705,3 +705,10 @@ unblock_failed: "사용자 차단 해제 중 오류 발생"
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"
