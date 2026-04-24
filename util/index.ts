@@ -156,7 +156,7 @@ const getBtcFiatPrice = async (fiatCode: string, fiatAmount: number) => {
     // Before hit the endpoint we make sure the code have only 3 chars
     const code = currency.code.substring(0, 3);
     const response = await axios.get(
-      `${process.env.FIAT_RATE_EP}/${fiatAmount}/${code}/BTC`
+      `${process.env.FIAT_RATE_EP}/${fiatAmount}/${code}/BTC`,
     );
     if (response.data.error) {
       return 0;
