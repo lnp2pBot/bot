@@ -29,7 +29,7 @@ export const getCommunityInfo = async (
       const regex = new RegExp(`^@${chat.username}$`, 'i');
       community = await Community.findOne({ group: regex });
       if (community) {
-        communityId = community._id;
+        communityId = community._id.toString();
       }
     } else if (user.default_community_id) {
       // Private chat with default community

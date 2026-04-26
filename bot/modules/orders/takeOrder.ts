@@ -80,7 +80,7 @@ export const takebuy = async (
     );
 
     order.status = 'WAITING_PAYMENT';
-    order.seller_id = user._id;
+    order.seller_id = user._id.toString();
     order.taken_at = new Date(Date.now());
 
     order.random_image = randomImage;
@@ -132,7 +132,7 @@ export const takesell = async (
       return await messages.bannedUserErrorMessage(ctx, user);
     if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
     order.status = 'WAITING_BUYER_INVOICE';
-    order.buyer_id = user._id;
+    order.buyer_id = user._id.toString();
     order.taken_at = new Date(Date.now());
 
     await order.save();

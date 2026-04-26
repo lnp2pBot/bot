@@ -135,7 +135,7 @@ const createOrder = async (
       bot_fee: isGoldenHoneyBadgerOrder ? 0 : botFee,
       is_golden_honey_badger: isGoldenHoneyBadgerOrder,
       community_fee: communityFee,
-      creator_id: user._id,
+      creator_id: user._id.toString(),
       type,
       status,
       fiat_code: fiatCode,
@@ -164,12 +164,12 @@ const createOrder = async (
     let order;
     if (type === 'sell') {
       order = new Order({
-        seller_id: user._id,
+        seller_id: user._id.toString(),
         ...baseOrderData,
       });
     } else {
       order = new Order({
-        buyer_id: user._id,
+        buyer_id: user._id.toString(),
         ...baseOrderData,
       });
     }
@@ -309,7 +309,7 @@ const getOrder = async (
 
     const where = {
       _id: orderId,
-      $or: [{ seller_id: user._id }, { buyer_id: user._id }],
+      $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }],
     };
 
     const order = await Order.findOne(where).exec();
@@ -330,7 +330,7 @@ const getOrders = async (user: UserDocument, status?: string) => {
     const where: any = {
       $and: [
         {
-          $or: [{ buyer_id: user._id }, { seller_id: user._id }],
+          $or: [{ buyer_id: user._id.toString() }, { seller_id: user._id.toString() }],
         },
       ],
     };
@@ -377,7 +377,7 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
         paymentMethod: order.payment_method,
         status: 'PENDING',
         priceMargin: order.price_margin,
-        range_parent_id: order._id,
+        range_parent_id: order._id.toString(),
         tgChatId: order.tg_chat_id,
         tgOrderMessage: order.tg_order_message,
         community_id: order.community_id,

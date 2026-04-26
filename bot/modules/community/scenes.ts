@@ -81,7 +81,7 @@ export const communityWizard = new Scenes.WizardScene<CommunityContext>(
         fee,
         solvers,
         dispute_channel: disputeChannel,
-        creator_id: user._id,
+        creator_id: user._id.toString(),
       });
       await community.save();
       await ctx.reply(
@@ -394,7 +394,7 @@ const createCommunitySteps = {
           const user = await User.findOne({ username });
           if (user) {
             solvers.push({
-              id: user._id,
+              id: user._id.toString(),
               username: user.username,
             } as IUsernameId);
           }
@@ -745,7 +745,7 @@ export const updateSolversCommunityWizard = new Scenes.WizardScene(
           if (user == null) throw new Error('user not found');
           if (user) {
             solvers.push({
-              id: user._id,
+              id: user._id.toString(),
               username: user.username,
             } as IUsernameId);
             botUsers.push(username);
@@ -945,8 +945,8 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
 
       const isScheduled = await PendingPayment.findOne({
-        community_id: community._id,
-        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        community_id: community._id.toString(),
+        attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
         paid: false,
       });
       // We check if the payment is on flight
@@ -957,12 +957,12 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
 
       const user = await User.findById(community.creator_id);
       if (user === null) throw new Error('user was not found');
-      logger.debug(`Creating pending payment for community ${community.id}`);
+      logger.debug(`Creating pending payment for community ${community._id.toString()}`);
       const pp = new PendingPayment({
         amount: community.earnings,
         payment_request: lnInvoice,
-        user_id: user.id,
-        community_id: community._id,
+        user_id: user._id.toString(),
+        community_id: community._id.toString(),
         description: `Retiro por admin @${user.username}`,
         hash: res.invoice.hash,
       });

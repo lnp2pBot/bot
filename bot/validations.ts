@@ -5,7 +5,8 @@ import {
   ctxUpdateAssertMsg,
 } from './start';
 import { IUsernameId } from '../models/community';
-import { FilterQuery } from 'mongoose';
+import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Types;
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
 // @ts-ignore
@@ -21,7 +22,7 @@ import {
 import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
 
-const { ObjectId } = require('mongoose').Types;
+// Removed redundant ObjectId declaration
 
 const ctxUpdateMessageFromAssertMsg =
   'ctx.update.message.from is not available';
@@ -44,7 +45,7 @@ const validateUser = async (ctx: MainContext, start: boolean) => {
 
       return false;
     }
-    let user = await User.findOne({ tg_id: tgUser.id });
+    let user = await User.findOne({ tg_id: String(tgUser.id) });
 
     if (!user && start) {
       user = new User({
@@ -111,7 +112,7 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
 
     let community = null;
     if (user.default_community_id)
-      community = await Community.findOne({ _id: user.default_community_id });
+      community = await Community.findOne({ _id: new ObjectId(user.default_community_id) });
 
     const isSolver = isDisputeSolver(community, user);
 
@@ -519,10 +520,10 @@ const validateReleaseOrder = async (
   orderId: string,
 ) => {
   try {
-    let where: FilterQuery<OrderQuery> = {
+    let where: any = {
       seller_id: user._id,
       status: 'WAITING_BUYER_INVOICE',
-      _id: orderId,
+      _id: new ObjectId(orderId),
     };
     let order = await Order.findOne(where);
     if (order) {
@@ -544,7 +545,7 @@ const validateReleaseOrder = async (
     };
 
     if (orderId) {
-      where._id = orderId;
+      where._id = new ObjectId(orderId);
     }
     order = await Order.findOne(where);
 
@@ -568,9 +569,9 @@ const validateDisputeOrder = async (
   try {
     const where = {
       $and: [
-        { _id: orderId },
+        { _id: new ObjectId(orderId) },
         { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
-        { $or: [{ seller_id: user._id }, { buyer_id: user._id }] },
+        { $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }] },
       ],
     };
 
@@ -594,9 +595,9 @@ const validateFiatSentOrder = async (
   orderId: string,
 ) => {
   try {
-    const where: FilterQuery<OrderQuery> = {
+    const where: any = {
       $and: [
-        { buyer_id: user._id },
+        { buyer_id: user._id.toString() },
         { $or: [{ status: 'ACTIVE' }, { status: 'PAID_HOLD_INVOICE' }] },
       ],
     };
@@ -631,7 +632,7 @@ const validateFiatSentOrder = async (
 const validateSeller = async (ctx: MainContext, user: UserDocument) => {
   try {
     const where = {
-      seller_id: user._id,
+      seller_id: user._id.toString(),
       status: 'FIAT_SENT',
     };
 
@@ -697,7 +698,7 @@ const validateUserWaitingOrder = async (
 ) => {
   try {
     // If is a seller
-    let where: FilterQuery<OrderQuery> = {
+    let where: any = {
       seller_id: user._id,
       status: 'WAITING_PAYMENT',
     };
@@ -730,10 +731,10 @@ const isBannedFromCommunity = async (
 ) => {
   try {
     if (!communityId) return false;
-    const community = await Community.findOne({ _id: communityId });
+    const community = await Community.findOne({ _id: new ObjectId(communityId) });
     if (!community) return false;
     return community.banned_users.some(
-      (buser: IUsernameId) => buser.id == user._id,
+      (buser: IUsernameId) => buser.id == user._id.toString(),
     );
   } catch (error) {
     logger.error(error);

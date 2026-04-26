@@ -75,7 +75,7 @@ export const createOrder = new Scenes.WizardScene(
         paymentMethod,
         status: 'PENDING',
         priceMargin,
-        community_id: community && community.id,
+        community_id: community && community._id.toString(),
       });
       if (order) {
         const publishFn =

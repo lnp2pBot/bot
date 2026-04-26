@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Types;
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
 import { logger } from '../logger';
@@ -8,18 +10,22 @@ import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 
+function getPaymentAttempts(): number {
+  return Number(process.env.PAYMENT_ATTEMPTS) || 2;
+}
+
 export const attemptPendingPayments = async (
   bot: Telegraf<CommunityContext>,
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: getPaymentAttempts() },
     is_invoice_expired: false,
     community_id: null,
     next_retry: { $lte: new Date() },
   });
   for (const pending of pendingPayments) {
-    const order = await Order.findOne({ _id: pending.order_id });
+    const order = await Order.findOne({ _id: new ObjectId(pending.order_id) });
     try {
       if (order === null) throw Error('Order was not found in DB');
       pending.attempts++;
@@ -54,7 +60,7 @@ export const attemptPendingPayments = async (
         amount: pending.amount,
         request: pending.payment_request,
       });
-      const buyerUser = await User.findOne({ _id: order.buyer_id });
+      const buyerUser = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
       if (buyerUser === null) throw Error('buyerUser was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
@@ -78,7 +84,7 @@ export const attemptPendingPayments = async (
         buyerUser.trades_completed++;
         await buyerUser.save();
         // We add a new completed trade for the seller
-        const sellerUser = await User.findOne({ _id: order.seller_id });
+        const sellerUser = await User.findOne({ _id: new ObjectId(order.seller_id!) });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
         sellerUser.save();
@@ -124,10 +130,7 @@ export const attemptPendingPayments = async (
           );
         }
 
-        if (
-          process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
-        ) {
+        if (pending.attempts >= getPaymentAttempts()) {
           order.paid_hold_buyer_invoice_updated = false;
           await messages.toBuyerPendingPaymentFailedMessage(
             bot,
@@ -162,7 +165,7 @@ export const attemptCommunitiesPendingPayments = async (
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: getPaymentAttempts() },
     is_invoice_expired: false,
     community_id: { $ne: null },
     next_retry: { $lte: new Date() },
@@ -191,7 +194,7 @@ export const attemptCommunitiesPendingPayments = async (
         amount: pending.amount,
         request: pending.payment_request,
       });
-      const user = await User.findById(pending.user_id);
+      const user = await User.findById(new ObjectId(pending.user_id));
       if (user === null) throw Error('User was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(user);
       // If the buyer's invoice is expired we let it know and don't try to pay again
@@ -203,7 +206,7 @@ export const attemptCommunitiesPendingPayments = async (
         );
       }
 
-      const community = await Community.findById(pending.community_id);
+      const community = await Community.findById(new ObjectId(pending.community_id));
       if (community === null) throw Error('Community was not found in DB');
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
@@ -238,10 +241,7 @@ export const attemptCommunitiesPendingPayments = async (
           );
         }
 
-        if (
-          process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
-        ) {
+        if (pending.attempts >= getPaymentAttempts()) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed', {

@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+const { ObjectId } = mongoose.Types;
 import { TelegramError, Telegraf } from 'telegraf';
 import {
   getCurrency,
@@ -101,7 +103,7 @@ const invoicePaymentRequestMessage = async (
       parse_mode: 'Markdown',
     });
 
-    await ctx.telegram.sendMessage(user.tg_id, order._id, {
+    await ctx.telegram.sendMessage(user.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -184,7 +186,7 @@ const pendingSellMessage = async (
 
     await ctx.telegram.sendMessage(
       user.tg_id,
-      i18n.t('cancel_order_cmd', { orderId: order._id }),
+      i18n.t('cancel_order_cmd', { orderId: order._id.toString() }),
       { parse_mode: 'Markdown' },
     );
 
@@ -221,7 +223,7 @@ const pendingBuyMessage = async (
     );
     await bot.telegram.sendMessage(
       user.tg_id,
-      i18n.t('cancel_order_cmd', { orderId: order._id }),
+      i18n.t('cancel_order_cmd', { orderId: order._id.toString() }),
       { parse_mode: 'MarkdownV2' },
     );
   } catch (error) {
@@ -289,7 +291,7 @@ const expiredInvoiceOnPendingMessage = async (
     await bot.telegram.sendMessage(user.tg_id, i18n.t('invoice_expired_long'));
     await bot.telegram.sendMessage(
       user.tg_id,
-      i18n.t('setinvoice_cmd_order', { orderId: order._id }),
+      i18n.t('setinvoice_cmd_order', { orderId: order._id.toString() }),
       { parse_mode: 'MarkdownV2' },
     );
   } catch (error) {
@@ -447,7 +449,7 @@ const beginTakeBuyMessage = async (
       },
     ]);
 
-    await bot.telegram.sendMessage(seller.tg_id, order._id, {
+    await bot.telegram.sendMessage(seller.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -552,7 +554,7 @@ const onGoingTakeBuyMessage = async (
         days: ageInDays,
       }),
     );
-    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+    await bot.telegram.sendMessage(buyer.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [{ text: i18nBuyer.t('continue'), callback_data: 'addInvoiceBtn' }],
@@ -584,7 +586,7 @@ const beginTakeSellMessage = async (
       ctx.i18n.t('you_took_someone_order', { expirationTime }),
       { parse_mode: 'MarkdownV2' },
     );
-    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+    await bot.telegram.sendMessage(buyer.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -614,7 +616,7 @@ const onGoingTakeSellMessage = async (
     await bot.telegram.sendMessage(
       buyerUser.tg_id,
       i18nBuyer.t('get_in_touch_with_seller', {
-        orderId: order.id,
+        orderId: order._id.toString(),
         currency: order.fiat_code,
         sellerUsername: sellerUser.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount!),
@@ -629,7 +631,7 @@ const onGoingTakeSellMessage = async (
     await bot.telegram.sendMessage(
       sellerUser.tg_id,
       i18nSeller.t('buyer_took_your_order', {
-        orderId: order.id,
+        orderId: order._id.toString(),
         fiatAmount: order.fiat_amount,
         paymentMethod: order.payment_method,
         currency: order.fiat_code,
@@ -650,7 +652,7 @@ const takeSellWaitingSellerToPayMessage = async (
   try {
     await bot.telegram.sendMessage(
       buyerUser.tg_id,
-      ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id }),
+      ctx.i18n.t('waiting_seller_to_pay', { orderId: order._id.toString() }),
     );
   } catch (error) {
     logger.error(error);
@@ -737,7 +739,7 @@ const publishBuyOrderMessage = async (
 ) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `:${order._id}:`;
+    publishMessage += `:${order._id.toString()}:`;
 
     const channel = await getOrderChannel(order);
     if (channel === undefined) throw new Error('channel is undefined');
@@ -745,13 +747,13 @@ const publishBuyOrderMessage = async (
     // Get the community language if available
     let communityI18n = i18n;
     if (order.community_id) {
-      const community = await Community.findOne({ _id: order.community_id });
+      const community = await Community.findOne({ _id: new ObjectId(order.community_id!) });
       if (community && community.language) {
         communityI18n = new I18n({
           defaultLanguageOnMissing: true,
-          locale: community.language,
+          defaultLanguage: community.language,
           directory: 'locales',
-        }).createContext(community.language);
+        }).createContext(community.language, {});
       }
     }
 
@@ -790,7 +792,7 @@ const publishSellOrderMessage = async (
 ) => {
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
-    publishMessage += `:${order._id}:`;
+    publishMessage += `:${order._id.toString()}:`;
     const channel = await getOrderChannel(order);
     if (channel === undefined) throw new Error('channel is undefined');
 
@@ -798,13 +800,13 @@ const publishSellOrderMessage = async (
     let communityI18n = i18n;
 
     if (order.community_id) {
-      const community = await Community.findOne({ _id: order.community_id });
+      const community = await Community.findOne({ _id: new ObjectId(order.community_id!) });
       if (community && community.language) {
         communityI18n = new I18n({
           defaultLanguageOnMissing: true,
-          locale: community.language,
+          defaultLanguage: community.language,
           directory: 'locales',
-        }).createContext(community.language);
+        }).createContext(community.language, {});
       }
     }
 
@@ -1079,7 +1081,7 @@ const addInvoiceMessage = async (
     await bot.telegram.sendMessage(
       buyer.tg_id,
       ctx.i18n.t('get_in_touch_with_seller', {
-        orderId: order.id,
+        orderId: order._id.toString(),
         currency: order.fiat_code,
         sellerUsername: seller.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount!),
@@ -1108,7 +1110,7 @@ const sendBuyerInfo2SellerMessage = async (
       seller.tg_id,
       i18n.t('get_in_touch_with_buyer', {
         currency: order.fiat_code,
-        orderId: order.id,
+        orderId: order._id.toString(),
         buyerUsername: buyer.username,
         fiatAmount: numberFormat(order.fiat_code, order.fiat_amount!),
         paymentMethod: order.payment_method,
