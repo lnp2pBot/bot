@@ -35,7 +35,7 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
     const seller = await User.findOne({ _id: order.seller_id });
     if (seller === null) throw new Error('seller was not found');
     let initiator: 'seller' | 'buyer' = 'seller';
-    if (user._id == order.buyer_id) initiator = 'buyer';
+    if (user._id.toString() == order.buyer_id) initiator = 'buyer';
 
     order.previous_dispute_status = order.status;
     if (initiator === 'seller') order.seller_dispute = true;
@@ -53,11 +53,11 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
       // If a user disputes is equal to MAX_DISPUTES, we ban the user
       const buyerDisputes =
         (await Dispute.countDocuments({
-          $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
+          $or: [{ buyer_id: buyer._id.toString() }, { seller_id: buyer._id.toString() }],
         })) + 1;
       const sellerDisputes =
         (await Dispute.countDocuments({
-          $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
+          $or: [{ buyer_id: seller._id.toString() }, { seller_id: seller._id.toString() }],
         })) + 1;
       const maxDisputes = Number(process.env.MAX_DISPUTES);
       // if MAX_DISPUTES is not specified or can't be parsed as number, following
@@ -74,18 +74,18 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
 
     const dispute = new Dispute({
       initiator,
-      seller_id: seller._id,
-      buyer_id: buyer._id,
+      seller_id: seller._id.toString(),
+      buyer_id: buyer._id.toString(),
       community_id: order.community_id,
       status: 'WAITING_FOR_SOLVER',
-      order_id: order._id,
+      order_id: order._id.toString(),
     });
     await dispute.save();
     // Send message to both users
     await messages.beginDispute(ctx, initiator, order, buyer, seller);
     // Show the dispute button to solvers
     await messages.takeDisputeButton(ctx, order);
-    logger.warning(`Order ${order.id}: User ${user.id} started a dispute!`);
+    logger.warning(`Order ${order._id.toString()}: User ${user._id.toString()} started a dispute!`);
   } catch (error) {
     logger.error(error);
   }
@@ -164,13 +164,13 @@ const deleteDispute = async (ctx: MainContext) => {
 
       // We check if this dispute is from a community we validate that
       // the solver is running this command
-      if (dispute && dispute.solver_id != admin._id) {
+      if (dispute && dispute.solver_id != admin._id.toString()) {
         return await globalMessages.notAuthorized(ctx);
       }
     }
 
-    if (user._id == dispute.buyer_id) dispute.buyer_id = null;
-    if (user._id == dispute.seller_id) dispute.seller_id = null;
+    if (user._id.toString() == dispute.buyer_id) dispute.buyer_id = null;
+    if (user._id.toString() == dispute.seller_id) dispute.seller_id = null;
     await dispute.save();
 
     await ctx.reply(ctx.i18n.t('operation_successful'));

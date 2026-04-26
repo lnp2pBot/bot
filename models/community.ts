@@ -11,7 +11,7 @@ const currencyLimits = (val: string): boolean => {
   return val.length > 0 && val.length <= CURRENCIES;
 };
 
-export interface IOrderChannel extends Document {
+export interface IOrderChannel {
   name: string;
   type: string;
 }
@@ -24,7 +24,7 @@ const OrderChannelSchema = new Schema<IOrderChannel>({
   },
 });
 
-export interface IUsernameId extends Document {
+export interface IUsernameId {
   id: string;
   username: string;
 }
@@ -35,17 +35,17 @@ const usernameIdSchema = new Schema<IUsernameId>({
 });
 
 export interface ICommunity extends Document {
-  _id: string;
+  _id: mongoose.Types.ObjectId;
   name: string;
   creator_id: string;
   group: string;
-  order_channels: Types.DocumentArray<IOrderChannel>;
+  order_channels: IOrderChannel[];
   fee: number;
   earnings: number;
   orders_to_redeem: number;
   dispute_channel: string;
-  solvers: Types.DocumentArray<IUsernameId>;
-  banned_users: Types.DocumentArray<IUsernameId>;
+  solvers: IUsernameId[];
+  banned_users: IUsernameId[];
   public: boolean;
   currencies: Array<string>;
   created_at: Date;

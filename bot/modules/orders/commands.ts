@@ -217,7 +217,7 @@ async function enterWizard(
 
 const isMaxPending = async (user: UserDocument) => {
   const pendingOrders = await Order.countDocuments({
-    creator_id: user._id,
+    creator_id: user._id.toString(),
     status: 'PENDING',
   });
   const maxPendingOrders = process.env.MAX_PENDING_ORDERS;

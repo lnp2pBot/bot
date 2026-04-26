@@ -22,16 +22,16 @@ export const listOrdersResponse = async (
       typeof order.fiat_amount !== 'undefined'
         ? sanitizeMD(order.fiat_amount)
         : [
-            sanitizeMD(order.min_amount),
-            ' \\- ',
-            sanitizeMD(order.max_amount),
-          ].join('');
+          sanitizeMD(order.min_amount),
+          ' \\- ',
+          sanitizeMD(order.max_amount),
+        ].join('');
 
     if (typeof order.amount !== 'undefined') amount = String(order.amount);
     const timeToExpire = getTimeToExpirationOrder(order, i18n);
     const details = [
       [''].join(''),
-      ['`Id      `: ', '`', order.id, '`'].join(''),
+      ['`Id      `: ', '`', order._id.toString(), '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
       ['`Sats amt`: ', '`', amount, '`'].join(''),
       ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),

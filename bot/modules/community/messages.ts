@@ -131,7 +131,7 @@ export const listCommunitiesMessage = async (
   try {
     let message = '';
     communities.forEach(community => {
-      message += `ID: #${community.id}\n`;
+      message += `ID: #${community._id.toString()}\n`;
       message += ctx.i18n.t('name') + `: ${community.name}\n`;
       message += ctx.i18n.t('group') + `: ${community.group}\n`;
       community.order_channels.forEach(channel => {
@@ -158,7 +158,7 @@ export const earningsMessage = async (ctx: MainContext) => {
     // We check if there is a payment scheduled for this community
     const isScheduled = await PendingPayment.findOne({
       community_id: communityId,
-      attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+      attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
       paid: false,
     });
     if (isScheduled)
@@ -169,17 +169,17 @@ export const earningsMessage = async (ctx: MainContext) => {
     const button =
       community.earnings > 0
         ? {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: ctx.i18n.t('withdraw_earnings'),
-                    callback_data: `withdrawEarnings_${community._id}`,
-                  },
-                ],
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: ctx.i18n.t('withdraw_earnings'),
+                  callback_data: `withdrawEarnings_${community._id}`,
+                },
               ],
-            },
-          }
+            ],
+          },
+        }
         : undefined;
     await ctx.reply(
       ctx.i18n.t('current_earnings', {
