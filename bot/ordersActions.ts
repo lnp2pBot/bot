@@ -309,7 +309,10 @@ const getOrder = async (
 
     const where = {
       _id: orderId,
-      $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }],
+      $or: [
+        { seller_id: user._id.toString() },
+        { buyer_id: user._id.toString() },
+      ],
     };
 
     const order = await Order.findOne(where).exec();
@@ -330,7 +333,10 @@ const getOrders = async (user: UserDocument, status?: string) => {
     const where: any = {
       $and: [
         {
-          $or: [{ buyer_id: user._id.toString() }, { seller_id: user._id.toString() }],
+          $or: [
+            { buyer_id: user._id.toString() },
+            { seller_id: user._id.toString() },
+          ],
         },
       ],
     };

@@ -53,11 +53,17 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
       // If a user disputes is equal to MAX_DISPUTES, we ban the user
       const buyerDisputes =
         (await Dispute.countDocuments({
-          $or: [{ buyer_id: buyer._id.toString() }, { seller_id: buyer._id.toString() }],
+          $or: [
+            { buyer_id: buyer._id.toString() },
+            { seller_id: buyer._id.toString() },
+          ],
         })) + 1;
       const sellerDisputes =
         (await Dispute.countDocuments({
-          $or: [{ buyer_id: seller._id.toString() }, { seller_id: seller._id.toString() }],
+          $or: [
+            { buyer_id: seller._id.toString() },
+            { seller_id: seller._id.toString() },
+          ],
         })) + 1;
       const maxDisputes = Number(process.env.MAX_DISPUTES);
       // if MAX_DISPUTES is not specified or can't be parsed as number, following
@@ -85,7 +91,9 @@ export const handleDispute = async (ctx: MainContext, orderId: string) => {
     await messages.beginDispute(ctx, initiator, order, buyer, seller);
     // Show the dispute button to solvers
     await messages.takeDisputeButton(ctx, order);
-    logger.warning(`Order ${order._id.toString()}: User ${user._id.toString()} started a dispute!`);
+    logger.warning(
+      `Order ${order._id.toString()}: User ${user._id.toString()} started a dispute!`,
+    );
   } catch (error) {
     logger.error(error);
   }

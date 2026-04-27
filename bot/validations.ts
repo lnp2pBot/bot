@@ -112,7 +112,9 @@ const validateAdmin = async (ctx: MainContext, id?: string) => {
 
     let community = null;
     if (user.default_community_id)
-      community = await Community.findOne({ _id: new ObjectId(user.default_community_id) });
+      community = await Community.findOne({
+        _id: new ObjectId(user.default_community_id),
+      });
 
     const isSolver = isDisputeSolver(community, user);
 
@@ -571,7 +573,12 @@ const validateDisputeOrder = async (
       $and: [
         { _id: new ObjectId(orderId) },
         { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
-        { $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }] },
+        {
+          $or: [
+            { seller_id: user._id.toString() },
+            { buyer_id: user._id.toString() },
+          ],
+        },
       ],
     };
 
@@ -731,7 +738,9 @@ const isBannedFromCommunity = async (
 ) => {
   try {
     if (!communityId) return false;
-    const community = await Community.findOne({ _id: new ObjectId(communityId) });
+    const community = await Community.findOne({
+      _id: new ObjectId(communityId),
+    });
     if (!community) return false;
     return community.banned_users.some(
       (buser: IUsernameId) => buser.id == user._id.toString(),

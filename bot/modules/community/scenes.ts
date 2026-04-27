@@ -957,7 +957,9 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
 
       const user = await User.findById(community.creator_id);
       if (user === null) throw new Error('user was not found');
-      logger.debug(`Creating pending payment for community ${community._id.toString()}`);
+      logger.debug(
+        `Creating pending payment for community ${community._id.toString()}`,
+      );
       const pp = new PendingPayment({
         amount: community.earnings,
         payment_request: lnInvoice,

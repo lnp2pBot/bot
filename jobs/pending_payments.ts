@@ -60,7 +60,9 @@ export const attemptPendingPayments = async (
         amount: pending.amount,
         request: pending.payment_request,
       });
-      const buyerUser = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
+      const buyerUser = await User.findOne({
+        _id: new ObjectId(order.buyer_id!),
+      });
       if (buyerUser === null) throw Error('buyerUser was not found in DB');
       const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
       // If the buyer's invoice is expired we let it know and don't try to pay again
@@ -84,7 +86,9 @@ export const attemptPendingPayments = async (
         buyerUser.trades_completed++;
         await buyerUser.save();
         // We add a new completed trade for the seller
-        const sellerUser = await User.findOne({ _id: new ObjectId(order.seller_id!) });
+        const sellerUser = await User.findOne({
+          _id: new ObjectId(order.seller_id!),
+        });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
         sellerUser.save();
@@ -206,7 +210,9 @@ export const attemptCommunitiesPendingPayments = async (
         );
       }
 
-      const community = await Community.findById(new ObjectId(pending.community_id));
+      const community = await Community.findById(
+        new ObjectId(pending.community_id),
+      );
       if (community === null) throw Error('Community was not found in DB');
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;

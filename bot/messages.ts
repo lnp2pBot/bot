@@ -747,7 +747,9 @@ const publishBuyOrderMessage = async (
     // Get the community language if available
     let communityI18n = i18n;
     if (order.community_id) {
-      const community = await Community.findOne({ _id: new ObjectId(order.community_id!) });
+      const community = await Community.findOne({
+        _id: new ObjectId(order.community_id!),
+      });
       if (community && community.language) {
         communityI18n = new I18n({
           defaultLanguageOnMissing: true,
@@ -800,7 +802,9 @@ const publishSellOrderMessage = async (
     let communityI18n = i18n;
 
     if (order.community_id) {
-      const community = await Community.findOne({ _id: new ObjectId(order.community_id!) });
+      const community = await Community.findOne({
+        _id: new ObjectId(order.community_id!),
+      });
       if (community && community.language) {
         communityI18n = new I18n({
           defaultLanguageOnMissing: true,

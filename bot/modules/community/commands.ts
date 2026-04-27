@@ -89,7 +89,9 @@ export const myComms = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
 
-    const communities = await Community.find({ creator_id: user._id.toString() });
+    const communities = await Community.find({
+      creator_id: user._id.toString(),
+    });
 
     if (!communities.length)
       return await ctx.reply(ctx.i18n.t('you_dont_have_communities'));

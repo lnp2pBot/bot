@@ -777,8 +777,9 @@ const initialize = (
             ctx.admin.default_community_id,
           );
           if (community === null) throw Error('Community was not found in DB');
-          community.banned_users = community.banned_users
-            .filter((el: IUsernameId) => el.id !== user._id.toString());
+          community.banned_users = community.banned_users.filter(
+            (el: IUsernameId) => el.id !== user._id.toString(),
+          );
           await community.save();
         } else {
           return await ctx.reply(ctx.i18n.t('need_default_community'));

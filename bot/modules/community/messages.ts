@@ -169,17 +169,17 @@ export const earningsMessage = async (ctx: MainContext) => {
     const button =
       community.earnings > 0
         ? {
-          reply_markup: {
-            inline_keyboard: [
-              [
-                {
-                  text: ctx.i18n.t('withdraw_earnings'),
-                  callback_data: `withdrawEarnings_${community._id}`,
-                },
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: ctx.i18n.t('withdraw_earnings'),
+                    callback_data: `withdrawEarnings_${community._id}`,
+                  },
+                ],
               ],
-            ],
-          },
-        }
+            },
+          }
         : undefined;
     await ctx.reply(
       ctx.i18n.t('current_earnings', {
