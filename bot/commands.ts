@@ -449,17 +449,11 @@ const showHoldInvoice = async (
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
 
-      order.fee = await getFee(
-        amount,
-        order.community_id,
-        order.is_golden_honey_badger,
-      );
+      order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
 
-    amount = order.is_golden_honey_badger
-      ? Math.floor(order.amount)
-      : Math.floor(order.amount + order.fee);
+    amount = Math.floor(order.amount + order.fee);
 
     const holdInvoice = await createHoldInvoice({
       description,
@@ -482,7 +476,6 @@ const showHoldInvoice = async (
       order.fiat_code,
       order.fiat_amount,
       order.random_image,
-      order.is_golden_honey_badger,
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);

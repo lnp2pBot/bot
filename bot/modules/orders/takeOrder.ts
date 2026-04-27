@@ -75,16 +75,14 @@ export const takebuy = async (
 
     if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
 
-    const { randomImage, isGoldenHoneyBadger } = await generateRandomImage(
-      user._id.toString(),
-    );
+    const { randomImage } = generateRandomImage(user._id.toString());
 
     order.status = 'WAITING_PAYMENT';
     order.seller_id = user._id;
     order.taken_at = new Date(Date.now());
 
     order.random_image = randomImage;
-    order.is_golden_honey_badger = isGoldenHoneyBadger;
+    order.is_golden_honey_badger = false;
 
     await order.save();
     order.status = 'in-progress';

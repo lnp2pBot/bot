@@ -187,10 +187,6 @@ const pendingSellMessage = async (
       i18n.t('cancel_order_cmd', { orderId: order._id }),
       { parse_mode: 'Markdown' },
     );
-
-    if (order.is_golden_honey_badger === true && order.type === 'sell') {
-      await ctx.telegram.sendMessage(user.tg_id, i18n.t('golden_honey_badger'));
-    }
   } catch (error) {
     logger.error(error);
     if (error instanceof ImageProcessingError) {
@@ -481,7 +477,6 @@ const showHoldInvoiceMessage = async (
   fiatCode: IOrder['fiat_code'],
   fiatAmount: IOrder['fiat_amount'],
   randomImage: string,
-  isGoldenHoneyBadger: boolean = false,
 ) => {
   try {
     const currency = getCurrency(fiatCode);
@@ -497,10 +492,6 @@ const showHoldInvoiceMessage = async (
         currency: currencySymbol,
       }),
     );
-
-    if (isGoldenHoneyBadger) {
-      await ctx.reply(ctx.i18n.t('golden_honey_badger'));
-    }
 
     const qrBytes = await generateQRWithImage(request, randomImage);
 
