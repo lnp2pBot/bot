@@ -708,10 +708,10 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
-community_payment_methods: "Payment methods"
-enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
-current_payment_methods: "Current payment methods: ${methods}"
-select_payment_methods: "Select one or more payment methods:"
-confirm_payment_methods: "✅ Confirm"
-no_payment_method_selected: "Please select at least one payment method"
-payment_methods_saved: "Payment methods saved ✅"
+community_payment_methods: "Métodos de pago"
+enter_community_payment_methods: "Ingresa los métodos de pago aceptados en tu comunidad, separados por comas (ej.: Transferencia bancaria, Efectivo, PayPal)"
+current_payment_methods: "Métodos de pago actuales: ${methods}"
+select_payment_methods: "Selecciona uno o más métodos de pago:"
+confirm_payment_methods: "✅ Confirmar"
+no_payment_method_selected: "Por favor selecciona al menos un método de pago"
+payment_methods_saved: "Métodos de pago guardados ✅"
