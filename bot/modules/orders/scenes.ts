@@ -237,7 +237,7 @@ const createOrderSteps = {
             undefined,
             buildKeyboard(selected).reply_markup,
           );
-        } catch (_) {
+        } catch (_err) {
           // ignore transient errors (e.g. "message is not modified" on rapid taps)
         }
         await ctx.answerCbQuery();
