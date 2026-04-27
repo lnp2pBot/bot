@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
 import { validateFiatSentOrder, validateReleaseOrder } from './validations';
 import {
   createHoldInvoice,
@@ -26,6 +25,7 @@ import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
+const { ObjectId } = mongoose.Types;
 
 enum UserOrderRole {
   BUYER,

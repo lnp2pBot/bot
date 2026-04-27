@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Types } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 import { isValidLanguage, SUPPORTED_LANGUAGES } from '../util/languages';
 
 const CURRENCIES: number = parseInt(process.env.COMMUNITY_CURRENCIES || '10');

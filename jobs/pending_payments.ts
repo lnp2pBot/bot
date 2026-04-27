@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
 import { PendingPayment, Order, User, Community } from '../models';
 import * as messages from '../bot/messages';
 import { logger } from '../logger';
@@ -9,6 +8,7 @@ import { payRequest, isPendingPayment } from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
+const { ObjectId } = mongoose.Types;
 
 function getPaymentAttempts(): number {
   return Number(process.env.PAYMENT_ATTEMPTS) || 2;

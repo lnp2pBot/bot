@@ -3,8 +3,7 @@ import { Telegraf, session, Context, Telegram } from 'telegraf';
 import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram';
 import { UserDocument } from '../models/user';
-import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
+
 import * as OrderEvents from './modules/events/orders';
 import { limit } from '@grammyjs/ratelimiter';
 import schedule from 'node-schedule';
@@ -78,6 +77,7 @@ import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
 import { commandLogger } from './middleware/commandlogging';
+
 
 export interface MainContext extends Context {
   match: Array<string> | null;

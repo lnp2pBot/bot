@@ -1,12 +1,10 @@
 import {
   HasTelegram,
   MainContext,
-  OrderQuery,
   ctxUpdateAssertMsg,
 } from './start';
 import { IUsernameId } from '../models/community';
 import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
 // @ts-ignore
@@ -21,6 +19,7 @@ import {
 } from '../util';
 import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
+const { ObjectId } = mongoose.Types;
 
 // Removed redundant ObjectId declaration
 

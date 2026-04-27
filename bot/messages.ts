@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-const { ObjectId } = mongoose.Types;
 import { TelegramError, Telegraf } from 'telegraf';
 import {
   getCurrency,
@@ -29,6 +28,7 @@ import { IFiat } from '../util/fiatModel';
 import { CommunityContext } from './modules/community/communityContext';
 import { imageCache } from '../util/imageCache';
 import { ImageProcessingError } from '../util/errors';
+const { ObjectId } = mongoose.Types;
 
 const { I18n } = require('@grammyjs/i18n');
 
