@@ -216,7 +216,7 @@ const createOrderSteps = {
       }
 
       if (data.startsWith('pm_toggle_')) {
-        const methodIdx = parseInt(data.slice('pm_toggle_'.length));
+        const methodIdx = parseInt(data.slice('pm_toggle_'.length), 10);
         const m = paymentMethods[methodIdx];
         if (m === undefined) {
           await ctx.answerCbQuery();
@@ -230,12 +230,16 @@ const createOrderSteps = {
           selected.push(m);
         }
         ctx.wizard.state.selectedMethods = selected;
-        await ctx.telegram.editMessageReplyMarkup(
-          prompt.chat.id,
-          prompt.message_id,
-          undefined,
-          buildKeyboard(selected).reply_markup,
-        );
+        try {
+          await ctx.telegram.editMessageReplyMarkup(
+            prompt.chat.id,
+            prompt.message_id,
+            undefined,
+            buildKeyboard(selected).reply_markup,
+          );
+        } catch (_) {
+          // ignore transient errors (e.g. "message is not modified" on rapid taps)
+        }
         await ctx.answerCbQuery();
         return;
       }
