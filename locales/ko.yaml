@@ -658,7 +658,6 @@ bot_info: |
   사용자 정보:
 
   ${user_info}
-golden_honey_badger: 🍯 골든 허니 배저! 수수료가 부과되지 않습니다! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
