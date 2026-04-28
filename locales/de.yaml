@@ -661,7 +661,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Goldener Honigdachs! Es werden keine Gebühren erhoben! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

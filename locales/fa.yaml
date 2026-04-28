@@ -763,7 +763,6 @@ bot_info: |
 
   اطلاعات کاربر:
   ${user_info}
-golden_honey_badger: 🍯 گورکن عسل‌خوار طلایی! هیچ کارمزدی گرفته نمی‌شود! 🦡
 user_info: |
   حجم معامله شده: ${volume_traded}
   میانگین امتیاز: ${total_rating}
