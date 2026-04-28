@@ -82,7 +82,6 @@ export const takebuy = async (
     order.taken_at = new Date(Date.now());
 
     order.random_image = randomImage;
-    order.is_golden_honey_badger = false;
 
     await order.save();
     order.status = 'in-progress';

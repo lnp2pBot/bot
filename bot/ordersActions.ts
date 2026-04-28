@@ -124,7 +124,6 @@ const createOrder = async (
       amount,
       fee,
       bot_fee: botFee,
-      is_golden_honey_badger: false,
       community_fee: communityFee,
       creator_id: user._id,
       type,
