@@ -926,7 +926,7 @@ export const updatePaymentMethodsCommunityWizard = new Scenes.WizardScene(
         ? ctx.i18n.t('current_payment_methods', { methods: current }) + '\n\n'
         : '';
       message += ctx.i18n.t('enter_community_payment_methods') + '\n\n';
-      message += ctx.i18n.t('wizard_to_exit');
+      message += ctx.i18n.t('payment_methods_wizard_commands');
       await ctx.reply(message);
       return ctx.wizard.next();
     } catch (error) {
@@ -955,6 +955,22 @@ export const updatePaymentMethodsCommunityWizard = new Scenes.WizardScene(
       await community.save();
       await ctx.reply(ctx.i18n.t('payment_methods_saved'));
 
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+updatePaymentMethodsCommunityWizard.command(
+  'reset',
+  async (ctx: CommunityContext) => {
+    try {
+      const { community } = ctx.wizard.state;
+      community.payment_methods = [];
+      await community.save();
+      await ctx.reply(ctx.i18n.t('payment_methods_reset'));
       return ctx.scene.leave();
     } catch (error) {
       logger.error(error);

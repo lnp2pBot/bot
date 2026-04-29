@@ -190,6 +190,9 @@ const createOrderSteps = {
       rows.push([
         Markup.button.callback(i18n.t('confirm_payment_methods'), 'pm_confirm'),
       ]);
+      rows.push([
+        Markup.button.callback(i18n.t('custom_payment_method'), 'pm_custom'),
+      ]);
       return Markup.inlineKeyboard(rows);
     };
 
@@ -199,7 +202,17 @@ const createOrderSteps = {
     );
 
     ctx.wizard.state.handler = async ctx => {
-      if (!ctx.callbackQuery) return;
+      if (!ctx.callbackQuery) {
+        if (ctx.message === undefined || !('text' in ctx.message)) return;
+        const { text } = ctx.message;
+        if (!text) return;
+        ctx.wizard.state.method = text;
+        await ctx.wizard.state.updateUI();
+        await ctx.deleteMessage();
+        await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        return true;
+      }
+
       const data = (ctx.callbackQuery as any).data as string;
 
       if (data === 'pm_confirm') {
@@ -213,6 +226,26 @@ const createOrderSteps = {
         await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
         await ctx.answerCbQuery();
         return true;
+      }
+
+      if (data === 'pm_custom') {
+        await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        await ctx.answerCbQuery();
+        const textPrompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
+        ctx.wizard.state.handler = async ctx => {
+          if (ctx.message === undefined || !('text' in ctx.message)) return;
+          const { text } = ctx.message;
+          if (!text) return;
+          ctx.wizard.state.method = text;
+          await ctx.wizard.state.updateUI();
+          await ctx.deleteMessage();
+          await ctx.telegram.deleteMessage(
+            textPrompt.chat.id,
+            textPrompt.message_id,
+          );
+          return true;
+        };
+        return;
       }
 
       if (data.startsWith('pm_toggle_')) {
