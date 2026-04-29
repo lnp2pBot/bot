@@ -316,6 +316,24 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return;
     }
+    const minPaymentAmt = Number(process.env.MIN_PAYMENT_AMT) || 0;
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
+    if (input !== 0 && minPaymentAmt > 0 && input < minPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_gt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: minPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    if (input !== 0 && maxPaymentAmt > 0 && input > maxPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_lt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: maxPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
     ctx.wizard.state.sats = Math.floor(input);
     await ctx.wizard.state.updateUI();
     return true;
