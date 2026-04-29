@@ -35,13 +35,19 @@ export const takeDispute = async (ctx: MainContext): Promise<void> => {
   if (seller === null) throw new Error('seller not found');
   const initiator = order.buyer_dispute ? 'buyer' : 'seller';
   const buyerDisputes = await Dispute.countDocuments({
-    $or: [{ buyer_id: buyer._id }, { seller_id: buyer._id }],
+    $or: [
+      { buyer_id: buyer._id.toString() },
+      { seller_id: buyer._id.toString() },
+    ],
   });
   const sellerDisputes = await Dispute.countDocuments({
-    $or: [{ buyer_id: seller._id }, { seller_id: seller._id }],
+    $or: [
+      { buyer_id: seller._id.toString() },
+      { seller_id: seller._id.toString() },
+    ],
   });
 
-  dispute.solver_id = solver.id;
+  dispute.solver_id = solver._id.toString();
   dispute.status = 'IN_PROGRESS';
   await dispute.save();
   await messages.disputeData(

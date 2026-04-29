@@ -145,8 +145,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return await messages.incorrectAmountInvoiceMessage(ctx);
 
       const isScheduled = await PendingPayment.findOne({
-        order_id: order._id,
-        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        order_id: order._id.toString(),
+        attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
         is_invoice_expired: false,
       });
       // We check if the payment is on flight

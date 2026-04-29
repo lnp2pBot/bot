@@ -1133,7 +1133,7 @@ describe('Validations', () => {
 
     it('should return true if user is banned', async () => {
       const user = { _id: 'userId' };
-      const communityId = 'communityId';
+      const communityId = new ObjectId().toString();
       community.banned_users = [{ id: 'userId', username: 'username' }];
 
       (Community.findOne as any).returns(community);

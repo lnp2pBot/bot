@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { validateFiatSentOrder, validateReleaseOrder } from './validations';
 import {
   createHoldInvoice,
@@ -24,6 +25,7 @@ import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
+const { ObjectId } = mongoose.Types;
 
 enum UserOrderRole {
   BUYER,
@@ -41,7 +43,7 @@ const setCooperativeCancelFlag = async (
   const update = { [propName]: true };
   return await Order.findOneAndUpdate(
     {
-      _id: orderId,
+      _id: new ObjectId(orderId),
       [propName]: { $ne: true },
       status: { $in: ['ACTIVE', 'FIAT_SENT', 'DISPUTE'] },
     },
@@ -62,7 +64,7 @@ const waitPayment = async (
     // If there is not fiat amount the function don't do anything
     if (order.fiat_amount === undefined) {
       logger.debug(
-        `waitPayment: fiat_amount === undefined, User Id ${ctx.user.id} order Id: ${order.id}`,
+        `waitPayment: fiat_amount === undefined, User Id ${ctx.user._id.toString()} order Id: ${order._id.toString()}`,
       );
       return;
     }
@@ -87,7 +89,7 @@ const waitPayment = async (
       // We create a hold invoice
       const description = i18nCtx.t('hold_invoice_memo', {
         botName: ctx.botInfo.username,
-        orderId: order._id,
+        orderId: order._id.toString(),
         fiatCode: order.fiat_code,
         fiatAmount: order.fiat_amount,
       });
@@ -137,7 +139,7 @@ const addInvoice = async (
     if (!order) {
       const orderId = (ctx.update as any).callback_query.message.text;
       if (!orderId) return;
-      order = await Order.findOne({ _id: orderId });
+      order = await Order.findOne({ _id: new ObjectId(orderId) });
       if (!order) return;
     }
 
@@ -146,7 +148,7 @@ const addInvoice = async (
       return;
     }
 
-    const buyer = await User.findOne({ _id: order.buyer_id });
+    const buyer = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
     if (buyer === null) throw new Error('buyer was not found');
 
     if (order.fiat_amount === undefined) {
@@ -175,7 +177,7 @@ const addInvoice = async (
       return;
     }
     await order.save();
-    const seller = await User.findOne({ _id: order.seller_id });
+    const seller = await User.findOne({ _id: new ObjectId(order.seller_id!) });
     if (seller === null) throw new Error('seller was not found');
 
     if (buyer.lightning_address) {
@@ -228,12 +230,12 @@ const rateUser = async (
     const callerId = ctx.from?.id;
 
     if (!orderId) return;
-    const order = await Order.findOne({ _id: orderId });
+    const order = await Order.findOne({ _id: new ObjectId(orderId) });
 
     if (order === null) return;
-    const buyer = await User.findOne({ _id: order.buyer_id });
+    const buyer = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
     if (buyer === null) throw new Error('buyer was not found');
-    const seller = await User.findOne({ _id: order.seller_id });
+    const seller = await User.findOne({ _id: new ObjectId(order.seller_id!) });
     if (seller === null) throw new Error('seller was not found');
 
     let targetUser = buyer;
@@ -300,7 +302,7 @@ const cancelAddInvoice = async (
         const orderId =
           !!ctx && (ctx.update as any).callback_query.message.text;
         if (!orderId) return;
-        order = await Order.findOne({ _id: orderId });
+        order = await Order.findOne({ _id: new ObjectId(orderId) });
       }
     }
     if (order === null) return;
@@ -310,7 +312,7 @@ const cancelAddInvoice = async (
       await cancelHoldInvoice({ hash: order.hash });
     }
 
-    const user = await User.findOne({ _id: order.buyer_id });
+    const user = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
 
     if (user == null) return;
 
@@ -319,9 +321,13 @@ const cancelAddInvoice = async (
     if (order.status !== 'WAITING_BUYER_INVOICE')
       return await messages.genericErrorMessage(ctx, user, i18nCtx);
 
-    const sellerUser = await User.findOne({ _id: order.seller_id });
+    const sellerUser = await User.findOne({
+      _id: new ObjectId(order.seller_id!),
+    });
     if (sellerUser === null) throw new Error('sellerUser was not found');
-    const buyerUser = await User.findOne({ _id: order.buyer_id });
+    const buyerUser = await User.findOne({
+      _id: new ObjectId(order.buyer_id!),
+    });
     if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerTgId = sellerUser.tg_id;
     // If order creator cancels it, it will not be republished
@@ -413,11 +419,11 @@ const showHoldInvoice = async (
     if (!order) {
       const orderId = (ctx.update as any).callback_query?.message?.text;
       if (!orderId) return;
-      order = await Order.findOne({ _id: orderId });
+      order = await Order.findOne({ _id: new ObjectId(orderId) });
       if (order === null || order === undefined) return;
     }
 
-    const user = await User.findOne({ _id: order.seller_id });
+    const user = await User.findOne({ _id: new ObjectId(order.seller_id!) });
     if (!user) return;
 
     if (order.status !== 'WAITING_PAYMENT') {
@@ -500,7 +506,7 @@ const cancelShowHoldInvoice = async (
         const orderId =
           !!ctx && (ctx.update as any).callback_query.message.text;
         if (!orderId) return;
-        order = await Order.findOne({ _id: orderId });
+        order = await Order.findOne({ _id: new ObjectId(orderId) });
       }
     }
     if (order === null) return;
@@ -509,9 +515,13 @@ const cancelShowHoldInvoice = async (
     if (order.hash) {
       await cancelHoldInvoice({ hash: order.hash });
     }
-    const buyerUser = await User.findOne({ _id: order.buyer_id });
+    const buyerUser = await User.findOne({
+      _id: new ObjectId(order.buyer_id!),
+    });
     if (buyerUser === null) throw new Error('buyerUser was not found');
-    const sellerUser = await User.findOne({ _id: order.seller_id });
+    const sellerUser = await User.findOne({
+      _id: new ObjectId(order.seller_id!),
+    });
     if (sellerUser === null) throw new Error('sellerUser was not found');
 
     const i18nCtxSeller = await getUserI18nContext(sellerUser);
@@ -639,12 +649,12 @@ const addInvoicePHI = async (
 ) => {
   try {
     ctx.deleteMessage();
-    const order = await Order.findOne({ _id: orderId });
+    const order = await Order.findOne({ _id: new ObjectId(orderId) });
     if (order === null) throw new Error('order was not found');
     // only orders with status PAID_HOLD_INVOICE are released payments
     if (order.status !== 'PAID_HOLD_INVOICE') return;
 
-    const buyer = await User.findOne({ _id: order.buyer_id });
+    const buyer = await User.findOne({ _id: new ObjectId(order.buyer_id!) });
     if (buyer === null) return;
     if (order.amount === 0) {
       await messages.genericErrorMessage(bot, buyer, ctx.i18n);
@@ -673,7 +683,11 @@ const cancelOrder = async (
       if (!user) return;
     }
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
-    const order = await ordersActions.getOrder(ctx, user, orderId);
+    const order = await ordersActions.getOrder(
+      ctx,
+      user,
+      new ObjectId(orderId) as any,
+    );
 
     if (!order) return;
 
@@ -682,7 +696,7 @@ const cancelOrder = async (
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       order.status = 'CANCELED';
-      order.canceled_by = user._id;
+      order.canceled_by = user._id.toString();
       await order.save();
       OrderEvents.orderUpdated(order);
       // we sent a private message to the user
@@ -730,16 +744,23 @@ const cancelOrder = async (
 
     const initiatorUser = user;
     if (initiatorUser._id.toString() === order.buyer_id?.toString()) {
-      counterPartyUser = await User.findOne({ _id: order.seller_id });
+      counterPartyUser = await User.findOne({
+        _id: new ObjectId(order.seller_id!),
+      });
       initiator = UserOrderRole.BUYER;
     } else {
-      counterPartyUser = await User.findOne({ _id: order.buyer_id });
+      counterPartyUser = await User.findOne({
+        _id: new ObjectId(order.buyer_id!),
+      });
       initiator = UserOrderRole.SELLER;
     }
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
+    const updateOrder = await setCooperativeCancelFlag(
+      new ObjectId(order._id) as any,
+      initiator,
+    );
 
     // If the call returns null, the flag was already set (or order is missing),
     // so we treat it as a duplicate request.
@@ -761,12 +782,12 @@ const cancelOrder = async (
       if (updateOrder.hash) await cancelHoldInvoice({ hash: updateOrder.hash });
 
       updateOrder.status = 'CANCELED';
-      updateOrder.canceled_by = String(user._id);
+      updateOrder.canceled_by = user._id.toString();
       await updateOrder.save();
 
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
-      if (order.seller_id == counterPartyUser._id) {
+      if (order.seller_id?.toString() == counterPartyUser._id.toString()) {
         seller = counterPartyUser;
         i18nCtxSeller = i18nCtxCP;
       }
@@ -823,7 +844,7 @@ const fiatSent = async (
     if (!order) return;
 
     order.status = 'FIAT_SENT';
-    const seller = await User.findOne({ _id: order.seller_id });
+    const seller = await User.findOne({ _id: new ObjectId(order.seller_id!) });
     if (seller === null) throw new Error('seller was not found');
     await order.save();
     // We sent messages to both parties
@@ -861,7 +882,7 @@ const release = async (
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
     // We look for a dispute for this order
-    const dispute = await Dispute.findOne({ order_id: order._id });
+    const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
     if (dispute) {
       dispute.status = 'RELEASED';
@@ -893,7 +914,11 @@ const showQrCode = async (
       if (!user) return;
     }
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
-    const order = await ordersActions.getOrder(ctx, user, orderId);
+    const order = await ordersActions.getOrder(
+      ctx,
+      user,
+      new ObjectId(orderId) as any,
+    );
 
     if (!order) return;
     if (!order.hash) return;
