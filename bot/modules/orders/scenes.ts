@@ -31,6 +31,7 @@ export const createOrder = new Scenes.WizardScene(
         sats,
         priceMargin,
         method,
+        selectedMethods,
       } = ctx.wizard.state;
       if (!statusMessage) {
         const { text } = messages.createOrderWizardStatus(
@@ -65,8 +66,13 @@ export const createOrder = new Scenes.WizardScene(
       if (undefined === priceMargin && sats === 0)
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
-      // We remove all special characters from the payment method
-      const paymentMethod = method.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
+      // We remove all special characters from the payment method.
+      // When the user selected from the community keyboard the raw array is
+      // preserved in selectedMethods, so we use it directly to avoid stripping
+      // the commas that join(', ') produced.
+      const paymentMethod = selectedMethods?.length
+        ? selectedMethods.join(', ')
+        : method.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
         type,
@@ -153,6 +159,7 @@ const createOrderSteps = {
         ? await Community.findById(user.default_community_id)
         : null;
     const community = stateComm ?? loadedComm;
+    if (loadedComm) ctx.wizard.state.community = loadedComm;
     const paymentMethods = community?.payment_methods;
 
     if (!paymentMethods || paymentMethods.length === 0) {
