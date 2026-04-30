@@ -704,3 +704,13 @@ unblock_failed: "Errore nello sbloccare l'utente"
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+community_payment_methods: "Metodi di pagamento"
+enter_community_payment_methods: "Inserisci i metodi di pagamento accettati nella tua community, separati da virgole (es.: Bonifico bancario, Contanti, PayPal)"
+current_payment_methods: "Metodi di pagamento attuali: ${methods}"
+select_payment_methods: "Seleziona uno o più metodi di pagamento:"
+confirm_payment_methods: "✅ Conferma"
+no_payment_method_selected: "Seleziona almeno un metodo di pagamento"
+payment_methods_saved: "Metodi di pagamento salvati ✅"
+custom_payment_method: "✍️ Metodo di pagamento personalizzato"
+payment_methods_reset: "Metodi di pagamento rimossi. Gli utenti possono ora inserire qualsiasi metodo di pagamento liberamente."
+payment_methods_wizard_commands: "/reset — rimuovere tutti i metodi di pagamento e ripristinare il comportamento predefinito\n/exit — uscire senza salvare"
