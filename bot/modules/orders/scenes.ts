@@ -66,13 +66,10 @@ export const createOrder = new Scenes.WizardScene(
       if (undefined === priceMargin && sats === 0)
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
-      // We remove all special characters from the payment method.
-      // When the user selected from the community keyboard the raw array is
-      // preserved in selectedMethods, so we use it directly to avoid stripping
-      // the commas that join(', ') produced.
-      const paymentMethod = selectedMethods?.length
+      let paymentMethod = selectedMethods?.length
         ? selectedMethods.join(', ')
-        : method.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
+        : method;
+      paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
         type,
