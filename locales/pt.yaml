@@ -713,7 +713,7 @@ user_requirements: |
   ordens concluídas: ${min_completed_orders}
   
   <strong># AJUDA</strong>
-  /counterpartyage &lt;dias&gt; - Define o requisito de antiguidade mínima (em dias) exigido para la contraparte para aceitar suas ordens.
+  /counterpartyage &lt;dias&gt; - Define o requisito de antiguidade mínima (em dias) exigido para a contraparte para aceitar suas ordens.
   /counterpartyorders &lt;ordens&gt; - Define o requisito mínimo de ordens concluídas pela contraparte para que possam aceitar suas ordens.
   /reset - volta esta configuração ao valor padrão
   /exit - para sair deste assistente

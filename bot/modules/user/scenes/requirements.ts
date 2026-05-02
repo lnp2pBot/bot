@@ -4,6 +4,7 @@ import {
   CommunityWizardState,
 } from '../../community/communityContext';
 import { Message } from 'telegraf/typings/core/types/typegram';
+import { logger } from '../../../../logger';
 
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
@@ -59,7 +60,9 @@ function make() {
       );
       state.message = msg as Message.TextMessage;
       state.message.text = str;
-    } catch (err) {}
+    } catch (err) {
+      logger.error(err);
+    }
   }
   async function initHandler(ctx: CommunityContext) {
     try {
@@ -70,7 +73,9 @@ function make() {
       const msg = await ctx.reply(str, { parse_mode: 'HTML' });
       state.message = msg;
       state.message.text = str;
-    } catch (err) {}
+    } catch (err) {
+      logger.error(err);
+    }
   }
   const scene = new Scenes.WizardScene(
     'USER_COUNTERPARTY_REQUIREMENTS',
@@ -87,7 +92,7 @@ function make() {
   );
 
   scene.command(
-    '/counterpartyage',
+    'counterpartyage',
     resetMessage,
     async (ctx: CommunityContext) => {
       try {
@@ -134,7 +139,7 @@ function make() {
   );
 
   scene.command(
-    '/counterpartyorders',
+    'counterpartyorders',
     resetMessage,
     async (ctx: CommunityContext) => {
       try {
@@ -181,7 +186,7 @@ function make() {
     },
   );
 
-  scene.command('/reset', resetMessage, async (ctx: CommunityContext) => {
+  scene.command('reset', resetMessage, async (ctx: CommunityContext) => {
     try {
       await ctx.deleteMessage();
       const state = ctx.scene.state as CommunityWizardState;
