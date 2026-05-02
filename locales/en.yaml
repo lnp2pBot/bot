@@ -254,6 +254,7 @@ help: |
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
+  /requirements - Enter Counterparty Requirements Wizard
   /listorders - Use this command to list all your pending transactions 
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller

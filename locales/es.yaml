@@ -251,6 +251,7 @@ help: |
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
   /setlang - Le permite al usuario cambiar el idioma
   /settings - Muestra la configuración actual del usuario
+  /requirements - Entrar al asistente de requisitos de contraparte
   /listorders - El usuario puede listar sus órdenes no finalizadas
   /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
   /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor

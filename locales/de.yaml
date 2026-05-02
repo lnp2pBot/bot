@@ -251,6 +251,7 @@ help: |
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
+  /requirements - Den Assistenten für Anforderungen an den Vertragspartner aufrufen
   /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten
   /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können 
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
