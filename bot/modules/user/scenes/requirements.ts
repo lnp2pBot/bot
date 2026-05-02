@@ -99,6 +99,15 @@ function make() {
         const min_days = parseInt(days);
         if (isNaN(min_days) || min_days < 0) throw new Error('NotValidNumber');
         const user = state.user;
+        const maxAge = parseInt(process.env.MAX_COUNTERPARTY_AGE_REQUIREMENT || '30');
+        if (min_days > maxAge) {
+          state.error = {
+            i18n: 'invalid_range',
+            command: '/counterpartyage',
+            max: maxAge,
+          };
+          return await updateMessage(ctx);
+        }
         if (!user.counterparty_requirements) {
           user.counterparty_requirements = {
             min_days_using_bot: 0,
@@ -113,7 +122,8 @@ function make() {
         };
         await updateMessage(ctx);
       } catch (err) {
-        (ctx.scene.state as CommunityWizardState).error = {
+        const state = ctx.scene.state as CommunityWizardState;
+        state.error = {
           i18n: 'invalid_number',
         };
         await updateMessage(ctx);
@@ -135,6 +145,15 @@ function make() {
         if (isNaN(min_orders) || min_orders < 0)
           throw new Error('NotValidNumber');
         const user = state.user;
+        const maxOrders = parseInt(process.env.MAX_COUNTERPARTY_ORDERS_REQUIREMENT || '10');
+        if (min_orders > maxOrders) {
+          state.error = {
+            i18n: 'invalid_range',
+            command: '/counterpartyorders',
+            max: maxOrders,
+          };
+          return await updateMessage(ctx);
+        }
         if (!user.counterparty_requirements) {
           user.counterparty_requirements = {
             min_days_using_bot: 0,
@@ -149,7 +168,8 @@ function make() {
         };
         await updateMessage(ctx);
       } catch (err) {
-        (ctx.scene.state as CommunityWizardState).error = {
+        const state = ctx.scene.state as CommunityWizardState;
+        state.error = {
           i18n: 'invalid_number',
         };
         await updateMessage(ctx);

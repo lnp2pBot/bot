@@ -722,3 +722,4 @@ counterpartyorders_updated: Anforderung für abgeschlossene Aufträge des Vertra
 requirements_reset: Anforderungen an den Vertragspartner wurden auf Standardwerte zurückgesetzt.
 not_meeting_requirements: Du erfüllst nicht die Anforderungen des Vertragspartners, um diesen Auftrag anzunehmen.
 invalid_number: Ungültige Nummer.
+invalid_range: Ungültiger Wert für den Parameter ${command}, bitte wählen Sie eine Zahl im Bereich [0 - ${max}]

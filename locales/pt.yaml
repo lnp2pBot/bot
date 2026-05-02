@@ -721,3 +721,4 @@ counterpartyorders_updated: Requisito de ordens concluídas da contraparte atual
 requirements_reset: Os requisitos da contraparte foram redefinidos para o padrão.
 not_meeting_requirements: Você não cumpre os requisitos da contraparte para aceitar esta ordem.
 invalid_number: Número inválido.
+invalid_range: Valor inválido para o parâmetro ${command}, por favor escolha um número no intervalo [0 - ${max}]

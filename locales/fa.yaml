@@ -821,3 +821,4 @@ counterpartyorders_updated: الزامات سفارش‌های تکمیل شده
 requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
 not_meeting_requirements: شما واجد الزامات طرف مقابل برای پذیرش این سفارش نیستید.
 invalid_number: عدد نامعتبر است.
+invalid_range: مقدار نامعتبر برای پارامتر ${command}، لطفاً عددی در محدوده [0 - ${max}] انتخاب کنید.

@@ -719,3 +719,4 @@ counterpartyorders_updated: Requisito di ordini completati della controparte agg
 requirements_reset: I requisiti della controparte sono stati riportati ai valori predefiniti.
 not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine.
 invalid_number: Numero non valido.
+invalid_range: Valore non valido per il parametro ${command}, scegli un numero compreso tra [0 - ${max}]

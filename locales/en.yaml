@@ -727,3 +727,4 @@ counterpartyorders_updated: Counterparty completed orders requirement updated to
 requirements_reset: Counterparty requirements have been reset to default.
 not_meeting_requirements: You do not meet the counterparty requirements to take this order.
 invalid_number: Invalid number.
+invalid_range: Invalid value for parameter ${command}, please choose a number in the range [0 - ${max}]

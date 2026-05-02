@@ -719,3 +719,4 @@ counterpartyorders_updated: 거래 상대방 완료 주문 수 요구 사항이 
 requirements_reset: 거래 상대방 요구 사항이 기본값으로 재설정되었습니다.
 not_meeting_requirements: 귀하는 이 주문을 수락하기 위한 거래 상대방 요구 사항을 충족하지 않습니다.
 invalid_number: 유효하지 않은 숫자입니다.
+invalid_range: ${command} 매개변수가 잘못되었습니다. [0 - ${max}] 사이의 숫자를 선택해 주세요.
