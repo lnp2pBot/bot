@@ -706,3 +706,19 @@ unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+
+user_requirements: |
+  <strong>Anforderungen an den Vertragspartner</strong>
+  Erforderliches Alter des Vertragspartners: ${min_days_using_bot} Tage Bot-Nutzung.
+  Abgeschlossene Aufträge: ${min_completed_orders}
+  
+  <strong># HILFE</strong>
+  /counterpartyage &lt;tage&gt; - Legt das Mindestalter (in Tagen) fest, das der Vertragspartner haben muss, um deine Aufträge anzunehmen.
+  /counterpartyorders &lt;aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge für den Vertragspartner fest, damit dieser deine Aufträge annehmen kann.
+  /reset - Setzt diese Konfiguration auf die Standardwerte zurück
+  /exit - Um diesen Assistenten zu verlassen
+counterpartyage_updated: Altersanforderung des Vertragspartners auf ${days} Tage aktualisiert.
+counterpartyorders_updated: Anforderung für abgeschlossene Aufträge des Vertragspartners auf ${orders} aktualisiert.
+requirements_reset: Anforderungen an den Vertragspartner wurden auf Standardwerte zurückgesetzt.
+not_meeting_requirements: Du erfüllst nicht die Anforderungen des Vertragspartners, um diesen Auftrag anzunehmen.
+invalid_number: Ungültige Nummer.

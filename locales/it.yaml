@@ -703,3 +703,19 @@ unblock_failed: "Errore nello sbloccare l'utente"
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+
+user_requirements: |
+  <strong>Requisiti della controparte</strong>
+  anzianità utente richiesta: ${min_days_using_bot} giorni di utilizzo del bot.
+  ordini completati: ${min_completed_orders}
+  
+  <strong># AIUTO</strong>
+  /counterpartyage &lt;giorni&gt; - Imposta il requisito di anzianità minima (in giorni) richiesto per la controparte per accettare i tuoi ordini.
+  /counterpartyorders &lt;ordini&gt; - Imposta il requisito minimo di ordini completati dalla controparte affinché possa accettare i tuoi ordini.
+  /reset - riporta questa configurazione al valore predefinito
+  /exit - per uscire da questa procedura guidata
+counterpartyage_updated: Requisito di anzianità della controparte aggiornato a ${days} giorni.
+counterpartyorders_updated: Requisito di ordini completati della controparte aggiornato a ${orders}.
+requirements_reset: I requisiti della controparte sono stati riportati ai valori predefiniti.
+not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine.
+invalid_number: Numero non valido.

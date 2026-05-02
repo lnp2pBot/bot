@@ -708,3 +708,19 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+
+user_requirements: |
+  <strong>Requisitos de la contraparte</strong>
+  antiguedad de usuario requerida: ${min_days_using_bot} dias usando el bot.
+  ordenes completadas: ${min_completed_orders}
+  
+  <strong># AYUDA</strong>
+  /counterpartyage &lt;dias&gt; - Setea el requisito de antiguedad minima (en días) requeridos para la contraparte para tomar tus ordenes.
+  /counterpartyorders &lt;ordenes&gt; - Setea el requisito minimo de ordenes completadas por la contraparte para que puedan tomar tus ordenes.
+  /reset - vuelve esta configuracion al valor por defecto
+  /exit - para salir de este asistente
+counterpartyage_updated: Requisito de antigüedad de la contraparte actualizado a ${days} días.
+counterpartyorders_updated: Requisito de órdenes completadas de la contraparte actualizado a ${orders}.
+requirements_reset: Los requisitos de la contraparte se han vuelto al valor por defecto.
+not_meeting_requirements: No cumples con los requisitos de la contraparte para tomar esta orden.
+invalid_number: Número inválido.
