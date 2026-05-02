@@ -254,6 +254,7 @@ help: |
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
+  /requirements - Enter Counterparty Requirements Wizard
   /listorders - Use this command to list all your pending transactions 
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
@@ -712,3 +713,20 @@ unblock_failed: "Error unblocking the user"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
+
+user_requirements: |
+  <strong>Counterparty Requirements</strong>
+  Required counterparty age: ${min_days_using_bot} days using the bot.
+  Completed orders: ${min_completed_orders}
+  
+  <strong># HELP</strong>
+  /counterpartyage &lt;days&gt; - Sets the minimum age (in days) required for the counterparty to take your orders.
+  /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders required for the counterparty to take your orders.
+  /reset - Returns this configuration to default values
+  /exit - To exit this wizard
+counterpartyage_updated: Counterparty age requirement updated to ${days} days.
+counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
+requirements_reset: Counterparty requirements have been reset to default.
+not_meeting_requirements: You do not meet the counterparty requirements to take this order.
+invalid_number: Invalid number.
+invalid_range: Invalid value for parameter ${command}, please choose a number in the range [0 - ${max}]

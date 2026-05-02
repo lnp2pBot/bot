@@ -253,6 +253,7 @@ help: |
   /setaddress <_addresse lightning / off_> - Permet à l'acheteur de définir une adresse de paiement statique (adresse lightning), _off_ pour désactiver 
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
+  /requirements - Entrer dans l'assistant des exigences de la contrepartie
   /listorders - Utilise cette commande pour afficher toutes tes offres en attente 
   /listcurrencies - Lister les devises que nous pouvons utiliser sans spécifier le montant en satoshi. 
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
@@ -706,3 +707,20 @@ unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
+
+user_requirements: |
+  <strong>Exigences de la contrepartie</strong>
+  Âge de la contrepartie requis : ${min_days_using_bot} jours d'utilisation du bot.
+  Ordres complétés : ${min_completed_orders}
+  
+  <strong># AIDE</strong>
+  /counterpartyage &lt;jours&gt; - Définit l'âge minimum (en jours) requis pour la contrepartie pour prendre vos ordres.
+  /counterpartyorders &lt;ordres&gt; - Définit le nombre minimum d'ordres complétés par la contrepartie pour qu'ils puissent prendre vos ordres.
+  /reset - Réinitialise cette configuration aux valeurs par défaut
+  /exit - Pour quitter cet assistant
+counterpartyage_updated: Exigence d'âge de la contrepartie mise à jour à ${days} jours.
+counterpartyorders_updated: Exigence d'ordres complétés de la contrepartie mise à jour à ${orders}.
+requirements_reset: Les exigences de la contrepartie ont été réinitialisées par défaut.
+not_meeting_requirements: Vous ne remplissez pas les exigences de la contrepartie pour prendre cet ordre.
+invalid_number: Nombre invalide.
+invalid_range: Valeur invalide pour le paramètre ${command}, veuillez choisir un nombre dans la plage [0 - ${max}]
