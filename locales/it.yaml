@@ -442,6 +442,8 @@ pending_payment_success: |
   Prova di pagamento: ${paymentSecret}
 pending_payment_failed: |
   🤖 Ho tentato di pagare la tua invoice ${attempts} volte ma senza successo, a volte gli utenti della rete Lightning non possono ricevere pagamenti perché il loro wallet non ha sufficiente capacità in entrata o perché il nodo non è ben collegato alla rete. Puoi provare a generare una fattura da un altro wallet.
+pending_payment_failed_earnings: |
+  🤖 Ho tentato di pagare la tua invoice di prelievo ${attempts} volte ma senza successo. Per favore riprova con una nuova invoice da un altro wallet.
 pending_payment_failed_to_admin: |
   Il pagamento della invoice per l'ordine di acquisto ${orderId} dell'utente @${username} è fallito.
 
@@ -657,7 +659,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Tasso del Miele Dorato! Non verrà addebitata alcuna commissione! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

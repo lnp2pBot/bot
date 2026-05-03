@@ -444,6 +444,8 @@ pending_payment_success: |
   Prova de pagamento: ${paymentSecret}
 pending_payment_failed: |
   🤖 Eu tentei pagar sua fatura ${attempts} Tempos e falhas, às vezes os usuários da rede de lightning não podem receber pagamentos porque sua carteira não possui capacidade de entrada suficiente ou o nó não está bem conectado na rede. Você pode tentar gerar uma fatura de outra carteira.
+pending_payment_failed_earnings: |
+  🤖 Eu tentei pagar sua fatura de retirada ${attempts} vezes e falhei. Por favor, tente novamente com uma nova fatura de outra carteira.
 pending_payment_failed_to_admin: |
   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
 
@@ -659,7 +661,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Texugo de Mel Dourado! Nenhuma taxa será cobrada! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

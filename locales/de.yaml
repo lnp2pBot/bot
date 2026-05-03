@@ -445,6 +445,8 @@ pending_payment_failed: |
   🤖 Ich habe ${attempts} Mal versucht, deine LN-Rechnung zu bezahlen und bin gescheitert. Manchmal können Nutzer des Lightning-Netzwerks keine Zahlungen erhalten, weil ihre Wallet nicht genügend Guthaben auf ihrem Node hat. Du solltest versuchen, eine LN-Rechnung von einer anderen Wallet mit genügend Guthaben zu erstellen.
 
   Wenn du mir eine neue LN-Rechnung schicken möchtest, um die Sats zu erhalten, benutze bitte den folgenden Befehl. 👇
+pending_payment_failed_earnings: |
+  🤖 Ich habe ${attempts} Mal versucht, deine Auszahlungs-LN-Rechnung zu bezahlen und bin gescheitert. Bitte versuche es erneut mit einer neuen LN-Rechnung von einer anderen Wallet.
 pending_payment_failed_to_admin: |
   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
@@ -660,7 +662,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Goldener Honigdachs! Es werden keine Gebühren erhoben! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

@@ -446,6 +446,8 @@ pending_payment_success: |
   Prueba de pago: ${paymentSecret}
 pending_payment_failed: |
   🤖 He intentado pagar tu factura un total de ${attempts} veces y todas han fallado, algunas veces los usuarios de lightning network no pueden recibir pagos porque no hay suficiente capacidad de entrada en su wallet/nodo, una solución puede ser generar una nueva factura desde otra wallet que sí tenga capacidad.
+pending_payment_failed_earnings: |
+  🤖 He intentado pagar tu factura de retiro ${attempts} veces y todas han fallado. Por favor, intenta de nuevo con una nueva factura desde otra wallet.
 pending_payment_failed_to_admin: |
   El pago a la invoice de la compra Id: ${orderId} del usuario @${username} ha fallado!
 
@@ -662,7 +664,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 ¡Tejón de Miel Dorado! ¡No se cobrará comisión! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}

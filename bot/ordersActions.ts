@@ -45,7 +45,6 @@ interface BuildDescriptionArguments {
   priceMargin: any;
   priceFromAPI: boolean;
   currency: IFiat;
-  isGoldenHoneyBadger?: boolean;
 }
 
 interface FiatAmountData {
@@ -114,26 +113,17 @@ const createOrder = async (
     const fiatAmountData = getFiatAmountData(fiatAmount);
 
     let randomImage = '';
-    let isGoldenHoneyBadger = false;
-    let isGoldenHoneyBadgerOrder = false;
 
     if (type === 'sell') {
       const result = generateRandomImage(user._id.toString());
       randomImage = result.randomImage;
-      isGoldenHoneyBadger = result.isGoldenHoneyBadger;
-      isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;
     }
-
-    const recalculatedFee = isGoldenHoneyBadgerOrder
-      ? await getFee(amount, community_id || '', true)
-      : fee;
 
     const baseOrderData = {
       ...fiatAmountData,
       amount,
-      fee: recalculatedFee,
-      bot_fee: isGoldenHoneyBadgerOrder ? 0 : botFee,
-      is_golden_honey_badger: isGoldenHoneyBadgerOrder,
+      fee,
+      bot_fee: botFee,
       community_fee: communityFee,
       creator_id: user._id,
       type,
@@ -154,7 +144,6 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
-        isGoldenHoneyBadger,
       }),
       range_parent_id,
       community_id,
@@ -214,7 +203,6 @@ const buildDescription = (
     priceMargin,
     priceFromAPI,
     currency,
-    isGoldenHoneyBadger,
   }: BuildDescriptionArguments,
 ) => {
   try {
