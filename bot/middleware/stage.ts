@@ -27,6 +27,7 @@ export const stageMiddleware = () => {
     addInvoicePHIWizard,
     OrdersModule.Scenes.createOrder,
     UserModule.Scenes.Settings,
+    UserModule.Scenes.Requirements,
   ];
   scenes.forEach(addGenericCommands);
   const stage = new Scenes.Stage(scenes, {

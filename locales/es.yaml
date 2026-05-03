@@ -251,6 +251,7 @@ help: |
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
   /setlang - Le permite al usuario cambiar el idioma
   /settings - Muestra la configuración actual del usuario
+  /requirements - Entrar al asistente de requisitos de contraparte
   /listorders - El usuario puede listar sus órdenes no finalizadas
   /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
   /fiatsent <_id orden_> - El comprador indica que ya ha enviado el dinero Fiat al vendedor
@@ -709,3 +710,20 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+
+user_requirements: |
+  <strong>Requisitos de la contraparte</strong>
+  antiguedad de usuario requerida: ${min_days_using_bot} dias usando el bot.
+  ordenes completadas: ${min_completed_orders}
+  
+  <strong># AYUDA</strong>
+  /counterpartyage &lt;dias&gt; - Setea el requisito de antiguedad minima (en días) requeridos para la contraparte para tomar tus ordenes.
+  /counterpartyorders &lt;ordenes&gt; - Setea el requisito minimo de ordenes completadas por la contraparte para que puedan tomar tus ordenes.
+  /reset - vuelve esta configuracion al valor por defecto
+  /exit - para salir de este asistente
+counterpartyage_updated: Requisito de antigüedad de la contraparte actualizado a ${days} días.
+counterpartyorders_updated: Requisito de órdenes completadas de la contraparte actualizado a ${orders}.
+requirements_reset: Los requisitos de la contraparte se han vuelto al valor por defecto.
+not_meeting_requirements: No cumples con los requisitos de la contraparte para tomar esta orden.
+invalid_number: Número inválido.
+invalid_range: Valor inválido para el parámetro ${command}, por favor elija un número en el rango [0 - ${max}]

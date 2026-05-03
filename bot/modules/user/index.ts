@@ -13,6 +13,14 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       ctx.reply(err.message);
     }
   });
+  bot.command('/requirements', userMiddleware, async ctx => {
+    try {
+      const { user } = ctx;
+      await ctx.scene.enter(Scenes.Requirements.id, { user });
+    } catch (err: any) {
+      ctx.reply(err.message);
+    }
+  });
 };
 
 export { Scenes };

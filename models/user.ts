@@ -25,6 +25,10 @@ export interface UserDocument extends Document {
   disputes: number;
   created_at: Date;
   default_community_id?: string;
+  counterparty_requirements: {
+    min_days_using_bot: number;
+    min_completed_orders: number;
+  };
 }
 
 const UserReviewSchema = new Schema<UserReview>({
@@ -51,6 +55,10 @@ const UserSchema = new Schema<UserDocument>({
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },
   default_community_id: { type: String },
+  counterparty_requirements: {
+    min_days_using_bot: { type: Number, min: 0, default: 0 },
+    min_completed_orders: { type: Number, min: 0, default: 0 },
+  },
 });
 
 export default mongoose.model<UserDocument>('User', UserSchema);
