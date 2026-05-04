@@ -67,8 +67,8 @@ export const createOrder = new Scenes.WizardScene(
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
 
-      let replaceRegex = /[&/\\#,+~%.'":*?<>{}]/g;
-      let paymentMethod = selectedMethods?.length
+      const replaceRegex = /[&/\\#,+~%.'":*?<>{}]/g;
+      const paymentMethod = selectedMethods?.length
         ? selectedMethods.map(m => m.replace(replaceRegex, '')).join(', ')
         : method.replace(replaceRegex, '');
 
