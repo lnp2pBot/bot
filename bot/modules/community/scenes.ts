@@ -945,7 +945,7 @@ export const updatePaymentMethodsCommunityWizard = new Scenes.WizardScene(
         .map(m => m.trim())
         .filter(m => m.length > 0);
 
-      const max = 20;
+      const max = parseInt(process.env.MAX_COMMUNITY_PAYMENT_METHODS || '10');
       if (methods.length > max) {
         return await ctx.reply(ctx.i18n.t('max_allowed', { max }));
       }
