@@ -211,6 +211,7 @@ const createOrderSteps = {
         if (ctx.message === undefined || !('text' in ctx.message)) return;
         const { text } = ctx.message;
         if (!text) return;
+        ctx.wizard.state.selectedMethods = [];
         ctx.wizard.state.method = text;
         await ctx.wizard.state.updateUI();
         await ctx.deleteMessage();
@@ -241,6 +242,7 @@ const createOrderSteps = {
           if (ctx.message === undefined || !('text' in ctx.message)) return;
           const { text } = ctx.message;
           if (!text) return;
+          ctx.wizard.state.selectedMethods = [];
           ctx.wizard.state.method = text;
           await ctx.wizard.state.updateUI();
           await ctx.deleteMessage();
