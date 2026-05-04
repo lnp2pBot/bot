@@ -1011,6 +1011,7 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
         community_id: community._id,
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         paid: false,
+        is_invoice_expired: false,
       });
       // We check if the payment is on flight
       const isPending = await isPendingPayment(lnInvoice);

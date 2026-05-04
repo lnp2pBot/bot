@@ -459,17 +459,9 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
 
 // Return the fee the bot will charge to the seller
 // this fee is a combination from the global bot fee and the community fee
-// When isGoldenHoneyBadger=true, only the community fee is charged (botFee=0)
-const getFee = async (
-  amount: number,
-  communityId: string,
-  isGoldenHoneyBadger = false,
-) => {
+const getFee = async (amount: number, communityId: string) => {
   const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
-  if (!communityId) {
-    // if no community, return 0 if golden honey badger, otherwise return max fee
-    return isGoldenHoneyBadger ? 0 : maxFee;
-  }
+  if (!communityId) return maxFee;
 
   // Calculate fees
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
@@ -478,11 +470,7 @@ const getFee = async (
   if (community === null) throw Error('Community was not found in DB');
   communityFee = communityFee * (community.fee / 100);
 
-  if (isGoldenHoneyBadger) {
-    return communityFee;
-  } else {
-    return botFee + communityFee;
-  }
+  return botFee + communityFee;
 };
 
 const itemsFromMessage = (str: string) => {

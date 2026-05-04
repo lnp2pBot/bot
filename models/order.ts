@@ -46,7 +46,6 @@ export interface IOrder extends Document {
   is_frozen: boolean;
   is_public: boolean;
   random_image: string;
-  is_golden_honey_badger?: boolean;
   settled_by_admin?: boolean;
 }
 
@@ -144,7 +143,6 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   is_public: { type: Boolean, default: true },
   is_frozen: { type: Boolean, default: false },
   random_image: { type: String },
-  is_golden_honey_badger: { type: Boolean, default: false },
 });
 
 export default mongoose.model<IOrder>('Order', orderSchema);

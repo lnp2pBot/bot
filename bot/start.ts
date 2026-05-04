@@ -135,7 +135,7 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
     } else if (command === '/setinvoice') {
       const where: FilterQuery<OrderQuery> = {
         buyer_id: user._id,
-        status: 'PAID_HOLD_INVOICE',
+        status: { $in: ['PAID_HOLD_INVOICE', 'WAITING_BUYER_INVOICE'] },
       };
 
       orders = await Order.find(where);
@@ -892,8 +892,14 @@ const initialize = (
       if (ctx.match === null) {
         throw new Error('ctx.match should not be null');
       }
-      ctx.deleteMessage();
-      await addInvoicePHI(ctx, bot, ctx.match[1]);
+      const order = await Order.findOne({ _id: ctx.match[1] });
+      if (!order) return;
+
+      if (order.status === 'WAITING_BUYER_INVOICE') {
+        await addInvoice(ctx, bot, order);
+      } else {
+        await addInvoicePHI(ctx, bot, ctx.match[1]);
+      }
     },
   );
 
