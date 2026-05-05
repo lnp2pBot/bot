@@ -260,7 +260,7 @@ const createOrderPrompts = {
   },
 };
 
-const createOrderHandlers = {
+export const createOrderHandlers = {
   async fiatAmount(ctx: CommunityContext) {
     if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.error = null;
@@ -304,18 +304,19 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return true;
     }
-    const input = Number(ctx.message?.text);
+    const rawInput = Number(ctx.message?.text);
     await ctx.deleteMessage();
-    if (isNaN(input)) {
+    if (isNaN(rawInput)) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
       return;
     }
-    if (input < 0) {
+    if (rawInput < 0) {
       ctx.wizard.state.error = ctx.i18n.t('not_negative');
       await ctx.wizard.state.updateUI();
       return;
     }
+    const input = Math.floor(rawInput);
     const minPaymentAmt = Number(process.env.MIN_PAYMENT_AMT) || 0;
     const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
     if (input !== 0 && minPaymentAmt > 0 && input < minPaymentAmt) {
@@ -334,7 +335,7 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return;
     }
-    ctx.wizard.state.sats = Math.floor(input);
+    ctx.wizard.state.sats = input;
     await ctx.wizard.state.updateUI();
     return true;
   },
