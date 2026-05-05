@@ -212,8 +212,8 @@ const validateSellOrder = async (ctx: MainContext) => {
       return false;
     }
 
-    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
-    if (amount !== 0 && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
+    if (amount !== 0 && Number.isFinite(maxPaymentAmt) && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
       await messages.mustBeLessEqThan(ctx, 'monto_en_sats', maxPaymentAmt);
       return false;
     }
@@ -306,8 +306,8 @@ const validateBuyOrder = async (ctx: MainContext) => {
       return false;
     }
 
-    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
-    if (amount !== 0 && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
+    if (amount !== 0 && Number.isFinite(maxPaymentAmt) && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
       await messages.mustBeLessEqThan(ctx, 'monto_en_sats', maxPaymentAmt);
       return false;
     }
