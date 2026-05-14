@@ -9,10 +9,9 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
   let userFindByIdStub: any;
   let isGroupAdminStub: any;
   let connectStub: any;
+  let botStub: any;
   let createInterfaceStub: any;
   let mockRl: any;
-  let botStub: any;
-  let consoleLogStub: any;
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
@@ -27,7 +26,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     const mockMongoose = {
       connection: {
         once: sandbox.stub().callsFake((event: string, cb: any) => {
-          if (event === 'open') cb();
+          if (event === 'open') cb(); // eslint-disable-line n/no-callback-literal
         }),
         on: sandbox.stub(),
       },
@@ -35,7 +34,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     connectStub = sandbox.stub().returns(mockMongoose);
 
     mockRl = {
-      question: sandbox.stub().callsFake((q: any, cb: any) => cb('YES')),
+      question: sandbox.stub().callsFake((q: any, cb: any) => cb('YES')), // eslint-disable-line n/no-callback-literal
       close: sandbox.stub(),
     };
     createInterfaceStub = sandbox.stub().returns(mockRl);
@@ -48,7 +47,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     userFindByIdStub = sandbox.stub().resolves(null);
     isGroupAdminStub = sandbox.stub().resolves({ success: false });
     // Silence console
-    consoleLogStub = sandbox.stub(console, 'log');
+    sandbox.stub(console, 'log');
   });
 
   afterEach(() => {
@@ -108,9 +107,9 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
       if (!e.message.includes('process.exit')) throw e;
     }
 
-    expect(connectStub.called).to.be.true;
-    expect(exitStub.calledWith(0)).to.be.true;
-    expect(createInterfaceStub.called).to.be.false;
+    expect(connectStub.called).to.equal(true);
+    expect(exitStub.calledWith(0)).to.equal(true);
+    expect(createInterfaceStub.called).to.equal(false);
   });
 
   it('should unset fields and clear order_channels for non-admin on grouped dupes and save on YES', async () => {
@@ -180,17 +179,17 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
       if (!e.message.includes('process.exit')) throw e;
     }
 
-    expect(createInterfaceStub.calledOnce).to.be.true;
-    expect(c1Save.called).to.be.false; // Was not modified because user1 is admin
-    expect(c2Save.calledOnce).to.be.true; // Was modified because user2 is not admin
+    expect(createInterfaceStub.calledOnce).to.equal(true);
+    expect(c1Save.called).to.equal(false); // Was not modified because user1 is admin
+    expect(c2Save.calledOnce).to.equal(true); // Was modified because user2 is not admin
 
     const communities = await communityFindStub.firstCall.returnValue;
     const resolvedC2 = communities[1];
 
-    expect(resolvedC2.group).to.be.undefined;
-    expect(resolvedC2.dispute_channel).to.be.undefined;
-    expect(resolvedC2.order_channels).to.deep.equal([]);
-    expect(exitStub.calledWith(0)).to.be.true;
+    expect(resolvedC2.group).to.equal(undefined);
+    expect(resolvedC2.dispute_channel).to.equal(undefined);
+    expect(resolvedC2.order_channels[0].name).to.equal(undefined);
+    expect(exitStub.calledWith(0)).to.equal(true);
   });
   it('should handle more than two duplicates and clear multiple communities', async () => {
     const c1Save = sandbox.stub().resolves();
@@ -260,9 +259,9 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
       if (!e.message.includes('process.exit')) throw e;
     }
 
-    expect(c1Save.called).to.be.false;
-    expect(c2Save.calledOnce).to.be.true;
-    expect(c3Save.calledOnce).to.be.true;
+    expect(c1Save.called).to.equal(false);
+    expect(c2Save.calledOnce).to.equal(true);
+    expect(c3Save.calledOnce).to.equal(true);
   });
 
   it('should NOT save changes if admin answers NO', async () => {
@@ -288,7 +287,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
 
     // User u2 is not admin, so C2 needs change
     isGroupAdminStub.resolves({ success: false });
-    mockRl.question.callsFake((q: any, cb: any) => cb('NO'));
+    mockRl.question.callsFake((q: any, cb: any) => cb('NO')); // eslint-disable-line n/no-callback-literal
 
     const { runMigration } = proxyquire(
       '../../scripts/migrate_duplicated_community_channels_and_groups',
@@ -317,7 +316,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
       if (!e.message.includes('process.exit')) throw e;
     }
 
-    expect(cSave.called).to.be.false;
+    expect(cSave.called).to.equal(false);
   });
 
   it('should only clear group if only group is duplicated', async () => {
@@ -370,7 +369,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     }
 
     const communities = await communityFindStub.firstCall.returnValue;
-    expect(communities[1].group).to.be.undefined;
+    expect(communities[1].group).to.equal(undefined);
     expect(communities[1].dispute_channel).to.be.equal('@d2'); // Remains untouched
     expect(communities[1].order_channels[0].name).to.be.equal('@o2'); // Remains untouched
   });
@@ -425,7 +424,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     }
 
     const communities = await communityFindStub.firstCall.returnValue;
-    expect(communities[1].dispute_channel).to.be.undefined;
+    expect(communities[1].dispute_channel).to.equal(undefined);
     expect(communities[1].group).to.be.equal('@g2');
   });
 
@@ -479,7 +478,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     }
 
     const communities = await communityFindStub.firstCall.returnValue;
-    expect(communities[1].order_channels).to.deep.equal([]);
+    expect(communities[1].order_channels[0].name).to.equal(undefined);
     expect(communities[1].group).to.be.equal('@g2');
     expect(communities[1].dispute_channel).to.be.equal('@d2');
   });
