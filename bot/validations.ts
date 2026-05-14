@@ -206,15 +206,24 @@ const validateSellOrder = async (ctx: MainContext) => {
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
-        'monto_en_sats',
+        ctx.i18n.t('sats_amount'),
         Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
 
     const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
-    if (amount !== 0 && Number.isFinite(maxPaymentAmt) && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
-      await messages.mustBeLessEqThan(ctx, 'monto_en_sats', maxPaymentAmt);
+    if (
+      amount !== 0 &&
+      Number.isFinite(maxPaymentAmt) &&
+      maxPaymentAmt > 0 &&
+      amount > maxPaymentAmt
+    ) {
+      await messages.mustBeLessEqThan(
+        ctx,
+        ctx.i18n.t('sats_amount'),
+        maxPaymentAmt,
+      );
       return false;
     }
 
@@ -229,7 +238,7 @@ const validateSellOrder = async (ctx: MainContext) => {
     }
 
     if (fiatAmount.some((x: number) => x < 1)) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, ctx.i18n.t('fiat_amount'), 1);
       return false;
     }
 
@@ -300,15 +309,24 @@ const validateBuyOrder = async (ctx: MainContext) => {
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
-        'monto_en_sats',
+        ctx.i18n.t('sats_amount'),
         Number(process.env.MIN_PAYMENT_AMT),
       );
       return false;
     }
 
     const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
-    if (amount !== 0 && Number.isFinite(maxPaymentAmt) && maxPaymentAmt > 0 && amount > maxPaymentAmt) {
-      await messages.mustBeLessEqThan(ctx, 'monto_en_sats', maxPaymentAmt);
+    if (
+      amount !== 0 &&
+      Number.isFinite(maxPaymentAmt) &&
+      maxPaymentAmt > 0 &&
+      amount > maxPaymentAmt
+    ) {
+      await messages.mustBeLessEqThan(
+        ctx,
+        ctx.i18n.t('sats_amount'),
+        maxPaymentAmt,
+      );
       return false;
     }
 
@@ -323,7 +341,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
     }
 
     if (fiatAmount.some((x: number) => x < 1)) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, ctx.i18n.t('fiat_amount'), 1);
       return false;
     }
 
