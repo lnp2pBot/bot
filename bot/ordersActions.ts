@@ -318,7 +318,7 @@ const getOrders = async (user: UserDocument, status?: string) => {
     const where: any = {
       $and: [
         {
-          $or: [{ buyer_id: user._id }, { seller_id: user._id }],
+          $or: [{ buyer_id: user._id.toString() }, { seller_id: user._id.toString() }],
         },
       ],
     };

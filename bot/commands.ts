@@ -761,12 +761,12 @@ const cancelOrder = async (
       if (updateOrder.hash) await cancelHoldInvoice({ hash: updateOrder.hash });
 
       updateOrder.status = 'CANCELED';
-      updateOrder.canceled_by = String(user._id);
+      updateOrder.canceled_by = user._id.toString();
       await updateOrder.save();
 
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
-      if (order.seller_id == counterPartyUser._id.toString()) {
+      if (order.seller_id === counterPartyUser._id.toString()) {
         seller = counterPartyUser;
         i18nCtxSeller = i18nCtxCP;
       }
