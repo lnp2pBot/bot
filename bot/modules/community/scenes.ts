@@ -394,9 +394,9 @@ const createCommunitySteps = {
           const user = await User.findOne({ username });
           if (user) {
             solvers.push({
-              id: user._id,
+              id: user._id.toString(),
               username: user.username,
-            } as IUsernameId);
+            } as unknown as IUsernameId);
           }
         }
       } else {
@@ -745,9 +745,9 @@ export const updateSolversCommunityWizard = new Scenes.WizardScene(
           if (user == null) throw new Error('user not found');
           if (user) {
             solvers.push({
-              id: user._id,
+              id: user._id.toString(),
               username: user.username,
-            } as IUsernameId);
+            } as unknown as IUsernameId);
             botUsers.push(username);
           } else {
             notBotUsers.push(username);
@@ -945,8 +945,8 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
 
       const isScheduled = await PendingPayment.findOne({
-        community_id: community._id,
-        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        community_id: community._id.toString(),
+        attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
         paid: false,
         is_invoice_expired: false,
       });

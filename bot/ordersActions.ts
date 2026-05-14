@@ -297,7 +297,7 @@ const getOrder = async (
 
     const where = {
       _id: orderId,
-      $or: [{ seller_id: user._id }, { buyer_id: user._id }],
+      $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }],
     };
 
     const order = await Order.findOne(where).exec();
@@ -365,7 +365,7 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
         paymentMethod: order.payment_method,
         status: 'PENDING',
         priceMargin: order.price_margin,
-        range_parent_id: order._id,
+        range_parent_id: order._id.toString(),
         tgChatId: order.tg_chat_id,
         tgOrderMessage: order.tg_order_message,
         community_id: order.community_id,

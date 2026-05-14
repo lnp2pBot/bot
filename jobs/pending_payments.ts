@@ -13,7 +13,7 @@ export const attemptPendingPayments = async (
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
     is_invoice_expired: false,
     community_id: null,
     next_retry: { $lte: new Date() },
@@ -162,7 +162,7 @@ export const attemptCommunitiesPendingPayments = async (
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
     is_invoice_expired: false,
     community_id: { $ne: null },
     next_retry: { $lte: new Date() },

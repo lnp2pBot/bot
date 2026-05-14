@@ -158,7 +158,7 @@ export const earningsMessage = async (ctx: MainContext) => {
     // We check if there is a payment scheduled for this community
     const isScheduled = await PendingPayment.findOne({
       community_id: communityId,
-      attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+      attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
       paid: false,
     });
     if (isScheduled)
