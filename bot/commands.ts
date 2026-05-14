@@ -739,7 +739,10 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    const updateOrder = await setCooperativeCancelFlag(order._id.toString(), initiator);
+    const updateOrder = await setCooperativeCancelFlag(
+      order._id.toString(),
+      initiator,
+    );
 
     // If the call returns null, the flag was already set (or order is missing),
     // so we treat it as a duplicate request.

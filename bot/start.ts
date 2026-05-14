@@ -101,7 +101,12 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
     if (command === '/cancel') {
       const where: QueryFilter<OrderQuery> = {
         $and: [
-          { $or: [{ buyer_id: user._id.toString() }, { seller_id: user._id.toString() }] },
+          {
+            $or: [
+              { buyer_id: user._id.toString() },
+              { seller_id: user._id.toString() },
+            ],
+          },
           {
             $or: [
               { status: 'ACTIVE' },

@@ -570,7 +570,12 @@ const validateDisputeOrder = async (
       $and: [
         { _id: orderId },
         { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
-        { $or: [{ seller_id: user._id.toString() }, { buyer_id: user._id.toString() }] },
+        {
+          $or: [
+            { seller_id: user._id.toString() },
+            { buyer_id: user._id.toString() },
+          ],
+        },
       ],
     };
 
