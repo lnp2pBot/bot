@@ -304,7 +304,10 @@ export const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return true;
     }
-    const rawInput = Number(ctx.message?.text);
+    if (!ctx.message?.text) {
+      return ctx.scene.leave();
+    }
+    const rawInput = Number(ctx.message.text);
     await ctx.deleteMessage();
     if (isNaN(rawInput)) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
