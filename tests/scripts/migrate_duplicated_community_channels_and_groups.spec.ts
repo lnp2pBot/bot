@@ -203,7 +203,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
         group: '@dupe',
         creator_id: 'u1',
         save: c1Save,
-        order_channels: [],
+        order_channels: [{ name: '@c1' }],
       },
       {
         _id: '2',
@@ -211,7 +211,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
         group: '@dupe',
         creator_id: 'u2',
         save: c2Save,
-        order_channels: [],
+        order_channels: [{ name: '@c2' }],
       },
       {
         _id: '3',
@@ -219,7 +219,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
         group: '@dupe',
         creator_id: 'u3',
         save: c3Save,
-        order_channels: [],
+        order_channels: [{ name: '@c3' }],
       },
     ]);
 
@@ -272,7 +272,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
         name: 'C1',
         group: '@d',
         creator_id: 'u1',
-        order_channels: [],
+        order_channels: [{ name: '@o1' }],
         save: cSave,
       },
       {
@@ -280,7 +280,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
         name: 'C2',
         group: '@d',
         creator_id: 'u2',
-        order_channels: [],
+        order_channels: [{ name: '@o2' }],
         save: cSave,
       },
     ]);
@@ -441,9 +441,10 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
       },
       {
         _id: '2',
+        name: 'C2',
         group: '@g2',
         dispute_channel: '@d2',
-        order_channels: [{ name: '@o' }],
+        order_channels: [{ name: '@o' }, { name: '@safe' }],
         creator_id: 'u2',
         save: c2Save,
       },
@@ -479,6 +480,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
 
     const communities = await communityFindStub.firstCall.returnValue;
     expect(communities[1].order_channels[0].name).to.equal(undefined);
+    expect(communities[1].order_channels[1].name).to.equal(undefined);
     expect(communities[1].group).to.be.equal('@g2');
     expect(communities[1].dispute_channel).to.be.equal('@d2');
   });
