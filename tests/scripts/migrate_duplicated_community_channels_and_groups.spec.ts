@@ -167,6 +167,135 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     expect(resolvedC2.order_channels).to.deep.equal([]);
     expect(exitStub.calledWith(0)).to.be.true;
   });
+  it('should handle more than two duplicates and clear multiple communities', async () => {
+    const c1Save = sandbox.stub().resolves();
+    const c2Save = sandbox.stub().resolves();
+    const c3Save = sandbox.stub().resolves();
+
+    communityFindStub.resolves([
+      { _id: '1', name: 'C1', group: '@dupe', creator_id: 'u1', save: c1Save, order_channels: [] },
+      { _id: '2', name: 'C2', group: '@dupe', creator_id: 'u2', save: c2Save, order_channels: [] },
+      { _id: '3', name: 'C3', group: '@dupe', creator_id: 'u3', save: c3Save, order_channels: [] }
+    ]);
+
+    userFindByIdStub.withArgs('u1').resolves({ id: 'u1' });
+    userFindByIdStub.withArgs('u2').resolves({ id: 'u2' });
+    userFindByIdStub.withArgs('u3').resolves({ id: 'u3' });
+
+    // Only u1 is admin
+    isGroupAdminStub.callsFake(async (target: string, user: any) => {
+      return { success: user.id === 'u1' };
+    });
+
+    const { runMigration } = proxyquire('../../scripts/migrate_duplicated_community_channels_and_groups', {
+      'mongoose': { connect: connectStub },
+      '../models': { Community: { find: communityFindStub }, User: { findById: userFindByIdStub } },
+      'telegraf': { Telegraf: sandbox.stub().returns(botStub) },
+      '../util': { isGroupAdmin: isGroupAdminStub },
+      'readline': { createInterface: createInterfaceStub }
+    });
+
+    try { await runMigration(); } catch (e: any) { if (!e.message.includes('process.exit')) throw e; }
+
+    expect(c1Save.called).to.be.false;
+    expect(c2Save.calledOnce).to.be.true;
+    expect(c3Save.calledOnce).to.be.true;
+  });
+
+  it('should NOT save changes if admin answers NO', async () => {
+    const cSave = sandbox.stub().resolves();
+    communityFindStub.resolves([
+      { _id: '1', name: 'C1', group: '@d', creator_id: 'u1', order_channels: [], save: cSave },
+      { _id: '2', name: 'C2', group: '@d', creator_id: 'u2', order_channels: [], save: cSave }
+    ]);
+    
+    // User u2 is not admin, so C2 needs change
+    isGroupAdminStub.resolves({ success: false });
+    mockRl.question.callsFake((q: any, cb: any) => cb('NO'));
+
+    const { runMigration } = proxyquire('../../scripts/migrate_duplicated_community_channels_and_groups', {
+      'mongoose': { connect: connectStub },
+      '../models': { Community: { find: communityFindStub }, User: { findById: userFindByIdStub } },
+      'telegraf': { Telegraf: sandbox.stub().returns(botStub) },
+      '../util': { isGroupAdmin: isGroupAdminStub },
+      'readline': { createInterface: createInterfaceStub }
+    });
+
+    try { await runMigration(); } catch (e: any) { if (!e.message.includes('process.exit')) throw e; }
+
+    expect(cSave.called).to.be.false;
+  });
+
+  it('should only clear group if only group is duplicated', async () => {
+    const c2Save = sandbox.stub().resolves();
+    communityFindStub.resolves([
+      { _id: '1', group: '@g', dispute_channel: '@d1', order_channels: [{name: '@o1'}], creator_id: 'u1', save: sandbox.stub() },
+      { _id: '2', group: '@g', dispute_channel: '@d2', order_channels: [{name: '@o2'}], creator_id: 'u2', save: c2Save }
+    ]);
+    isGroupAdminStub.resolves({ success: false });
+
+    const { runMigration } = proxyquire('../../scripts/migrate_duplicated_community_channels_and_groups', {
+      'mongoose': { connect: connectStub },
+      '../models': { Community: { find: communityFindStub }, User: { findById: userFindByIdStub } },
+      'telegraf': { Telegraf: sandbox.stub().returns(botStub) },
+      '../util': { isGroupAdmin: isGroupAdminStub },
+      'readline': { createInterface: createInterfaceStub }
+    });
+
+    try { await runMigration(); } catch (e: any) { if (!e.message.includes('process.exit')) throw e; }
+
+    const communities = await communityFindStub.firstCall.returnValue;
+    expect(communities[1].group).to.be.undefined;
+    expect(communities[1].dispute_channel).to.be.equal('@d2'); // Remains untouched
+    expect(communities[1].order_channels[0].name).to.be.equal('@o2'); // Remains untouched
+  });
+
+  it('should only clear dispute_channel if only dispute_channel is duplicated', async () => {
+    const c2Save = sandbox.stub().resolves();
+    communityFindStub.resolves([
+      { _id: '1', group: '@g1', dispute_channel: '@d', order_channels: [{name: '@o1'}], creator_id: 'u1', save: sandbox.stub() },
+      { _id: '2', group: '@g2', dispute_channel: '@d', order_channels: [{name: '@o2'}], creator_id: 'u2', save: c2Save }
+    ]);
+    isGroupAdminStub.resolves({ success: false });
+
+    const { runMigration } = proxyquire('../../scripts/migrate_duplicated_community_channels_and_groups', {
+      'mongoose': { connect: connectStub },
+      '../models': { Community: { find: communityFindStub }, User: { findById: userFindByIdStub } },
+      'telegraf': { Telegraf: sandbox.stub().returns(botStub) },
+      '../util': { isGroupAdmin: isGroupAdminStub },
+      'readline': { createInterface: createInterfaceStub }
+    });
+
+    try { await runMigration(); } catch (e: any) { if (!e.message.includes('process.exit')) throw e; }
+
+    const communities = await communityFindStub.firstCall.returnValue;
+    expect(communities[1].dispute_channel).to.be.undefined;
+    expect(communities[1].group).to.be.equal('@g2');
+  });
+
+  it('should only clear order_channels if only order_channels are duplicated', async () => {
+    const c2Save = sandbox.stub().resolves();
+    communityFindStub.resolves([
+      { _id: '1', group: '@g1', dispute_channel: '@d1', order_channels: [{name: '@o'}], creator_id: 'u1', save: sandbox.stub() },
+      { _id: '2', group: '@g2', dispute_channel: '@d2', order_channels: [{name: '@o'}], creator_id: 'u2', save: c2Save }
+    ]);
+    isGroupAdminStub.resolves({ success: false });
+
+    const { runMigration } = proxyquire('../../scripts/migrate_duplicated_community_channels_and_groups', {
+      'mongoose': { connect: connectStub },
+      '../models': { Community: { find: communityFindStub }, User: { findById: userFindByIdStub } },
+      'telegraf': { Telegraf: sandbox.stub().returns(botStub) },
+      '../util': { isGroupAdmin: isGroupAdminStub },
+      'readline': { createInterface: createInterfaceStub }
+    });
+
+    try { await runMigration(); } catch (e: any) { if (!e.message.includes('process.exit')) throw e; }
+
+    const communities = await communityFindStub.firstCall.returnValue;
+    expect(communities[1].order_channels).to.deep.equal([]);
+    expect(communities[1].group).to.be.equal('@g2');
+    expect(communities[1].dispute_channel).to.be.equal('@d2');
+  });
 });
 
 export {};
