@@ -265,6 +265,8 @@ help: |
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
   /terms - Shows the terms and conditions when using the bot
+  Templates:
+  /templates - Create and manage your order templates
 
   Nostr:
   /setnpub <_nostr npub_> - Updates your nostr pubkey, this command is only executable in the /settings wizard
@@ -578,7 +580,7 @@ chat_not_found: Chat not found. Are you sure you added the bot to the group/chan
 not_member: You are not a member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has changed, check the chat ID again
 community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
-dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
+dispute_too_soon: You can't start a dispute too soon, be patient and wait few minutes for your counterparty to reply
 maintenance: 🚨 Bot in maintenance, please try again later 🚨
 
 # START modules/community
@@ -712,3 +714,22 @@ unblock_failed: "Error unblocking the user"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
+
+# templates
+no_templates: "You have no templates yet. Create one!"
+templates_list: "Your templates:"
+template_published: "✅ Order published from template!"
+template_saved: "✅ Template saved."
+template_deleted: "🗑 Template deleted."
+confirm_delete_template: "Delete this template?"
+enter_template_type: "Choose order type:"
+template_summary: "Template summary:\nType: ${type}\nCurrency: ${fiatCode}\nAmount: ${fiatAmount}\nPrice: ${priceMode}\nMargin: ${margin}%\nPayment: ${paymentMethod}"
+template_not_found: "Template not found."
+create_new_template: "Create new template"
+template_publish_btn: "🚀  Publish"
+template_delete_btn: "🗑  Delete"
+template_card: "${action} ${amountStr} for ${fiatAmount} ${fiatCode}. Payment via ${paymentMethod}.${rateStr}"
+template_rate: " Rate: ${margin}%."
+template_new_prompt: "Create a new template:"
+buy: "Buy"
+sell: "Sell"
