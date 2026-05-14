@@ -113,7 +113,9 @@ export const runMigration = async () => {
       console.log(
         `Community ${c.name} (${c._id}) loses all order_channels due to conflict in one of them`,
       );
-      c.order_channels = [] as any;
+      for (const ch of c.order_channels) {
+        ch.name = undefined as any;
+      }
       modified = true;
     }
 
