@@ -39,10 +39,8 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     communityFindStub = sandbox.stub().resolves([]);
     userFindByIdStub = sandbox.stub().resolves(null);
     isGroupAdminStub = sandbox.stub().resolves({ success: false });
-    // Print through original console
-    consoleLogStub = sandbox.stub(console, 'log').callsFake((...args: any[]) => {
-      console.info('STUBBED LOG:', ...args);
-    });
+    // Silence console
+    consoleLogStub = sandbox.stub(console, 'log');
   });
 
   afterEach(() => {
@@ -91,7 +89,6 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     } catch (e: any) {
       if (!e.message.includes('process.exit')) throw e;
     }
-    console.info('Test 1 finished runMigration');
 
     expect(connectStub.called).to.be.true;
     expect(exitStub.calledWith(0)).to.be.true;
