@@ -1,6 +1,7 @@
 import { Scenes, Markup } from 'telegraf';
 import { logger } from '../../../logger';
 import { getCurrency } from '../../../util';
+import { Community } from '../../../models';
 import * as ordersActions from '../../ordersActions';
 import {
   publishBuyOrderMessage,
@@ -30,6 +31,7 @@ export const createOrder = new Scenes.WizardScene(
         sats,
         priceMargin,
         method,
+        selectedMethods,
       } = ctx.wizard.state;
       if (!statusMessage) {
         const { text } = messages.createOrderWizardStatus(
@@ -64,8 +66,11 @@ export const createOrder = new Scenes.WizardScene(
       if (undefined === priceMargin && sats === 0)
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
-      // We remove all special characters from the payment method
-      const paymentMethod = method.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
+
+      const replaceRegex = /[&/\\#,+~%.'":*?<>{}]/g;
+      const paymentMethod = selectedMethods?.length
+        ? selectedMethods.map(m => m.replace(replaceRegex, '')).join(', ')
+        : method.replace(replaceRegex, '');
 
       const order = await ordersActions.createOrder(ctx.i18n, ctx, user, {
         type,
@@ -145,19 +150,143 @@ const createOrderSteps = {
     return ctx.wizard.next();
   },
   async method(ctx: CommunityContext) {
-    ctx.wizard.state.handler = async ctx => {
-      if (ctx.message === undefined) return ctx.scene.leave();
-      const { text } = ctx.message;
-      if (!text) return;
-      ctx.wizard.state.method = text;
-      await ctx.wizard.state.updateUI();
-      await ctx.deleteMessage();
-      return await ctx.telegram.deleteMessage(
-        prompt.chat.id,
-        prompt.message_id,
+    const { user } = ctx.wizard.state;
+    const stateComm = ctx.wizard.state.community;
+    const loadedComm =
+      !stateComm && user?.default_community_id
+        ? await Community.findById(user.default_community_id)
+        : null;
+    const community = stateComm ?? loadedComm;
+    if (loadedComm) ctx.wizard.state.community = loadedComm;
+    const paymentMethods = community?.payment_methods;
+
+    if (!paymentMethods || paymentMethods.length === 0) {
+      ctx.wizard.state.handler = async ctx => {
+        if (ctx.message === undefined) return ctx.scene.leave();
+        if (!('text' in ctx.message)) return;
+        const { text } = ctx.message;
+        if (!text) return;
+        ctx.wizard.state.method = text;
+        await ctx.wizard.state.updateUI();
+        await ctx.deleteMessage();
+        return await ctx.telegram.deleteMessage(
+          prompt.chat.id,
+          prompt.message_id,
+        );
+      };
+      const prompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
+      return ctx.wizard.next();
+    }
+
+    ctx.wizard.state.selectedMethods = [];
+    const i18n = ctx.i18n;
+
+    const buildKeyboard = (selected: string[]) => {
+      const buttons = paymentMethods.map((m, i) =>
+        Markup.button.callback(
+          (selected.includes(m) ? '✓ ' : '') + m,
+          `pm_toggle_${i}`,
+        ),
       );
+      const rows = [];
+      for (let i = 0; i < buttons.length; i += 2) {
+        rows.push(buttons.slice(i, i + 2));
+      }
+      rows.push([
+        Markup.button.callback(i18n.t('confirm_payment_methods'), 'pm_confirm'),
+      ]);
+      rows.push([
+        Markup.button.callback(i18n.t('custom_payment_method'), 'pm_custom'),
+      ]);
+      return Markup.inlineKeyboard(rows);
     };
-    const prompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
+
+    const prompt = await ctx.reply(
+      ctx.i18n.t('select_payment_methods'),
+      buildKeyboard([]),
+    );
+
+    ctx.wizard.state.handler = async ctx => {
+      if (!ctx.callbackQuery) {
+        if (ctx.message === undefined || !('text' in ctx.message)) return;
+        const { text } = ctx.message;
+        if (!text) return;
+        ctx.wizard.state.selectedMethods = [];
+        ctx.wizard.state.method = text;
+        await ctx.wizard.state.updateUI();
+        await ctx.deleteMessage();
+        await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        return true;
+      }
+
+      const data = (ctx.callbackQuery as any).data as string;
+
+      if (data === 'pm_confirm') {
+        const selected = ctx.wizard.state.selectedMethods || [];
+        if (selected.length === 0) {
+          await ctx.answerCbQuery(ctx.i18n.t('no_payment_method_selected'));
+          return;
+        }
+        ctx.wizard.state.method = selected.join(', ');
+        await ctx.wizard.state.updateUI();
+        await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        await ctx.answerCbQuery();
+        return true;
+      }
+
+      if (data === 'pm_custom') {
+        await ctx.telegram.deleteMessage(prompt.chat.id, prompt.message_id);
+        await ctx.answerCbQuery();
+        const textPrompt = await ctx.reply(ctx.i18n.t('enter_payment_method'));
+        ctx.wizard.state.handler = async ctx => {
+          if (ctx.message === undefined || !('text' in ctx.message)) return;
+          const { text } = ctx.message;
+          if (!text) return;
+          ctx.wizard.state.selectedMethods = [];
+          ctx.wizard.state.method = text;
+          await ctx.wizard.state.updateUI();
+          await ctx.deleteMessage();
+          await ctx.telegram.deleteMessage(
+            textPrompt.chat.id,
+            textPrompt.message_id,
+          );
+          return true;
+        };
+        return;
+      }
+
+      if (data.startsWith('pm_toggle_')) {
+        const methodIdx = parseInt(data.slice('pm_toggle_'.length), 10);
+        const m = paymentMethods[methodIdx];
+        if (m === undefined) {
+          await ctx.answerCbQuery();
+          return;
+        }
+        const selected = ctx.wizard.state.selectedMethods || [];
+        const idx = selected.indexOf(m);
+        if (idx >= 0) {
+          selected.splice(idx, 1);
+        } else {
+          selected.push(m);
+        }
+        ctx.wizard.state.selectedMethods = selected;
+        try {
+          await ctx.telegram.editMessageReplyMarkup(
+            prompt.chat.id,
+            prompt.message_id,
+            undefined,
+            buildKeyboard(selected).reply_markup,
+          );
+        } catch (_err) {
+          // ignore transient errors (e.g. "message is not modified" on rapid taps)
+        }
+        await ctx.answerCbQuery();
+        return;
+      }
+
+      await ctx.answerCbQuery();
+    };
+
     return ctx.wizard.next();
   },
   async priceMargin(ctx: CommunityContext) {

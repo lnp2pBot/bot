@@ -707,3 +707,13 @@ unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+community_payment_methods: "Zahlungsmethoden"
+enter_community_payment_methods: "Gib die in deiner Community akzeptierten Zahlungsmethoden ein, getrennt durch Kommas (z.B.: Banküberweisung, Bargeld, PayPal)"
+current_payment_methods: "Aktuelle Zahlungsmethoden: ${methods}"
+select_payment_methods: "Wähle eine oder mehrere Zahlungsmethoden:"
+confirm_payment_methods: "✅ Bestätigen"
+no_payment_method_selected: "Bitte wähle mindestens eine Zahlungsmethode aus"
+payment_methods_saved: "Zahlungsmethoden gespeichert ✅"
+custom_payment_method: "✍️ Benutzerdefinierte Zahlungsmethode"
+payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt beliebige Zahlungsmethoden frei eingeben."
+payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
