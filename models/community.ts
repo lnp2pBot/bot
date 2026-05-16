@@ -17,7 +17,7 @@ export interface IOrderChannel extends Document {
 }
 
 const OrderChannelSchema = new Schema<IOrderChannel>({
-  name: { type: String, unique: true, sparse: true },
+  name: { type: String, unique: true, trim: true },
   type: {
     type: String,
     enum: ['buy', 'sell', 'mixed'],
