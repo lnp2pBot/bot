@@ -389,7 +389,7 @@ const createOrderPrompts = {
   },
 };
 
-const createOrderHandlers = {
+export const createOrderHandlers = {
   async fiatAmount(ctx: CommunityContext) {
     if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.error = null;
@@ -433,19 +433,41 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return true;
     }
-    const input = Number(ctx.message?.text);
+    if (!ctx.message?.text) {
+      return ctx.scene.leave();
+    }
+    const rawInput = Number(ctx.message.text);
     await ctx.deleteMessage();
-    if (isNaN(input)) {
+    if (isNaN(rawInput)) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
       return;
     }
-    if (input < 0) {
+    if (rawInput < 0) {
       ctx.wizard.state.error = ctx.i18n.t('not_negative');
       await ctx.wizard.state.updateUI();
       return;
     }
-    ctx.wizard.state.sats = Math.floor(input);
+    const input = Math.floor(rawInput);
+    const minPaymentAmt = Number(process.env.MIN_PAYMENT_AMT) || 0;
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
+    if (input !== 0 && minPaymentAmt > 0 && input < minPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_gt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: minPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    if (input !== 0 && maxPaymentAmt > 0 && input > maxPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_lt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: maxPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    ctx.wizard.state.sats = input;
     await ctx.wizard.state.updateUI();
     return true;
   },
