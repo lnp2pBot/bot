@@ -707,6 +707,7 @@ unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+order_channel_validation_failed: "Ihre Bestellung konnte nicht veröffentlicht werden. Versuchen Sie, die Standard-Community mit /setcomm off zu deaktivieren, oder bitten Sie Ihren Community-Administrator, die Kanäle und Gruppen der Community neu zu konfigurieren."
 community_payment_methods: "Zahlungsmethoden"
 enter_community_payment_methods: "Gib die in deiner Community akzeptierten Zahlungsmethoden ein, getrennt durch Kommas (z.B.: Banküberweisung, Bargeld, PayPal)"
 current_payment_methods: "Aktuelle Zahlungsmethoden: ${methods}"

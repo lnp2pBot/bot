@@ -706,6 +706,7 @@ unblock_failed: "Erro ao desbloquear o usuário"
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
+order_channel_validation_failed: "Não foi possível publicar a sua ordem. Tente desativar a comunidade padrão com /setcomm off ou peça ao administrador da comunidade para reconfigurar os canais e grupos da comunidade."
 community_payment_methods: "Métodos de pagamento"
 enter_community_payment_methods: "Insira os métodos de pagamento aceitos em sua comunidade, separados por vírgulas (ex.: Transferência bancária, Dinheiro, PayPal)"
 current_payment_methods: "Métodos de pagamento atuais: ${methods}"
