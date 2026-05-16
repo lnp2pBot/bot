@@ -732,10 +732,14 @@ const publishBuyOrderMessage = async (
 
     const channel = await getOrderChannel(order, bot.telegram);
     if (channel === undefined) {
-      await bot.telegram.sendMessage(
-        user.tg_id,
-        i18n.t('order_channel_validation_failed')
-      );
+      try {
+        await bot.telegram.sendMessage(
+          user.tg_id,
+          i18n.t('order_channel_validation_failed')
+        );
+      } catch (error) {
+        logger.error(error);
+      }
       order.status = 'CLOSED';
       await order.save();
       return;
@@ -792,10 +796,14 @@ const publishSellOrderMessage = async (
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order, ctx.telegram);
     if (channel === undefined) {
-      await ctx.telegram.sendMessage(
-        user.tg_id,
-        i18n.t('order_channel_validation_failed')
-      );
+      try {
+        await ctx.telegram.sendMessage(
+          user.tg_id,
+          i18n.t('order_channel_validation_failed')
+        );
+      } catch (error) {
+        logger.error(error);
+      }
       order.status = 'CLOSED';
       await order.save();
       return;
