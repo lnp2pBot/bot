@@ -328,7 +328,7 @@ const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
-      community.order_channels.forEach(async (c: IOrderChannel) => {
+      community.order_channels.forEach((c: IOrderChannel) => {
         if (c.type === order.type) {
           channel = c.name;
         }
@@ -345,6 +345,9 @@ const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
       // This validation is performed lazily when publishing the order to the community order channel
       const isChannelOk = await isGroupAdmin(channel, communityOwner, bot);
       if (!isChannelOk.success) {
+        logger.error(
+          `Order channel validation failed for community ${community._id}`,
+        );
         return undefined;
       }
     }
