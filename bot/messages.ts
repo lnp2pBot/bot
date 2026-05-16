@@ -735,7 +735,7 @@ const publishBuyOrderMessage = async (
       try {
         await bot.telegram.sendMessage(
           user.tg_id,
-          i18n.t('order_channel_validation_failed')
+          i18n.t('order_channel_validation_failed'),
         );
       } catch (error) {
         logger.error(error);
@@ -799,7 +799,7 @@ const publishSellOrderMessage = async (
       try {
         await ctx.telegram.sendMessage(
           user.tg_id,
-          i18n.t('order_channel_validation_failed')
+          i18n.t('order_channel_validation_failed'),
         );
       } catch (error) {
         logger.error(error);
