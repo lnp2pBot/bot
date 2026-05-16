@@ -188,7 +188,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
 
     expect(resolvedC2.group).to.equal(undefined);
     expect(resolvedC2.dispute_channel).to.equal(undefined);
-    expect(resolvedC2.order_channels[0].name).to.equal(undefined);
+    expect(resolvedC2.order_channels.length).to.equal(0);
     expect(exitStub.calledWith(0)).to.equal(true);
   });
   it('should handle more than two duplicates and clear multiple communities', async () => {
@@ -479,8 +479,7 @@ describe('Migration Script: migrate_duplicated_community_channels_and_groups', (
     }
 
     const communities = await communityFindStub.firstCall.returnValue;
-    expect(communities[1].order_channels[0].name).to.equal(undefined);
-    expect(communities[1].order_channels[1].name).to.equal(undefined);
+    expect(communities[1].order_channels.length).to.equal(0);
     expect(communities[1].group).to.be.equal('@g2');
     expect(communities[1].dispute_channel).to.be.equal('@d2');
   });
