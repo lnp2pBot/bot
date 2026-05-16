@@ -2,7 +2,7 @@
   "name": "lnp2pbot",
   "version": "0.15.0",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   },
   "author": "Francisco Calderón <negrunch@grunch.dev>",
   "description": "P2P lightning network telegram bot",
@@ -28,7 +28,7 @@
     "dotenv": "^10.0.0",
     "invoices": "2.0.6",
     "lightning": "10.25.0",
-    "mongoose": "^8.17.1",
+    "mongoose": "^9.6.2",
     "node-schedule": "^2.0.0",
     "nostr-tools": "^2.5.2",
     "qrcode": "^1.5.0",

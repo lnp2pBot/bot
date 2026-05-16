@@ -7,7 +7,7 @@ import { MainContext } from '../../start';
 import { CommunityContext } from './communityContext';
 import { Telegraf } from 'telegraf';
 
-async function getOrderCountByCommunity(): Promise<number[]> {
+async function getOrderCountByCommunity(): Promise<Record<string, number>> {
   const data = await Order.aggregate([
     { $group: { _id: '$community_id', total: { $count: {} } } },
   ]);
@@ -57,7 +57,7 @@ export const setComm = async (ctx: MainContext) => {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
     }
 
-    user.default_community_id = community._id;
+    user.default_community_id = community._id.toString();
     await user.save();
 
     await ctx.reply(ctx.i18n.t('operation_successful'));
@@ -89,7 +89,7 @@ export const myComms = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
 
-    const communities = await Community.find({ creator_id: user._id });
+    const communities = await Community.find({ creator_id: user._id.toString() });
 
     if (!communities.length)
       return await ctx.reply(ctx.i18n.t('you_dont_have_communities'));
@@ -146,7 +146,7 @@ export const updateCommunity = async (
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: user._id,
+      creator_id: user._id.toString(),
     });
 
     if (!community) {
@@ -227,7 +227,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: ctx.user._id,
+      creator_id: ctx.user._id.toString(),
     });
 
     if (!community) {
@@ -250,7 +250,7 @@ export const changeVisibility = async (ctx: CommunityContext) => {
     if (!(await validateObjectId(ctx, id))) return;
     const community = await Community.findOne({
       _id: id,
-      creator_id: ctx.user._id,
+      creator_id: ctx.user._id.toString(),
     });
 
     if (!community) {

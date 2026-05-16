@@ -682,7 +682,7 @@ const cancelOrder = async (
       if (order.hash) await cancelHoldInvoice({ hash: order.hash });
 
       order.status = 'CANCELED';
-      order.canceled_by = user._id;
+      order.canceled_by = user._id.toString();
       await order.save();
       OrderEvents.orderUpdated(order);
       // we sent a private message to the user
@@ -739,7 +739,10 @@ const cancelOrder = async (
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
+    const updateOrder = await setCooperativeCancelFlag(
+      order._id.toString(),
+      initiator,
+    );
 
     // If the call returns null, the flag was already set (or order is missing),
     // so we treat it as a duplicate request.
@@ -761,12 +764,12 @@ const cancelOrder = async (
       if (updateOrder.hash) await cancelHoldInvoice({ hash: updateOrder.hash });
 
       updateOrder.status = 'CANCELED';
-      updateOrder.canceled_by = String(user._id);
+      updateOrder.canceled_by = user._id.toString();
       await updateOrder.save();
 
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
-      if (order.seller_id == counterPartyUser._id) {
+      if (order.seller_id === counterPartyUser._id.toString()) {
         seller = counterPartyUser;
         i18nCtxSeller = i18nCtxCP;
       }
@@ -861,7 +864,7 @@ const release = async (
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
     // We look for a dispute for this order
-    const dispute = await Dispute.findOne({ order_id: order._id });
+    const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
     if (dispute) {
       dispute.status = 'RELEASED';
