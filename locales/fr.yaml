@@ -707,3 +707,13 @@ check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veu
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
 order_channel_validation_failed: "Impossible de publier votre commande. Essayez de désactiver la communauté par défaut avec /setcomm off, ou demandez à l'administrateur de votre communauté de reconfigurer les canaux et groupes de la communauté."
+community_payment_methods: "Méthodes de paiement"
+enter_community_payment_methods: "Entrez les méthodes de paiement acceptées dans votre communauté, séparées par des virgules (ex. : Virement bancaire, Espèces, PayPal)"
+current_payment_methods: "Méthodes de paiement actuelles : ${methods}"
+select_payment_methods: "Sélectionnez une ou plusieurs méthodes de paiement :"
+confirm_payment_methods: "✅ Confirmer"
+no_payment_method_selected: "Veuillez sélectionner au moins une méthode de paiement"
+payment_methods_saved: "Méthodes de paiement enregistrées ✅"
+custom_payment_method: "✍️ Méthode de paiement personnalisée"
+payment_methods_reset: "Méthodes de paiement supprimées. Les utilisateurs peuvent désormais saisir n'importe quelle méthode de paiement librement."
+payment_methods_wizard_commands: "/reset — supprimer toutes les méthodes de paiement et restaurer le comportement par défaut\n/exit — quitter sans enregistrer"

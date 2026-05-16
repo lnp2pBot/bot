@@ -710,3 +710,13 @@ image_processing_error: Hemos tenido un error procesando la imagen, por favor es
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
 order_channel_validation_failed: "No se pudo publicar la orden, prueba desactivando la comunidad por defecto /setcomm off, o pídele al administrador de tu comunidad que reconfigure los canales y grupos de comunidad."
+community_payment_methods: "Métodos de pago"
+enter_community_payment_methods: "Ingresa los métodos de pago aceptados en tu comunidad, separados por comas (ej.: Transferencia bancaria, Efectivo, PayPal)"
+current_payment_methods: "Métodos de pago actuales: ${methods}"
+select_payment_methods: "Selecciona uno o más métodos de pago:"
+confirm_payment_methods: "✅ Confirmar"
+no_payment_method_selected: "Por favor selecciona al menos un método de pago"
+payment_methods_saved: "Métodos de pago guardados ✅"
+custom_payment_method: "✍️ Método de pago personalizado"
+payment_methods_reset: "Métodos de pago eliminados. Los usuarios ahora pueden ingresar cualquier método de pago libremente."
+payment_methods_wizard_commands: "/reset — eliminar todos los métodos de pago y restaurar el comportamiento predeterminado\n/exit — salir sin guardar"

@@ -102,6 +102,12 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
           ],
           [
             {
+              text: '✏️ ' + ctx.i18n.t('community_payment_methods'),
+              callback_data: `editPaymentMethodsBtn_${id}`,
+            },
+          ],
+          [
+            {
               text: '💰 ' + ctx.i18n.t('earnings'),
               callback_data: `earningsBtn_${id}`,
             },

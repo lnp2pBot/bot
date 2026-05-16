@@ -807,3 +807,13 @@ check_solvers: اجتماع شما ${communityName} هیچ داوری ندارد
 check_solvers_last_warning: اجتماع شما ${communityName} هیچ داوری ندارد. برای جلوگیری از غیرفعال شدن اجتماع، امروز حداقل یک داور به آن اضافه کنید.
 image_processing_error: هنگام پردازش تصویر با خطایی مواجه شدیم، لطفاً چند دقیقه صبر کرده و دوباره امتحان کنید.
 order_channel_validation_failed: "امکان انتشار سفارش شما وجود ندارد. سعی کنید انجمن پیش‌فرض را با /setcomm off غیرفعال کنید یا از مدیر انجمن خود بخواهید کانال‌ها و گروه‌های انجمن را مجدداً پیکربندی کند."
+community_payment_methods: "روش‌های پرداخت"
+enter_community_payment_methods: "روش‌های پرداخت پذیرفته‌شده در اجتماع خود را با کاما از هم جدا کرده وارد کنید (مثال: انتقال بانکی، نقد، PayPal)"
+current_payment_methods: "روش‌های پرداخت فعلی: ${methods}"
+select_payment_methods: "یک یا چند روش پرداخت انتخاب کنید:"
+confirm_payment_methods: "✅ تأیید"
+no_payment_method_selected: "لطفاً حداقل یک روش پرداخت انتخاب کنید"
+payment_methods_saved: "روش‌های پرداخت ذخیره شد ✅"
+custom_payment_method: "✍️ روش پرداخت سفارشی"
+payment_methods_reset: "روش‌های پرداخت حذف شدند. کاربران اکنون می‌توانند هر روش پرداختی را آزادانه وارد کنند."
+payment_methods_wizard_commands: "/reset — حذف همه روش‌های پرداخت و بازگرداندن رفتار پیش‌فرض\n/exit — خروج بدون ذخیره"
