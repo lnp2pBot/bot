@@ -732,9 +732,13 @@ const publishBuyOrderMessage = async (
 
     const channel = await getOrderChannel(order, bot.telegram);
     if (channel === undefined) {
+      await bot.telegram.sendMessage(
+        user.tg_id,
+        i18n.t('order_channel_validation_failed')
+      );
       order.status = 'CLOSED';
       await order.save();
-      throw new Error('channel is undefined');
+      return;
     }
 
     // Get the community language if available
@@ -788,9 +792,13 @@ const publishSellOrderMessage = async (
     publishMessage += `:${order._id}:`;
     const channel = await getOrderChannel(order, ctx.telegram);
     if (channel === undefined) {
+      await ctx.telegram.sendMessage(
+        user.tg_id,
+        i18n.t('order_channel_validation_failed')
+      );
       order.status = 'CLOSED';
       await order.save();
-      throw new Error('channel is undefined');
+      return;
     }
 
     // Get the community language if available

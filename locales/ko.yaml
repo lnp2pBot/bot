@@ -704,3 +704,4 @@ unblock_failed: "사용자 차단 해제 중 오류 발생"
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
+order_channel_validation_failed: "주문을 등록할 수 없습니다. /setcomm off 로 기본 커뮤니티를 비활성화하거나, 커뮤니티 관리자에게 커뮤니티 채널 및 그룹을 재설정해 달라고 요청하세요."

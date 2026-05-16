@@ -709,3 +709,4 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+order_channel_validation_failed: "No se pudo publicar la orden, prueba desactivando la comunidad por defecto /setcomm off, o pídele al administrador de tu comunidad que reconfigure los canales y grupos de comunidad."
