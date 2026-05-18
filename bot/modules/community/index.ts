@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf';
-import { userMiddleware } from '../../middleware/user';
+import { userMiddleware, superAdminMiddleware } from '../../middleware/user';
 import * as actions from './actions';
 import * as commands from './commands';
 import {
@@ -57,6 +57,13 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.action(/^editLanguageBtn_([0-9a-f]{24})$/, userMiddleware, async ctx => {
     await commands.updateCommunity(ctx, ctx.match[1], 'language');
   });
+
+  bot.command('closecommunity', superAdminMiddleware, commands.closeCommunity);
+  bot.action(
+    /^closeCommunityConfirmBtn_([0-9a-f]{24})$/,
+    superAdminMiddleware,
+    commands.closeCommunityConfirm,
+  );
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
   bot.action(

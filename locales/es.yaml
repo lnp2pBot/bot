@@ -709,3 +709,11 @@ unblock_failed: "Error al desbloquear al usuario"
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
+
+close_community_confirmation: |
+  Comunidad ${communityName}
+  Ordenes completadas: ${completedOrders}
+  Creador: @${creatorUsername}
+  Solvers: ${solvers}
+  ¿Está seguro que desea continuar?
+community_closed_by_admin: Un administrador ha cerrado tu comunidad @${communityName}

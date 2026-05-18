@@ -712,3 +712,11 @@ unblock_failed: "Error unblocking the user"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
+
+close_community_confirmation: |
+  Community ${communityName}
+  Completed orders: ${completedOrders}
+  Creator: @${creatorUsername}
+  Solvers: ${solvers}
+  Are you sure you want to continue?
+community_closed_by_admin: An administrator has closed your community @${communityName}

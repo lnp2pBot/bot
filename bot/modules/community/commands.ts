@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { logger } from '../../../logger';
 import { showUserCommunitiesMessage } from './messages';
-import { Community, Order } from '../../../models';
+import { Community, Order, User } from '../../../models';
 import { validateParams, validateObjectId } from '../../validations';
 import { MainContext } from '../../start';
 import { CommunityContext } from './communityContext';
@@ -228,6 +228,99 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
       return ctx.reply(ctx.i18n.t('no_permission'));
     }
     await community.deleteOne();
+
+    return ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export const closeCommunity = async (ctx: MainContext) => {
+  try {
+    const [input] = (await validateParams(
+      ctx,
+      2,
+      '\\<_community id \\| @groupUsername_\\>',
+    ))!;
+    if (!input) return;
+
+    let community;
+    if (input[0] === '@') {
+      const regex = new RegExp(['^', input, '$'].join(''), 'i');
+      community = await Community.findOne({ group: regex });
+    } else {
+      if (!(await validateObjectId(ctx, input))) return;
+      community = await Community.findOne({ _id: input });
+    }
+
+    if (!community) {
+      return ctx.reply(ctx.i18n.t('community_not_found'));
+    }
+
+    const completedOrders = await Order.countDocuments({
+      community_id: community._id,
+      status: 'SUCCESS',
+    });
+
+    const creator = await User.findById(community.creator_id);
+    const creatorUsername = creator?.username || 'unknown';
+
+    const solversText =
+      community.solvers.length > 0
+        ? community.solvers.map(s => `@${s.username}`).join(', ')
+        : '-';
+
+    const text = ctx.i18n.t('close_community_confirmation', {
+      communityName: community.name,
+      completedOrders,
+      creatorUsername,
+      solvers: solversText,
+    });
+
+    await ctx.reply(text, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: ctx.i18n.t('continue'),
+              callback_data: `closeCommunityConfirmBtn_${community._id}`,
+            },
+            {
+              text: ctx.i18n.t('cancel'),
+              callback_data: 'doNothingBtn',
+            },
+          ],
+        ],
+      },
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export const closeCommunityConfirm = async (ctx: CommunityContext) => {
+  try {
+    ctx.deleteMessage();
+    const id = ctx.match?.[1];
+    if (!id) return;
+
+    if (!(await validateObjectId(ctx, id))) return;
+    const community = await Community.findById(id);
+    if (!community) {
+      return ctx.reply(ctx.i18n.t('community_not_found'));
+    }
+
+    const creator = await User.findById(community.creator_id);
+    const communityName = community.name;
+
+    await community.deleteOne();
+
+    if (creator) {
+      await ctx.telegram.sendMessage(
+        creator.tg_id,
+        ctx.i18n.t('community_closed_by_admin', { communityName }),
+      );
+    }
 
     return ctx.reply(ctx.i18n.t('operation_successful'));
   } catch (error) {
