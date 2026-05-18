@@ -23,6 +23,11 @@ jobs:
           sudo apt install --yes --no-install-recommends npm
 
           sudo apt install --yes git
+
+          # Dependencies required to compile the canvas package from source
+          sudo apt install --yes --no-install-recommends \
+            build-essential pkg-config libcairo2-dev libpango1.0-dev \
+            libjpeg-dev libgif-dev librsvg2-dev
           # one time fix to avoid permission problems later on
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
