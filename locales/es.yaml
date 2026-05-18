@@ -719,10 +719,9 @@ payment_methods_saved: "Métodos de pago guardados ✅"
 custom_payment_method: "✍️ Método de pago personalizado"
 payment_methods_reset: "Métodos de pago eliminados. Los usuarios ahora pueden ingresar cualquier método de pago libremente."
 payment_methods_wizard_commands: "/reset — eliminar todos los métodos de pago y restaurar el comportamiento predeterminado\n/exit — salir sin guardar"
-close_community_confirmation: |
-  Comunidad ${communityName}
-  Ordenes completadas: ${completedOrders}
-  Creador: @${creatorUsername}
-  Solvers: ${solvers}
-  ¿Está seguro que desea continuar?
-community_closed_by_admin: Un administrador ha cerrado tu comunidad ${communityName}
+community_disabled_info: "Comunidad: ${communityName}\nGrupo: ${group}\nSolvers: ${solvers}\nCreador: @${creatorUsername}\nLa comunidad fue deshabilitada"
+community_enabled_info: "Comunidad: ${communityName}\nGrupo: ${group}\nSolvers: ${solvers}\nCreador: @${creatorUsername}\nLa comunidad fue habilitada"
+community_disabled_by_admin: Un administrador ha deshabilitado tu comunidad ${communityName}
+community_enabled_by_admin: Un administrador ha reactivado tu comunidad ${communityName}
+community_already_disabled: Esta comunidad ya está deshabilitada
+community_already_enabled: Esta comunidad ya está habilitada

@@ -47,6 +47,7 @@ export interface ICommunity extends Document {
   solvers: Types.DocumentArray<IUsernameId>;
   banned_users: Types.DocumentArray<IUsernameId>;
   public: boolean;
+  enabled: boolean;
   currencies: Array<string>;
   payment_methods: Array<string>;
   created_at: Date;
@@ -78,6 +79,7 @@ const CommunitySchema = new Schema<ICommunity>({
   solvers: [usernameIdSchema], // users that are dispute solvers
   banned_users: [usernameIdSchema], // users that are banned from the community
   public: { type: Boolean, default: true },
+  enabled: { type: Boolean, default: true },
   currencies: {
     type: [String],
     required: true,

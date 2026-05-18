@@ -722,10 +722,9 @@ payment_methods_saved: "Payment methods saved ✅"
 custom_payment_method: "✍️ Custom payment method"
 payment_methods_reset: "Payment methods removed. Users can now enter any payment method freely."
 payment_methods_wizard_commands: "/reset — remove all payment methods and restore default behavior\n/exit — exit without saving"
-close_community_confirmation: |
-  Community ${communityName}
-  Completed orders: ${completedOrders}
-  Creator: @${creatorUsername}
-  Solvers: ${solvers}
-  Are you sure you want to continue?
-community_closed_by_admin: An administrator has closed your community ${communityName}
+community_disabled_info: "Community: ${communityName}\nGroup: ${group}\nSolvers: ${solvers}\nCreator: @${creatorUsername}\nThe community was disabled"
+community_enabled_info: "Community: ${communityName}\nGroup: ${group}\nSolvers: ${solvers}\nCreator: @${creatorUsername}\nThe community was enabled"
+community_disabled_by_admin: An administrator has disabled your community ${communityName}
+community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
+community_already_disabled: This community is already disabled
+community_already_enabled: This community is already enabled

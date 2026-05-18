@@ -59,7 +59,10 @@ const getVolumeNDays = async (
 
 export const onCommunityInfo = async (ctx: MainContext) => {
   const commId = ctx.match?.[1];
-  const community = await Community.findById(commId);
+  const community = await Community.findOne({
+    _id: commId,
+    enabled: { $ne: false },
+  });
   if (community === null) throw new Error('community not found');
   const userCount = await User.countDocuments({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
@@ -120,7 +123,10 @@ export const onSetCommunity = async (ctx: CommunityContext) => {
 
 export const withdrawEarnings = async (ctx: CommunityContext) => {
   ctx.deleteMessage();
-  const community = await Community.findById(ctx.match?.[1]);
+  const community = await Community.findOne({
+    _id: ctx.match?.[1],
+    enabled: { $ne: false },
+  });
   ctx.scene.enter('ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID', {
     community,
   });

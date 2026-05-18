@@ -717,10 +717,9 @@ payment_methods_saved: "Zahlungsmethoden gespeichert ✅"
 custom_payment_method: "✍️ Benutzerdefinierte Zahlungsmethode"
 payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt beliebige Zahlungsmethoden frei eingeben."
 payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
-close_community_confirmation: |
-  Gemeinschaft ${communityName}
-  Abgeschlossene Bestellungen: ${completedOrders}
-  Ersteller: @${creatorUsername}
-  Löser: ${solvers}
-  Sind Sie sicher, dass Sie fortfahren möchten?
-community_closed_by_admin: Ein Administrator hat Ihre Gemeinschaft ${communityName} geschlossen
+community_disabled_info: "Gemeinschaft: ${communityName}\nGruppe: ${group}\nLöser: ${solvers}\nErsteller: @${creatorUsername}\nDie Gemeinschaft wurde deaktiviert"
+community_enabled_info: "Gemeinschaft: ${communityName}\nGruppe: ${group}\nLöser: ${solvers}\nErsteller: @${creatorUsername}\nDie Gemeinschaft wurde aktiviert"
+community_disabled_by_admin: Ein Administrator hat Ihre Gemeinschaft ${communityName} deaktiviert
+community_enabled_by_admin: Ein Administrator hat Ihre Gemeinschaft ${communityName} wieder aktiviert
+community_already_disabled: Diese Gemeinschaft ist bereits deaktiviert
+community_already_enabled: Diese Gemeinschaft ist bereits aktiv

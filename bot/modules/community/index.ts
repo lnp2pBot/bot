@@ -65,11 +65,15 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     },
   );
 
-  bot.command('closecommunity', superAdminMiddleware, commands.closeCommunity);
-  bot.action(
-    /^closeCommunityConfirmBtn_([0-9a-f]{24})$/,
+  bot.command(
+    'disablecommunity',
     superAdminMiddleware,
-    commands.closeCommunityConfirm,
+    commands.disableCommunity,
+  );
+  bot.command(
+    'enablecommunity',
+    superAdminMiddleware,
+    commands.enableCommunity,
   );
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
