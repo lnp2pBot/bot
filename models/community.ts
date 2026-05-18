@@ -48,6 +48,7 @@ export interface ICommunity extends Document {
   banned_users: Types.DocumentArray<IUsernameId>;
   public: boolean;
   currencies: Array<string>;
+  payment_methods: Array<string>;
   created_at: Date;
   nostr_public_key: string;
   warning_messages_count: number;
@@ -82,6 +83,10 @@ const CommunitySchema = new Schema<ICommunity>({
     required: true,
     trim: true,
     validate: [currencyLimits, '{PATH} is not within limits'],
+  },
+  payment_methods: {
+    type: [String],
+    default: [],
   },
   created_at: { type: Date, default: Date.now },
   nostr_public_key: { type: String },

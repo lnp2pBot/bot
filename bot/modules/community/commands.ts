@@ -206,6 +206,12 @@ export const updateCommunity = async (
         user,
         community,
       });
+    } else if (field === 'payment_methods') {
+      ctx.scene.enter('UPDATE_PAYMENT_METHODS_COMMUNITY_WIZARD_SCENE_ID', {
+        id,
+        user,
+        community,
+      });
     }
   } catch (error) {
     logger.error(error);
