@@ -252,7 +252,8 @@ export const closeCommunity = async (ctx: MainContext) => {
 
     let community;
     if (input[0] === '@') {
-      const regex = new RegExp(['^', input, '$'].join(''), 'i');
+      const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`^${escapedInput}$`, 'i');
       community = await Community.findOne({ group: regex });
     } else {
       if (!(await validateObjectId(ctx, input))) return;
@@ -322,10 +323,14 @@ export const closeCommunityConfirm = async (ctx: CommunityContext) => {
     await community.deleteOne();
 
     if (creator) {
-      await ctx.telegram.sendMessage(
-        creator.tg_id,
-        ctx.i18n.t('community_closed_by_admin', { communityName }),
-      );
+      try {
+        await ctx.telegram.sendMessage(
+          creator.tg_id,
+          ctx.i18n.t('community_closed_by_admin', { communityName }),
+        );
+      } catch (notifyError) {
+        logger.error(notifyError);
+      }
     }
 
     return ctx.reply(ctx.i18n.t('operation_successful'));

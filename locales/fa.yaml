@@ -822,4 +822,4 @@ close_community_confirmation: |
   سازنده: @${creatorUsername}
   حل‌کنندگان: ${solvers}
   آیا مطمئن هستید که می‌خواهید ادامه دهید؟
-community_closed_by_admin: یک مدیر جامعه شما @${communityName} را بست
+community_closed_by_admin: یک مدیر جامعه شما ${communityName} را بست

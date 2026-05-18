@@ -719,4 +719,4 @@ close_community_confirmation: |
   Створив: @${creatorUsername}
   Вирішувачі: ${solvers}
   Ви впевнені, що хочете продовжити?
-community_closed_by_admin: Адміністратор закрив вашу спільноту @${communityName}
+community_closed_by_admin: Адміністратор закрив вашу спільноту ${communityName}

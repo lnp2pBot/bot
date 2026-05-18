@@ -722,4 +722,4 @@ close_community_confirmation: |
   Criador: @${creatorUsername}
   Solvers: ${solvers}
   Tem certeza que deseja continuar?
-community_closed_by_admin: Um administrador fechou sua comunidade @${communityName}
+community_closed_by_admin: Um administrador fechou sua comunidade ${communityName}

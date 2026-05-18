@@ -720,4 +720,4 @@ close_community_confirmation: |
   생성자: @${creatorUsername}
   해결사: ${solvers}
   계속하시겠습니까?
-community_closed_by_admin: 관리자가 귀하의 커뮤니티 @${communityName}을 폐쇄했습니다
+community_closed_by_admin: 관리자가 귀하의 커뮤니티 ${communityName}을 폐쇄했습니다

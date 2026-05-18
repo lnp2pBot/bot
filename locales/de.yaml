@@ -723,4 +723,4 @@ close_community_confirmation: |
   Ersteller: @${creatorUsername}
   Löser: ${solvers}
   Sind Sie sicher, dass Sie fortfahren möchten?
-community_closed_by_admin: Ein Administrator hat Ihre Gemeinschaft @${communityName} geschlossen
+community_closed_by_admin: Ein Administrator hat Ihre Gemeinschaft ${communityName} geschlossen

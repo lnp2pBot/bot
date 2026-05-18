@@ -723,4 +723,4 @@ close_community_confirmation: |
   Создатель: @${creatorUsername}
   Решатели: ${solvers}
   Вы уверены, что хотите продолжить?
-community_closed_by_admin: Администратор закрыл ваше сообщество @${communityName}
+community_closed_by_admin: Администратор закрыл ваше сообщество ${communityName}

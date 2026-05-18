@@ -720,4 +720,4 @@ close_community_confirmation: |
   Creatore: @${creatorUsername}
   Risolutori: ${solvers}
   Sei sicuro di voler continuare?
-community_closed_by_admin: Un amministratore ha chiuso la tua comunità @${communityName}
+community_closed_by_admin: Un amministratore ha chiuso la tua comunità ${communityName}
