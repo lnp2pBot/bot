@@ -13,14 +13,16 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      image: 'ubuntu:26.04'
+      image: 'ubuntu:24.04'
     steps:
       - name: Update apt and install required packages
         run: |
           apt update --yes
-          apt install --yes sudo
+          apt install --yes sudo curl
 
-          sudo apt install --yes --no-install-recommends npm
+          # Install Node.js 20.x via NodeSource (ubuntu:24.04 ships Node 18 by default)
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt install --yes nodejs
 
           sudo apt install --yes git
 
@@ -28,6 +30,7 @@ jobs:
           sudo apt install --yes --no-install-recommends \
             build-essential pkg-config libcairo2-dev libpango1.0-dev \
             libjpeg-dev libgif-dev librsvg2-dev
+
           # one time fix to avoid permission problems later on
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
