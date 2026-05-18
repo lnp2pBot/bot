@@ -13,7 +13,7 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      image: 'ubuntu:24.04'
+      image: 'ubuntu:26.04'
     steps:
       - name: Update apt and install required packages
         run: |
@@ -34,13 +34,13 @@ jobs:
           sudo rm -f /etc/ssl/certs/ca-bundle.crt
           sudo apt reinstall --yes ca-certificates
           sudo update-ca-certificates
-          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
-            sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+          curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
             --dearmor
 
       - name: Install MongoDB
         run: |
-          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
           sudo apt-get update
           sudo apt-get install -y mongodb-org
       - name: Check Mongo version
