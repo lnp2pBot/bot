@@ -717,3 +717,10 @@ payment_methods_saved: "Zahlungsmethoden gespeichert ✅"
 custom_payment_method: "✍️ Benutzerdefinierte Zahlungsmethode"
 payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt beliebige Zahlungsmethoden frei eingeben."
 payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
+close_community_confirmation: |
+  Gemeinschaft ${communityName}
+  Abgeschlossene Bestellungen: ${completedOrders}
+  Ersteller: @${creatorUsername}
+  Löser: ${solvers}
+  Sind Sie sicher, dass Sie fortfahren möchten?
+community_closed_by_admin: Ein Administrator hat Ihre Gemeinschaft @${communityName} geschlossen

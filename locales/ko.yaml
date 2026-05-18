@@ -714,3 +714,10 @@ payment_methods_saved: "결제 방법이 저장되었습니다 ✅"
 custom_payment_method: "✍️ 사용자 지정 결제 방법"
 payment_methods_reset: "결제 방법이 삭제되었습니다. 이제 사용자는 어떤 결제 방법이든 자유롭게 입력할 수 있습니다."
 payment_methods_wizard_commands: "/reset — 모든 결제 방법을 삭제하고 기본 동작을 복원합니다\n/exit — 저장하지 않고 종료"
+close_community_confirmation: |
+  커뮤니티 ${communityName}
+  완료된 주문: ${completedOrders}
+  생성자: @${creatorUsername}
+  해결사: ${solvers}
+  계속하시겠습니까?
+community_closed_by_admin: 관리자가 귀하의 커뮤니티 @${communityName}을 폐쇄했습니다

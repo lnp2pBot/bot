@@ -713,3 +713,10 @@ payment_methods_saved: "Способи оплати збережено ✅"
 custom_payment_method: "✍️ Власний спосіб оплати"
 payment_methods_reset: "Способи оплати видалено. Користувачі тепер можуть вільно вводити будь-який спосіб оплати."
 payment_methods_wizard_commands: "/reset — видалити всі способи оплати та відновити поведінку за замовчуванням\n/exit — вийти без збереження"
+close_community_confirmation: |
+  Спільнота ${communityName}
+  Виконані замовлення: ${completedOrders}
+  Створив: @${creatorUsername}
+  Вирішувачі: ${solvers}
+  Ви впевнені, що хочете продовжити?
+community_closed_by_admin: Адміністратор закрив вашу спільноту @${communityName}
