@@ -34,11 +34,7 @@ export const superAdminMiddleware = async (
   ctx: CommunityContext,
   next: () => void,
 ) => {
-  const tgId =
-    'callback_query' in ctx.update
-      ? ctx.update.callback_query.from.id.toString()
-      : undefined;
-  const admin = await validateSuperAdmin(ctx, tgId);
+  const admin = await validateSuperAdmin(ctx);
   if (!admin) return false;
   ctx.i18n.locale(admin.lang);
   ctx.admin = admin;

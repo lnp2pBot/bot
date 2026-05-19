@@ -260,7 +260,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
 async function findCommunityByInput(
   ctx: MainContext,
   input: string,
-): Promise<(typeof Community.prototype) | null> {
+): Promise<typeof Community.prototype | null> {
   if (input[0] === '@') {
     const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`^${escapedInput}$`, 'i');
@@ -272,13 +272,15 @@ async function findCommunityByInput(
 
 function buildCommunityInfoText(
   ctx: MainContext,
-  community: (typeof Community.prototype),
+  community: typeof Community.prototype,
   creatorUsername: string,
   localeKey: string,
 ): string {
   const solversText =
     community.solvers.length > 0
-      ? community.solvers.map((s: { username: string }) => `@${s.username}`).join(', ')
+      ? community.solvers
+          .map((s: { username: string }) => `@${s.username}`)
+          .join(', ')
       : '-';
   const groupText = community.group || '-';
   return ctx.i18n.t(localeKey, {
@@ -327,7 +329,12 @@ export const disableCommunity = async (ctx: MainContext) => {
     }
 
     return ctx.reply(
-      buildCommunityInfoText(ctx, community, creatorUsername, 'community_disabled_info'),
+      buildCommunityInfoText(
+        ctx,
+        community,
+        creatorUsername,
+        'community_disabled_info',
+      ),
     );
   } catch (error) {
     logger.error(error);
@@ -373,7 +380,12 @@ export const enableCommunity = async (ctx: MainContext) => {
     }
 
     return ctx.reply(
-      buildCommunityInfoText(ctx, community, creatorUsername, 'community_enabled_info'),
+      buildCommunityInfoText(
+        ctx,
+        community,
+        creatorUsername,
+        'community_enabled_info',
+      ),
     );
   } catch (error) {
     logger.error(error);

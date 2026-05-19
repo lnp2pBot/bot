@@ -127,6 +127,9 @@ export const withdrawEarnings = async (ctx: CommunityContext) => {
     _id: ctx.match?.[1],
     enabled: { $ne: false },
   });
+  if (community == null) {
+    return ctx.reply(ctx.i18n.t('community_not_found'));
+  }
   ctx.scene.enter('ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID', {
     community,
   });
