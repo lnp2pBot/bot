@@ -13,18 +13,12 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      image: 'ubuntu:24.04'
+      image: 'ubuntu:26.04'
     steps:
       - name: Update apt and install required packages
         run: |
           apt update --yes
-          apt install --yes sudo curl
-
-          # Install Node.js 20.x via NodeSource (ubuntu:24.04 ships Node 18 by default)
-          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-          sudo apt install --yes nodejs
-
-          sudo apt install --yes git
+          apt install --yes sudo curl git nodejs npm
 
           # Dependencies required to compile the canvas package from source
           sudo apt install --yes --no-install-recommends \
