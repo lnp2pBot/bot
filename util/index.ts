@@ -319,7 +319,7 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
 };
 
 const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
-  let channel = process.env.CHANNEL;
+  let channel;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
     if (!community) {
@@ -351,6 +351,9 @@ const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
         return undefined;
       }
     }
+  } else {
+    // no community order / order in the global community
+    channel = process.env.CHANNEL;
   }
 
   return channel;
