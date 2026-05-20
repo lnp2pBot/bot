@@ -121,15 +121,6 @@ export const runMigration = async () => {
       affectedCommunities.add(c._id.toString());
     }
   }
-
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  const question = (query: string): Promise<string> =>
-    new Promise(resolve => rl.question(query, resolve));
-
   // Re-check for remaining duplicates
   const finalGroupCounts: Record<string, typeof communities> = {};
   const finalDisputeCounts: Record<string, typeof communities> = {};
@@ -163,6 +154,24 @@ export const runMigration = async () => {
   const remainingDuplicateOrderChannels = Object.entries(
     finalOrderChannelCounts,
   ).filter(([_, comms]) => comms.length > 1);
+
+  if (
+    affectedCommunities.size === 0 &&
+    remainingDuplicateGroups.length === 0 &&
+    remainingDuplicateDisputes.length === 0 &&
+    remainingDuplicateOrderChannels.length === 0
+  ) {
+    console.log('No modifications needed. Exiting.');
+    process.exit(0);
+  }
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  const question = (query: string): Promise<string> =>
+    new Promise(resolve => rl.question(query, resolve));
 
   if (
     remainingDuplicateGroups.length > 0 ||
@@ -256,10 +265,6 @@ export const runMigration = async () => {
     }
   }
 
-  if (affectedCommunities.size === 0) {
-    console.log('No modifications needed. Exiting.');
-    process.exit(0);
-  }
 
   const answer = await question(
     `\nType 'YES' to save changes to ${affectedCommunities.size} communities: `,
