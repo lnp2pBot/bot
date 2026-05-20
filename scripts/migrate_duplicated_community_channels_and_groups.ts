@@ -265,7 +265,6 @@ export const runMigration = async () => {
     }
   }
 
-
   const answer = await question(
     `\nType 'YES' to save changes to ${affectedCommunities.size} communities: `,
   );
