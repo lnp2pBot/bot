@@ -122,34 +122,161 @@ export const runMigration = async () => {
     }
   }
 
-  if (affectedCommunities.size === 0) {
-    console.log('No modifications needed. Exiting.');
-    process.exit(0);
-  }
-
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  rl.question(
-    `\nType 'YES' to save changes to ${affectedCommunities.size} communities: `,
-    async answer => {
-      if (answer === 'YES') {
-        console.log('Saving changes...');
-        for (const c of communities) {
-          if (affectedCommunities.has(c._id.toString())) {
-            await c.save();
-          }
-        }
-        console.log('Done.');
-      } else {
-        console.log('Aborted.');
+  const question = (query: string): Promise<string> =>
+    new Promise(resolve => rl.question(query, resolve));
+
+  // Re-check for remaining duplicates
+  const finalGroupCounts: Record<string, typeof communities> = {};
+  const finalDisputeCounts: Record<string, typeof communities> = {};
+  const finalOrderChannelCounts: Record<string, typeof communities> = {};
+
+  for (const c of communities) {
+    if (c.group) {
+      if (!finalGroupCounts[c.group]) finalGroupCounts[c.group] = [];
+      finalGroupCounts[c.group].push(c);
+    }
+    if (c.dispute_channel) {
+      if (!finalDisputeCounts[c.dispute_channel])
+        finalDisputeCounts[c.dispute_channel] = [];
+      finalDisputeCounts[c.dispute_channel].push(c);
+    }
+    for (const ch of c.order_channels) {
+      if (ch.name) {
+        if (!finalOrderChannelCounts[ch.name])
+          finalOrderChannelCounts[ch.name] = [];
+        finalOrderChannelCounts[ch.name].push(c);
       }
-      rl.close();
-      process.exit(0);
-    },
+    }
+  }
+
+  const remainingDuplicateGroups = Object.entries(finalGroupCounts).filter(
+    ([_, comms]) => comms.length > 1,
   );
+  const remainingDuplicateDisputes = Object.entries(finalDisputeCounts).filter(
+    ([_, comms]) => comms.length > 1,
+  );
+  const remainingDuplicateOrderChannels = Object.entries(
+    finalOrderChannelCounts,
+  ).filter(([_, comms]) => comms.length > 1);
+
+  if (
+    remainingDuplicateGroups.length > 0 ||
+    remainingDuplicateDisputes.length > 0 ||
+    remainingDuplicateOrderChannels.length > 0
+  ) {
+    console.log('\n--- Manual Resolution for Remaining Duplicates ---');
+  }
+
+  for (const [group, comms] of remainingDuplicateGroups) {
+    console.log(`\nGroup ${group} is still duplicated in communities:`);
+    comms.forEach((c, idx) => console.log(`${idx + 1}. ${c.name} (${c._id})`));
+    const answer = await question(
+      `Enter the number of the community that should KEEP the group ${group} (or press Enter to make all loose the group): `,
+    );
+    const keepIdx = parseInt(answer) - 1;
+    if (!isNaN(keepIdx) && comms[keepIdx]) {
+      comms.forEach((c, idx) => {
+        if (idx !== keepIdx) {
+          console.log(`Community ${c.name} (${c._id}) loses group ${group}`);
+          c.group = undefined as any;
+          affectedCommunities.add(c._id.toString());
+        }
+      });
+    } else {
+      comms.forEach(c => {
+        console.log(`Community ${c.name} (${c._id}) loses group ${group}`);
+        c.group = undefined as any;
+        affectedCommunities.add(c._id.toString());
+      });
+    }
+  }
+
+  for (const [channel, comms] of remainingDuplicateDisputes) {
+    console.log(
+      `\nDispute channel ${channel} is still duplicated in communities:`,
+    );
+    comms.forEach((c, idx) => console.log(`${idx + 1}. ${c.name} (${c._id})`));
+    const answer = await question(
+      `Enter the number of the community that should KEEP the dispute channel ${channel} (or press Enter to make all loose the channel): `,
+    );
+    const keepIdx = parseInt(answer) - 1;
+    if (!isNaN(keepIdx) && comms[keepIdx]) {
+      comms.forEach((c, idx) => {
+        if (idx !== keepIdx) {
+          console.log(
+            `Community ${c.name} (${c._id}) loses dispute_channel ${channel}`,
+          );
+          c.dispute_channel = undefined as any;
+          affectedCommunities.add(c._id.toString());
+        }
+      });
+    } else {
+      comms.forEach(c => {
+        console.log(
+          `Community ${c.name} (${c._id}) loses dispute_channel ${channel}`,
+        );
+        c.dispute_channel = undefined as any;
+        affectedCommunities.add(c._id.toString());
+      });
+    }
+  }
+
+  for (const [channel, comms] of remainingDuplicateOrderChannels) {
+    console.log(
+      `\nOrder channel ${channel} is still duplicated in communities:`,
+    );
+    comms.forEach((c, idx) => console.log(`${idx + 1}. ${c.name} (${c._id})`));
+    const answer = await question(
+      `Enter the number of the community that should KEEP the order channel ${channel} (or press Enter make all loose the channels): `,
+    );
+    const keepIdx = parseInt(answer) - 1;
+    if (!isNaN(keepIdx) && comms[keepIdx]) {
+      comms.forEach((c, idx) => {
+        if (idx !== keepIdx) {
+          console.log(
+            `Community ${c.name} (${c._id}) loses all order_channels due to conflict in ${channel}`,
+          );
+          c.order_channels = [] as any;
+          affectedCommunities.add(c._id.toString());
+        }
+      });
+    } else {
+      comms.forEach(c => {
+        console.log(
+          `Community ${c.name} (${c._id}) loses all order_channels due to conflict in ${channel}`,
+        );
+        c.order_channels = [] as any;
+        affectedCommunities.add(c._id.toString());
+      });
+    }
+  }
+
+  if (affectedCommunities.size === 0) {
+    console.log('No modifications needed. Exiting.');
+    process.exit(0);
+  }
+
+  const answer = await question(
+    `\nType 'YES' to save changes to ${affectedCommunities.size} communities: `,
+  );
+  if (answer === 'YES') {
+    console.log('Saving changes...');
+    for (const c of communities) {
+      if (affectedCommunities.has(c._id.toString())) {
+        await c.save();
+      }
+    }
+    console.log('Done.');
+  } else {
+    console.log('Aborted.');
+  }
+  rl.close();
+  process.exit(0);
 };
 
 if (require.main === module) {
