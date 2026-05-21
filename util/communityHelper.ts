@@ -27,7 +27,10 @@ export const getCommunityInfo = async (
     if (chatType !== 'private' && chat?.username) {
       // Group chat - find community by group name
       const regex = new RegExp(`^@${chat.username}$`, 'i');
-      community = await Community.findOne({ group: regex, enabled: { $ne: false } });
+      community = await Community.findOne({
+        group: regex,
+        enabled: { $ne: false },
+      });
       if (community) {
         communityId = community._id;
       }
