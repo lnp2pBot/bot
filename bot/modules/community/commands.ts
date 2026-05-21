@@ -241,6 +241,144 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
   }
 };
 
+async function findCommunityByInput(
+  ctx: MainContext,
+  input: string,
+): Promise<typeof Community.prototype | null | undefined> {
+  if (input[0] === '@') {
+    const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`^${escapedInput}$`, 'i');
+    return Community.findOne({ group: regex });
+  }
+  if (!(await validateObjectId(ctx, input))) return undefined;
+  return Community.findOne({ _id: input });
+}
+
+function buildCommunityInfoText(
+  ctx: MainContext,
+  community: typeof Community.prototype,
+  creatorUsername: string,
+  localeKey: string,
+): string {
+  const solversText =
+    community.solvers.length > 0
+      ? community.solvers
+          .map((s: { username: string }) => `@${s.username}`)
+          .join(', ')
+      : '-';
+  const groupText = community.group || '-';
+  return ctx.i18n.t(localeKey, {
+    communityName: community.name,
+    group: groupText,
+    solvers: solversText,
+    creatorUsername,
+  });
+}
+
+export const disableCommunity = async (ctx: MainContext) => {
+  try {
+    const [input] = (await validateParams(
+      ctx,
+      2,
+      '\\<_community id \\| @groupUsername_\\>',
+    ))!;
+    if (!input) return;
+
+    const community = await findCommunityByInput(ctx, input);
+    if (community === undefined) return;
+    if (community === null) {
+      return ctx.reply(ctx.i18n.t('community_not_found'));
+    }
+
+    if (community.enabled === false) {
+      return ctx.reply(ctx.i18n.t('community_already_disabled'));
+    }
+
+    community.enabled = false;
+    await community.save();
+
+    const creator = await User.findById(community.creator_id);
+    const creatorUsername = creator?.username || 'unknown';
+
+    if (creator) {
+      try {
+        await ctx.telegram.sendMessage(
+          creator.tg_id,
+          ctx.i18n.t('community_disabled_by_admin', {
+            communityName: community.name,
+          }),
+        );
+      } catch (notifyError) {
+        logger.error(notifyError);
+      }
+    }
+
+    return ctx.reply(
+      buildCommunityInfoText(
+        ctx,
+        community,
+        creatorUsername,
+        'community_disabled_info',
+      ),
+    );
+  } catch (error) {
+    logger.error(error);
+    await ctx.reply(ctx.i18n.t('generic_error'));
+  }
+};
+
+export const enableCommunity = async (ctx: MainContext) => {
+  try {
+    const [input] = (await validateParams(
+      ctx,
+      2,
+      '\\<_community id \\| @groupUsername_\\>',
+    ))!;
+    if (!input) return;
+
+    const community = await findCommunityByInput(ctx, input);
+    if (community === undefined) return;
+    if (community === null) {
+      return ctx.reply(ctx.i18n.t('community_not_found'));
+    }
+
+    if (community.enabled !== false) {
+      return ctx.reply(ctx.i18n.t('community_already_enabled'));
+    }
+
+    community.enabled = true;
+    await community.save();
+
+    const creator = await User.findById(community.creator_id);
+    const creatorUsername = creator?.username || 'unknown';
+
+    if (creator) {
+      try {
+        await ctx.telegram.sendMessage(
+          creator.tg_id,
+          ctx.i18n.t('community_enabled_by_admin', {
+            communityName: community.name,
+          }),
+        );
+      } catch (notifyError) {
+        logger.error(notifyError);
+      }
+    }
+
+    return ctx.reply(
+      buildCommunityInfoText(
+        ctx,
+        community,
+        creatorUsername,
+        'community_enabled_info',
+      ),
+    );
+  } catch (error) {
+    logger.error(error);
+    await ctx.reply(ctx.i18n.t('generic_error'));
+  }
+};
+
 export const changeVisibility = async (ctx: CommunityContext) => {
   try {
     ctx.deleteMessage();
