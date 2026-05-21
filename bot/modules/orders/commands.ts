@@ -187,32 +187,34 @@ async function enterWizard(
   user: UserDocument,
   type: string,
 ) {
-  const state: EnterWizardState = {
-    type,
-    user,
-  };
-  if (user.default_community_id) {
-    // Use optimized community lookup
-    const communityInfo = await getCommunityInfo(user, 'private');
-    const { community, isBanned } = communityInfo;
+  try {
+    const state: EnterWizardState = {
+      type,
+      user,
+    };
+    if (user.default_community_id) {
+      const communityInfo = await getCommunityInfo(user, 'private');
+      const { community, isBanned } = communityInfo;
 
-    if (!community) {
-      throw new Error('Default community not found');
+      if (!community) {
+        return await deletedCommunityMessage(ctx);
+      }
+
+      if (isBanned) {
+        return await messages.bannedUserErrorMessage(ctx, user);
+      }
+
+      state.community = community;
+      state.currencies = community.currencies;
+      if (community.currencies.length === 1) {
+        state.currency = community.currencies[0];
+      }
     }
 
-    // Check if user is banned
-    if (isBanned) {
-      return await messages.bannedUserErrorMessage(ctx, user);
-    }
-
-    state.community = community;
-    state.currencies = community.currencies;
-    if (community.currencies.length === 1) {
-      state.currency = community.currencies[0];
-    }
+    await ctx.scene.enter(Scenes.CREATE_ORDER, state);
+  } catch (error) {
+    logger.error(error);
   }
-
-  await ctx.scene.enter(Scenes.CREATE_ORDER, state);
 }
 
 const isMaxPending = async (user: UserDocument) => {
