@@ -570,7 +570,7 @@ bot_kicked: le bot a été expulsé du chat, il doit être membre et administrat
 chat_not_found: Chat introuvable. Êtes-vous sûr d'avoir ajouté le bot au groupe/canal ?
 not_member: Vous n'êtes pas membre de ce chat
 upgraded_to_supergroup: Le chat a été transformé en "supergroupe" et l'identifiant a changé. Vérifiez à nouveau l'identifiant du chat.
-community_deleted: Cette communauté a été supprimée pour cause d'inactivité. Je vous en ai dissocié, essayez de créer l'offre à nouveau.
+community_deleted: Votre communauté par défaut a été désactivée. Je vous en ai dissocié. Essayez de créer l'offre à nouveau.
 dispute_too_soon: Vous ne pouvez pas lancer un litige trop tôt, soyez patient et attendez quelques minutes pour que votre contrepartie vous réponde.
 maintenance: 🚨 Bot en maintenance, veuillez réessayer plus tard 🚨
 

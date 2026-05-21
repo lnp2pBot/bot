@@ -86,6 +86,8 @@ export const createOrderWizardStatus = (
 
 export const deletedCommunityMessage = async (ctx: MainContext) => {
   try {
+    ctx.user.default_community_id = undefined;
+    await ctx.user.save();
     await ctx.reply(ctx.i18n.t('community_deleted'));
   } catch (error) {
     logger.error(error);

@@ -571,7 +571,7 @@ bot_kicked: Bot was kicked from chat, must be member and admin
 chat_not_found: Chat not found, are you sure you added the bot to the group/channel?
 not_member: You are not member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has changed, check the chat Id again
-community_deleted: Diese Community wurde aufgrund von Inaktivität gelöscht, ich habe dich davon getrennt, versuche die Bestellung erneut zu erstellen
+community_deleted: Deine Standardgemeinschaft wurde deaktiviert. Ich habe dich davon getrennt. Versuche die Bestellung erneut zu erstellen.
 disput_too_soon: Sie können einen Streit nicht so früh beginnen, seien Sie geduldig und warten Sie ein paar Minuten, bis Ihre Gegenpartei antwortet
 maintenance: 🚨 Bot in Wartung, bitte versuche es später noch einmal 🚨
 # START modules/nostr

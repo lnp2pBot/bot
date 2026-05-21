@@ -577,7 +577,7 @@ bot_kicked: bot was kicked from the chat, it must be a member and admin
 chat_not_found: Chat not found. Are you sure you added the bot to the group/channel?
 not_member: You are not a member of that chat
 upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has changed, check the chat ID again
-community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
+community_deleted: Your default community has been disabled. I unlinked you from that community. Try creating your order again.
 dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
 maintenance: 🚨 Bot in maintenance, please try again later 🚨
 

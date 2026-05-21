@@ -572,7 +572,7 @@ bot_kicked: El bot fue pateado del chat, debe ser miembro y administrador
 chat_not_found: Chat no encontrado, ¿Estas segur@ que agregaste al bot al chat?
 not_member: No eres miembro de ese chat
 upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambiado, consulta el Id del chat nuevamente
-community_deleted: Esta comunidad fue eliminada por inactividad, te he desvinculado de ella, intenta crear la orden nuevamente
+community_deleted: Tu comunidad predeterminada ha sido deshabilitada. Te he desvinculado de ella. Intenta crear la orden nuevamente.
 dispute_too_soon: No puedes iniciar una disputa tan pronto, ten paciencia y espera unos minutos a que tu contraparte responda
 maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
 
