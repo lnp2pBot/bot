@@ -15,7 +15,10 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('mycomms', userMiddleware, commands.myComms);
   if (process.env.COMMUNITY_CREATION_ENABLED === 'true') {
     bot.command('community', userMiddleware, async ctx => {
-      await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user: ctx.user });
+      await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', {
+        bot,
+        user: ctx.user,
+      });
     });
   }
   bot.command('setcomm', userMiddleware, commands.setComm);
