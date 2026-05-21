@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { logger } from '../../../logger';
 import { showUserCommunitiesMessage } from './messages';
-import { Community, Order } from '../../../models';
+import { Community, Order, User } from '../../../models';
 import { validateParams, validateObjectId } from '../../validations';
 import { MainContext } from '../../start';
 import { CommunityContext } from './communityContext';
