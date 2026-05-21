@@ -260,13 +260,13 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
 async function findCommunityByInput(
   ctx: MainContext,
   input: string,
-): Promise<typeof Community.prototype | null> {
+): Promise<typeof Community.prototype | null | undefined> {
   if (input[0] === '@') {
     const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`^${escapedInput}$`, 'i');
     return Community.findOne({ group: regex });
   }
-  if (!(await validateObjectId(ctx, input))) return null;
+  if (!(await validateObjectId(ctx, input))) return undefined;
   return Community.findOne({ _id: input });
 }
 
@@ -301,6 +301,7 @@ export const disableCommunity = async (ctx: MainContext) => {
     if (!input) return;
 
     const community = await findCommunityByInput(ctx, input);
+    if (community === undefined) return;
     if (community === null) {
       return ctx.reply(ctx.i18n.t('community_not_found'));
     }
@@ -352,6 +353,7 @@ export const enableCommunity = async (ctx: MainContext) => {
     if (!input) return;
 
     const community = await findCommunityByInput(ctx, input);
+    if (community === undefined) return;
     if (community === null) {
       return ctx.reply(ctx.i18n.t('community_not_found'));
     }
