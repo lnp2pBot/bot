@@ -139,10 +139,12 @@ export const runMigration = async () => {
     if (c.order_channels.length == 2) {
       if (c.order_channels[0].name == c.order_channels[1].name) {
         // If the same comunity has the two order channels with the same name, merge them
-        c.order_channels = [{
-          type: 'mixed',
-          name: c.order_channels[0].name,
-        }] as any;
+        c.order_channels = [
+          {
+            type: 'mixed',
+            name: c.order_channels[0].name,
+          },
+        ] as any;
       }
     }
     for (const ch of c.order_channels) {
