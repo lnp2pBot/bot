@@ -447,6 +447,8 @@ pending_payment_failed_to_admin: |
   
   결제 시도 횟수: ${attempts}
 
+selling: 팝니다
+buying: 삽니다
 selling_sats: sats 판매
 buying_sats: sats 구매
 receive_payment: 입금
