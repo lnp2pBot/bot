@@ -8,6 +8,7 @@ interface CommunityLookupResult {
   community: ICommunity | null;
   communityId: string | undefined;
   isBanned: boolean;
+  communityDisabled: boolean;
 }
 
 /**
@@ -22,6 +23,7 @@ export const getCommunityInfo = async (
   try {
     let community: ICommunity | null = null;
     let communityId: string | undefined;
+    let communityDisabled = false;
 
     // Determine community based on context
     if (chatType !== 'private' && chat?.username) {
@@ -48,8 +50,10 @@ export const getCommunityInfo = async (
         // Community exists and is enabled
         community = foundCommunity;
       } else {
-        // Community exists but is disabled - preserve preference for when it's re-enabled
+        // Community is disabled: skip it for this order but keep user.default_community_id
+        // intact so the preference is restored automatically when the community is re-enabled.
         communityId = undefined;
+        communityDisabled = true;
       }
     }
 
@@ -65,6 +69,7 @@ export const getCommunityInfo = async (
       community,
       communityId,
       isBanned,
+      communityDisabled,
     };
   } catch (error) {
     logger.error(`Error in getCommunityInfo: ${error}`);
@@ -72,6 +77,7 @@ export const getCommunityInfo = async (
       community: null,
       communityId: undefined,
       isBanned: false,
+      communityDisabled: false,
     };
   }
 };

@@ -63,18 +63,19 @@ const sell = async (ctx: MainContext) => {
       ctx.message?.chat as Chat.UserNameChat,
     );
 
-    const { community, communityId, isBanned } = communityInfo;
+    const { community, communityId, isBanned, communityDisabled } = communityInfo;
 
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
       return ctx.deleteMessage();
     }
 
-    // Handle deleted default community
+    // Handle deleted default community (not disabled — disabled preserves the preference)
     if (
       ctx.message?.chat.type === 'private' &&
       user.default_community_id &&
-      !community
+      !community &&
+      !communityDisabled
     ) {
       return deletedCommunityMessage(ctx);
     }
@@ -132,7 +133,7 @@ const buy = async (ctx: MainContext) => {
       ctx.message?.chat as Chat.UserNameChat,
     );
 
-    const { community, communityId, isBanned } = communityInfo;
+    const { community, communityId, isBanned, communityDisabled } = communityInfo;
 
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
@@ -140,11 +141,12 @@ const buy = async (ctx: MainContext) => {
       return;
     }
 
-    // Handle deleted default community
+    // Handle deleted default community (not disabled — disabled preserves the preference)
     if (
       ctx.message?.chat.type === 'private' &&
       user.default_community_id &&
-      !community
+      !community &&
+      !communityDisabled
     ) {
       return deletedCommunityMessage(ctx);
     }
@@ -194,20 +196,22 @@ async function enterWizard(
     };
     if (user.default_community_id) {
       const communityInfo = await getCommunityInfo(user, 'private');
-      const { community, isBanned } = communityInfo;
+      const { community, isBanned, communityDisabled } = communityInfo;
 
-      if (!community) {
+      if (!community && !communityDisabled) {
         return await deletedCommunityMessage(ctx);
       }
 
-      if (isBanned) {
-        return await messages.bannedUserErrorMessage(ctx, user);
-      }
+      if (community) {
+        if (isBanned) {
+          return await messages.bannedUserErrorMessage(ctx, user);
+        }
 
-      state.community = community;
-      state.currencies = community.currencies;
-      if (community.currencies.length === 1) {
-        state.currency = community.currencies[0];
+        state.community = community;
+        state.currencies = community.currencies;
+        if (community.currencies.length === 1) {
+          state.currency = community.currencies[0];
+        }
       }
     }
 

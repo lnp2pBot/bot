@@ -6,6 +6,7 @@ import { validateParams, validateObjectId } from '../../validations';
 import { MainContext } from '../../start';
 import { CommunityContext } from './communityContext';
 import { Telegraf } from 'telegraf';
+import { getUserI18nContext } from '../../../util';
 
 async function getOrderCountByCommunity(): Promise<number[]> {
   const data = await Order.aggregate([
@@ -317,9 +318,10 @@ export const disableCommunity = async (ctx: MainContext) => {
 
     if (creator) {
       try {
+        const creatorI18n = await getUserI18nContext(creator);
         await ctx.telegram.sendMessage(
           creator.tg_id,
-          ctx.i18n.t('community_disabled_by_admin', {
+          creatorI18n.t('community_disabled_by_admin', {
             communityName: community.name,
           }),
         );
@@ -368,9 +370,10 @@ export const enableCommunity = async (ctx: MainContext) => {
 
     if (creator) {
       try {
+        const creatorI18n = await getUserI18nContext(creator);
         await ctx.telegram.sendMessage(
           creator.tg_id,
-          ctx.i18n.t('community_enabled_by_admin', {
+          creatorI18n.t('community_enabled_by_admin', {
             communityName: community.name,
           }),
         );
