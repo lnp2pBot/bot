@@ -145,6 +145,10 @@ export const runMigration = async () => {
             name: c.order_channels[0].name,
           },
         ] as any;
+        console.log(
+          `Community ${c.name} (${c._id}) has two order_channels with the same name, merging them`,
+        );
+        affectedCommunities.add(c._id.toString());
       }
     }
     for (const ch of c.order_channels) {
