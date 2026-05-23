@@ -63,7 +63,8 @@ const sell = async (ctx: MainContext) => {
       ctx.message?.chat as Chat.UserNameChat,
     );
 
-    const { community, communityId, isBanned, communityDisabled } = communityInfo;
+    const { community, communityId, isBanned, communityDisabled } =
+      communityInfo;
 
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
@@ -133,7 +134,8 @@ const buy = async (ctx: MainContext) => {
       ctx.message?.chat as Chat.UserNameChat,
     );
 
-    const { community, communityId, isBanned, communityDisabled } = communityInfo;
+    const { community, communityId, isBanned, communityDisabled } =
+      communityInfo;
 
     // Handle community not found in group chat
     if (ctx.message?.chat.type !== 'private' && !community) {
