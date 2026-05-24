@@ -33,6 +33,32 @@ export const runMigration = async () => {
   const disputeCounts: Record<string, number> = {};
   const orderChannelCounts: Record<string, number> = {};
 
+  const affectedCommunities = new Set<string>();
+
+  // Ensure all channels and groups are lowercase
+  for (const c of communities) {
+    if (c.group && c.group !== c.group.toLowerCase()) {
+      console.log(`Community ${c.name} (${c._id}) group changed to lowercase: ${c.group} -> ${c.group.toLowerCase()}`);
+      c.group = c.group.toLowerCase();
+      affectedCommunities.add(c._id.toString());
+    }
+    if (
+      c.dispute_channel &&
+      c.dispute_channel !== c.dispute_channel.toLowerCase()
+    ) {
+      console.log(`Community ${c.name} (${c._id}) dispute_channel changed to lowercase: ${c.dispute_channel} -> ${c.dispute_channel.toLowerCase()}`);
+      c.dispute_channel = c.dispute_channel.toLowerCase();
+      affectedCommunities.add(c._id.toString());
+    }
+    for (const ch of c.order_channels) {
+      if (ch.name && ch.name !== ch.name.toLowerCase()) {
+        console.log(`Community ${c.name} (${c._id}) order_channel changed to lowercase: ${ch.name} -> ${ch.name.toLowerCase()}`);
+        ch.name = ch.name.toLowerCase();
+        affectedCommunities.add(c._id.toString());
+      }
+    }
+  }
+
   // Count occurrences
   communities.forEach(c => {
     if (c.group) {
@@ -64,8 +90,6 @@ export const runMigration = async () => {
   console.log(
     `Found ${duplicateOrderChannels.length} duplicated order channels.`,
   );
-
-  const affectedCommunities = new Set<string>();
 
   for (const c of communities) {
     const creator = await User.findById(c.creator_id);

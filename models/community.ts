@@ -17,7 +17,7 @@ export interface IOrderChannel extends Document {
 }
 
 const OrderChannelSchema = new Schema<IOrderChannel>({
-  name: { type: String, required: true, unique: true, trim: true },
+  name: { type: String, required: true, unique: true, lowercase: true, trim: true },
   type: {
     type: String,
     enum: ['buy', 'sell', 'mixed'],
@@ -65,7 +65,7 @@ const CommunitySchema = new Schema<ICommunity>({
     required: true,
   },
   creator_id: { type: String },
-  group: { type: String, unique: true, sparse: true }, // group Id or public name
+  group: { type: String, unique: true, lowercase: true, sparse: true }, // group Id or public name
   order_channels: {
     // array of Id or public name of channels
     type: [OrderChannelSchema],
@@ -74,7 +74,7 @@ const CommunitySchema = new Schema<ICommunity>({
   fee: { type: Number, min: 0, max: 100, default: 0 },
   earnings: { type: Number, default: 0 }, // Sats amount to be paid to the community
   orders_to_redeem: { type: Number, default: 0 }, // Number of orders calculated to be redeemed
-  dispute_channel: { type: String, unique: true, sparse: true }, // Id or public name, channel to send new disputes
+  dispute_channel: { type: String, unique: true, lowercase: true, sparse: true }, // Id or public name, channel to send new disputes
   solvers: [usernameIdSchema], // users that are dispute solvers
   banned_users: [usernameIdSchema], // users that are banned from the community
   public: { type: Boolean, default: true },
