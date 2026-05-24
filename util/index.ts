@@ -296,7 +296,7 @@ const isGroupAdmin = async (
 
 const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
   try {
-    let channel = process.env.CHANNEL;
+    let channel;
     if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
       if (!community) {
@@ -311,8 +311,14 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
           }
         }
       }
+    } else {
+      channel = process.env.CHANNEL;
     }
-    await telegram.deleteMessage(channel!, Number(order.tg_channel_message1!));
+    if (!channel) {
+      // It will be logged in this function's catch()
+      throw Error(`Channel not found for order ${order._id}`);
+    }
+    await telegram.deleteMessage(channel, Number(order.tg_channel_message1!));
   } catch (error) {
     logger.error(error);
   }
