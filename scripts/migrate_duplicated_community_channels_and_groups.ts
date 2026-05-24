@@ -38,7 +38,9 @@ export const runMigration = async () => {
   // Ensure all channels and groups are lowercase
   for (const c of communities) {
     if (c.group && c.group !== c.group.toLowerCase()) {
-      console.log(`Community ${c.name} (${c._id}) group changed to lowercase: ${c.group} -> ${c.group.toLowerCase()}`);
+      console.log(
+        `Community ${c.name} (${c._id}) group changed to lowercase: ${c.group} -> ${c.group.toLowerCase()}`,
+      );
       c.group = c.group.toLowerCase();
       affectedCommunities.add(c._id.toString());
     }
@@ -46,13 +48,17 @@ export const runMigration = async () => {
       c.dispute_channel &&
       c.dispute_channel !== c.dispute_channel.toLowerCase()
     ) {
-      console.log(`Community ${c.name} (${c._id}) dispute_channel changed to lowercase: ${c.dispute_channel} -> ${c.dispute_channel.toLowerCase()}`);
+      console.log(
+        `Community ${c.name} (${c._id}) dispute_channel changed to lowercase: ${c.dispute_channel} -> ${c.dispute_channel.toLowerCase()}`,
+      );
       c.dispute_channel = c.dispute_channel.toLowerCase();
       affectedCommunities.add(c._id.toString());
     }
     for (const ch of c.order_channels) {
       if (ch.name && ch.name !== ch.name.toLowerCase()) {
-        console.log(`Community ${c.name} (${c._id}) order_channel changed to lowercase: ${ch.name} -> ${ch.name.toLowerCase()}`);
+        console.log(
+          `Community ${c.name} (${c._id}) order_channel changed to lowercase: ${ch.name} -> ${ch.name.toLowerCase()}`,
+        );
         ch.name = ch.name.toLowerCase();
         affectedCommunities.add(c._id.toString());
       }
