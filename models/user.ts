@@ -5,8 +5,8 @@ interface UserReview {
   reviewed_at: Date;
 }
 
-export interface UserDocument extends Document {
-  _id: string;
+export interface UserDocument extends Omit<Document, '_id'> {
+  _id: mongoose.Types.ObjectId;
   tg_id: string;
   username?: string;
   lang: string;

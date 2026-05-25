@@ -38,7 +38,7 @@ const orderToTags = async (order: IOrder) => {
   const channel = removeAtSymbol(channelEnvVar);
   let source = `https://t.me/${channel}/${order.tg_channel_message1}`;
   const tags = [];
-  tags.push(['d', order.id]);
+  tags.push(['d', order._id.toString()]);
   tags.push(['k', order.type]);
   tags.push(['f', order.fiat_code]);
   tags.push(['s', toKebabCase(order.status)]);

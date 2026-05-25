@@ -15,10 +15,7 @@ if (!MONGO_URI) {
 }
 logger.info(`Connecting to MongoDB`);
 const connect = () => {
-  mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as ConnectOptions);
+  mongoose.connect(MONGO_URI, {} as ConnectOptions);
   return mongoose;
 };
 

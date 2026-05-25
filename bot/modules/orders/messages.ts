@@ -31,7 +31,7 @@ export const listOrdersResponse = async (
     const timeToExpire = getTimeToExpirationOrder(order, i18n);
     const details = [
       [''].join(''),
-      ['`Id      `: ', '`', order.id, '`'].join(''),
+      ['`Id      `: ', '`', order._id.toString(), '`'].join(''),
       ['`Status  `: ', '`', status, '`'].join(''),
       ['`Sats amt`: ', '`', amount, '`'].join(''),
       ['`Fiat amt`: ', '`', fiatAmount, '`'].join(''),

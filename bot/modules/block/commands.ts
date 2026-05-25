@@ -24,8 +24,8 @@ const block = async (ctx: MainContext, usernameOrId: string): Promise<void> => {
 
   const areExistingOrders = await Order.exists({
     $or: [
-      { seller_id: user.id, buyer_id: userToBlock.id },
-      { seller_id: userToBlock.id, buyer_id: user.id },
+      { seller_id: user._id.toString(), buyer_id: userToBlock._id.toString() },
+      { seller_id: userToBlock._id.toString(), buyer_id: user._id.toString() },
     ],
     status: {
       $nin: [

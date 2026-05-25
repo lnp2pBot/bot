@@ -37,7 +37,7 @@ const isIso4217 = (code: string): boolean => {
 
 const isOrderCreator = (user: UserDocument, order: IOrder) => {
   try {
-    return user._id == order.creator_id;
+    return user._id.toString() == order.creator_id;
   } catch (error) {
     logger.error(error);
     return false;
@@ -88,8 +88,8 @@ const handleReputationItems = async (
     const yesterday = new Date(Date.now() - 86400000).toISOString();
     const orders = await Order.find({
       status: 'SUCCESS',
-      seller_id: buyer._id,
-      buyer_id: seller._id,
+      seller_id: buyer._id.toString(),
+      buyer_id: seller._id.toString(),
       taken_at: { $gte: yesterday },
     });
     if (orders.length > 0) {
@@ -454,7 +454,7 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
     return false;
   }
 
-  return community.solvers.some(solver => solver.id == user._id);
+  return community.solvers.some(solver => solver.id == user._id.toString());
 };
 
 // Return the fee the bot will charge to the seller
