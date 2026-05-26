@@ -43,6 +43,8 @@ export const getCommunityInfo = async (
       });
 
       if (!community) {
+        user.default_community_id = undefined;
+        await user.save();
         communityId = undefined;
       }
     }
