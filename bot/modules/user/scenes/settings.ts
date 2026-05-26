@@ -26,9 +26,11 @@ function make() {
       lightning_address: '',
     };
     if (user.default_community_id) {
-      const community = await Community.findById(user.default_community_id);
-      if (community == null) throw new Error('community not found');
-      data.community = community.group;
+      const community = await Community.findOne({
+        _id: user.default_community_id,
+        enabled: { $ne: false },
+      });
+      if (community) data.community = community.group;
     }
     if (user.nostr_public_key) {
       data.npub = NostrLib.encodeNpub(user.nostr_public_key);
