@@ -63,7 +63,7 @@ export const onCommunityInfo = async (ctx: MainContext) => {
     _id: commId,
     enabled: { $ne: false },
   });
-  if (community === null) throw new Error('community not found');
+  if (community === null) return ctx.reply(ctx.i18n.t('community_not_found'));
   const userCount = await User.countDocuments({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);

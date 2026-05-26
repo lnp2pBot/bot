@@ -54,7 +54,8 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
       _id: id,
       enabled: { $ne: false },
     });
-    if (community == null) throw new Error('community was not found');
+    if (community == null)
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
     const visibilityText = community.public
@@ -177,7 +178,8 @@ export const earningsMessage = async (ctx: MainContext) => {
       _id: communityId,
       enabled: { $ne: false },
     });
-    if (community == null) throw new Error('community was not found');
+    if (community == null)
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     const button =
       community.earnings > 0
         ? {

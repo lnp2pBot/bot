@@ -267,7 +267,9 @@ async function findCommunityByInput(
       `^${input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
       'i',
     );
-    return Community.findOne({ group: regex });
+    const matches = await Community.find({ group: regex }).limit(2);
+    if (matches.length > 1) throw new Error('AmbiguousCommunityInput');
+    return matches[0] ?? null;
   }
   if (!(await validateObjectId(ctx, input))) return null;
   return Community.findOne({ _id: input });
@@ -306,7 +308,9 @@ export const disableCommunity = async (ctx: MainContext) => {
     }
 
     return ctx.reply(ctx.i18n.t('operation_successful'));
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'AmbiguousCommunityInput')
+      return ctx.reply(ctx.i18n.t('ambiguous_community_input'));
     logger.error(error);
     await ctx.reply(ctx.i18n.t('generic_error'));
   }
@@ -345,7 +349,9 @@ export const enableCommunity = async (ctx: MainContext) => {
     }
 
     return ctx.reply(ctx.i18n.t('operation_successful'));
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'AmbiguousCommunityInput')
+      return ctx.reply(ctx.i18n.t('ambiguous_community_input'));
     logger.error(error);
     await ctx.reply(ctx.i18n.t('generic_error'));
   }
