@@ -713,7 +713,7 @@ payment_methods_saved: "Способи оплати збережено ✅"
 custom_payment_method: "✍️ Власний спосіб оплати"
 payment_methods_reset: "Способи оплати видалено. Користувачі тепер можуть вільно вводити будь-який спосіб оплати."
 payment_methods_wizard_commands: "/reset — видалити всі способи оплати та відновити поведінку за замовчуванням\n/exit — вийти без збереження"
-community_disabled_by_admin: An administrator has disabled your community ${communityName}
-community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
-community_already_disabled: This community is already disabled
-community_already_enabled: This community is already enabled
+community_disabled_by_admin: Адміністратор вимкнув вашу спільноту ${communityName}
+community_enabled_by_admin: Адміністратор повторно увімкнув вашу спільноту ${communityName}
+community_already_disabled: Ця спільнота вже вимкнена
+community_already_enabled: Ця спільнота вже увімкнена

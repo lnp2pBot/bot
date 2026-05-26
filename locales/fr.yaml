@@ -716,7 +716,7 @@ payment_methods_saved: "Méthodes de paiement enregistrées ✅"
 custom_payment_method: "✍️ Méthode de paiement personnalisée"
 payment_methods_reset: "Méthodes de paiement supprimées. Les utilisateurs peuvent désormais saisir n'importe quelle méthode de paiement librement."
 payment_methods_wizard_commands: "/reset — supprimer toutes les méthodes de paiement et restaurer le comportement par défaut\n/exit — quitter sans enregistrer"
-community_disabled_by_admin: An administrator has disabled your community ${communityName}
-community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
-community_already_disabled: This community is already disabled
-community_already_enabled: This community is already enabled
+community_disabled_by_admin: Un administrateur a désactivé votre communauté ${communityName}
+community_enabled_by_admin: Un administrateur a réactivé votre communauté ${communityName}
+community_already_disabled: Cette communauté est déjà désactivée
+community_already_enabled: Cette communauté est déjà activée
