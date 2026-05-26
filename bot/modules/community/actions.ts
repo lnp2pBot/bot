@@ -114,6 +114,11 @@ export const onCommunityInfo = async (ctx: MainContext) => {
 export const onSetCommunity = async (ctx: CommunityContext) => {
   const tgId = (ctx.update as any).callback_query.from.id;
   const defaultCommunityId = ctx.match?.[1];
+  const community = await Community.findOne({
+    _id: defaultCommunityId,
+    enabled: { $ne: false },
+  });
+  if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));
   await User.findOneAndUpdate(
     { tg_id: tgId },
     { default_community_id: defaultCommunityId },

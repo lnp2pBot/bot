@@ -42,10 +42,7 @@ export const getCommunityInfo = async (
         enabled: { $ne: false },
       });
 
-      // If community not found, clear the user's default
       if (!community) {
-        user.default_community_id = undefined;
-        await user.save();
         communityId = undefined;
       }
     }
