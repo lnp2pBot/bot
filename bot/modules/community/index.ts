@@ -1,5 +1,5 @@
 import { Telegraf } from 'telegraf';
-import { userMiddleware } from '../../middleware/user';
+import { userMiddleware, superAdminMiddleware } from '../../middleware/user';
 import * as actions from './actions';
 import * as commands from './commands';
 import {
@@ -63,6 +63,17 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     async ctx => {
       await commands.updateCommunity(ctx, ctx.match[1], 'payment_methods');
     },
+  );
+
+  bot.command(
+    'disablecommunity',
+    superAdminMiddleware,
+    commands.disableCommunity,
+  );
+  bot.command(
+    'enablecommunity',
+    superAdminMiddleware,
+    commands.enableCommunity,
   );
 
   bot.command('findcomms', userMiddleware, commands.findCommunity);
