@@ -820,3 +820,4 @@ community_disabled_by_admin: یک مدیر جامعه ${communityName} شما ر
 community_enabled_by_admin: یک مدیر جامعه ${communityName} شما را دوباره فعال کرد
 community_already_disabled: این جامعه از قبل غیرفعال است
 community_already_enabled: این جامعه از قبل فعال است
+ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید

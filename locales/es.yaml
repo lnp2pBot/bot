@@ -723,3 +723,4 @@ community_disabled_by_admin: Un administrador ha deshabilitado tu comunidad ${co
 community_enabled_by_admin: Un administrador ha reactivado tu comunidad ${communityName}
 community_already_disabled: Esta comunidad ya está deshabilitada
 community_already_enabled: Esta comunidad ya está habilitada
+ambiguous_community_input: Varias comunidades coinciden con ese nombre de usuario, por favor usa el ID de la comunidad

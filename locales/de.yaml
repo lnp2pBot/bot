@@ -721,3 +721,4 @@ community_disabled_by_admin: Ein Administrator hat deine Community ${communityNa
 community_enabled_by_admin: Ein Administrator hat deine Community ${communityName} wieder aktiviert
 community_already_disabled: Diese Community ist bereits deaktiviert
 community_already_enabled: Diese Community ist bereits aktiviert
+ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID

@@ -718,3 +718,4 @@ community_disabled_by_admin: Un amministratore ha disabilitato la tua comunità 
 community_enabled_by_admin: Un amministratore ha riabilitato la tua comunità ${communityName}
 community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
+ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità

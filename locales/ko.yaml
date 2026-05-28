@@ -718,3 +718,4 @@ community_disabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 
 community_enabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 다시 활성화했습니다
 community_already_disabled: 이 커뮤니티는 이미 비활성화되어 있습니다
 community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니다
+ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요
