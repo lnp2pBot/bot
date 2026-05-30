@@ -374,7 +374,13 @@ const cancelAddInvoice = async (
         await messages.publishBuyOrderMessage(ctx, user, order, i18nCtx);
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(ctx, sellerUser, order, i18nCtx);
+        const i18nCtxSeller = await getUserI18nContext(sellerUser);
+        await messages.publishSellOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
       await order.save();
 
