@@ -141,9 +141,6 @@ export const takesell = async (
 
       await order.save();
 
-      console.log('takeSell: Ups... bloqueo por latencia de red, 10 segundos');
-      await new Promise(resolve => setTimeout(resolve, 10000));
-
       order.status = 'in-progress';
       OrderEvents.orderUpdated(order);
       // We delete the messages related to that order from the channel
