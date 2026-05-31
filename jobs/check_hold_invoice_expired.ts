@@ -1,9 +1,8 @@
 import { HasTelegram } from '../bot/start';
 import { Order, User, Dispute } from '../models';
-import { holdInvoiceExpirationInSecs, getUserI18nContext } from '../util';
+import { holdInvoiceExpirationInSecs, getUserI18nContext, PerOrderIdMutex } from '../util';
 import { logger } from '../logger';
 import { cancelHoldInvoice } from '../ln';
-import { PerOrderIdMutex } from '../ln/subscribe_invoice';
 import * as OrderEvents from '../bot/modules/events/orders';
 import * as messages from '../bot/messages';
 
