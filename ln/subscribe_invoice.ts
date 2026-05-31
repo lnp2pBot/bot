@@ -6,7 +6,12 @@ import { getInfo } from './info';
 import lnd from './connect';
 import * as messages from '../bot/messages';
 import * as ordersActions from '../bot/ordersActions';
-import { getUserI18nContext, getEmojiRate, decimalRound, PerOrderIdMutex } from '../util';
+import {
+  getUserI18nContext,
+  getEmojiRate,
+  decimalRound,
+  PerOrderIdMutex,
+} from '../util';
 import { logger } from '../logger';
 import { HasTelegram } from '../bot/start';
 import { IOrder } from '../models/order';

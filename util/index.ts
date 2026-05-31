@@ -605,7 +605,6 @@ const generateQRWithImage = async (request: string, randomImage: string) => {
   return canvas.toBuffer();
 };
 
-
 type LockCountedMutex = {
   lockCount: number;
   mutex: Mutex;
