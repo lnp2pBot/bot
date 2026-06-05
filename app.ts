@@ -80,6 +80,7 @@ import { startMonitoring } from './monitoring';
         startMonitoring();
       } catch (error) {
         logger.error(`Startup failed: ${error}`);
+        process.exit(1);
       }
     })
     .on('error', (error: Error) =>
