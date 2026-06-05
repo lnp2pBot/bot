@@ -1,6 +1,6 @@
 {
   "name": "lnp2pbot",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "engines": {
     "node": ">=18.0.0"
   },
