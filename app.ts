@@ -57,7 +57,9 @@ import { startMonitoring } from './monitoring';
               return new SocksProxyAgent(proxyUrl) as any;
             })()
           : (() => {
-              logger.info('Using direct HTTPS agent for Telegram API (IPv4 forced)');
+              logger.info(
+                'Using direct HTTPS agent for Telegram API (IPv4 forced)',
+              );
               return new https.Agent({
                 family: 4,
                 keepAlive: true,
