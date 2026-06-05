@@ -9,6 +9,11 @@ import {
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../../../../logger';
 
+const readNonNegativeInt = (value: string | undefined, fallback: number) => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+};
+
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
     const state = ctx.scene.state as CommunityWizardState;
@@ -146,8 +151,9 @@ function make() {
         const [, days] = ctx.message.text.trim().split(' ');
         const min_days = parseInt(days);
         if (isNaN(min_days) || min_days < 0) throw new Error('NotValidNumber');
-        const maxAge = parseInt(
-          process.env.MAX_COUNTERPARTY_AGE_REQUIREMENT || '30',
+        const maxAge = readNonNegativeInt(
+          process.env.MAX_COUNTERPARTY_AGE_REQUIREMENT,
+          30,
         );
         if (min_days > maxAge) {
           state.error = {
@@ -171,7 +177,10 @@ function make() {
       } catch (err) {
         logger.error(err);
         (ctx.scene.state as CommunityWizardState).error = {
-          i18n: 'invalid_number',
+          i18n:
+            err instanceof Error && err.message === 'NotValidNumber'
+              ? 'invalid_number'
+              : 'generic_error',
         };
         await updateMessage(ctx);
       }
@@ -191,8 +200,9 @@ function make() {
         const min_orders = parseInt(orders);
         if (isNaN(min_orders) || min_orders < 0)
           throw new Error('NotValidNumber');
-        const maxOrders = parseInt(
-          process.env.MAX_COUNTERPARTY_ORDERS_REQUIREMENT || '10',
+        const maxOrders = readNonNegativeInt(
+          process.env.MAX_COUNTERPARTY_ORDERS_REQUIREMENT,
+          10,
         );
         if (min_orders > maxOrders) {
           state.error = {
@@ -219,7 +229,10 @@ function make() {
       } catch (err) {
         logger.error(err);
         (ctx.scene.state as CommunityWizardState).error = {
-          i18n: 'invalid_number',
+          i18n:
+            err instanceof Error && err.message === 'NotValidNumber'
+              ? 'invalid_number'
+              : 'generic_error',
         };
         await updateMessage(ctx);
       }
