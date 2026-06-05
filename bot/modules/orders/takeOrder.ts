@@ -5,6 +5,7 @@ import {
   deleteOrderFromChannel,
   generateRandomImage,
   PerOrderIdMutex,
+  getUserAge,
 } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
@@ -78,6 +79,8 @@ export const takebuy = async (
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
 
+      if (!(await meetsCounterpartyRequirements(ctx, user, userOffer))) return;
+
       if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
 
       const { randomImage } = generateRandomImage(user._id.toString());
@@ -134,6 +137,9 @@ export const takesell = async (
       // We verify if the user is not banned on this community
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
+
+      if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
+
       if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
       order.status = 'WAITING_BUYER_INVOICE';
       order.buyer_id = user._id;
@@ -150,6 +156,34 @@ export const takesell = async (
   } catch (error) {
     logger.error(error);
   }
+};
+
+const meetsCounterpartyRequirements = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderCreator: UserDocument,
+) => {
+  if (!orderCreator.counterparty_requirements) return true;
+
+  const { min_days_using_bot, min_completed_orders } =
+    orderCreator.counterparty_requirements;
+
+  if (min_days_using_bot > 0) {
+    const ageInDays = getUserAge(user);
+    if (ageInDays < min_days_using_bot) {
+      await messages.notMeetingRequirementsMessage(ctx, user);
+      return false;
+    }
+  }
+
+  if (min_completed_orders > 0) {
+    if (user.trades_completed < min_completed_orders) {
+      await messages.notMeetingRequirementsMessage(ctx, user);
+      return false;
+    }
+  }
+
+  return true;
 };
 
 const checkBlockingStatus = async (

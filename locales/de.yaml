@@ -251,6 +251,10 @@ help: |
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
+  Innerhalb von /settings kannst du Gegenpartei-Anforderungen konfigurieren:
+    /counterpartyage &lt;Tage&gt; - Legt das Mindestalter (in Tagen) für die Gegenpartei fest
+    /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge für die Gegenpartei fest
+    /resetrequirements - Setzt die Anforderungen auf Standardwerte zurück
   /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten
   /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können 
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
@@ -631,20 +635,33 @@ order_not_found: Bestellung nicht gefunden.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Benutzereinstellungen für @${user.username}</strong>
 
-  Language:
+  Sprache:
     ${language.emoji} ${language.name}
-  Community:
+  Gemeinschaft:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  Lightning-Adresse:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Gegenpartei-Anforderungen</strong>
+  Mindestalter: ${min_days_using_bot} Tage
+  Mindestanzahl abgeschlossener Aufträge: ${min_completed_orders}
+
+  <strong># HILFE</strong>
+  /setnpub &lt;npub&gt; - Nostr-Schlüssel des Benutzers konfigurieren.
+  /counterpartyage &lt;Tage&gt; - Legt das Mindestalter (in Tagen) für die Gegenpartei fest.
+  /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge fest.
+  /resetrequirements - Setzt die Gegenpartei-Anforderungen auf Standardwerte zurück.
+  /exit - um den Assistenten zu verlassen.
+not_meeting_requirements: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen.
+counterpartyage_updated: Altersanforderung der Gegenpartei auf ${days} Tage aktualisiert.
+counterpartyorders_updated: Auftragsanforderung der Gegenpartei auf ${orders} aktualisiert.
+requirements_reset: Gegenpartei-Anforderungen wurden auf Standardwerte zurückgesetzt.
+invalid_number: Ungültige Zahl.
+invalid_range: Ungültiger Wert für ${command}, bitte wähle eine Zahl im Bereich [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Rechnung wurde bereits niedergelassen
