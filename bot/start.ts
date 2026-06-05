@@ -1110,13 +1110,13 @@ const initialize = (
   return bot;
 };
 
-const start = (
+const start = async (
   botToken: string,
   options: Partial<Telegraf.Options<CommunityContext>>,
-): Telegraf<CommunityContext> => {
+): Promise<Telegraf<CommunityContext>> => {
   const bot = initialize(botToken, options);
 
-  bot.launch();
+  await bot.launch();
 
   logger.notice('Bot launched.');
 
