@@ -56,8 +56,11 @@ const UserSchema = new Schema<UserDocument>({
   created_at: { type: Date, default: Date.now },
   default_community_id: { type: String },
   counterparty_requirements: {
-    min_days_using_bot: { type: Number, min: 0, default: 0 },
-    min_completed_orders: { type: Number, min: 0, default: 0 },
+    type: {
+      min_days_using_bot: { type: Number, min: 0, default: 0 },
+      min_completed_orders: { type: Number, min: 0, default: 0 },
+    },
+    required: false,
   },
 });
 
