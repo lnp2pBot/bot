@@ -251,6 +251,10 @@ help: |
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
+  In /settings puoi configurare i requisiti della controparte:
+    /counterpartyage &lt;giorni&gt; - Imposta l'età minima (in giorni) richiesta per la controparte
+    /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati richiesti per la controparte
+    /resetrequirements - Ripristina i requisiti ai valori predefiniti
   /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
@@ -628,20 +632,33 @@ order_not_found: Ordine non trovato.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Impostazioni utente per @${user.username}</strong>
 
-  Language:
+  Lingua:
     ${language.emoji} ${language.name}
-  Community:
+  Comunità:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  indirizzo lightning:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Requisiti della controparte</strong>
+  Età minima: ${min_days_using_bot} giorni
+  Ordini completati minimi: ${min_completed_orders}
+
+  <strong># AIUTO</strong>
+  /setnpub &lt;npub&gt; - Configura la chiave pubblica Nostr dell'utente.
+  /counterpartyage &lt;giorni&gt; - Imposta l'età minima (in giorni) per la controparte.
+  /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati per la controparte.
+  /resetrequirements - Ripristina i requisiti della controparte ai valori predefiniti.
+  /exit - per uscire dall'assistente.
+not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine.
+counterpartyage_updated: Requisito di età della controparte aggiornato a ${days} giorni.
+counterpartyorders_updated: Requisito di ordini completati della controparte aggiornato a ${orders}.
+requirements_reset: I requisiti della controparte sono stati ripristinati ai valori predefiniti.
+invalid_number: Numero non valido.
+invalid_range: Valore non valido per ${command}, scegli un numero nell'intervallo [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Fattura già risolta
