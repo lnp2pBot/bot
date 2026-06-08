@@ -369,12 +369,24 @@ const cancelAddInvoice = async (
         order.secret = null;
       }
 
+      const i18nCtxSeller = await getUserI18nContext(sellerUser);
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(ctx, user, order, i18nCtx);
+        const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+        await messages.publishBuyOrderMessage(
+          ctx,
+          buyerUser,
+          order,
+          i18nCtxBuyer,
+        );
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(ctx, sellerUser, order, i18nCtx);
+        await messages.publishSellOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
       await order.save();
 
