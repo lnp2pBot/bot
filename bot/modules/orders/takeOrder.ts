@@ -167,10 +167,14 @@ const checkTakeRateLimit = async (
   ctx: MainContext,
   user: UserDocument,
 ): Promise<boolean> => {
-  if (
-    user.take_order_cooldown_until &&
-    user.take_order_cooldown_until > new Date()
-  ) {
+  const now = new Date();
+  if (user.take_order_cooldown_until && user.take_order_cooldown_until <= now) {
+    user.take_order_count = 0;
+    user.take_order_cooldown_until = null;
+    await user.save();
+  }
+
+  if (user.take_order_cooldown_until && user.take_order_cooldown_until > now) {
     await messages.orderTakeRateLimitMessage(
       ctx,
       user,
@@ -182,8 +186,16 @@ const checkTakeRateLimit = async (
 };
 
 const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
-  const maxOrdersTake = parseInt(process.env.MAX_ORDERS_TAKE || '10');
-  const cooldownHours = parseInt(process.env.ORDER_TAKE_COOLDOWN_HOURS || '24');
+  const maxOrdersTakeRaw = Number(process.env.MAX_ORDERS_TAKE ?? 10);
+  const cooldownHoursRaw = Number(process.env.ORDER_TAKE_COOLDOWN_HOURS ?? 24);
+  const maxOrdersTake =
+    Number.isInteger(maxOrdersTakeRaw) && maxOrdersTakeRaw > 0
+      ? maxOrdersTakeRaw
+      : 10;
+  const cooldownHours =
+    Number.isFinite(cooldownHoursRaw) && cooldownHoursRaw > 0
+      ? cooldownHoursRaw
+      : 24;
 
   user.take_order_count = (user.take_order_count || 0) + 1;
   if (user.take_order_count >= maxOrdersTake) {
