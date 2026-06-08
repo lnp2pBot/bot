@@ -13,11 +13,14 @@ import * as Scenes from './scenes';
 export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('mycomm', userMiddleware, commands.communityAdmin);
   bot.command('mycomms', userMiddleware, commands.myComms);
-  // TODO: Uncomment when the community wizard is ready
-  // bot.command('community', userMiddleware, async ctx => {
-  //   const { user } = ctx;
-  //   await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', { bot, user });
-  // });
+  if (process.env.COMMUNITY_CREATION_ENABLED === 'true') {
+    bot.command('community', userMiddleware, async ctx => {
+      await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', {
+        bot,
+        user: ctx.user,
+      });
+    });
+  }
   bot.command('setcomm', userMiddleware, commands.setComm);
 
   bot.action(
