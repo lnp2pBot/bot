@@ -2,11 +2,14 @@ import { HasTelegram } from '../bot/start';
 import { User, Order } from '../models';
 import { cancelShowHoldInvoice, cancelAddInvoice } from '../bot/commands';
 import * as messages from '../bot/messages';
-import { getUserI18nContext, holdInvoiceExpirationInSecs } from '../util';
+import {
+  getUserI18nContext,
+  holdInvoiceExpirationInSecs,
+  PerOrderIdMutex,
+} from '../util';
 import { logger } from '../logger';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import * as OrderEvents from '../bot/modules/events/orders';
-import { PerOrderIdMutex } from '../ln/subscribe_invoice';
 
 const cancelOrders = async (bot: HasTelegram) => {
   try {

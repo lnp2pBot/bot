@@ -1,4 +1,5 @@
 import { I18nContext } from '@grammyjs/i18n';
+import { Mutex } from 'async-mutex';
 import { ICommunity, IOrderChannel } from '../models/community';
 import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
@@ -604,6 +605,38 @@ const generateQRWithImage = async (request: string, randomImage: string) => {
   return canvas.toBuffer();
 };
 
+type LockCountedMutex = {
+  lockCount: number;
+  mutex: Mutex;
+};
+
+class PerOrderIdMutex {
+  mutexes: Map<string, LockCountedMutex> = new Map();
+
+  async runExclusive(orderId: string, callback: () => Promise<any>) {
+    let mtx: LockCountedMutex;
+    if (!this.mutexes.has(orderId)) {
+      mtx = { lockCount: 1, mutex: new Mutex() };
+      this.mutexes.set(orderId, mtx);
+    } else {
+      mtx = this.mutexes.get(orderId)!;
+      mtx.lockCount++;
+    }
+    let ret: any;
+    try {
+      ret = await mtx.mutex.runExclusive(callback);
+    } finally {
+      mtx.lockCount--;
+      if (mtx.lockCount == 0) {
+        this.mutexes.delete(orderId);
+      }
+    }
+    return ret;
+  }
+
+  static instance = new PerOrderIdMutex();
+}
+
 export {
   isIso4217,
   plural,
@@ -637,4 +670,5 @@ export {
   isOrderCreator,
   generateRandomImage,
   generateQRWithImage,
+  PerOrderIdMutex,
 };
