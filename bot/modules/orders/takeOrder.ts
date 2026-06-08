@@ -63,6 +63,9 @@ export const takebuy = async (
       if (!orderId) return;
       const { user } = ctx;
       if (!(await validateObjectId(ctx, orderId))) return;
+
+      if (await checkTakeRateLimit(ctx, user)) return;
+
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
@@ -79,6 +82,8 @@ export const takebuy = async (
         return await messages.bannedUserErrorMessage(ctx, user);
 
       if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
+
+      await incrementTakeOrderCount(user);
 
       const { randomImage } = generateRandomImage(user._id.toString());
 
@@ -109,6 +114,9 @@ export const takesell = async (
     await PerOrderIdMutex.instance.runExclusive(orderId, async () => {
       const { user } = ctx;
       if (!orderId) return;
+
+      if (await checkTakeRateLimit(ctx, user)) return;
+
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
       const seller = await User.findOne({ _id: order.seller_id });
@@ -135,6 +143,9 @@ export const takesell = async (
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
       if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
+
+      await incrementTakeOrderCount(user);
+
       order.status = 'WAITING_BUYER_INVOICE';
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
@@ -150,6 +161,37 @@ export const takesell = async (
   } catch (error) {
     logger.error(error);
   }
+};
+
+const checkTakeRateLimit = async (
+  ctx: MainContext,
+  user: UserDocument,
+): Promise<boolean> => {
+  if (
+    user.take_order_cooldown_until &&
+    user.take_order_cooldown_until > new Date()
+  ) {
+    await messages.orderTakeRateLimitMessage(
+      ctx,
+      user,
+      user.take_order_cooldown_until,
+    );
+    return true;
+  }
+  return false;
+};
+
+const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
+  const maxOrdersTake = parseInt(process.env.MAX_ORDERS_TAKE || '10');
+  const cooldownHours = parseInt(process.env.ORDER_TAKE_COOLDOWN_HOURS || '24');
+
+  user.take_order_count = (user.take_order_count || 0) + 1;
+  if (user.take_order_count >= maxOrdersTake) {
+    user.take_order_cooldown_until = new Date(
+      Date.now() + cooldownHours * 60 * 60 * 1000,
+    );
+  }
+  await user.save();
 };
 
 const checkBlockingStatus = async (

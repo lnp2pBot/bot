@@ -2102,6 +2102,23 @@ const showReleaseConfirmationMessage = async (
   }
 };
 
+const orderTakeRateLimitMessage = async (
+  ctx: MainContext,
+  user: UserDocument,
+  cooldownUntil: Date,
+) => {
+  try {
+    const remainingMs = cooldownUntil.getTime() - Date.now();
+    const remainingHours = Math.ceil(remainingMs / (1000 * 60 * 60));
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('order_take_rate_limit', { hours: remainingHours }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 export {
   startMessage,
   initBotErrorMessage,
@@ -2224,4 +2241,5 @@ export {
   userTakerIsBlockedByUserOrder,
   userOrderIsBlockedByUserTaker,
   showQRCodeMessage,
+  orderTakeRateLimitMessage,
 };
