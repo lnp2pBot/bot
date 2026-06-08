@@ -154,7 +154,10 @@ const createOrderSteps = {
     const stateComm = ctx.wizard.state.community;
     const loadedComm =
       !stateComm && user?.default_community_id
-        ? await Community.findById(user.default_community_id)
+        ? await Community.findOne({
+            _id: user.default_community_id,
+            enabled: { $ne: false },
+          })
         : null;
     const community = stateComm ?? loadedComm;
     if (loadedComm) ctx.wizard.state.community = loadedComm;

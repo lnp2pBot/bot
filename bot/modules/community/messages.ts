@@ -50,8 +50,12 @@ export const updateCommunityMessage = async (ctx: MainContext) => {
   try {
     await ctx.deleteMessage();
     const id = ctx.match?.[1];
-    const community = await Community.findById(id);
-    if (community == null) throw new Error('community was not found');
+    const community = await Community.findOne({
+      _id: id,
+      enabled: { $ne: false },
+    });
+    if (community == null)
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     let text = ctx.i18n.t('community') + `: ${community.name}\n`;
     text += ctx.i18n.t('what_to_do');
     const visibilityText = community.public
@@ -170,8 +174,12 @@ export const earningsMessage = async (ctx: MainContext) => {
     if (isScheduled)
       return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
-    const community = await Community.findById(communityId);
-    if (community == null) throw new Error('community was not found');
+    const community = await Community.findOne({
+      _id: communityId,
+      enabled: { $ne: false },
+    });
+    if (community == null)
+      return await ctx.reply(ctx.i18n.t('community_not_found'));
     const button =
       community.earnings > 0
         ? {

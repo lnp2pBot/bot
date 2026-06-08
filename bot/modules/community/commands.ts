@@ -1,11 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 import { logger } from '../../../logger';
 import { showUserCommunitiesMessage } from './messages';
-import { Community, Order } from '../../../models';
+import { Community, Order, User } from '../../../models';
 import { validateParams, validateObjectId } from '../../validations';
 import { MainContext } from '../../start';
 import { CommunityContext } from './communityContext';
 import { Telegraf } from 'telegraf';
+import { getUserI18nContext } from '../../../util';
 
 async function getOrderCountByCommunity(): Promise<number[]> {
   const data = await Order.aggregate([
@@ -21,6 +22,7 @@ async function findCommunities(currency: string) {
   const communities = await Community.find({
     currencies: currency,
     public: true,
+    enabled: { $ne: false },
   });
   const orderCount = await getOrderCountByCommunity();
   return communities.map(comm => {
@@ -49,9 +51,15 @@ export const setComm = async (ctx: MainContext) => {
     if (groupName[0] == '@') {
       // Allow find communities case insensitive
       const regex = new RegExp(['^', groupName, '$'].join(''), 'i');
-      community = await Community.findOne({ group: regex });
+      community = await Community.findOne({
+        group: regex,
+        enabled: { $ne: false },
+      });
     } else if (groupName[0] == '-') {
-      community = await Community.findOne({ group: groupName });
+      community = await Community.findOne({
+        group: groupName,
+        enabled: { $ne: false },
+      });
     }
     if (!community) {
       return await ctx.reply(ctx.i18n.t('community_not_found'));
@@ -70,7 +78,11 @@ export const communityAdmin = async (ctx: CommunityContext) => {
   try {
     const [group] = (await validateParams(ctx, 2, '\\<_community_\\>'))!;
     const creator_id = ctx.user.id;
-    const [community] = await Community.find({ group, creator_id });
+    const [community] = await Community.find({
+      group,
+      creator_id,
+      enabled: { $ne: false },
+    });
     if (!community) throw new Error('CommunityNotFound');
     await ctx.scene.enter('COMMUNITY_ADMIN', { community });
   } catch (err: any) {
@@ -89,7 +101,10 @@ export const myComms = async (ctx: MainContext) => {
   try {
     const { user } = ctx;
 
-    const communities = await Community.find({ creator_id: user._id });
+    const communities = await Community.find({
+      creator_id: user._id,
+      enabled: { $ne: false },
+    });
 
     if (!communities.length)
       return await ctx.reply(ctx.i18n.t('you_dont_have_communities'));
@@ -147,6 +162,7 @@ export const updateCommunity = async (
     const community = await Community.findOne({
       _id: id,
       creator_id: user._id,
+      enabled: { $ne: false },
     });
 
     if (!community) {
@@ -228,6 +244,7 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,
+      enabled: { $ne: false },
     });
 
     if (!community) {
@@ -241,6 +258,105 @@ export const deleteCommunity = async (ctx: CommunityContext) => {
   }
 };
 
+async function findCommunityByInput(
+  ctx: MainContext,
+  input: string,
+): Promise<typeof Community.prototype | null> {
+  if (input[0] === '@') {
+    const regex = new RegExp(
+      `^${input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
+      'i',
+    );
+    const matches = await Community.find({ group: regex }).limit(2);
+    if (matches.length > 1) throw new Error('AmbiguousCommunityInput');
+    return matches[0] ?? null;
+  }
+  if (!(await validateObjectId(ctx, input))) return null;
+  return Community.findOne({ _id: input });
+}
+
+export const disableCommunity = async (ctx: MainContext) => {
+  try {
+    const [input] = (await validateParams(
+      ctx,
+      2,
+      '\\<_community id \\| @groupUsername_\\>',
+    ))!;
+    if (!input) return;
+
+    const community = await findCommunityByInput(ctx, input);
+    if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));
+    if (community.enabled === false)
+      return ctx.reply(ctx.i18n.t('community_already_disabled'));
+
+    community.enabled = false;
+    await community.save();
+
+    const creator = await User.findById(community.creator_id);
+    if (creator) {
+      try {
+        const creatorI18n = await getUserI18nContext(creator);
+        await ctx.telegram.sendMessage(
+          creator.tg_id,
+          creatorI18n.t('community_disabled_by_admin', {
+            communityName: community.name,
+          }),
+        );
+      } catch (notifyError) {
+        logger.error(notifyError);
+      }
+    }
+
+    return ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error: any) {
+    if (error.message === 'AmbiguousCommunityInput')
+      return ctx.reply(ctx.i18n.t('ambiguous_community_input'));
+    logger.error(error);
+    await ctx.reply(ctx.i18n.t('generic_error'));
+  }
+};
+
+export const enableCommunity = async (ctx: MainContext) => {
+  try {
+    const [input] = (await validateParams(
+      ctx,
+      2,
+      '\\<_community id \\| @groupUsername_\\>',
+    ))!;
+    if (!input) return;
+
+    const community = await findCommunityByInput(ctx, input);
+    if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));
+    if (community.enabled !== false)
+      return ctx.reply(ctx.i18n.t('community_already_enabled'));
+
+    community.enabled = true;
+    await community.save();
+
+    const creator = await User.findById(community.creator_id);
+    if (creator) {
+      try {
+        const creatorI18n = await getUserI18nContext(creator);
+        await ctx.telegram.sendMessage(
+          creator.tg_id,
+          creatorI18n.t('community_enabled_by_admin', {
+            communityName: community.name,
+          }),
+        );
+      } catch (notifyError) {
+        logger.error(notifyError);
+      }
+    }
+
+    return ctx.reply(ctx.i18n.t('operation_successful'));
+  } catch (error: any) {
+    if (error.message === 'AmbiguousCommunityInput')
+      return ctx.reply(ctx.i18n.t('ambiguous_community_input'));
+    logger.error(error);
+    await ctx.reply(ctx.i18n.t('generic_error'));
+  }
+};
+
 export const changeVisibility = async (ctx: CommunityContext) => {
   try {
     ctx.deleteMessage();
@@ -251,6 +367,7 @@ export const changeVisibility = async (ctx: CommunityContext) => {
     const community = await Community.findOne({
       _id: id,
       creator_id: ctx.user._id,
+      enabled: { $ne: false },
     });
 
     if (!community) {

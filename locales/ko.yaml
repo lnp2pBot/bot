@@ -716,3 +716,8 @@ payment_methods_saved: "결제 방법이 저장되었습니다 ✅"
 custom_payment_method: "✍️ 사용자 지정 결제 방법"
 payment_methods_reset: "결제 방법이 삭제되었습니다. 이제 사용자는 어떤 결제 방법이든 자유롭게 입력할 수 있습니다."
 payment_methods_wizard_commands: "/reset — 모든 결제 방법을 삭제하고 기본 동작을 복원합니다\n/exit — 저장하지 않고 종료"
+community_disabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 비활성화했습니다
+community_enabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 다시 활성화했습니다
+community_already_disabled: 이 커뮤니티는 이미 비활성화되어 있습니다
+community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니다
+ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요

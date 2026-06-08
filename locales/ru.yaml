@@ -719,3 +719,8 @@ payment_methods_saved: "Способы оплаты сохранены ✅"
 custom_payment_method: "✍️ Пользовательский способ оплаты"
 payment_methods_reset: "Способы оплаты удалены. Пользователи теперь могут свободно вводить любой способ оплаты."
 payment_methods_wizard_commands: "/reset — удалить все способы оплаты и восстановить поведение по умолчанию\n/exit — выйти без сохранения"
+community_disabled_by_admin: Администратор отключил ваше сообщество ${communityName}
+community_enabled_by_admin: Администратор повторно включил ваше сообщество ${communityName}
+community_already_disabled: Это сообщество уже отключено
+community_already_enabled: Это сообщество уже включено
+ambiguous_community_input: Несколько сообществ соответствуют этому имени пользователя, пожалуйста, используйте ID сообщества
