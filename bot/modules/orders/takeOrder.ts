@@ -1,7 +1,11 @@
 import { logger } from '../../../logger';
 import { Block, Order, User } from '../../../models';
 import { UserDocument } from '../../../models/user';
-import { deleteOrderFromChannel, generateRandomImage } from '../../../util';
+import {
+  deleteOrderFromChannel,
+  generateRandomImage,
+  PerOrderIdMutex,
+} from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
 import {
@@ -55,41 +59,43 @@ export const takebuy = async (
   orderId: string,
 ) => {
   try {
-    if (!orderId) return;
-    const { user } = ctx;
-    if (!(await validateObjectId(ctx, orderId))) return;
-    const order = await Order.findOne({ _id: orderId });
-    if (!order) return;
+    await PerOrderIdMutex.instance.runExclusive(orderId, async () => {
+      if (!orderId) return;
+      const { user } = ctx;
+      if (!(await validateObjectId(ctx, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!order) return;
 
-    const userOffer = await User.findOne({ _id: order.buyer_id });
+      const userOffer = await User.findOne({ _id: order.buyer_id });
 
-    if (!userOffer) {
-      return await messages.notFoundUserMessage(ctx);
-    } else if (await checkBlockingStatus(ctx, user, userOffer)) {
-      return;
-    }
+      if (!userOffer) {
+        return await messages.notFoundUserMessage(ctx);
+      } else if (await checkBlockingStatus(ctx, user, userOffer)) {
+        return;
+      }
 
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, order.community_id))
-      return await messages.bannedUserErrorMessage(ctx, user);
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, order.community_id))
+        return await messages.bannedUserErrorMessage(ctx, user);
 
-    if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
+      if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
 
-    const { randomImage } = generateRandomImage(user._id.toString());
+      const { randomImage } = generateRandomImage(user._id.toString());
 
-    order.status = 'WAITING_PAYMENT';
-    order.seller_id = user._id;
-    order.taken_at = new Date(Date.now());
+      order.status = 'WAITING_PAYMENT';
+      order.seller_id = user._id;
+      order.taken_at = new Date(Date.now());
 
-    order.random_image = randomImage;
+      order.random_image = randomImage;
 
-    await order.save();
-    order.status = 'in-progress';
-    OrderEvents.orderUpdated(order);
+      await order.save();
+      order.status = 'in-progress';
+      OrderEvents.orderUpdated(order);
 
-    await deleteOrderFromChannel(order, bot.telegram);
+      await deleteOrderFromChannel(order, bot.telegram);
 
-    await messages.beginTakeBuyMessage(ctx, bot, user, order);
+      await messages.beginTakeBuyMessage(ctx, bot, user, order);
+    });
   } catch (error) {
     logger.error(error);
   }
@@ -100,44 +106,47 @@ export const takesell = async (
   orderId: string,
 ) => {
   try {
-    const { user } = ctx;
-    if (!orderId) return;
-    const order = await Order.findOne({ _id: orderId });
-    if (!order) return;
-    const seller = await User.findOne({ _id: order.seller_id });
-    if (seller === null) {
-      throw new Error('seller is null');
-    }
+    await PerOrderIdMutex.instance.runExclusive(orderId, async () => {
+      const { user } = ctx;
+      if (!orderId) return;
+      const order = await Order.findOne({ _id: orderId });
+      if (!order) return;
+      const seller = await User.findOne({ _id: order.seller_id });
+      if (seller === null) {
+        throw new Error('seller is null');
+      }
 
-    const sellerIsBlocked = await Block.exists({
-      blocker_tg_id: user.tg_id,
-      blocked_tg_id: seller.tg_id,
+      const sellerIsBlocked = await Block.exists({
+        blocker_tg_id: user.tg_id,
+        blocked_tg_id: seller.tg_id,
+      });
+      const buyerIsBlocked = await Block.exists({
+        blocker_tg_id: seller.tg_id,
+        blocked_tg_id: user.tg_id,
+      });
+
+      if (sellerIsBlocked)
+        return await messages.userOrderIsBlockedByUserTaker(ctx, user);
+
+      if (buyerIsBlocked)
+        return await messages.userTakerIsBlockedByUserOrder(ctx, user);
+
+      // We verify if the user is not banned on this community
+      if (await isBannedFromCommunity(user, order.community_id))
+        return await messages.bannedUserErrorMessage(ctx, user);
+      if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
+      order.status = 'WAITING_BUYER_INVOICE';
+      order.buyer_id = user._id;
+      order.taken_at = new Date(Date.now());
+
+      await order.save();
+
+      order.status = 'in-progress';
+      OrderEvents.orderUpdated(order);
+      // We delete the messages related to that order from the channel
+      await deleteOrderFromChannel(order, bot.telegram);
+      await messages.beginTakeSellMessage(ctx, bot, user, order);
     });
-    const buyerIsBlocked = await Block.exists({
-      blocker_tg_id: seller.tg_id,
-      blocked_tg_id: user.tg_id,
-    });
-
-    if (sellerIsBlocked)
-      return await messages.userOrderIsBlockedByUserTaker(ctx, user);
-
-    if (buyerIsBlocked)
-      return await messages.userTakerIsBlockedByUserOrder(ctx, user);
-
-    // We verify if the user is not banned on this community
-    if (await isBannedFromCommunity(user, order.community_id))
-      return await messages.bannedUserErrorMessage(ctx, user);
-    if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
-    order.status = 'WAITING_BUYER_INVOICE';
-    order.buyer_id = user._id;
-    order.taken_at = new Date(Date.now());
-
-    await order.save();
-    order.status = 'in-progress';
-    OrderEvents.orderUpdated(order);
-    // We delete the messages related to that order from the channel
-    await deleteOrderFromChannel(order, bot.telegram);
-    await messages.beginTakeSellMessage(ctx, bot, user, order);
   } catch (error) {
     logger.error(error);
   }
