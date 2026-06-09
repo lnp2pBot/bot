@@ -13,6 +13,10 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
+      # ubuntu:26.04 ships Node.js 22 via apt, satisfying the Node >=20 that
+      # lightning v11 requires. The previous LTS (24.04) only ships Node 18 via
+      # apt, which would force a NodeSource/nvm install; staying on distro apt
+      # keeps the setup simpler. This is why the base image is 26.04.
       image: 'ubuntu:26.04'
     steps:
       - name: Update apt and install required packages
@@ -42,6 +46,10 @@ jobs:
 
       - name: Install MongoDB
         run: |
+          # MongoDB does not yet publish a dedicated apt repo for ubuntu:26.04,
+          # so we use the "noble" (24.04) channel. The 8.0 packages are
+          # binary-compatible with 26.04 — verified that mongod installs, starts
+          # and accepts connections. Revisit once an official 26.04 repo ships.
           echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
           sudo apt-get update
           sudo apt-get install -y mongodb-org
