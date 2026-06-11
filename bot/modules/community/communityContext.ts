@@ -32,7 +32,7 @@ export interface CommunityWizardState {
   channels: IOrderChannel[];
   fee: number;
   sats: number;
-  fiatAmount: number[];
+  fiatAmount?: number[];
   priceMargin: number;
   solvers: IUsernameId[];
   disputeChannel: any;
