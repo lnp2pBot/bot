@@ -178,7 +178,19 @@ const addInvoice = async (
     const seller = await User.findOne({ _id: order.seller_id });
     if (seller === null) throw new Error('seller was not found');
 
-    if (buyer.lightning_address) {
+    // Temporary mitigation: when DISABLE_LN_ADDRESS is enabled we skip the
+    // Lightning Address auto-resolution and route the buyer to the manual
+    // BOLT11 invoice flow. We do NOT delete the saved address, so this is
+    // fully reversible by unsetting the flag.
+    const lnAddressDisabled = process.env.DISABLE_LN_ADDRESS === 'true';
+    if (buyer.lightning_address && lnAddressDisabled) {
+      await bot.telegram.sendMessage(
+        buyer.tg_id,
+        ctx.i18n.t('ln_address_temporarily_disabled'),
+      );
+    }
+
+    if (buyer.lightning_address && !lnAddressDisabled) {
       const laRes = await resolvLightningAddress(
         buyer.lightning_address,
         order.amount * 1000,

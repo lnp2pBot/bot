@@ -243,6 +243,7 @@ must_be_valid_currency: 'Fiat_code must be a valid code, for example: USD, EUR. 
 must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format'
 invalid_lightning_address: Invalid lightning address
 unavailable_lightning_address: Unavailable lightning address ${la}
+ln_address_temporarily_disabled: ⚠️ Lightning Address payouts are temporarily disabled for maintenance. Please send a regular Lightning invoice (BOLT11) for the exact order amount to receive your sats.
 help: |
   /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
