@@ -17,6 +17,7 @@ import {
   isDisputeSolver,
   removeLightningPrefix,
   isOrderCreator,
+  checkMarketOrderSatsLimits,
 } from '../util';
 import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
@@ -250,6 +251,37 @@ const validateSellOrder = async (ctx: MainContext) => {
       return false;
     }
 
+    // Market price orders (amount === 0) settle in sats at take time. Estimate
+    // the sats at the current market price and enforce MIN/MAX on the estimate.
+    if (amount === 0) {
+      const check = await checkMarketOrderSatsLimits(
+        fiatCode.toUpperCase(),
+        fiatAmount,
+        Number(priceMargin) || 0,
+      );
+      if (check.status === 'below_min') {
+        await messages.mustBeGreatherEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'above_max') {
+        await messages.mustBeLessEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'price_unavailable') {
+        logger.warning(
+          'Market price order sats estimate skipped: price API unavailable',
+        );
+      }
+    }
+
     paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
 
     return {
@@ -351,6 +383,37 @@ const validateBuyOrder = async (ctx: MainContext) => {
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(ctx);
       return false;
+    }
+
+    // Market price orders (amount === 0) settle in sats at take time. Estimate
+    // the sats at the current market price and enforce MIN/MAX on the estimate.
+    if (amount === 0) {
+      const check = await checkMarketOrderSatsLimits(
+        fiatCode.toUpperCase(),
+        fiatAmount,
+        Number(priceMargin) || 0,
+      );
+      if (check.status === 'below_min') {
+        await messages.mustBeGreatherEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'above_max') {
+        await messages.mustBeLessEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'price_unavailable') {
+        logger.warning(
+          'Market price order sats estimate skipped: price API unavailable',
+        );
+      }
     }
 
     paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
