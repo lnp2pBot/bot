@@ -60,7 +60,6 @@ export const attemptPendingPayments = async (
           `attemptPendingPayments: amount mismatch for order ${order._id} ` +
             `(pending ${pending.amount} != order ${order.amount}); stopping retries`,
         );
-        await pending.save();
         continue;
       }
 
