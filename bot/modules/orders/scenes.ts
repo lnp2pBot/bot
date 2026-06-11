@@ -1,6 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
 import { logger } from '../../../logger';
-import { getCurrency } from '../../../util';
+import { getCurrency, checkMarketOrderSatsLimits } from '../../../util';
 import { Community } from '../../../models';
 import * as ordersActions from '../../ordersActions';
 import {
@@ -67,6 +67,35 @@ export const createOrder = new Scenes.WizardScene(
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
 
+      // Market price orders (sats === 0) settle in sats at take time. Estimate
+      // the sats at the current market price and enforce MIN/MAX on the
+      // estimate before creating the order. Covers both the range path and the
+      // "market price" button, since both reach this gate with sats === 0.
+      if (sats === 0) {
+        const check = await checkMarketOrderSatsLimits(
+          currency,
+          fiatAmount,
+          priceMargin ?? 0,
+        );
+        if (check.status === 'below_min' || check.status === 'above_max') {
+          ctx.wizard.state.error = ctx.i18n.t(
+            check.status === 'below_min'
+              ? 'must_be_gt_or_eq'
+              : 'must_be_lt_or_eq',
+            { fieldName: ctx.i18n.t('sats_amount'), qty: check.limit },
+          );
+          ctx.wizard.state.fiatAmount = undefined;
+          await ctx.wizard.state.updateUI();
+          return createOrderSteps.fiatAmount(ctx);
+        }
+        if (check.status === 'price_unavailable') {
+          logger.warning(
+            'Market price order sats estimate skipped: price API unavailable',
+          );
+        }
+      }
+
+      // We remove all special characters from the payment method(s)
       const replaceRegex = /[&/\\#,+~%.'":*?<>{}]/g;
       const paymentMethod = selectedMethods?.length
         ? selectedMethods.map(m => m.replace(replaceRegex, '')).join(', ')
