@@ -61,6 +61,12 @@ const addInvoiceWizard = new Scenes.WizardScene(
 
       let lnInvoice = ctx.message.text.trim();
       const isValidLN = await validateLightningAddress(lnInvoice);
+      // Temporary mitigation: Lightning Address payouts are disabled.
+      // The buyer can still receive sats by pasting a regular BOLT11 invoice.
+      if (isValidLN && process.env.DISABLE_LN_ADDRESS === 'true') {
+        await ctx.reply(ctx.i18n.t('ln_address_temporarily_disabled'));
+        return;
+      }
       let res: InvoiceParseResult = {};
       if (isValidLN) {
         const laRes = await resolvLightningAddress(
@@ -128,6 +134,12 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
 
       let lnInvoice = ctx.message.text.trim();
       const isValidLN = await validateLightningAddress(lnInvoice);
+      // Temporary mitigation: Lightning Address payouts are disabled.
+      // The buyer can still receive sats by pasting a regular BOLT11 invoice.
+      if (isValidLN && process.env.DISABLE_LN_ADDRESS === 'true') {
+        await ctx.reply(ctx.i18n.t('ln_address_temporarily_disabled'));
+        return;
+      }
       let res: InvoiceParseResult = {};
       if (isValidLN) {
         const laRes = await resolvLightningAddress(

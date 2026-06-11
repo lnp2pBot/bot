@@ -240,6 +240,7 @@ must_be_valid_currency: 'codigo_fiat debe ser un código de moneda válido, ejem
 must_be_number_or_range: 'monto_en_fiat debe ser un número o un rango numerico de la forma: <mínimo>-<máximo>.'
 invalid_lightning_address: Dirección lightning no válida
 unavailable_lightning_address: Dirección lightning ${la} no disponible
+ln_address_temporarily_disabled: ⚠️ Los pagos a Lightning Address están temporalmente deshabilitados por mantenimiento. Por favor envía una factura Lightning normal (BOLT11) por el monto exacto de la orden para recibir tus sats.
 help: |
   /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
   /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
