@@ -43,6 +43,21 @@ const payRequest = async ({
     // If the invoice is expired we return is_expired = true
     if (invoice.is_expired) return invoice;
 
+    // SECURITY: never pay an amount different from the order amount.
+    // If the invoice encodes an amount, it MUST match the expected amount
+    // exactly. This prevents an attacker from supplying an inflated invoice
+    // (e.g. via a malicious LNURL/Lightning Address endpoint) and draining
+    // the node by being paid more than was held from the seller.
+    if (invoice.tokens && invoice.tokens !== amount) {
+      logger.error(
+        `payRequest: invoice amount (${invoice.tokens}) does not match the expected amount (${amount}); refusing to pay`,
+      );
+      return {
+        error: 'AMOUNT_MISMATCH',
+        message: 'invoice amount does not match order amount',
+      };
+    }
+
     const maxRoutingFee = process.env.MAX_ROUTING_FEE;
     if (maxRoutingFee === undefined)
       throw new Error('Environment variable MAX_ROUTING_FEE is not defined');
@@ -147,6 +162,21 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       );
       await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
+      // SECURITY: a structural amount mismatch must never be retried — the
+      // invoice itself is wrong. Alert and stop instead of scheduling a retry,
+      // otherwise the pending payments job would keep attempting to pay it.
+      if (
+        payment &&
+        typeof payment === 'object' &&
+        'error' in payment &&
+        payment.error === 'AMOUNT_MISMATCH'
+      ) {
+        logger.error(
+          `payToBuyer: AMOUNT_MISMATCH for order ${order._id}; refusing to pay and not scheduling a retry`,
+        );
+        await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+        return;
+      }
       // Handle different types of payment failures
       if (payment && typeof payment === 'object' && 'error' in payment) {
         const errorType = payment.error as string;
