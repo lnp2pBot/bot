@@ -358,7 +358,9 @@ const initialize = (
           return await messages.notAuthorized(ctx);
         }
 
-        if (String(order.community_id) !== String(ctx.admin.default_community_id)) {
+        if (
+          String(order.community_id) !== String(ctx.admin.default_community_id)
+        ) {
           return await messages.notAuthorized(ctx);
         }
 
@@ -380,12 +382,14 @@ const initialize = (
         }
       }
 
+      // Settle the hold invoice first; only persist the FROZEN status
+      // if the settlement succeeded.
+      if (order.secret) await settleHoldInvoice({ secret: order.secret });
+
       order.is_frozen = true;
       order.status = 'FROZEN';
       order.action_by = ctx.admin._id;
       await order.save();
-
-      if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       await ctx.reply(ctx.i18n.t('order_frozen'));
     } catch (error) {
@@ -1041,7 +1045,9 @@ const initialize = (
           return await messages.notAuthorized(ctx);
         }
 
-        if (String(order.community_id) !== String(ctx.admin.default_community_id)) {
+        if (
+          String(order.community_id) !== String(ctx.admin.default_community_id)
+        ) {
           return await messages.notAuthorized(ctx);
         }
 
