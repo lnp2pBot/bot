@@ -895,6 +895,11 @@ const initialize = (
       const order = await Order.findOne({ _id: ctx.match[1] });
       if (!order) return;
 
+      // Only the order's buyer may set/replace the payout invoice. The order
+      // id comes from the callback data, so we verify the caller is the buyer
+      // before driving the invoice flow.
+      if (String(order.buyer_id) !== String(ctx.user._id)) return;
+
       if (order.status === 'WAITING_BUYER_INVOICE') {
         await addInvoice(ctx, bot, order);
       } else {
