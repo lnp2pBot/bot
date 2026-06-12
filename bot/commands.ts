@@ -195,7 +195,7 @@ const addInvoice = async (
         buyer.lightning_address,
         order.amount * 1000,
       );
-      if (!!laRes && !laRes.pr) {
+      if (!laRes || !laRes.pr) {
         logger.error(
           `lightning address ${buyer.lightning_address} not available`,
         );

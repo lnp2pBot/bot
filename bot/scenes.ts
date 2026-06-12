@@ -73,6 +73,12 @@ const addInvoiceWizard = new Scenes.WizardScene(
           lnInvoice,
           order.amount * 1000,
         );
+        if (!laRes || !laRes.pr) {
+          await ctx.reply(
+            ctx.i18n.t('unavailable_lightning_address', { la: lnInvoice }),
+          );
+          return;
+        }
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
       } else {
@@ -146,6 +152,12 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
           lnInvoice,
           order.amount * 1000,
         );
+        if (!laRes || !laRes.pr) {
+          await ctx.reply(
+            ctx.i18n.t('unavailable_lightning_address', { la: lnInvoice }),
+          );
+          return;
+        }
         lnInvoice = laRes.pr;
         res.invoice = parsePaymentRequest({ request: lnInvoice });
       } else {

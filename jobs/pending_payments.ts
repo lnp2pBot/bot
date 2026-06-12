@@ -35,7 +35,7 @@ export const attemptPendingPayments = async (
         pending.paid = true;
         await pending.save();
         logger.info(`Order id: ${order._id} was already paid`);
-        return;
+        continue;
       }
       // We check if the old payment is on flight
       const isPendingOldPayment: boolean = await isPendingPayment(
@@ -48,7 +48,20 @@ export const attemptPendingPayments = async (
       );
 
       // If one of the payments is on flight we don't do anything
-      if (isPending || isPendingOldPayment) return;
+      if (isPending || isPendingOldPayment) continue;
+
+      // SECURITY (defense in depth): the amount to pay must equal the order
+      // amount. payRequest also enforces this, but we stop retries early here
+      // so a structurally-wrong pending payment is never re-attempted.
+      if (pending.amount !== order.amount) {
+        pending.last_error = 'AMOUNT_MISMATCH';
+        pending.is_invoice_expired = true; // prevents further retries
+        logger.error(
+          `attemptPendingPayments: amount mismatch for order ${order._id} ` +
+            `(pending ${pending.amount} != order ${order.amount}); stopping retries`,
+        );
+        continue;
+      }
 
       const payment = await payRequest({
         amount: pending.amount,
@@ -61,12 +74,13 @@ export const attemptPendingPayments = async (
       if (!!payment && payment.is_expired) {
         pending.is_invoice_expired = true;
         order.paid_hold_buyer_invoice_updated = false;
-        return await messages.expiredInvoiceOnPendingMessage(
+        await messages.expiredInvoiceOnPendingMessage(
           bot,
           buyerUser,
           order,
           i18nCtx,
         );
+        continue;
       }
 
       if (!!payment && !!payment.confirmed_at) {
@@ -111,6 +125,12 @@ export const attemptPendingPayments = async (
           } else if (payment.error === 'ROUTING_FAILED') {
             logger.warning(
               `Routing failed for order ${order._id}, attempt ${pending.attempts}`,
+            );
+          } else if (payment.error === 'AMOUNT_MISMATCH') {
+            // Structural error: never retry an invoice with the wrong amount.
+            pending.is_invoice_expired = true;
+            logger.error(
+              `AMOUNT_MISMATCH for order ${order._id}; stopping retries`,
             );
           } else {
             logger.error(
