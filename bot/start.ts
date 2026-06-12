@@ -339,13 +339,43 @@ const initialize = (
 
       if (!order) return;
 
+      // freezeorder settles the hold invoice, so it must only run on orders
+      // that still have funds in escrow. Refuse terminal/paid states.
+      const freezableStatuses = ['ACTIVE', 'FIAT_SENT', 'DISPUTE'];
+      if (!freezableStatuses.includes(order.status)) {
+        logger.warning(
+          `freezeorder ${order._id}: refused, status ${order.status} is not freezable`,
+        );
+        return await messages.notAuthorized(ctx);
+      }
+
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
         if (!order.community_id) {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.admin.default_community_id) {
+        if (String(order.community_id) !== String(ctx.admin.default_community_id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a community solver may only act on the dispute they were
+        // assigned to (parity with settleorder/cancelorder).
+        if (dispute && String(dispute.solver_id) !== String(ctx.admin._id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a solver must never resolve an order they are a party to.
+        if (
+          String(order.buyer_id) === String(ctx.admin._id) ||
+          String(order.seller_id) === String(ctx.admin._id)
+        ) {
+          logger.warning(
+            `freezeorder ${order._id}: @${ctx.admin.username} is a party to this order`,
+          );
           return await messages.notAuthorized(ctx);
         }
       }
@@ -1002,13 +1032,34 @@ const initialize = (
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
       }
 
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
         if (!order.community_id) {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.admin.default_community_id) {
+        if (String(order.community_id) !== String(ctx.admin.default_community_id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a community solver may only act on the dispute they were
+        // assigned to (parity with settleorder/cancelorder).
+        if (dispute && String(dispute.solver_id) !== String(ctx.admin._id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a solver must never push the payout of an order they are
+        // a party to.
+        if (
+          String(order.buyer_id) === String(ctx.admin._id) ||
+          String(order.seller_id) === String(ctx.admin._id)
+        ) {
+          logger.warning(
+            `paytobuyer ${order._id}: @${ctx.admin.username} is a party to this order`,
+          );
           return await messages.notAuthorized(ctx);
         }
       }
