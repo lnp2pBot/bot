@@ -668,6 +668,11 @@ const addInvoicePHI = async (
     // only orders with status PAID_HOLD_INVOICE are released payments
     if (order.status !== 'PAID_HOLD_INVOICE') return;
 
+    // Only the order's buyer may (re)submit the payout invoice. The order id
+    // comes from the callback data, so we verify the caller is the buyer
+    // before entering the invoice flow.
+    if (!ctx.user || String(order.buyer_id) !== String(ctx.user._id)) return;
+
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (buyer === null) return;
     if (order.amount === 0) {
