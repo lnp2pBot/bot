@@ -25,6 +25,8 @@ export interface UserDocument extends Document {
   disputes: number;
   created_at: Date;
   default_community_id?: string;
+  take_order_count: number;
+  take_order_cooldown_until?: Date | null;
 }
 
 const UserReviewSchema = new Schema<UserReview>({
@@ -51,6 +53,8 @@ const UserSchema = new Schema<UserDocument>({
   disputes: { type: Number, min: 0, default: 0 },
   created_at: { type: Date, default: Date.now },
   default_community_id: { type: String },
+  take_order_count: { type: Number, min: 0, default: 0 },
+  take_order_cooldown_until: { type: Date, default: null },
 });
 
 export default mongoose.model<UserDocument>('User', UserSchema);

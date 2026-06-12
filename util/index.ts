@@ -142,6 +142,10 @@ const handleReputationItems = async (
       buyer.volume_traded += amount;
       seller.volume_traded += amount;
     }
+    buyer.take_order_count = 0;
+    buyer.take_order_cooldown_until = null;
+    seller.take_order_count = 0;
+    seller.take_order_cooldown_until = null;
     await buyer.save();
     await seller.save();
   } catch (error) {
