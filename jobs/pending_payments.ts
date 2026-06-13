@@ -217,22 +217,32 @@ export const attemptCommunitiesPendingPayments = async (
       // If the buyer's invoice is expired we let it know and don't try to pay again
       if (!!payment && payment.is_expired) {
         pending.is_invoice_expired = true;
-        await bot.telegram.sendMessage(
-          user.tg_id,
-          i18nCtx.t('invoice_expired_earnings'),
-          {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  {
-                    text: i18nCtx.t('withdraw_earnings'),
-                    callback_data: `withdrawEarnings_${pending.community_id}`,
-                  },
+        // Don't let a notification failure abort the run before the earnings
+        // are restored further down; restoring the balance is the critical
+        // step and the pending payment is excluded from future runs once it is
+        // flagged as expired.
+        try {
+          await bot.telegram.sendMessage(
+            user.tg_id,
+            i18nCtx.t('invoice_expired_earnings'),
+            {
+              reply_markup: {
+                inline_keyboard: [
+                  [
+                    {
+                      text: i18nCtx.t('withdraw_earnings'),
+                      callback_data: `withdrawEarnings_${pending.community_id}`,
+                    },
+                  ],
                 ],
-              ],
+              },
             },
-          },
-        );
+          );
+        } catch (error) {
+          logger.error(
+            `Failed to notify user ${user.tg_id} about expired invoice: ${error}`,
+          );
+        }
       }
 
       const community = await Community.findById(pending.community_id);
@@ -241,8 +251,10 @@ export const attemptCommunitiesPendingPayments = async (
         pending.paid = true;
         pending.paid_at = new Date();
 
-        // Reset the community's values
-        community.earnings = 0;
+        // The earnings were already atomically zeroed when this withdrawal was
+        // claimed at scheduling time, so don't reset them again here: doing so
+        // would wipe out any earnings accrued between the claim and this
+        // successful payment.
         community.orders_to_redeem = 0;
         await community.save();
         logger.info(
@@ -270,10 +282,25 @@ export const attemptCommunitiesPendingPayments = async (
           );
         }
 
-        if (
+        const attemptsExhausted =
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
-        ) {
+          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS);
+
+        // SECURITY/accounting: the earnings were atomically claimed (zeroed)
+        // when this withdrawal was scheduled. If the payout has now failed
+        // permanently (invoice expired or no attempts left) we restore them so
+        // the community can withdraw again without losing funds. Because the
+        // pending payment is then excluded from future runs (is_invoice_expired
+        // or attempts >= PAYMENT_ATTEMPTS), this restore happens exactly once.
+        if (pending.is_invoice_expired || attemptsExhausted) {
+          // Atomic increment against the current DB value so we don't clobber
+          // earnings accrued since this community document was read above.
+          await Community.findByIdAndUpdate(community._id, {
+            $inc: { earnings: pending.amount },
+          });
+        }
+
+        if (attemptsExhausted) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed_earnings', {

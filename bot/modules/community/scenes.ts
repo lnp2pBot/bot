@@ -1004,7 +1004,9 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
       const res = await isValidInvoice(ctx, lnInvoice);
       if (!res.success) return;
 
-      if (!!res.invoice.tokens && res.invoice.tokens !== community.earnings)
+      const amountToWithdraw = community.earnings;
+
+      if (!!res.invoice.tokens && res.invoice.tokens !== amountToWithdraw)
         return await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
 
       const isScheduled = await PendingPayment.findOne({
@@ -1019,18 +1021,42 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
       if (!!isScheduled || !!isPending)
         return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
-      const user = await User.findById(community.creator_id);
-      if (user === null) throw new Error('user was not found');
-      logger.debug(`Creating pending payment for community ${community.id}`);
-      const pp = new PendingPayment({
-        amount: community.earnings,
-        payment_request: lnInvoice,
-        user_id: user.id,
-        community_id: community._id,
-        description: `Retiro por admin @${user.username}`,
-        hash: res.invoice.hash,
-      });
-      await pp.save();
+      // SECURITY: atomically claim the earnings before scheduling the payout.
+      // We zero the community's earnings only if they still equal the amount
+      // we snapshotted. Two concurrent withdrawals race on this compare-and-set
+      // and only one wins; the loser gets null and aborts, which prevents the
+      // node from paying the same earnings twice. If the payout later fails
+      // permanently the job restores the earnings (see attemptCommunities-
+      // PendingPayments) so the creator can withdraw again.
+      const claimed = await Community.findOneAndUpdate(
+        { _id: community._id, earnings: amountToWithdraw },
+        { earnings: 0 },
+      );
+      if (claimed === null)
+        return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
+
+      // The earnings were already claimed (zeroed) above. If creating the
+      // pending payment fails there is nothing for the retry job to restore
+      // from, so roll the claim back here to avoid stranding the earnings.
+      try {
+        const user = await User.findById(community.creator_id);
+        if (user === null) throw new Error('user was not found');
+        logger.debug(`Creating pending payment for community ${community.id}`);
+        const pp = new PendingPayment({
+          amount: amountToWithdraw,
+          payment_request: lnInvoice,
+          user_id: user.id,
+          community_id: community._id,
+          description: `Retiro por admin @${user.username}`,
+          hash: res.invoice.hash,
+        });
+        await pp.save();
+      } catch (error) {
+        await Community.findByIdAndUpdate(community._id, {
+          $inc: { earnings: amountToWithdraw },
+        });
+        throw error;
+      }
       await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
 
       return ctx.scene.leave();
