@@ -14,6 +14,7 @@ import {
   getUserI18nContext,
   getFee,
   removeLightningPrefix,
+  PerOrderIdMutex,
 } from '../util';
 import * as ordersActions from './ordersActions';
 import * as OrderEvents from './modules/events/orders';
@@ -889,18 +890,39 @@ const release = async (
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
-    // We look for a dispute for this order
-    const dispute = await Dispute.findOne({ order_id: order._id });
 
-    if (dispute) {
-      dispute.status = 'RELEASED';
-      await dispute.save();
-    }
+    // SECURITY: serialize the settle under the per-order mutex (the same lock
+    // used by payHoldInvoice and the cancel/expiry jobs) and re-read the order
+    // under the lock. validateReleaseOrder ran without the lock, so the order
+    // may have been canceled, settled or otherwise advanced in between. Only
+    // settle if it is still in a releasable state — this closes the
+    // settle-vs-cancel race over the same hold invoice.
+    await PerOrderIdMutex.instance.runExclusive(String(order._id), async () => {
+      const currentOrder = await Order.findById(order._id);
+      if (currentOrder === null) throw new Error('order was not found');
 
-    if (order.secret === null) {
-      throw new Error('order.secret is null');
-    }
-    await settleHoldInvoice({ secret: order.secret });
+      const releasableStatuses = ['ACTIVE', 'FIAT_SENT', 'DISPUTE'];
+      if (!releasableStatuses.includes(currentOrder.status)) {
+        logger.info(
+          `release: order ${order._id} no longer releasable ` +
+            `(status ${currentOrder.status}), skipping settle`,
+        );
+        return;
+      }
+
+      if (currentOrder.secret === null) {
+        throw new Error('order.secret is null');
+      }
+
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: currentOrder._id });
+      if (dispute) {
+        dispute.status = 'RELEASED';
+        await dispute.save();
+      }
+
+      await settleHoldInvoice({ secret: currentOrder.secret });
+    });
   } catch (error) {
     logger.error(error);
   }
