@@ -45,6 +45,9 @@ const settleHoldInvoice = async ({ secret }: { secret: string }) => {
     await lightning.settleHodlInvoice({ lnd, secret });
   } catch (error) {
     logger.error(error);
+    // Callers must not mark an order as settled/frozen if the
+    // invoice settlement did not happen.
+    throw error;
   }
 };
 
