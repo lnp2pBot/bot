@@ -270,10 +270,22 @@ export const attemptCommunitiesPendingPayments = async (
           );
         }
 
-        if (
+        const attemptsExhausted =
           process.env.PAYMENT_ATTEMPTS !== undefined &&
-          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS)
-        ) {
+          pending.attempts >= parseInt(process.env.PAYMENT_ATTEMPTS);
+
+        // SECURITY/accounting: the earnings were atomically claimed (zeroed)
+        // when this withdrawal was scheduled. If the payout has now failed
+        // permanently (invoice expired or no attempts left) we restore them so
+        // the community can withdraw again without losing funds. Because the
+        // pending payment is then excluded from future runs (is_invoice_expired
+        // or attempts >= PAYMENT_ATTEMPTS), this restore happens exactly once.
+        if (pending.is_invoice_expired || attemptsExhausted) {
+          community.earnings += pending.amount;
+          await community.save();
+        }
+
+        if (attemptsExhausted) {
           await bot.telegram.sendMessage(
             user.tg_id,
             i18nCtx.t('pending_payment_failed_earnings', {
