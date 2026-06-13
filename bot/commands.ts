@@ -914,14 +914,17 @@ const release = async (
         throw new Error('order.secret is null');
       }
 
-      // We look for a dispute for this order
+      await settleHoldInvoice({ secret: currentOrder.secret });
+
+      // Only mark the dispute as released once the Lightning settle has
+      // actually completed. Otherwise a failed settle would leave a stale
+      // RELEASED dispute that makes solvers believe the seller already
+      // released (see bot/modules/dispute/actions.ts).
       const dispute = await Dispute.findOne({ order_id: currentOrder._id });
       if (dispute) {
         dispute.status = 'RELEASED';
         await dispute.save();
       }
-
-      await settleHoldInvoice({ secret: currentOrder.secret });
     });
   } catch (error) {
     logger.error(error);
