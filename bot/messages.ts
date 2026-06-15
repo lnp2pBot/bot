@@ -730,8 +730,20 @@ const publishBuyOrderMessage = async (
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
 
-    const channel = await getOrderChannel(order);
-    if (channel === undefined) throw new Error('channel is undefined');
+    const channel = await getOrderChannel(order, bot.telegram);
+    if (channel === undefined) {
+      try {
+        await bot.telegram.sendMessage(
+          user.tg_id,
+          i18n.t('order_channel_validation_failed'),
+        );
+      } catch (error) {
+        logger.error(error);
+      }
+      order.status = 'CLOSED';
+      await order.save();
+      return;
+    }
 
     // Get the community language if available
     let communityI18n = i18n;
@@ -782,8 +794,20 @@ const publishSellOrderMessage = async (
   try {
     let publishMessage = `⚡️🍊⚡️\n${order.description}\n`;
     publishMessage += `:${order._id}:`;
-    const channel = await getOrderChannel(order);
-    if (channel === undefined) throw new Error('channel is undefined');
+    const channel = await getOrderChannel(order, ctx.telegram);
+    if (channel === undefined) {
+      try {
+        await ctx.telegram.sendMessage(
+          user.tg_id,
+          i18n.t('order_channel_validation_failed'),
+        );
+      } catch (error) {
+        logger.error(error);
+      }
+      order.status = 'CLOSED';
+      await order.save();
+      return;
+    }
 
     // Get the community language if available
     let communityI18n = i18n;

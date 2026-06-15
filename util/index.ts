@@ -9,7 +9,7 @@ import { Telegram } from 'telegraf';
 import axios from 'axios';
 import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
-import { Order, Community } from '../models';
+import { Order, Community, User } from '../models';
 import { logger } from '../logger';
 import QRCode from 'qrcode';
 import { Image, createCanvas } from 'canvas';
@@ -297,7 +297,7 @@ const isGroupAdmin = async (
 
 const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
   try {
-    let channel = process.env.CHANNEL;
+    let channel;
     if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
       if (!community) {
@@ -312,15 +312,21 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
           }
         }
       }
+    } else {
+      channel = process.env.CHANNEL;
     }
-    await telegram.deleteMessage(channel!, Number(order.tg_channel_message1!));
+    if (!channel) {
+      // It will be logged in this function's catch()
+      throw Error(`Channel not found for order ${order._id}`);
+    }
+    await telegram.deleteMessage(channel, Number(order.tg_channel_message1!));
   } catch (error) {
     logger.error(error);
   }
 };
 
-const getOrderChannel = async (order: IOrder) => {
-  let channel = process.env.CHANNEL;
+const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
+  let channel;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
     if (!community) {
@@ -329,12 +335,35 @@ const getOrderChannel = async (order: IOrder) => {
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
-      community.order_channels.forEach(async (c: IOrderChannel) => {
+      community.order_channels.forEach((c: IOrderChannel) => {
         if (c.type === order.type) {
           channel = c.name;
         }
       });
     }
+    const communityOwner = await User.findById(community.creator_id);
+    if (!communityOwner) {
+      logger.error(
+        `Community owner not found for community ${community._id}, creator_id: ${community.creator_id}`,
+      );
+      return undefined;
+    }
+
+    if (bot && channel) {
+      // Validate order channel if the caller of this function passed the bot instance to perform the validation
+      // If it was not passed as a parameter the order channel can be trusted because its for ui purposes (listorders for example)
+      // This validation is performed lazily when publishing the order to the community order channel
+      const isChannelOk = await isGroupAdmin(channel, communityOwner, bot);
+      if (!isChannelOk.success) {
+        logger.error(
+          `Order channel validation failed for community ${community._id}`,
+        );
+        return undefined;
+      }
+    }
+  } else {
+    // no community order / order in the global community
+    channel = process.env.CHANNEL;
   }
 
   return channel;
