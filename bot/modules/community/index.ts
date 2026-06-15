@@ -1,4 +1,5 @@
 import { Telegraf } from 'telegraf';
+import { logger } from '../../../logger';
 import { userMiddleware, superAdminMiddleware } from '../../middleware/user';
 import * as actions from './actions';
 import * as commands from './commands';
@@ -15,6 +16,38 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('mycomms', userMiddleware, commands.myComms);
   if (process.env.COMMUNITY_CREATION_ENABLED === 'true') {
     bot.command('community', userMiddleware, async ctx => {
+      const { user } = ctx;
+
+      const minOrders = parseInt(
+        process.env.COMMUNITY_CREATION_MIN_ORDERS || '',
+      );
+      const minVolume = parseInt(
+        process.env.COMMUNITY_CREATION_MIN_VOLUME || '',
+      );
+      const minDays = parseInt(
+        process.env.COMMUNITY_CREATION_MIN_DAYS_USING_BOT || '',
+      );
+      const minReputation = parseFloat(
+        process.env.COMMUNITY_CREATION_MIN_REPUTATION || '',
+      );
+
+      const daysUsing = Math.floor(
+        (Date.now() - new Date(user.created_at).getTime()) / 86400000,
+      );
+
+      const meetsRequirements =
+        (isNaN(minOrders) || user.trades_completed >= minOrders) &&
+        (isNaN(minVolume) || user.volume_traded >= minVolume) &&
+        (isNaN(minDays) || daysUsing >= minDays) &&
+        (isNaN(minReputation) || user.total_rating >= minReputation);
+
+      if (!meetsRequirements) {
+        logger.error(
+          `User ${user.tg_id} tried to create a community but does not meet the requirements - orders: ${user.trades_completed}, volume: ${user.volume_traded}, days: ${daysUsing}, reputation: ${user.total_rating}`,
+        );
+        return ctx.reply(ctx.i18n.t('community_creation_requirements_not_met'));
+      }
+
       await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', {
         bot,
         user: ctx.user,
