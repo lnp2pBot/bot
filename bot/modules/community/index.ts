@@ -21,7 +21,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       const parseOptionalNumber = (raw: string | undefined): number | null => {
         if (raw == null || raw.trim() === '') return null;
         const n = Number(raw);
-        return Number.isFinite(n) ? n : null;
+        return Number.isFinite(n) && n >= 0 ? n : null;
       };
 
       const thresholds = {
