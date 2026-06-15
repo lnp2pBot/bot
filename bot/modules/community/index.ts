@@ -18,28 +18,57 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     bot.command('community', userMiddleware, async ctx => {
       const { user } = ctx;
 
-      const minOrders = parseInt(
-        process.env.COMMUNITY_CREATION_MIN_ORDERS || '',
-      );
-      const minVolume = parseInt(
-        process.env.COMMUNITY_CREATION_MIN_VOLUME || '',
-      );
-      const minDays = parseInt(
-        process.env.COMMUNITY_CREATION_MIN_DAYS_USING_BOT || '',
-      );
-      const minReputation = parseFloat(
-        process.env.COMMUNITY_CREATION_MIN_REPUTATION || '',
-      );
+      const parseOptionalNumber = (raw: string | undefined): number | null => {
+        if (raw == null || raw.trim() === '') return null;
+        const n = Number(raw);
+        return Number.isFinite(n) ? n : null;
+      };
+
+      const thresholds = {
+        COMMUNITY_CREATION_MIN_ORDERS: parseOptionalNumber(
+          process.env.COMMUNITY_CREATION_MIN_ORDERS,
+        ),
+        COMMUNITY_CREATION_MIN_VOLUME: parseOptionalNumber(
+          process.env.COMMUNITY_CREATION_MIN_VOLUME,
+        ),
+        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: parseOptionalNumber(
+          process.env.COMMUNITY_CREATION_MIN_DAYS_USING_BOT,
+        ),
+        COMMUNITY_CREATION_MIN_REPUTATION: parseOptionalNumber(
+          process.env.COMMUNITY_CREATION_MIN_REPUTATION,
+        ),
+      };
+
+      const invalidEnvVars = Object.entries(thresholds)
+        .filter(
+          ([key, val]) =>
+            val === null && (process.env[key] ?? '').trim() !== '',
+        )
+        .map(([key]) => key);
+
+      if (invalidEnvVars.length > 0) {
+        logger.error(
+          `Invalid COMMUNITY_CREATION_* threshold configuration: ${invalidEnvVars.join(', ')}`,
+        );
+        return ctx.reply(ctx.i18n.t('generic_error'));
+      }
+
+      const {
+        COMMUNITY_CREATION_MIN_ORDERS: minOrders,
+        COMMUNITY_CREATION_MIN_VOLUME: minVolume,
+        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: minDays,
+        COMMUNITY_CREATION_MIN_REPUTATION: minReputation,
+      } = thresholds;
 
       const daysUsing = Math.floor(
         (Date.now() - new Date(user.created_at).getTime()) / 86400000,
       );
 
       const meetsRequirements =
-        (isNaN(minOrders) || user.trades_completed >= minOrders) &&
-        (isNaN(minVolume) || user.volume_traded >= minVolume) &&
-        (isNaN(minDays) || daysUsing >= minDays) &&
-        (isNaN(minReputation) || user.total_rating >= minReputation);
+        (minOrders === null || user.trades_completed >= minOrders) &&
+        (minVolume === null || user.volume_traded >= minVolume) &&
+        (minDays === null || daysUsing >= minDays) &&
+        (minReputation === null || user.total_rating >= minReputation);
 
       if (!meetsRequirements) {
         logger.error(
