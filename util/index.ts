@@ -342,6 +342,9 @@ const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
     }
     const communityOwner = await User.findById(community.creator_id);
     if (!communityOwner) {
+      logger.error(
+        `Community owner not found for community ${community._id}, creator_id: ${community.creator_id}`,
+      );
       return undefined;
     }
 

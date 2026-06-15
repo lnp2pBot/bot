@@ -23,6 +23,7 @@ const OrderChannelSchema = new Schema<IOrderChannel>({
     unique: true,
     lowercase: true,
     trim: true,
+    sparse: true,
   },
   type: {
     type: String,
