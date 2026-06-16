@@ -13,16 +13,23 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      # ubuntu:26.04 ships Node.js 22 via apt, satisfying the Node >=20 that
-      # lightning v11 requires. The previous LTS (24.04) only ships Node 18 via
-      # apt, which would force a NodeSource/nvm install; staying on distro apt
-      # keeps the setup simpler. This is why the base image is 26.04.
-      image: 'ubuntu:26.04'
+      # ubuntu:24.04 (noble) is an LTS that MongoDB 8.0 officially supports, so
+      # both MongoDB and Node come from supported sources (MongoDB noble apt repo
+      # + Node 20 via NodeSource). lightning v11 only needs Node >=20, so there is
+      # no reason to move to a newer base that would force an unsupported
+      # OS/MongoDB-repo combination just to get a newer Node from distro apt.
+      image: 'ubuntu:24.04'
     steps:
       - name: Update apt and install required packages
         run: |
           apt update --yes
-          apt install --yes sudo curl git nodejs npm
+          apt install --yes sudo curl
+
+          # Install Node.js 20.x via NodeSource (ubuntu:24.04 ships Node 18 by default)
+          curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+          sudo apt install --yes nodejs
+
+          sudo apt install --yes git
 
           # Dependencies required to compile the canvas package from source
           sudo apt install --yes --no-install-recommends \
@@ -46,10 +53,6 @@ jobs:
 
       - name: Install MongoDB
         run: |
-          # MongoDB does not yet publish a dedicated apt repo for ubuntu:26.04,
-          # so we use the "noble" (24.04) channel. The 8.0 packages are
-          # binary-compatible with 26.04 — verified that mongod installs, starts
-          # and accepts connections. Revisit once an official 26.04 repo ships.
           echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
           sudo apt-get update
           sudo apt-get install -y mongodb-org
