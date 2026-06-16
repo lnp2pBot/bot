@@ -18,13 +18,14 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     bot.command('community', userMiddleware, async ctx => {
       const { user } = ctx;
 
-      const parseOptionalNumber = (raw: string | undefined): number | null => {
-        if (raw == null || raw.trim() === '') return null;
+      const parseOptionalNumber = (raw: string | undefined): { value: number | null, isValid: boolean } => {
+        if (raw == null || raw.trim() === '') return { value: null, isValid: true };
         const n = Number(raw);
-        return Number.isFinite(n) && n >= 0 ? n : null;
+        if (Number.isFinite(n) && n >= 0) return { value: n, isValid: true };
+        return { value: null, isValid: false };
       };
 
-      const thresholds = {
+      const thresholdResults = {
         COMMUNITY_CREATION_MIN_ORDERS: parseOptionalNumber(
           process.env.COMMUNITY_CREATION_MIN_ORDERS,
         ),
@@ -39,11 +40,8 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
         ),
       };
 
-      const invalidEnvVars = Object.entries(thresholds)
-        .filter(
-          ([key, val]) =>
-            val === null && (process.env[key] ?? '').trim() !== '',
-        )
+      const invalidEnvVars = Object.entries(thresholdResults)
+        .filter(([_, res]) => !res.isValid)
         .map(([key]) => key);
 
       if (invalidEnvVars.length > 0) {
@@ -54,11 +52,11 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
       }
 
       const {
-        COMMUNITY_CREATION_MIN_ORDERS: minOrders,
-        COMMUNITY_CREATION_MIN_VOLUME: minVolume,
-        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: minDays,
-        COMMUNITY_CREATION_MIN_REPUTATION: minReputation,
-      } = thresholds;
+        COMMUNITY_CREATION_MIN_ORDERS: { value: minOrders },
+        COMMUNITY_CREATION_MIN_VOLUME: { value: minVolume },
+        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: { value: minDays },
+        COMMUNITY_CREATION_MIN_REPUTATION: { value: minReputation },
+      } = thresholdResults;
 
       const daysUsing = Math.floor(
         (Date.now() - new Date(user.created_at).getTime()) / 86400000,
