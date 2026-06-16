@@ -42,7 +42,8 @@ const usernameIdSchema = new Schema<IUsernameId>({
 });
 
 export interface ICommunity extends Document {
-  _id: string;
+  _id: Types.ObjectId;
+  id: string;
   name: string;
   creator_id: string;
   group: string;

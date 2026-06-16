@@ -134,7 +134,7 @@ export const withdrawEarnings = async (ctx: CommunityContext) => {
   // changeVisibility, updateCommunity).
   const community = await Community.findOne({
     _id: ctx.match?.[1],
-    creator_id: ctx.user._id,
+    creator_id: ctx.user._id.toString(),
     enabled: { $ne: false },
   });
   if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));

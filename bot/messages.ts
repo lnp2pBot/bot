@@ -101,7 +101,7 @@ const invoicePaymentRequestMessage = async (
       parse_mode: 'Markdown',
     });
 
-    await ctx.telegram.sendMessage(user.tg_id, order._id, {
+    await ctx.telegram.sendMessage(user.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -443,7 +443,7 @@ const beginTakeBuyMessage = async (
       },
     ]);
 
-    await bot.telegram.sendMessage(seller.tg_id, order._id, {
+    await bot.telegram.sendMessage(seller.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [
@@ -543,7 +543,7 @@ const onGoingTakeBuyMessage = async (
         days: ageInDays,
       }),
     );
-    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+    await bot.telegram.sendMessage(buyer.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [{ text: i18nBuyer.t('continue'), callback_data: 'addInvoiceBtn' }],
@@ -575,7 +575,7 @@ const beginTakeSellMessage = async (
       ctx.i18n.t('you_took_someone_order', { expirationTime }),
       { parse_mode: 'MarkdownV2' },
     );
-    await bot.telegram.sendMessage(buyer.tg_id, order._id, {
+    await bot.telegram.sendMessage(buyer.tg_id, order._id.toString(), {
       reply_markup: {
         inline_keyboard: [
           [

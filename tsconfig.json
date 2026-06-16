@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "downlevelIteration": true,
@@ -14,6 +15,7 @@
   },
   "include": [
     "app.ts",
+    "monitoring.ts",
     "bot/**/*",
     "jobs/**/*",
     "ln/**/*",
