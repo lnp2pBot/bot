@@ -1521,12 +1521,31 @@ describe('Validations', () => {
       expect(checkStub.calledOnce).to.equal(true);
     });
 
+    it('rejects when the estimate exceeds the maximum', async () => {
+      const checkStub = sinon
+        .stub()
+        .resolves({ status: 'above_max', limit: 5000 });
+      const validate = loadWith(checkStub);
+      ctx.state.command.args = ['0', '100000', 'USD', 'zelle'];
+      const result = await validate(ctx);
+      expect(result).to.equal(false);
+    });
+
     it('accepts when the estimate is within limits', async () => {
       const checkStub = sinon.stub().resolves({ status: 'ok' });
       const validate = loadWith(checkStub);
       ctx.state.command.args = ['0', '100', 'USD', 'zelle'];
       const result = await validate(ctx);
       expect(result).to.be.an('object');
+    });
+
+    it('accepts (pass-through) when the price oracle is unavailable', async () => {
+      const checkStub = sinon.stub().resolves({ status: 'price_unavailable' });
+      const validate = loadWith(checkStub);
+      ctx.state.command.args = ['0', '100', 'USD', 'zelle'];
+      const result = await validate(ctx);
+      expect(result).to.be.an('object');
+      expect(checkStub.calledOnce).to.equal(true);
     });
   });
 });
