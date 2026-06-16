@@ -1,11 +1,6 @@
-import {
-  HasTelegram,
-  MainContext,
-  OrderQuery,
-  ctxUpdateAssertMsg,
-} from './start';
+import { HasTelegram, MainContext, ctxUpdateAssertMsg } from './start';
 import { IUsernameId } from '../models/community';
-import { FilterQuery } from 'mongoose';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import { UserDocument } from '../models/user';
 import { IOrder } from '../models/order';
 // @ts-ignore
@@ -44,7 +39,7 @@ const validateUser = async (ctx: MainContext, start: boolean) => {
 
       return false;
     }
-    let user = await User.findOne({ tg_id: tgUser.id });
+    let user = await User.findOne({ tg_id: String(tgUser.id) });
 
     if (!user && start) {
       user = new User({
@@ -522,8 +517,8 @@ const validateReleaseOrder = async (
   orderId: string,
 ) => {
   try {
-    let where: FilterQuery<OrderQuery> = {
-      seller_id: user._id,
+    let where: FilterQuery<IOrder> = {
+      seller_id: user._id.toString(),
       status: 'WAITING_BUYER_INVOICE',
       _id: orderId,
     };
@@ -535,7 +530,7 @@ const validateReleaseOrder = async (
 
     where = {
       $and: [
-        { seller_id: user._id },
+        { seller_id: user._id.toString() },
         {
           $or: [
             { status: 'ACTIVE' },
@@ -573,7 +568,12 @@ const validateDisputeOrder = async (
       $and: [
         { _id: orderId },
         { $or: [{ status: 'ACTIVE' }, { status: 'FIAT_SENT' }] },
-        { $or: [{ seller_id: user._id }, { buyer_id: user._id }] },
+        {
+          $or: [
+            { seller_id: user._id.toString() },
+            { buyer_id: user._id.toString() },
+          ],
+        },
       ],
     };
 
@@ -597,9 +597,9 @@ const validateFiatSentOrder = async (
   orderId: string,
 ) => {
   try {
-    const where: FilterQuery<OrderQuery> = {
+    const where: FilterQuery<IOrder> = {
       $and: [
-        { buyer_id: user._id },
+        { buyer_id: user._id.toString() },
         { $or: [{ status: 'ACTIVE' }, { status: 'PAID_HOLD_INVOICE' }] },
       ],
     };
@@ -634,7 +634,7 @@ const validateFiatSentOrder = async (
 const validateSeller = async (ctx: MainContext, user: UserDocument) => {
   try {
     const where = {
-      seller_id: user._id,
+      seller_id: user._id.toString(),
       status: 'FIAT_SENT',
     };
 
@@ -700,8 +700,8 @@ const validateUserWaitingOrder = async (
 ) => {
   try {
     // If is a seller
-    let where: FilterQuery<OrderQuery> = {
-      seller_id: user._id,
+    let where: FilterQuery<IOrder> = {
+      seller_id: user._id.toString(),
       status: 'WAITING_PAYMENT',
     };
     let orders = await Order.find(where);
@@ -711,7 +711,7 @@ const validateUserWaitingOrder = async (
     }
     // If is a buyer
     where = {
-      buyer_id: user._id,
+      buyer_id: user._id.toString(),
       status: 'WAITING_BUYER_INVOICE',
     };
     orders = await Order.find(where);
@@ -736,7 +736,7 @@ const isBannedFromCommunity = async (
     const community = await Community.findOne({ _id: communityId });
     if (!community) return false;
     return community.banned_users.some(
-      (buser: IUsernameId) => buser.id == user._id,
+      (buser: IUsernameId) => buser.id === user._id.toString(),
     );
   } catch (error) {
     logger.error(error);

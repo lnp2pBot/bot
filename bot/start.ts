@@ -3,7 +3,8 @@ import { Telegraf, session, Context, Telegram } from 'telegraf';
 import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram';
 import { UserDocument } from '../models/user';
-import { FilterQuery } from 'mongoose';
+import { IOrder } from '../models/order';
+import type { QueryFilter as FilterQuery } from 'mongoose';
 import * as OrderEvents from './modules/events/orders';
 import { limit } from '@grammyjs/ratelimiter';
 import schedule from 'node-schedule';
@@ -85,12 +86,6 @@ export interface MainContext extends Context {
   admin: UserDocument;
 }
 
-export interface OrderQuery {
-  status?: string;
-  buyer_id?: string;
-  seller_id?: string;
-}
-
 export interface HasTelegram {
   telegram: Telegram;
 }
@@ -99,9 +94,14 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
   try {
     let orders: any[] = [];
     if (command === '/cancel') {
-      const where: FilterQuery<OrderQuery> = {
+      const where: FilterQuery<IOrder> = {
         $and: [
-          { $or: [{ buyer_id: user._id }, { seller_id: user._id }] },
+          {
+            $or: [
+              { buyer_id: user._id.toString() },
+              { seller_id: user._id.toString() },
+            ],
+          },
           {
             $or: [
               { status: 'ACTIVE' },
@@ -114,14 +114,14 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
       };
       orders = await Order.find(where);
     } else if (command === '/fiatsent') {
-      const where: FilterQuery<OrderQuery> = {
-        $and: [{ buyer_id: user._id }, { status: 'ACTIVE' }],
+      const where: FilterQuery<IOrder> = {
+        $and: [{ buyer_id: user._id.toString() }, { status: 'ACTIVE' }],
       };
       orders = await Order.find(where);
     } else if (command === '/release') {
-      const where: FilterQuery<OrderQuery> = {
+      const where: FilterQuery<IOrder> = {
         $and: [
-          { seller_id: user._id },
+          { seller_id: user._id.toString() },
           {
             $or: [
               { status: 'ACTIVE' },
@@ -133,8 +133,8 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
       };
       orders = await Order.find(where);
     } else if (command === '/setinvoice') {
-      const where: FilterQuery<OrderQuery> = {
-        buyer_id: user._id,
+      const where: FilterQuery<IOrder> = {
+        buyer_id: user._id.toString(),
         status: { $in: ['PAID_HOLD_INVOICE', 'WAITING_BUYER_INVOICE'] },
       };
 
@@ -350,7 +350,7 @@ const initialize = (
       }
 
       // We look for a dispute for this order
-      const dispute = await Dispute.findOne({ order_id: order._id });
+      const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
@@ -388,7 +388,7 @@ const initialize = (
 
       order.is_frozen = true;
       order.status = 'FROZEN';
-      order.action_by = ctx.admin._id;
+      order.action_by = ctx.admin._id.toString();
       await order.save();
 
       await ctx.reply(ctx.i18n.t('order_frozen'));
@@ -414,7 +414,7 @@ const initialize = (
       if (order === null) return;
 
       // We look for a dispute for this order
-      const dispute = await Dispute.findOne({ order_id: order._id });
+      const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
@@ -434,7 +434,7 @@ const initialize = (
 
         // We check if this dispute is from a community we validate that
         // the solver is running this command
-        if (dispute && dispute.solver_id != ctx.admin._id) {
+        if (dispute && dispute.solver_id != ctx.admin._id.toString()) {
           logger.debug(
             `cancelorder ${order._id}: @${ctx.admin.username} is not the solver of this dispute`,
           );
@@ -452,7 +452,7 @@ const initialize = (
       logger.info(`order ${order._id}: cancelled by admin`);
 
       order.status = 'CANCELED_BY_ADMIN';
-      order.canceled_by = ctx.admin._id;
+      order.canceled_by = ctx.admin._id.toString();
       await order.save();
       order.status = 'CANCELED';
       OrderEvents.orderUpdated(order);
@@ -548,7 +548,7 @@ const initialize = (
       }
 
       // We look for a dispute for this order
-      const dispute = await Dispute.findOne({ order_id: order._id });
+      const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
@@ -1026,7 +1026,7 @@ const initialize = (
       }
 
       // We look for a dispute for this order
-      const dispute = await Dispute.findOne({ order_id: order._id });
+      const dispute = await Dispute.findOne({ order_id: order._id.toString() });
 
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
@@ -1061,8 +1061,8 @@ const initialize = (
 
       // We make sure the buyers invoice is not being paid
       const isPending = await PendingPayment.findOne({
-        order_id: order._id,
-        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        order_id: order._id.toString(),
+        attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
       });
 
       if (isPending) return;
