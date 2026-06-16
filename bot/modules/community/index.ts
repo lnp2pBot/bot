@@ -18,8 +18,11 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
     bot.command('community', userMiddleware, async ctx => {
       const { user } = ctx;
 
-      const parseOptionalNumber = (raw: string | undefined): { value: number | null, isValid: boolean } => {
-        if (raw == null || raw.trim() === '') return { value: null, isValid: true };
+      const parseOptionalNumber = (
+        raw: string | undefined,
+      ): { value: number | null; isValid: boolean } => {
+        if (raw == null || raw.trim() === '')
+          return { value: null, isValid: true };
         const n = Number(raw);
         if (Number.isFinite(n) && n >= 0) return { value: n, isValid: true };
         return { value: null, isValid: false };
