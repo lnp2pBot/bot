@@ -15,6 +15,7 @@
   },
   "include": [
     "app.ts",
+    "monitoring.ts",
     "bot/**/*",
     "jobs/**/*",
     "ln/**/*",

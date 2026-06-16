@@ -88,7 +88,7 @@ export const takebuy = async (
       const { randomImage } = generateRandomImage(user._id.toString());
 
       order.status = 'WAITING_PAYMENT';
-      order.seller_id = user._id;
+      order.seller_id = user._id.toString();
       order.taken_at = new Date(Date.now());
 
       order.random_image = randomImage;
@@ -160,7 +160,7 @@ export const takesell = async (
       if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
 
       order.status = 'WAITING_BUYER_INVOICE';
-      order.buyer_id = user._id;
+      order.buyer_id = user._id.toString();
       order.taken_at = new Date(Date.now());
 
       // Reserve a take slot (enforces the cap and increments the counter under a
