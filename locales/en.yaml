@@ -728,7 +728,12 @@ payment_methods_reset: "Payment methods removed. Users can now enter any payment
 payment_methods_wizard_commands: "/reset — remove all payment methods and restore default behavior\n/exit — exit without saving"
 community_disabled_by_admin: An administrator has disabled your community ${communityName}
 community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
-community_creation_requirements_not_met: "You don't meet the requirements to create a community"
+community_creation_requirements_not_met: |
+  You do not meet the requirements to create a community:
+  * Orders: ${userOrders} / ${requiredOrders}
+  * Volume: ${userVolume} / ${requiredVolume}
+  * Days using the bot: ${userDays} / ${requiredDays}
+  * Reputation: ${userRep} / ${requiredRep}
 community_already_disabled: This community is already disabled
 community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead

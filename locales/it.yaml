@@ -719,7 +719,12 @@ payment_methods_reset: "Metodi di pagamento rimossi. Gli utenti possono ora inse
 payment_methods_wizard_commands: "/reset — rimuovere tutti i metodi di pagamento e ripristinare il comportamento predefinito\n/exit — uscire senza salvare"
 community_disabled_by_admin: Un amministratore ha disabilitato la tua comunità ${communityName}
 community_enabled_by_admin: Un amministratore ha riabilitato la tua comunità ${communityName}
-community_creation_requirements_not_met: "Non soddisfi i requisiti per creare una comunità"
+community_creation_requirements_not_met: |
+  Non soddisfi i requisiti per creare una comunità:
+  * Ordini: ${userOrders} / ${requiredOrders}
+  * Volume: ${userVolume} / ${requiredVolume}
+  * Giorni di utilizzo del bot: ${userDays} / ${requiredDays}
+  * Reputazione: ${userRep} / ${requiredRep}
 community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità

@@ -718,7 +718,12 @@ payment_methods_reset: "Способи оплати видалено. Корис
 payment_methods_wizard_commands: "/reset — видалити всі способи оплати та відновити поведінку за замовчуванням\n/exit — вийти без збереження"
 community_disabled_by_admin: Адміністратор вимкнув вашу спільноту ${communityName}
 community_enabled_by_admin: Адміністратор повторно увімкнув вашу спільноту ${communityName}
-community_creation_requirements_not_met: "Ви не відповідаєте вимогам для створення спільноти"
+community_creation_requirements_not_met: |
+  Ви не відповідаєте вимогам для створення спільноти:
+  * Замовлення: ${userOrders} / ${requiredOrders}
+  * Обсяг: ${userVolume} / ${requiredVolume}
+  * Днів використання бота: ${userDays} / ${requiredDays}
+  * Репутація: ${userRep} / ${requiredRep}
 community_already_disabled: Ця спільнота вже вимкнена
 community_already_enabled: Ця спільнота вже увімкнена
 ambiguous_community_input: Кілька спільнот відповідають цьому імені користувача, будь ласка, використовуйте ID спільноти

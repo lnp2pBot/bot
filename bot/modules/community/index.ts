@@ -11,41 +11,91 @@ import {
 import { CommunityContext } from './communityContext';
 import * as Scenes from './scenes';
 
+interface ParsedThresholds {
+  minOrders: number | null;
+  minVolume: number | null;
+  minDays: number | null;
+  minReputation: number | null;
+  invalidEnvVars: string[];
+}
+
+interface UserMetrics {
+  tg_id: string;
+  trades_completed: number;
+  volume_traded: number;
+  total_rating: number;
+  created_at: Date | string;
+}
+
+const parseOptionalNumber = (
+  raw: string | undefined,
+): { value: number | null; isValid: boolean } => {
+  if (raw == null || raw.trim() === '') return { value: null, isValid: true };
+  const n = Number(raw);
+  if (Number.isFinite(n) && n >= 0) return { value: n, isValid: true };
+  return { value: null, isValid: false };
+};
+
+const getCommunityThresholds = (): ParsedThresholds => {
+  const thresholdResults = {
+    COMMUNITY_CREATION_MIN_ORDERS: parseOptionalNumber(
+      process.env.COMMUNITY_CREATION_MIN_ORDERS,
+    ),
+    COMMUNITY_CREATION_MIN_VOLUME: parseOptionalNumber(
+      process.env.COMMUNITY_CREATION_MIN_VOLUME,
+    ),
+    COMMUNITY_CREATION_MIN_DAYS_USING_BOT: parseOptionalNumber(
+      process.env.COMMUNITY_CREATION_MIN_DAYS_USING_BOT,
+    ),
+    COMMUNITY_CREATION_MIN_REPUTATION: parseOptionalNumber(
+      process.env.COMMUNITY_CREATION_MIN_REPUTATION,
+    ),
+  };
+
+  const invalidEnvVars = Object.entries(thresholdResults)
+    .filter(([_, res]) => !res.isValid)
+    .map(([key]) => key);
+
+  return {
+    minOrders: thresholdResults.COMMUNITY_CREATION_MIN_ORDERS.value,
+    minVolume: thresholdResults.COMMUNITY_CREATION_MIN_VOLUME.value,
+    minDays: thresholdResults.COMMUNITY_CREATION_MIN_DAYS_USING_BOT.value,
+    minReputation: thresholdResults.COMMUNITY_CREATION_MIN_REPUTATION.value,
+    invalidEnvVars,
+  };
+};
+
+const meetsCommunityCreationRequirements = (
+  user: UserMetrics,
+  thresholds: Omit<ParsedThresholds, 'invalidEnvVars'>,
+): { meets: boolean; daysUsing: number | null; hasInvalidDate: boolean } => {
+  const createdAtTime = new Date(user.created_at).getTime();
+  if (!Number.isFinite(createdAtTime)) {
+    return { meets: false, daysUsing: null, hasInvalidDate: true };
+  }
+
+  const daysUsing = Math.floor((Date.now() - createdAtTime) / 86400000);
+  const { minOrders, minVolume, minDays, minReputation } = thresholds;
+
+  const meets =
+    (minOrders === null || user.trades_completed >= minOrders) &&
+    (minVolume === null || user.volume_traded >= minVolume) &&
+    (minDays === null || daysUsing >= minDays) &&
+    (minReputation === null || user.total_rating >= minReputation);
+
+  return { meets, daysUsing, hasInvalidDate: false };
+};
+
 export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('mycomm', userMiddleware, commands.communityAdmin);
   bot.command('mycomms', userMiddleware, commands.myComms);
   if (process.env.COMMUNITY_CREATION_ENABLED === 'true') {
+    // Parsing of this values only happens once, they are not reparsed every time an user wants to create a new community
+    const { invalidEnvVars, minOrders, minVolume, minDays, minReputation } =
+      getCommunityThresholds();
+
     bot.command('community', userMiddleware, async ctx => {
       const { user } = ctx;
-
-      const parseOptionalNumber = (
-        raw: string | undefined,
-      ): { value: number | null; isValid: boolean } => {
-        if (raw == null || raw.trim() === '')
-          return { value: null, isValid: true };
-        const n = Number(raw);
-        if (Number.isFinite(n) && n >= 0) return { value: n, isValid: true };
-        return { value: null, isValid: false };
-      };
-
-      const thresholdResults = {
-        COMMUNITY_CREATION_MIN_ORDERS: parseOptionalNumber(
-          process.env.COMMUNITY_CREATION_MIN_ORDERS,
-        ),
-        COMMUNITY_CREATION_MIN_VOLUME: parseOptionalNumber(
-          process.env.COMMUNITY_CREATION_MIN_VOLUME,
-        ),
-        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: parseOptionalNumber(
-          process.env.COMMUNITY_CREATION_MIN_DAYS_USING_BOT,
-        ),
-        COMMUNITY_CREATION_MIN_REPUTATION: parseOptionalNumber(
-          process.env.COMMUNITY_CREATION_MIN_REPUTATION,
-        ),
-      };
-
-      const invalidEnvVars = Object.entries(thresholdResults)
-        .filter(([_, res]) => !res.isValid)
-        .map(([key]) => key);
 
       if (invalidEnvVars.length > 0) {
         logger.error(
@@ -54,28 +104,38 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
         return ctx.reply(ctx.i18n.t('generic_error'));
       }
 
-      const {
-        COMMUNITY_CREATION_MIN_ORDERS: { value: minOrders },
-        COMMUNITY_CREATION_MIN_VOLUME: { value: minVolume },
-        COMMUNITY_CREATION_MIN_DAYS_USING_BOT: { value: minDays },
-        COMMUNITY_CREATION_MIN_REPUTATION: { value: minReputation },
-      } = thresholdResults;
+      const { meets, daysUsing, hasInvalidDate } =
+        meetsCommunityCreationRequirements(user, {
+          minOrders,
+          minVolume,
+          minDays,
+          minReputation,
+        });
 
-      const daysUsing = Math.floor(
-        (Date.now() - new Date(user.created_at).getTime()) / 86400000,
-      );
-
-      const meetsRequirements =
-        (minOrders === null || user.trades_completed >= minOrders) &&
-        (minVolume === null || user.volume_traded >= minVolume) &&
-        (minDays === null || daysUsing >= minDays) &&
-        (minReputation === null || user.total_rating >= minReputation);
-
-      if (!meetsRequirements) {
+      if (hasInvalidDate) {
         logger.error(
+          `User ${user.tg_id} has invalid created_at timestamp: ${user.created_at}`,
+        );
+        return ctx.reply(ctx.i18n.t('generic_error'));
+      }
+
+      if (!meets) {
+        logger.warning(
           `User ${user.tg_id} tried to create a community but does not meet the requirements - orders: ${user.trades_completed}, volume: ${user.volume_traded}, days: ${daysUsing}, reputation: ${user.total_rating}`,
         );
-        return ctx.reply(ctx.i18n.t('community_creation_requirements_not_met'));
+
+        return ctx.reply(
+          ctx.i18n.t('community_creation_requirements_not_met', {
+            userOrders: user.trades_completed,
+            requiredOrders: minOrders ?? '-',
+            userVolume: user.volume_traded,
+            requiredVolume: minVolume ?? '-',
+            userDays: daysUsing,
+            requiredDays: minDays ?? '-',
+            userRep: user.total_rating,
+            requiredRep: minReputation ?? '-',
+          }),
+        );
       }
 
       await ctx.scene.enter('COMMUNITY_WIZARD_SCENE_ID', {
