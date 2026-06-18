@@ -41,7 +41,7 @@ const usernameIdSchema = new Schema<IUsernameId>({
   username: { type: String, required: true, trim: true },
 });
 
-export interface ICommunity extends Document {
+export interface ICommunity extends Document<string> {
   _id: string;
   name: string;
   creator_id: string;

@@ -5,7 +5,7 @@ interface UserReview {
   reviewed_at: Date;
 }
 
-export interface UserDocument extends Document {
+export interface UserDocument extends Document<string> {
   _id: string;
   tg_id: string;
   username?: string;
