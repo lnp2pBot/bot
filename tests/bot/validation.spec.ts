@@ -67,9 +67,9 @@ describe('Validations', () => {
     sandbox = sinon.createSandbox();
     // Mock process.env within the sandbox
     sandbox.stub(process, 'env').value({
-      MIN_PAYMENT_AMT: 100,
+      MIN_PAYMENT_AMT: '100',
       NODE_ENV: 'production',
-      INVOICE_EXPIRATION_WINDOW: 3600000,
+      INVOICE_EXPIRATION_WINDOW: '3600000',
     });
 
     replyStub = sinon.stub(ctx, 'reply');
