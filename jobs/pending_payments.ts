@@ -3,7 +3,7 @@ import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
-import { payRequest, isPendingPayment } from '../ln';
+import { payRequest, getPaymentStatus } from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
@@ -22,14 +22,6 @@ export const attemptPendingPayments = async (
     const order = await Order.findOne({ _id: pending.order_id });
     try {
       if (order === null) throw Error('Order was not found in DB');
-      pending.attempts++;
-
-      // Calculate exponential backoff delay
-      const baseDelay = 5 * 60 * 1000; // 5 minutes
-      const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
-      const maxDelay = 60 * 60 * 1000; // 1 hour max
-      const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
-      pending.next_retry = new Date(Date.now() + nextRetryDelay);
 
       if (order.status === 'SUCCESS') {
         pending.paid = true;
@@ -37,18 +29,106 @@ export const attemptPendingPayments = async (
         logger.info(`Order id: ${order._id} was already paid`);
         continue;
       }
-      // We check if the old payment is on flight
-      const isPendingOldPayment: boolean = await isPendingPayment(
-        order.buyer_invoice,
-      );
 
-      // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(
-        pending.payment_request,
-      );
+      // Guard against double-pay after a bot restart mid-payment: if the
+      // original buyer invoice was already confirmed by LND (e.g. the attacker
+      // held it as a hold invoice and settled after restart), heal the order
+      // and skip the retry instead of paying a second time.
+      if (order.buyer_invoice) {
+        const originalStatus = await getPaymentStatus(order.buyer_invoice);
+        if (originalStatus.is_confirmed) {
+          order.status = 'SUCCESS';
+          pending.paid = true;
+          logger.info(
+            `Order ${order._id}: original buyer invoice already confirmed, marking SUCCESS and skipping retry`,
+          );
+          continue;
+        }
+        if (originalStatus.is_pending) {
+          logger.info(
+            `Order ${order._id}: original buyer invoice is pending (in-flight), skipping retry without incrementing attempts`,
+          );
+          continue;
+        }
+      }
 
-      // If one of the payments is on flight we don't do anything
-      if (isPending || isPendingOldPayment) continue;
+      const previousPendingPayments = await PendingPayment.find({
+        _id: { $ne: pending._id },
+        order_id: order._id,
+        is_invoice_expired: false,
+      });
+
+      let shouldSkip = false;
+
+      for (const prev of previousPendingPayments) {
+        const prevStatus = await getPaymentStatus(prev.payment_request);
+        if (prevStatus.is_confirmed) {
+          order.status = 'SUCCESS';
+          prev.paid = true;
+          await prev.save();
+          pending.paid = true;
+          logger.info(
+            `Order ${order._id}: previous payment already confirmed, marking order as SUCCESS and skipping retry`,
+          );
+          shouldSkip = true;
+          break;
+        } else if (prevStatus.is_pending) {
+          logger.info(
+            `Order ${order._id}: previous payment already in-flight, skipping attempt`,
+          );
+          shouldSkip = true;
+          break;
+        }
+      }
+
+      if (shouldSkip) continue;
+
+      const currentStatus = await getPaymentStatus(pending.payment_request);
+
+      // If already confirmed, process the SUCCESS routine immediately!
+      if (currentStatus.is_confirmed && currentStatus.payment) {
+        const payment = currentStatus.payment;
+        order.status = 'SUCCESS';
+        order.routing_fee = payment.fee;
+        pending.paid = true;
+        pending.paid_at = new Date();
+        const buyerUser = await User.findOne({ _id: order.buyer_id });
+        if (buyerUser === null) throw Error('buyerUser was not found in DB');
+        const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
+        buyerUser.trades_completed++;
+        await buyerUser.save();
+        const sellerUser = await User.findOne({ _id: order.seller_id });
+        if (sellerUser === null) throw Error('sellerUser was not found in DB');
+        sellerUser.trades_completed++;
+        await sellerUser.save();
+        logger.info(
+          `Invoice with hash: ${pending.hash} already paid, processing SUCCESS routine`,
+        );
+        await messages.toAdminChannelPendingPaymentSuccessMessage(
+          bot,
+          buyerUser,
+          order,
+          pending,
+          payment,
+          i18nCtx,
+        );
+        await messages.toBuyerPendingPaymentSuccessMessage(
+          bot,
+          buyerUser,
+          order,
+          payment,
+          i18nCtx,
+        );
+        await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
+        continue;
+      }
+
+      if (currentStatus.is_pending) {
+        logger.info(
+          `Order ${order._id}: current payment is already in-flight, skipping retry without incrementing attempts`,
+        );
+        continue;
+      }
 
       // SECURITY (defense in depth): the amount to pay must equal the order
       // amount. payRequest also enforces this, but we stop retries early here
@@ -62,6 +142,16 @@ export const attemptPendingPayments = async (
         );
         continue;
       }
+
+      // Increment attempts and update backoff only when we actually attempt payment
+      pending.attempts++;
+
+      // Calculate exponential backoff delay
+      const baseDelay = 5 * 60 * 1000; // 5 minutes
+      const exponentialDelay = baseDelay * Math.pow(2, pending.attempts - 1);
+      const maxDelay = 60 * 60 * 1000; // 1 hour max
+      const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
+      pending.next_retry = new Date(Date.now() + nextRetryDelay);
 
       const payment = await payRequest({
         amount: pending.amount,
@@ -95,7 +185,7 @@ export const attemptPendingPayments = async (
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
-        sellerUser.save();
+        await sellerUser.save();
         logger.info(`Invoice with hash: ${pending.hash} paid`);
         await messages.toAdminChannelPendingPaymentSuccessMessage(
           bot,
@@ -190,6 +280,45 @@ export const attemptCommunitiesPendingPayments = async (
 
   for (const pending of pendingPayments) {
     try {
+      const status = await getPaymentStatus(pending.payment_request);
+
+      if (status.is_confirmed && status.payment) {
+        const payment = status.payment;
+        pending.paid = true;
+        pending.paid_at = new Date();
+
+        const community = await Community.findById(pending.community_id);
+        if (community === null) throw Error('Community was not found in DB');
+        community.orders_to_redeem = 0;
+        await community.save();
+
+        const user = await User.findById(pending.user_id);
+        if (user === null) throw Error('User was not found in DB');
+        const i18nCtx: I18nContext = await getUserI18nContext(user);
+
+        logger.info(
+          `Community ${community.id} withdrew ${pending.amount} sats, invoice with hash: ${payment.id} already confirmed, processing SUCCESS routine`,
+        );
+
+        await bot.telegram.sendMessage(
+          user.tg_id,
+          i18nCtx.t('pending_payment_success', {
+            id: community.id,
+            amount: pending.amount,
+            paymentSecret: payment.secret,
+          }),
+        );
+        continue;
+      }
+
+      if (status.is_pending) {
+        logger.info(
+          `Community pending payment is already in-flight, skipping attempt without incrementing attempts`,
+        );
+        continue;
+      }
+
+      // Increment attempts and update backoff only when we actually attempt payment
       pending.attempts++;
 
       // Calculate exponential backoff delay for community payments
@@ -198,14 +327,6 @@ export const attemptCommunitiesPendingPayments = async (
       const maxDelay = 60 * 60 * 1000; // 1 hour max
       const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
       pending.next_retry = new Date(Date.now() + nextRetryDelay);
-
-      // We check if this new payment is on flight
-      const isPending: boolean = await isPendingPayment(
-        pending.payment_request,
-      );
-
-      // If the payments is on flight we don't do anything
-      if (isPending) return;
 
       const payment = await payRequest({
         amount: pending.amount,

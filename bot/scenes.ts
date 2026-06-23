@@ -6,7 +6,7 @@ import { Order, PendingPayment } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
-import { isPendingPayment } from '../ln';
+import { isConfirmedPayment, isPendingOrConfirmed } from '../ln';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
@@ -168,15 +168,29 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (!!res.invoice.tokens && res.invoice.tokens !== order.amount)
         return await messages.incorrectAmountInvoiceMessage(ctx);
 
+      // If the original invoice was already paid (e.g. bot restarted mid-payment
+      // while a hold invoice was ACCEPTED), heal the order and reject the update.
+      // Without this check an attacker can settle the hold invoice after restart
+      // and then claim a second payment via /setinvoice.
+      if (order.buyer_invoice) {
+        const alreadyPaid = await isConfirmedPayment(order.buyer_invoice);
+        if (alreadyPaid) {
+          order.status = 'SUCCESS';
+          await order.save();
+          return await messages.invoiceAlreadyUpdatedMessage(ctx);
+        }
+      }
+
       const isScheduled = await PendingPayment.findOne({
         order_id: order._id,
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         is_invoice_expired: false,
       });
-      // We check if the payment is on flight
-      const isPending = await isPendingPayment(order.buyer_invoice);
-
-      if (!!isScheduled || !!isPending)
+      // Block update if payment is already in-flight or was confirmed (covers restart mid-payment)
+      const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(
+        order.buyer_invoice,
+      );
+      if (!!isScheduled || isPaymentPendingOrConfirmed)
         return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
       // if the payment is not on flight, we create a pending payment

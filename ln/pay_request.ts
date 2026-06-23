@@ -122,9 +122,11 @@ const payRequest = async ({
 
 const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   try {
-    // We check if the payment is on flight we don't do anything
-    const isPending = await isPendingPayment(order.buyer_invoice);
-    if (isPending) {
+    // Skip if the payment is already in-flight or was confirmed
+    const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(
+      order.buyer_invoice,
+    );
+    if (isPaymentPendingOrConfirmed) {
       return;
     }
     const payment = await payRequest({
@@ -222,17 +224,58 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   }
 };
 
-const isPendingPayment = async (request: string) => {
-  try {
-    const { id } = parsePaymentRequest({ request });
-    const { is_pending } = await getPayment({ lnd, id });
+interface PaymentStatus {
+  is_confirmed: boolean;
+  is_pending: boolean;
+  payment?: any;
+}
 
-    return !!is_pending;
+const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
+  try {
+    if (!request) {
+      return { is_confirmed: false, is_pending: false, payment: undefined };
+    }
+    const { id } = parsePaymentRequest({ request });
+    const res = await getPayment({ lnd, id });
+    return {
+      is_confirmed: !!res.is_confirmed,
+      is_pending: !!res.is_pending,
+      payment: res.payment,
+    };
   } catch (error: any) {
-    const message = error.toString();
-    logger.error(`isPendingPayment catch error: ${message}`);
-    return false;
+    const errStr = error.toString();
+    if (
+      errStr.includes('SentPaymentNotFound') ||
+      errStr.includes('PaymentNotFound') ||
+      errStr.includes('404')
+    ) {
+      return { is_confirmed: false, is_pending: false, payment: undefined };
+    }
+    logger.error(`getPaymentStatus error: ${errStr}`);
+    return { is_confirmed: false, is_pending: false, payment: undefined };
   }
 };
 
-export { payRequest, payToBuyer, isPendingPayment };
+const isPendingPayment = async (request: string) => {
+  const { is_pending } = await getPaymentStatus(request);
+  return is_pending;
+};
+
+const isConfirmedPayment = async (request: string) => {
+  const { is_confirmed } = await getPaymentStatus(request);
+  return is_confirmed;
+};
+
+const isPendingOrConfirmed = async (request: string) => {
+  const { is_confirmed, is_pending } = await getPaymentStatus(request);
+  return is_confirmed || is_pending;
+};
+
+export {
+  payRequest,
+  payToBuyer,
+  isPendingPayment,
+  isConfirmedPayment,
+  isPendingOrConfirmed,
+  getPaymentStatus,
+};
