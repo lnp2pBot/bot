@@ -4,6 +4,7 @@ import {
   deleteForwardingReputations,
   AuthenticatedLnd,
 } from 'lightning';
+import type { PayViaPaymentRequestResult } from 'lightning/lnd_methods/offchain/pay_via_payment_request';
 import { User, PendingPayment } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
@@ -224,46 +225,43 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   }
 };
 
+type LndPayment = PayViaPaymentRequestResult;
+
 interface PaymentStatus {
   is_confirmed: boolean;
   is_pending: boolean;
-  payment?: any;
+  payment?: LndPayment;
 }
 
 const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
   try {
     if (!request) {
-      return { is_confirmed: false, is_pending: false, payment: undefined };
+      return { is_confirmed: false, is_pending: false };
     }
     const { id } = parsePaymentRequest({ request });
     const res = await getPayment({ lnd, id });
     return {
       is_confirmed: !!res.is_confirmed,
       is_pending: !!res.is_pending,
-      payment: res.payment,
+      payment: res.payment as LndPayment | undefined,
     };
   } catch (error: any) {
-    const errStr = error.toString();
-    if (
-      errStr.includes('SentPaymentNotFound') ||
-      errStr.includes('PaymentNotFound') ||
-      errStr.includes('404')
-    ) {
-      return { is_confirmed: false, is_pending: false, payment: undefined };
+    // lightning lib returns errors as arrays: [code, message, details]
+    const code = Array.isArray(error) ? error[0] : undefined;
+    const message = Array.isArray(error)
+      ? String(error[1] ?? '')
+      : String(error);
+    const isNotFound =
+      code === 404 ||
+      message.includes('SentPaymentNotFound') ||
+      message.includes('PaymentNotFound');
+    if (isNotFound) {
+      return { is_confirmed: false, is_pending: false };
     }
-    logger.error(`getPaymentStatus error: ${errStr}`);
-    return { is_confirmed: false, is_pending: false, payment: undefined };
+    logger.error(`getPaymentStatus error: ${error}`);
+    // Fail closed: on unknown/transient errors treat as pending to prevent double-pay
+    return { is_confirmed: false, is_pending: true };
   }
-};
-
-const isPendingPayment = async (request: string) => {
-  const { is_pending } = await getPaymentStatus(request);
-  return is_pending;
-};
-
-const isConfirmedPayment = async (request: string) => {
-  const { is_confirmed } = await getPaymentStatus(request);
-  return is_confirmed;
 };
 
 const isPendingOrConfirmed = async (request: string) => {
@@ -274,8 +272,7 @@ const isPendingOrConfirmed = async (request: string) => {
 export {
   payRequest,
   payToBuyer,
-  isPendingPayment,
-  isConfirmedPayment,
   isPendingOrConfirmed,
   getPaymentStatus,
+  LndPayment,
 };

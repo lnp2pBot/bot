@@ -2,11 +2,11 @@ import { Scenes } from 'telegraf';
 // @ts-ignore
 import { parsePaymentRequest } from 'invoices';
 import { isValidInvoice, validateLightningAddress } from './validations';
-import { Order, PendingPayment } from '../models';
+import { Order, PendingPayment, User } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
-import { isConfirmedPayment, isPendingOrConfirmed } from '../ln';
+import { getPaymentStatus } from '../ln';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
@@ -129,6 +129,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('must_enter_text'));
 
       let { buyer, order } = ctx.wizard.state;
+      const bot = ctx.wizard.bot;
       // We get an updated order from the DB
       const updatedOrder = await Order.findOne({ _id: order._id });
       if (updatedOrder === null) {
@@ -172,13 +173,37 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       // while a hold invoice was ACCEPTED), heal the order and reject the update.
       // Without this check an attacker can settle the hold invoice after restart
       // and then claim a second payment via /setinvoice.
-      if (order.buyer_invoice) {
-        const alreadyPaid = await isConfirmedPayment(order.buyer_invoice);
-        if (alreadyPaid) {
-          order.status = 'SUCCESS';
-          await order.save();
-          return await messages.invoiceAlreadyUpdatedMessage(ctx);
+      // We fetch the status once and reuse it for the in-flight check below.
+      const originalStatus = order.buyer_invoice
+        ? await getPaymentStatus(order.buyer_invoice)
+        : undefined;
+      if (originalStatus?.is_confirmed) {
+        const i18nCtx = await getUserI18nContext(buyer);
+        order.status = 'SUCCESS';
+        if (originalStatus.payment) {
+          order.routing_fee = originalStatus.payment.fee;
         }
+        await order.save();
+        buyer.trades_completed++;
+        await buyer.save();
+        const sellerUser = await User.findOne({ _id: order.seller_id });
+        if (sellerUser !== null) {
+          sellerUser.trades_completed++;
+          await sellerUser.save();
+        }
+        if (originalStatus.payment) {
+          await messages.toBuyerPendingPaymentSuccessMessage(
+            bot,
+            buyer,
+            order,
+            originalStatus.payment,
+            i18nCtx,
+          );
+        } else {
+          await messages.invoiceAlreadyUpdatedMessage(ctx);
+        }
+        await messages.rateUserMessage(bot, buyer, order, i18nCtx);
+        return ctx.scene.leave();
       }
 
       const isScheduled = await PendingPayment.findOne({
@@ -186,11 +211,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         is_invoice_expired: false,
       });
-      // Block update if payment is already in-flight or was confirmed (covers restart mid-payment)
-      const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(
-        order.buyer_invoice,
-      );
-      if (!!isScheduled || isPaymentPendingOrConfirmed)
+      // Block update if payment is already in-flight (confirmed is handled above)
+      if (!!isScheduled || !!originalStatus?.is_pending)
         return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
       // if the payment is not on flight, we create a pending payment

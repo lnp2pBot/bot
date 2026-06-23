@@ -10,10 +10,9 @@ import { resubscribeInvoices } from './resubscribe_invoices';
 import {
   payRequest,
   payToBuyer,
-  isConfirmedPayment,
-  isPendingPayment,
   isPendingOrConfirmed,
   getPaymentStatus,
+  LndPayment,
 } from './pay_request';
 import { getInfo } from './info';
 
@@ -26,11 +25,10 @@ export {
   payRequest,
   payToBuyer,
   getInfo,
-  isConfirmedPayment,
-  isPendingPayment,
   isPendingOrConfirmed,
   getPaymentStatus,
   subscribeProbe,
   getInvoice,
   payHoldInvoice,
+  LndPayment,
 };

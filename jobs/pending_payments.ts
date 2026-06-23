@@ -1,12 +1,50 @@
 import { PendingPayment, Order, User, Community } from '../models';
+import { IOrder } from '../models/order';
+import { IPendingPayment } from '../models/pending_payment';
+import { UserDocument } from '../models/user';
 import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
-import { payRequest, getPaymentStatus } from '../ln';
+import { payRequest, getPaymentStatus, LndPayment } from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
+
+const runOrderSuccessRoutine = async (
+  bot: Telegraf<CommunityContext>,
+  order: IOrder,
+  pending: IPendingPayment,
+  payment: LndPayment,
+  buyerUser: UserDocument,
+  sellerUser: UserDocument,
+  i18nCtx: I18nContext,
+): Promise<void> => {
+  order.status = 'SUCCESS';
+  order.routing_fee = payment.fee;
+  pending.paid = true;
+  pending.paid_at = new Date();
+  buyerUser.trades_completed++;
+  await buyerUser.save();
+  sellerUser.trades_completed++;
+  await sellerUser.save();
+  await messages.toAdminChannelPendingPaymentSuccessMessage(
+    bot,
+    buyerUser,
+    order,
+    pending,
+    payment,
+    i18nCtx,
+  );
+  await messages.toBuyerPendingPaymentSuccessMessage(
+    bot,
+    buyerUser,
+    order,
+    payment,
+    i18nCtx,
+  );
+  await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
+};
 
 export const attemptPendingPayments = async (
   bot: Telegraf<CommunityContext>,
@@ -37,11 +75,32 @@ export const attemptPendingPayments = async (
       if (order.buyer_invoice) {
         const originalStatus = await getPaymentStatus(order.buyer_invoice);
         if (originalStatus.is_confirmed) {
-          order.status = 'SUCCESS';
-          pending.paid = true;
           logger.info(
-            `Order ${order._id}: original buyer invoice already confirmed, marking SUCCESS and skipping retry`,
+            `Order ${order._id}: original buyer invoice already confirmed, running success routine`,
           );
+          const buyerUser = await User.findOne({ _id: order.buyer_id });
+          if (buyerUser === null) throw Error('buyerUser was not found in DB');
+          const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
+          const sellerUser = await User.findOne({ _id: order.seller_id });
+          if (sellerUser === null)
+            throw Error('sellerUser was not found in DB');
+          if (originalStatus.payment) {
+            await runOrderSuccessRoutine(
+              bot,
+              order,
+              pending,
+              originalStatus.payment,
+              buyerUser,
+              sellerUser,
+              i18nCtx,
+            );
+          } else {
+            order.status = 'SUCCESS';
+            pending.paid = true;
+            logger.warn(
+              `Order ${order._id}: confirmed but no payment details in LND response`,
+            );
+          }
           continue;
         }
         if (originalStatus.is_pending) {
@@ -55,6 +114,7 @@ export const attemptPendingPayments = async (
       const previousPendingPayments = await PendingPayment.find({
         _id: { $ne: pending._id },
         order_id: order._id,
+        paid: false,
         is_invoice_expired: false,
       });
 
@@ -63,13 +123,34 @@ export const attemptPendingPayments = async (
       for (const prev of previousPendingPayments) {
         const prevStatus = await getPaymentStatus(prev.payment_request);
         if (prevStatus.is_confirmed) {
-          order.status = 'SUCCESS';
+          logger.info(
+            `Order ${order._id}: previous payment already confirmed, running success routine`,
+          );
           prev.paid = true;
           await prev.save();
           pending.paid = true;
-          logger.info(
-            `Order ${order._id}: previous payment already confirmed, marking order as SUCCESS and skipping retry`,
-          );
+          const buyerUser = await User.findOne({ _id: order.buyer_id });
+          if (buyerUser === null) throw Error('buyerUser was not found in DB');
+          const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
+          const sellerUser = await User.findOne({ _id: order.seller_id });
+          if (sellerUser === null)
+            throw Error('sellerUser was not found in DB');
+          if (prevStatus.payment) {
+            await runOrderSuccessRoutine(
+              bot,
+              order,
+              pending,
+              prevStatus.payment,
+              buyerUser,
+              sellerUser,
+              i18nCtx,
+            );
+          } else {
+            order.status = 'SUCCESS';
+            logger.warn(
+              `Order ${order._id}: previous payment confirmed but no payment details in LND response`,
+            );
+          }
           shouldSkip = true;
           break;
         } else if (prevStatus.is_pending) {
@@ -85,41 +166,24 @@ export const attemptPendingPayments = async (
 
       const currentStatus = await getPaymentStatus(pending.payment_request);
 
-      // If already confirmed, process the SUCCESS routine immediately!
       if (currentStatus.is_confirmed && currentStatus.payment) {
-        const payment = currentStatus.payment;
-        order.status = 'SUCCESS';
-        order.routing_fee = payment.fee;
-        pending.paid = true;
-        pending.paid_at = new Date();
+        logger.info(
+          `Invoice with hash: ${pending.hash} already paid, running success routine`,
+        );
         const buyerUser = await User.findOne({ _id: order.buyer_id });
         if (buyerUser === null) throw Error('buyerUser was not found in DB');
         const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
-        buyerUser.trades_completed++;
-        await buyerUser.save();
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        sellerUser.trades_completed++;
-        await sellerUser.save();
-        logger.info(
-          `Invoice with hash: ${pending.hash} already paid, processing SUCCESS routine`,
-        );
-        await messages.toAdminChannelPendingPaymentSuccessMessage(
+        await runOrderSuccessRoutine(
           bot,
-          buyerUser,
           order,
           pending,
-          payment,
-          i18nCtx,
-        );
-        await messages.toBuyerPendingPaymentSuccessMessage(
-          bot,
+          currentStatus.payment,
           buyerUser,
-          order,
-          payment,
+          sellerUser,
           i18nCtx,
         );
-        await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
         continue;
       }
 
@@ -174,35 +238,18 @@ export const attemptPendingPayments = async (
       }
 
       if (!!payment && !!payment.confirmed_at) {
-        order.status = 'SUCCESS';
-        order.routing_fee = payment.fee;
-        pending.paid = true;
-        pending.paid_at = new Date();
-        // We add a new completed trade for the buyer
-        buyerUser.trades_completed++;
-        await buyerUser.save();
-        // We add a new completed trade for the seller
+        logger.info(`Invoice with hash: ${pending.hash} paid`);
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        sellerUser.trades_completed++;
-        await sellerUser.save();
-        logger.info(`Invoice with hash: ${pending.hash} paid`);
-        await messages.toAdminChannelPendingPaymentSuccessMessage(
+        await runOrderSuccessRoutine(
           bot,
-          buyerUser,
           order,
           pending,
-          payment,
-          i18nCtx,
-        );
-        await messages.toBuyerPendingPaymentSuccessMessage(
-          bot,
+          payment as LndPayment,
           buyerUser,
-          order,
-          payment,
+          sellerUser,
           i18nCtx,
         );
-        await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
       } else {
         // Enhanced error handling for different payment failure types
         if (payment && typeof payment === 'object' && 'error' in payment) {
