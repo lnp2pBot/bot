@@ -721,6 +721,11 @@ payment_methods_reset: "Méthodes de paiement supprimées. Les utilisateurs peuv
 payment_methods_wizard_commands: "/reset — supprimer toutes les méthodes de paiement et restaurer le comportement par défaut\n/exit — quitter sans enregistrer"
 community_disabled_by_admin: Un administrateur a désactivé votre communauté ${communityName}
 community_enabled_by_admin: Un administrateur a réactivé votre communauté ${communityName}
+community_creation_requirements_not_met_header: "Vous ne remplissez pas les conditions pour créer une communauté :"
+community_creation_requirements_not_met_orders: "* Commandes : ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volume : ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Jours d'utilisation du bot : ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Réputation : ${userRep} / ${requiredRep}"
 community_already_disabled: Cette communauté est déjà désactivée
 community_already_enabled: Cette communauté est déjà activée
 ambiguous_community_input: Plusieurs communautés correspondent à ce nom d'utilisateur, veuillez utiliser l'ID de la communauté à la place
