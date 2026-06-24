@@ -725,12 +725,11 @@ payment_methods_reset: "Métodos de pago eliminados. Los usuarios ahora pueden i
 payment_methods_wizard_commands: "/reset — eliminar todos los métodos de pago y restaurar el comportamiento predeterminado\n/exit — salir sin guardar"
 community_disabled_by_admin: Un administrador ha deshabilitado tu comunidad ${communityName}
 community_enabled_by_admin: Un administrador ha reactivado tu comunidad ${communityName}
-community_creation_requirements_not_met: |
-  No cumples con los requisitos para crear una comunidad:
-  * Órdenes: ${userOrders} / ${requiredOrders}
-  * Volumen: ${userVolume} / ${requiredVolume}
-  * Días usando el bot: ${userDays} / ${requiredDays}
-  * Reputación: ${userRep} / ${requiredRep}
+community_creation_requirements_not_met_header: "No cumples con los requisitos para crear una comunidad:"
+community_creation_requirements_not_met_orders: "* Órdenes: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volumen: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Días usando el bot: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputación: ${userRep} / ${requiredRep}"
 community_already_disabled: Esta comunidad ya está deshabilitada
 community_already_enabled: Esta comunidad ya está habilitada
 ambiguous_community_input: Varias comunidades coinciden con ese nombre de usuario, por favor usa el ID de la comunidad

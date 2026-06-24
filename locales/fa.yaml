@@ -821,12 +821,11 @@ payment_methods_reset: "روش‌های پرداخت حذف شدند. کاربر
 payment_methods_wizard_commands: "/reset — حذف همه روش‌های پرداخت و بازگرداندن رفتار پیش‌فرض\n/exit — خروج بدون ذخیره"
 community_disabled_by_admin: یک مدیر جامعه ${communityName} شما را غیرفعال کرد
 community_enabled_by_admin: یک مدیر جامعه ${communityName} شما را دوباره فعال کرد
-community_creation_requirements_not_met: |
-  شما شرایط لازم برای ایجاد جامعه را ندارید:
-  * سفارش‌ها: ${userOrders} / ${requiredOrders}
-  * حجم: ${userVolume} / ${requiredVolume}
-  * روزهای استفاده از ربات: ${userDays} / ${requiredDays}
-  * اعتبار: ${userRep} / ${requiredRep}
+community_creation_requirements_not_met_header: "شما شرایط لازم برای ایجاد جامعه را ندارید:"
+community_creation_requirements_not_met_orders: "* سفارش‌ها: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* حجم: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* روزهای استفاده از ربات: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* اعتبار: ${userRep} / ${requiredRep}"
 community_already_disabled: این جامعه از قبل غیرفعال است
 community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید

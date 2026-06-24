@@ -722,12 +722,11 @@ payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt belieb
 payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
 community_disabled_by_admin: Ein Administrator hat deine Community ${communityName} deaktiviert
 community_enabled_by_admin: Ein Administrator hat deine Community ${communityName} wieder aktiviert
-community_creation_requirements_not_met: |
-  Du erfüllst nicht die Anforderungen zur Erstellung einer Community:
-  * Bestellungen: ${userOrders} / ${requiredOrders}
-  * Volumen: ${userVolume} / ${requiredVolume}
-  * Tage der Nutzung des Bots: ${userDays} / ${requiredDays}
-  * Reputation: ${userRep} / ${requiredRep}
+community_creation_requirements_not_met_header: "Du erfüllst nicht die Anforderungen zur Erstellung einer Community:"
+community_creation_requirements_not_met_orders: "* Bestellungen: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volumen: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Tage der Nutzung des Bots: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requiredRep}"
 community_already_disabled: Diese Community ist bereits deaktiviert
 community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
