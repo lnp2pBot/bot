@@ -144,7 +144,7 @@ CHANNEL='@tu-canal-de-ofertas'
 ADMIN_CHANNEL='-10*****46' 
 HELP_GROUP='@tu-grupo-de-soporte' 
 
-FIAT_RATE_EP='https://api.yadio.io/rate'
+FIAT_RATE_EP='https://api.yadio.io/convert'
 
 DISPUTE_CHANNEL='@tu-canal-de-disputas' 
 
