@@ -108,7 +108,13 @@ describe('attemptPendingPayments healing branches', () => {
           find: pendingFindStub,
           findOne: pendingFindOneStub,
         },
-        Order: { findOne: orderFindOneStub },
+        Order: {
+          findOne: orderFindOneStub,
+          // Atomic compare-and-set used by completeOrderAsSuccess. Returning a
+          // truthy doc means "this caller won the race" so the success routine
+          // runs (sets status SUCCESS in memory, notifies, increments trades).
+          findOneAndUpdate: sandbox.stub().resolves({ status: 'SUCCESS' }),
+        },
         User: { findOne: userFindOneStub },
         Community: {
           findById: sandbox.stub(),
