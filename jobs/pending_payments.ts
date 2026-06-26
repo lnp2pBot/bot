@@ -1,7 +1,4 @@
 import { PendingPayment, Order, User, Community } from '../models';
-import { IOrder } from '../models/order';
-import { IPendingPayment } from '../models/pending_payment';
-import { UserDocument } from '../models/user';
 import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
@@ -10,57 +7,7 @@ import { payRequest, getPaymentStatus, LndPayment } from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
-
-// Closes an order as SUCCESS and runs the success side effects (notify buyer,
-// rating prompt, trades_completed). The status flip is an atomic compare-and-set
-// so that if two callers race (e.g. this job and a concurrent /setinvoice), only
-// the first one runs the side effects: no double notification, no double trades.
-// Returns true if this caller won the race and ran the routine.
-export const completeOrderAsSuccess = async (
-  bot: Telegraf<CommunityContext>,
-  order: IOrder,
-  payment: LndPayment,
-  buyerUser: UserDocument,
-  sellerUser: UserDocument,
-  i18nCtx: I18nContext,
-  pending?: IPendingPayment,
-): Promise<boolean> => {
-  const won = await Order.findOneAndUpdate(
-    { _id: order._id, status: { $ne: 'SUCCESS' } },
-    { $set: { status: 'SUCCESS', routing_fee: payment.fee } },
-  );
-  if (won === null) return false;
-  // Keep the in-memory document consistent for any later save by the caller.
-  order.status = 'SUCCESS';
-  order.routing_fee = payment.fee;
-  if (pending) {
-    pending.paid = true;
-    pending.paid_at = new Date();
-  }
-  buyerUser.trades_completed++;
-  await buyerUser.save();
-  sellerUser.trades_completed++;
-  await sellerUser.save();
-  if (pending) {
-    await messages.toAdminChannelPendingPaymentSuccessMessage(
-      bot,
-      buyerUser,
-      order,
-      pending,
-      payment,
-      i18nCtx,
-    );
-  }
-  await messages.toBuyerPendingPaymentSuccessMessage(
-    bot,
-    buyerUser,
-    order,
-    payment,
-    i18nCtx,
-  );
-  await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
-  return true;
-};
+import { completeOrderAsSuccess } from '../util/completeOrder';
 
 export const attemptPendingPayments = async (
   bot: Telegraf<CommunityContext>,

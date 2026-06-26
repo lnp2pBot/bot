@@ -7,7 +7,7 @@ import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
 import { getPaymentStatus } from '../ln';
-import { completeOrderAsSuccess } from '../jobs/pending_payments';
+import { completeOrderAsSuccess } from '../util/completeOrder';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';

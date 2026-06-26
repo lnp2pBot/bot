@@ -120,11 +120,15 @@ describe('attemptPendingPayments healing branches', () => {
           findById: sandbox.stub(),
           findByIdAndUpdate: sandbox.stub(),
         },
+        // @global so the stubs also apply to util/completeOrder (required
+        // indirectly by the job), not only to the job's own require.
+        '@global': true,
         '@noCallThru': true,
       },
       '../ln': {
         payRequest: payRequestStub,
         getPaymentStatus: getPaymentStatusStub,
+        '@global': true,
         '@noCallThru': true,
       },
       '../bot/messages': {
@@ -134,6 +138,7 @@ describe('attemptPendingPayments healing branches', () => {
         expiredInvoiceOnPendingMessage: sandbox.stub().resolves(),
         toBuyerPendingPaymentFailedMessage: sandbox.stub().resolves(),
         toAdminChannelPendingPaymentFailedMessage: sandbox.stub().resolves(),
+        '@global': true,
         '@noCallThru': true,
       },
       '../util': {
