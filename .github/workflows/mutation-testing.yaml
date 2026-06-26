@@ -1,0 +1,41 @@
+name: Mutation Testing
+
+# Non-blocking: this runs on a schedule and on demand, never gates merges.
+# It reports how effective the test suite is at catching real bugs (mutation
+# score), scoped to util/ for now. See issue #760.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # Weekly on Monday 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  mutation-test:
+    runs-on: ubuntu-latest
+    container:
+      # Official Node 20 image (Debian bookworm) — Node baked in, no third-party
+      # repo, same base used by the integration workflow.
+      image: 'node:20-bookworm'
+    steps:
+      - name: Install canvas build dependencies
+        run: |
+          apt-get update --yes
+          apt-get install --yes --no-install-recommends \
+            build-essential pkg-config libcairo2-dev libpango1.0-dev \
+            libjpeg-dev libgif-dev librsvg2-dev
+
+      - uses: actions/checkout@v4
+
+      - run: npm ci
+
+      - name: Run mutation testing on util/
+        run: npm run mutation-test:util
+        env:
+          NODE_ENV: test
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          if-no-files-found: ignore

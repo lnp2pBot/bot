@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "testRunner": "mocha",
+  "buildCommand": "npm run build:test",
+  "coverageAnalysis": "perTest",
+  "mutate": ["util/**/*.ts", "!**/*.spec.ts"],
+  "mochaOptions": {
+    "spec": ["dist/tests/**/*.spec.js"]
+  },
+  "thresholds": {
+    "high": 80,
+    "low": 60,
+    "break": null
+  },
+  "reporters": ["html", "clear-text", "progress"],
+  "timeoutMS": 60000,
+  "concurrency": 2
+}
