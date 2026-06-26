@@ -506,7 +506,12 @@ const initialize = (
       // has taken yet). Orders already being taken (WAITING_PAYMENT /
       // WAITING_BUYER_INVOICE) must be handled individually with /cancel or
       // through a dispute, just like single /cancel rejects them.
-      const orders = (await ordersActions.getOrders(ctx.user, 'PENDING')) || [];
+      const orders = await ordersActions.getOrders(ctx.user, 'PENDING');
+
+      // getOrders returns undefined when the query itself failed (already
+      // logged). Bail out instead of telling the user they have no orders,
+      // which would otherwise leave their pending orders silently uncanceled.
+      if (orders === undefined) return;
 
       if (orders.length === 0) {
         return await messages.notOrdersMessage(ctx);
