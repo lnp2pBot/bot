@@ -11,31 +11,46 @@ import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 
-const runOrderSuccessRoutine = async (
+// Closes an order as SUCCESS and runs the success side effects (notify buyer,
+// rating prompt, trades_completed). The status flip is an atomic compare-and-set
+// so that if two callers race (e.g. this job and a concurrent /setinvoice), only
+// the first one runs the side effects: no double notification, no double trades.
+// Returns true if this caller won the race and ran the routine.
+export const completeOrderAsSuccess = async (
   bot: Telegraf<CommunityContext>,
   order: IOrder,
-  pending: IPendingPayment,
   payment: LndPayment,
   buyerUser: UserDocument,
   sellerUser: UserDocument,
   i18nCtx: I18nContext,
-): Promise<void> => {
+  pending?: IPendingPayment,
+): Promise<boolean> => {
+  const won = await Order.findOneAndUpdate(
+    { _id: order._id, status: { $ne: 'SUCCESS' } },
+    { $set: { status: 'SUCCESS', routing_fee: payment.fee } },
+  );
+  if (won === null) return false;
+  // Keep the in-memory document consistent for any later save by the caller.
   order.status = 'SUCCESS';
   order.routing_fee = payment.fee;
-  pending.paid = true;
-  pending.paid_at = new Date();
+  if (pending) {
+    pending.paid = true;
+    pending.paid_at = new Date();
+  }
   buyerUser.trades_completed++;
   await buyerUser.save();
   sellerUser.trades_completed++;
   await sellerUser.save();
-  await messages.toAdminChannelPendingPaymentSuccessMessage(
-    bot,
-    buyerUser,
-    order,
-    pending,
-    payment,
-    i18nCtx,
-  );
+  if (pending) {
+    await messages.toAdminChannelPendingPaymentSuccessMessage(
+      bot,
+      buyerUser,
+      order,
+      pending,
+      payment,
+      i18nCtx,
+    );
+  }
   await messages.toBuyerPendingPaymentSuccessMessage(
     bot,
     buyerUser,
@@ -44,6 +59,7 @@ const runOrderSuccessRoutine = async (
     i18nCtx,
   );
   await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
+  return true;
 };
 
 export const attemptPendingPayments = async (
@@ -85,14 +101,14 @@ export const attemptPendingPayments = async (
           if (sellerUser === null)
             throw Error('sellerUser was not found in DB');
           if (originalStatus.payment) {
-            await runOrderSuccessRoutine(
+            await completeOrderAsSuccess(
               bot,
               order,
-              pending,
               originalStatus.payment,
               buyerUser,
               sellerUser,
               i18nCtx,
+              pending,
             );
           } else {
             order.status = 'SUCCESS';
@@ -136,14 +152,14 @@ export const attemptPendingPayments = async (
           if (sellerUser === null)
             throw Error('sellerUser was not found in DB');
           if (prevStatus.payment) {
-            await runOrderSuccessRoutine(
+            await completeOrderAsSuccess(
               bot,
               order,
-              pending,
               prevStatus.payment,
               buyerUser,
               sellerUser,
               i18nCtx,
+              pending,
             );
           } else {
             order.status = 'SUCCESS';
@@ -175,14 +191,14 @@ export const attemptPendingPayments = async (
         const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        await runOrderSuccessRoutine(
+        await completeOrderAsSuccess(
           bot,
           order,
-          pending,
           currentStatus.payment,
           buyerUser,
           sellerUser,
           i18nCtx,
+          pending,
         );
         continue;
       }
@@ -241,14 +257,14 @@ export const attemptPendingPayments = async (
         logger.info(`Invoice with hash: ${pending.hash} paid`);
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        await runOrderSuccessRoutine(
+        await completeOrderAsSuccess(
           bot,
           order,
-          pending,
           payment as LndPayment,
           buyerUser,
           sellerUser,
           i18nCtx,
+          pending,
         );
       } else {
         // Enhanced error handling for different payment failure types

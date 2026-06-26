@@ -7,6 +7,7 @@ import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
 import { getPaymentStatus } from '../ln';
+import { completeOrderAsSuccess } from '../jobs/pending_payments';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
@@ -179,30 +180,24 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         : undefined;
       if (originalStatus?.is_confirmed) {
         const i18nCtx = await getUserI18nContext(buyer);
-        order.status = 'SUCCESS';
-        if (originalStatus.payment) {
-          order.routing_fee = originalStatus.payment.fee;
-        }
-        await order.save();
-        buyer.trades_completed++;
-        await buyer.save();
         const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (sellerUser !== null) {
-          sellerUser.trades_completed++;
-          await sellerUser.save();
-        }
-        if (originalStatus.payment) {
-          await messages.toBuyerPendingPaymentSuccessMessage(
+        if (originalStatus.payment && sellerUser !== null) {
+          // Shared, idempotent success routine: if the pending-payments job
+          // already closed this order the compare-and-set inside makes this a
+          // no-op so the buyer is not notified twice.
+          await completeOrderAsSuccess(
             bot,
-            buyer,
             order,
             originalStatus.payment,
+            buyer,
+            sellerUser,
             i18nCtx,
           );
         } else {
+          order.status = 'SUCCESS';
+          await order.save();
           await messages.invoiceAlreadyUpdatedMessage(ctx);
         }
-        await messages.rateUserMessage(bot, buyer, order, i18nCtx);
         return ctx.scene.leave();
       }
 

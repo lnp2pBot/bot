@@ -170,13 +170,11 @@ describe('attemptPendingPayments healing branches', () => {
       userFindOneStub.withArgs({ _id: SELLER_ID }).resolves(seller);
 
       // Original invoice already confirmed; current pending is not
-      getPaymentStatusStub
-        .withArgs('lnbc_buyer_invoice')
-        .resolves({
-          is_confirmed: true,
-          is_pending: false,
-          payment: fakePayment,
-        });
+      getPaymentStatusStub.withArgs('lnbc_buyer_invoice').resolves({
+        is_confirmed: true,
+        is_pending: false,
+        payment: fakePayment,
+      });
       getPaymentStatusStub.resolves({ is_confirmed: false, is_pending: false });
 
       pendingFindStub.onSecondCall().resolves([]); // no previousPendingPayments
@@ -266,13 +264,11 @@ describe('attemptPendingPayments healing branches', () => {
       getPaymentStatusStub
         .withArgs('lnbc_buyer_invoice')
         .resolves({ is_confirmed: false, is_pending: false });
-      getPaymentStatusStub
-        .withArgs('lnbc_prev_request')
-        .resolves({
-          is_confirmed: true,
-          is_pending: false,
-          payment: fakePayment,
-        });
+      getPaymentStatusStub.withArgs('lnbc_prev_request').resolves({
+        is_confirmed: true,
+        is_pending: false,
+        payment: fakePayment,
+      });
 
       pendingFindStub.onSecondCall().resolves([prevPending]);
 
