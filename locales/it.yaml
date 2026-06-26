@@ -244,6 +244,8 @@ unavailable_lightning_address: Lightning adress non disponibile ${la}
 help: |
   /sell <_importo in satoshi_> <_importo in fiat_> <_fiat code_> <_metodo di pagamento_> [surplus/sconto] - Crea un ordine di vendita
   /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [premium/discount] - Crea un ordine di acquisto
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Crea un ordine che viene ripubblicato automaticamente alla scadenza
+  /cancelschedule <_order id_> - Interrompe la ripubblicazione automatica di un ordine programmato
   /takeorder <_order id_> - Permette di prendere un ordine dalla chat con il bot senza passare al canale dove è stato pubblicato
   /info - Mostra indo aggiuntive sul Bot
   /showusername - Disattiva la visualizzazione del nome utente in ogni nuovo ordine creato. Il valore predefinito è settato su no (false)

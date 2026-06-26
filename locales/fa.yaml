@@ -259,6 +259,8 @@ help: |
   سفارش فروش ایجاد می‌کند.
 
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount]
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - سفارشی ایجاد می‌کند که پس از انقضا به طور خودکار بازنشر می‌شود
+  /cancelschedule <_order id_> - بازنشر خودکار یک سفارش زمان‌بندی‌شده را متوقف می‌کند
   سفارش خرید ایجاد می‌کند.
 
   /takeorder <_order id_>

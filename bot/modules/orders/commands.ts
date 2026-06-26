@@ -197,10 +197,15 @@ const scheduleOrder = async (ctx: MainContext) => {
     if (type !== 'buy' && type !== 'sell') {
       return await messages.invalidTypeOrderMessage(ctx, ctx, user, type);
     }
-    const republishCount = parseInt(
+    // Guard against a non-numeric env value so /scheduleorder still schedules
+    // with the default instead of silently creating a non-republishing order.
+    const parsedRepublishCount = parseInt(
       process.env.REPUBLISH_ORDER_DAYS || '10',
       10,
     );
+    const republishCount = Number.isFinite(parsedRepublishCount)
+      ? parsedRepublishCount
+      : 10;
     // Drop the buy|sell token so the existing order validators read the params
     ctx.state.command.args = args.slice(1);
     if (type === 'sell') return await sell(ctx, republishCount);

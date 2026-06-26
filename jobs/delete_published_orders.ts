@@ -61,9 +61,10 @@ const republishOrder = async (
       return false;
     }
 
-    // Remove the expired post from the channel before publishing a fresh one
-    const orderCloned = order.toObject() as IOrder;
-    await deleteOrderFromChannel(orderCloned, bot.telegram);
+    // Snapshot the current channel post so we can remove it only AFTER a fresh
+    // one is published — if publishing fails the existing post stays up instead
+    // of hiding the order off-channel.
+    const previousPost = order.toObject() as IOrder;
 
     // Consume one cycle and restart the expiration window. We persist this
     // first so a failure while publishing cannot leave the order republishing
@@ -78,6 +79,10 @@ const republishOrder = async (
     } else {
       await messages.publishSellOrderMessage(bot, creator, order, i18nCtx);
     }
+
+    // The fresh post is up (publishX saved its new message id on the order), so
+    // remove the previous expired post now.
+    await deleteOrderFromChannel(previousPost, bot.telegram);
     logger.info(
       `Republished scheduled order ${order._id}; ${order.republish_count} republish(es) left`,
     );

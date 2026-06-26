@@ -246,6 +246,8 @@ unavailable_lightning_address: Adresse Lightning non disponible ${la}
 help: |
   /sell <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre de vente
   /buy <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre d'achat
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Crée une offre qui est automatiquement republiée à son expiration
+  /cancelschedule <_order id_> - Arrête la republication automatique d'une offre programmée
   /takeorder <_order id_> - Vous permet de prendre une commande depuis le chat avec le bot sans accéder au canal où elle a été publiée
   /info - Affiche des informations additionnelles à propos du bot
   /showusername - Désactive l'affichage du nom d'utilisateur dans chaque offre nouvellement créée. La valeur par défaut est définie sur false

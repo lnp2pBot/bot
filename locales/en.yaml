@@ -248,6 +248,8 @@ ln_address_temporarily_disabled: ⚠️ Lightning Address payouts are temporaril
 help: |
   /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates an order that automatically republishes when it expires
+  /cancelschedule <_order id_> - Stops a scheduled order from auto-republishing
   /takeorder <_order id_> - Allows the user to take an order from the chat with the bot without going to the channel where it was published
   /info - Shows additional info about the bot
   /showusername - Toggles off the username display in each new order created. Default value is set to false

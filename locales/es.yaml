@@ -245,6 +245,8 @@ ln_address_temporarily_disabled: ⚠️ Los pagos a Lightning Address están tem
 help: |
   /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
   /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Crea una orden que se vuelve a publicar automáticamente al expirar
+  /cancelschedule <_order id_> - Detiene la republicación automática de una orden programada
   /takeorder <_order id_> - Permite tomar una orden desde el chat con el bot sin ir al canal donde fue publicada
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)

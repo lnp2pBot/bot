@@ -245,6 +245,8 @@ unavailable_lightning_address: 사용할 수 없는 라이트닝 주소입니다
 help: |
   /sell <_사토시 금액_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [프리미엄/할인율] - 판매 주문을 생성합니다.
   /buy <_사토시 금액_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [프리미엄/할인율] - 구매 주문을 생성합니다.
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - 만료 시 자동으로 다시 게시되는 주문을 생성합니다
+  /cancelschedule <_order id_> - 예약된 주문의 자동 재게시를 중지합니다
   /takeorder <_주문 ID_> - 따로 주문이 등록된 마켓 채널에 가지 않고, 봇 채널에서 주문 ID로 주문을 수락할 수 있게 해 줍니다.
   /info - 봇에 대한 추가적인 정보를 보여줍니다.
   /showusername - 새로운 주문이 생성될 때마다 사용자명을 표시할지 여부를 설정합니다. 기본값은 false입니다.

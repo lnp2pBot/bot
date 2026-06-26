@@ -150,7 +150,12 @@ const createOrder = async (
       range_parent_id,
       community_id,
       is_public: isPublic,
-      republish_count: republish_count || 0,
+      // Only a non-negative integer is a valid republish counter; anything else
+      // (undefined for normal orders, or a bad value) falls back to 0.
+      republish_count:
+        Number.isInteger(republish_count) && (republish_count as number) >= 0
+          ? republish_count
+          : 0,
     };
 
     let order;

@@ -244,6 +244,8 @@ unavailable_lightning_address: Nicht verfügbare Lightning-Adresse ${la}
 help: |
   /sell <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt einen Bitcoin Verkaufsauftrag
   /buy <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt eine Bitcoin Kaufauftrag
+  /scheduleorder <_buy|sell_> <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Erstellt eine Order, die bei Ablauf automatisch neu veröffentlicht wird
+  /cancelschedule <_order id_> - Stoppt die automatische Neuveröffentlichung einer geplanten Order
   /takeorder <_order id_> - Ermöglicht Ihnen, eine Bestellung aus dem Chat mit dem Bot anzunehmen, ohne zu dem Kanal zu gehen, in dem sie veröffentlicht wurde
   /info - Zeigt zusätzliche Informationen über das Bot an
   /showusername - Schaltet die Anzeige des Benutzernamens in jedem neu erstellten Auftrag aus. Der Standardwert ist *nein* (false)
