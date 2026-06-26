@@ -502,38 +502,17 @@ const initialize = (
   // pending orders are the ones that are not taken by another user
   bot.command('cancelall', userMiddleware, async (ctx: CommunityContext) => {
     try {
-      const pending_orders =
-        (await ordersActions.getOrders(ctx.user, 'PENDING')) || [];
-      const seller_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE')) ||
-        [];
-      const buyer_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT')) || [];
-
-      const orders = [...pending_orders, ...seller_orders, ...buyer_orders];
+      // /cancelall only cancels PENDING orders (published orders that nobody
+      // has taken yet). Orders already being taken (WAITING_PAYMENT /
+      // WAITING_BUYER_INVOICE) must be handled individually with /cancel or
+      // through a dispute, just like single /cancel rejects them.
+      const orders = (await ordersActions.getOrders(ctx.user, 'PENDING')) || [];
 
       if (orders.length === 0) {
         return await messages.notOrdersMessage(ctx);
       }
 
       for (const order of orders) {
-        // If a buyer is taking a sell offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
-          return await cancelAddInvoice(ctx, order);
-        }
-
-        // If a seller is taking a buy offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
-          return await cancelShowHoldInvoice(ctx, order);
-        }
-
-        // If a buyer wants cancel but the seller already pay the hold invoice
-        if (order.type === 'buy' && order.status === 'WAITING_BUYER_INVOICE') {
-          if (order.hash) await cancelHoldInvoice({ hash: order.hash });
-        }
-
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
