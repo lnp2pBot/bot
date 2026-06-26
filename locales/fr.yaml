@@ -170,6 +170,7 @@ funds_released: 🕐 @${sellerUsername} a déjà débloqué les sats, ta facture
 rate_counterpart: 'Merci de nommer ta contre-partie:'
 choose_order_for_dispute: 'Choisissez la commande pour initier la dispute:'
 cant_process_order: Cette offre ne peut pas être traitée, merci de vérifier que l'ID d'offre est correct.
+schedule_order_canceled: L'offre ${orderId} ne sera plus republiée automatiquement.
 cant_release_order: Cette offre ne peut pas être débloquée, l'acheteur n'a pas fourni une facture à laquelle envoyer le paiement
 no_id_related: Tu n'as aucune offre associée à cette référence.
 sell_sats: Vends des satoshis

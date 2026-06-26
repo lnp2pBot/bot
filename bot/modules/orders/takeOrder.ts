@@ -85,6 +85,20 @@ export const takebuy = async (
       order.status = 'WAITING_PAYMENT';
       order.seller_id = user._id;
       order.taken_at = new Date(Date.now());
+      // Refresh the auto-republish schedule on take, but only for orders that
+      // were already scheduled (republish_count > 0) — a regular order must not
+      // become a scheduled one just by being taken.
+      if (order.republish_count > 0) {
+        const republishDays = parseInt(
+          process.env.REPUBLISH_ORDER_DAYS || '10',
+          10,
+        );
+        // Guard against a non-numeric env value so we never persist NaN; keep
+        // the current schedule if it is misconfigured.
+        if (Number.isFinite(republishDays)) {
+          order.republish_count = republishDays;
+        }
+      }
 
       order.random_image = randomImage;
 
@@ -138,6 +152,20 @@ export const takesell = async (
       order.status = 'WAITING_BUYER_INVOICE';
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
+      // Refresh the auto-republish schedule on take, but only for orders that
+      // were already scheduled (republish_count > 0) — a regular order must not
+      // become a scheduled one just by being taken.
+      if (order.republish_count > 0) {
+        const republishDays = parseInt(
+          process.env.REPUBLISH_ORDER_DAYS || '10',
+          10,
+        );
+        // Guard against a non-numeric env value so we never persist NaN; keep
+        // the current schedule if it is misconfigured.
+        if (Number.isFinite(republishDays)) {
+          order.republish_count = republishDays;
+        }
+      }
 
       await order.save();
 

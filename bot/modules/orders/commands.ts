@@ -6,6 +6,7 @@ import {
   validateSeller,
   validateSellOrder,
   validateParams,
+  validateObjectId,
 } from '../../validations';
 import * as messages from '../../messages';
 import * as ordersActions from '../../ordersActions';
@@ -36,7 +37,7 @@ const buyWizard = async (ctx: CommunityContext) =>
 const sellWizard = async (ctx: CommunityContext) =>
   enterWizard(ctx, ctx.user, 'sell');
 
-const sell = async (ctx: MainContext) => {
+const sell = async (ctx: MainContext, republishCount = 0) => {
   try {
     const user = ctx.user;
     if (await isMaxPending(user))
@@ -102,6 +103,7 @@ const sell = async (ctx: MainContext) => {
       status: 'PENDING',
       priceMargin,
       community_id: communityId,
+      republish_count: republishCount,
     });
     if (order)
       await messages.publishSellOrderMessage(ctx, user, order, ctx.i18n, true);
@@ -110,7 +112,7 @@ const sell = async (ctx: MainContext) => {
   }
 };
 
-const buy = async (ctx: MainContext) => {
+const buy = async (ctx: MainContext, republishCount = 0) => {
   try {
     const user = ctx.user;
     if (await isMaxPending(user))
@@ -172,11 +174,59 @@ const buy = async (ctx: MainContext) => {
       status: 'PENDING',
       priceMargin,
       community_id: communityId,
+      republish_count: republishCount,
     });
 
     if (order) {
       await messages.publishBuyOrderMessage(ctx, user, order, ctx.i18n, true);
     }
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+// /scheduleorder <buy|sell> <amount> <fiat_amount> <fiat_code> <method> [premium]
+// Creates an order that auto-republishes on expiry. It reuses the regular buy/
+// sell flow, only seeding republish_count so the delete_published_orders job
+// republishes the order instead of deleting it.
+const scheduleOrder = async (ctx: MainContext) => {
+  try {
+    const user = ctx.user;
+    const args = ctx.state.command.args;
+    const type = (args[0] || '').toString().toLowerCase();
+    if (type !== 'buy' && type !== 'sell') {
+      return await messages.invalidTypeOrderMessage(ctx, ctx, user, type);
+    }
+    const republishCount = parseInt(
+      process.env.REPUBLISH_ORDER_DAYS || '10',
+      10,
+    );
+    // Drop the buy|sell token so the existing order validators read the params
+    ctx.state.command.args = args.slice(1);
+    if (type === 'sell') return await sell(ctx, republishCount);
+    return await buy(ctx, republishCount);
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+// /cancelschedule <order_id> — stops a scheduled order from auto-republishing
+const cancelSchedule = async (ctx: MainContext) => {
+  try {
+    const user = ctx.user;
+    const params = await validateParams(ctx, 2, '\\<_order id_\\>');
+    if (params === null || params.length === 0) return;
+    const [orderId] = params;
+    if (!(await validateObjectId(ctx, orderId))) return;
+    // Scope the lookup to the creator so only the owner can cancel its schedule
+    const order = await Order.findOne({
+      _id: orderId,
+      creator_id: user._id.toString(),
+    });
+    if (order === null) return await messages.notActiveOrderMessage(ctx);
+    order.republish_count = 0;
+    await order.save();
+    await messages.scheduleOrderCanceledMessage(ctx, order);
   } catch (error) {
     logger.error(error);
   }
@@ -268,4 +318,13 @@ const takeOrder = async (ctx: MainContext) => {
   }
 };
 
-export { buyWizard, sellWizard, buy, sell, isMaxPending, takeOrder };
+export {
+  buyWizard,
+  sellWizard,
+  buy,
+  sell,
+  scheduleOrder,
+  cancelSchedule,
+  isMaxPending,
+  takeOrder,
+};

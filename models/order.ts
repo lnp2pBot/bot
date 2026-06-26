@@ -47,6 +47,10 @@ export interface IOrder extends Document<string> {
   is_public: boolean;
   random_image: string;
   settled_by_admin?: boolean;
+  // Number of times this order can still auto-republish on expiry (0 = off).
+  // Set by /scheduleorder, decremented by the delete_published_orders job,
+  // and reset to REPUBLISH_ORDER_DAYS when the order is taken.
+  republish_count: number;
 }
 
 const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
@@ -143,6 +147,8 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   is_public: { type: Boolean, default: true },
   is_frozen: { type: Boolean, default: false },
   random_image: { type: String },
+  // Remaining auto-republish cycles for /scheduleorder (0 = no republish)
+  republish_count: { type: Number, default: 0 },
 });
 
 export default mongoose.model<IOrder>('Order', orderSchema);

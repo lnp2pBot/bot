@@ -168,6 +168,7 @@ funds_released: 🕐 @${sellerUsername} ya liberó los satoshis, debes esperar p
 rate_counterpart: 'Califica a tu contraparte:'
 choose_order_for_dispute: 'Elige la orden para iniciar la disputa:'
 cant_process_order: Esta orden no puede ser procesada, asegúrate de que el Id es correcto
+schedule_order_canceled: La orden ${orderId} ya no se republicará automáticamente.
 cant_release_order: Esta orden no puede ser liberada, el comprador no me ha indicado la factura para recibir los sats
 no_id_related: No tienes ninguna orden asociada con ese Id
 sell_sats: Vender satoshis

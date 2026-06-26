@@ -171,6 +171,7 @@ sell_success: Your sats sale has been completed after confirming the payment fro
 funds_released: 🕐 @${sellerUsername} already released the sats, expect your invoice to be paid any time, remember your wallet needs to be online to receive through Lightning Network.
 rate_counterpart: 'Please qualify your counterparty:'
 cant_process_order: This order cannot be processed, please check the ID is correct.
+schedule_order_canceled: Order ${orderId} will no longer auto-republish.
 cant_release_order: This order cannot be released, the buyer has not sent an invoice where to pay
 no_id_related: You do not have any order associated with this ID.
 sell_sats: Sell satoshis

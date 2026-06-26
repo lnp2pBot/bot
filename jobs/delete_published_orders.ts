@@ -1,7 +1,9 @@
 import { Telegraf } from 'telegraf';
+import { HydratedDocument } from 'mongoose';
 
-import { Order } from '../models';
-import { deleteOrderFromChannel } from '../util';
+import { Order, User } from '../models';
+import { deleteOrderFromChannel, getUserI18nContext } from '../util';
+import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { IOrder } from '../models/order';
@@ -19,6 +21,15 @@ const deleteOrders = async (bot: Telegraf<CommunityContext>) => {
       created_at: { $lte: windowTime },
     });
     for (const order of pendingOrders) {
+      // /scheduleorder: while there are republish cycles left, republish the
+      // order instead of deleting it. We reset created_at (not expires_at, which
+      // does not exist in this schema) so the expiration window restarts.
+      if (order.republish_count > 0) {
+        const republished = await republishOrder(bot, order);
+        if (republished) continue;
+        // If we could not republish (e.g. creator missing), fall through to the
+        // normal deletion flow below.
+      }
       logger.info(
         `Pending order Id: ${order._id} expired after ${process.env.ORDER_PUBLISHED_EXPIRATION_WINDOW} seconds, deleting it from database and channel`,
       );
@@ -31,6 +42,50 @@ const deleteOrders = async (bot: Telegraf<CommunityContext>) => {
   } catch (error) {
     const message = String(error);
     logger.error(`deleteOrders catch error: ${message}`);
+  }
+};
+
+// Republishes a scheduled order: removes the expired channel post, consumes one
+// republish cycle, restarts the expiration window and posts a fresh message.
+// Returns true if the order was republished, false if it should be deleted.
+const republishOrder = async (
+  bot: Telegraf<CommunityContext>,
+  order: HydratedDocument<IOrder>,
+): Promise<boolean> => {
+  try {
+    const creator = await User.findOne({ _id: order.creator_id });
+    if (creator === null) {
+      logger.warning(
+        `Order ${order._id} has republish_count but its creator was not found; deleting it`,
+      );
+      return false;
+    }
+
+    // Remove the expired post from the channel before publishing a fresh one
+    const orderCloned = order.toObject() as IOrder;
+    await deleteOrderFromChannel(orderCloned, bot.telegram);
+
+    // Consume one cycle and restart the expiration window. We persist this
+    // first so a failure while publishing cannot leave the order republishing
+    // forever without ever decrementing the counter.
+    order.republish_count -= 1;
+    order.created_at = new Date();
+    await order.save();
+
+    const i18nCtx = await getUserI18nContext(creator);
+    if (order.type === 'buy') {
+      await messages.publishBuyOrderMessage(bot, creator, order, i18nCtx);
+    } else {
+      await messages.publishSellOrderMessage(bot, creator, order, i18nCtx);
+    }
+    logger.info(
+      `Republished scheduled order ${order._id}; ${order.republish_count} republish(es) left`,
+    );
+    return true;
+  } catch (error) {
+    logger.error(`republishOrder catch error: ${String(error)}`);
+    // Skip this order on error; it stays PENDING and will be retried next run.
+    return true;
   }
 };
 

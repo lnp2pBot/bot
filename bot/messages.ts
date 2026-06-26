@@ -703,6 +703,19 @@ const notActiveOrderMessage = async (ctx: MainContext) => {
   }
 };
 
+const scheduleOrderCanceledMessage = async (
+  ctx: MainContext,
+  order: IOrder,
+) => {
+  try {
+    await ctx.reply(
+      ctx.i18n.t('schedule_order_canceled', { orderId: order._id }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const waitingForBuyerOrderMessage = async (ctx: MainContext) => {
   try {
     await ctx.reply(ctx.i18n.t('cant_release_order'));
@@ -2150,6 +2163,7 @@ export {
   invalidDataMessage,
   beginTakeBuyMessage,
   notActiveOrderMessage,
+  scheduleOrderCanceledMessage,
   publishSellOrderMessage,
   onGoingTakeBuyMessage,
   pendingSellMessage,

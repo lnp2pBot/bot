@@ -168,6 +168,7 @@ funds_released: 🕐 @${sellerUsername} hat die Sats bereits freigegeben. Du kan
 rate_counterpart: 'Bitte bewerte deine Gegenpartei:'
 choose_order_for_dispute: 'Wählen Sie den Auftrag aus, um den Streitfall einzuleiten:'
 cant_process_order: Dieser Auftrag kann nicht bearbeitet werden. Bitte überprüfe, ob die ID korrekt ist.
+schedule_order_canceled: Bestellung ${orderId} wird nicht mehr automatisch erneut veröffentlicht.
 cant_release_order: Dieser Auftrag kann nicht freigegeben werden, der Käufer hat keine LN-Rechnung geschickt.
 no_id_related: Du hast keinen Auftrag, der mit dieser Id verbunden ist.
 sell_sats: Verkaufe Sats

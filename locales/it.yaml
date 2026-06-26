@@ -168,6 +168,7 @@ funds_released: 🕐 @${sellerUsername} ha rilasciato i satoshi, la vostra invoi
 rate_counterpart: 'Dai un voto alla tua controparte:'
 choose_order_for_dispute: 'Scegli l''ordine per avviare il reclamo:'
 cant_process_order: Quest'ordine non può essere elaborato, si prega di controllare che l'ID sia corretto.
+schedule_order_canceled: L'ordine ${orderId} non verrà più ripubblicato automaticamente.
 cant_release_order: L'ordine non può essere evaso, l'acquirente non ha inviato la richiesta di pagamento LN
 no_id_related: Non c'è nessun ordine associato a questo Id.
 sell_sats: Vendi satoshis

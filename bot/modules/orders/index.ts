@@ -36,7 +36,7 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
       commands.buyWizard(ctx);
     },
-    commands.buy,
+    (ctx: CommunityContext) => commands.buy(ctx),
   );
   bot.command(
     'sell',
@@ -50,8 +50,11 @@ export const configure = (bot: Telegraf<CommunityContext>) => {
 
       commands.sellWizard(ctx);
     },
-    commands.sell,
+    (ctx: CommunityContext) => commands.sell(ctx),
   );
+
+  bot.command('scheduleorder', userMiddleware, commands.scheduleOrder);
+  bot.command('cancelschedule', userMiddleware, commands.cancelSchedule);
 
   bot.command('listorders', userMiddleware, async ctx => {
     try {

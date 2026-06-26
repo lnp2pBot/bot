@@ -33,6 +33,7 @@ interface CreateOrderArguments {
   tgChatId?: string;
   tgOrderMessage?: string;
   community_id?: string;
+  republish_count?: number;
 }
 
 interface BuildDescriptionArguments {
@@ -69,6 +70,7 @@ const createOrder = async (
     tgChatId,
     tgOrderMessage,
     community_id,
+    republish_count,
   }: CreateOrderArguments,
 ) => {
   try {
@@ -148,6 +150,7 @@ const createOrder = async (
       range_parent_id,
       community_id,
       is_public: isPublic,
+      republish_count: republish_count || 0,
     };
 
     let order;
