@@ -1,5 +1,4 @@
-import { MainContext } from '../../start';
-import { PendingSchedule } from './commands';
+import { CommunityContext } from '../community/communityContext';
 
 const DAY_LABELS: Record<number, string> = {
   0: 'Sun',
@@ -11,10 +10,10 @@ const DAY_LABELS: Record<number, string> = {
   6: 'Sat',
 };
 
-const formatDays = (days: number[]): string =>
+export const formatDays = (days: number[]): string =>
   days.map(d => DAY_LABELS[d]).join(', ');
 
-export const askScheduleDays = async (ctx: MainContext) => {
+export const askScheduleDays = async (ctx: CommunityContext) => {
   await ctx.reply(ctx.i18n.t('schedule_choose_days'), {
     reply_markup: {
       inline_keyboard: [
@@ -43,26 +42,32 @@ export const askScheduleDays = async (ctx: MainContext) => {
   });
 };
 
-export const askCustomDays = async (ctx: MainContext) => {
+export const askCustomDays = async (ctx: CommunityContext) => {
   await ctx.reply(ctx.i18n.t('schedule_enter_custom_days'));
 };
 
-export const askScheduleHour = async (ctx: MainContext) => {
+export const askScheduleHour = async (ctx: CommunityContext) => {
   await ctx.reply(ctx.i18n.t('schedule_enter_hour'));
 };
 
 export const askScheduleConfirm = async (
-  ctx: MainContext,
-  pending: PendingSchedule,
+  ctx: CommunityContext,
+  summaryData: {
+    type: string;
+    fiatAmount: number[];
+    fiatCode: string;
+    paymentMethod: string;
+    days: number[];
+    hour: number;
+  },
 ) => {
-  const days = formatDays(pending.days!);
-  const hour = String(pending.hour!).padStart(2, '0');
+  const hour = String(summaryData.hour).padStart(2, '0');
   const summary = ctx.i18n.t('schedule_confirm_summary', {
-    type: pending.type.toUpperCase(),
-    fiatAmount: pending.fiatAmount.join('-'),
-    fiatCode: pending.fiatCode,
-    paymentMethod: pending.paymentMethod,
-    days,
+    type: summaryData.type.toUpperCase(),
+    fiatAmount: summaryData.fiatAmount.join('-'),
+    fiatCode: summaryData.fiatCode,
+    paymentMethod: summaryData.paymentMethod,
+    days: formatDays(summaryData.days),
     hour: `${hour}:00 UTC`,
   });
 
