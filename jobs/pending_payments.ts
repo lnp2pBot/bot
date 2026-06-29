@@ -74,6 +74,22 @@ export const attemptPendingPayments = async (
         }
       }
 
+      // Defensive guard if another pending payment was already actually paid
+      if (
+        (await PendingPayment.countDocuments({
+          _id: { $ne: pending._id },
+          order_id: order._id,
+          paid: true,
+        })) > 0
+      ) {
+        order.status = 'SUCCESS';
+        await order.save();
+        logger.warn(
+          `Order ${order._id}: another pending payment was already paid, setting order to success`,
+        );
+        continue;
+      }
+
       const previousPendingPayments = await PendingPayment.find({
         _id: { $ne: pending._id },
         order_id: order._id,
@@ -91,7 +107,8 @@ export const attemptPendingPayments = async (
           );
           prev.paid = true;
           await prev.save();
-          pending.paid = true;
+          pending.is_invoice_expired = true; // prevents retrying on this PendingPayment
+          await pending.save();
           const buyerUser = await User.findOne({ _id: order.buyer_id });
           if (buyerUser === null) throw Error('buyerUser was not found in DB');
           const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
@@ -106,7 +123,7 @@ export const attemptPendingPayments = async (
               buyerUser,
               sellerUser,
               i18nCtx,
-              pending,
+              prev,
             );
           } else {
             order.status = 'SUCCESS';

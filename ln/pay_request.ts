@@ -13,6 +13,7 @@ import { logger, logTimeout, logOperationDuration } from '../logger';
 import * as OrderEvents from '../bot/modules/events/orders';
 import { IOrder } from '../models/order';
 import { HasTelegram } from '../bot/start';
+import util from 'node:util';
 
 const { parsePaymentRequest } = require('invoices');
 
@@ -258,9 +259,10 @@ const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
     if (isNotFound) {
       return { is_confirmed: false, is_pending: false };
     }
-    logger.error(`getPaymentStatus error: ${error}`);
-    // Fail closed: on unknown/transient errors treat as pending to prevent double-pay
-    return { is_confirmed: false, is_pending: true };
+    // Use util.inspect to log the error more specifically
+    logger.error(`getPaymentStatus error: ` + util.inspect(error));
+    // This edge case can't be handled, rethrow
+    throw error;
   }
 };
 
