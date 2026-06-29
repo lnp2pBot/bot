@@ -17,6 +17,7 @@ import {
   validateTakeSellOrder,
   validateUserWaitingOrder,
 } from '../../validations';
+import { getRepublishCount } from '../schedule/helpers';
 
 const OrderEvents = require('../../modules/events/orders');
 
@@ -162,11 +163,6 @@ const refreshScheduledOrder = async (
   bot: HasTelegram,
 ): Promise<void> => {
   try {
-    const REPUBLISH_DAYS_DEFAULT = 10;
-    const raw = parseInt(process.env.REPUBLISH_ORDER_DAYS || '');
-    const republishCount =
-      Number.isInteger(raw) && raw > 0 ? raw : REPUBLISH_DAYS_DEFAULT;
-
     const schedule = await ScheduledOrder.findOne({
       last_order_id: orderId,
       active: true,
@@ -204,7 +200,7 @@ const refreshScheduledOrder = async (
     await publishFn(bot, creator, newOrder, i18n, false);
 
     schedule.last_order_id = newOrder._id;
-    schedule.republish_count = republishCount;
+    schedule.republish_count = getRepublishCount();
     await schedule.save();
   } catch (error) {
     logger.error(`refreshScheduledOrder error: ${String(error)}`);
