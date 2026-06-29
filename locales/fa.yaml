@@ -861,3 +861,26 @@ community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید
 
 order_take_rate_limit: "شما به حد مجاز دریافت سفارش رسیده‌اید. لطفاً ${hours} ساعت صبر کنید یا یک سفارش را با موفقیت تکمیل کنید تا شمارنده بازنشینی شود."
+scheduleorder_usage: "راهنما: /scheduleorder <buy|sell> <سات> <مبلغ فیات> <کد فیات> <روش پرداخت> [پریمیوم]"
+cancelschedule_usage: "راهنما: /cancelschedule <شناسه زمان‌بندی>"
+schedule_not_found: "⚠️ زمان‌بندی پیدا نشد یا قبلاً غیرفعال شده است."
+schedule_cancelled: "✅ زمان‌بندی ${scheduleId} لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
+schedule_creation_cancelled: "❌ ایجاد زمان‌بندی لغو شد."
+schedule_created: "✅ سفارش زمان‌بندی‌شده ایجاد شد! شناسه شما: ${scheduleId}\nبرای توقف از /cancelschedule ${scheduleId} استفاده کنید."
+schedule_choose_days: "📅 در چه روزهایی سفارش منتشر شود؟"
+sched_daily: هر روز
+sched_weekdays: دوشنبه–جمعه
+sched_weekend: آخر هفته
+sched_custom: سفارشی
+schedule_enter_custom_days: "✍️ روزها را با کاما وارد کنید (مثال: monday, wednesday, friday)"
+invalid_days: "⚠️ روزها را نتوانستم تشخیص دهم. لطفاً با کاما جدا کنید (مثال: monday, wednesday, friday)."
+schedule_enter_hour: "🕐 سفارش در چه ساعتی منتشر شود؟ عددی بین ۰ تا ۲۳ وارد کنید (UTC)."
+invalid_hour: "⚠️ ساعت نامعتبر است. لطفاً عددی بین ۰ تا ۲۳ وارد کنید."
+schedule_confirm_summary: |
+  📋 *خلاصه سفارش زمان‌بندی‌شده*
+
+  نوع: ${type}
+  مبلغ: ${fiatAmount} ${fiatCode}
+  روش پرداخت: ${paymentMethod}
+  روزها: ${days}
+  ساعت: ${hour}

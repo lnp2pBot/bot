@@ -759,3 +759,26 @@ community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
 
 order_take_rate_limit: "Du hast das Limit für angenommene Aufträge erreicht. Bitte warte ${hours} Stunde(n), bevor du einen neuen Auftrag annimmst, oder schließe einen Auftrag erfolgreich ab, um den Zähler zurückzusetzen."
+scheduleorder_usage: "Verwendung: /scheduleorder <kaufen|verkaufen> <sats> <Fiat-Betrag> <Fiat-Code> <Zahlungsmethode> [Aufschlag]"
+cancelschedule_usage: "Verwendung: /cancelschedule <Schedule-ID>"
+schedule_not_found: "⚠️ Schedule nicht gefunden oder bereits inaktiv."
+schedule_cancelled: "✅ Schedule ${scheduleId} abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
+schedule_creation_cancelled: "❌ Erstellung des Schedules abgebrochen."
+schedule_created: "✅ Geplante Bestellung erstellt! Deine ID ist: ${scheduleId}\nVerwende /cancelschedule ${scheduleId} zum Stoppen."
+schedule_choose_days: "📅 An welchen Tagen soll die Bestellung veröffentlicht werden?"
+sched_daily: Jeden Tag
+sched_weekdays: Mo–Fr
+sched_weekend: Wochenende
+sched_custom: Benutzerdefiniert
+schedule_enter_custom_days: "✍️ Gib die Tage durch Kommas getrennt ein (z.B.: montag, mittwoch, freitag)"
+invalid_days: "⚠️ Ich konnte diese Tage nicht verstehen. Bitte gib sie durch Kommas getrennt ein (z.B.: montag, mittwoch, freitag)."
+schedule_enter_hour: "🕐 Zu welcher Uhrzeit soll die Bestellung veröffentlicht werden? Gib eine Zahl zwischen 0 und 23 ein (UTC)."
+invalid_hour: "⚠️ Ungültige Stunde. Bitte gib eine Zahl zwischen 0 und 23 ein."
+schedule_confirm_summary: |
+  📋 *Zusammenfassung der geplanten Bestellung*
+
+  Typ: ${type}
+  Betrag: ${fiatAmount} ${fiatCode}
+  Zahlungsmethode: ${paymentMethod}
+  Tage: ${days}
+  Uhrzeit: ${hour}
