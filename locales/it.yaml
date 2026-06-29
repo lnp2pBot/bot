@@ -722,3 +722,27 @@ community_enabled_by_admin: Un amministratore ha riabilitato la tua comunità ${
 community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità
+
+scheduleorder_usage: "Utilizzo: /scheduleorder <comprare|vendere> <sats> <importo fiat> <codice fiat> <metodo di pagamento> [premio]"
+cancelschedule_usage: "Utilizzo: /cancelschedule <id dello schedule>"
+schedule_not_found: "⚠️ Schedule non trovato o già inattivo."
+schedule_cancelled: "✅ Schedule ${scheduleId} annullato. Non verranno più pubblicate offerte automaticamente."
+schedule_creation_cancelled: "❌ Creazione dello schedule annullata."
+schedule_created: "✅ Ordine programmato creato! Il tuo ID è: ${scheduleId}\nUsa /cancelschedule ${scheduleId} per fermarlo."
+schedule_choose_days: "📅 In quali giorni deve essere pubblicato l'ordine?"
+sched_daily: Ogni giorno
+sched_weekdays: Lun–Ven
+sched_weekend: Weekend
+sched_custom: Personalizzato
+schedule_enter_custom_days: "✍️ Inserisci i giorni separati da virgole (es: lunedì, mercoledì, venerdì)"
+invalid_days: "⚠️ Non ho capito quei giorni. Inseriscili separati da virgole (es: lunedì, mercoledì, venerdì)."
+schedule_enter_hour: "🕐 A che ora deve essere pubblicato l'ordine? Inserisci un numero tra 0 e 23 (UTC)."
+invalid_hour: "⚠️ Ora non valida. Inserisci un numero tra 0 e 23."
+schedule_confirm_summary: |
+  📋 *Riepilogo ordine programmato*
+
+  Tipo: ${type}
+  Importo: ${fiatAmount} ${fiatCode}
+  Metodo di pagamento: ${paymentMethod}
+  Giorni: ${days}
+  Ora: ${hour}
