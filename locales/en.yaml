@@ -265,6 +265,8 @@ help: |
   /blocklist - List of your blocked users
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
+  /scheduleorder <_buy|sell_> <_sats_> <_fiat amount_> <_fiat code_> <_payment method_> [_premium_] - Creates a recurring order that auto-republishes
+  /cancelschedule <_schedule id_> - Stops auto-republishing of a scheduled order
   /terms - Shows the terms and conditions when using the bot
 
   Nostr:
@@ -731,3 +733,28 @@ community_enabled_by_admin: An administrator has re-enabled your community ${com
 community_already_disabled: This community is already disabled
 community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead
+scheduleorder_usage: "Usage: /scheduleorder <buy|sell> <sats> <fiat amount> <fiat code> <payment method> [premium]"
+cancelschedule_usage: "Usage: /cancelschedule <schedule id>"
+schedule_not_found: "⚠️ Schedule not found or already inactive."
+schedule_cancelled: "✅ Schedule ${scheduleId} cancelled. No more orders will be auto-published."
+schedule_creation_cancelled: "❌ Schedule creation cancelled."
+schedule_created: "✅ Scheduled order created! Your ID is: ${scheduleId}\nUse /cancelschedule ${scheduleId} to stop it."
+schedule_choose_days: "📅 On which days should the order be published?"
+sched_daily: Every day
+sched_weekdays: Mon–Fri
+sched_weekend: Weekend
+sched_custom: Custom
+schedule_enter_custom_days: "✍️ Enter the days separated by commas (e.g.: monday, wednesday, friday)"
+invalid_days: "⚠️ I couldn't understand those days. Please enter them separated by commas (e.g.: monday, wednesday, friday)."
+schedule_enter_hour: "🕐 At what hour should the order be published? Enter a number between 0 and 23 (UTC)."
+invalid_hour: "⚠️ Invalid hour. Please enter a number between 0 and 23."
+schedule_confirm_summary: |
+  📋 *Order schedule summary*
+
+  Type: ${type}
+  Amount: ${fiatAmount} ${fiatCode}
+  Payment method: ${paymentMethod}
+  Days: ${days}
+  Hour: ${hour}
+
+  Confirm?
