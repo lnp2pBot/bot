@@ -267,6 +267,8 @@ help: |
   /terms - 사용자 이용 약관 및 면책 조항을 표시합니다.
   /cancel <_주문 id_> - 아직 수락되지 않은 주문을 취소합니다.
   /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
+  /scheduleorder <_buy|sell_> <_sats_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [_프리미엄_] - 자동으로 재게시되는 반복 주문을 생성합니다
+  /cancelschedule <_schedule id_> - 예약 주문의 자동 재게시를 중지합니다
 
   Nostr:
   /setnpub <_노스터 npub_> - 노스터 공개키를 설정합니다. 이 명령어는 /settings 명령어 수행 중에만 사용 가능합니다.

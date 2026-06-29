@@ -266,6 +266,8 @@ help: |
   /blocklist - Listado de tus usuarios bloqueados
   /cancel <_id orden_> - Cancela una orden que no ha sido tomada
   /cancelall - Cancela todas las órdenes publicadas y que no han sido tomadas
+  /scheduleorder <_compra|venta_> <_sats_> <_monto fiat_> <_código fiat_> <_método de pago_> [_prima_] - Crea una orden recurrente que se republica automáticamente
+  /cancelschedule <_id del schedule_> - Detiene la republicación automática de una orden programada
   /terms - Muestra los términos y condiciones al usar el bot
   /privacy - Muestra la Política de Privacidad
 

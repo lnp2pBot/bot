@@ -265,6 +265,8 @@ help: |
   /blocklist - Liste Ihrer blockierten Benutzer
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
+  /scheduleorder <_kaufen|verkaufen_> <_sats_> <_Fiat-Betrag_> <_Fiat-Code_> <_Zahlungsmethode_> [_Aufschlag_] - Erstellt einen wiederkehrenden Auftrag, der automatisch neu veröffentlicht wird
+  /cancelschedule <_Schedule-ID_> - Stoppt die automatische Neuveröffentlichung eines geplanten Auftrags
   /terms - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
 
   Nostr:

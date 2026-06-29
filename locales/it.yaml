@@ -265,6 +265,8 @@ help: |
   /blocklist - Elenco degli utenti bloccati
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
+  /scheduleorder <_comprare|vendere_> <_sats_> <_importo fiat_> <_codice fiat_> <_metodo di pagamento_> [_premio_] - Crea un ordine ricorrente che si ripubblica automaticamente
+  /cancelschedule <_id dello schedule_> - Ferma la ripubblicazione automatica di un ordine programmato
   /terms: mostra i termini e le condizioni quando si utilizza il bot
 
   Nostr:

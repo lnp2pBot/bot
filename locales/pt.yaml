@@ -266,6 +266,8 @@ help: |
   /blocklist - Lista de seus usuários bloqueados
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
+  /scheduleorder <_comprar|vender_> <_sats_> <_valor fiat_> <_código fiat_> <_método de pagamento_> [_prêmio_] - Cria um pedido recorrente que se republica automaticamente
+  /cancelschedule <_id do schedule_> - Para a republicação automática de um pedido programado
   /terms - Mostra os termos e condições ao usar o bot
 
   Nostr:
