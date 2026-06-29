@@ -1,9 +1,10 @@
 import { logger } from '../../../logger';
-import { Block, Order, User } from '../../../models';
+import { Block, Order, User, ScheduledOrder } from '../../../models';
 import { UserDocument } from '../../../models/user';
 import {
   deleteOrderFromChannel,
   generateRandomImage,
+  getUserI18nContext,
   PerOrderIdMutex,
   PerUserIdMutex,
   getUserAge,
@@ -112,6 +113,7 @@ export const takebuy = async (
       OrderEvents.orderUpdated(order);
 
       await deleteOrderFromChannel(order, bot.telegram);
+      await refreshScheduledOrder(order._id, bot);
 
       await messages.beginTakeBuyMessage(ctx, bot, user, order);
     });
@@ -182,6 +184,7 @@ export const takesell = async (
       OrderEvents.orderUpdated(order);
       // We delete the messages related to that order from the channel
       await deleteOrderFromChannel(order, bot.telegram);
+      await refreshScheduledOrder(order._id, bot);
       await messages.beginTakeSellMessage(ctx, bot, user, order);
     });
   } catch (error) {
@@ -337,6 +340,62 @@ export const meetsCounterpartyRequirements = async (
   }
 
   return true;
+};
+
+// When a scheduled order is taken, reset its cycle counter and publish a
+// fresh order from the mold so the trader's offer stays live on the channel.
+const refreshScheduledOrder = async (
+  orderId: string,
+  bot: HasTelegram,
+): Promise<void> => {
+  try {
+    const REPUBLISH_DAYS_DEFAULT = 10;
+    const raw = parseInt(process.env.REPUBLISH_ORDER_DAYS || '');
+    const republishCount =
+      Number.isInteger(raw) && raw > 0 ? raw : REPUBLISH_DAYS_DEFAULT;
+
+    const schedule = await ScheduledOrder.findOne({
+      last_order_id: orderId,
+      active: true,
+    });
+    if (!schedule) return;
+
+    const creator = await User.findById(schedule.creator_id);
+    if (!creator) return;
+
+    const i18n = await getUserI18nContext(creator);
+
+    const ordersActions = require('../../ordersActions');
+    const {
+      publishBuyOrderMessage,
+      publishSellOrderMessage,
+    } = require('../../messages');
+
+    const newOrder = await ordersActions.createOrder(i18n, bot, creator, {
+      type: schedule.type,
+      amount: schedule.amount,
+      fiatAmount: schedule.fiat_amount,
+      fiatCode: schedule.fiat_code,
+      paymentMethod: schedule.payment_method,
+      status: 'PENDING',
+      priceMargin: schedule.price_margin,
+      community_id: schedule.community_id,
+    });
+
+    if (!newOrder) return;
+
+    const publishFn =
+      schedule.type === 'buy'
+        ? publishBuyOrderMessage
+        : publishSellOrderMessage;
+    await publishFn(bot, creator, newOrder, i18n, false);
+
+    schedule.last_order_id = newOrder._id;
+    schedule.republish_count = republishCount;
+    await schedule.save();
+  } catch (error) {
+    logger.error(`refreshScheduledOrder error: ${String(error)}`);
+  }
 };
 
 const checkBlockingStatus = async (
