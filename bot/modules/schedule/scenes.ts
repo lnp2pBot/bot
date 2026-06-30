@@ -81,8 +81,8 @@ export const scheduleOrderWizard = new Scenes.WizardScene<CommunityContext>(
     try {
       const state = getState(ctx);
       const text = (ctx.message as any)?.text?.trim();
-      const hour = parseInt(text);
-      if (isNaN(hour) || hour < 0 || hour > 23) {
+      const hour = parseInt(text, 10);
+      if (isNaN(hour) || hour < 0 || hour > 23 || String(hour) !== text) {
         await ctx.reply(ctx.i18n.t('invalid_hour'));
         return; // stay, reprompt
       }
