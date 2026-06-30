@@ -385,9 +385,12 @@ const refreshScheduledOrder = async (
       schedule.type === 'buy'
         ? publishBuyOrderMessage
         : publishSellOrderMessage;
-    const published = await publishFn(bot, creator, newOrder, i18n, false);
+    await publishFn(bot, creator, newOrder, i18n, false);
 
-    if (!published) {
+    // publishFn swallows errors and returns void, so we detect success from the
+    // side effects it leaves on the order: a populated channel message id, and a
+    // status that was not closed because the channel was unreachable.
+    if (newOrder.status === 'CLOSED' || !newOrder.tg_channel_message1) {
       logger.warning(
         `refreshScheduledOrder: publish failed for schedule ${schedule._id}, skipping counter reset`,
       );
