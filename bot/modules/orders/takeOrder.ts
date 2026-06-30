@@ -114,9 +114,9 @@ export const takebuy = async (
       OrderEvents.orderUpdated(order);
 
       await deleteOrderFromChannel(order, bot.telegram);
-      await refreshScheduledOrder(order._id, bot);
-
+      const refreshBuyPromise = refreshScheduledOrder(order._id, bot);
       await messages.beginTakeBuyMessage(ctx, bot, user, order);
+      await refreshBuyPromise;
     });
   } catch (error) {
     logger.error(error);
@@ -185,8 +185,9 @@ export const takesell = async (
       OrderEvents.orderUpdated(order);
       // We delete the messages related to that order from the channel
       await deleteOrderFromChannel(order, bot.telegram);
-      await refreshScheduledOrder(order._id, bot);
+      const refreshSellPromise = refreshScheduledOrder(order._id, bot);
       await messages.beginTakeSellMessage(ctx, bot, user, order);
+      await refreshSellPromise;
     });
   } catch (error) {
     logger.error(error);
@@ -384,7 +385,14 @@ const refreshScheduledOrder = async (
       schedule.type === 'buy'
         ? publishBuyOrderMessage
         : publishSellOrderMessage;
-    await publishFn(bot, creator, newOrder, i18n, false);
+    const published = await publishFn(bot, creator, newOrder, i18n, false);
+
+    if (!published) {
+      logger.warning(
+        `refreshScheduledOrder: publish failed for schedule ${schedule._id}, skipping counter reset`,
+      );
+      return;
+    }
 
     schedule.last_order_id = newOrder._id;
     schedule.republish_count = getRepublishCount();

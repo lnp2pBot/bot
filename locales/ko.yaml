@@ -769,8 +769,8 @@ sched_daily: 매일
 sched_weekdays: 월–금
 sched_weekend: 주말
 sched_custom: 직접 입력
-schedule_enter_custom_days: "✍️ 요일을 쉼표로 구분하여 입력하세요 (예: monday, wednesday, friday)"
-invalid_days: "⚠️ 요일을 인식할 수 없습니다. 쉼표로 구분하여 입력해 주세요 (예: monday, wednesday, friday)."
+schedule_enter_custom_days: "✍️ 요일을 영어로 쉼표 구분하여 입력하세요 (예: sunday, wednesday, friday)"
+invalid_days: "⚠️ 유효하지 않은 요일입니다. 영어 요일 이름을 쉼표로 구분하여 입력하세요 (예: sunday, wednesday, friday)."
 schedule_enter_hour: "🕐 주문을 게시할 시간을 입력하세요. 0에서 23 사이의 숫자를 입력하세요 (UTC)."
 invalid_hour: "⚠️ 유효하지 않은 시간입니다. 0에서 23 사이의 숫자를 입력하세요."
 schedule_confirm_summary: |

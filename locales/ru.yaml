@@ -772,8 +772,8 @@ sched_daily: Каждый день
 sched_weekdays: Пн–Пт
 sched_weekend: Выходные
 sched_custom: Настроить
-schedule_enter_custom_days: "✍️ Введите дни через запятую (например: monday, wednesday, friday)"
-invalid_days: "⚠️ Не удалось распознать дни. Введите их через запятую (например: monday, wednesday, friday)."
+schedule_enter_custom_days: "✍️ Введите дни на английском через запятую (например: sunday, wednesday, friday)"
+invalid_days: "⚠️ Неверные дни. Введите названия дней на английском через запятую (например: sunday, wednesday, friday)."
 schedule_enter_hour: "🕐 В какой час публиковать ордер? Введите число от 0 до 23 (UTC)."
 invalid_hour: "⚠️ Неверный час. Введите число от 0 до 23."
 schedule_confirm_summary: |
