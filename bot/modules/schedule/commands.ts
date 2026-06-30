@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { CommunityContext } from '../community/communityContext';
 import { ScheduledOrder } from '../../../models';
 import { validateSellOrder, validateBuyOrder } from '../../validations';
@@ -56,7 +57,7 @@ export const cancelschedule = async (ctx: CommunityContext) => {
     const args = ctx.state?.command?.args || [];
     const scheduleId = args[0];
 
-    if (!scheduleId) {
+    if (!scheduleId || !Types.ObjectId.isValid(scheduleId)) {
       return ctx.reply(ctx.i18n.t('cancelschedule_usage'));
     }
 

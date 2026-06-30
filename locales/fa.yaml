@@ -842,8 +842,8 @@ sched_daily: هر روز
 sched_weekdays: دوشنبه–جمعه
 sched_weekend: آخر هفته
 sched_custom: سفارشی
-schedule_enter_custom_days: "✍️ روزها را با کاما وارد کنید (مثال: monday, wednesday, friday)"
-invalid_days: "⚠️ روزها را نتوانستم تشخیص دهم. لطفاً با کاما جدا کنید (مثال: monday, wednesday, friday)."
+schedule_enter_custom_days: "✍️ روزها را به انگلیسی و با کاما وارد کنید (مثال: sunday, wednesday, friday)"
+invalid_days: "⚠️ روزهای نامعتبر. نام روزها را به انگلیسی با کاما جدا کنید (مثال: sunday, wednesday, friday)."
 schedule_enter_hour: "🕐 سفارش در چه ساعتی منتشر شود؟ عددی بین ۰ تا ۲۳ وارد کنید (UTC)."
 invalid_hour: "⚠️ ساعت نامعتبر است. لطفاً عددی بین ۰ تا ۲۳ وارد کنید."
 schedule_confirm_summary: |

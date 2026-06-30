@@ -5,52 +5,32 @@ export const getRepublishCount = (): number => {
   return Number.isInteger(raw) && raw > 0 ? raw : REPUBLISH_DAYS_DEFAULT;
 };
 
-// Day names (Spanish, English, abbreviated) mapped to getUTCDay() values (0=Sun)
+// English day names (full and abbreviated) mapped to getUTCDay() values (0=Sun..6=Sat)
 const DAY_ALIASES: Record<string, number> = {
-  domingo: 0,
   sunday: 0,
   sun: 0,
-  dom: 0,
-  lunes: 1,
   monday: 1,
   mon: 1,
-  lun: 1,
-  martes: 2,
   tuesday: 2,
   tue: 2,
-  mar: 2,
-  miercoles: 3,
   wednesday: 3,
   wed: 3,
-  mie: 3,
-  jueves: 4,
   thursday: 4,
   thu: 4,
-  jue: 4,
-  viernes: 5,
   friday: 5,
   fri: 5,
-  vie: 5,
-  sabado: 6,
   saturday: 6,
   sat: 6,
-  sab: 6,
 };
 
-// Parses a comma/space separated list of day names into sorted weekday numbers.
-// Tolerant to accents, casing and extra whitespace. Returns null if any token
-// is not a recognized day.
+// Parses a comma/space separated list of English day names into sorted UTC
+// weekday values (0-6). Returns null if any token is unrecognized.
 export const parseCustomDays = (input: string): number[] | null => {
-  const parts = input
-    .toLowerCase()
-    .split(/[,\s]+/)
-    .filter(Boolean);
+  const parts = input.toLowerCase().split(/[,\s]+/).filter(Boolean);
   if (parts.length === 0) return null;
   const days = new Set<number>();
   for (const part of parts) {
-    // strip accents so "miércoles" -> "miercoles"
-    const normalized = part.normalize('NFD').replace(/[̀-ͯ]/g, '');
-    const dayNum = DAY_ALIASES[normalized];
+    const dayNum = DAY_ALIASES[part];
     if (dayNum === undefined) return null;
     days.add(dayNum);
   }

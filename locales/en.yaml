@@ -744,8 +744,8 @@ sched_daily: Every day
 sched_weekdays: Mon–Fri
 sched_weekend: Weekend
 sched_custom: Custom
-schedule_enter_custom_days: "✍️ Enter the days separated by commas (e.g.: monday, wednesday, friday)"
-invalid_days: "⚠️ I couldn't understand those days. Please enter them separated by commas (e.g.: monday, wednesday, friday)."
+schedule_enter_custom_days: "✍️ Enter the days separated by commas (e.g.: sunday, wednesday, friday)"
+invalid_days: "⚠️ Invalid days. Enter English day names separated by commas (e.g.: sunday, wednesday, friday)."
 schedule_enter_hour: "🕐 At what hour should the order be published? Enter a number between 0 and 23 (UTC)."
 invalid_hour: "⚠️ Invalid hour. Please enter a number between 0 and 23."
 schedule_confirm_summary: |
