@@ -69,6 +69,17 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
             : publishSellOrderMessage;
         await publishFn(bot, user, order, i18n, false);
 
+        // publishFn swallows errors and returns void, so we detect success from
+        // the side effects it leaves on the order: a populated channel message
+        // id, and a status that was not closed because the channel was
+        // unreachable. Only advance the schedule on a confirmed publish.
+        if (order.status === 'CLOSED' || !order.tg_channel_message1) {
+          logger.warning(
+            `ScheduledOrder ${schedule._id}: publish failed, schedule not advanced`,
+          );
+          continue;
+        }
+
         schedule.last_order_id = order._id;
         schedule.republish_count -= 1;
         if (schedule.republish_count <= 0) schedule.active = false;
