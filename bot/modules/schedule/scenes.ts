@@ -51,8 +51,9 @@ export const scheduleOrderWizard = new Scenes.WizardScene<CommunityContext>(
           await messages.askCustomDays(ctx);
           return; // stay on this step, waiting for the text
         }
-        if (PRESET_DAYS[data.replace('sched_', '')]) {
-          state.days = PRESET_DAYS[data.replace('sched_', '')];
+        const presetKey = data.replace('sched_', '');
+        if (Object.prototype.hasOwnProperty.call(PRESET_DAYS, presetKey)) {
+          state.days = PRESET_DAYS[presetKey];
           await messages.askScheduleHour(ctx);
           return ctx.wizard.next();
         }
