@@ -34,7 +34,9 @@ export const parseCustomDays = (input: string): number[] | null => {
   const days = new Set<number>();
   for (const part of parts) {
     const dayNum = DAY_ALIASES[part];
-    if (dayNum === undefined) return null;
+    // Guard against inherited Object.prototype keys (e.g. "constructor",
+    // "toString") which would resolve to a function instead of undefined.
+    if (typeof dayNum !== 'number') return null;
     days.add(dayNum);
   }
   return [...days].sort((a, b) => a - b);
