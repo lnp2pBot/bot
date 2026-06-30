@@ -26,7 +26,10 @@ const DAY_ALIASES: Record<string, number> = {
 // Parses a comma/space separated list of English day names into sorted UTC
 // weekday values (0-6). Returns null if any token is unrecognized.
 export const parseCustomDays = (input: string): number[] | null => {
-  const parts = input.toLowerCase().split(/[,\s]+/).filter(Boolean);
+  const parts = input
+    .toLowerCase()
+    .split(/[,\s]+/)
+    .filter(Boolean);
   if (parts.length === 0) return null;
   const days = new Set<number>();
   for (const part of parts) {
