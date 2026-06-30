@@ -62,8 +62,9 @@ export const askScheduleConfirm = async (
   },
 ) => {
   const hour = String(summaryData.hour).padStart(2, '0');
+  const typeKey = summaryData.type === 'buy' ? 'buying' : 'selling';
   const summary = ctx.i18n.t('schedule_confirm_summary', {
-    type: summaryData.type.toUpperCase(),
+    type: ctx.i18n.t(typeKey),
     fiatAmount: summaryData.fiatAmount.join('-'),
     fiatCode: summaryData.fiatCode,
     paymentMethod: summaryData.paymentMethod,
@@ -72,6 +73,7 @@ export const askScheduleConfirm = async (
   });
 
   await ctx.reply(summary, {
+    parse_mode: 'Markdown',
     reply_markup: {
       inline_keyboard: [
         [
