@@ -78,6 +78,7 @@ describe('attemptPendingPayments healing branches', () => {
   let userFindOneStub: any;
   let pendingFindStub: any;
   let pendingFindOneStub: any;
+  let pendingCountDocumentsStub: any;
   let toAdminStub: any;
   let toBuyerStub: any;
   let rateUserStub: any;
@@ -96,6 +97,7 @@ describe('attemptPendingPayments healing branches', () => {
     userFindOneStub = sandbox.stub();
     pendingFindStub = sandbox.stub();
     pendingFindOneStub = sandbox.stub();
+    pendingCountDocumentsStub = sandbox.stub().resolves(0);
     toAdminStub = sandbox.stub().resolves();
     toBuyerStub = sandbox.stub().resolves();
     rateUserStub = sandbox.stub().resolves();
@@ -108,7 +110,7 @@ describe('attemptPendingPayments healing branches', () => {
           find: pendingFindStub,
           findOne: pendingFindOneStub,
           findOneAndUpdate: sandbox.stub().resolves({ status: 'SUCCESS' }),
-          countDocuments: sandbox.stub().resolves(0),
+          countDocuments: pendingCountDocumentsStub,
         },
         Order: {
           findOne: orderFindOneStub,
@@ -295,7 +297,45 @@ describe('attemptPendingPayments healing branches', () => {
     });
   });
 
-  // ── Branch 4: getPaymentStatus with unknown error → fail-closed ──────────
+  // ── Branch 4: another pending payment already paid in DB → skip & mark order SUCCESS ──
+
+  describe('another pending payment already marked paid in the database', () => {
+    it('sets order to SUCCESS and skips retry without paying', async () => {
+      const order = makeFakeOrder();
+      const pending = makeFakePending();
+
+      pendingFindStub.onFirstCall().resolves([pending]);
+      orderFindOneStub.resolves(order);
+
+      getPaymentStatusStub
+        .withArgs('lnbc_buyer_invoice')
+        .resolves({ is_confirmed: false, is_pending: false });
+
+      // Override countDocuments to return 1 (another paid pending exists)
+      pendingCountDocumentsStub.resolves(1);
+
+      await job.attemptPendingPayments(fakeBot);
+
+      expect(order.status).to.equal(
+        'SUCCESS',
+        'order must be marked SUCCESS',
+      );
+      expect(payRequestStub.called).to.equal(
+        false,
+        'must NOT attempt a new payment',
+      );
+      expect(toBuyerStub.called).to.equal(
+        false,
+        'must NOT notify buyer — no full success routine',
+      );
+      expect(rateUserStub.called).to.equal(
+        false,
+        'must NOT send rating prompt',
+      );
+    });
+  });
+
+  // ── Branch 5: getPaymentStatus with unknown error → fail-closed ──────────
 
   describe('fail-closed on unknown LND error during healing check', () => {
     it('skips the pending payment without attempting to pay when getPaymentStatus fails unexpectedly', async () => {
