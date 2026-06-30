@@ -316,10 +316,7 @@ describe('attemptPendingPayments healing branches', () => {
 
       await job.attemptPendingPayments(fakeBot);
 
-      expect(order.status).to.equal(
-        'SUCCESS',
-        'order must be marked SUCCESS',
-      );
+      expect(order.status).to.equal('SUCCESS', 'order must be marked SUCCESS');
       expect(payRequestStub.called).to.equal(
         false,
         'must NOT attempt a new payment',
