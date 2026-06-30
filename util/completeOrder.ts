@@ -35,7 +35,6 @@ export const completeOrderAsSuccess = async (
     { $set: { status: 'SUCCESS', routing_fee: payment.fee } },
   );
   if (won === null) return false;
-
   if (pending) {
     pending.paid = true;
     pending.paid_at = new Date();

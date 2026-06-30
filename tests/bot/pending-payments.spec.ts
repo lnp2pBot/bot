@@ -107,6 +107,8 @@ describe('attemptPendingPayments healing branches', () => {
         PendingPayment: {
           find: pendingFindStub,
           findOne: pendingFindOneStub,
+          findOneAndUpdate: sandbox.stub().resolves({ status: 'SUCCESS' }),
+          countDocuments: sandbox.stub().resolves(0),
         },
         Order: {
           findOne: orderFindOneStub,
@@ -166,7 +168,7 @@ describe('attemptPendingPayments healing branches', () => {
     sandbox.restore();
   });
 
-  // ── Rama 1: invoice original del comprador ya confirmado ──────────────────
+  // ── Branch 1: original buyer invoice already confirmed ──────────────────
 
   describe('original buyer invoice already confirmed', () => {
     it('runs full success routine (notifies buyer, increments trades_completed)', async () => {
@@ -218,7 +220,7 @@ describe('attemptPendingPayments healing branches', () => {
     });
   });
 
-  // ── Rama 2: pago anterior ya en vuelo → saltear sin incrementar attempts ──
+  // ── Branch 2: previous payment already in-flight → skip without incrementing attempts ──
 
   describe('previous pending payment already in-flight', () => {
     it('skips retry and does not increment attempts', async () => {
@@ -253,11 +255,11 @@ describe('attemptPendingPayments healing branches', () => {
     });
   });
 
-  // ── Rama 3: pago anterior ya confirmado → rutina completa de éxito ────────
+  // ── Branch 3: previous payment already confirmed → full success routine ────────
 
   describe('previous pending payment already confirmed', () => {
     it('runs full success routine without attempting a new payment', async () => {
-      const order = makeFakeOrder();
+      const order = makeFakeOrder({ status: 'PENDING' });
       const pending = makeFakePending();
       const prevPending = makeFakePending({
         _id: 'prev0000000000000000000001',
@@ -286,13 +288,14 @@ describe('attemptPendingPayments healing branches', () => {
       await job.attemptPendingPayments(fakeBot);
 
       expect(order.status).to.equal('SUCCESS');
+
       expect(toBuyerStub.calledOnce).to.equal(true, 'buyer must be notified');
       expect(rateUserStub.calledOnce).to.equal(true, 'rating must be sent');
       expect(payRequestStub.called).to.equal(false);
     });
   });
 
-  // ── Rama 4: getPaymentStatus con error desconocido → fail-closed ──────────
+  // ── Branch 4: getPaymentStatus with unknown error → fail-closed ──────────
 
   describe('fail-closed on unknown LND error during healing check', () => {
     it('skips the pending payment without attempting to pay when getPaymentStatus fails unexpectedly', async () => {

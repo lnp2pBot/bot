@@ -261,8 +261,8 @@ const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
     }
     // Use util.inspect to log the error more specifically
     logger.error(`getPaymentStatus error: ` + util.inspect(error));
-    // This edge case can't be handled, rethrow
-    throw error;
+    // We prefer to handle this case manually preventing potential fund loss
+    return { is_confirmed: false, is_pending: true };
   }
 };
 
