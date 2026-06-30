@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IScheduledOrder extends Document {
-  _id: string;
   creator_id: string;
   type: string;
   amount: number;
