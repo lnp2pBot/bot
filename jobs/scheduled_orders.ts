@@ -63,30 +63,52 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
           continue;
         }
 
+        // Reserve the cycle atomically BEFORE the external publish. The guard
+        // on republish_count acts as optimistic concurrency control: only one
+        // run can decrement from this exact value. If the process dies after
+        // reserving but before/while publishing, the schedule has already
+        // advanced, so the next tick will not republish the same cycle. We
+        // prefer losing one publication over posting a duplicate order.
+        const remaining = schedule.republish_count - 1;
+        const reserved = await ScheduledOrder.findOneAndUpdate(
+          {
+            _id: schedule._id,
+            active: true,
+            republish_count: schedule.republish_count,
+          },
+          {
+            last_order_id: order._id,
+            republish_count: remaining,
+            active: remaining > 0,
+          },
+          { new: true },
+        );
+
+        if (!reserved) {
+          // Another run already claimed this cycle; drop the order we created.
+          logger.warning(
+            `ScheduledOrder ${schedule._id}: cycle already claimed, skipping publish`,
+          );
+          continue;
+        }
+
         const publishFn =
           schedule.type === 'buy'
             ? publishBuyOrderMessage
             : publishSellOrderMessage;
         await publishFn(bot, user, order, i18n, false);
 
-        // publishFn swallows errors and returns void, so we detect success from
-        // the side effects it leaves on the order: a populated channel message
-        // id, and a status that was not closed because the channel was
-        // unreachable. Only advance the schedule on a confirmed publish.
+        // publishFn swallows errors and returns void; surface a failed publish
+        // for observability, but the cycle is already reserved either way.
         if (order.status === 'CLOSED' || !order.tg_channel_message1) {
           logger.warning(
-            `ScheduledOrder ${schedule._id}: publish failed, schedule not advanced`,
+            `ScheduledOrder ${schedule._id}: publish failed after reservation`,
           );
           continue;
         }
 
-        schedule.last_order_id = order._id;
-        schedule.republish_count -= 1;
-        if (schedule.republish_count <= 0) schedule.active = false;
-        await schedule.save();
-
         logger.info(
-          `ScheduledOrder ${schedule._id} published order ${order._id}, ${schedule.republish_count} cycles left`,
+          `ScheduledOrder ${schedule._id} published order ${order._id}, ${remaining} cycles left`,
         );
       } catch (error) {
         logger.error(`publishScheduledOrders inner error: ${String(error)}`);

@@ -194,25 +194,30 @@ const refreshScheduledOrder = async (
 
     if (!newOrder) return;
 
+    // Claim the refresh atomically BEFORE the external publish. Guarding on the
+    // old last_order_id moves the mold->order link to newOrder in a single step,
+    // so a concurrent take or a retry after a crash can't republish twice: once
+    // the link points at newOrder, this branch no longer matches the old id.
+    const claimed = await ScheduledOrder.findOneAndUpdate(
+      { _id: schedule._id, last_order_id: orderId, active: true },
+      { last_order_id: newOrder._id, republish_count: getRepublishCount() },
+      { new: true },
+    );
+    if (!claimed) return; // already refreshed by a concurrent take
+
     const publishFn =
       schedule.type === 'buy'
         ? publishBuyOrderMessage
         : publishSellOrderMessage;
     await publishFn(bot, creator, newOrder, i18n, false);
 
-    // publishFn swallows errors and returns void, so we detect success from the
-    // side effects it leaves on the order: a populated channel message id, and a
-    // status that was not closed because the channel was unreachable.
+    // publishFn swallows errors and returns void; surface a failed publish for
+    // observability, but the refresh is already claimed either way.
     if (newOrder.status === 'CLOSED' || !newOrder.tg_channel_message1) {
       logger.warning(
-        `refreshScheduledOrder: publish failed for schedule ${schedule._id}, skipping counter reset`,
+        `refreshScheduledOrder: publish failed for schedule ${schedule._id} after claim`,
       );
-      return;
     }
-
-    schedule.last_order_id = newOrder._id;
-    schedule.republish_count = getRepublishCount();
-    await schedule.save();
   } catch (error) {
     logger.error(`refreshScheduledOrder error: ${String(error)}`);
   }
