@@ -451,11 +451,11 @@ pending_payment_failed_to_admin: |
   Tentatives de paiement : ${attempts}
 selling: Vente
 buying: Achat
-selling_sats: Vente de sats
-buying_sats: Achat de sats
+selling_sats: 'Vente de ${amount} sats'
+buying_sats: 'Achat de ${amount} sats'
 receive_payment: Réception du paiement
-showusername_buying_sats: "@${username} achète des sats"
-showusername_selling_sats: "@${username} vend des sats"
+showusername_buying_sats: "@${username} achète ${amount} sats"
+showusername_selling_sats: "@${username} vend ${amount} sats"
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'

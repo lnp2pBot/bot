@@ -248,7 +248,14 @@ const buildDescription = (
 
     const ageInDays = getUserAge(user);
 
-    const firstLine = getOrderTitleMessage(user, type, i18n);
+    const firstLine = getOrderTitleMessage(
+      user,
+      type,
+      amount,
+      fiatCode,
+      priceFromAPI,
+      i18n,
+    );
 
     let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
@@ -269,19 +276,30 @@ const buildDescription = (
 const getOrderTitleMessage = (
   user: UserDocument,
   type: string,
+  orderAmount: number,
+  fiatCode: string,
+  priceFromAPI: boolean,
   i18n: I18nContext,
 ) => {
   const isSell = type === 'sell';
+  // Fixed-price orders show the sats volume in the title; market-price orders
+  // don't, since the sats amount is not known until the order is taken.
+  const amount = priceFromAPI ? '' : numberFormat(fiatCode, orderAmount);
 
-  // Guard Clause: The user DOES want to show their name, we resolve and leave.
+  let title: string;
   if (user.show_username) {
-    return isSell
-      ? i18n.t('showusername_selling_sats', { username: user.username })
-      : i18n.t('showusername_buying_sats', { username: user.username });
+    title = isSell
+      ? i18n.t('showusername_selling_sats', { username: user.username, amount })
+      : i18n.t('showusername_buying_sats', { username: user.username, amount });
+  } else {
+    title = isSell
+      ? i18n.t('selling_sats', { amount })
+      : i18n.t('buying_sats', { amount });
   }
 
-  // The user DOES NOT want to show their name.
-  return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
+  // Collapse any double spaces left when amount is empty (market orders) so the
+  // result is clean regardless of where translators place the ${amount} slot.
+  return title.replace(/\s+/g, ' ').trim();
 };
 
 const getOrder = async (

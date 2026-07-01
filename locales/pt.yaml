@@ -451,12 +451,12 @@ pending_payment_failed_to_admin: |
   Tentativas de pagamento: ${attempts}
 selling: Vendendo
 buying: Comprando
-selling_sats: Vendendo sats
-buying_sats: Comprando sats
+selling_sats: 'Vendendo ${amount} sats'
+buying_sats: 'Comprando ${amount} sats'
 receive_payment: Receber pagamento
 pay: Pagar
-showusername_buying_sats: '@${username} está comprando sats'
-showusername_selling_sats: '@${username} está vendendo sats'
+showusername_buying_sats: '@${username} está comprando ${amount} sats'
+showusername_selling_sats: '@${username} está vendendo ${amount} sats'
 is: é
 trading_volume: 'Volume de negócios: ${volume} sats'
 satoshis: satoshis

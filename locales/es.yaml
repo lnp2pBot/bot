@@ -454,10 +454,10 @@ pending_payment_failed_to_admin: |
   Intento de pago: ${attempts}
 selling: Vendiendo
 buying: Comprando
-selling_sats: Vendiendo sats
-buying_sats: Comprando sats
-showusername_buying_sats: '@${username} está comprando sats'
-showusername_selling_sats: '@${username} está vendiendo sats'
+selling_sats: 'Vendiendo ${amount} sats'
+buying_sats: 'Comprando ${amount} sats'
+showusername_buying_sats: '@${username} está comprando ${amount} sats'
+showusername_selling_sats: '@${username} está vendiendo ${amount} sats'
 receive_payment: Recibo pago
 pay: Pago
 is: está

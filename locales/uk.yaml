@@ -449,14 +449,14 @@ pending_payment_failed_to_admin: |
   Спроб оплати: ${attempts}
 selling: Продаю
 buying: Купую
-selling_sats: Продаж сатоші
-buying_sats: Купівля сатоші
+selling_sats: 'Продаж ${amount} сатоші'
+buying_sats: 'Купівля ${amount} сатоші'
 receive_payment: Розрахунок
 pay: Оплата
 is: є
 trading_volume: 'Обсяг торгів: ${volume} сат'
-showusername_buying_sats: '@${username} купує сатоші'
-showusername_selling_sats: '@${username} продає сатоші'
+showusername_buying_sats: '@${username} купує ${amount} сатоші'
+showusername_selling_sats: '@${username} продає ${amount} сатоші'
 satoshis: сатоші
 by: за допомогою
 rate: Kурс
