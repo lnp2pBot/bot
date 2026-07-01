@@ -282,6 +282,7 @@ help: |
   /version - mostra la versione corrente del bot
   /help - messaggi di aiuto
 must_be_gt_or_eq: ${fieldName} Deve essere superiore o uguale a ${qty}
+must_be_lt_or_eq: ${fieldName} Deve essere inferiore o uguale a ${qty}
 you_have_been_banned: Sei stato bannato!
 I_told_seller_you_sent_fiat: 🤖 Ho avvisato @${sellerUsername} che hai inviato il denaro fiat, quando il venditore confermerà di aver ricevuto il tuo denaro dovrà liberare i fondi. Se si rifiuta, puoi aprire una disputa.
 buyer_told_me_that_sent_fiat: |

@@ -281,6 +281,7 @@ help: |
   /version - Показує поточну версію бота
   /help - Показати ключові команди
 must_be_gt_or_eq: ${fieldName} має бути більше чи рівно ${qty}
+must_be_lt_or_eq: ${fieldName} має бути менше чи рівно ${qty}
 you_have_been_banned: Ви були забанені!
 I_told_seller_you_sent_fiat: 🤖 Я повідомив @${sellerUsername}, що ти надіслав фіат, коли продавець підтвердить отримання твоїх грошей, він звільнить кошти. Якщо він відмовиться, ти можеш відкрити спір.
 buyer_told_me_that_sent_fiat: |
