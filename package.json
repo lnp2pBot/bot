@@ -15,7 +15,10 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --write '**/*.{js,ts}'",
     "pretest": "tsc -p tsconfig.test.json",
-    "test": "export NODE_ENV=test && mocha --exit 'dist/tests/**/*.spec.js'"
+    "test": "export NODE_ENV=test && mocha --exit 'dist/tests/**/*.spec.js'",
+    "mutation-test": "NODE_ENV=test stryker run",
+    "mutation-test:util": "NODE_ENV=test stryker run --mutate \"util/**/*.ts\"",
+    "build:test": "tsc && tsc -p tsconfig.test.json"
   },
   "license": "MIT",
   "dependencies": {
@@ -49,6 +52,9 @@
     "network"
   ],
   "devDependencies": {
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/mocha-runner": "^9.6.1",
+    "@stryker-mutator/typescript-checker": "^9.6.1",
     "@types/i18n": "^0.13.12",
     "@types/mocha": "^10.0.9",
     "@types/node": "^20.16.15",
