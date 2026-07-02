@@ -400,4 +400,10 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
   }
 };
 
-export { createOrder, getOrder, getOrders, getNewRangeOrderPayload };
+export {
+  createOrder,
+  getOrder,
+  getOrders,
+  getNewRangeOrderPayload,
+  getOrderTitleMessage,
+};
