@@ -232,6 +232,10 @@ interface PaymentStatus {
   is_confirmed: boolean;
   is_pending: boolean;
   payment?: LndPayment;
+  // True when is_pending was forced by an unknown/transient LND error (fail
+  // closed) rather than a genuine in-flight payment. Lets callers tell a real
+  // in-flight payment apart from a node fault that would wedge retries.
+  is_error?: boolean;
 }
 
 const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
@@ -261,8 +265,10 @@ const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
     }
     // Use util.inspect to log the error more specifically
     logger.error(`getPaymentStatus error: ` + util.inspect(error));
-    // We prefer to handle this case manually preventing potential fund loss
-    return { is_confirmed: false, is_pending: true };
+    // We prefer to handle this case manually preventing potential fund loss.
+    // Fail closed: mark is_error so callers can tell an unknown/transient LND
+    // fault apart from a genuine in-flight payment.
+    return { is_confirmed: false, is_pending: true, is_error: true };
   }
 };
 

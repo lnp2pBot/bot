@@ -4,7 +4,7 @@ import { parsePaymentRequest } from 'invoices';
 import { isValidInvoice, validateLightningAddress } from './validations';
 import { Order, PendingPayment, User } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
-import { getCurrency, getUserI18nContext } from '../util';
+import { getCurrency, getUserI18nContext, logOrderError } from '../util';
 import * as messages from './messages';
 import { getPaymentStatus } from '../ln';
 import { completeOrderAsSuccess } from '../util/completeOrder';
@@ -130,7 +130,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('must_enter_text'));
 
       let { buyer, order } = ctx.wizard.state;
-      const bot = ctx.wizard.bot;
+      const { bot } = ctx.wizard.state;
       // We get an updated order from the DB
       const updatedOrder = await Order.findOne({ _id: order._id });
       if (updatedOrder === null) {
@@ -194,9 +194,23 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
             i18nCtx,
           );
         } else {
-          order.status = 'SUCCESS';
+          // Fail closed: the original payment is confirmed but LND returned no
+          // payment payload (or the seller is missing). Do not silently mark the
+          // order SUCCESS — that could hide an inconsistent settlement. Leave the
+          // order untouched for manual/operational resolution and reject the update.
+          logger.error(
+            `Order ${order._id}: buyer invoice confirmed but no payment details from LND; ` +
+              `not marking SUCCESS — needs manual resolution`,
+          );
+          order.status = 'ERROR';
           await order.save();
-          await messages.invoiceAlreadyUpdatedMessage(ctx);
+          await logOrderError(
+            bot.telegram,
+            order,
+            'getPaymentStatus returned error for pending payment: ' +
+              order.buyer_invoice,
+          );
+          await messages.genericErrorMessage(bot, ctx.user, ctx.i18n);
         }
         return ctx.scene.leave();
       }

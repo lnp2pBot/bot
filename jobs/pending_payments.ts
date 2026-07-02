@@ -4,7 +4,7 @@ import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { payRequest, getPaymentStatus, LndPayment } from '../ln';
-import { getUserI18nContext } from '../util';
+import { getUserI18nContext, logOrderError } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 import { completeOrderAsSuccess } from '../util/completeOrder';
@@ -67,6 +67,16 @@ export const attemptPendingPayments = async (
           continue;
         }
         if (originalStatus.is_pending) {
+          if (originalStatus.is_error) {
+            await logOrderError(
+              bot.telegram,
+              order,
+              'getPaymentStatus returned error for invoice: ' +
+                order.buyer_invoice,
+            );
+            order.status = 'ERROR';
+            await order.save();
+          }
           logger.info(
             `Order ${order._id}: original buyer invoice is pending (in-flight), skipping retry without incrementing attempts`,
           );
@@ -146,7 +156,26 @@ export const attemptPendingPayments = async (
 
       const currentStatus = await getPaymentStatus(pending.payment_request);
 
-      if (currentStatus.is_confirmed && currentStatus.payment) {
+      if (currentStatus.is_confirmed) {
+        // is_confirmed alone must stop the retry: falling through to payRequest
+        // when LND reports a confirmed payment would re-open a double-pay window.
+        if (!currentStatus.payment) {
+          // Fail closed: confirmed but no payment payload. Do not re-pay and do
+          // not silently mark SUCCESS — leave the order for manual resolution.
+          logger.error(
+            `Order ${order._id}: payment confirmed but LND returned no details; ` +
+              `not re-paying and not marking SUCCESS — needs manual resolution`,
+          );
+          await logOrderError(
+            bot.telegram,
+            order,
+            'getPaymentStatus returned error for pending payment: ' +
+              pending.payment_request,
+          );
+          order.status = 'ERROR';
+          await order.save();
+          continue;
+        }
         logger.info(
           `Invoice with hash: ${pending.hash} already paid, running success routine`,
         );
@@ -168,6 +197,16 @@ export const attemptPendingPayments = async (
       }
 
       if (currentStatus.is_pending) {
+        if (currentStatus.is_error) {
+          await logOrderError(
+            bot.telegram,
+            order,
+            'getPaymentStatus returned error for pending payment: ' +
+              pending.payment_request,
+          );
+          order.status = 'ERROR';
+          await order.save();
+        }
         logger.info(
           `Order ${order._id}: current payment is already in-flight, skipping retry without incrementing attempts`,
         );
