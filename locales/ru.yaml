@@ -455,8 +455,8 @@ buying: Покупаю
 selling_sats: 'Продажа ${amount}сат'
 buying_sats: 'Покупка ${amount}сат'
 receive_payment: Расчет
-showusername_buying_sats: '@${username} покупает ${amount}саты'
-showusername_selling_sats: '@${username} продает ${amount}саты'
+showusername_buying_sats: '@${username} покупает ${amount}сат'
+showusername_selling_sats: '@${username} продает ${amount}сат'
 pay: Расчет
 is: Я
 trading_volume: 'Обьем торгов: ${volume} сат'
