@@ -58,10 +58,17 @@ export const attemptPendingPayments = async (
               pending,
             );
           } else {
-            order.status = 'SUCCESS';
-            pending.paid = true;
-            logger.warn(
-              `Order ${order._id}: confirmed but no payment details in LND response`,
+            logger.error(
+              `Order ${order._id}: confirmed but no payment details in LND response; ` +
+                `not marking SUCCESS — needs manual resolution`,
+            );
+            order.status = 'ERROR';
+            await order.save();
+            await logOrderError(
+              bot.telegram,
+              order,
+              'getPaymentStatus confirmed but no payment details in LND response: ' +
+                order.buyer_invoice,
             );
           }
           continue;
@@ -136,9 +143,17 @@ export const attemptPendingPayments = async (
               prev,
             );
           } else {
-            order.status = 'SUCCESS';
-            logger.warn(
-              `Order ${order._id}: previous payment confirmed but no payment details in LND response`,
+            logger.error(
+              `Order ${order._id}: previous payment confirmed but no payment details in LND response; ` +
+                `not marking SUCCESS — needs manual resolution`,
+            );
+            order.status = 'ERROR';
+            await order.save();
+            await logOrderError(
+              bot.telegram,
+              order,
+              'getPaymentStatus confirmed but no payment details in LND response: ' +
+                prev.payment_request,
             );
           }
           shouldSkip = true;
