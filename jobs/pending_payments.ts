@@ -363,7 +363,22 @@ export const attemptCommunitiesPendingPayments = async (
     try {
       const status = await getPaymentStatus(pending.payment_request);
 
-      if (status.is_confirmed && status.payment) {
+      if (status.is_confirmed) {
+        if (!status.payment) {
+          logger.error(
+            `Community ${pending.community_id} pending payment confirmed but LND returned no details; ` +
+              `not marking SUCCESS — needs manual resolution`,
+          );
+          pending.paid = true;
+          pending.is_invoice_expired = true;
+          pending.last_error = 'CONFIRMED_NO_PAYLOAD';
+          await pending.save();
+          // Notify admin (using Telegram bot's admin capability if possible,
+          // or just generic bot.telegram.sendMessage to an admin ID if available.
+          // For now, mirroring the logic of failing and continuing.)
+          continue;
+        }
+
         const payment = status.payment;
         pending.paid = true;
         pending.paid_at = new Date();
