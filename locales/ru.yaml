@@ -260,6 +260,8 @@ help: |
   /blocklist - Список заблокированных вами пользователей
   /cancel <_order id_> - Отменить заявку до ее исполнения
   /cancelall - Отменить все выставленные заявки
+  /scheduleorder <_buy|sell_> <_sats_> <_сумма фиат_> <_код фиат_> <_способ оплаты_> [_премиум_] - Создать повторяющуюся заявку с автопубликацией
+  /cancelschedule <_id расписания_> - Остановить автопубликацию запланированной заявки
   /terms - показать условия использования бота
 
   Nostr:
@@ -730,3 +732,27 @@ community_creation_requirements_not_met_rep: "* Репутация: ${userRep} /
 community_already_disabled: Это сообщество уже отключено
 community_already_enabled: Это сообщество уже включено
 ambiguous_community_input: Несколько сообществ соответствуют этому имени пользователя, пожалуйста, используйте ID сообщества
+
+scheduleorder_usage: "Использование: /scheduleorder <buy|sell> <sats> <сумма фиат> <код фиат> <способ оплаты> [премиум]"
+cancelschedule_usage: "Использование: /cancelschedule <id расписания>"
+schedule_not_found: "⚠️ Расписание не найдено или уже неактивно."
+schedule_cancelled: "✅ Расписание ${scheduleId} отменено. Ордера больше не будут публиковаться автоматически."
+schedule_creation_cancelled: "❌ Создание расписания отменено."
+schedule_created: "✅ Плановый ордер создан! Ваш ID: ${scheduleId}\nИспользуйте /cancelschedule ${scheduleId} для остановки."
+schedule_choose_days: "📅 В какие дни публиковать ордер?"
+sched_daily: Каждый день
+sched_weekdays: Пн–Пт
+sched_weekend: Выходные
+sched_custom: Настроить
+schedule_enter_custom_days: "✍️ Введите дни на английском через запятую (например: sunday, wednesday, friday)"
+invalid_days: "⚠️ Неверные дни. Введите названия дней на английском через запятую (например: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 В какой час публиковать ордер? Введите число от 0 до 23 (UTC)."
+invalid_hour: "⚠️ Неверный час. Введите число от 0 до 23."
+schedule_confirm_summary: |
+  📋 *Сводка планового ордера*
+
+  Тип: ${type}
+  Сумма: ${fiatAmount} ${fiatCode}
+  Способ оплаты: ${paymentMethod}
+  Дни: ${days}
+  Час: ${hour}

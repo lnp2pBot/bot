@@ -35,6 +35,7 @@ import * as OrdersModule from './modules/orders';
 import * as UserModule from './modules/user';
 import * as DisputeModule from './modules/dispute';
 import * as BlockModule from './modules/block';
+import * as ScheduleModule from './modules/schedule';
 import {
   rateUser,
   cancelAddInvoice,
@@ -72,6 +73,7 @@ import {
   nodeInfo,
   checkSolvers,
   checkHoldInvoiceExpired,
+  publishScheduledOrders,
 } from '../jobs';
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
@@ -237,6 +239,11 @@ const initialize = (
     await checkHoldInvoiceExpired(bot);
   });
 
+  // Publish scheduled orders — runs at the top of every hour (UTC)
+  schedule.scheduleJob(`0 * * * *`, async () => {
+    await publishScheduledOrders(bot);
+  });
+
   bot.start(async (ctx: MainContext) => {
     try {
       if (!('message' in ctx.update) || !('text' in ctx.update.message)) {
@@ -300,6 +307,7 @@ const initialize = (
   CommunityModule.configure(bot);
   LanguageModule.configure(bot);
   BlockModule.configure(bot);
+  ScheduleModule.configure(bot);
 
   bot.command('release', userMiddleware, async ctx => {
     try {

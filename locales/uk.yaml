@@ -260,6 +260,8 @@ help: |
   /blocklist - Список ваших заблокованих користувачів
   /cancel <_order id_> - Скасувати заявку до її виконання
   /cancelall - Скасувати всі виставлені заявки
+  /scheduleorder <_buy|sell_> <_sats_> <_сума фіат_> <_код фіат_> <_спосіб оплати_> [_преміум_] - Створити повторювану заявку з автопублікацією
+  /cancelschedule <_id розкладу_> - Зупинити автопублікацію запланованої заявки
   /terms - Показати умови використання бота
 
   Nostr:
@@ -726,3 +728,27 @@ community_creation_requirements_not_met_rep: "* Репутація: ${userRep} /
 community_already_disabled: Ця спільнота вже вимкнена
 community_already_enabled: Ця спільнота вже увімкнена
 ambiguous_community_input: Кілька спільнот відповідають цьому імені користувача, будь ласка, використовуйте ID спільноти
+
+scheduleorder_usage: "Використання: /scheduleorder <buy|sell> <sats> <сума фіат> <код фіат> <спосіб оплати> [преміум]"
+cancelschedule_usage: "Використання: /cancelschedule <id розкладу>"
+schedule_not_found: "⚠️ Розклад не знайдено або вже неактивний."
+schedule_cancelled: "✅ Розклад ${scheduleId} скасовано. Ордери більше не будуть публікуватися автоматично."
+schedule_creation_cancelled: "❌ Створення розкладу скасовано."
+schedule_created: "✅ Плановий ордер створено! Ваш ID: ${scheduleId}\nВикористовуйте /cancelschedule ${scheduleId} для зупинки."
+schedule_choose_days: "📅 У які дні публікувати ордер?"
+sched_daily: Щодня
+sched_weekdays: Пн–Пт
+sched_weekend: Вихідні
+sched_custom: Налаштувати
+schedule_enter_custom_days: "✍️ Введіть дні англійською через кому (наприклад: sunday, wednesday, friday)"
+invalid_days: "⚠️ Невірні дні. Введіть назви днів англійською через кому (наприклад: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 О якій годині публікувати ордер? Введіть число від 0 до 23 (UTC)."
+invalid_hour: "⚠️ Недійсна година. Введіть число від 0 до 23."
+schedule_confirm_summary: |
+  📋 *Зведення планового ордера*
+
+  Тип: ${type}
+  Сума: ${fiatAmount} ${fiatCode}
+  Спосіб оплати: ${paymentMethod}
+  Дні: ${days}
+  Година: ${hour}

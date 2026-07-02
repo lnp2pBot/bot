@@ -261,6 +261,8 @@ help: |
   /blocklist - Elenco degli utenti bloccati
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
+  /scheduleorder <_buy|sell_> <_sats_> <_importo fiat_> <_codice fiat_> <_metodo di pagamento_> [_premio_] - Crea un ordine ricorrente che si ripubblica automaticamente
+  /cancelschedule <_id dello schedule_> - Ferma la ripubblicazione automatica di un ordine programmato
   /terms: mostra i termini e le condizioni quando si utilizza il bot
 
   Nostr:
@@ -727,3 +729,27 @@ community_creation_requirements_not_met_rep: "* Reputazione: ${userRep} / ${requ
 community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità
+
+scheduleorder_usage: "Utilizzo: /scheduleorder <buy|sell> <sats> <importo fiat> <codice fiat> <metodo di pagamento> [premio]"
+cancelschedule_usage: "Utilizzo: /cancelschedule <id dello schedule>"
+schedule_not_found: "⚠️ Schedule non trovato o già inattivo."
+schedule_cancelled: "✅ Schedule ${scheduleId} annullato. Non verranno più pubblicate offerte automaticamente."
+schedule_creation_cancelled: "❌ Creazione dello schedule annullata."
+schedule_created: "✅ Ordine programmato creato! Il tuo ID è: ${scheduleId}\nUsa /cancelschedule ${scheduleId} per fermarlo."
+schedule_choose_days: "📅 In quali giorni deve essere pubblicato l'ordine?"
+sched_daily: Ogni giorno
+sched_weekdays: Lun–Ven
+sched_weekend: Weekend
+sched_custom: Personalizzato
+schedule_enter_custom_days: "✍️ Inserisci i giorni in inglese separati da virgole (es: sunday, wednesday, friday)"
+invalid_days: "⚠️ Giorni non validi. Inserisci i nomi dei giorni in inglese separati da virgole (es: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 A che ora deve essere pubblicato l'ordine? Inserisci un numero tra 0 e 23 (UTC)."
+invalid_hour: "⚠️ Ora non valida. Inserisci un numero tra 0 e 23."
+schedule_confirm_summary: |
+  📋 *Riepilogo ordine programmato*
+
+  Tipo: ${type}
+  Importo: ${fiatAmount} ${fiatCode}
+  Metodo di pagamento: ${paymentMethod}
+  Giorni: ${days}
+  Ora: ${hour}

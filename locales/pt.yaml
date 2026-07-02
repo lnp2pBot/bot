@@ -262,6 +262,8 @@ help: |
   /blocklist - Lista de seus usuários bloqueados
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
+  /scheduleorder <_buy|sell_> <_sats_> <_valor fiat_> <_código fiat_> <_método de pagamento_> [_prêmio_] - Cria um pedido recorrente que se republica automaticamente
+  /cancelschedule <_id do schedule_> - Para a republicação automática de um pedido programado
   /terms - Mostra os termos e condições ao usar o bot
 
   Nostr:
@@ -729,3 +731,27 @@ community_creation_requirements_not_met_rep: "* Reputação: ${userRep} / ${requ
 community_already_disabled: Esta comunidade já está desativada
 community_already_enabled: Esta comunidade já está ativada
 ambiguous_community_input: Várias comunidades correspondem a esse nome de usuário, por favor use o ID da comunidade
+
+scheduleorder_usage: "Uso: /scheduleorder <buy|sell> <sats> <valor fiat> <código fiat> <método de pagamento> [prêmio]"
+cancelschedule_usage: "Uso: /cancelschedule <id do schedule>"
+schedule_not_found: "⚠️ Schedule não encontrado ou já inativo."
+schedule_cancelled: "✅ Schedule ${scheduleId} cancelado. Não serão mais publicadas ordens automaticamente."
+schedule_creation_cancelled: "❌ Criação do schedule cancelada."
+schedule_created: "✅ Ordem programada criada! Seu ID é: ${scheduleId}\nUse /cancelschedule ${scheduleId} para pará-la."
+schedule_choose_days: "📅 Em quais dias a ordem deve ser publicada?"
+sched_daily: Todos os dias
+sched_weekdays: Seg–Sex
+sched_weekend: Fim de semana
+sched_custom: Personalizado
+schedule_enter_custom_days: "✍️ Insira os dias em inglês separados por vírgulas (ex: sunday, wednesday, friday)"
+invalid_days: "⚠️ Dias inválidos. Insira os nomes dos dias em inglês separados por vírgulas (ex: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 Em que hora a ordem deve ser publicada? Insira um número entre 0 e 23 (UTC)."
+invalid_hour: "⚠️ Hora inválida. Por favor insira um número entre 0 e 23."
+schedule_confirm_summary: |
+  📋 *Resumo da ordem programada*
+
+  Tipo: ${type}
+  Valor: ${fiatAmount} ${fiatCode}
+  Método de pagamento: ${paymentMethod}
+  Dias: ${days}
+  Hora: ${hour}

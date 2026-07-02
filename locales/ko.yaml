@@ -263,6 +263,8 @@ help: |
   /terms - 사용자 이용 약관 및 면책 조항을 표시합니다.
   /cancel <_주문 id_> - 아직 수락되지 않은 주문을 취소합니다.
   /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
+  /scheduleorder <_buy|sell_> <_sats_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [_프리미엄_] - 자동으로 재게시되는 반복 주문을 생성합니다
+  /cancelschedule <_schedule id_> - 예약 주문의 자동 재게시를 중지합니다
 
   Nostr:
   /setnpub <_노스터 npub_> - 노스터 공개키를 설정합니다. 이 명령어는 /settings 명령어 수행 중에만 사용 가능합니다.
@@ -727,3 +729,27 @@ community_creation_requirements_not_met_rep: "* 평판: ${userRep} / ${requiredR
 community_already_disabled: 이 커뮤니티는 이미 비활성화되어 있습니다
 community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니다
 ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요
+
+scheduleorder_usage: "사용법: /scheduleorder <buy|sell> <sats> <법정화폐 금액> <법정화폐 코드> <결제 방법> [프리미엄]"
+cancelschedule_usage: "사용법: /cancelschedule <schedule id>"
+schedule_not_found: "⚠️ 스케줄을 찾을 수 없거나 이미 비활성화되었습니다."
+schedule_cancelled: "✅ 스케줄 ${scheduleId}이(가) 취소되었습니다. 더 이상 자동으로 주문이 게시되지 않습니다."
+schedule_creation_cancelled: "❌ 스케줄 생성이 취소되었습니다."
+schedule_created: "✅ 예약 주문이 생성되었습니다! ID: ${scheduleId}\n중지하려면 /cancelschedule ${scheduleId}을 사용하세요."
+schedule_choose_days: "📅 어떤 요일에 주문을 게시할까요?"
+sched_daily: 매일
+sched_weekdays: 월–금
+sched_weekend: 주말
+sched_custom: 직접 입력
+schedule_enter_custom_days: "✍️ 요일을 영어로 쉼표 구분하여 입력하세요 (예: sunday, wednesday, friday)"
+invalid_days: "⚠️ 유효하지 않은 요일입니다. 영어 요일 이름을 쉼표로 구분하여 입력하세요 (예: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 주문을 게시할 시간을 입력하세요. 0에서 23 사이의 숫자를 입력하세요 (UTC)."
+invalid_hour: "⚠️ 유효하지 않은 시간입니다. 0에서 23 사이의 숫자를 입력하세요."
+schedule_confirm_summary: |
+  📋 *예약 주문 요약*
+
+  유형: ${type}
+  금액: ${fiatAmount} ${fiatCode}
+  결제 방법: ${paymentMethod}
+  요일: ${days}
+  시간: ${hour}
