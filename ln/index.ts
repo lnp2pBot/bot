@@ -7,7 +7,13 @@ import {
 import { subscribeInvoice, payHoldInvoice } from './subscribe_invoice';
 import { subscribeProbe } from './subscribe_probe';
 import { resubscribeInvoices } from './resubscribe_invoices';
-import { payRequest, payToBuyer, isPendingPayment } from './pay_request';
+import {
+  payRequest,
+  payToBuyer,
+  isPendingOrConfirmed,
+  getPaymentStatus,
+  LndPayment,
+} from './pay_request';
 import { getInfo } from './info';
 
 export {
@@ -19,8 +25,10 @@ export {
   payRequest,
   payToBuyer,
   getInfo,
-  isPendingPayment,
+  isPendingOrConfirmed,
+  getPaymentStatus,
   subscribeProbe,
   getInvoice,
   payHoldInvoice,
+  LndPayment,
 };
