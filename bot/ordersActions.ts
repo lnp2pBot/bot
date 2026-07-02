@@ -248,7 +248,14 @@ const buildDescription = (
 
     const ageInDays = getUserAge(user);
 
-    const firstLine = getOrderTitleMessage(user, type, i18n);
+    const firstLine = getOrderTitleMessage(
+      user,
+      type,
+      amount,
+      fiatCode,
+      priceFromAPI,
+      i18n,
+    );
 
     let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
@@ -269,19 +276,34 @@ const buildDescription = (
 const getOrderTitleMessage = (
   user: UserDocument,
   type: string,
+  amount: number,
+  fiatCode: string,
+  priceFromAPI: boolean,
   i18n: I18nContext,
 ) => {
   const isSell = type === 'sell';
 
+  // For fixed orders we show the sats amount; for market/range orders
+  // (priceFromAPI, amount === 0) the amount is omitted.
+  const amountText = priceFromAPI ? '' : `${numberFormat(fiatCode, amount)} `;
+
   // Guard Clause: The user DOES want to show their name, we resolve and leave.
   if (user.show_username) {
     return isSell
-      ? i18n.t('showusername_selling_sats', { username: user.username })
-      : i18n.t('showusername_buying_sats', { username: user.username });
+      ? i18n.t('showusername_selling_sats', {
+          username: user.username,
+          amount: amountText,
+        })
+      : i18n.t('showusername_buying_sats', {
+          username: user.username,
+          amount: amountText,
+        });
   }
 
   // The user DOES NOT want to show their name.
-  return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
+  return isSell
+    ? i18n.t('selling_sats', { amount: amountText })
+    : i18n.t('buying_sats', { amount: amountText });
 };
 
 const getOrder = async (
@@ -378,4 +400,10 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
   }
 };
 
-export { createOrder, getOrder, getOrders, getNewRangeOrderPayload };
+export {
+  createOrder,
+  getOrder,
+  getOrders,
+  getNewRangeOrderPayload,
+  getOrderTitleMessage,
+};
