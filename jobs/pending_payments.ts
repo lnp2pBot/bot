@@ -393,6 +393,12 @@ export const attemptCommunitiesPendingPayments = async (
       }
 
       if (status.is_pending) {
+        if (status.is_error) {
+          logger.error(
+            `Community ${pending.community_id} pending payment: getPaymentStatus returned error; ` +
+              `not marking SUCCESS — needs manual resolution`,
+          );
+        }
         logger.info(
           `Community pending payment is already in-flight, skipping attempt without incrementing attempts`,
         );
