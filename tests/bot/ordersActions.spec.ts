@@ -1,6 +1,10 @@
+import { getOrderTitleMessage } from '../../bot/ordersActions';
+
+// chai v4 ships no types and @grammyjs/i18n's typed Config rejects the
+// locale/directory options, so both are required CommonJS-style, matching
+// every other spec and the production I18n usage in bot/ordersActions.ts.
 const { expect } = require('chai');
 const { I18n } = require('@grammyjs/i18n');
-const { getOrderTitleMessage } = require('../../bot/ordersActions');
 
 // Real i18n context so the test exercises the actual locale strings and
 // their ${amount} interpolation (the part that regressed in PR #770).
