@@ -42,29 +42,38 @@ describe('Utility Functions', () => {
   });
 
   describe('numberFormat', () => {
-    it('should return false for invalid currency code', () => {
+    it('returns the plain number as string for an invalid currency code', () => {
       const result = numberFormat('INVALID', 100);
-      expect(result).to.equal(false);
+      expect(result).to.equal('100');
     });
 
-    it('should return original number if no locale found', () => {
+    it('formats the number using the currency locale', () => {
       const result = numberFormat('USD', 1234.56);
-      expect(result).to.not.be.false;
+      expect(result).to.equal('1,234.56');
     });
 
-    it('should return original number for NaN input', () => {
+    it('returns a string for NaN input', () => {
       const result = numberFormat('USD', NaN);
-      expect(result).to.be.NaN;
+      expect(result).to.equal('NaN');
     });
 
-    it('should handle zero correctly', () => {
+    it('handles zero correctly', () => {
       const result = numberFormat('USD', 0);
-      expect(result).to.not.be.false;
+      expect(result).to.equal('0');
     });
 
-    it('should handle negative numbers', () => {
+    it('handles negative numbers', () => {
       const result = numberFormat('USD', -100);
-      expect(result).to.not.be.false;
+      expect(result).to.equal('-100');
+    });
+
+    it('always returns a string', () => {
+      const results = [
+        numberFormat('INVALID', 100),
+        numberFormat('USD', 1000),
+        numberFormat('USD', NaN),
+      ];
+      results.forEach(result => expect(result).to.be.a('string'));
     });
   });
 
