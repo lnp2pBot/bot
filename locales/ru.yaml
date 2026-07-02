@@ -452,11 +452,15 @@ pending_payment_failed_to_admin: |
   Попытка оплаты: ${attempts}
 selling: Продаю
 buying: Покупаю
-selling_sats: 'Продажа ${amount}сат'
-buying_sats: 'Покупка ${amount}сат'
+selling_sats: Продажа сат
+selling_sats_with_amount: 'Продажа ${amount} сат'
+buying_sats: Покупка сат
+buying_sats_with_amount: 'Покупка ${amount} сат'
 receive_payment: Расчет
-showusername_buying_sats: '@${username} покупает ${amount}сат'
-showusername_selling_sats: '@${username} продает ${amount}сат'
+showusername_buying_sats: '@${username} покупает сат'
+showusername_buying_sats_with_amount: '@${username} покупает ${amount} сат'
+showusername_selling_sats: '@${username} продает сат'
+showusername_selling_sats_with_amount: '@${username} продает ${amount} сат'
 pay: Расчет
 is: Я
 trading_volume: 'Обьем торгов: ${volume} сат'
