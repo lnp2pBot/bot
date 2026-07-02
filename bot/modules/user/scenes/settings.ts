@@ -7,6 +7,12 @@ import {
   CommunityWizardState,
 } from '../../community/communityContext';
 import { Message } from 'telegraf/typings/core/types/typegram';
+import { logger } from '../../../../logger';
+
+const readNonNegativeInt = (value: string | undefined, fallback: number) => {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+};
 
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
@@ -24,6 +30,10 @@ function make() {
       npub: '',
       community: '',
       lightning_address: '',
+      min_days_using_bot:
+        user.counterparty_requirements?.min_days_using_bot ?? 0,
+      min_completed_orders:
+        user.counterparty_requirements?.min_completed_orders ?? 0,
     };
     if (user.default_community_id) {
       const community = await Community.findOne({
@@ -130,6 +140,131 @@ function make() {
       await updateMessage(ctx);
     }
   });
+
+  scene.command(
+    'counterpartyage',
+    resetMessage,
+    async (ctx: CommunityContext) => {
+      try {
+        await ctx.deleteMessage();
+        const state = ctx.scene.state as CommunityWizardState;
+        if (ctx.message === undefined || !('text' in ctx.message))
+          throw new Error('ctx.message is undefined');
+        const [, days] = ctx.message.text.trim().split(' ');
+        const min_days = parseInt(days);
+        if (isNaN(min_days) || min_days < 0) throw new Error('NotValidNumber');
+        const maxAge = readNonNegativeInt(
+          process.env.MAX_COUNTERPARTY_AGE_REQUIREMENT,
+          30,
+        );
+        if (min_days > maxAge) {
+          state.error = {
+            i18n: 'invalid_range',
+            command: '/counterpartyage',
+            max: maxAge,
+          };
+          return await updateMessage(ctx);
+        }
+        const user = state.user;
+        if (!user.counterparty_requirements) {
+          user.counterparty_requirements = {
+            min_days_using_bot: 0,
+            min_completed_orders: 0,
+          };
+        }
+        user.counterparty_requirements.min_days_using_bot = min_days;
+        await user.save();
+        state.feedback = { i18n: 'counterpartyage_updated', days: min_days };
+        await updateMessage(ctx);
+      } catch (err) {
+        logger.error(err);
+        (ctx.scene.state as CommunityWizardState).error = {
+          i18n:
+            err instanceof Error && err.message === 'NotValidNumber'
+              ? 'invalid_number'
+              : 'generic_error',
+        };
+        await updateMessage(ctx);
+      }
+    },
+  );
+
+  scene.command(
+    'counterpartyorders',
+    resetMessage,
+    async (ctx: CommunityContext) => {
+      try {
+        await ctx.deleteMessage();
+        const state = ctx.scene.state as CommunityWizardState;
+        if (ctx.message === undefined || !('text' in ctx.message))
+          throw new Error('ctx.message is undefined');
+        const [, orders] = ctx.message.text.trim().split(' ');
+        const min_orders = parseInt(orders);
+        if (isNaN(min_orders) || min_orders < 0)
+          throw new Error('NotValidNumber');
+        const maxOrders = readNonNegativeInt(
+          process.env.MAX_COUNTERPARTY_ORDERS_REQUIREMENT,
+          10,
+        );
+        if (min_orders > maxOrders) {
+          state.error = {
+            i18n: 'invalid_range',
+            command: '/counterpartyorders',
+            max: maxOrders,
+          };
+          return await updateMessage(ctx);
+        }
+        const user = state.user;
+        if (!user.counterparty_requirements) {
+          user.counterparty_requirements = {
+            min_days_using_bot: 0,
+            min_completed_orders: 0,
+          };
+        }
+        user.counterparty_requirements.min_completed_orders = min_orders;
+        await user.save();
+        state.feedback = {
+          i18n: 'counterpartyorders_updated',
+          orders: min_orders,
+        };
+        await updateMessage(ctx);
+      } catch (err) {
+        logger.error(err);
+        (ctx.scene.state as CommunityWizardState).error = {
+          i18n:
+            err instanceof Error && err.message === 'NotValidNumber'
+              ? 'invalid_number'
+              : 'generic_error',
+        };
+        await updateMessage(ctx);
+      }
+    },
+  );
+
+  scene.command(
+    'resetrequirements',
+    resetMessage,
+    async (ctx: CommunityContext) => {
+      try {
+        await ctx.deleteMessage();
+        const state = ctx.scene.state as CommunityWizardState;
+        const user = state.user;
+        user.counterparty_requirements = {
+          min_days_using_bot: 0,
+          min_completed_orders: 0,
+        };
+        await user.save();
+        state.feedback = { i18n: 'requirements_reset' };
+        await updateMessage(ctx);
+      } catch (err) {
+        logger.error(err);
+        (ctx.scene.state as CommunityWizardState).error = {
+          i18n: 'generic_error',
+        };
+        await updateMessage(ctx);
+      }
+    },
+  );
 
   return scene;
 }

@@ -999,6 +999,20 @@ const userTakerIsBlockedByUserOrder = async (
   }
 };
 
+const notMeetingRequirementsMessage = async (
+  ctx: MainContext,
+  user: UserDocument,
+) => {
+  try {
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('not_meeting_requirements'),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const fiatSentMessages = async (
   ctx: MainContext,
   buyer: UserDocument,
@@ -2248,4 +2262,5 @@ export {
   userTakerIsBlockedByUserOrder,
   userOrderIsBlockedByUserTaker,
   showQRCodeMessage,
+  notMeetingRequirementsMessage,
 };
