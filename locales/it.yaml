@@ -449,14 +449,18 @@ pending_payment_failed_to_admin: |
   Payment attempts: ${attempts}
 selling: Vendita
 buying: Acquisto
-selling_sats: 'Vendita ${amount}sats'
-buying_sats: 'Acquisto ${amount}sats'
+selling_sats: Vendita sats
+selling_sats_with_amount: 'Vendita ${amount} sats'
+buying_sats: Acquisto sats
+buying_sats_with_amount: 'Acquisto ${amount} sats'
 receive_payment: Ricezione del pagamento
 pay: Paga
 is: è
 trading_volume: 'Volume scambio: ${volume} sats'
-showusername_buying_sats: '@${username} sta comprando ${amount}sats'
-showusername_selling_sats: '@${username} sta vendendo ${amount}sats'
+showusername_buying_sats: '@${username} sta comprando sats'
+showusername_buying_sats_with_amount: '@${username} sta comprando ${amount} sats'
+showusername_selling_sats: '@${username} sta vendendo sats'
+showusername_selling_sats_with_amount: '@${username} sta vendendo ${amount} sats'
 satoshis: satoshi
 by: da
 rate: Valutazione
