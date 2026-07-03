@@ -252,8 +252,8 @@ help: |
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
   Innerhalb von /settings kannst du Gegenpartei-Anforderungen konfigurieren:
-    /counterpartyage &lt;Tage&gt; - Legt das Mindestalter (in Tagen) für die Gegenpartei fest
-    /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge für die Gegenpartei fest
+    /counterpartyage <Tage> - Legt das Mindestalter (in Tagen) für die Gegenpartei fest
+    /counterpartyorders <Aufträge> - Legt die Mindestanzahl abgeschlossener Aufträge für die Gegenpartei fest
     /resetrequirements - Setzt die Anforderungen auf Standardwerte zurück
   /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten
   /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können 

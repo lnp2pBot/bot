@@ -252,8 +252,8 @@ help: |
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
   In /settings puoi configurare i requisiti della controparte:
-    /counterpartyage &lt;giorni&gt; - Imposta l'età minima (in giorni) richiesta per la controparte
-    /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati richiesti per la controparte
+    /counterpartyage <giorni> - Imposta l'età minima (in giorni) richiesta per la controparte
+    /counterpartyorders <ordini> - Imposta il numero minimo di ordini completati richiesti per la controparte
     /resetrequirements - Ripristina i requisiti ai valori predefiniti
   /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 

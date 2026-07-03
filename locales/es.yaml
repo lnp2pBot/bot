@@ -252,9 +252,9 @@ help: |
   /setaddress <_lightning address / off_> - Permite al comprador indicar una dirección de pago estática (lightning address), _off_ para desactivarla
   /setlang - Le permite al usuario cambiar el idioma
   /settings - Muestra la configuración actual del usuario
-  Dentro de /settings podés configurar los requisitos de contraparte:
-    /counterpartyage &lt;días&gt; - Establece la antigüedad mínima (en días) requerida para la contraparte
-    /counterpartyorders &lt;órdenes&gt; - Establece el mínimo de órdenes completadas requeridas para la contraparte
+  Dentro de /settings puedes configurar los requisitos de contraparte:
+    /counterpartyage <días> - Establece la antigüedad mínima (en días) requerida para la contraparte
+    /counterpartyorders <órdenes> - Establece el mínimo de órdenes completadas requeridas para la contraparte
     /resetrequirements - Restablece los requisitos al valor por defecto
   /listorders - El usuario puede listar sus órdenes no finalizadas
   /listcurrencies - Lista las monedas que podemos utilizar sin indicar el monto en satoshis
@@ -659,12 +659,12 @@ user_settings: |
   /counterpartyorders &lt;órdenes&gt; - Establece el mínimo de órdenes completadas para la contraparte.
   /resetrequirements - Restablece los requisitos de contraparte al valor por defecto.
   /exit - para salir del asistente.
-not_meeting_requirements: No cumplís los requisitos de la contraparte para tomar esta orden.
+not_meeting_requirements: No cumples los requisitos de la contraparte para tomar esta orden.
 counterpartyage_updated: Requisito de antigüedad de contraparte actualizado a ${days} días.
 counterpartyorders_updated: Requisito de órdenes completadas de contraparte actualizado a ${orders}.
 requirements_reset: Los requisitos de contraparte han sido restablecidos al valor por defecto.
 invalid_number: Número inválido.
-invalid_range: Valor inválido para ${command}, por favor elegí un número en el rango [0 - ${max}].
+invalid_range: Valor inválido para ${command}, por favor elige un número en el rango [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Factura ya cobrada

@@ -254,8 +254,8 @@ help: |
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
   Dans /settings tu peux configurer les exigences de contrepartie:
-    /counterpartyage &lt;jours&gt; - Définit l'âge minimum (en jours) requis pour la contrepartie
-    /counterpartyorders &lt;ordres&gt; - Définit le nombre minimum d'ordres complétés requis pour la contrepartie
+    /counterpartyage <jours> - Définit l'âge minimum (en jours) requis pour la contrepartie
+    /counterpartyorders <ordres> - Définit le nombre minimum d'ordres complétés requis pour la contrepartie
     /resetrequirements - Réinitialise les exigences aux valeurs par défaut
   /listorders - Utilise cette commande pour afficher toutes tes offres en attente
   /listcurrencies - Lister les devises que nous pouvons utiliser sans spécifier le montant en satoshi. 

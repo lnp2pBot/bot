@@ -253,8 +253,8 @@ help: |
   /setlang - Permite que o usuário altere o idioma
   /settings - Exibe as configurações atuais do usuário
   Dentro de /settings você pode configurar os requisitos de contraparte:
-    /counterpartyage &lt;dias&gt; - Define a antiguidade mínima (em dias) exigida para a contraparte
-    /counterpartyorders &lt;ordens&gt; - Define o número mínimo de ordens concluídas exigido para a contraparte
+    /counterpartyage <dias> - Define a antiguidade mínima (em dias) exigida para a contraparte
+    /counterpartyorders <ordens> - Define o número mínimo de ordens concluídas exigido para a contraparte
     /resetrequirements - Redefine os requisitos para os valores padrão
   /listorders - O usuário pode listar seus pedidos inacabados
   /listcurrencies - Lista as moedas que podemos usar sem indicar o valor em satoshis

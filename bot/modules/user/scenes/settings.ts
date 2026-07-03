@@ -10,6 +10,7 @@ import { Message } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../../../../logger';
 
 const readNonNegativeInt = (value: string | undefined, fallback: number) => {
+  if (value === undefined || value.trim() === '') return fallback;
   const parsed = Number(value);
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
 };
