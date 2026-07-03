@@ -1002,11 +1002,12 @@ const userTakerIsBlockedByUserOrder = async (
 const notMeetingRequirementsMessage = async (
   ctx: MainContext,
   user: UserDocument,
+  requirements?: { min_days_using_bot: number; min_completed_orders: number },
 ) => {
   try {
     await ctx.telegram.sendMessage(
       user.tg_id,
-      ctx.i18n.t('not_meeting_requirements'),
+      ctx.i18n.t('not_meeting_requirements', requirements),
     );
   } catch (error) {
     logger.error(error);

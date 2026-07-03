@@ -119,7 +119,7 @@ continue: Continua
 cancel: Cancella
 pay_invoice: |
   Nota: Conferma che l'immagine allegata corrisponda a quella inviata durante la creazione dell'ordine prima di pagare la fattura
-  
+
   Si prega di pagare questa invoice di ${amount} sats per ${currency} ${fiatAmount} per iniziare lo scambio.
 payment_received: |
   🤑 Pagamento ricevuto!
@@ -166,7 +166,7 @@ waiting_seller_to_pay: "Ho inviato una richiesta di pagamento al venditore in mo
 sell_success: La vendita di sats è stata completata dopo la conferma del pagamento da parte di @${buyerUsername} ⚡️🍊⚡️
 funds_released: 🕐 @${sellerUsername} ha rilasciato i satoshi, la vostra invoice verrà pagata da un momento all'altro. Ricordata che il tuo wallet deve essere online per ricevere attraverso la rete Lightning.
 rate_counterpart: 'Dai un voto alla tua controparte:'
-choose_order_for_dispute: 'Scegli l''ordine per avviare il reclamo:'
+choose_order_for_dispute: "Scegli l'ordine per avviare il reclamo:"
 cant_process_order: Quest'ordine non può essere elaborato, si prega di controllare che l'ID sia corretto.
 cant_release_order: L'ordine non può essere evaso, l'acquirente non ha inviato la richiesta di pagamento LN
 no_id_related: Non c'è nessun ordine associato a questo Id.
@@ -325,7 +325,7 @@ order_completed_by_admin: "Un amministratore ha completato l'ordine ID: ${orderI
 have_to_wait_for_counterpart: 🕒 Hai già effettuato questa operazione, devi attendere l'azione della controparte.
 ok_cooperativecancel: "👍 La controparte ha accettato e l'ordine ID: ${orderId} has been cancelled"
 refund_cooperativecancel: 💰 Hai ricevuto il rimborso del pagamento LN, non ci sono altre azioni da eseguire.
-init_cooperativecancel: | 
+init_cooperativecancel: |
   "🕒 Hai avviato la cancellazione dell'ordine Id: ${orderId}, anche la tua controparte deve indicarmi che desidera annullarlo. Se lui/lei non risponde, puoi aprire una disputa.
 
   Nessun amministratore ti contatterà per cancellare il tuo ordine, a meno che tu non apra prima una disputa."
@@ -594,7 +594,6 @@ npub_not_valid: |
   Esempio:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/community
 community_admin: |
   <strong>Community Admin Mode</strong>
@@ -623,7 +622,7 @@ community_language_updated: Hai aggiornato con successo la lingua della communit
 wizard_community_enter_language: 'Inserisci il codice lingua per la tua community (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Codice lingua non valido. Inserisci uno dei seguenti - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
-language: "Lingua"
+language: 'Lingua'
 # END modules/community
 
 # START modules/orders
@@ -653,7 +652,7 @@ user_settings: |
   /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati per la controparte.
   /resetrequirements - Ripristina i requisiti della controparte ai valori predefiniti.
   /exit - per uscire dall'assistente.
-not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine.
+not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine (richiede almeno ${min_days_using_bot} giorni di utilizzo del bot e ${min_completed_orders} ordini completati).
 counterpartyage_updated: Requisito di età della controparte aggiornato a ${days} giorni.
 counterpartyorders_updated: Requisito di ordini completati della controparte aggiornato a ${orders}.
 requirements_reset: I requisiti della controparte sono stati ripristinati ai valori predefiniti.
@@ -699,7 +698,7 @@ setinvoice_no_response: Non ci sono ordini da pagare.
 already_cancelled: L'offerta è già stata annullata!
 privacy: |
   *Informativa sulla Privacy*
-  
+
   La tua privacy è importante per noi e siamo impegnati a proteggere le tue informazioni personali. Questa Informativa sulla Privacy spiega quali informazioni raccogliamo, come, e per quale scopo.
 
   *1. Informazioni che raccogliamo:*  
@@ -716,31 +715,31 @@ blocklist_empty: Non hai alcun utente bloccato
 orders_in_process: Ci sono ordini in corso con questo utente
 user_order_is_blocked_by_user_taker: Non puoi accettare questo ordine perché hai bloccato il suo creatore
 user_taker_is_blocked_by_user_order: Non puoi accettare questo ordine perché il suo creatore ti ha bloccato
-block_usage: "Utilizzo: /block @Username o /block telegramId"
-unblock_usage: "Utilizzo: /unblock @Username o /unblock telegramId"
+block_usage: 'Utilizzo: /block @Username o /block telegramId'
+unblock_usage: 'Utilizzo: /unblock @Username o /unblock telegramId'
 block_failed: "Errore nel bloccare l'utente"
 unblock_failed: "Errore nello sbloccare l'utente"
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
 order_channel_validation_failed: "Impossibile pubblicare il tuo ordine. Prova a disattivare la community predefinita con /setcomm off, o chiedi all'amministratore della tua community di riconfigurare i canali e i gruppi della community."
-community_payment_methods: "Metodi di pagamento"
-enter_community_payment_methods: "Inserisci i metodi di pagamento accettati nella tua community, separati da virgole (es.: Bonifico bancario, Contanti, PayPal)"
-current_payment_methods: "Metodi di pagamento attuali: ${methods}"
-select_payment_methods: "Seleziona uno o più metodi di pagamento:"
-confirm_payment_methods: "✅ Conferma"
-no_payment_method_selected: "Seleziona almeno un metodo di pagamento"
-payment_methods_saved: "Metodi di pagamento salvati ✅"
-custom_payment_method: "✍️ Metodo di pagamento personalizzato"
-payment_methods_reset: "Metodi di pagamento rimossi. Gli utenti possono ora inserire qualsiasi metodo di pagamento liberamente."
+community_payment_methods: 'Metodi di pagamento'
+enter_community_payment_methods: 'Inserisci i metodi di pagamento accettati nella tua community, separati da virgole (es.: Bonifico bancario, Contanti, PayPal)'
+current_payment_methods: 'Metodi di pagamento attuali: ${methods}'
+select_payment_methods: 'Seleziona uno o più metodi di pagamento:'
+confirm_payment_methods: '✅ Conferma'
+no_payment_method_selected: 'Seleziona almeno un metodo di pagamento'
+payment_methods_saved: 'Metodi di pagamento salvati ✅'
+custom_payment_method: '✍️ Metodo di pagamento personalizzato'
+payment_methods_reset: 'Metodi di pagamento rimossi. Gli utenti possono ora inserire qualsiasi metodo di pagamento liberamente.'
 payment_methods_wizard_commands: "/reset — rimuovere tutti i metodi di pagamento e ripristinare il comportamento predefinito\n/exit — uscire senza salvare"
 community_disabled_by_admin: Un amministratore ha disabilitato la tua comunità ${communityName}
 community_enabled_by_admin: Un amministratore ha riabilitato la tua comunità ${communityName}
-community_creation_requirements_not_met_header: "Non soddisfi i requisiti per creare una comunità:"
-community_creation_requirements_not_met_orders: "* Ordini: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Volume: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* Giorni di utilizzo del bot: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Reputazione: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'Non soddisfi i requisiti per creare una comunità:'
+community_creation_requirements_not_met_orders: '* Ordini: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Volume: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* Giorni di utilizzo del bot: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* Reputazione: ${userRep} / ${requiredRep}'
 community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità

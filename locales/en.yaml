@@ -3,7 +3,7 @@ start: |
 
   ${disclaimer}
   ---———— TERMS AND CONDITIONS ————---
-  
+
   This bot will help you complete P2P Bitcoin transactions through the Lightning Network (LN).
 
   Once you start up the bot, you can use the following commands:
@@ -31,7 +31,7 @@ start: |
   You can find more information on how to use this bot here 👇
 
   https://lnp2pbot.com/learn
-  
+
   Make a quick and safe transaction!
 init_bot_error: to use this bot, you need to first initialize the boot with the command /start
 non_handle_error: 👤 To use this bot, you need to activate your Telegram Username. To activate it open the hamburger menu on the top left and select settings -> edit profile -> username
@@ -117,7 +117,7 @@ begin_take_buy: |
   🤖 Press Continue to take the offer, if you press Cancel, you will be released from the order and it will be republished.
 
   Note: Remember this image because you will see it again inside the invoice to pay
-  
+
   You have ${expirationTime} minutes before this order expires. 👇
 continue: Continue
 cancel: Cancel
@@ -162,7 +162,7 @@ buyer_took_your_order: |
   🤖 Order ID: #${orderId}
 
   @${buyerUsername} has taken your order and wants to buy your sats. Get in touch and tell him how to send you ${currency} ${fiatAmount} through ${paymentMethod}.
-  
+
   I will notify you when the buyer indicates that they have sent the fiat. After that, you should check if it has arrived.
 
   If the buyer does not respond, you can initiate a cancellation or a dispute. Remember, an administrator will NEVER contact you to resolve your order unless you open a dispute first.
@@ -179,7 +179,7 @@ order_detail: |
   ID: `${order._id}`
 
   Status previous to dispute: ${previousDisputeStatus}
-  
+
   Status: ${status}
 
   Settled by admin: ${settledByAdmin}
@@ -296,7 +296,7 @@ you_have_been_banned: You have been banned!
 I_told_seller_you_sent_fiat: 🤖 I told @${sellerUsername} that you have sent the fiat money. When the seller confirms that they have received your money, they should release the funds. If they refuse, you can open a dispute.
 buyer_told_me_that_sent_fiat: |
   🤖 @${buyerUsername} has informed that he already sent you the fiat money. Once you confirm the reception, please release funds. You will not be able to create another order until you release funds.
-  
+
   After releasing, the money will go to the buyer and there will be no turning back, so only proceed with this process if you are 💯 sure.
 
   Press the following command if you want to release the sats to the buyer 👇
@@ -335,15 +335,15 @@ ok_cooperativecancel: '👍 Counterparty agreed and the order ID: ${orderId} has
 refund_cooperativecancel: 💰 You have received a refund of your lightning payment, there is no further action to make
 init_cooperativecancel: |
   🕒 You have started the cancellation of the order ID: ${orderId}, your counterparty must agree on the cancellation too. If they do not respond, you can open a dispute.
-  
-  No administrator will contact you to cancel your order unless you open a dispute first.  
-  
+
+  No administrator will contact you to cancel your order unless you open a dispute first.
+
 counterparty_wants_cooperativecancel: |
   😳 Your counterparty wants to cancel order ID: ${orderId}.
-  
+
   No administrator will contact you to cancel your order unless you open a dispute first.
-  
-  If you agree on such cancellation, please execute the following command 👇  
+
+  If you agree on such cancellation, please execute the following command 👇
 invoice_payment_failed: ⛔ I tried to send you the sats but the payment of your invoice failed, I will try ${attempts} more times in ${pendingPaymentWindow} minutes window, please check your node/wallet is online
 cant_take_more_orders: ⛔ Sorry! You can't take another order while you have others waiting for you
 seller_released: 💸 Seller has already released the satoshis, you must wait for your invoice to be paid.
@@ -592,7 +592,7 @@ maintenance: 🚨 Bot in maintenance, please try again later 🚨
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -635,7 +635,6 @@ npub_not_valid: |
   Example:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/orders
 order_not_found: Order not found.
 # END modules/orders
@@ -663,7 +662,7 @@ user_settings: |
   /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders for the counterparty.
   /resetrequirements - Resets counterparty requirements to default.
   /exit - to exit the wizard.
-not_meeting_requirements: You do not meet the counterparty requirements to take this order.
+not_meeting_requirements: You do not meet the counterparty requirements to take this order (requires at least ${min_days_using_bot} days using the bot and ${min_completed_orders} completed orders).
 counterpartyage_updated: Counterparty age requirement updated to ${days} days.
 counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
 requirements_reset: Counterparty requirements have been reset to default.
@@ -681,7 +680,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -708,7 +707,7 @@ dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can w
 setinvoice_no_response: You have no orders to be paid
 privacy: |
   *Privacy Policy*
-  
+
   Your privacy is important to us, and we are committed to protecting your personal information. This Privacy Policy explains what information we collect, how, and for what purpose.
 
   *1. Information We Collect:*  
@@ -725,31 +724,31 @@ blocklist_empty: You do not have any blocked user
 orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
-block_usage: "Usage: /block @Username or /block telegramId"
-unblock_usage: "Usage: /unblock @Username or /unblock telegramId"
-block_failed: "Error blocking the user"
-unblock_failed: "Error unblocking the user"
+block_usage: 'Usage: /block @Username or /block telegramId'
+unblock_usage: 'Usage: /unblock @Username or /unblock telegramId'
+block_failed: 'Error blocking the user'
+unblock_failed: 'Error unblocking the user'
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
-order_channel_validation_failed: "Unable to publish your order. Try disabling the default community /setcomm off, or ask your community administrator to reconfigure the community channels and groups."
-community_payment_methods: "Payment methods"
-enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
-current_payment_methods: "Current payment methods: ${methods}"
-select_payment_methods: "Select one or more payment methods:"
-confirm_payment_methods: "✅ Confirm"
-no_payment_method_selected: "Please select at least one payment method"
-payment_methods_saved: "Payment methods saved ✅"
-custom_payment_method: "✍️ Custom payment method"
-payment_methods_reset: "Payment methods removed. Users can now enter any payment method freely."
+order_channel_validation_failed: 'Unable to publish your order. Try disabling the default community /setcomm off, or ask your community administrator to reconfigure the community channels and groups.'
+community_payment_methods: 'Payment methods'
+enter_community_payment_methods: 'Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)'
+current_payment_methods: 'Current payment methods: ${methods}'
+select_payment_methods: 'Select one or more payment methods:'
+confirm_payment_methods: '✅ Confirm'
+no_payment_method_selected: 'Please select at least one payment method'
+payment_methods_saved: 'Payment methods saved ✅'
+custom_payment_method: '✍️ Custom payment method'
+payment_methods_reset: 'Payment methods removed. Users can now enter any payment method freely.'
 payment_methods_wizard_commands: "/reset — remove all payment methods and restore default behavior\n/exit — exit without saving"
 community_disabled_by_admin: An administrator has disabled your community ${communityName}
 community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
-community_creation_requirements_not_met_header: "You do not meet the requirements to create a community:"
-community_creation_requirements_not_met_orders: "* Orders: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Volume: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* Days using the bot: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'You do not meet the requirements to create a community:'
+community_creation_requirements_not_met_orders: '* Orders: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Volume: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* Days using the bot: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* Reputation: ${userRep} / ${requiredRep}'
 community_already_disabled: This community is already disabled
 community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead

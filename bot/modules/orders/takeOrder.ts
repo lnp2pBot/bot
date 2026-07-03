@@ -79,9 +79,9 @@ export const takebuy = async (
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
 
-      if (!(await meetsCounterpartyRequirements(ctx, user, userOffer))) return;
-
       if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
+
+      if (!(await meetsCounterpartyRequirements(ctx, user, userOffer))) return;
 
       const { randomImage } = generateRandomImage(user._id.toString());
 
@@ -138,9 +138,9 @@ export const takesell = async (
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
 
-      if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
-
       if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
+
+      if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
       order.status = 'WAITING_BUYER_INVOICE';
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
@@ -158,7 +158,7 @@ export const takesell = async (
   }
 };
 
-const meetsCounterpartyRequirements = async (
+export const meetsCounterpartyRequirements = async (
   ctx: MainContext,
   user: UserDocument,
   orderCreator: UserDocument,
@@ -170,15 +170,24 @@ const meetsCounterpartyRequirements = async (
 
   if (min_days_using_bot > 0) {
     const ageInDays = getUserAge(user);
-    if (ageInDays < min_days_using_bot) {
-      await messages.notMeetingRequirementsMessage(ctx, user);
+    // Legacy accounts without a created_at yield NaN here. Such accounts
+    // predate created_at tracking and are genuinely old, so we let them pass
+    // the age check explicitly instead of relying on NaN comparisons.
+    if (!Number.isNaN(ageInDays) && ageInDays < min_days_using_bot) {
+      await messages.notMeetingRequirementsMessage(ctx, user, {
+        min_days_using_bot,
+        min_completed_orders,
+      });
       return false;
     }
   }
 
   if (min_completed_orders > 0) {
     if (user.trades_completed < min_completed_orders) {
-      await messages.notMeetingRequirementsMessage(ctx, user);
+      await messages.notMeetingRequirementsMessage(ctx, user, {
+        min_days_using_bot,
+        min_completed_orders,
+      });
       return false;
     }
   }

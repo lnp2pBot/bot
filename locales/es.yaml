@@ -109,7 +109,7 @@ invoice_require_hash: La factura necesita un hash
 order_id_invalid: Id de orden incorrecto
 order_invalid_type: Esta orden es una ${type}
 order_already_taken: Esta orden ya ha sido tomada por otro usuario
-order_already_settled: Esta orden ya ha sido liquidada. 
+order_already_settled: Esta orden ya ha sido liquidada.
 invalid_data: Has enviado datos incorrectos, inténtalo nuevamente.
 begin_take_buy: |
   🤖 Presiona Continuar para tomar la oferta, si presionas Cancelar te desvincularé de la orden y será publicada nuevamente, tienes ${expirationTime} minutos o la orden expirará 👇
@@ -174,9 +174,9 @@ sell_sats: Vender satoshis
 buy_sats: Comprar satoshis
 order_detail: |
   Id: `${order._id}`
-  
+
   Status previo a disputa: ${previousDisputeStatus}
-  
+
   Status: ${status}
 
   Completada por admin: ${settledByAdmin}
@@ -587,7 +587,7 @@ maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Pública:
     ${community.public ? 'Si' : 'No'}
   Fee:
@@ -611,7 +611,7 @@ community_npub_updated: ¡Has configurado la pubkey ${npub} de la comunidad exit
 community_language_updated: ¡Has configurado el idioma ${language} de la comunidad exitosamente!
 wizard_community_enter_language: 'Ingresa el idioma de la comunidad, ej: es, en, pt, fr, de, it, etc.'
 wizard_community_invalid_language: 'El idioma debe ser uno de los siguientes: es, en, pt, fr, de, it, etc.'
-language: "Idioma"
+language: 'Idioma'
 # END modules/community
 
 # START modules/nostr
@@ -631,7 +631,6 @@ npub_not_valid: |
   Ejemplo:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/orders
 order_not_found: No se encontró la orden.
 # END modules/orders
@@ -659,7 +658,7 @@ user_settings: |
   /counterpartyorders &lt;órdenes&gt; - Establece el mínimo de órdenes completadas para la contraparte.
   /resetrequirements - Restablece los requisitos de contraparte al valor por defecto.
   /exit - para salir del asistente.
-not_meeting_requirements: No cumples los requisitos de la contraparte para tomar esta orden.
+not_meeting_requirements: No cumples los requisitos de la contraparte para tomar esta orden (requiere al menos ${min_days_using_bot} días usando el bot y ${min_completed_orders} órdenes completadas).
 counterpartyage_updated: Requisito de antigüedad de contraparte actualizado a ${days} días.
 counterpartyorders_updated: Requisito de órdenes completadas de contraparte actualizado a ${orders}.
 requirements_reset: Los requisitos de contraparte han sido restablecidos al valor por defecto.
@@ -677,7 +676,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -705,7 +704,7 @@ setinvoice_no_response: No tienes ordenes a ser pagadas
 already_cancelled: ¡La orden ya ha sido cancelada!
 privacy: |
   *Política de Privacidad*
-  
+
   Tu privacidad es importante para nosotros, y estamos comprometidos a proteger tu información personal. Esta Política de Privacidad explica qué información recopilamos, cómo, y con qué propósito.
 
   *1. Información que Recopilamos:*  
@@ -722,31 +721,31 @@ blocklist_empty: No tienes ningun usuario bloqueado
 orders_in_process: Hay ordenes en proceso con este usuario
 user_order_is_blocked_by_user_taker: No puedes aceptar esta oferta porque has bloqueado a su creador
 user_taker_is_blocked_by_user_order: No puedes aceptar esta oferta porque su creador te ha bloqueado
-block_usage: "Uso: /block @Username o /block telegramId"
-unblock_usage: "Uso: /unblock @Username o /unblock telegramId"
-block_failed: "Error al bloquear al usuario"
-unblock_failed: "Error al desbloquear al usuario"
+block_usage: 'Uso: /block @Username o /block telegramId'
+unblock_usage: 'Uso: /unblock @Username o /unblock telegramId'
+block_failed: 'Error al bloquear al usuario'
+unblock_failed: 'Error al desbloquear al usuario'
 image_processing_error: Hemos tenido un error procesando la imagen, por favor espera unos minutos y vuelve a intentarlo.
 check_solvers: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno dentro de ${remainingDays} días para evitar que se deshabilite la comunidad.
 check_solvers_last_warning: Tu comunidad ${communityName} no tiene ningún solucionador. Agregue al menos uno hoy para evitar que la comunidad quede inhabilitada.
-order_channel_validation_failed: "No se pudo publicar la orden, prueba desactivando la comunidad por defecto /setcomm off, o pídele al administrador de tu comunidad que reconfigure los canales y grupos de comunidad."
-community_payment_methods: "Métodos de pago"
-enter_community_payment_methods: "Ingresa los métodos de pago aceptados en tu comunidad, separados por comas (ej.: Transferencia bancaria, Efectivo, PayPal)"
-current_payment_methods: "Métodos de pago actuales: ${methods}"
-select_payment_methods: "Selecciona uno o más métodos de pago:"
-confirm_payment_methods: "✅ Confirmar"
-no_payment_method_selected: "Por favor selecciona al menos un método de pago"
-payment_methods_saved: "Métodos de pago guardados ✅"
-custom_payment_method: "✍️ Método de pago personalizado"
-payment_methods_reset: "Métodos de pago eliminados. Los usuarios ahora pueden ingresar cualquier método de pago libremente."
+order_channel_validation_failed: 'No se pudo publicar la orden, prueba desactivando la comunidad por defecto /setcomm off, o pídele al administrador de tu comunidad que reconfigure los canales y grupos de comunidad.'
+community_payment_methods: 'Métodos de pago'
+enter_community_payment_methods: 'Ingresa los métodos de pago aceptados en tu comunidad, separados por comas (ej.: Transferencia bancaria, Efectivo, PayPal)'
+current_payment_methods: 'Métodos de pago actuales: ${methods}'
+select_payment_methods: 'Selecciona uno o más métodos de pago:'
+confirm_payment_methods: '✅ Confirmar'
+no_payment_method_selected: 'Por favor selecciona al menos un método de pago'
+payment_methods_saved: 'Métodos de pago guardados ✅'
+custom_payment_method: '✍️ Método de pago personalizado'
+payment_methods_reset: 'Métodos de pago eliminados. Los usuarios ahora pueden ingresar cualquier método de pago libremente.'
 payment_methods_wizard_commands: "/reset — eliminar todos los métodos de pago y restaurar el comportamiento predeterminado\n/exit — salir sin guardar"
 community_disabled_by_admin: Un administrador ha deshabilitado tu comunidad ${communityName}
 community_enabled_by_admin: Un administrador ha reactivado tu comunidad ${communityName}
-community_creation_requirements_not_met_header: "No cumples con los requisitos para crear una comunidad:"
-community_creation_requirements_not_met_orders: "* Órdenes: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Volumen: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* Días usando el bot: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Reputación: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'No cumples con los requisitos para crear una comunidad:'
+community_creation_requirements_not_met_orders: '* Órdenes: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Volumen: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* Días usando el bot: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* Reputación: ${userRep} / ${requiredRep}'
 community_already_disabled: Esta comunidad ya está deshabilitada
 community_already_enabled: Esta comunidad ya está habilitada
 ambiguous_community_input: Varias comunidades coinciden con ese nombre de usuario, por favor usa el ID de la comunidad

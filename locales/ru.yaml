@@ -55,7 +55,7 @@ pending_sell: |
   *Разработчики и арбитры споров не несут ответственности за потери или ущерб, которые пользователь может понести, если он не следует инструкциям*
 
   Примечание: Запомните это изображение, так как вы увидите его снова в счете на оплату
-  
+
   Вы можете отменить эту заявку до того, как ее примет ктото другой, командой 👇
 cancel_order_cmd: /cancel ${orderId}
 pending_buy: |
@@ -173,7 +173,7 @@ sell_sats: Продать сатоши
 buy_sats: Купить сатоши
 order_detail: |
   Id: `${order._id}`
-  
+
   Status previous to dispute: ${previousDisputeStatus}
 
   Статус: ${status}
@@ -281,7 +281,7 @@ help: |
   /deldispute <_username_> <_id order_> - Удаляет спор от пользователя в сообществе, по умолчанию должно быть сообщество
   /ban <_username_> - Забанить пользователя в сообществе, должно быть сообщество по умолчанию
   /unban <_username_> - Unban a user from a community, there should be a default community
-  
+
   /version - Показывает текущую версию бота
   /help - Показать ключевые команды
 must_be_gt_or_eq: ${fieldName} должно быть больше или равно ${qty}
@@ -325,9 +325,9 @@ have_to_wait_for_counterpart: Вы уже выполнили эту операц
 ok_cooperativecancel: 'Ваш контрагент согласился, и идентификатор заявки: ${orderId} был отменен.'
 refund_cooperativecancel: Вы получили возврат платежа Lightning, больше ничего делать не нужно.
 init_cooperativecancel: |
- 🕒 Ты начал отмену заказа Id: ${orderId}, твоя противоположная сторона также должна подтвердить, что хочет отменить его. Если он/она не ответит, можешь открыть спор.
+  🕒 Ты начал отмену заказа Id: ${orderId}, твоя противоположная сторона также должна подтвердить, что хочет отменить его. Если он/она не ответит, можешь открыть спор.
 
-  Ни один администратор не свяжется с тобой для отмены заказа, если ты сначала не откроешь спор.
+   Ни один администратор не свяжется с тобой для отмены заказа, если ты сначала не откроешь спор.
 counterparty_wants_cooperativecancel: |
   😳 Твоя противоположная сторона хочет отменить заказ Id: ${orderId}
 
@@ -597,12 +597,11 @@ npub_not_valid: |
   Пример:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/community
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -626,7 +625,7 @@ community_language_updated: Вы успешно обновили язык соо
 wizard_community_enter_language: 'Введите код языка для вашего сообщества (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Недопустимый код языка. Пожалуйста, введите один из следующих - en, es, fr, de, it, pt, ru, uk, ko, fa'
 community_npub_updated: You added the community's pubkey ${npub} successfully!
-language: "Язык"
+language: 'Язык'
 # END modules/community
 
 # START modules/orders
@@ -656,7 +655,7 @@ user_settings: |
   /counterpartyorders &lt;ордеров&gt; - Устанавливает минимальное количество выполненных ордеров для контрагента.
   /resetrequirements - Сбрасывает требования к контрагенту до значений по умолчанию.
   /exit - выйти из мастера.
-not_meeting_requirements: Вы не соответствуете требованиям контрагента для принятия этого ордера.
+not_meeting_requirements: Вы не соответствуете требованиям контрагента для принятия этого ордера (требуется не менее ${min_days_using_bot} дней использования бота и ${min_completed_orders} завершённых ордеров).
 counterpartyage_updated: Требование к возрасту контрагента обновлено до ${days} дней.
 counterpartyorders_updated: Требование к выполненным ордерам контрагента обновлено до ${orders}.
 requirements_reset: Требования к контрагенту сброшены до значений по умолчанию.
@@ -674,7 +673,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -702,7 +701,7 @@ setinvoice_no_response: У вас нет заказов для оплаты
 already_cancelled: Предложение уже отменено!
 privacy: |
   *Политика конфиденциальности*
-  
+
   Ваша конфиденциальность важна для нас, и мы стремимся защищать вашу личную информацию. Эта Политика конфиденциальности объясняет, какую информацию мы собираем, как и с какой целью.
 
   *1. Информация, которую мы собираем:*  
@@ -719,31 +718,31 @@ blocklist_empty: You do not have any blocked user
 orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
-block_usage: "Использование: /block @Username или /block telegramId"
-unblock_usage: "Использование: /unblock @Username или /unblock telegramId"
-block_failed: "Ошибка при блокировке пользователя"
-unblock_failed: "Ошибка при разблокировке пользователя"
+block_usage: 'Использование: /block @Username или /block telegramId'
+unblock_usage: 'Использование: /unblock @Username или /unblock telegramId'
+block_failed: 'Ошибка при блокировке пользователя'
+unblock_failed: 'Ошибка при разблокировке пользователя'
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
-order_channel_validation_failed: "Не удалось опубликовать ваш ордер. Попробуйте отключить сообщество по умолчанию с помощью /setcomm off или попросите администратора сообщества перенастроить каналы и группы сообщества."
-community_payment_methods: "Способы оплаты"
-enter_community_payment_methods: "Введите способы оплаты, принятые в вашем сообществе, разделённые запятыми (напр.: Банковский перевод, Наличные, PayPal)"
-current_payment_methods: "Текущие способы оплаты: ${methods}"
-select_payment_methods: "Выберите один или несколько способов оплаты:"
-confirm_payment_methods: "✅ Подтвердить"
-no_payment_method_selected: "Пожалуйста, выберите хотя бы один способ оплаты"
-payment_methods_saved: "Способы оплаты сохранены ✅"
-custom_payment_method: "✍️ Пользовательский способ оплаты"
-payment_methods_reset: "Способы оплаты удалены. Пользователи теперь могут свободно вводить любой способ оплаты."
+order_channel_validation_failed: 'Не удалось опубликовать ваш ордер. Попробуйте отключить сообщество по умолчанию с помощью /setcomm off или попросите администратора сообщества перенастроить каналы и группы сообщества.'
+community_payment_methods: 'Способы оплаты'
+enter_community_payment_methods: 'Введите способы оплаты, принятые в вашем сообществе, разделённые запятыми (напр.: Банковский перевод, Наличные, PayPal)'
+current_payment_methods: 'Текущие способы оплаты: ${methods}'
+select_payment_methods: 'Выберите один или несколько способов оплаты:'
+confirm_payment_methods: '✅ Подтвердить'
+no_payment_method_selected: 'Пожалуйста, выберите хотя бы один способ оплаты'
+payment_methods_saved: 'Способы оплаты сохранены ✅'
+custom_payment_method: '✍️ Пользовательский способ оплаты'
+payment_methods_reset: 'Способы оплаты удалены. Пользователи теперь могут свободно вводить любой способ оплаты.'
 payment_methods_wizard_commands: "/reset — удалить все способы оплаты и восстановить поведение по умолчанию\n/exit — выйти без сохранения"
 community_disabled_by_admin: Администратор отключил ваше сообщество ${communityName}
 community_enabled_by_admin: Администратор повторно включил ваше сообщество ${communityName}
-community_creation_requirements_not_met_header: "Вы не соответствуете требованиям для создания сообщества:"
-community_creation_requirements_not_met_orders: "* Заказы: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Объем: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* Дней использования бота: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Репутация: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'Вы не соответствуете требованиям для создания сообщества:'
+community_creation_requirements_not_met_orders: '* Заказы: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Объем: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* Дней использования бота: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* Репутация: ${userRep} / ${requiredRep}'
 community_already_disabled: Это сообщество уже отключено
 community_already_enabled: Это сообщество уже включено
 ambiguous_community_input: Несколько сообществ соответствуют этому имени пользователя, пожалуйста, используйте ID сообщества

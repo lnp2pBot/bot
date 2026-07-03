@@ -392,7 +392,7 @@ not_rate_for_currency: |
   هیچ نرخ تبدیلی برای این ارز روی ${fiatRateProvider} وجود ندارد؛ اگر می‌خواهید از این ارز استفاده کنید، باید مشخص کنید چه تعداد ساتوشی می‌خواهید.
   اگر تمایل دارید این ارز در لیست باشد، به لینک زیر بروید و درخواست ثبت کنید. 👇
 
-  🌐 https://yadio.io/api.html 
+  🌐 https://yadio.io/api.html
 invoice_with_incorrect_amount: مقدار ذکر شده در صورتحساب، اشتباه است.
 invoice_updated: '📝 صورتحساب به درستی به‌روزرسانی شده است!'
 invoice_updated_and_will_be_paid: 'صورتحساب به درستی به‌روزرسانی شده است و تا لحظاتی دیگر پرداخت خواهد شد!'
@@ -437,7 +437,7 @@ name: نام
 group: گروه
 channel: کانال
 solver: داور
-published: منتشر شده 
+published: منتشر شده
 created: ایجاد شده
 yes: بله
 no: خیر
@@ -669,7 +669,7 @@ maintenance: 🚨 ربات در دست تعمیر است، لطفاً بعداً
 community_admin: |
   <strong>حالت مدیر اجتماع</strong>
   > ${community.name} (${community.group})
-  
+
   عمومی:
   ${community.public ? 'بله' : 'خیر'}
 
@@ -678,7 +678,7 @@ community_admin: |
 
   درآمد:
   ${community.earnings}
-  
+
   زبان:
     ${community.language || 'fa'}
 
@@ -693,12 +693,12 @@ community_admin: |
 
 community_admin_help: |
   <strong>حالت مدیر اجتماع</strong>
-  
+
   # commands
-  
+
   /setnpub &lt;npub&gt;
   ثبت کلید عمومی نوستر اجتماع
-  
+
   /setlanguage &lt;lang&gt;
   تعیین زبان اجتماع برای پیام‌های منتشر شده
 community_npub_updated: 'شما با موفقیت ${npub} را به عنوان کلید عمومی اجتماع اضافه کردید!'
@@ -757,7 +757,7 @@ user_settings: |
 
   خروج از راهنما:
   /exit
-not_meeting_requirements: شما واجد الزامات طرف مقابل برای پذیرش این سفارش نیستید.
+not_meeting_requirements: شما واجد الزامات طرف مقابل برای پذیرش این سفارش نیستید (حداقل ${min_days_using_bot} روز استفاده از ربات و ${min_completed_orders} سفارش تکمیل‌شده لازم است).
 counterpartyage_updated: الزامات سابقه طرف مقابل به ${days} روز به‌روزرسانی شد.
 counterpartyorders_updated: الزامات سفارش‌های تکمیل شده طرف مقابل به ${orders} عدد به‌روزرسانی شد.
 requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
@@ -793,9 +793,9 @@ disclaimer: |
   این ربات یک نرم‌افزار منبع باز است که برای استفاده، تکثیر، اصلاح و اجرا در دسترس همگان قرار دارد. توسعه‌دهندگان هیچ گونه مسئولیتی در قبال کارهایی که دیگران با استفاده از ربات انجام می‌دهند، شامل کارهای قانونی یا غیرقانونی، صادقانه یا متقلبانه، ندارند.
 
   این ربات «همان طور که هست» و «در صورت در دسترس بودن» در اختیار کاربران گذاشته می‌شود و توسعه‌دهندگان هیچ گونه ضمانت صریح یا ضمنی در رابطه با ربات و استفاده آن نمی‌کنند.
-  
+
   توسعه‌دهندگان و داوران مشاجره‌ها نهایت تلاش خود را برای جلوگیری از عوامل بد، شیادی و کلاهبرداری در استفاده از ربات خواهند کرد، اما کاربر می‌داند که سیستم می‌تواند مورد سوء استفاده قرار گیرد و هنگام استفاده از آن مسئولیت کامل را می‌پذیرد.
-  
+
   توسعه‌دهندگان و حل‌کنندگان مشاجره‌ها مسئول هیچ زیان یا آسیبی که کاربر ممکن است بر اثر استفاده از این ربات متحمل شود نخواهند بود.
 order_frozen: شما سفارش را مسدود کردید
 paytobuyer_only_frozen_orders: 'دستور paytobuyer تنها برای سفارش‌هایی با وضعیت «مسدود شده» یا PAID_HOLD_INVOICE می‌تواند استفاده شود.'
@@ -819,31 +819,31 @@ blocklist_empty: شما هیچ کاربر مسدود شده‌ای ندارید.
 orders_in_process: سفارش‌های در جریانی وجود دارند که این کاربر در آن‌ها دخیل است.
 user_order_is_blocked_by_user_taker: شما نمی‌توانید این سفارش را بردارید زیرا گذارنده آن را مسدود کرده‌اید.
 user_taker_is_blocked_by_user_order: شما نمی‌توانید این سفارش را بردارید زیرا توسط گذارنده آن مسدود شده‌اید.
-block_usage: "استفاده: /block @Username یا /block telegramId"
-unblock_usage: "استفاده: /unblock @Username یا /unblock telegramId"
-block_failed: "خطا در مسدود کردن کاربر"
-unblock_failed: "خطا در رفع مسدودیت کاربر"
+block_usage: 'استفاده: /block @Username یا /block telegramId'
+unblock_usage: 'استفاده: /unblock @Username یا /unblock telegramId'
+block_failed: 'خطا در مسدود کردن کاربر'
+unblock_failed: 'خطا در رفع مسدودیت کاربر'
 check_solvers: اجتماع شما ${communityName} هیچ داوری ندارد. لطفاً برای جلوگیری از غیرفعال شدن اجتماع، تا ${remainingDays} روز آینده حداقل یک داور به آن اضافه کنید.
 check_solvers_last_warning: اجتماع شما ${communityName} هیچ داوری ندارد. برای جلوگیری از غیرفعال شدن اجتماع، امروز حداقل یک داور به آن اضافه کنید.
 image_processing_error: هنگام پردازش تصویر با خطایی مواجه شدیم، لطفاً چند دقیقه صبر کرده و دوباره امتحان کنید.
-order_channel_validation_failed: "امکان انتشار سفارش شما وجود ندارد. سعی کنید انجمن پیش‌فرض را با /setcomm off غیرفعال کنید یا از مدیر انجمن خود بخواهید کانال‌ها و گروه‌های انجمن را مجدداً پیکربندی کند."
-community_payment_methods: "روش‌های پرداخت"
-enter_community_payment_methods: "روش‌های پرداخت پذیرفته‌شده در اجتماع خود را با کاما از هم جدا کرده وارد کنید (مثال: انتقال بانکی، نقد، PayPal)"
-current_payment_methods: "روش‌های پرداخت فعلی: ${methods}"
-select_payment_methods: "یک یا چند روش پرداخت انتخاب کنید:"
-confirm_payment_methods: "✅ تأیید"
-no_payment_method_selected: "لطفاً حداقل یک روش پرداخت انتخاب کنید"
-payment_methods_saved: "روش‌های پرداخت ذخیره شد ✅"
-custom_payment_method: "✍️ روش پرداخت سفارشی"
-payment_methods_reset: "روش‌های پرداخت حذف شدند. کاربران اکنون می‌توانند هر روش پرداختی را آزادانه وارد کنند."
+order_channel_validation_failed: 'امکان انتشار سفارش شما وجود ندارد. سعی کنید انجمن پیش‌فرض را با /setcomm off غیرفعال کنید یا از مدیر انجمن خود بخواهید کانال‌ها و گروه‌های انجمن را مجدداً پیکربندی کند.'
+community_payment_methods: 'روش‌های پرداخت'
+enter_community_payment_methods: 'روش‌های پرداخت پذیرفته‌شده در اجتماع خود را با کاما از هم جدا کرده وارد کنید (مثال: انتقال بانکی، نقد، PayPal)'
+current_payment_methods: 'روش‌های پرداخت فعلی: ${methods}'
+select_payment_methods: 'یک یا چند روش پرداخت انتخاب کنید:'
+confirm_payment_methods: '✅ تأیید'
+no_payment_method_selected: 'لطفاً حداقل یک روش پرداخت انتخاب کنید'
+payment_methods_saved: 'روش‌های پرداخت ذخیره شد ✅'
+custom_payment_method: '✍️ روش پرداخت سفارشی'
+payment_methods_reset: 'روش‌های پرداخت حذف شدند. کاربران اکنون می‌توانند هر روش پرداختی را آزادانه وارد کنند.'
 payment_methods_wizard_commands: "/reset — حذف همه روش‌های پرداخت و بازگرداندن رفتار پیش‌فرض\n/exit — خروج بدون ذخیره"
 community_disabled_by_admin: یک مدیر جامعه ${communityName} شما را غیرفعال کرد
 community_enabled_by_admin: یک مدیر جامعه ${communityName} شما را دوباره فعال کرد
-community_creation_requirements_not_met_header: "شما شرایط لازم برای ایجاد جامعه را ندارید:"
-community_creation_requirements_not_met_orders: "* سفارش‌ها: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* حجم: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* روزهای استفاده از ربات: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* اعتبار: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'شما شرایط لازم برای ایجاد جامعه را ندارید:'
+community_creation_requirements_not_met_orders: '* سفارش‌ها: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* حجم: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* روزهای استفاده از ربات: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* اعتبار: ${userRep} / ${requiredRep}'
 community_already_disabled: این جامعه از قبل غیرفعال است
 community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید

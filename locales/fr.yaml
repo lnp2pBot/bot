@@ -3,7 +3,7 @@ start: |
 
   ${disclaimer}
   ---———— TERMS AND CONDITIONS ————---
-  
+
   Ce bot vous aidera à effectuer des transactions P2P Bitcoin via le réseau Lightning Network (LN).
 
   Une fois le bot lancé, vous pouvez utiliser les commandes suivantes:
@@ -235,9 +235,9 @@ dispute_started_channel: |
 
   @${initiatorUser} a été impliqué.e dans ${buyerDisputes} litiges
   @${counterPartyUser} a été impliqué.e dans ${sellerDisputes} litiges
-you_started : '🥴 Vous avez commencé un litige sur votre commande Id : ${orderId}.'
-counterpart_started : '🥴 Votre contrepartie a démarré un litige sur votre commande Id : ${orderId}.'
-dispute_started : "${who} Un solver va bientôt venir vous voir, lorsqu'il/elle sera assigné(e) à votre litige, le bot vous indiquera son nom d'utilisateur, il/elle seul(e) sera en mesure de venir vous voir. Vous pouvez lui écrire directement, mais s'il vous contacte en premier, vous devez lui demander de vous dire quel est le jeton de votre litige, votre jeton est : ${token}."
+you_started: '🥴 Vous avez commencé un litige sur votre commande Id : ${orderId}.'
+counterpart_started: '🥴 Votre contrepartie a démarré un litige sur votre commande Id : ${orderId}.'
+dispute_started: "${who} Un solver va bientôt venir vous voir, lorsqu'il/elle sera assigné(e) à votre litige, le bot vous indiquera son nom d'utilisateur, il/elle seul(e) sera en mesure de venir vous voir. Vous pouvez lui écrire directement, mais s'il vous contacte en premier, vous devez lui demander de vous dire quel est le jeton de votre litige, votre jeton est : ${token}."
 must_be_valid_currency: 'Le code FIAT doit être valide, par exemple : XOF, XAF, EUR, USD... Tu peux afficher la liste complète des codes FIAT avec la commande /listcurrencies'
 must_be_number_or_range: 'Le montant fiat doit être un nombre entier ou une plage de valeur entières dans le format <minimum>-<maximum>'
 invalid_lightning_address: Adresse Lightning invalide !
@@ -332,7 +332,7 @@ init_cooperativecancel: |
   Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord."
 counterparty_wants_cooperativecancel: |
   "😳 Votre contrepartie souhaite annuler l'offre ID : ${orderId}. 
-  
+
   Aucun administrateur ne te contactera pour annuler ta commande, à moins que tu n'ouvres un litige d'abord.
 
   Si vous acceptez cette annulation, veuillez exécuter la commande suivante 👇"
@@ -458,8 +458,8 @@ buying: Achat
 selling_sats: Vente de sats
 buying_sats: Achat de sats
 receive_payment: Réception du paiement
-showusername_buying_sats: "@${username} achète des sats"
-showusername_selling_sats: "@${username} vend des sats"
+showusername_buying_sats: '@${username} achète des sats'
+showusername_selling_sats: '@${username} vend des sats'
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'
@@ -584,7 +584,7 @@ maintenance: 🚨 Bot en maintenance, veuillez réessayer plus tard 🚨
 community_admin: |
   <strong>Mode Admin de la Communauté</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Oui' : 'Non'}
   Fee:
@@ -608,7 +608,7 @@ community_language_updated: Vous avez configuré la langue de la communauté en 
 wizard_community_enter_language: 'Entrez le code de la langue de votre communauté (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: "Code de langue invalide. Veuillez entrer l'un des suivants - en, es, fr, de, it, pt, ru, uk, ko, fa"
 community_npub_updated: Vous avez ajouté la clé publique de la communauté ${npub} avec succès !
-language: "Langue"
+language: 'Langue'
 # END modules/community
 
 # START modules/nostr
@@ -627,7 +627,6 @@ npub_not_valid: |
   Exemple:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/orders
 order_not_found: Ordre non trouvé.
 # END modules/orders
@@ -655,7 +654,7 @@ user_settings: |
   /counterpartyorders &lt;ordres&gt; - Définit le nombre minimum d'ordres complétés pour la contrepartie.
   /resetrequirements - Réinitialise les exigences de contrepartie aux valeurs par défaut.
   /exit - pour quitter l'assistant.
-not_meeting_requirements: Vous ne remplissez pas les exigences de la contrepartie pour prendre cet ordre.
+not_meeting_requirements: Vous ne remplissez pas les exigences de la contrepartie pour prendre cet ordre (nécessite au moins ${min_days_using_bot} jours d'utilisation du bot et ${min_completed_orders} ordres complétés).
 counterpartyage_updated: Exigence d'âge de la contrepartie mise à jour à ${days} jours.
 counterpartyorders_updated: Exigence d'ordres complétés de la contrepartie mise à jour à ${orders}.
 requirements_reset: Les exigences de contrepartie ont été réinitialisées aux valeurs par défaut.
@@ -673,7 +672,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -697,11 +696,11 @@ order_frozen: Vous avez gelé la commande
 paytobuyer_only_frozen_orders: La commande paytobuyer ne peut être utilisée que sur des commandes avec le statut FROZEN ou PAID_HOLD_INVOICE
 settleorder_only_dispute_orders: La commande settleorder ne peut être utilisée que sur des commandes avec le statut DISPUTE
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
-setinvoice_no_response : Vous n'avez pas d'ordre à payer
+setinvoice_no_response: Vous n'avez pas d'ordre à payer
 already_cancelled: L'offre a déjà été annulée !
 privacy: |
   *Politique de Confidentialité*
-  
+
   Votre vie privée est importante pour nous, et nous nous engageons à protéger vos informations personnelles. Cette Politique de Confidentialité explique quelles informations nous collectons, comment, et à quelle fin.
 
   *1. Informations que nous collectons:*  
@@ -718,31 +717,31 @@ blocklist_empty: Vous n'avez aucun utilisateur bloqué
 orders_in_process: Il y a des ordres en cours avec cet utilisateur
 user_order_is_blocked_by_user_taker: Vous ne pouvez pas accepter cette offre car vous avez bloqué son créateur
 user_taker_is_blocked_by_user_order: Vous ne pouvez pas accepter cette offre car son créateur vous a bloqué
-block_usage: "Utilisation : /block @Username ou /block telegramId"
-unblock_usage: "Utilisation : /unblock @Username ou /unblock telegramId"
+block_usage: 'Utilisation : /block @Username ou /block telegramId'
+unblock_usage: 'Utilisation : /unblock @Username ou /unblock telegramId'
 block_failed: "Erreur lors du blocage de l'utilisateur"
 unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
 order_channel_validation_failed: "Impossible de publier votre commande. Essayez de désactiver la communauté par défaut avec /setcomm off, ou demandez à l'administrateur de votre communauté de reconfigurer les canaux et groupes de la communauté."
-community_payment_methods: "Méthodes de paiement"
-enter_community_payment_methods: "Entrez les méthodes de paiement acceptées dans votre communauté, séparées par des virgules (ex. : Virement bancaire, Espèces, PayPal)"
-current_payment_methods: "Méthodes de paiement actuelles : ${methods}"
-select_payment_methods: "Sélectionnez une ou plusieurs méthodes de paiement :"
-confirm_payment_methods: "✅ Confirmer"
-no_payment_method_selected: "Veuillez sélectionner au moins une méthode de paiement"
-payment_methods_saved: "Méthodes de paiement enregistrées ✅"
-custom_payment_method: "✍️ Méthode de paiement personnalisée"
+community_payment_methods: 'Méthodes de paiement'
+enter_community_payment_methods: 'Entrez les méthodes de paiement acceptées dans votre communauté, séparées par des virgules (ex. : Virement bancaire, Espèces, PayPal)'
+current_payment_methods: 'Méthodes de paiement actuelles : ${methods}'
+select_payment_methods: 'Sélectionnez une ou plusieurs méthodes de paiement :'
+confirm_payment_methods: '✅ Confirmer'
+no_payment_method_selected: 'Veuillez sélectionner au moins une méthode de paiement'
+payment_methods_saved: 'Méthodes de paiement enregistrées ✅'
+custom_payment_method: '✍️ Méthode de paiement personnalisée'
 payment_methods_reset: "Méthodes de paiement supprimées. Les utilisateurs peuvent désormais saisir n'importe quelle méthode de paiement librement."
 payment_methods_wizard_commands: "/reset — supprimer toutes les méthodes de paiement et restaurer le comportement par défaut\n/exit — quitter sans enregistrer"
 community_disabled_by_admin: Un administrateur a désactivé votre communauté ${communityName}
 community_enabled_by_admin: Un administrateur a réactivé votre communauté ${communityName}
-community_creation_requirements_not_met_header: "Vous ne remplissez pas les conditions pour créer une communauté :"
-community_creation_requirements_not_met_orders: "* Commandes : ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Volume : ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_header: 'Vous ne remplissez pas les conditions pour créer une communauté :'
+community_creation_requirements_not_met_orders: '* Commandes : ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Volume : ${userVolume} / ${requiredVolume}'
 community_creation_requirements_not_met_days: "* Jours d'utilisation du bot : ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Réputation : ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_rep: '* Réputation : ${userRep} / ${requiredRep}'
 community_already_disabled: Cette communauté est déjà désactivée
 community_already_enabled: Cette communauté est déjà activée
 ambiguous_community_input: Plusieurs communautés correspondent à ce nom d'utilisateur, veuillez utiliser l'ID de la communauté à la place

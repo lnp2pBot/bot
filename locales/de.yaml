@@ -29,7 +29,7 @@ start: |
   Weitere Informationen zur Verwendung dieses Bots finden Sie hier 👇
 
   https://lnp2pbot.com/learn
-  
+
   Mache eine schnelle und sichere Transaktion!
 init_bot_error: Um diesen Bot zu verwenden, musst du zuerst den Boot mit dem Befehl /start initialisieren
 non_handle_error: 👤 Um diesen Bot zu nutzen, musst du deinen Telegram-Benutzernamen aktivieren. Um ihn zu aktivieren, öffne das Hamburger-Menü oben links und wähle Einstellungen -> Profil bearbeiten -> Benutzernamen
@@ -158,7 +158,7 @@ buyer_took_your_order: |
   🤖 Order Id: #${orderId}
 
   @${buyerUsername} hat deinen Auftrag angenommen und möchte deine Sats kaufen. Nimm Kontakt mit ihm auf und sag ihm, wie er dir ${currency} ${fiatAmount} über ${paymentMethod} senden kann.
-  
+
   Ich werde dich benachrichtigen, sobald der Käufer mir mitteilt, dass er das Fiat-Geld gesendet hat. Danach musst du überprüfen, ob es angekommen ist.
 
   Wenn der Käufer nicht antwortet, kannst du eine Stornierung oder eine Streitigkeit einleiten. Denk daran, dass dich ein Administrator NIE kontaktieren wird, um deine Bestellung zu klären, es sei denn, du öffnest zuerst eine Streitigkeit.
@@ -290,9 +290,9 @@ you_have_been_banned: Du wurdest gesperrt!
 I_told_seller_you_sent_fiat: 🤖 Ich habe @${sellerUsername} gesagt, dass du FIAT-Geld geschickt hast. Wenn der Verkäufer bestätigt, dass er dein Geld erhalten hat, muss er die Mittel freigeben. Falls er sich weigert, kannst du eine Streitigkeit eröffnen.
 buyer_told_me_that_sent_fiat: |
   🤖 @${buyerUsername} hat mitgeteilt, dass er dir das FIAT-Geld geschickt hat. Sobald du den Erhalt des Geldes bestätigst, bitte gib die Mittel frei. Beachte, dass du bis zur Freigabe der Mittel keine neue Bestellung erstellen oder übernehmen kannst.
-  
+
   Nachdem du freigegeben hast, geht das Geld an den Käufer und es gibt kein Zurück mehr. Daher führe diesen Prozess nur durch, wenn du dir 💯 sicher bist.
-  
+
   Drücke den folgenden Befehl, wenn du die Sats für den Käufer freigeben möchtest 👇
 release_order_cmd: /release
 you_have_orders_waiting: 🤖 Du hast eine oder mehrere Aufträge, bei denen der Käufer dir mitteilt, dass das Geld an dich geschickt wurde, du es aber noch nicht freigegeben hast. Du kannst keine neuen Aufträge erstellen, bis du das Geld freigibst.
@@ -327,13 +327,13 @@ ok_cooperativecancel: '👍 Die Gegenpartei hat zugestimmt und der Auftrag mit d
 refund_cooperativecancel: 💰 Du hast eine Rückerstattung deiner Lightning-Zahlung erhalten, es gibt keine weiteren Schritte zu unternehmen
 init_cooperativecancel: |
   🕒 Du hast mit der Stornierung des Auftrages mit der Id ${orderId} gestartet. Dein Gegenüber muss mir ebenfalls mitteilen, dass er die Stornierung wünscht. Falls er/sie nicht antwortet, kannst du eine Streitigkeit eröffnen.
-  
+
   Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
 counterparty_wants_cooperativecancel: |
   😳 Deine Gegenpartei möchte den Auftrag mit der Id ${orderId} stornieren.
-  
+
   Kein Administrator wird dich kontaktieren, um deine Bestellung zu stornieren, es sei denn, du eröffnest zuerst eine Streitigkeit.
-  
+
   Wenn du einverstanden bist, benutze den Befehl 👇
 invoice_payment_failed: ⛔ Ich habe versucht, dir die Sats zu schicken, aber die Bezahlung deiner LN-Rechnung ist fehlgeschlagen. Ich werde es noch ${attempts} weitere Male in ${pendingPaymentWindow} Minuten-Intervallen versuchen. Bitte überprüfe, ob dein Node/Wallet online ist.
 cant_take_more_orders: ⛔ Sorry! Du kannst keinen weiteren Auftrag annehmen, während andere auf dich warten
@@ -597,12 +597,11 @@ npub_not_valid: |
   Beispiel:
   /setnpub npub180cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsyjh6w6
 # END modules/nostr
-
 # START modules/community
 community_admin: |
   <strong>Community Admin Mode</strong>
   > ${community.name} (${community.group})
-  
+
   Public:
     ${community.public ? 'Yes' : 'No'}
   Fee:
@@ -626,7 +625,7 @@ community_npub_updated: You added the community's pubkey ${npub} successfully!
 community_language_updated: Du hast die Sprache der Community erfolgreich auf ${language} aktualisiert!
 wizard_community_enter_language: 'Gib den Sprachcode für deine Community ein (en, es, fr, de, it, pt, ru, uk, ko, fa)'
 wizard_community_invalid_language: 'Ungültiger Sprachcode. Bitte gib einen der folgenden ein - en, es, fr, de, it, pt, ru, uk, ko, fa'
-language: "Sprache"
+language: 'Sprache'
 # END modules/community
 
 # START modules/orders
@@ -656,7 +655,7 @@ user_settings: |
   /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge fest.
   /resetrequirements - Setzt die Gegenpartei-Anforderungen auf Standardwerte zurück.
   /exit - um den Assistenten zu verlassen.
-not_meeting_requirements: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen.
+not_meeting_requirements: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen (erfordert mindestens ${min_days_using_bot} Tage Nutzung des Bots und ${min_completed_orders} abgeschlossene Aufträge).
 counterpartyage_updated: Altersanforderung der Gegenpartei auf ${days} Tage aktualisiert.
 counterpartyorders_updated: Auftragsanforderung der Gegenpartei auf ${orders} aktualisiert.
 requirements_reset: Gegenpartei-Anforderungen wurden auf Standardwerte zurückgesetzt.
@@ -674,7 +673,7 @@ bot_info: |
   Max routing fee: ${routing_fee}
 
   Node URI: `${node_uri}`
-  
+
   Node status: ${status}
 
   User info:
@@ -702,7 +701,7 @@ setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
 already_cancelled: Die Bestellung wurde bereits storniert!
 privacy: |
   *Datenschutzrichtlinie*
-  
+
   Ihre Privatsphäre ist uns wichtig, und wir sind verpflichtet, Ihre persönlichen Daten zu schützen. Diese Datenschutzrichtlinie erklärt, welche Informationen wir sammeln, wie und zu welchem Zweck.
 
   *1. Informationen, die wir sammeln:*  
@@ -719,31 +718,31 @@ blocklist_empty: Du hast keine gesperrten Benutzer
 orders_in_process: Es gibt laufende Aufträge mit diesem Benutzer
 user_order_is_blocked_by_user_taker: Du kannst diesen Auftrag nicht annehmen, da du seinen Ersteller gesperrt hast
 user_taker_is_blocked_by_user_order: Du kannst diesen Auftrag nicht annehmen, da dich sein Ersteller gesperrt hat
-block_usage: "Verwendung: /block @Username oder /block telegramId"
-unblock_usage: "Verwendung: /unblock @Username oder /unblock telegramId"
-block_failed: "Fehler beim Blockieren des Benutzers"
-unblock_failed: "Fehler beim Freigeben des Benutzers"
+block_usage: 'Verwendung: /block @Username oder /block telegramId'
+unblock_usage: 'Verwendung: /unblock @Username oder /unblock telegramId'
+block_failed: 'Fehler beim Blockieren des Benutzers'
+unblock_failed: 'Fehler beim Freigeben des Benutzers'
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
-order_channel_validation_failed: "Ihre Bestellung konnte nicht veröffentlicht werden. Versuchen Sie, die Standard-Community mit /setcomm off zu deaktivieren, oder bitten Sie Ihren Community-Administrator, die Kanäle und Gruppen der Community neu zu konfigurieren."
-community_payment_methods: "Zahlungsmethoden"
-enter_community_payment_methods: "Gib die in deiner Community akzeptierten Zahlungsmethoden ein, getrennt durch Kommas (z.B.: Banküberweisung, Bargeld, PayPal)"
-current_payment_methods: "Aktuelle Zahlungsmethoden: ${methods}"
-select_payment_methods: "Wähle eine oder mehrere Zahlungsmethoden:"
-confirm_payment_methods: "✅ Bestätigen"
-no_payment_method_selected: "Bitte wähle mindestens eine Zahlungsmethode aus"
-payment_methods_saved: "Zahlungsmethoden gespeichert ✅"
-custom_payment_method: "✍️ Benutzerdefinierte Zahlungsmethode"
-payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt beliebige Zahlungsmethoden frei eingeben."
+order_channel_validation_failed: 'Ihre Bestellung konnte nicht veröffentlicht werden. Versuchen Sie, die Standard-Community mit /setcomm off zu deaktivieren, oder bitten Sie Ihren Community-Administrator, die Kanäle und Gruppen der Community neu zu konfigurieren.'
+community_payment_methods: 'Zahlungsmethoden'
+enter_community_payment_methods: 'Gib die in deiner Community akzeptierten Zahlungsmethoden ein, getrennt durch Kommas (z.B.: Banküberweisung, Bargeld, PayPal)'
+current_payment_methods: 'Aktuelle Zahlungsmethoden: ${methods}'
+select_payment_methods: 'Wähle eine oder mehrere Zahlungsmethoden:'
+confirm_payment_methods: '✅ Bestätigen'
+no_payment_method_selected: 'Bitte wähle mindestens eine Zahlungsmethode aus'
+payment_methods_saved: 'Zahlungsmethoden gespeichert ✅'
+custom_payment_method: '✍️ Benutzerdefinierte Zahlungsmethode'
+payment_methods_reset: 'Zahlungsmethoden entfernt. Benutzer können jetzt beliebige Zahlungsmethoden frei eingeben.'
 payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
 community_disabled_by_admin: Ein Administrator hat deine Community ${communityName} deaktiviert
 community_enabled_by_admin: Ein Administrator hat deine Community ${communityName} wieder aktiviert
-community_creation_requirements_not_met_header: "Du erfüllst nicht die Anforderungen zur Erstellung einer Community:"
-community_creation_requirements_not_met_orders: "* Bestellungen: ${userOrders} / ${requiredOrders}"
-community_creation_requirements_not_met_volume: "* Volumen: ${userVolume} / ${requiredVolume}"
-community_creation_requirements_not_met_days: "* Tage der Nutzung des Bots: ${userDays} / ${requiredDays}"
-community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requiredRep}"
+community_creation_requirements_not_met_header: 'Du erfüllst nicht die Anforderungen zur Erstellung einer Community:'
+community_creation_requirements_not_met_orders: '* Bestellungen: ${userOrders} / ${requiredOrders}'
+community_creation_requirements_not_met_volume: '* Volumen: ${userVolume} / ${requiredVolume}'
+community_creation_requirements_not_met_days: '* Tage der Nutzung des Bots: ${userDays} / ${requiredDays}'
+community_creation_requirements_not_met_rep: '* Reputation: ${userRep} / ${requiredRep}'
 community_already_disabled: Diese Community ist bereits deaktiviert
 community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
