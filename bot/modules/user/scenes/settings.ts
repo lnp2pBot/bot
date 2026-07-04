@@ -9,7 +9,8 @@ import {
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../../../../logger';
 
-const isNonNegativeInt = (value: number) => Number.isInteger(value) && value >= 0;
+const isNonNegativeInt = (value: number) =>
+  Number.isInteger(value) && value >= 0;
 
 const readNonNegativeInt = (value: string | undefined, fallback: number) => {
   if (value === undefined || value.trim() === '') return fallback;
@@ -181,8 +182,7 @@ function make() {
           throw new Error('ctx.message is undefined');
         const [, value] = ctx.message.text.trim().split(/\s+/);
         const parsed = parseInt(value, 10);
-        if (!isNonNegativeInt(parsed))
-          throw new Error('NotValidNumber');
+        if (!isNonNegativeInt(parsed)) throw new Error('NotValidNumber');
         const max = readNonNegativeInt(process.env[envVar], fallbackMax);
         if (parsed > max) {
           state.error = {
