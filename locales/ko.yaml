@@ -653,7 +653,9 @@ user_settings: |
   /counterpartyorders &lt;주문&gt; - 거래 상대방의 최소 완료 주문 수를 설정합니다.
   /resetrequirements - 거래 상대방 요구 사항을 기본값으로 초기화합니다.
   /exit - 설정 모드 나가기.
-not_meeting_requirements: 귀하는 이 주문을 수락하기 위한 거래 상대방 요구 사항을 충족하지 않습니다 (최소 ${min_days_using_bot}일의 봇 사용과 ${min_completed_orders}개의 완료된 주문이 필요합니다).
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
 counterpartyage_updated: 거래 상대방 가입 기간 요구 사항이 ${days}일로 업데이트되었습니다.
 counterpartyorders_updated: 거래 상대방 완료 주문 수 요구 사항이 ${orders}개로 업데이트되었습니다.
 requirements_reset: 거래 상대방 요구 사항이 기본값으로 초기화되었습니다.

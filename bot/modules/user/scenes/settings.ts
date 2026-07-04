@@ -9,10 +9,12 @@ import {
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../../../../logger';
 
+const isNonNegativeInt = (value: number) => Number.isInteger(value) && value >= 0;
+
 const readNonNegativeInt = (value: string | undefined, fallback: number) => {
   if (value === undefined || value.trim() === '') return fallback;
-  const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+  const parsed = parseInt(value, 10);
+  return isNonNegativeInt(parsed) ? parsed : fallback;
 };
 
 const DEFAULT_COUNTERPARTY_REQUIREMENTS = {
@@ -30,6 +32,7 @@ function make() {
     const state = ctx.scene.state as CommunityWizardState;
     delete state.feedback;
     delete state.error;
+    await updateMessage(ctx);
     next();
   };
   async function mainData(ctx: CommunityContext) {
@@ -176,9 +179,9 @@ function make() {
         const state = ctx.scene.state as CommunityWizardState;
         if (ctx.message === undefined || !('text' in ctx.message))
           throw new Error('ctx.message is undefined');
-        const [, value] = ctx.message.text.trim().split(' ');
-        const parsed = Number(value);
-        if (!Number.isInteger(parsed) || parsed < 0)
+        const [, value] = ctx.message.text.trim().split(/\s+/);
+        const parsed = parseInt(value, 10);
+        if (!isNonNegativeInt(parsed))
           throw new Error('NotValidNumber');
         const max = readNonNegativeInt(process.env[envVar], fallbackMax);
         if (parsed > max) {
@@ -238,9 +241,7 @@ function make() {
         await ctx.deleteMessage();
         const state = ctx.scene.state as CommunityWizardState;
         const user = state.user;
-        user.counterparty_requirements = {
-          ...DEFAULT_COUNTERPARTY_REQUIREMENTS,
-        };
+        user.counterparty_requirements = undefined;
         await user.save();
         state.feedback = { i18n: 'requirements_reset' };
         await updateMessage(ctx);

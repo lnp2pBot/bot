@@ -168,28 +168,33 @@ export const meetsCounterpartyRequirements = async (
   const { min_days_using_bot, min_completed_orders } =
     orderCreator.counterparty_requirements;
 
+  const failures = {
+    age: false,
+    orders: false,
+  };
+
   if (min_days_using_bot > 0) {
     const ageInDays = getUserAge(user);
-    // Legacy accounts without a created_at yield NaN here. Such accounts
-    // predate created_at tracking and are genuinely old, so we let them pass
-    // the age check explicitly instead of relying on NaN comparisons.
     if (!Number.isNaN(ageInDays) && ageInDays < min_days_using_bot) {
-      await messages.notMeetingRequirementsMessage(ctx, user, {
-        min_days_using_bot,
-        min_completed_orders,
-      });
-      return false;
+      failures.age = true;
     }
   }
 
   if (min_completed_orders > 0) {
     if (user.trades_completed < min_completed_orders) {
-      await messages.notMeetingRequirementsMessage(ctx, user, {
-        min_days_using_bot,
-        min_completed_orders,
-      });
-      return false;
+      failures.orders = true;
     }
+  }
+
+  if (failures.age || failures.orders) {
+    await messages.notMeetingRequirementsMessage(ctx, user, {
+      failures,
+      min_days_using_bot,
+      min_completed_orders,
+      user_age: getUserAge(user),
+      user_trades: user.trades_completed,
+    });
+    return false;
   }
 
   return true;
