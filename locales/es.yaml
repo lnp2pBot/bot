@@ -659,7 +659,7 @@ user_settings: |
   /counterpartyorders &lt;órdenes&gt; - Establece el mínimo de órdenes completadas para la contraparte.
   /resetrequirements - Restablece los requisitos de contraparte al valor por defecto.
   /exit - para salir del asistente.
-not_meeting_requirements: No cumples los requisitos de la contraparte para tomar esta orden.
+not_meeting_requirements: No cumples los requisitos de la contraparte para tomar esta orden (requiere al menos ${min_days_using_bot} días usando el bot y ${min_completed_orders} órdenes completadas).
 counterpartyage_updated: Requisito de antigüedad de contraparte actualizado a ${days} días.
 counterpartyorders_updated: Requisito de órdenes completadas de contraparte actualizado a ${orders}.
 requirements_reset: Los requisitos de contraparte han sido restablecidos al valor por defecto.

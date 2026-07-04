@@ -15,6 +15,16 @@ const readNonNegativeInt = (value: string | undefined, fallback: number) => {
   return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
 };
 
+const DEFAULT_COUNTERPARTY_REQUIREMENTS = {
+  min_days_using_bot: 0,
+  min_completed_orders: 0,
+};
+
+// Fallback caps when the corresponding MAX_COUNTERPARTY_* env vars are unset,
+// mirroring the values documented in .env-sample.
+const DEFAULT_MAX_COUNTERPARTY_AGE = 30;
+const DEFAULT_MAX_COUNTERPARTY_ORDERS = 10;
+
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
     const state = ctx.scene.state as CommunityWizardState;
@@ -142,92 +152,52 @@ function make() {
     }
   });
 
-  scene.command(
-    'counterpartyage',
-    resetMessage,
-    async (ctx: CommunityContext) => {
+  // counterpartyage and counterpartyorders only differ in the field they set,
+  // the env cap, its fallback, and the feedback key/param, so we build both
+  // from a single factory.
+  const makeRequirementCommand = ({
+    command,
+    envVar,
+    fallbackMax,
+    field,
+    feedbackKey,
+    paramKey,
+  }: {
+    command: string;
+    envVar: string;
+    fallbackMax: number;
+    field: 'min_days_using_bot' | 'min_completed_orders';
+    feedbackKey: string;
+    paramKey: string;
+  }) => {
+    scene.command(command, resetMessage, async (ctx: CommunityContext) => {
       try {
         await ctx.deleteMessage();
         const state = ctx.scene.state as CommunityWizardState;
         if (ctx.message === undefined || !('text' in ctx.message))
           throw new Error('ctx.message is undefined');
-        const [, days] = ctx.message.text.trim().split(' ');
-        const min_days = parseInt(days);
-        if (isNaN(min_days) || min_days < 0) throw new Error('NotValidNumber');
-        const maxAge = readNonNegativeInt(
-          process.env.MAX_COUNTERPARTY_AGE_REQUIREMENT,
-          30,
-        );
-        if (min_days > maxAge) {
-          state.error = {
-            i18n: 'invalid_range',
-            command: '/counterpartyage',
-            max: maxAge,
-          };
-          return await updateMessage(ctx);
-        }
-        const user = state.user;
-        if (!user.counterparty_requirements) {
-          user.counterparty_requirements = {
-            min_days_using_bot: 0,
-            min_completed_orders: 0,
-          };
-        }
-        user.counterparty_requirements.min_days_using_bot = min_days;
-        await user.save();
-        state.feedback = { i18n: 'counterpartyage_updated', days: min_days };
-        await updateMessage(ctx);
-      } catch (err) {
-        logger.error(err);
-        (ctx.scene.state as CommunityWizardState).error = {
-          i18n:
-            err instanceof Error && err.message === 'NotValidNumber'
-              ? 'invalid_number'
-              : 'generic_error',
-        };
-        await updateMessage(ctx);
-      }
-    },
-  );
-
-  scene.command(
-    'counterpartyorders',
-    resetMessage,
-    async (ctx: CommunityContext) => {
-      try {
-        await ctx.deleteMessage();
-        const state = ctx.scene.state as CommunityWizardState;
-        if (ctx.message === undefined || !('text' in ctx.message))
-          throw new Error('ctx.message is undefined');
-        const [, orders] = ctx.message.text.trim().split(' ');
-        const min_orders = parseInt(orders);
-        if (isNaN(min_orders) || min_orders < 0)
+        const [, value] = ctx.message.text.trim().split(' ');
+        const parsed = Number(value);
+        if (!Number.isInteger(parsed) || parsed < 0)
           throw new Error('NotValidNumber');
-        const maxOrders = readNonNegativeInt(
-          process.env.MAX_COUNTERPARTY_ORDERS_REQUIREMENT,
-          10,
-        );
-        if (min_orders > maxOrders) {
+        const max = readNonNegativeInt(process.env[envVar], fallbackMax);
+        if (parsed > max) {
           state.error = {
             i18n: 'invalid_range',
-            command: '/counterpartyorders',
-            max: maxOrders,
+            command: '/' + command,
+            max,
           };
           return await updateMessage(ctx);
         }
         const user = state.user;
         if (!user.counterparty_requirements) {
           user.counterparty_requirements = {
-            min_days_using_bot: 0,
-            min_completed_orders: 0,
+            ...DEFAULT_COUNTERPARTY_REQUIREMENTS,
           };
         }
-        user.counterparty_requirements.min_completed_orders = min_orders;
+        user.counterparty_requirements[field] = parsed;
         await user.save();
-        state.feedback = {
-          i18n: 'counterpartyorders_updated',
-          orders: min_orders,
-        };
+        state.feedback = { i18n: feedbackKey, [paramKey]: parsed };
         await updateMessage(ctx);
       } catch (err) {
         logger.error(err);
@@ -239,8 +209,26 @@ function make() {
         };
         await updateMessage(ctx);
       }
-    },
-  );
+    });
+  };
+
+  makeRequirementCommand({
+    command: 'counterpartyage',
+    envVar: 'MAX_COUNTERPARTY_AGE_REQUIREMENT',
+    fallbackMax: DEFAULT_MAX_COUNTERPARTY_AGE,
+    field: 'min_days_using_bot',
+    feedbackKey: 'counterpartyage_updated',
+    paramKey: 'days',
+  });
+
+  makeRequirementCommand({
+    command: 'counterpartyorders',
+    envVar: 'MAX_COUNTERPARTY_ORDERS_REQUIREMENT',
+    fallbackMax: DEFAULT_MAX_COUNTERPARTY_ORDERS,
+    field: 'min_completed_orders',
+    feedbackKey: 'counterpartyorders_updated',
+    paramKey: 'orders',
+  });
 
   scene.command(
     'resetrequirements',
@@ -251,8 +239,7 @@ function make() {
         const state = ctx.scene.state as CommunityWizardState;
         const user = state.user;
         user.counterparty_requirements = {
-          min_days_using_bot: 0,
-          min_completed_orders: 0,
+          ...DEFAULT_COUNTERPARTY_REQUIREMENTS,
         };
         await user.save();
         state.feedback = { i18n: 'requirements_reset' };

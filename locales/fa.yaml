@@ -757,7 +757,7 @@ user_settings: |
 
   خروج از راهنما:
   /exit
-not_meeting_requirements: شما واجد الزامات طرف مقابل برای پذیرش این سفارش نیستید.
+not_meeting_requirements: شما واجد الزامات طرف مقابل برای پذیرش این سفارش نیستید (حداقل ${min_days_using_bot} روز استفاده از ربات و ${min_completed_orders} سفارش تکمیل‌شده لازم است).
 counterpartyage_updated: الزامات سابقه طرف مقابل به ${days} روز به‌روزرسانی شد.
 counterpartyorders_updated: الزامات سفارش‌های تکمیل شده طرف مقابل به ${orders} عدد به‌روزرسانی شد.
 requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
