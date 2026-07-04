@@ -174,22 +174,25 @@ export const meetsCounterpartyRequirements = async (
     // predate created_at tracking and are genuinely old, so we let them pass
     // the age check explicitly instead of relying on NaN comparisons.
     if (!Number.isNaN(ageInDays) && ageInDays < min_days_using_bot) {
-      await messages.notMeetingRequirementsMessage(ctx, user, {
+      await messages.notMeetingAgeRequirementMessage(
+        ctx,
+        user,
         min_days_using_bot,
-        min_completed_orders,
-      });
+      );
       return false;
     }
   }
 
-  if (min_completed_orders > 0) {
-    if (user.trades_completed < min_completed_orders) {
-      await messages.notMeetingRequirementsMessage(ctx, user, {
-        min_days_using_bot,
-        min_completed_orders,
-      });
-      return false;
-    }
+  if (
+    min_completed_orders > 0 &&
+    user.trades_completed < min_completed_orders
+  ) {
+    await messages.notMeetingOrdersRequirementMessage(
+      ctx,
+      user,
+      min_completed_orders,
+    );
+    return false;
   }
 
   return true;

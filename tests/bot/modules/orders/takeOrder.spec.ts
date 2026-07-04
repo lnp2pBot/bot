@@ -4,11 +4,12 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 
-// Stub the two collaborators the requirements gate depends on so we can drive
-// getUserAge and observe the denial message without loading the LN stack.
+// Stub the collaborators the requirements gate depends on so we can drive
+// getUserAge and observe the denial messages without loading the LN stack.
 const getUserAgeStub = sinon.stub();
 const messagesMock = {
-  notMeetingRequirementsMessage: sinon.stub().resolves(),
+  notMeetingAgeRequirementMessage: sinon.stub().resolves(),
+  notMeetingOrdersRequirementMessage: sinon.stub().resolves(),
   '@noCallThru': true,
 };
 
@@ -20,6 +21,13 @@ const { meetsCounterpartyRequirements } = proxyquire(
   },
 );
 
+const expectNoDenialMessage = () => {
+  expect(messagesMock.notMeetingAgeRequirementMessage.called).to.equal(false);
+  expect(messagesMock.notMeetingOrdersRequirementMessage.called).to.equal(
+    false,
+  );
+};
+
 describe('meetsCounterpartyRequirements', () => {
   const ctx: any = {};
   let taker: any;
@@ -27,7 +35,8 @@ describe('meetsCounterpartyRequirements', () => {
 
   beforeEach(() => {
     getUserAgeStub.reset();
-    messagesMock.notMeetingRequirementsMessage.resetHistory();
+    messagesMock.notMeetingAgeRequirementMessage.resetHistory();
+    messagesMock.notMeetingOrdersRequirementMessage.resetHistory();
     taker = { tg_id: '1', trades_completed: 5, created_at: '2021-01-01' };
     maker = { tg_id: '2', counterparty_requirements: undefined };
   });
@@ -35,7 +44,7 @@ describe('meetsCounterpartyRequirements', () => {
   it('passes legacy makers without requirements', async () => {
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(true);
-    expect(messagesMock.notMeetingRequirementsMessage.called).to.equal(false);
+    expectNoDenialMessage();
   });
 
   it('passes when requirements are all zero', async () => {
@@ -45,7 +54,7 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(true);
-    expect(messagesMock.notMeetingRequirementsMessage.called).to.equal(false);
+    expectNoDenialMessage();
   });
 
   it('passes when age equals the minimum (boundary)', async () => {
@@ -56,10 +65,10 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(true);
-    expect(messagesMock.notMeetingRequirementsMessage.called).to.equal(false);
+    expectNoDenialMessage();
   });
 
-  it('fails and notifies when age is below the minimum', async () => {
+  it('fails and notifies the age threshold when age is below the minimum', async () => {
     getUserAgeStub.returns(10);
     maker.counterparty_requirements = {
       min_days_using_bot: 30,
@@ -67,15 +76,16 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(false);
-    expect(messagesMock.notMeetingRequirementsMessage.calledOnce).to.equal(
+    expect(messagesMock.notMeetingAgeRequirementMessage.calledOnce).to.equal(
       true,
     );
-    // The taker gets told the thresholds it failed.
-    const params = messagesMock.notMeetingRequirementsMessage.firstCall.args[2];
-    expect(params).to.deep.equal({
-      min_days_using_bot: 30,
-      min_completed_orders: 0,
-    });
+    // The taker is told only the threshold it actually failed.
+    expect(
+      messagesMock.notMeetingAgeRequirementMessage.firstCall.args[2],
+    ).to.equal(30);
+    expect(messagesMock.notMeetingOrdersRequirementMessage.called).to.equal(
+      false,
+    );
   });
 
   it('passes when completed orders equal the minimum (boundary)', async () => {
@@ -86,10 +96,10 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(true);
-    expect(messagesMock.notMeetingRequirementsMessage.called).to.equal(false);
+    expectNoDenialMessage();
   });
 
-  it('fails and notifies when completed orders are below the minimum', async () => {
+  it('fails and notifies the orders threshold when completed orders are below the minimum', async () => {
     taker.trades_completed = 2;
     maker.counterparty_requirements = {
       min_days_using_bot: 0,
@@ -97,9 +107,13 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(false);
-    expect(messagesMock.notMeetingRequirementsMessage.calledOnce).to.equal(
+    expect(messagesMock.notMeetingOrdersRequirementMessage.calledOnce).to.equal(
       true,
     );
+    expect(
+      messagesMock.notMeetingOrdersRequirementMessage.firstCall.args[2],
+    ).to.equal(5);
+    expect(messagesMock.notMeetingAgeRequirementMessage.called).to.equal(false);
   });
 
   it('lets legacy takers with no created_at (NaN age) pass the age check', async () => {
@@ -110,6 +124,6 @@ describe('meetsCounterpartyRequirements', () => {
     };
     const result = await meetsCounterpartyRequirements(ctx, taker, maker);
     expect(result).to.equal(true);
-    expect(messagesMock.notMeetingRequirementsMessage.called).to.equal(false);
+    expectNoDenialMessage();
   });
 });

@@ -663,7 +663,8 @@ user_settings: |
   /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders for the counterparty.
   /resetrequirements - Resets counterparty requirements to default.
   /exit - to exit the wizard.
-not_meeting_requirements: You do not meet the counterparty requirements to take this order (requires at least ${min_days_using_bot} days using the bot and ${min_completed_orders} completed orders).
+not_meeting_age_requirement: You do not meet the counterparty requirements to take this order (requires at least ${min_days_using_bot} days using the bot).
+not_meeting_orders_requirement: You do not meet the counterparty requirements to take this order (requires at least ${min_completed_orders} completed orders).
 counterpartyage_updated: Counterparty age requirement updated to ${days} days.
 counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
 requirements_reset: Counterparty requirements have been reset to default.

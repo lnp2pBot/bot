@@ -999,15 +999,30 @@ const userTakerIsBlockedByUserOrder = async (
   }
 };
 
-const notMeetingRequirementsMessage = async (
+const notMeetingAgeRequirementMessage = async (
   ctx: MainContext,
   user: UserDocument,
-  requirements?: { min_days_using_bot: number; min_completed_orders: number },
+  min_days_using_bot: number,
 ) => {
   try {
     await ctx.telegram.sendMessage(
       user.tg_id,
-      ctx.i18n.t('not_meeting_requirements', requirements),
+      ctx.i18n.t('not_meeting_age_requirement', { min_days_using_bot }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+const notMeetingOrdersRequirementMessage = async (
+  ctx: MainContext,
+  user: UserDocument,
+  min_completed_orders: number,
+) => {
+  try {
+    await ctx.telegram.sendMessage(
+      user.tg_id,
+      ctx.i18n.t('not_meeting_orders_requirement', { min_completed_orders }),
     );
   } catch (error) {
     logger.error(error);
@@ -2263,5 +2278,6 @@ export {
   userTakerIsBlockedByUserOrder,
   userOrderIsBlockedByUserTaker,
   showQRCodeMessage,
-  notMeetingRequirementsMessage,
+  notMeetingAgeRequirementMessage,
+  notMeetingOrdersRequirementMessage,
 };

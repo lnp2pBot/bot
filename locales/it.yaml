@@ -653,7 +653,8 @@ user_settings: |
   /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati per la controparte.
   /resetrequirements - Ripristina i requisiti della controparte ai valori predefiniti.
   /exit - per uscire dall'assistente.
-not_meeting_requirements: Non soddisfi i requisiti della controparte per accettare questo ordine (sono necessari almeno ${min_days_using_bot} giorni di utilizzo del bot e ${min_completed_orders} ordini completati).
+not_meeting_age_requirement: Non soddisfi i requisiti della controparte per accettare questo ordine (sono necessari almeno ${min_days_using_bot} giorni di utilizzo del bot).
+not_meeting_orders_requirement: Non soddisfi i requisiti della controparte per accettare questo ordine (sono necessari almeno ${min_completed_orders} ordini completati).
 counterpartyage_updated: Requisito di età della controparte aggiornato a ${days} giorni.
 counterpartyorders_updated: Requisito di ordini completati della controparte aggiornato a ${orders}.
 requirements_reset: I requisiti della controparte sono stati ripristinati ai valori predefiniti.

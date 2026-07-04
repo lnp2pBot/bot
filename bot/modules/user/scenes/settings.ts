@@ -9,10 +9,12 @@ import {
 import { Message } from 'telegraf/typings/core/types/typegram';
 import { logger } from '../../../../logger';
 
+const isNonNegativeInt = (n: number) => Number.isInteger(n) && n >= 0;
+
 const readNonNegativeInt = (value: string | undefined, fallback: number) => {
   if (value === undefined || value.trim() === '') return fallback;
   const parsed = Number(value);
-  return Number.isInteger(parsed) && parsed >= 0 ? parsed : fallback;
+  return isNonNegativeInt(parsed) ? parsed : fallback;
 };
 
 const DEFAULT_COUNTERPARTY_REQUIREMENTS = {
@@ -28,8 +30,15 @@ const DEFAULT_MAX_COUNTERPARTY_ORDERS = 10;
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
     const state = ctx.scene.state as CommunityWizardState;
-    delete state.feedback;
-    delete state.error;
+    // Re-render without the previous feedback/error line so the next
+    // updateMessage always differs from the displayed text; otherwise
+    // repeating a command with the same value would be silently skipped
+    // by the messageChanged guard, leaving the user with no acknowledgement.
+    if (state.feedback || state.error) {
+      delete state.feedback;
+      delete state.error;
+      await updateMessage(ctx);
+    }
     next();
   };
   async function mainData(ctx: CommunityContext) {
@@ -176,10 +185,11 @@ function make() {
         const state = ctx.scene.state as CommunityWizardState;
         if (ctx.message === undefined || !('text' in ctx.message))
           throw new Error('ctx.message is undefined');
-        const [, value] = ctx.message.text.trim().split(' ');
+        // Split on runs of whitespace: with split(' ') a double space would
+        // bind value to '' and Number('') === 0 silently disables the rule.
+        const [, value] = ctx.message.text.trim().split(/\s+/);
         const parsed = Number(value);
-        if (!Number.isInteger(parsed) || parsed < 0)
-          throw new Error('NotValidNumber');
+        if (!isNonNegativeInt(parsed)) throw new Error('NotValidNumber');
         const max = readNonNegativeInt(process.env[envVar], fallbackMax);
         if (parsed > max) {
           state.error = {
@@ -238,9 +248,10 @@ function make() {
         await ctx.deleteMessage();
         const state = ctx.scene.state as CommunityWizardState;
         const user = state.user;
-        user.counterparty_requirements = {
-          ...DEFAULT_COUNTERPARTY_REQUIREMENTS,
-        };
+        // Unset the field instead of storing zeros so "no requirements"
+        // keeps a single canonical representation (undefined), matching the
+        // fast path in meetsCounterpartyRequirements.
+        user.counterparty_requirements = undefined;
         await user.save();
         state.feedback = { i18n: 'requirements_reset' };
         await updateMessage(ctx);

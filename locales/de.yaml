@@ -656,7 +656,8 @@ user_settings: |
   /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge fest.
   /resetrequirements - Setzt die Gegenpartei-Anforderungen auf Standardwerte zurück.
   /exit - um den Assistenten zu verlassen.
-not_meeting_requirements: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen (erfordert mindestens ${min_days_using_bot} Tage Nutzung des Bots und ${min_completed_orders} abgeschlossene Aufträge).
+not_meeting_age_requirement: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen (erfordert mindestens ${min_days_using_bot} Tage Nutzung des Bots).
+not_meeting_orders_requirement: Du erfüllst nicht die Anforderungen der Gegenpartei, um diesen Auftrag anzunehmen (erfordert mindestens ${min_completed_orders} abgeschlossene Aufträge).
 counterpartyage_updated: Altersanforderung der Gegenpartei auf ${days} Tage aktualisiert.
 counterpartyorders_updated: Auftragsanforderung der Gegenpartei auf ${orders} aktualisiert.
 requirements_reset: Gegenpartei-Anforderungen wurden auf Standardwerte zurückgesetzt.
