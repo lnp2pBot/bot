@@ -45,6 +45,22 @@ export const parseCustomDays = (input: string): number[] | null => {
   return [...days].sort((a, b) => a - b);
 };
 
+// Minutes from now until the next time the scheduler will publish an order for
+// the given UTC weekdays (0=Sun..6=Sat) and hour (0-23). The job runs hourly on
+// the hour, so publication happens at minute 0 of the matching hour.
+export const minutesUntilNextRun = (days: number[], hour: number): number => {
+  const now = new Date();
+  for (let offset = 0; offset < 8; offset++) {
+    const candidate = new Date(now);
+    candidate.setUTCDate(now.getUTCDate() + offset);
+    candidate.setUTCHours(hour, 0, 0, 0);
+    if (days.includes(candidate.getUTCDay()) && candidate > now) {
+      return Math.round((candidate.getTime() - now.getTime()) / 60000);
+    }
+  }
+  return 0;
+};
+
 export const PRESET_DAYS: Record<string, number[]> = {
   daily: [0, 1, 2, 3, 4, 5, 6],
   weekdays: [1, 2, 3, 4, 5],
@@ -133,16 +149,21 @@ export const checkScheduleRequirements = async (
     };
   }
 
-  // Completion rate: successfully finished orders over all orders the user has
-  // created. Low completion means auto-published orders would likely waste
-  // takers' time, so we require a high ratio.
-  const totalOrders = await Order.countDocuments({ creator_id: user._id });
-  if (totalOrders > 0) {
+  // Completion rate: successfully finished orders over the orders that were
+  // actually taken (taken_at set). Orders that expired in PENDING without a
+  // taker are excluded (they never wasted anyone's time), so this measures how
+  // often the maker follows through once a counterparty commits — which is what
+  // matters for auto-published orders.
+  const takenOrders = await Order.countDocuments({
+    creator_id: user._id,
+    taken_at: { $ne: null },
+  });
+  if (takenOrders > 0) {
     const successOrders = await Order.countDocuments({
       creator_id: user._id,
       status: 'SUCCESS',
     });
-    const rate = successOrders / totalOrders;
+    const rate = successOrders / takenOrders;
     if (rate < minCompletionRate) {
       return {
         ok: false,
