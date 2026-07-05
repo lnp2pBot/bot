@@ -266,6 +266,8 @@ help: |
   /cancelall - Отменить все выставленные заявки
   /scheduleorder <_buy|sell_> <_sats_> <_сумма фиат_> <_код фиат_> <_способ оплаты_> [_премиум_] - Создать повторяющуюся заявку с автопубликацией
   /cancelschedule <_id расписания_> - Остановить автопубликацию запланированной заявки
+  /listschedules - Показывает ваши активные запланированные заявки с их ID
+  /cancelallschedules - Отменяет все ваши запланированные заявки
   /terms - показать условия использования бота
 
   Nostr:
@@ -765,6 +767,14 @@ scheduleorder_usage: "Использование: /scheduleorder <buy|sell> <sat
 cancelschedule_usage: "Использование: /cancelschedule <id расписания>"
 schedule_not_found: "⚠️ Расписание не найдено или уже неактивно."
 schedule_cancelled: "✅ Расписание ${scheduleId} отменено. Ордера больше не будут публиковаться автоматически."
+listschedules_empty: "У вас нет активных запланированных заявок."
+listschedules_header: "📋 Ваши запланированные заявки:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "У вас нет активных запланированных заявок для отмены."
+all_schedules_cancelled: "✅ Отменено запланированных заявок: ${count}. Ордера больше не будут публиковаться автоматически."
 schedule_creation_cancelled: "❌ Создание расписания отменено."
 schedule_created: "✅ Плановый ордер создан! Ваш ID: ${scheduleId}\nИспользуйте /cancelschedule ${scheduleId} для остановки."
 schedule_choose_days: "📅 В какие дни публиковать ордер?"

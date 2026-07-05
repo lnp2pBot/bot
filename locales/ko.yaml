@@ -269,6 +269,8 @@ help: |
   /cancelall - 등록되었지만 아직 수락되지 않은 모든 주문들을 취소합니다.
   /scheduleorder <_buy|sell_> <_sats_> <_법정화폐 금액_> <_법정화폐 코드_> <_결제 방법_> [_프리미엄_] - 자동으로 재게시되는 반복 주문을 생성합니다
   /cancelschedule <_schedule id_> - 예약 주문의 자동 재게시를 중지합니다
+  /listschedules - 활성 예약 주문과 해당 ID를 나열합니다
+  /cancelallschedules - 모든 예약 주문을 취소합니다
 
   Nostr:
   /setnpub <_노스터 npub_> - 노스터 공개키를 설정합니다. 이 명령어는 /settings 명령어 수행 중에만 사용 가능합니다.
@@ -762,6 +764,14 @@ scheduleorder_usage: "사용법: /scheduleorder <buy|sell> <sats> <법정화폐 
 cancelschedule_usage: "사용법: /cancelschedule <schedule id>"
 schedule_not_found: "⚠️ 스케줄을 찾을 수 없거나 이미 비활성화되었습니다."
 schedule_cancelled: "✅ 스케줄 ${scheduleId}이(가) 취소되었습니다. 더 이상 자동으로 주문이 게시되지 않습니다."
+listschedules_empty: "활성화된 예약 주문이 없습니다."
+listschedules_header: "📋 예약 주문 목록:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "취소할 활성 예약 주문이 없습니다."
+all_schedules_cancelled: "✅ ${count}개의 예약 주문이 취소되었습니다. 더 이상 자동으로 주문이 게시되지 않습니다."
 schedule_creation_cancelled: "❌ 스케줄 생성이 취소되었습니다."
 schedule_created: "✅ 예약 주문이 생성되었습니다! ID: ${scheduleId}\n중지하려면 /cancelschedule ${scheduleId}을 사용하세요."
 schedule_choose_days: "📅 어떤 요일에 주문을 게시할까요?"

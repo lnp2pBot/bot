@@ -324,6 +324,12 @@ help: |
   /cancelschedule <_شناسه زمان‌بندی_>
   بازنشر خودکار سفارش زمان‌بندی‌شده را متوقف می‌کند.
 
+  /listschedules
+  سفارش‌های زمان‌بندی‌شده فعال شما را همراه با شناسه‌هایشان فهرست می‌کند.
+
+  /cancelallschedules
+  تمام سفارش‌های زمان‌بندی‌شده شما را لغو می‌کند.
+
   /terms
   شرایط و ضوابط استفاده از ربات را نمایش می‌دهد.
 
@@ -871,6 +877,14 @@ scheduleorder_usage: "راهنما: /scheduleorder <buy|sell> <سات> <مبلغ
 cancelschedule_usage: "راهنما: /cancelschedule <شناسه زمان‌بندی>"
 schedule_not_found: "⚠️ زمان‌بندی پیدا نشد یا قبلاً غیرفعال شده است."
 schedule_cancelled: "✅ زمان‌بندی ${scheduleId} لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
+listschedules_empty: "شما هیچ سفارش زمان‌بندی‌شده فعالی ندارید."
+listschedules_header: "📋 سفارش‌های زمان‌بندی‌شده شما:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "شما هیچ سفارش زمان‌بندی‌شده فعالی برای لغو ندارید."
+all_schedules_cancelled: "✅ ${count} سفارش زمان‌بندی‌شده لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
 schedule_creation_cancelled: "❌ ایجاد زمان‌بندی لغو شد."
 schedule_created: "✅ سفارش زمان‌بندی‌شده ایجاد شد! شناسه شما: ${scheduleId}\nبرای توقف از /cancelschedule ${scheduleId} استفاده کنید."
 schedule_choose_days: "📅 در چه روزهایی سفارش منتشر شود؟"

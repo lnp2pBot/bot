@@ -5,6 +5,7 @@ import { validateSellOrder, validateBuyOrder } from '../../validations';
 import { getCurrency } from '../../../util';
 import { logger } from '../../../logger';
 import { SCHEDULE_ORDER } from './scenes';
+import { formatDays } from './messages';
 
 export const scheduleorder = async (ctx: CommunityContext) => {
   try {
@@ -75,6 +76,64 @@ export const cancelschedule = async (ctx: CommunityContext) => {
     await schedule.save();
 
     await ctx.reply(ctx.i18n.t('schedule_cancelled', { scheduleId }));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export const listschedules = async (ctx: CommunityContext) => {
+  try {
+    const user = ctx.user;
+
+    const schedules = await ScheduledOrder.find({
+      creator_id: user._id,
+      active: true,
+    }).sort({ created_at: 1 });
+
+    if (schedules.length === 0) {
+      return ctx.reply(ctx.i18n.t('listschedules_empty'));
+    }
+
+    const items = schedules
+      .map(schedule => {
+        const hour = String(schedule.hour).padStart(2, '0');
+        const typeKey = schedule.type === 'buy' ? 'buying' : 'selling';
+        return ctx.i18n.t('schedule_list_item', {
+          scheduleId: String(schedule._id),
+          type: ctx.i18n.t(typeKey),
+          fiatAmount: schedule.fiat_amount.join('-'),
+          fiatCode: schedule.fiat_code,
+          paymentMethod: schedule.payment_method,
+          days: formatDays(schedule.days),
+          hour: `${hour}:00 UTC`,
+        });
+      })
+      .join('\n');
+
+    await ctx.reply(`${ctx.i18n.t('listschedules_header')}\n\n${items}`, {
+      parse_mode: 'Markdown',
+    });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+export const cancelallschedules = async (ctx: CommunityContext) => {
+  try {
+    const user = ctx.user;
+
+    const result = await ScheduledOrder.updateMany(
+      { creator_id: user._id, active: true },
+      { active: false },
+    );
+
+    if (result.modifiedCount === 0) {
+      return ctx.reply(ctx.i18n.t('cancelallschedules_none'));
+    }
+
+    await ctx.reply(
+      ctx.i18n.t('all_schedules_cancelled', { count: result.modifiedCount }),
+    );
   } catch (error) {
     logger.error(error);
   }

@@ -267,6 +267,8 @@ help: |
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
   /scheduleorder <_buy|sell_> <_sats_> <_Fiat-Betrag_> <_Fiat-Code_> <_Zahlungsmethode_> [_Aufschlag_] - Erstellt einen wiederkehrenden Auftrag, der automatisch neu veröffentlicht wird
   /cancelschedule <_Schedule-ID_> - Stoppt die automatische Neuveröffentlichung eines geplanten Auftrags
+  /listschedules - Listet deine aktiven geplanten Aufträge mit ihren IDs auf
+  /cancelallschedules - Bricht alle deine geplanten Aufträge ab
   /terms - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
 
   Nostr:
@@ -765,6 +767,14 @@ scheduleorder_usage: "Verwendung: /scheduleorder <buy|sell> <sats> <Fiat-Betrag>
 cancelschedule_usage: "Verwendung: /cancelschedule <Schedule-ID>"
 schedule_not_found: "⚠️ Schedule nicht gefunden oder bereits inaktiv."
 schedule_cancelled: "✅ Schedule ${scheduleId} abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
+listschedules_empty: "Du hast keine aktiven geplanten Aufträge."
+listschedules_header: "📋 Deine geplanten Aufträge:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Du hast keine aktiven geplanten Aufträge zum Abbrechen."
+all_schedules_cancelled: "✅ ${count} geplante(r) Auftrag/Aufträge abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
 schedule_creation_cancelled: "❌ Erstellung des Schedules abgebrochen."
 schedule_created: "✅ Geplante Bestellung erstellt! Deine ID ist: ${scheduleId}\nVerwende /cancelschedule ${scheduleId} zum Stoppen."
 schedule_choose_days: "📅 An welchen Tagen soll die Bestellung veröffentlicht werden?"

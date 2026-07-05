@@ -271,6 +271,8 @@ help: |
   /cancelall - Cancel all posted and untaken orders
   /scheduleorder <_buy|sell_> <_sats_> <_fiat amount_> <_fiat code_> <_payment method_> [_premium_] - Creates a recurring order that auto-republishes
   /cancelschedule <_schedule id_> - Stops auto-republishing of a scheduled order
+  /listschedules - Lists your active scheduled orders with their IDs
+  /cancelallschedules - Cancels all your scheduled orders
   /terms - Shows the terms and conditions when using the bot
 
   Nostr:
@@ -771,6 +773,14 @@ scheduleorder_usage: "Usage: /scheduleorder <buy|sell> <sats> <fiat amount> <fia
 cancelschedule_usage: "Usage: /cancelschedule <schedule id>"
 schedule_not_found: "⚠️ Schedule not found or already inactive."
 schedule_cancelled: "✅ Schedule ${scheduleId} cancelled. No more orders will be auto-published."
+listschedules_empty: "You have no active scheduled orders."
+listschedules_header: "📋 Your scheduled orders:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "You have no active scheduled orders to cancel."
+all_schedules_cancelled: "✅ Cancelled ${count} scheduled order(s). No more orders will be auto-published."
 schedule_creation_cancelled: "❌ Schedule creation cancelled."
 schedule_created: "✅ Scheduled order created! Your ID is: ${scheduleId}\nUse /cancelschedule ${scheduleId} to stop it."
 schedule_choose_days: "📅 On which days should the order be published?"

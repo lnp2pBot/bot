@@ -269,6 +269,8 @@ help: |
   /cancelall - Annule toutes les commandes validées et non prises
   /scheduleorder <_buy|sell_> <_sats_> <_montant fiat_> <_code fiat_> <_méthode de paiement_> [_prime_] - Crée une commande récurrente qui se republie automatiquement
   /cancelschedule <_id du schedule_> - Arrête la republication automatique d'une commande planifiée
+  /listschedules - Liste vos commandes planifiées actives avec leurs identifiants
+  /cancelallschedules - Annule toutes vos commandes planifiées
   /terms - Affiche les termes et conditions lors de l'utilisation du bot
 
   Nostr:
@@ -764,6 +766,14 @@ scheduleorder_usage: "Utilisation : /scheduleorder <buy|sell> <sats> <montant fi
 cancelschedule_usage: "Utilisation : /cancelschedule <id du schedule>"
 schedule_not_found: "⚠️ Schedule introuvable ou déjà inactif."
 schedule_cancelled: "✅ Schedule ${scheduleId} annulé. Aucune autre commande ne sera publiée automatiquement."
+listschedules_empty: "Vous n'avez aucune commande planifiée active."
+listschedules_header: "📋 Vos commandes planifiées :"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Vous n'avez aucune commande planifiée active à annuler."
+all_schedules_cancelled: "✅ ${count} commande(s) planifiée(s) annulée(s). Aucune autre commande ne sera publiée automatiquement."
 schedule_creation_cancelled: "❌ Création du schedule annulée."
 schedule_created: "✅ Ordre planifié créé ! Votre ID est : ${scheduleId}\nUtilisez /cancelschedule ${scheduleId} pour l'arrêter."
 schedule_choose_days: "📅 Quels jours l'ordre doit-il être publié ?"

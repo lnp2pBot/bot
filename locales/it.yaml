@@ -267,6 +267,8 @@ help: |
   /cancelall - Cancella tutti gli ordini non ancora accettati
   /scheduleorder <_buy|sell_> <_sats_> <_importo fiat_> <_codice fiat_> <_metodo di pagamento_> [_premio_] - Crea un ordine ricorrente che si ripubblica automaticamente
   /cancelschedule <_id dello schedule_> - Ferma la ripubblicazione automatica di un ordine programmato
+  /listschedules - Elenca i tuoi ordini programmati attivi con i loro ID
+  /cancelallschedules - Annulla tutti i tuoi ordini programmati
   /terms: mostra i termini e le condizioni quando si utilizza il bot
 
   Nostr:
@@ -762,6 +764,14 @@ scheduleorder_usage: "Utilizzo: /scheduleorder <buy|sell> <sats> <importo fiat> 
 cancelschedule_usage: "Utilizzo: /cancelschedule <id dello schedule>"
 schedule_not_found: "⚠️ Schedule non trovato o già inattivo."
 schedule_cancelled: "✅ Schedule ${scheduleId} annullato. Non verranno più pubblicate offerte automaticamente."
+listschedules_empty: "Non hai ordini programmati attivi."
+listschedules_header: "📋 I tuoi ordini programmati:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Non hai ordini programmati attivi da annullare."
+all_schedules_cancelled: "✅ Annullati ${count} ordine/i programmato/i. Non verranno più pubblicate offerte automaticamente."
 schedule_creation_cancelled: "❌ Creazione dello schedule annullata."
 schedule_created: "✅ Ordine programmato creato! Il tuo ID è: ${scheduleId}\nUsa /cancelschedule ${scheduleId} per fermarlo."
 schedule_choose_days: "📅 In quali giorni deve essere pubblicato l'ordine?"
