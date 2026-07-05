@@ -4,7 +4,12 @@ import { ScheduledOrder } from '../../../models';
 import { CommunityContext } from '../community/communityContext';
 import { UserDocument } from '../../../models/user';
 import * as messages from './messages';
-import { getRepublishCount, parseCustomDays, PRESET_DAYS } from './helpers';
+import {
+  getRepublishCount,
+  minutesUntilNextRun,
+  parseCustomDays,
+  PRESET_DAYS,
+} from './helpers';
 
 export const SCHEDULE_ORDER = 'SCHEDULE_ORDER_WIZARD';
 
@@ -136,6 +141,11 @@ export const scheduleOrderWizard = new Scenes.WizardScene<CommunityContext>(
         republish_count: getRepublishCount(),
         active: true,
       });
+
+      const minutesToPublish = minutesUntilNextRun(state.days, state.hour);
+      logger.info(
+        `ScheduledOrder ${schedule._id} created, next publication in ${minutesToPublish} minutes`,
+      );
 
       await ctx.reply(
         ctx.i18n.t('schedule_created', { scheduleId: schedule._id }),
