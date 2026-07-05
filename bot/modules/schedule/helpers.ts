@@ -45,22 +45,6 @@ export const parseCustomDays = (input: string): number[] | null => {
   return [...days].sort((a, b) => a - b);
 };
 
-// Minutes from now until the next time the scheduler will publish an order for
-// the given UTC weekdays (0=Sun..6=Sat) and hour (0-23). The job runs hourly on
-// the hour, so publication happens at minute 0 of the matching hour.
-export const minutesUntilNextRun = (days: number[], hour: number): number => {
-  const now = new Date();
-  for (let offset = 0; offset < 8; offset++) {
-    const candidate = new Date(now);
-    candidate.setUTCDate(now.getUTCDate() + offset);
-    candidate.setUTCHours(hour, 0, 0, 0);
-    if (days.includes(candidate.getUTCDay()) && candidate > now) {
-      return Math.round((candidate.getTime() - now.getTime()) / 60000);
-    }
-  }
-  return 0;
-};
-
 export const PRESET_DAYS: Record<string, number[]> = {
   daily: [0, 1, 2, 3, 4, 5, 6],
   weekdays: [1, 2, 3, 4, 5],
