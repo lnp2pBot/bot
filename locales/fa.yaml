@@ -885,6 +885,12 @@ schedule_list_item: |
   📅 ${days} · 🕐 ${hour}
 cancelallschedules_none: "شما هیچ سفارش زمان‌بندی‌شده فعالی برای لغو ندارید."
 all_schedules_cancelled: "✅ ${count} سفارش زمان‌بندی‌شده لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
+schedule_req_max_reached: "⚠️ شما در حال حاضر ${max} سفارش زمان‌بندی‌شده فعال دارید که حداکثر مجاز است. پیش از ساختن سفارش جدید، یکی را با /cancelschedule لغو کنید."
+schedule_req_account_age: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده، حساب شما باید حداقل ${days} روز قدمت داشته باشد."
+schedule_req_completed_orders: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به حداقل ${count} سفارش تکمیل‌شده نیاز دارید."
+schedule_req_volume: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به حجم معاملاتی حداقل ${volume} ساتوشی نیاز دارید."
+schedule_req_rating: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به اعتبار حداقل ${rating} نیاز دارید."
+schedule_req_completion_rate: "⚠️ نرخ تکمیل سفارش‌های شما (${current}%) کمتر از ${rate}% موردنیاز است. پیش از زمان‌بندی، سفارش‌های بیشتری را تکمیل کنید."
 schedule_creation_cancelled: "❌ ایجاد زمان‌بندی لغو شد."
 schedule_created: "✅ سفارش زمان‌بندی‌شده ایجاد شد! شناسه شما: ${scheduleId}\nبرای توقف از /cancelschedule ${scheduleId} استفاده کنید."
 schedule_choose_days: "📅 در چه روزهایی سفارش منتشر شود؟"

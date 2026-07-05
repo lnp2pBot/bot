@@ -778,6 +778,12 @@ schedule_list_item: |
   📅 ${days} · 🕐 ${hour}
 cancelallschedules_none: "No tenés órdenes programadas activas para cancelar."
 all_schedules_cancelled: "✅ Se cancelaron ${count} orden(es) programada(s). No se publicarán más órdenes automáticamente."
+schedule_req_max_reached: "⚠️ Ya tenés ${max} órdenes programadas activas, que es el máximo permitido. Cancelá una con /cancelschedule antes de crear una nueva."
+schedule_req_account_age: "⚠️ Tu cuenta debe tener al menos ${days} días de antigüedad para crear órdenes programadas."
+schedule_req_completed_orders: "⚠️ Necesitás al menos ${count} órdenes completadas para crear órdenes programadas."
+schedule_req_volume: "⚠️ Necesitás un volumen operado de al menos ${volume} sats para crear órdenes programadas."
+schedule_req_rating: "⚠️ Necesitás una reputación de al menos ${rating} para crear órdenes programadas."
+schedule_req_completion_rate: "⚠️ Tu tasa de completitud de órdenes (${current}%) está por debajo del ${rate}% requerido. Completá más de tus órdenes antes de programar."
 schedule_creation_cancelled: "❌ Creación de schedule cancelada."
 schedule_created: "✅ Orden programada creada. Tu ID es: ${scheduleId}\nUsa /cancelschedule ${scheduleId} para detenerla."
 schedule_choose_days: "📅 ¿En qué días debe publicarse la orden?"

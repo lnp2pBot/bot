@@ -775,6 +775,12 @@ schedule_list_item: |
   📅 ${days} · 🕐 ${hour}
 cancelallschedules_none: "Du hast keine aktiven geplanten Aufträge zum Abbrechen."
 all_schedules_cancelled: "✅ ${count} geplante(r) Auftrag/Aufträge abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
+schedule_req_max_reached: "⚠️ Du hast bereits ${max} aktive geplante Aufträge, das ist das erlaubte Maximum. Brich einen mit /cancelschedule ab, bevor du einen neuen erstellst."
+schedule_req_account_age: "⚠️ Dein Konto muss mindestens ${days} Tage alt sein, um geplante Aufträge zu erstellen."
+schedule_req_completed_orders: "⚠️ Du benötigst mindestens ${count} abgeschlossene Aufträge, um geplante Aufträge zu erstellen."
+schedule_req_volume: "⚠️ Du benötigst ein gehandeltes Volumen von mindestens ${volume} Sats, um geplante Aufträge zu erstellen."
+schedule_req_rating: "⚠️ Du benötigst eine Reputation von mindestens ${rating}, um geplante Aufträge zu erstellen."
+schedule_req_completion_rate: "⚠️ Deine Auftrags-Abschlussquote (${current}%) liegt unter den erforderlichen ${rate}%. Schließe mehr deiner Aufträge ab, bevor du planst."
 schedule_creation_cancelled: "❌ Erstellung des Schedules abgebrochen."
 schedule_created: "✅ Geplante Bestellung erstellt! Deine ID ist: ${scheduleId}\nVerwende /cancelschedule ${scheduleId} zum Stoppen."
 schedule_choose_days: "📅 An welchen Tagen soll die Bestellung veröffentlicht werden?"

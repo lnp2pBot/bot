@@ -1,3 +1,6 @@
+import { Order, ScheduledOrder } from '../../../models';
+import { UserDocument } from '../../../models/user';
+
 const REPUBLISH_DAYS_DEFAULT = 10;
 
 export const getRepublishCount = (): number => {
@@ -46,4 +49,111 @@ export const PRESET_DAYS: Record<string, number[]> = {
   daily: [0, 1, 2, 3, 4, 5, 6],
   weekdays: [1, 2, 3, 4, 5],
   weekend: [0, 6],
+};
+
+const envNumber = (raw: string | undefined, fallback: number): number => {
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : fallback;
+};
+
+export interface ScheduleRequirementResult {
+  ok: boolean;
+  messageKey?: string;
+  params?: Record<string, unknown>;
+}
+
+// Gates the creation of scheduled orders to prevent spam and UX degradation:
+// only trusted, active makers with a good completion rate should be allowed to
+// publish orders automatically. All thresholds are configurable via env.
+export const checkScheduleRequirements = async (
+  user: UserDocument,
+): Promise<ScheduleRequirementResult> => {
+  const maxPerUser = envNumber(process.env.SCHEDULE_MAX_PER_USER, 3);
+  const minAgeDays = envNumber(process.env.SCHEDULE_MIN_ACCOUNT_AGE_DAYS, 7);
+  const minCompleted = envNumber(process.env.SCHEDULE_MIN_COMPLETED_ORDERS, 5);
+  const minVolume = envNumber(process.env.SCHEDULE_MIN_VOLUME, 0);
+  const minRating = envNumber(process.env.SCHEDULE_MIN_RATING, 4);
+  const minCompletionRate = envNumber(
+    process.env.SCHEDULE_MIN_COMPLETION_RATE,
+    0.9,
+  );
+
+  // Hard limit on how many active schedules a user can hold at once.
+  const activeCount = await ScheduledOrder.countDocuments({
+    creator_id: user._id,
+    active: true,
+  });
+  if (activeCount >= maxPerUser) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_max_reached',
+      params: { max: maxPerUser },
+    };
+  }
+
+  // Minimal account age (days using the bot).
+  const ageDays =
+    (Date.now() - new Date(user.created_at).getTime()) / (1000 * 60 * 60 * 24);
+  if (ageDays < minAgeDays) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_account_age',
+      params: { days: minAgeDays },
+    };
+  }
+
+  // Minimum number of completed trades.
+  if (user.trades_completed < minCompleted) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_completed_orders',
+      params: { count: minCompleted },
+    };
+  }
+
+  // Minimum traded volume (skipped when threshold is 0).
+  if (minVolume > 0 && user.volume_traded < minVolume) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_volume',
+      params: { volume: minVolume },
+    };
+  }
+
+  // Minimum reputation, only enforced once the user has received reviews.
+  if (
+    minRating > 0 &&
+    user.total_reviews > 0 &&
+    user.total_rating < minRating
+  ) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_rating',
+      params: { rating: minRating },
+    };
+  }
+
+  // Completion rate: successfully finished orders over all orders the user has
+  // created. Low completion means auto-published orders would likely waste
+  // takers' time, so we require a high ratio.
+  const totalOrders = await Order.countDocuments({ creator_id: user._id });
+  if (totalOrders > 0) {
+    const successOrders = await Order.countDocuments({
+      creator_id: user._id,
+      status: 'SUCCESS',
+    });
+    const rate = successOrders / totalOrders;
+    if (rate < minCompletionRate) {
+      return {
+        ok: false,
+        messageKey: 'schedule_req_completion_rate',
+        params: {
+          rate: Math.round(minCompletionRate * 100),
+          current: Math.round(rate * 100),
+        },
+      };
+    }
+  }
+
+  return { ok: true };
 };

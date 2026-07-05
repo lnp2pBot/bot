@@ -6,6 +6,7 @@ import { getCurrency } from '../../../util';
 import { logger } from '../../../logger';
 import { SCHEDULE_ORDER } from './scenes';
 import { formatDays } from './messages';
+import { checkScheduleRequirements } from './helpers';
 
 export const scheduleorder = async (ctx: CommunityContext) => {
   try {
@@ -35,6 +36,14 @@ export const scheduleorder = async (ctx: CommunityContext) => {
 
     if (!getCurrency(params.fiatCode)) {
       await ctx.reply(ctx.i18n.t('must_be_valid_currency'));
+      return;
+    }
+
+    // Gate creation behind anti-spam requirements (limit, seniority, completion
+    // rate, etc.) so only trusted makers can auto-publish orders.
+    const requirement = await checkScheduleRequirements(ctx.user);
+    if (!requirement.ok) {
+      await ctx.reply(ctx.i18n.t(requirement.messageKey!, requirement.params));
       return;
     }
 
