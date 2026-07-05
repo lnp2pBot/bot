@@ -784,6 +784,7 @@ schedule_req_completed_orders: "⚠️ Necesitás al menos ${count} órdenes com
 schedule_req_volume: "⚠️ Necesitás un volumen operado de al menos ${volume} sats para crear órdenes programadas."
 schedule_req_rating: "⚠️ Necesitás una reputación de al menos ${rating} para crear órdenes programadas."
 schedule_req_completion_rate: "⚠️ Tu tasa de completitud de órdenes (${current}%) está por debajo del ${rate}% requerido. Completá más de tus órdenes antes de programar."
+schedule_dormant_removed: "⚠️ Eliminé todas tus órdenes programadas porque no completaste tus últimas ${count} órdenes tomadas."
 schedule_creation_cancelled: "❌ Creación de schedule cancelada."
 schedule_created: "✅ Orden programada creada. Tu ID es: ${scheduleId}\nUsa /cancelschedule ${scheduleId} para detenerla."
 schedule_choose_days: "📅 ¿En qué días debe publicarse la orden?"

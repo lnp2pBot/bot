@@ -787,6 +787,7 @@ schedule_req_completed_orders: "⚠️ You need at least ${count} completed orde
 schedule_req_volume: "⚠️ You need a traded volume of at least ${volume} sats to create scheduled orders."
 schedule_req_rating: "⚠️ You need a reputation of at least ${rating} to create scheduled orders."
 schedule_req_completion_rate: "⚠️ Your order completion rate (${current}%) is below the required ${rate}%. Complete more of your orders before scheduling."
+schedule_dormant_removed: "⚠️ I removed all your scheduled orders because you didn't complete your last ${count} taken orders."
 schedule_creation_cancelled: "❌ Schedule creation cancelled."
 schedule_created: "✅ Scheduled order created! Your ID is: ${scheduleId}\nUse /cancelschedule ${scheduleId} to stop it."
 schedule_choose_days: "📅 On which days should the order be published?"

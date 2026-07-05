@@ -9,6 +9,10 @@ import {
   publishBuyOrderMessage,
   publishSellOrderMessage,
 } from '../bot/messages';
+import {
+  getDormantLimit,
+  isDormantMaker,
+} from '../bot/modules/schedule/helpers';
 
 // Runs every hour. For each active ScheduledOrder whose days/hour (UTC) match
 // now, publishes a brand-new Order from the stored mold. The mold is never
@@ -25,8 +29,14 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
       hour: currentHour,
     });
 
+    // Makers already handled as dormant in this run, so we don't deactivate
+    // their schedules or notify them more than once.
+    const dormantHandled = new Set<string>();
+
     for (const schedule of schedules) {
       try {
+        if (dormantHandled.has(schedule.creator_id)) continue;
+
         if (schedule.republish_count <= 0) {
           schedule.active = false;
           await schedule.save();
@@ -44,6 +54,30 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
         }
 
         const i18n = await getUserI18nContext(user);
+
+        // Dormant maker enforcement: if the creator has left their last N taken
+        // orders uncompleted, remove all their schedules and notify them.
+        if (await isDormantMaker(schedule.creator_id)) {
+          const removed = await ScheduledOrder.updateMany(
+            { creator_id: schedule.creator_id, active: true },
+            { active: false },
+          );
+          dormantHandled.add(schedule.creator_id);
+          try {
+            await bot.telegram.sendMessage(
+              user.tg_id,
+              i18n.t('schedule_dormant_removed', { count: getDormantLimit() }),
+            );
+          } catch (error) {
+            logger.warning(
+              `ScheduledOrder: failed to notify dormant maker ${schedule.creator_id}: ${String(error)}`,
+            );
+          }
+          logger.info(
+            `ScheduledOrder: deactivated ${removed.modifiedCount} schedule(s) for dormant maker ${schedule.creator_id}`,
+          );
+          continue;
+        }
 
         const order = await ordersActions.createOrder(i18n, bot, user, {
           type: schedule.type,

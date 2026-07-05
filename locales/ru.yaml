@@ -781,6 +781,7 @@ schedule_req_completed_orders: "⚠️ Вам нужно не менее ${count
 schedule_req_volume: "⚠️ Вам нужен торговый объём не менее ${volume} сатоши, чтобы создавать запланированные заявки."
 schedule_req_rating: "⚠️ Вам нужна репутация не менее ${rating}, чтобы создавать запланированные заявки."
 schedule_req_completion_rate: "⚠️ Ваш показатель завершения ордеров (${current}%) ниже требуемых ${rate}%. Завершите больше своих ордеров, прежде чем планировать."
+schedule_dormant_removed: "⚠️ Я удалил все ваши запланированные заявки, потому что вы не завершили свои последние ${count} принятых ордеров."
 schedule_creation_cancelled: "❌ Создание расписания отменено."
 schedule_created: "✅ Плановый ордер создан! Ваш ID: ${scheduleId}\nИспользуйте /cancelschedule ${scheduleId} для остановки."
 schedule_choose_days: "📅 В какие дни публиковать ордер?"

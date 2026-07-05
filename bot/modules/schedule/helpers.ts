@@ -178,3 +178,28 @@ export const checkScheduleRequirements = async (
 
   return { ok: true };
 };
+
+// Hard limit on how many of a maker's most recent taken orders may go
+// uncompleted in a row before their schedules are removed as dormant.
+export const getDormantLimit = (): number =>
+  envNumber(process.env.SCHEDULE_MAX_CONSECUTIVE_UNCOMPLETED, 5);
+
+// A maker is "dormant" when their last N taken orders all ended without
+// success. Such a user keeps getting orders taken but never follows through, so
+// their auto-published orders only waste takers' time. Returns false while
+// there is not enough taken-order history to judge.
+export const isDormantMaker = async (userId: string): Promise<boolean> => {
+  const limit = getDormantLimit();
+  if (limit <= 0) return false;
+
+  const recent = await Order.find({
+    creator_id: userId,
+    taken_at: { $ne: null },
+  })
+    .sort({ taken_at: -1 })
+    .limit(limit)
+    .select('status');
+
+  if (recent.length < limit) return false;
+  return recent.every(order => order.status !== 'SUCCESS');
+};

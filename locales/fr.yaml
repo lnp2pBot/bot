@@ -780,6 +780,7 @@ schedule_req_completed_orders: "⚠️ Vous devez avoir au moins ${count} comman
 schedule_req_volume: "⚠️ Vous devez avoir un volume échangé d'au moins ${volume} sats pour créer des commandes planifiées."
 schedule_req_rating: "⚠️ Vous devez avoir une réputation d'au moins ${rating} pour créer des commandes planifiées."
 schedule_req_completion_rate: "⚠️ Votre taux de complétion des commandes (${current}%) est inférieur aux ${rate}% requis. Terminez davantage de vos commandes avant de planifier."
+schedule_dormant_removed: "⚠️ J'ai supprimé toutes vos commandes planifiées car vous n'avez pas terminé vos ${count} dernières commandes acceptées."
 schedule_creation_cancelled: "❌ Création du schedule annulée."
 schedule_created: "✅ Ordre planifié créé ! Votre ID est : ${scheduleId}\nUtilisez /cancelschedule ${scheduleId} pour l'arrêter."
 schedule_choose_days: "📅 Quels jours l'ordre doit-il être publié ?"

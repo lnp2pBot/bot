@@ -778,6 +778,7 @@ schedule_req_completed_orders: "⚠️ Ti servono almeno ${count} ordini complet
 schedule_req_volume: "⚠️ Ti serve un volume scambiato di almeno ${volume} sats per creare ordini programmati."
 schedule_req_rating: "⚠️ Ti serve una reputazione di almeno ${rating} per creare ordini programmati."
 schedule_req_completion_rate: "⚠️ Il tuo tasso di completamento degli ordini (${current}%) è inferiore al ${rate}% richiesto. Completa più dei tuoi ordini prima di programmare."
+schedule_dormant_removed: "⚠️ Ho rimosso tutti i tuoi ordini programmati perché non hai completato i tuoi ultimi ${count} ordini presi."
 schedule_creation_cancelled: "❌ Creazione dello schedule annullata."
 schedule_created: "✅ Ordine programmato creato! Il tuo ID è: ${scheduleId}\nUsa /cancelschedule ${scheduleId} per fermarlo."
 schedule_choose_days: "📅 In quali giorni deve essere pubblicato l'ordine?"
