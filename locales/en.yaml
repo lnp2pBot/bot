@@ -663,9 +663,9 @@ user_settings: |
   /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders for the counterparty.
   /resetrequirements - Resets counterparty requirements to default.
   /exit - to exit the wizard.
-not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
-not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
-not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+not_meeting_requirements_header: "You do not meet the counterparty's requirements to take this order:"
+not_meeting_age_detail: "Required age: ${required} days: Your age: ${actual} days"
+not_meeting_orders_detail: "Required orders: ${required}: Your number of orders: ${actual}"
 counterpartyage_updated: Counterparty age requirement updated to ${days} days.
 counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
 requirements_reset: Counterparty requirements have been reset to default.
