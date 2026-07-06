@@ -255,7 +255,11 @@ help: |
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
-  /listorders - Use this command to list all your pending transactions 
+  While in /settings you can configure counterparty requirements:
+    /counterpartyage <days> - Sets the minimum account age (in days) required for the counterparty to take your orders
+    /counterpartyorders <orders> - Sets the minimum number of completed orders required for the counterparty
+    /resetrequirements - Resets counterparty requirements to default
+  /listorders - Use this command to list all your pending transactions
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
@@ -649,9 +653,24 @@ user_settings: |
   lightning address:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>Counterparty requirements</strong>
+  Min. account age: ${min_days_using_bot} days
+  Min. completed orders: ${min_completed_orders}
+
   <strong># HELP</strong>
   /setnpub &lt;npub&gt; - Configure user's Nostr public key.
+  /counterpartyage &lt;days&gt; - Sets the minimum account age (in days) for the counterparty.
+  /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders for the counterparty.
+  /resetrequirements - Resets counterparty requirements to default.
   /exit - to exit the wizard.
+not_meeting_requirements_header: "You do not meet the counterparty's requirements to take this order:"
+not_meeting_age_detail: "Required age: ${required} days: Your age: ${actual} days"
+not_meeting_orders_detail: "Required orders: ${required}: Your number of orders: ${actual}"
+counterpartyage_updated: Counterparty age requirement updated to ${days} days.
+counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
+requirements_reset: Counterparty requirements have been reset to default.
+invalid_number: Invalid number.
+invalid_range: Invalid value for ${command}, please choose a number in the range [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Invoice already settled

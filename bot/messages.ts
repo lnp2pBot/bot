@@ -999,6 +999,43 @@ const userTakerIsBlockedByUserOrder = async (
   }
 };
 
+const notMeetingRequirementsMessage = async (
+  ctx: MainContext,
+  user: UserDocument,
+  requirements?: {
+    failures: { age: boolean; orders: boolean };
+    min_days_using_bot: number;
+    min_completed_orders: number;
+    user_age: number | typeof NaN;
+    user_trades: number;
+  },
+) => {
+  try {
+    const lines = [ctx.i18n.t('not_meeting_requirements_header')];
+
+    if (requirements?.failures.age) {
+      lines.push(
+        ctx.i18n.t('not_meeting_age_detail', {
+          required: requirements.min_days_using_bot,
+          actual: requirements.user_age,
+        }),
+      );
+    }
+    if (requirements?.failures.orders) {
+      lines.push(
+        ctx.i18n.t('not_meeting_orders_detail', {
+          required: requirements.min_completed_orders,
+          actual: requirements.user_trades,
+        }),
+      );
+    }
+
+    await ctx.telegram.sendMessage(user.tg_id, lines.join('\n'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const fiatSentMessages = async (
   ctx: MainContext,
   buyer: UserDocument,
@@ -2248,4 +2285,5 @@ export {
   userTakerIsBlockedByUserOrder,
   userOrderIsBlockedByUserTaker,
   showQRCodeMessage,
+  notMeetingRequirementsMessage,
 };

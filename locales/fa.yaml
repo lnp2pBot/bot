@@ -283,6 +283,10 @@ help: |
 
   /settings
   تنظیمات کنونی کاربر را نمایش می‌دهد.
+  در /settings می‌توانید الزامات طرف مقابل را تنظیم کنید:
+    /counterpartyage <روز> - حداقل سابقه (به روز) برای طرف مقابل
+    /counterpartyorders <سفارش> - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل
+    /resetrequirements - بازگرداندن الزامات به مقادیر پیش‌فرض
 
   /listorders
   از این دستور برای مشاهده لیستی از تمامی سفارش‌ها فعال خود استفاده کنید.
@@ -739,12 +743,28 @@ user_settings: |
   نشانی لایتنینگ:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>الزامات طرف مقابل</strong>
+  حداقل سابقه: ${min_days_using_bot} روز
+  حداقل سفارش‌های تکمیل شده: ${min_completed_orders}
+
   <strong># راهنما</strong>
   تنظیم کلید عمومی نوستر کاربر:
   /setnpub &lt;npub&gt;
 
+  /counterpartyage &lt;روز&gt; - حداقل سابقه (به روز) برای طرف مقابل.
+  /counterpartyorders &lt;سفارش&gt; - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل.
+  /resetrequirements - بازگرداندن الزامات طرف مقابل به مقادیر پیش‌فرض.
+
   خروج از راهنما:
   /exit
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: الزامات سابقه طرف مقابل به ${days} روز به‌روزرسانی شد.
+counterpartyorders_updated: الزامات سفارش‌های تکمیل شده طرف مقابل به ${orders} عدد به‌روزرسانی شد.
+requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
+invalid_number: عدد نامعتبر است.
+invalid_range: مقدار نامعتبر برای ${command}، لطفاً عددی در محدوده [0 - ${max}] انتخاب کنید.
 # END modules/user
 # check hold invoice
 invoice_settled: صورتحساب تسویه شده است.

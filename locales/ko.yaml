@@ -252,6 +252,10 @@ help: |
   /setaddress <_라이트닝 주소 / off_> - 구매자가 정적인 결제 주소 (라이트닝 주소)를 설정할 수 있게 해 줍니다. 주소 대신 _off_를 넣으면 비활성화됩니다.
   /setlang - 사용자 언어를 변경합니다.
   /settings - 사용자의 현재 설정을 표시합니다.
+  /settings 안에서 거래 상대방 요구 사항을 설정할 수 있습니다:
+    /counterpartyage <일> - 거래 상대방의 최소 가입 기간(일)을 설정합니다
+    /counterpartyorders <주문> - 거래 상대방의 최소 완료 주문 수를 설정합니다
+    /resetrequirements - 요구 사항을 기본값으로 초기화합니다
   /listorders - 대기 중인 결제 내역들을 모두 보려면 이 명령어를 사용하세요.
   /listcurrencies - 사용 가능한 모든 법정화폐 종류를 나열합니다. (sat 단위 제외)
   /fiatsent <_주문 id_> - 구매자가 판매자에게 법정화폐의 지불을 마쳤다고 알려주는 명령어입니다.
@@ -639,9 +643,24 @@ user_settings: |
   라이트닝 주소:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>거래 상대방 요구 사항</strong>
+  최소 가입 기간: ${min_days_using_bot}일
+  최소 완료 주문 수: ${min_completed_orders}
+
   <strong># 도움말</strong>
-  /setnpub &lt;npub&gt; - 사용자의 nostr 공개키를 설정해주세요. Nostr 이벤트들이 이 공개키로 등록됩니다.
+  /setnpub &lt;npub&gt; - 사용자의 Nostr 공개키를 설정합니다.
+  /counterpartyage &lt;일&gt; - 거래 상대방의 최소 가입 기간(일)을 설정합니다.
+  /counterpartyorders &lt;주문&gt; - 거래 상대방의 최소 완료 주문 수를 설정합니다.
+  /resetrequirements - 거래 상대방 요구 사항을 기본값으로 초기화합니다.
   /exit - 설정 모드 나가기.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: 거래 상대방 가입 기간 요구 사항이 ${days}일로 업데이트되었습니다.
+counterpartyorders_updated: 거래 상대방 완료 주문 수 요구 사항이 ${orders}개로 업데이트되었습니다.
+requirements_reset: 거래 상대방 요구 사항이 기본값으로 초기화되었습니다.
+invalid_number: 유효하지 않은 숫자입니다.
+invalid_range: ${command}의 값이 잘못되었습니다. [0 - ${max}] 사이의 숫자를 선택해 주세요.
 # END modules/user
 # check hold invoice
 invoice_settled: 인보이스가 이미 체결되었습니다.

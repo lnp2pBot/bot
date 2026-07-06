@@ -253,7 +253,11 @@ help: |
   /setaddress <_addresse lightning / off_> - Permet à l'acheteur de définir une adresse de paiement statique (adresse lightning), _off_ pour désactiver 
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
-  /listorders - Utilise cette commande pour afficher toutes tes offres en attente 
+  Dans /settings tu peux configurer les exigences de contrepartie:
+    /counterpartyage <jours> - Définit l'âge minimum (en jours) requis pour la contrepartie
+    /counterpartyorders <ordres> - Définit le nombre minimum d'ordres complétés requis pour la contrepartie
+    /resetrequirements - Réinitialise les exigences aux valeurs par défaut
+  /listorders - Utilise cette commande pour afficher toutes tes offres en attente
   /listcurrencies - Lister les devises que nous pouvons utiliser sans spécifier le montant en satoshi. 
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
   /release <_order id_> - Le vendeur libère les satoshis 
@@ -641,9 +645,24 @@ user_settings: |
   adresse lightning:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>Exigences de contrepartie</strong>
+  Âge minimum: ${min_days_using_bot} jours
+  Ordres complétés minimum: ${min_completed_orders}
+
   <strong># AIDE</strong>
-  /setnpub &lt;npub&gt; - Configurer la clé publique de l'utilisateur.
+  /setnpub &lt;npub&gt; - Configurer la clé publique Nostr de l'utilisateur.
+  /counterpartyage &lt;jours&gt; - Définit l'âge minimum (en jours) pour la contrepartie.
+  /counterpartyorders &lt;ordres&gt; - Définit le nombre minimum d'ordres complétés pour la contrepartie.
+  /resetrequirements - Réinitialise les exigences de contrepartie aux valeurs par défaut.
   /exit - pour quitter l'assistant.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Exigence d'âge de la contrepartie mise à jour à ${days} jours.
+counterpartyorders_updated: Exigence d'ordres complétés de la contrepartie mise à jour à ${orders}.
+requirements_reset: Les exigences de contrepartie ont été réinitialisées aux valeurs par défaut.
+invalid_number: Nombre invalide.
+invalid_range: Valeur invalide pour ${command}, veuillez choisir un nombre dans la plage [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Facture déjà installée

@@ -250,6 +250,10 @@ help: |
   /setaddress <_lightning address / off_> - Дозволяє покупцеві вказати статичну платіжну адресу (lightning address), _off_ - відключено
   /setlang - Дозволяє користувачеві змінювати мову
   /settings - відображає поточні налаштування користувача
+  У /settings можна налаштувати вимоги до контрагента:
+    /counterpartyage <днів> - Встановлює мінімальний вік (у днях) для контрагента
+    /counterpartyorders <ордерів> - Встановлює мінімальну кількість виконаних ордерів для контрагента
+    /resetrequirements - Скидає вимоги до значень за замовчуванням
   /listorders - Використовуйте цю команду, щоб переглянути всі Ваші транзакції, що очікують на розгляд.
   /listcurrencies - Перелічує всі валюти, які ми можемо використовувати, не вказуючи суми в сатоші
   /fiatsent <_order id_> - Покупець повідомляє, що вже відправив фіатні гроші продавцю
@@ -627,20 +631,35 @@ order_not_found: Замовлення не знайдено.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Налаштування користувача @${user.username}</strong>
 
-  Language:
+  Мова:
     ${language.emoji} ${language.name}
-  Community:
+  Спільнота:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  Lightning-адреса:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Вимоги до контрагента</strong>
+  Мінімальний вік: ${min_days_using_bot} днів
+  Мінімум виконаних ордерів: ${min_completed_orders}
+
+  <strong># ДОПОМОГА</strong>
+  /setnpub &lt;npub&gt; - Налаштувати публічний ключ Nostr користувача.
+  /counterpartyage &lt;днів&gt; - Встановлює мінімальний вік (у днях) для контрагента.
+  /counterpartyorders &lt;ордерів&gt; - Встановлює мінімальну кількість виконаних ордерів для контрагента.
+  /resetrequirements - Скидає вимоги до контрагента до значень за замовчуванням.
+  /exit - вийти з майстра.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Вимогу до віку контрагента оновлено до ${days} днів.
+counterpartyorders_updated: Вимогу до виконаних ордерів контрагента оновлено до ${orders}.
+requirements_reset: Вимоги до контрагента скинуто до значень за замовчуванням.
+invalid_number: Невірне число.
+invalid_range: Недопустиме значення для ${command}, будь ласка, виберіть число в діапазоні [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Invoice already settled
