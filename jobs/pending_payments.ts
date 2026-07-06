@@ -1,4 +1,5 @@
 import { PendingPayment, Order, User, Community } from '../models';
+import { IPendingPayment } from '../models/pending_payment';
 import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
@@ -8,6 +9,16 @@ import { getUserI18nContext, logOrderError } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 import { completeOrderAsSuccess } from '../util/completeOrder';
+
+// Advances next_retry with the same exponential backoff used after a real
+// payment attempt, but without incrementing attempts: in-flight skips must not
+// consume retries, yet they should not poll LND on every job run either.
+const advanceNextRetry = (pending: IPendingPayment): void => {
+  const baseDelay = 5 * 60 * 1000; // 5 minutes
+  const exponentialDelay = baseDelay * Math.pow(2, pending.attempts);
+  const maxDelay = 60 * 60 * 1000; // 1 hour max
+  pending.next_retry = new Date(Date.now() + Math.min(exponentialDelay, maxDelay));
+};
 
 export const attemptPendingPayments = async (
   bot: Telegraf<CommunityContext>,
@@ -33,7 +44,7 @@ export const attemptPendingPayments = async (
         logger.info(
           `attemptPendingPayments: order ${order._id} is in ERROR status, skipping`,
         );
-        //Increment attempts so it is expired
+        // Increment attempts so it is expired
         pending.attempts++;
         await pending.save();
         continue;
@@ -110,6 +121,7 @@ export const attemptPendingPayments = async (
           logger.info(
             `Order ${order._id}: original buyer invoice is pending (in-flight), skipping retry without incrementing attempts`,
           );
+          advanceNextRetry(pending);
           continue;
         }
       }
@@ -185,6 +197,7 @@ export const attemptPendingPayments = async (
           logger.info(
             `Order ${order._id}: previous payment already in-flight, skipping attempt`,
           );
+          advanceNextRetry(pending);
           shouldSkip = true;
           break;
         }
@@ -248,6 +261,7 @@ export const attemptPendingPayments = async (
         logger.info(
           `Order ${order._id}: current payment is already in-flight, skipping retry without incrementing attempts`,
         );
+        advanceNextRetry(pending);
         continue;
       }
 
