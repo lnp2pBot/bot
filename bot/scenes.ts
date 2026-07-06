@@ -210,7 +210,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
             'getPaymentStatus returned error for pending payment: ' +
               order.buyer_invoice,
           );
-          await messages.genericErrorMessage(bot, ctx.user, ctx.i18n);
+          await messages.genericErrorMessage(bot, buyer, i18nCtx);
         }
         return ctx.scene.leave();
       }

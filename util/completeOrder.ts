@@ -25,16 +25,16 @@ export const completeOrderAsSuccess = async (
   i18nCtx: I18nContext,
   pending?: IPendingPayment,
 ): Promise<boolean> => {
-  // Keep the in-memory document consistent for any later save by the caller.
-  order.status = 'SUCCESS';
-  order.routing_fee = payment.fee;
-
   // If this coroutine come first and successfully updated the order status then continue the routine
   const won = await Order.findOneAndUpdate(
     { _id: order._id, status: { $ne: 'SUCCESS' } },
     { $set: { status: 'SUCCESS', routing_fee: payment.fee } },
   );
   if (won === null) return false;
+  // Keep the in-memory document consistent for any later save by the caller.
+  order.status = 'SUCCESS';
+  order.routing_fee = payment.fee;
+
   if (pending) {
     pending.paid = true;
     pending.paid_at = new Date();

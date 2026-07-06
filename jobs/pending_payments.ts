@@ -29,6 +29,29 @@ export const attemptPendingPayments = async (
         await pending.save();
         logger.info(`Order id: ${order._id} was already paid`);
         continue;
+      } else if (order.status === 'ERROR') {
+        logger.info(
+          `attemptPendingPayments: order ${order._id} is in ERROR status, skipping`,
+        );
+        //Increment attempts so it is expired
+        pending.attempts++;
+        await pending.save();
+        continue;
+      } else if (order.status !== 'PAID_HOLD_INVOICE') {
+        // Only orders in PAID_HOLD_INVOICE status are payable
+        logger.error(
+          `attemptPendingPayments: order ${order._id} is not in PAID_HOLD_INVOICE status, skipping`,
+        );
+        order.status = 'ERROR';
+        await order.save();
+        pending.attempts++;
+        await pending.save();
+        await logOrderError(
+          bot.telegram,
+          order,
+          'attemptPendingPayments: Order is not in PAID_HOLD_INVOICE status',
+        );
+        continue;
       }
 
       // Guard against double-pay after a bot restart mid-payment: if the

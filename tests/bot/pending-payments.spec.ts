@@ -33,7 +33,7 @@ function makeFakeOrder(overrides = {}) {
     buyer_invoice: 'lnbc_buyer_invoice',
     amount: 1000,
     fiat_code: 'ARS',
-    status: 'PENDING',
+    status: 'PAID_HOLD_INVOICE',
     routing_fee: 0,
     paid_hold_buyer_invoice_updated: false,
     save: sinon.stub().resolves(),
@@ -261,7 +261,7 @@ describe('attemptPendingPayments healing branches', () => {
 
   describe('previous pending payment already confirmed', () => {
     it('runs full success routine without attempting a new payment', async () => {
-      const order = makeFakeOrder({ status: 'PENDING' });
+      const order = makeFakeOrder();
       const pending = makeFakePending();
       const prevPending = makeFakePending({
         _id: 'prev0000000000000000000001',
