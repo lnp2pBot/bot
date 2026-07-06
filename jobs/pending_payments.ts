@@ -5,7 +5,7 @@ import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
 import { payRequest, getPaymentStatus, LndPayment } from '../ln';
-import { getUserI18nContext, logOrderError } from '../util';
+import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
 import {
@@ -60,8 +60,8 @@ export const attemptPendingPayments = async (
         await order.save();
         pending.attempts++;
         await pending.save();
-        await logOrderError(
-          bot.telegram,
+        await messages.toAdminChannelOrderErrorMessage(
+          bot,
           order,
           'attemptPendingPayments: Order is not in PAID_HOLD_INVOICE status',
         );
@@ -83,8 +83,8 @@ export const attemptPendingPayments = async (
         }
         if (originalStatus.is_pending) {
           if (originalStatus.is_error) {
-            await logOrderError(
-              bot.telegram,
+            await messages.toAdminChannelOrderErrorMessage(
+              bot,
               order,
               'getPaymentStatus returned error for invoice: ' +
                 order.buyer_invoice,
@@ -164,8 +164,8 @@ export const attemptPendingPayments = async (
 
       if (currentStatus.is_pending) {
         if (currentStatus.is_error) {
-          await logOrderError(
-            bot.telegram,
+          await messages.toAdminChannelOrderErrorMessage(
+            bot,
             order,
             'getPaymentStatus returned error for pending payment: ' +
               pending.payment_request,

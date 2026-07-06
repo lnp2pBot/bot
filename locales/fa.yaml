@@ -533,6 +533,10 @@ pending_payment_failed_earnings: |
 pending_payment_failed_to_admin: |
   پرداخت صورتحساب سفارش خرید کاربر @${username} با شناسه ${orderId} شکست خورد.
   تعداد تلاش‌های پرداخت: ${attempts}
+order_error_to_admin: |
+  ⚠️ سفارش ${orderId} به وضعیت ERROR منتقل شد
+  ممکن است پرداخت گیر کرده باشد — لطفاً سفارش را بررسی کنید، ممکن است به حل دستی نیاز داشته باشد.
+  جزئیات: ${details}
 selling: فروختن
 buying: خریدن
 selling_sats: فروش ساتوشی

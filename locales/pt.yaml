@@ -449,6 +449,10 @@ pending_payment_failed_to_admin: |
   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
 
   Tentativas de pagamento: ${attempts}
+order_error_to_admin: |
+  ⚠️ O pedido ${orderId} passou para o estado ERROR
+  O pagamento pode estar travado — por favor verifique o pedido, pode exigir resolução manual.
+  Detalhes: ${details}
 selling: Vendendo
 buying: Comprando
 selling_sats: Vendendo sats

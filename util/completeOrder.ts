@@ -7,7 +7,7 @@ import { UserDocument } from '../models/user';
 import * as messages from '../bot/messages';
 import { LndPayment, PaymentStatus } from '../ln';
 import { CommunityContext } from '../bot/modules/community/communityContext';
-import { getUserI18nContext, logOrderError } from '../util';
+import { getUserI18nContext } from '../util';
 import { logger } from '../logger';
 
 // Closes an order as SUCCESS and runs the success side effects (notify buyer,
@@ -105,8 +105,8 @@ export const healConfirmedOrder = async (
   );
   order.status = 'ERROR';
   await order.save();
-  await logOrderError(
-    bot.telegram,
+  await messages.toAdminChannelOrderErrorMessage(
+    bot,
     order,
     'getPaymentStatus confirmed but no payment details in LND response',
   );

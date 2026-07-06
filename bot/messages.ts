@@ -2006,6 +2006,32 @@ const toAdminChannelPendingPaymentFailedMessage = async (
   }
 };
 
+// Notifies the admin channel that an order transitioned to the ERROR state.
+// The admin channel has no per-user language, so we use an English context.
+const toAdminChannelOrderErrorMessage = async (
+  bot: Telegraf<CommunityContext>,
+  order: IOrder,
+  details: string,
+) => {
+  logger.error(`Order ${order._id} transitioned to ERROR state: ${details}`);
+  try {
+    const i18n = new I18n({
+      locale: 'en',
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
+    await bot.telegram.sendMessage(
+      String(process.env.ADMIN_CHANNEL),
+      i18n.t('en', 'order_error_to_admin', {
+        orderId: order._id,
+        details,
+      }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const currencyNotSupportedMessage = async (
   ctx: MainContext,
   currencies: Array<string>,
@@ -2231,6 +2257,7 @@ export {
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
   toAdminChannelPendingPaymentFailedMessage,
+  toAdminChannelOrderErrorMessage,
   genericErrorMessage,
   refundCooperativeCancelMessage,
   toBuyerExpiredOrderMessage,

@@ -450,6 +450,10 @@ pending_payment_failed_to_admin: |
   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
   Zahlungsversuche: ${attempts}
+order_error_to_admin: |
+  ⚠️ Auftrag ${orderId} ist in den ERROR-Status übergegangen
+  Die Auszahlung könnte feststecken — bitte den Auftrag prüfen, eventuell ist eine manuelle Lösung erforderlich.
+  Details: ${details}
 selling: Verkaufe
 buying: Kaufe
 selling_sats: Verkaufe Sats

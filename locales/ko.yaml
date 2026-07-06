@@ -447,6 +447,10 @@ pending_payment_failed_to_admin: |
   
   결제 시도 횟수: ${attempts}
 
+order_error_to_admin: |
+  ⚠️ 주문 ${orderId}이(가) ERROR 상태로 전환되었습니다
+  지급이 중단되었을 수 있습니다 — 주문을 확인해 주세요. 수동 해결이 필요할 수 있습니다.
+  상세 정보: ${details}
 selling: 팝니다
 buying: 삽니다
 selling_sats: sats 판매
