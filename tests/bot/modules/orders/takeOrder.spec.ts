@@ -73,8 +73,14 @@ describe('meetsCounterpartyRequirements', () => {
     // The taker gets told the thresholds it failed.
     const params = messagesMock.notMeetingRequirementsMessage.firstCall.args[2];
     expect(params).to.deep.equal({
+      failures: {
+        age: true,
+        orders: false,
+      },
       min_days_using_bot: 30,
       min_completed_orders: 0,
+      user_age: 10,
+      user_trades: 5,
     });
   });
 
