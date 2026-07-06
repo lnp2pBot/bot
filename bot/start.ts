@@ -1046,6 +1046,12 @@ const initialize = (
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
       }
 
+      // SECURITY: only a superadmin may resolve ERROR orders manually;
+      // community solvers are limited to FROZEN and PAID_HOLD_INVOICE.
+      if (order.status === 'ERROR' && !ctx.admin.admin) {
+        return await messages.notAuthorized(ctx);
+      }
+
       // We look for a dispute for this order
       const dispute = await Dispute.findOne({ order_id: order._id });
 
