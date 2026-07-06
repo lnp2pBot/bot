@@ -8,7 +8,10 @@ import { payRequest, getPaymentStatus, LndPayment } from '../ln';
 import { getUserI18nContext, logOrderError } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
-import { completeOrderAsSuccess } from '../util/completeOrder';
+import {
+  completeOrderAsSuccess,
+  healConfirmedOrder,
+} from '../util/completeOrder';
 
 // Advances next_retry with the same exponential backoff used after a real
 // payment attempt, but without incrementing attempts: in-flight skips must not
@@ -75,36 +78,7 @@ export const attemptPendingPayments = async (
           logger.info(
             `Order ${order._id}: original buyer invoice already confirmed, running success routine`,
           );
-          const buyerUser = await User.findOne({ _id: order.buyer_id });
-          if (buyerUser === null) throw Error('buyerUser was not found in DB');
-          const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
-          const sellerUser = await User.findOne({ _id: order.seller_id });
-          if (sellerUser === null)
-            throw Error('sellerUser was not found in DB');
-          if (originalStatus.payment) {
-            await completeOrderAsSuccess(
-              bot,
-              order,
-              originalStatus.payment,
-              buyerUser,
-              sellerUser,
-              i18nCtx,
-              pending,
-            );
-          } else {
-            logger.error(
-              `Order ${order._id}: confirmed but no payment details in LND response; ` +
-                `not marking SUCCESS — needs manual resolution`,
-            );
-            order.status = 'ERROR';
-            await order.save();
-            await logOrderError(
-              bot.telegram,
-              order,
-              'getPaymentStatus confirmed but no payment details in LND response: ' +
-                order.buyer_invoice,
-            );
-          }
+          await healConfirmedOrder(bot, order, originalStatus, pending);
           continue;
         }
         if (originalStatus.is_pending) {
@@ -161,36 +135,7 @@ export const attemptPendingPayments = async (
           await prev.save();
           pending.is_invoice_expired = true; // prevents retrying on this PendingPayment
           await pending.save();
-          const buyerUser = await User.findOne({ _id: order.buyer_id });
-          if (buyerUser === null) throw Error('buyerUser was not found in DB');
-          const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
-          const sellerUser = await User.findOne({ _id: order.seller_id });
-          if (sellerUser === null)
-            throw Error('sellerUser was not found in DB');
-          if (prevStatus.payment) {
-            await completeOrderAsSuccess(
-              bot,
-              order,
-              prevStatus.payment,
-              buyerUser,
-              sellerUser,
-              i18nCtx,
-              prev,
-            );
-          } else {
-            logger.error(
-              `Order ${order._id}: previous payment confirmed but no payment details in LND response; ` +
-                `not marking SUCCESS — needs manual resolution`,
-            );
-            order.status = 'ERROR';
-            await order.save();
-            await logOrderError(
-              bot.telegram,
-              order,
-              'getPaymentStatus confirmed but no payment details in LND response: ' +
-                prev.payment_request,
-            );
-          }
+          await healConfirmedOrder(bot, order, prevStatus, prev);
           shouldSkip = true;
           break;
         } else if (prevStatus.is_pending) {
@@ -210,40 +155,10 @@ export const attemptPendingPayments = async (
       if (currentStatus.is_confirmed) {
         // is_confirmed alone must stop the retry: falling through to payRequest
         // when LND reports a confirmed payment would re-open a double-pay window.
-        if (!currentStatus.payment) {
-          // Fail closed: confirmed but no payment payload. Do not re-pay and do
-          // not silently mark SUCCESS — leave the order for manual resolution.
-          logger.error(
-            `Order ${order._id}: payment confirmed but LND returned no details; ` +
-              `not re-paying and not marking SUCCESS — needs manual resolution`,
-          );
-          await logOrderError(
-            bot.telegram,
-            order,
-            'getPaymentStatus returned error for pending payment: ' +
-              pending.payment_request,
-          );
-          order.status = 'ERROR';
-          await order.save();
-          continue;
-        }
         logger.info(
           `Invoice with hash: ${pending.hash} already paid, running success routine`,
         );
-        const buyerUser = await User.findOne({ _id: order.buyer_id });
-        if (buyerUser === null) throw Error('buyerUser was not found in DB');
-        const i18nCtx: I18nContext = await getUserI18nContext(buyerUser);
-        const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        await completeOrderAsSuccess(
-          bot,
-          order,
-          currentStatus.payment,
-          buyerUser,
-          sellerUser,
-          i18nCtx,
-          pending,
-        );
+        await healConfirmedOrder(bot, order, currentStatus, pending);
         continue;
       }
 

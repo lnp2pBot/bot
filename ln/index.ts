@@ -13,6 +13,7 @@ import {
   isPendingOrConfirmed,
   getPaymentStatus,
   LndPayment,
+  PaymentStatus,
 } from './pay_request';
 import { getInfo } from './info';
 
@@ -31,4 +32,5 @@ export {
   getInvoice,
   payHoldInvoice,
   LndPayment,
+  PaymentStatus,
 };

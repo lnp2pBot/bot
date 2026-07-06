@@ -2,12 +2,12 @@ import { Scenes } from 'telegraf';
 // @ts-ignore
 import { parsePaymentRequest } from 'invoices';
 import { isValidInvoice, validateLightningAddress } from './validations';
-import { Order, PendingPayment, User } from '../models';
+import { Order, PendingPayment } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
-import { getCurrency, getUserI18nContext, logOrderError } from '../util';
+import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
 import { getPaymentStatus } from '../ln';
-import { completeOrderAsSuccess } from '../util/completeOrder';
+import { healConfirmedOrder } from '../util/completeOrder';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
@@ -179,37 +179,14 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         ? await getPaymentStatus(order.buyer_invoice)
         : undefined;
       if (originalStatus?.is_confirmed) {
-        const i18nCtx = await getUserI18nContext(buyer);
-        const sellerUser = await User.findOne({ _id: order.seller_id });
-        if (originalStatus.payment && sellerUser !== null) {
-          // Shared, idempotent success routine: if the pending-payments job
-          // already closed this order the compare-and-set inside makes this a
-          // no-op so the buyer is not notified twice.
-          await completeOrderAsSuccess(
-            bot,
-            order,
-            originalStatus.payment,
-            buyer,
-            sellerUser,
-            i18nCtx,
-          );
-        } else {
-          // Fail closed: the original payment is confirmed but LND returned no
-          // payment payload (or the seller is missing). Do not silently mark the
-          // order SUCCESS — that could hide an inconsistent settlement. Leave the
-          // order untouched for manual/operational resolution and reject the update.
-          logger.error(
-            `Order ${order._id}: buyer invoice confirmed but no payment details from LND; ` +
-              `not marking SUCCESS — needs manual resolution`,
-          );
-          order.status = 'ERROR';
-          await order.save();
-          await logOrderError(
-            bot.telegram,
-            order,
-            'getPaymentStatus returned error for pending payment: ' +
-              order.buyer_invoice,
-          );
+        // Shared, idempotent fail-closed healing routine: if the payment payload
+        // is present the order is closed as SUCCESS (the compare-and-set inside
+        // makes this a no-op if the pending-payments job already closed it, so
+        // the buyer is not notified twice); if LND returned no payload the order
+        // is flagged ERROR and the admin channel is notified.
+        const healed = await healConfirmedOrder(bot, order, originalStatus);
+        if (!healed) {
+          const i18nCtx = await getUserI18nContext(buyer);
           await messages.genericErrorMessage(bot, buyer, i18nCtx);
         }
         return ctx.scene.leave();
