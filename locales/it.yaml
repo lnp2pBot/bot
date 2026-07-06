@@ -679,7 +679,7 @@ disclaimer: |
 
   Né gli sviluppatori né i risolutori di controversie sono responsabili di eventuali perdite o danni che l'utente potrebbe subire a causa dell'utilizzo del bot.
 order_frozen: hai congelato l'ordine
-paytobuyer_only_frozen_orders: Il comando paytobuyer può essere utilizzato solo su ordini con stato FROZEN o PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: Il comando paytobuyer può essere utilizzato solo su ordini con stato FROZEN, PAID_HOLD_INVOICE o ERROR
 settleorder_only_dispute_orders: Il comando settleorder può essere utilizzato solo su ordini con stato DISPUTE
 dispute_solver: 👮‍♂️ Un solutore si occuperà della vostra controversia, potete scrivergli direttamente toccando il suo nome utente => @${solver} <=, se il solutore vi scrive per primo, dovreste chiedergli di dirvi qual è il token della vostra controversia, il vostro token è ${token}.
 setinvoice_no_response: Non ci sono ordini da pagare.

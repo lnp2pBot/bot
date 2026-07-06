@@ -20,7 +20,9 @@ const advanceNextRetry = (pending: IPendingPayment): void => {
   const baseDelay = 5 * 60 * 1000; // 5 minutes
   const exponentialDelay = baseDelay * Math.pow(2, pending.attempts);
   const maxDelay = 60 * 60 * 1000; // 1 hour max
-  pending.next_retry = new Date(Date.now() + Math.min(exponentialDelay, maxDelay));
+  pending.next_retry = new Date(
+    Date.now() + Math.min(exponentialDelay, maxDelay),
+  );
 };
 
 export const attemptPendingPayments = async (

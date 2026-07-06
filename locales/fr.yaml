@@ -681,7 +681,7 @@ disclaimer: |
 
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
 order_frozen: Vous avez gelé la commande
-paytobuyer_only_frozen_orders: La commande paytobuyer ne peut être utilisée que sur des commandes avec le statut FROZEN ou PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: La commande paytobuyer ne peut être utilisée que sur des commandes avec le statut FROZEN, PAID_HOLD_INVOICE ou ERROR
 settleorder_only_dispute_orders: La commande settleorder ne peut être utilisée que sur des commandes avec le statut DISPUTE
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
 setinvoice_no_response : Vous n'avez pas d'ordre à payer

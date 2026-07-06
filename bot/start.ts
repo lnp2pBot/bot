@@ -1036,8 +1036,13 @@ const initialize = (
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
 
-      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
-      if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
+      // paytobuyer can only be used if the order status is FROZEN,
+      // PAID_HOLD_INVOICE or ERROR (manual resolution of stuck payouts)
+      if (
+        order.status !== 'FROZEN' &&
+        order.status !== 'PAID_HOLD_INVOICE' &&
+        order.status !== 'ERROR'
+      ) {
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
       }
 
