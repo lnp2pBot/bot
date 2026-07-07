@@ -129,6 +129,13 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       order.buyer_invoice,
     );
     if (isPaymentPendingOrConfirmed) {
+      order.status = 'ERROR';
+      await order.save();
+      await messages.toAdminChannelOrderErrorMessage(
+        bot,
+        order,
+        'Payment is already in-flight or was confirmed',
+      );
       return;
     }
     const payment = await payRequest({

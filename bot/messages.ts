@@ -2009,7 +2009,7 @@ const toAdminChannelPendingPaymentFailedMessage = async (
 // Notifies the admin channel that an order transitioned to the ERROR state.
 // The admin channel has no per-user language, so we use an English context.
 const toAdminChannelOrderErrorMessage = async (
-  bot: Telegraf<CommunityContext>,
+  bot: HasTelegram,
   order: IOrder,
   details: string,
 ) => {
