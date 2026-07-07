@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Conventions
+
+- **Language:** everything committed to this repo (code, comments, commit messages, PRs, issues, docs) must be in English. See AGENTS.md.
+
 ## Project Overview
 
 LNp2pBot is a Telegram bot that facilitates peer-to-peer Lightning Network trading. Users can create buy/sell orders for Bitcoin using Lightning Network hold invoices to ensure trustless transactions.

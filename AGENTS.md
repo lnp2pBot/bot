@@ -1,5 +1,11 @@
 # Repository Guidelines
 
+## Language
+- All repository artifacts must be written in English: source code, comments,
+  identifiers, commit messages, PR titles and descriptions, issues, and docs.
+- This applies regardless of the language used to converse with a contributor
+  or maintainer — the repository itself stays English-only.
+
 ## Project Structure & Module Organization
 - `app.ts` bootstraps the Telegram bot and Mongo connection; keep startup logic centralized there.
 - `bot/` houses commands, scenes, and middleware modules; pair new flows with text updates under `locales/`.
