@@ -467,6 +467,11 @@ export const attemptCommunitiesPendingPayments = async (
       if (!!payment && !!payment.confirmed_at) {
         pending.paid = true;
         pending.paid_at = new Date();
+        // Persist the routing fee paid for this withdrawal. Unlike buyer
+        // payouts (whose fee is stored on the order), community withdrawals
+        // have no order, so without this the cost would only live in the log
+        // and be invisible to the operator/accounting (see issue #867).
+        pending.fee = payment.fee;
 
         // The earnings were already atomically zeroed when this withdrawal was
         // claimed at scheduling time, so don't reset them again here: doing so
