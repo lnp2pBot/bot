@@ -86,6 +86,12 @@ export const attemptPendingPayments = async (
       if (!!payment && !!payment.confirmed_at) {
         order.status = 'SUCCESS';
         order.routing_fee = payment.fee;
+        // Reflect the invoice that was actually paid. When a payout fails and
+        // the buyer runs /setinvoice, the retry pays a new invoice stored only
+        // on the pending payment, while order.buyer_invoice still points at the
+        // original (failed) invoice. Sync it here so the order is a faithful
+        // record of the payment (needed for reconciliation/auditing). See #864.
+        order.buyer_invoice = pending.payment_request;
         pending.paid = true;
         pending.paid_at = new Date();
         // We add a new completed trade for the buyer
@@ -96,7 +102,11 @@ export const attemptPendingPayments = async (
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
         sellerUser.trades_completed++;
         sellerUser.save();
-        logger.info(`Invoice with hash: ${pending.hash} paid`);
+        // Log the real payment hash (payment.id); pending.hash stores the hold
+        // invoice hash, not the payout's, which made this line misleading (#864).
+        logger.info(
+          `Order ${order._id} - Invoice with hash: ${payment.id} paid`,
+        );
         await messages.toAdminChannelPendingPaymentSuccessMessage(
           bot,
           buyerUser,
