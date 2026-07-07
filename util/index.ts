@@ -398,7 +398,7 @@ const getUserI18nContext = async (user: UserDocument) => {
     directory: 'locales',
   });
 
-  return i18n.createContext(user.lang);
+  return i18n.createContext(user.lang || language || 'en');
 };
 
 const getDetailedOrder = async (
@@ -666,28 +666,6 @@ class PerOrderIdMutex {
   static instance = new PerOrderIdMutex();
 }
 
-// Logs to the admin channel that an order transitioned to an ERROR state
-const logOrderError = async (
-  telegram: Telegram,
-  order: IOrder,
-  details: string,
-): Promise<void> => {
-  logger.error(
-    `Order ${order._id}: payment skipped due to unknown errors; payout may be stuck`,
-  );
-  try {
-    await telegram.sendMessage(
-      String(process.env.ADMIN_CHANNEL),
-      `⚠️ Order ${order._id} transitioned to ERROR state \n` +
-        `The payout may be stuck — please check the order. \n` +
-        `The order may require manual resolution. \n` +
-        `Details: ${details}`,
-    );
-  } catch (error) {
-    logger.error(error);
-  }
-};
-
 export {
   isIso4217,
   plural,
@@ -722,5 +700,4 @@ export {
   generateRandomImage,
   generateQRWithImage,
   PerOrderIdMutex,
-  logOrderError,
 };

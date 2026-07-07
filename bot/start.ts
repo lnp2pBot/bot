@@ -1036,9 +1036,20 @@ const initialize = (
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
 
-      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
-      if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
+      // paytobuyer can only be used if the order status is FROZEN,
+      // PAID_HOLD_INVOICE or ERROR (manual resolution of stuck payouts)
+      if (
+        order.status !== 'FROZEN' &&
+        order.status !== 'PAID_HOLD_INVOICE' &&
+        order.status !== 'ERROR'
+      ) {
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
+      }
+
+      // SECURITY: only a superadmin may resolve ERROR orders manually;
+      // community solvers are limited to FROZEN and PAID_HOLD_INVOICE.
+      if (order.status === 'ERROR' && !ctx.admin.admin) {
+        return await messages.notAuthorized(ctx);
       }
 
       // We look for a dispute for this order

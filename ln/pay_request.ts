@@ -283,4 +283,5 @@ export {
   isPendingOrConfirmed,
   getPaymentStatus,
   LndPayment,
+  PaymentStatus,
 };
