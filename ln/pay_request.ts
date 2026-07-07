@@ -150,6 +150,11 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       logger.info(`Order ${order._id} - Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
+      // Persist proof of the buyer payout: the payment hash and its preimage.
+      // These live only on the node otherwise, so recording them makes the
+      // order a self-contained, verifiable record of the payment (issue #869).
+      order.payout_hash = payment.id;
+      order.payout_preimage = payment.secret;
 
       await order.save();
       OrderEvents.orderUpdated(order);

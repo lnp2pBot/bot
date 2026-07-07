@@ -12,6 +12,8 @@ export interface IOrder extends Document<string> {
   routing_fee: number;
   hash: string | null;
   secret: string | null;
+  payout_hash: string | null;
+  payout_preimage: string | null;
   creator_id: string;
   seller_id: string | null;
   buyer_id: string | null;
@@ -84,6 +86,8 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
       partialFilterExpression: { secret: { $type: 'string' } },
     },
   }, // hold invoice secret
+  payout_hash: { type: String }, // payment hash of the outgoing payment to the buyer
+  payout_preimage: { type: String }, // preimage (proof of payment) of the buyer payout
   creator_id: { type: String },
   seller_id: { type: String },
   buyer_id: { type: String },
