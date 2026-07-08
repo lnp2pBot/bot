@@ -352,7 +352,13 @@ const cancelAddInvoice = async (
     } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.successCancelOrderMessage(ctx, sellerUser, order, i18nCtx);
+      const i18nCtxSeller = await getUserI18nContext(sellerUser);
+      await messages.successCancelOrderMessage(
+        ctx,
+        sellerUser,
+        order,
+        i18nCtxSeller,
+      );
       const i18nCtxBuyer = await getUserI18nContext(buyerUser);
       await messages.counterPartyCancelOrderMessage(
         ctx,
