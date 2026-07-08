@@ -14,6 +14,7 @@ import {
   getUserI18nContext,
   getFee,
   removeLightningPrefix,
+  PerOrderIdMutex,
 } from '../util';
 import * as ordersActions from './ordersActions';
 import * as OrderEvents from './modules/events/orders';
@@ -24,6 +25,31 @@ import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
 import { HasTelegram, MainContext } from './start';
 import { CommunityContext } from './modules/community/communityContext';
+
+enum UserOrderRole {
+  BUYER,
+  SELLER,
+}
+
+const setCooperativeCancelFlag = async (
+  orderId: string,
+  role: UserOrderRole,
+): Promise<IOrder | null> => {
+  const propName =
+    role === UserOrderRole.BUYER
+      ? 'buyer_cooperativecancel'
+      : 'seller_cooperativecancel';
+  const update = { [propName]: true };
+  return await Order.findOneAndUpdate(
+    {
+      _id: orderId,
+      [propName]: { $ne: true },
+      status: { $in: ['ACTIVE', 'FIAT_SENT', 'DISPUTE'] },
+    },
+    update,
+    { new: true },
+  );
+};
 
 const waitPayment = async (
   ctx: MainContext,
@@ -153,12 +179,24 @@ const addInvoice = async (
     const seller = await User.findOne({ _id: order.seller_id });
     if (seller === null) throw new Error('seller was not found');
 
-    if (buyer.lightning_address) {
+    // Temporary mitigation: when DISABLE_LN_ADDRESS is enabled we skip the
+    // Lightning Address auto-resolution and route the buyer to the manual
+    // BOLT11 invoice flow. We do NOT delete the saved address, so this is
+    // fully reversible by unsetting the flag.
+    const lnAddressDisabled = process.env.DISABLE_LN_ADDRESS === 'true';
+    if (buyer.lightning_address && lnAddressDisabled) {
+      await bot.telegram.sendMessage(
+        buyer.tg_id,
+        ctx.i18n.t('ln_address_temporarily_disabled'),
+      );
+    }
+
+    if (buyer.lightning_address && !lnAddressDisabled) {
       const laRes = await resolvLightningAddress(
         buyer.lightning_address,
         order.amount * 1000,
       );
-      if (!!laRes && !laRes.pr) {
+      if (!laRes || !laRes.pr) {
         logger.error(
           `lightning address ${buyer.lightning_address} not available`,
         );
@@ -344,12 +382,24 @@ const cancelAddInvoice = async (
         order.secret = null;
       }
 
+      const i18nCtxSeller = await getUserI18nContext(sellerUser);
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(ctx, user, order, i18nCtx);
+        const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+        await messages.publishBuyOrderMessage(
+          ctx,
+          buyerUser,
+          order,
+          i18nCtxBuyer,
+        );
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(ctx, sellerUser, order, i18nCtx);
+        await messages.publishSellOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
       await order.save();
 
@@ -424,17 +474,11 @@ const showHoldInvoice = async (
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
 
-      order.fee = await getFee(
-        amount,
-        order.community_id,
-        order.is_golden_honey_badger,
-      );
+      order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
 
-    amount = order.is_golden_honey_badger
-      ? Math.floor(order.amount)
-      : Math.floor(order.amount + order.fee);
+    amount = Math.floor(order.amount + order.fee);
 
     const holdInvoice = await createHoldInvoice({
       description,
@@ -457,7 +501,6 @@ const showHoldInvoice = async (
       order.fiat_code,
       order.fiat_amount,
       order.random_image,
-      order.is_golden_honey_badger,
     );
   } catch (error) {
     logger.error(`Error in showHoldInvoice: ${error}`);
@@ -491,45 +534,55 @@ const cancelShowHoldInvoice = async (
     if (order.hash) {
       await cancelHoldInvoice({ hash: order.hash });
     }
-
-    const user = await User.findOne({ _id: order.seller_id });
-    if (!user) return;
-    const i18nCtx = await getUserI18nContext(user);
-    // Sellers only can cancel orders with status WAITING_PAYMENT
-    if (order.status !== 'WAITING_PAYMENT')
-      return await messages.genericErrorMessage(ctx, user, i18nCtx);
-
     const buyerUser = await User.findOne({ _id: order.buyer_id });
     if (buyerUser === null) throw new Error('buyerUser was not found');
     const sellerUser = await User.findOne({ _id: order.seller_id });
     if (sellerUser === null) throw new Error('sellerUser was not found');
+
+    const i18nCtxSeller = await getUserI18nContext(sellerUser);
+    const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+
+    // Sellers only can cancel orders with status WAITING_PAYMENT
+    if (order.status !== 'WAITING_PAYMENT')
+      return await messages.genericErrorMessage(ctx, sellerUser, i18nCtxSeller);
+
     const buyerTgId = buyerUser.tg_id;
     // If order creator cancels it, it will not be republished
     if (order.creator_id === order.seller_id) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.toSellerDidntPayInvoiceMessage(ctx, user, order, i18nCtx);
+      await messages.toSellerDidntPayInvoiceMessage(
+        ctx,
+        sellerUser,
+        order,
+        i18nCtxSeller,
+      );
       await messages.toBuyerSellerDidntPayInvoiceMessage(
         ctx,
         buyerUser,
         order,
-        i18nCtx,
+        i18nCtxBuyer,
       );
     } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
       await order.save();
-      await messages.successCancelOrderMessage(ctx, buyerUser, order, i18nCtx);
+      await messages.successCancelOrderMessage(
+        ctx,
+        buyerUser,
+        order,
+        i18nCtxBuyer,
+      );
       await messages.counterPartyCancelOrderMessage(
         ctx,
         sellerUser,
         order,
-        i18nCtx,
+        i18nCtxSeller,
       );
     } else {
       // Re-publish order
       if (userAction) {
         logger.info(
-          `Seller Id ${user.id} cancelled Order Id: ${order._id}, republishing to the channel`,
+          `Seller Id ${sellerUser.id} cancelled Order Id: ${order._id}, republishing to the channel`,
         );
       } else {
         logger.info(
@@ -552,29 +605,44 @@ const cancelShowHoldInvoice = async (
 
       if (order.type === 'buy') {
         order.seller_id = null;
-        await messages.publishBuyOrderMessage(ctx, buyerUser, order, i18nCtx);
+        await messages.publishBuyOrderMessage(
+          ctx,
+          buyerUser,
+          order,
+          i18nCtxBuyer,
+        );
       } else {
         order.buyer_id = null;
-        await messages.publishSellOrderMessage(ctx, user, order, i18nCtx);
+        await messages.publishSellOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
       await order.save();
       if (!userAction) {
         if (job) {
           await messages.toSellerDidntPayInvoiceMessage(
             ctx,
-            user,
+            sellerUser,
             order,
-            i18nCtx,
+            i18nCtxSeller,
           );
           await messages.toAdminChannelSellerDidntPayInvoiceMessage(
             ctx,
-            user,
+            sellerUser,
             order,
-            i18nCtx,
+            i18nCtxSeller,
           );
         }
       } else {
-        await messages.successCancelOrderMessage(ctx, user, order, i18nCtx);
+        await messages.successCancelOrderMessage(
+          ctx,
+          sellerUser,
+          order,
+          i18nCtxSeller,
+        );
       }
     }
   } catch (error) {
@@ -598,13 +666,13 @@ const addInvoicePHI = async (
     ctx.deleteMessage();
     const order = await Order.findOne({ _id: orderId });
     if (order === null) throw new Error('order was not found');
-    // orders with status PAID_HOLD_INVOICE or COMPLETED_BY_ADMIN are released payments
-    if (
-      order.status !== 'PAID_HOLD_INVOICE' &&
-      order.status !== 'COMPLETED_BY_ADMIN'
-    ) {
-      return;
-    }
+    // only orders with status PAID_HOLD_INVOICE are released payments
+    if (order.status !== 'PAID_HOLD_INVOICE') return;
+
+    // Only the order's buyer may (re)submit the payout invoice. The order id
+    // comes from the callback data, so we verify the caller is the buyer
+    // before entering the invoice flow.
+    if (!ctx.user || String(order.buyer_id) !== String(ctx.user._id)) return;
 
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (buyer === null) return;
@@ -687,78 +755,79 @@ const cancelOrder = async (
       return await messages.badStatusOnCancelOrderMessage(ctx);
 
     // If the order is active we start a cooperative cancellation
-    let counterPartyUser, initiator, counterParty;
+    let counterPartyUser;
+    let initiator: UserOrderRole;
 
     const initiatorUser = user;
-    if (initiatorUser._id == order.buyer_id) {
+    if (initiatorUser._id.toString() === order.buyer_id?.toString()) {
       counterPartyUser = await User.findOne({ _id: order.seller_id });
-      initiator = 'buyer';
-      counterParty = 'seller';
+      initiator = UserOrderRole.BUYER;
     } else {
       counterPartyUser = await User.findOne({ _id: order.buyer_id });
-      initiator = 'seller';
-      counterParty = 'buyer';
+      initiator = UserOrderRole.SELLER;
     }
     if (counterPartyUser == null)
       throw new Error('counterPartyUser was not found');
 
-    const initiatorCooperativeCancelProperty =
-      initiator == 'seller'
-        ? 'seller_cooperativecancel'
-        : 'buyer_cooperativecancel';
+    const updateOrder = await setCooperativeCancelFlag(order._id, initiator);
 
-    if (order[initiatorCooperativeCancelProperty])
-      return await messages.shouldWaitCooperativeCancelMessage(
-        ctx,
-        initiatorUser,
+    // If the call returns null, the flag was already set (or order is missing),
+    // so we treat it as a duplicate request.
+    if (!updateOrder) {
+      logger.warn(
+        `Order ${orderId} not found or duplicate request when setting cooperative cancel flag`,
       );
-
-    order[initiatorCooperativeCancelProperty] = true;
+      return await messages.shouldWaitCooperativeCancelMessage(ctx, user);
+    }
 
     const i18nCtxCP = await getUserI18nContext(counterPartyUser);
-    // If the counter party already requested a cooperative cancel order
+
+    // Re-check both flags after update to avoid race condition
     if (
-      counterParty == 'seller'
-        ? order.seller_cooperativecancel
-        : order.buyer_cooperativecancel
+      updateOrder.buyer_cooperativecancel &&
+      updateOrder.seller_cooperativecancel
     ) {
       // If we already have a holdInvoice we cancel it and return the money
-      if (order.hash) await cancelHoldInvoice({ hash: order.hash });
+      if (updateOrder.hash) await cancelHoldInvoice({ hash: updateOrder.hash });
 
-      order.status = 'CANCELED';
+      updateOrder.status = 'CANCELED';
+      updateOrder.canceled_by = String(user._id);
+      await updateOrder.save();
+
       let seller = initiatorUser;
       let i18nCtxSeller = ctx.i18n;
       if (order.seller_id == counterPartyUser._id) {
         seller = counterPartyUser;
         i18nCtxSeller = i18nCtxCP;
       }
+
       // We sent a private message to the users
       await messages.successCancelOrderMessage(
         ctx,
         initiatorUser,
-        order,
+        updateOrder,
         ctx.i18n,
       );
       await messages.okCooperativeCancelMessage(
         ctx,
         counterPartyUser,
-        order,
+        updateOrder,
         i18nCtxCP,
       );
       await messages.refundCooperativeCancelMessage(ctx, seller, i18nCtxSeller);
-      logger.info(`Order ${order._id} was cancelled cooperatively!`);
-      logger.info('cancelOrder => OrderEvents.orderUpdated(order);');
-      OrderEvents.orderUpdated(order);
+      logger.info(`Order ${updateOrder._id} was cancelled cooperatively!`);
+
+      // Emit updateOrder (fresh) instead of order (stale)
+      OrderEvents.orderUpdated(updateOrder);
     } else {
-      await messages.initCooperativeCancelMessage(ctx, order);
+      await messages.initCooperativeCancelMessage(ctx, updateOrder);
       await messages.counterPartyWantsCooperativeCancelMessage(
         ctx,
         counterPartyUser,
-        order,
+        updateOrder,
         i18nCtxCP,
       );
     }
-    await order.save();
   } catch (error) {
     logger.error(error);
   }
@@ -821,18 +890,42 @@ const release = async (
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
-    // We look for a dispute for this order
-    const dispute = await Dispute.findOne({ order_id: order._id });
 
-    if (dispute) {
-      dispute.status = 'RELEASED';
-      await dispute.save();
-    }
+    // SECURITY: serialize the settle under the per-order mutex (the same lock
+    // used by payHoldInvoice and the cancel/expiry jobs) and re-read the order
+    // under the lock. validateReleaseOrder ran without the lock, so the order
+    // may have been canceled, settled or otherwise advanced in between. Only
+    // settle if it is still in a releasable state — this closes the
+    // settle-vs-cancel race over the same hold invoice.
+    await PerOrderIdMutex.instance.runExclusive(String(order._id), async () => {
+      const currentOrder = await Order.findById(order._id);
+      if (currentOrder === null) throw new Error('order was not found');
 
-    if (order.secret === null) {
-      throw new Error('order.secret is null');
-    }
-    await settleHoldInvoice({ secret: order.secret });
+      const releasableStatuses = ['ACTIVE', 'FIAT_SENT', 'DISPUTE'];
+      if (!releasableStatuses.includes(currentOrder.status)) {
+        logger.info(
+          `release: order ${order._id} no longer releasable ` +
+            `(status ${currentOrder.status}), skipping settle`,
+        );
+        return;
+      }
+
+      if (currentOrder.secret === null) {
+        throw new Error('order.secret is null');
+      }
+
+      await settleHoldInvoice({ secret: currentOrder.secret });
+
+      // Only mark the dispute as released once the Lightning settle has
+      // actually completed. Otherwise a failed settle would leave a stale
+      // RELEASED dispute that makes solvers believe the seller already
+      // released (see bot/modules/dispute/actions.ts).
+      const dispute = await Dispute.findOne({ order_id: currentOrder._id });
+      if (dispute) {
+        dispute.status = 'RELEASED';
+        await dispute.save();
+      }
+    });
   } catch (error) {
     logger.error(error);
   }

@@ -45,7 +45,8 @@ export interface CommunityWizardState {
   seller: UserDocument;
   type: string;
   method: string;
-  bot: CommunityContext;
+  selectedMethods: string[];
+  bot: Telegraf<CommunityContext>;
   message: Message.TextMessage | undefined;
   error?: any;
   feedback?: any;

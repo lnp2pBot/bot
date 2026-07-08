@@ -187,6 +187,8 @@ order_detail: |
 
   وضعیت: ${status}
 
+  تسویه توسط مدیر: ${settledByAdmin}
+
   ایجاد کننده: @${creator || ''}
 
   خریدار: @${buyerUsername || ''}
@@ -281,6 +283,10 @@ help: |
 
   /settings
   تنظیمات کنونی کاربر را نمایش می‌دهد.
+  در /settings می‌توانید الزامات طرف مقابل را تنظیم کنید:
+    /counterpartyage <روز> - حداقل سابقه (به روز) برای طرف مقابل
+    /counterpartyorders <سفارش> - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل
+    /resetrequirements - بازگرداندن الزامات به مقادیر پیش‌فرض
 
   /listorders
   از این دستور برای مشاهده لیستی از تمامی سفارش‌ها فعال خود استفاده کنید.
@@ -296,6 +302,15 @@ help: |
 
   /dispute <_order id_>
   مشاجره‌ای بین طرفین معامله را ثبت می‌‌کند.
+
+  /block <_@username/id_>
+  مسدود کردن یک کاربر برای جلوگیری از تعامل او با سفارش‌های شما.
+
+  /unblock <_@username/id_>
+  رفع مسدودیت یک کاربر.
+
+  /blocklist
+  مشاهده لیست کاربران مسدود شده شما.
 
   /cancel <_order id_>
   سفارشی که هنوز پذیرفته نشده را لغو می‌کند.
@@ -489,10 +504,18 @@ expired_order_to_seller: |
 
   اگر پول فیات را دریافت کرده‌اید، لطفاً ساتوشی‌ها را با دستور /release آزاد کنید وگرنه خطر ثبت مشاجره توسط خریدار را متحمل می‌شوید که روی شهرت شما تأثیر منفی خواهد داشت.
 
-  اگر به کمک نیاز دارید، می‌‌توانید در گروه  ${helpGroup} بنویسید.
+  اگر به کمک نیاز دارید، می توانید پیامتان را در گروه ${helpGroup} بنویسید.
 didnt_add_invoice: '🤨 شما صورتحسابی برای دریافت ساتوشی‌های سفارش با شناسه ${orderId} ارسال نکرده‌اید.'
 buyer_havent_add_invoice: '😔 خریدار هیچ صورتحسابی برای دریافت ساتوشی‌های سفارش شما با شناسه ${orderId} برای من ارسال نکرد؛ ساتوشی‌های شما به شما بازگردانده شدند.'
 buyer_havent_add_invoice_to_admin_channel: 'خریدار @${username} (${tgId}) سفارش با شناسه ${orderId} را برداشت اما صورتحسابی برای دریافت ساتوشی نفرستاد، مهلت ارسال صورتحساب به پایان رسید و سفارش بازنشر شد.'
+hold_invoice_expired_to_buyer: |
+  فاکتور تضمینی سفارش با شناسه ${orderId} قبل از تکمیل معامله منقضی شد. ساتوشی‌ها به فروشنده بازگردانده شده‌اند.
+
+  در صورت نیاز به کمک می‌توانید به گروه ${helpGroup} پیام دهید.
+hold_invoice_expired_to_seller: |
+  فاکتور تضمینی سفارش با شناسه ${orderId} قبل از تکمیل معامله منقضی شد. ساتوشی‌های شما به شما بازگردانده شده‌اند.
+
+  در صورت نیاز به کمک می‌توانید به گروه ${helpGroup} پیام دهید.
 havent_paid_invoice: '🤨 شما صورتحساب فروش ساتوشی مربوط به سفارش با شناسه ${orderId} را پرداخت نکردید.'
 seller_havent_paid_invoice: '😔 فروشنده صورتحساب خرید شما با شناسه {orderId} را پرداخت نکرد و معامله لغو شد.'
 seller_havent_add_invoice_to_admin_channel: 'فروشنده @${username} (${tgId}) صورتحساب سفارش با شناسه ${orderId} را پرداخت نکرد، مهلت پرداخت به پایان رسید و سفارش بازنشر شد.'
@@ -509,18 +532,31 @@ pending_payment_success: |
 pending_payment_failed: |
   🤖 من ${attempts} بار تلاش کردم صورتحساب شما را پرداخت کنم اما نشد.
   گاهی اوقات کاربران شبکه لایتنینگ به دلیل ناکافی بودن ظرفیت دریافت کیف پولشان یا اتصال ناپایدار گره به شبکه، نمی‌توانند پرداخت‌ها را دریافت کنند. شاید بهتر باشد با استفاده از کیف پول دیگری یک صورتحساب ایجاد کنید.
+pending_payment_failed_earnings: |
+  🤖 من ${attempts} بار تلاش کردم صورتحساب برداشت شما را پرداخت کنم اما نشد. لطفاً با یک صورتحساب جدید از کیف پول دیگری دوباره امتحان کنید.
 pending_payment_failed_to_admin: |
   پرداخت صورتحساب سفارش خرید کاربر @${username} با شناسه ${orderId} شکست خورد.
-
   تعداد تلاش‌های پرداخت: ${attempts}
+order_error_to_admin: |
+  ⚠️ سفارش ${orderId} به وضعیت ERROR منتقل شد
+  ممکن است پرداخت گیر کرده باشد — لطفاً سفارش را بررسی کنید، ممکن است به حل دستی نیاز داشته باشد.
+  جزئیات: ${details}
 selling: فروختن
 buying: خریدن
-receive_payment: دریافت پرداخت
+selling_sats: فروش ساتوشی
+selling_sats_with_amount: 'فروش ${amount} ساتوشی'
+buying_sats: خرید ساتوشی
+buying_sats_with_amount: 'خرید ${amount} ساتوشی'
+receive_payment: دریافت وجه
 pay: پرداخت
 is: هست
-trading_volume: 'حجم معاملات: ${volume} ساتوشی'
-satoshis: ساتوشی
-by: با
+trading_volume: 'حجم معاملات: ${volume} sat'
+showusername_buying_sats: '@${username} در حال خرید ساتوشی است'
+showusername_buying_sats_with_amount: '@${username} در حال خرید ${amount} ساتوشی است'
+showusername_selling_sats: '@${username} در حال فروش ساتوشی است'
+showusername_selling_sats_with_amount: '@${username} در حال فروش ${amount} ساتوشی است'
+satoshis: ساتوشی‌ها
+by: توسط
 rate: نرخ
 has_successful_trades: 'دارای ${trades} معامله موفق'
 user_age: 'از ربات به مدت ${days} روز استفاده کرده است.'
@@ -715,12 +751,28 @@ user_settings: |
   نشانی لایتنینگ:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>الزامات طرف مقابل</strong>
+  حداقل سابقه: ${min_days_using_bot} روز
+  حداقل سفارش‌های تکمیل شده: ${min_completed_orders}
+
   <strong># راهنما</strong>
   تنظیم کلید عمومی نوستر کاربر:
   /setnpub &lt;npub&gt;
 
+  /counterpartyage &lt;روز&gt; - حداقل سابقه (به روز) برای طرف مقابل.
+  /counterpartyorders &lt;سفارش&gt; - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل.
+  /resetrequirements - بازگرداندن الزامات طرف مقابل به مقادیر پیش‌فرض.
+
   خروج از راهنما:
   /exit
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: الزامات سابقه طرف مقابل به ${days} روز به‌روزرسانی شد.
+counterpartyorders_updated: الزامات سفارش‌های تکمیل شده طرف مقابل به ${orders} عدد به‌روزرسانی شد.
+requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
+invalid_number: عدد نامعتبر است.
+invalid_range: مقدار نامعتبر برای ${command}، لطفاً عددی در محدوده [0 - ${max}] انتخاب کنید.
 # END modules/user
 # check hold invoice
 invoice_settled: صورتحساب تسویه شده است.
@@ -741,7 +793,6 @@ bot_info: |
 
   اطلاعات کاربر:
   ${user_info}
-golden_honey_badger: 🍯 گورکن عسل‌خوار طلایی! هیچ کارمزدی گرفته نمی‌شود! 🦡
 user_info: |
   حجم معامله شده: ${volume_traded}
   میانگین امتیاز: ${total_rating}
@@ -757,7 +808,7 @@ disclaimer: |
   
   توسعه‌دهندگان و حل‌کنندگان مشاجره‌ها مسئول هیچ زیان یا آسیبی که کاربر ممکن است بر اثر استفاده از این ربات متحمل شود نخواهند بود.
 order_frozen: شما سفارش را مسدود کردید
-paytobuyer_only_frozen_orders: 'دستور paytobuyer تنها برای سفارش‌هایی با وضعیت «مسدود شده» یا PAID_HOLD_INVOICE می‌تواند استفاده شود.'
+paytobuyer_only_frozen_orders: 'دستور paytobuyer تنها برای سفارش‌هایی با وضعیت «مسدود شده»، PAID_HOLD_INVOICE یا ERROR می‌تواند استفاده شود.'
 settleorder_only_dispute_orders: 'دستور settleorder تنها برای سفارش‌هایی با وضعیت «مشاجره» می‌تواند استفاده شود.'
 dispute_solver: '👮‍♂️ یک داور به مشاجره شما رسیدگی خواهد کرد. شما می‌توانید با لمس نام کاربری او (@${solver}) مسقیماً به خودش پیام دهید. اگر داور ابتدا به شما پیام داد، باید از او بخواهید که رمز مشاجره‌تان را به شما بگوید؛ رمز مشاجره شما ${token} است.'
 setinvoice_no_response: شما هیچ سفارشی که در مرحله پرداخت باشد ندارید.
@@ -778,6 +829,31 @@ blocklist_empty: شما هیچ کاربر مسدود شده‌ای ندارید.
 orders_in_process: سفارش‌های در جریانی وجود دارند که این کاربر در آن‌ها دخیل است.
 user_order_is_blocked_by_user_taker: شما نمی‌توانید این سفارش را بردارید زیرا گذارنده آن را مسدود کرده‌اید.
 user_taker_is_blocked_by_user_order: شما نمی‌توانید این سفارش را بردارید زیرا توسط گذارنده آن مسدود شده‌اید.
+block_usage: "استفاده: /block @Username یا /block telegramId"
+unblock_usage: "استفاده: /unblock @Username یا /unblock telegramId"
+block_failed: "خطا در مسدود کردن کاربر"
+unblock_failed: "خطا در رفع مسدودیت کاربر"
 check_solvers: اجتماع شما ${communityName} هیچ داوری ندارد. لطفاً برای جلوگیری از غیرفعال شدن اجتماع، تا ${remainingDays} روز آینده حداقل یک داور به آن اضافه کنید.
 check_solvers_last_warning: اجتماع شما ${communityName} هیچ داوری ندارد. برای جلوگیری از غیرفعال شدن اجتماع، امروز حداقل یک داور به آن اضافه کنید.
 image_processing_error: هنگام پردازش تصویر با خطایی مواجه شدیم، لطفاً چند دقیقه صبر کرده و دوباره امتحان کنید.
+order_channel_validation_failed: "امکان انتشار سفارش شما وجود ندارد. سعی کنید انجمن پیش‌فرض را با /setcomm off غیرفعال کنید یا از مدیر انجمن خود بخواهید کانال‌ها و گروه‌های انجمن را مجدداً پیکربندی کند."
+community_payment_methods: "روش‌های پرداخت"
+enter_community_payment_methods: "روش‌های پرداخت پذیرفته‌شده در اجتماع خود را با کاما از هم جدا کرده وارد کنید (مثال: انتقال بانکی، نقد، PayPal)"
+current_payment_methods: "روش‌های پرداخت فعلی: ${methods}"
+select_payment_methods: "یک یا چند روش پرداخت انتخاب کنید:"
+confirm_payment_methods: "✅ تأیید"
+no_payment_method_selected: "لطفاً حداقل یک روش پرداخت انتخاب کنید"
+payment_methods_saved: "روش‌های پرداخت ذخیره شد ✅"
+custom_payment_method: "✍️ روش پرداخت سفارشی"
+payment_methods_reset: "روش‌های پرداخت حذف شدند. کاربران اکنون می‌توانند هر روش پرداختی را آزادانه وارد کنند."
+payment_methods_wizard_commands: "/reset — حذف همه روش‌های پرداخت و بازگرداندن رفتار پیش‌فرض\n/exit — خروج بدون ذخیره"
+community_disabled_by_admin: یک مدیر جامعه ${communityName} شما را غیرفعال کرد
+community_enabled_by_admin: یک مدیر جامعه ${communityName} شما را دوباره فعال کرد
+community_creation_requirements_not_met_header: "شما شرایط لازم برای ایجاد جامعه را ندارید:"
+community_creation_requirements_not_met_orders: "* سفارش‌ها: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* حجم: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* روزهای استفاده از ربات: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* اعتبار: ${userRep} / ${requiredRep}"
+community_already_disabled: این جامعه از قبل غیرفعال است
+community_already_enabled: این جامعه از قبل فعال است
+ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید

@@ -6,47 +6,19 @@ import { getInfo } from './info';
 import lnd from './connect';
 import * as messages from '../bot/messages';
 import * as ordersActions from '../bot/ordersActions';
-import { getUserI18nContext, getEmojiRate, decimalRound } from '../util';
+import {
+  getUserI18nContext,
+  getEmojiRate,
+  decimalRound,
+  PerOrderIdMutex,
+} from '../util';
 import { logger } from '../logger';
 import { HasTelegram } from '../bot/start';
 import { IOrder } from '../models/order';
-import { Mutex } from 'async-mutex';
-
-type LockCountedMutex = {
-  lockCount: number;
-  mutex: Mutex;
-};
 
 // Track pending reconnects to prevent duplicate resubscriptions
 // when both 'error' and 'end' events fire for the same invoice
 const pendingReconnects: Set<string> = new Set();
-
-class PerOrderIdMutex {
-  mutexes: Map<string, LockCountedMutex> = new Map();
-
-  async runExclusive(orderId: string, callback: () => Promise<any>) {
-    let mtx: LockCountedMutex;
-    if (!this.mutexes.has(orderId)) {
-      mtx = { lockCount: 1, mutex: new Mutex() };
-      this.mutexes.set(orderId, mtx);
-    } else {
-      mtx = this.mutexes.get(orderId)!;
-      mtx.lockCount++;
-    }
-    let ret: any;
-    try {
-      ret = await mtx.mutex.runExclusive(callback);
-    } finally {
-      mtx.lockCount--;
-      if (mtx.lockCount == 0) {
-        this.mutexes.delete(orderId);
-      }
-    }
-    return ret;
-  }
-
-  static instance = new PerOrderIdMutex();
-}
 
 const subscribeInvoice = async (
   bot: HasTelegram,
@@ -307,4 +279,4 @@ const payHoldInvoice = async (bot: HasTelegram, order: IOrder) => {
   }
 };
 
-export { subscribeInvoice, payHoldInvoice, PerOrderIdMutex };
+export { subscribeInvoice, payHoldInvoice };

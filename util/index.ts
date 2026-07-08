@@ -1,4 +1,5 @@
 import { I18nContext } from '@grammyjs/i18n';
+import { Mutex } from 'async-mutex';
 import { ICommunity, IOrderChannel } from '../models/community';
 import { IOrder } from '../models/order';
 import { UserDocument } from '../models/user';
@@ -8,7 +9,7 @@ import { Telegram } from 'telegraf';
 import axios from 'axios';
 import fiatJson from './fiat.json';
 import languagesJson from './languages.json';
-import { Order, Community } from '../models';
+import { Order, Community, User } from '../models';
 import { logger } from '../logger';
 import QRCode from 'qrcode';
 import { Image, createCanvas } from 'canvas';
@@ -62,18 +63,17 @@ const plural = (n: number): string => {
 exports.plural = plural;
 
 // This function formats a number to locale strings.
-// If Iso code or locale code doesn´t exist, the function will return a number without format.
-const numberFormat = (code: string, number: number) => {
-  if (!isIso4217(code)) return false;
+// If Iso code or locale code doesn´t exist, the function will return the number as a plain string.
+const numberFormat = (code: string, number: number): string => {
+  if (!isIso4217(code)) return String(number);
 
-  if (!currencies[code]) return number;
+  if (!currencies[code]) return String(number);
 
   const locale = currencies[code].locale;
-  const numberToLocaleString = Intl.NumberFormat(locale);
 
-  if (!locale || isNaN(number)) return number;
+  if (!locale || isNaN(number)) return String(number);
 
-  return numberToLocaleString.format(number);
+  return Intl.NumberFormat(locale).format(number);
 };
 
 // This function checks if the current buyer and seller were doing circular operations
@@ -296,7 +296,7 @@ const isGroupAdmin = async (
 
 const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
   try {
-    let channel = process.env.CHANNEL;
+    let channel;
     if (order.community_id) {
       const community = await Community.findOne({ _id: order.community_id });
       if (!community) {
@@ -311,15 +311,21 @@ const deleteOrderFromChannel = async (order: IOrder, telegram: Telegram) => {
           }
         }
       }
+    } else {
+      channel = process.env.CHANNEL;
     }
-    await telegram.deleteMessage(channel!, Number(order.tg_channel_message1!));
+    if (!channel) {
+      // It will be logged in this function's catch()
+      throw Error(`Channel not found for order ${order._id}`);
+    }
+    await telegram.deleteMessage(channel, Number(order.tg_channel_message1!));
   } catch (error) {
     logger.error(error);
   }
 };
 
-const getOrderChannel = async (order: IOrder) => {
-  let channel = process.env.CHANNEL;
+const getOrderChannel = async (order: IOrder, bot?: Telegram) => {
+  let channel;
   if (order.community_id) {
     const community = await Community.findOne({ _id: order.community_id });
     if (!community) {
@@ -328,12 +334,35 @@ const getOrderChannel = async (order: IOrder) => {
     if (community.order_channels.length === 1) {
       channel = community.order_channels[0].name;
     } else {
-      community.order_channels.forEach(async (c: IOrderChannel) => {
+      community.order_channels.forEach((c: IOrderChannel) => {
         if (c.type === order.type) {
           channel = c.name;
         }
       });
     }
+    const communityOwner = await User.findById(community.creator_id);
+    if (!communityOwner) {
+      logger.error(
+        `Community owner not found for community ${community._id}, creator_id: ${community.creator_id}`,
+      );
+      return undefined;
+    }
+
+    if (bot && channel) {
+      // Validate order channel if the caller of this function passed the bot instance to perform the validation
+      // If it was not passed as a parameter the order channel can be trusted because its for ui purposes (listorders for example)
+      // This validation is performed lazily when publishing the order to the community order channel
+      const isChannelOk = await isGroupAdmin(channel, communityOwner, bot);
+      if (!isChannelOk.success) {
+        logger.error(
+          `Order channel validation failed for community ${community._id}`,
+        );
+        return undefined;
+      }
+    }
+  } else {
+    // no community order / order in the global community
+    channel = process.env.CHANNEL;
   }
 
   return channel;
@@ -368,7 +397,7 @@ const getUserI18nContext = async (user: UserDocument) => {
     directory: 'locales',
   });
 
-  return i18n.createContext(user.lang);
+  return i18n.createContext(user.lang || language || 'en');
 };
 
 const getDetailedOrder = async (
@@ -386,7 +415,7 @@ const getDetailedOrder = async (
     const sellerReputation = seller
       ? sanitizeMD(seller.total_rating.toFixed(2))
       : '';
-    const buyerId = buyer ? buyer._id : '';
+    const buyerId = buyer ? String(buyer._id) : '';
     const paymentMethod = sanitizeMD(order.payment_method);
     const priceMargin = sanitizeMD(order.price_margin.toString());
     let createdAt = order.created_at.toISOString();
@@ -402,6 +431,9 @@ const getDetailedOrder = async (
     const sellerAge = seller ? getUserAge(seller) : '';
     const buyerTrades = buyer ? buyer.trades_completed : 0;
     const sellerTrades = seller ? seller.trades_completed : 0;
+    const settledByAdmin = order.settled_by_admin
+      ? i18n.t('yes')
+      : i18n.t('no');
 
     // Add order community name
     let communityName: string | undefined;
@@ -435,6 +467,7 @@ const getDetailedOrder = async (
       sellerAge,
       buyerTrades,
       sellerTrades,
+      settledByAdmin,
       communityName,
     });
 
@@ -455,17 +488,9 @@ const isDisputeSolver = (community: ICommunity | null, user: UserDocument) => {
 
 // Return the fee the bot will charge to the seller
 // this fee is a combination from the global bot fee and the community fee
-// When isGoldenHoneyBadger=true, only the community fee is charged (botFee=0)
-const getFee = async (
-  amount: number,
-  communityId: string,
-  isGoldenHoneyBadger = false,
-) => {
+const getFee = async (amount: number, communityId: string) => {
   const maxFee = Math.round(amount * Number(process.env.MAX_FEE));
-  if (!communityId) {
-    // if no community, return 0 if golden honey badger, otherwise return max fee
-    return isGoldenHoneyBadger ? 0 : maxFee;
-  }
+  if (!communityId) return maxFee;
 
   // Calculate fees
   const botFee = maxFee * Number(process.env.FEE_PERCENT);
@@ -474,11 +499,7 @@ const getFee = async (
   if (community === null) throw Error('Community was not found in DB');
   communityFee = communityFee * (community.fee / 100);
 
-  if (isGoldenHoneyBadger) {
-    return communityFee;
-  } else {
-    return botFee + communityFee;
-  }
+  return botFee + communityFee;
 };
 
 const itemsFromMessage = (str: string) => {
@@ -612,6 +633,38 @@ const generateQRWithImage = async (request: string, randomImage: string) => {
   return canvas.toBuffer();
 };
 
+type LockCountedMutex = {
+  lockCount: number;
+  mutex: Mutex;
+};
+
+class PerOrderIdMutex {
+  mutexes: Map<string, LockCountedMutex> = new Map();
+
+  async runExclusive(orderId: string, callback: () => Promise<any>) {
+    let mtx: LockCountedMutex;
+    if (!this.mutexes.has(orderId)) {
+      mtx = { lockCount: 1, mutex: new Mutex() };
+      this.mutexes.set(orderId, mtx);
+    } else {
+      mtx = this.mutexes.get(orderId)!;
+      mtx.lockCount++;
+    }
+    let ret: any;
+    try {
+      ret = await mtx.mutex.runExclusive(callback);
+    } finally {
+      mtx.lockCount--;
+      if (mtx.lockCount == 0) {
+        this.mutexes.delete(orderId);
+      }
+    }
+    return ret;
+  }
+
+  static instance = new PerOrderIdMutex();
+}
+
 export {
   isIso4217,
   plural,
@@ -645,4 +698,5 @@ export {
   isOrderCreator,
   generateRandomImage,
   generateQRWithImage,
+  PerOrderIdMutex,
 };

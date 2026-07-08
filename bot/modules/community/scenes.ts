@@ -2,7 +2,7 @@ import { Scenes } from 'telegraf';
 import { logger } from '../../../logger';
 import { Community, User, PendingPayment } from '../../../models';
 import { IOrderChannel, IUsernameId } from '../../../models/community';
-import { isPendingPayment } from '../../../ln';
+import { isPendingOrConfirmed } from '../../../ln';
 import { isGroupAdmin, itemsFromMessage, removeAtSymbol } from '../../../util';
 import * as messages from '../../messages';
 import { isValidInvoice } from '../../validations';
@@ -916,6 +916,69 @@ export const updateLanguageCommunityWizard = new Scenes.WizardScene(
   },
 );
 
+export const updatePaymentMethodsCommunityWizard = new Scenes.WizardScene(
+  'UPDATE_PAYMENT_METHODS_COMMUNITY_WIZARD_SCENE_ID',
+  async (ctx: CommunityContext) => {
+    try {
+      const { community } = ctx.wizard.state;
+      const current = community.payment_methods?.join(', ') || '';
+      let message = current
+        ? ctx.i18n.t('current_payment_methods', { methods: current }) + '\n\n'
+        : '';
+      message += ctx.i18n.t('enter_community_payment_methods') + '\n\n';
+      message += ctx.i18n.t('payment_methods_wizard_commands');
+      await ctx.reply(message);
+      return ctx.wizard.next();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+  async (ctx: CommunityContext) => {
+    try {
+      if (ctx.message === undefined) return ctx.scene.leave();
+      if (!('text' in ctx.message)) return;
+
+      const text = ctx.message.text.trim();
+      const methods = text
+        .split(',')
+        .map(m => m.trim())
+        .filter(m => m.length > 0);
+
+      const max = parseInt(process.env.MAX_COMMUNITY_PAYMENT_METHODS || '10');
+      if (methods.length > max) {
+        return await ctx.reply(ctx.i18n.t('max_allowed', { max }));
+      }
+
+      const { community } = ctx.wizard.state;
+      community.payment_methods = methods;
+      await community.save();
+      await ctx.reply(ctx.i18n.t('payment_methods_saved'));
+
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
+updatePaymentMethodsCommunityWizard.command(
+  'reset',
+  async (ctx: CommunityContext) => {
+    try {
+      const { community } = ctx.wizard.state;
+      community.payment_methods = [];
+      await community.save();
+      await ctx.reply(ctx.i18n.t('payment_methods_reset'));
+      return ctx.scene.leave();
+    } catch (error) {
+      logger.error(error);
+      ctx.scene.leave();
+    }
+  },
+);
+
 export const addEarningsInvoiceWizard = new Scenes.WizardScene(
   'ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID',
   async (ctx: CommunityContext) => {
@@ -941,32 +1004,58 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
       const res = await isValidInvoice(ctx, lnInvoice);
       if (!res.success) return;
 
-      if (!!res.invoice.tokens && res.invoice.tokens !== community.earnings)
+      const amountToWithdraw = community.earnings;
+
+      if (!!res.invoice.tokens && res.invoice.tokens !== amountToWithdraw)
         return await ctx.reply(ctx.i18n.t('invoice_with_incorrect_amount'));
 
       const isScheduled = await PendingPayment.findOne({
         community_id: community._id,
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         paid: false,
+        is_invoice_expired: false,
       });
-      // We check if the payment is on flight
-      const isPending = await isPendingPayment(lnInvoice);
-
-      if (!!isScheduled || !!isPending)
+      // Block update if payment is already in-flight or was confirmed
+      const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(lnInvoice);
+      if (!!isScheduled || isPaymentPendingOrConfirmed)
         return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
-      const user = await User.findById(community.creator_id);
-      if (user === null) throw new Error('user was not found');
-      logger.debug(`Creating pending payment for community ${community.id}`);
-      const pp = new PendingPayment({
-        amount: community.earnings,
-        payment_request: lnInvoice,
-        user_id: user.id,
-        community_id: community._id,
-        description: `Retiro por admin @${user.username}`,
-        hash: res.invoice.hash,
-      });
-      await pp.save();
+      // SECURITY: atomically claim the earnings before scheduling the payout.
+      // We zero the community's earnings only if they still equal the amount
+      // we snapshotted. Two concurrent withdrawals race on this compare-and-set
+      // and only one wins; the loser gets null and aborts, which prevents the
+      // node from paying the same earnings twice. If the payout later fails
+      // permanently the job restores the earnings (see attemptCommunities-
+      // PendingPayments) so the creator can withdraw again.
+      const claimed = await Community.findOneAndUpdate(
+        { _id: community._id, earnings: amountToWithdraw },
+        { earnings: 0 },
+      );
+      if (claimed === null)
+        return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
+
+      // The earnings were already claimed (zeroed) above. If creating the
+      // pending payment fails there is nothing for the retry job to restore
+      // from, so roll the claim back here to avoid stranding the earnings.
+      try {
+        const user = await User.findById(community.creator_id);
+        if (user === null) throw new Error('user was not found');
+        logger.debug(`Creating pending payment for community ${community.id}`);
+        const pp = new PendingPayment({
+          amount: amountToWithdraw,
+          payment_request: lnInvoice,
+          user_id: user.id,
+          community_id: community._id,
+          description: `Retiro por admin @${user.username}`,
+          hash: res.invoice.hash,
+        });
+        await pp.save();
+      } catch (error) {
+        await Community.findByIdAndUpdate(community._id, {
+          $inc: { earnings: amountToWithdraw },
+        });
+        throw error;
+      }
       await ctx.reply(ctx.i18n.t('invoice_updated_and_will_be_paid'));
 
       return ctx.scene.leave();

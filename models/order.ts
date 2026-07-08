@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IOrder extends Document {
+export interface IOrder extends Document<string> {
   _id: string;
   description?: string;
   amount: number;
@@ -46,7 +46,7 @@ export interface IOrder extends Document {
   is_frozen: boolean;
   is_public: boolean;
   random_image: string;
-  is_golden_honey_badger?: boolean;
+  settled_by_admin?: boolean;
 }
 
 const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
@@ -118,10 +118,12 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
       'PAID_HOLD_INVOICE', // seller released funds
       'CANCELED_BY_ADMIN',
       'EXPIRED', // Expired orders, stated changed by a job
-      'COMPLETED_BY_ADMIN',
       'FROZEN',
+      'HOLD_INVOICE_EXPIRED', // hold invoice expired before payment was collected
+      'ERROR', // Unexpected error during processing of this order, manual resolution may be required.
     ],
   },
+  settled_by_admin: { type: Boolean, default: false },
   type: { type: String },
   fiat_amount: { type: Number, min: 1 }, // amount in fiat
   fiat_code: { type: String },
@@ -142,7 +144,6 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   is_public: { type: Boolean, default: true },
   is_frozen: { type: Boolean, default: false },
   random_image: { type: String },
-  is_golden_honey_badger: { type: Boolean, default: false },
 });
 
 export default mongoose.model<IOrder>('Order', orderSchema);

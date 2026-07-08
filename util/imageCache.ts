@@ -7,14 +7,12 @@ const fs = require('fs').promises;
 const honeybadgerFilename = 'Honeybadger.png';
 
 interface ImageCache {
-  honeybadgerImage: string | null;
   regularImages: string[];
   isInitialized: boolean;
 }
 
 class ImageCacheManager {
   private cache: ImageCache = {
-    honeybadgerImage: null,
     regularImages: [],
     isInitialized: false,
   };
@@ -22,8 +20,6 @@ class ImageCacheManager {
   async initialize(): Promise<void> {
     try {
       logger.info('Initializing image cache...');
-
-      this.cache.honeybadgerImage = honeybadgerFilename;
 
       // Load all regular images
       try {
@@ -49,44 +45,15 @@ class ImageCacheManager {
     }
   }
 
-  generateRandomImage(nonce: string): {
-    randomImage: string;
-    isGoldenHoneyBadger: boolean;
-  } {
+  generateRandomImage(_nonce: string): { randomImage: string } {
     if (!this.cache.isInitialized) {
       logger.warning('Image cache not initialized, returning empty image');
-      return { randomImage: '', isGoldenHoneyBadger: false };
+      return { randomImage: '' };
     }
 
     let randomImage = '';
-    let isGoldenHoneyBadger = false;
 
     try {
-      // Check for Golden Honey Badger
-      if (this.cache.honeybadgerImage) {
-        const goldenProbability = parseInt(
-          process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100',
-        );
-        const probability = isNaN(goldenProbability)
-          ? 100
-          : Math.max(1, goldenProbability);
-        const luckyNumber = Math.floor(Math.random() * probability) + 1;
-        const winningNumber = 1;
-
-        logger.debug(
-          `Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`,
-        );
-
-        if (luckyNumber === winningNumber) {
-          randomImage = this.cache.honeybadgerImage;
-          isGoldenHoneyBadger = true;
-          logger.info(
-            `🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`,
-          );
-          return { randomImage, isGoldenHoneyBadger };
-        }
-      }
-
       // Select random regular image
       if (this.cache.regularImages.length > 0) {
         const randomIndex = Math.floor(
@@ -100,7 +67,7 @@ class ImageCacheManager {
       logger.error(`Error in generateRandomImage: ${error}`);
     }
 
-    return { randomImage, isGoldenHoneyBadger };
+    return { randomImage };
   }
 
   /**
@@ -135,12 +102,10 @@ class ImageCacheManager {
   };
 
   getStats(): {
-    honeybadgerCached: boolean;
     regularImagesCount: number;
     isInitialized: boolean;
   } {
     return {
-      honeybadgerCached: this.cache.honeybadgerImage !== null,
       regularImagesCount: this.cache.regularImages.length,
       isInitialized: this.cache.isInitialized,
     };

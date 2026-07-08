@@ -45,7 +45,14 @@ interface BuildDescriptionArguments {
   priceMargin: any;
   priceFromAPI: boolean;
   currency: IFiat;
-  isGoldenHoneyBadger?: boolean;
+}
+
+interface OrderTitleArguments {
+  user: UserDocument;
+  type: string;
+  amount: number;
+  fiatCode: string;
+  priceFromAPI: boolean;
 }
 
 interface FiatAmountData {
@@ -114,26 +121,17 @@ const createOrder = async (
     const fiatAmountData = getFiatAmountData(fiatAmount);
 
     let randomImage = '';
-    let isGoldenHoneyBadger = false;
-    let isGoldenHoneyBadgerOrder = false;
 
     if (type === 'sell') {
       const result = generateRandomImage(user._id.toString());
       randomImage = result.randomImage;
-      isGoldenHoneyBadger = result.isGoldenHoneyBadger;
-      isGoldenHoneyBadgerOrder = isGoldenHoneyBadger;
     }
-
-    const recalculatedFee = isGoldenHoneyBadgerOrder
-      ? await getFee(amount, community_id || '', true)
-      : fee;
 
     const baseOrderData = {
       ...fiatAmountData,
       amount,
-      fee: recalculatedFee,
-      bot_fee: isGoldenHoneyBadgerOrder ? 0 : botFee,
-      is_golden_honey_badger: isGoldenHoneyBadgerOrder,
+      fee,
+      bot_fee: botFee,
       community_fee: communityFee,
       creator_id: user._id,
       type,
@@ -154,7 +152,6 @@ const createOrder = async (
         priceMargin,
         priceFromAPI,
         currency,
-        isGoldenHoneyBadger,
       }),
       range_parent_id,
       community_id,
@@ -214,11 +211,9 @@ const buildDescription = (
     priceMargin,
     priceFromAPI,
     currency,
-    isGoldenHoneyBadger,
   }: BuildDescriptionArguments,
 ) => {
   try {
-    const action = type === 'sell' ? i18n.t('selling') : i18n.t('buying');
     const hashtag = `#${type.toUpperCase()}${fiatCode}\n`;
     const paymentAction =
       type === 'sell' ? i18n.t('receive_payment') : i18n.t('pay');
@@ -226,9 +221,6 @@ const buildDescription = (
     const volume = numberFormat(fiatCode, user.volume_traded);
     const totalRating = user.total_rating;
     const totalReviews = user.total_reviews;
-    const username = user.show_username
-      ? `@${user.username} ` + i18n.t('is') + ` `
-      : ``;
     const volumeTraded = user.show_volume_traded
       ? i18n.t('trading_volume', { volume }) + `\n`
       : ``;
@@ -245,10 +237,8 @@ const buildDescription = (
     if (currency)
       currencyString = `${fiatAmountString} ${currency.code} ${currency.emoji}`;
 
-    let amountText = `${numberFormat(fiatCode, amount)} `;
     let tasaText = '';
     if (priceFromAPI) {
-      amountText = '';
       tasaText =
         i18n.t('rate') + `: ${process.env.FIAT_RATE_NAME} ${priceMarginText}\n`;
     } else {
@@ -266,8 +256,15 @@ const buildDescription = (
 
     const ageInDays = getUserAge(user);
 
-    let description =
-      `${username}${action} ${amountText}` + i18n.t('sats') + `\n`;
+    const firstLine = getOrderTitleMessage(i18n, {
+      user,
+      type,
+      amount,
+      fiatCode,
+      priceFromAPI,
+    });
+
+    let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
     description += `${paymentAction} ` + i18n.t('by') + ` ${paymentMethod}\n`;
     description += i18n.t('has_successful_trades', { trades }) + `\n`;
@@ -281,6 +278,41 @@ const buildDescription = (
   } catch (error) {
     logger.error(error);
   }
+};
+
+const getOrderTitleMessage = (
+  i18n: I18nContext,
+  { user, type, amount, fiatCode, priceFromAPI }: OrderTitleArguments,
+) => {
+  const isSell = type === 'sell';
+
+  // Market and range orders take their price from the API and have no fixed
+  // sats amount at creation time, so their title shows no amount.
+  if (priceFromAPI) {
+    if (user.show_username) {
+      return isSell
+        ? i18n.t('showusername_selling_sats', { username: user.username })
+        : i18n.t('showusername_buying_sats', { username: user.username });
+    }
+    return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
+  }
+
+  // Fixed orders show the sats amount.
+  const formattedAmount = numberFormat(fiatCode, amount);
+  if (user.show_username) {
+    return isSell
+      ? i18n.t('showusername_selling_sats_with_amount', {
+          username: user.username,
+          amount: formattedAmount,
+        })
+      : i18n.t('showusername_buying_sats_with_amount', {
+          username: user.username,
+          amount: formattedAmount,
+        });
+  }
+  return isSell
+    ? i18n.t('selling_sats_with_amount', { amount: formattedAmount })
+    : i18n.t('buying_sats_with_amount', { amount: formattedAmount });
 };
 
 const getOrder = async (
@@ -377,4 +409,10 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
   }
 };
 
-export { createOrder, getOrder, getOrders, getNewRangeOrderPayload };
+export {
+  createOrder,
+  getOrder,
+  getOrders,
+  getNewRangeOrderPayload,
+  getOrderTitleMessage,
+};

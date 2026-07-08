@@ -59,8 +59,11 @@ const getVolumeNDays = async (
 
 export const onCommunityInfo = async (ctx: MainContext) => {
   const commId = ctx.match?.[1];
-  const community = await Community.findById(commId);
-  if (community === null) throw new Error('community not found');
+  const community = await Community.findOne({
+    _id: commId,
+    enabled: { $ne: false },
+  });
+  if (community === null) return ctx.reply(ctx.i18n.t('community_not_found'));
   const userCount = await User.countDocuments({ default_community_id: commId });
   const orderCount = await getOrdersNDays(1, commId);
   const volume = await getVolumeNDays(1, commId);
@@ -111,6 +114,11 @@ export const onCommunityInfo = async (ctx: MainContext) => {
 export const onSetCommunity = async (ctx: CommunityContext) => {
   const tgId = (ctx.update as any).callback_query.from.id;
   const defaultCommunityId = ctx.match?.[1];
+  const community = await Community.findOne({
+    _id: defaultCommunityId,
+    enabled: { $ne: false },
+  });
+  if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));
   await User.findOneAndUpdate(
     { tg_id: tgId },
     { default_community_id: defaultCommunityId },
@@ -120,7 +128,16 @@ export const onSetCommunity = async (ctx: CommunityContext) => {
 
 export const withdrawEarnings = async (ctx: CommunityContext) => {
   ctx.deleteMessage();
-  const community = await Community.findById(ctx.match?.[1]);
+  // Only the community creator may withdraw its earnings. The community id
+  // comes from the callback data, so we scope the lookup by creator_id to
+  // match the other community-management handlers (deleteCommunity,
+  // changeVisibility, updateCommunity).
+  const community = await Community.findOne({
+    _id: ctx.match?.[1],
+    creator_id: ctx.user._id,
+    enabled: { $ne: false },
+  });
+  if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));
   ctx.scene.enter('ADD_EARNINGS_INVOICE_WIZARD_SCENE_ID', {
     community,
   });

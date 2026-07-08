@@ -7,12 +7,33 @@ import {
   CommunityWizardState,
 } from '../../community/communityContext';
 import { Message } from 'telegraf/typings/core/types/typegram';
+import { logger } from '../../../../logger';
+
+const isNonNegativeInt = (value: number) =>
+  Number.isInteger(value) && value >= 0;
+
+const readNonNegativeInt = (value: string | undefined, fallback: number) => {
+  if (value === undefined || value.trim() === '') return fallback;
+  const parsed = parseInt(value, 10);
+  return isNonNegativeInt(parsed) ? parsed : fallback;
+};
+
+const DEFAULT_COUNTERPARTY_REQUIREMENTS = {
+  min_days_using_bot: 0,
+  min_completed_orders: 0,
+};
+
+// Fallback caps when the corresponding MAX_COUNTERPARTY_* env vars are unset,
+// mirroring the values documented in .env-sample.
+const DEFAULT_MAX_COUNTERPARTY_AGE = 30;
+const DEFAULT_MAX_COUNTERPARTY_ORDERS = 10;
 
 function make() {
   const resetMessage = async (ctx: CommunityContext, next: () => void) => {
     const state = ctx.scene.state as CommunityWizardState;
     delete state.feedback;
     delete state.error;
+    await updateMessage(ctx);
     next();
   };
   async function mainData(ctx: CommunityContext) {
@@ -24,11 +45,17 @@ function make() {
       npub: '',
       community: '',
       lightning_address: '',
+      min_days_using_bot:
+        user.counterparty_requirements?.min_days_using_bot ?? 0,
+      min_completed_orders:
+        user.counterparty_requirements?.min_completed_orders ?? 0,
     };
     if (user.default_community_id) {
-      const community = await Community.findById(user.default_community_id);
-      if (community == null) throw new Error('community not found');
-      data.community = community.group;
+      const community = await Community.findOne({
+        _id: user.default_community_id,
+        enabled: { $ne: false },
+      });
+      if (community) data.community = community.group;
     }
     if (user.nostr_public_key) {
       data.npub = NostrLib.encodeNpub(user.nostr_public_key);
@@ -128,6 +155,105 @@ function make() {
       await updateMessage(ctx);
     }
   });
+
+  // counterpartyage and counterpartyorders only differ in the field they set,
+  // the env cap, its fallback, and the feedback key/param, so we build both
+  // from a single factory.
+  const makeRequirementCommand = ({
+    command,
+    envVar,
+    fallbackMax,
+    field,
+    feedbackKey,
+    paramKey,
+  }: {
+    command: string;
+    envVar: string;
+    fallbackMax: number;
+    field: 'min_days_using_bot' | 'min_completed_orders';
+    feedbackKey: string;
+    paramKey: string;
+  }) => {
+    scene.command(command, resetMessage, async (ctx: CommunityContext) => {
+      try {
+        await ctx.deleteMessage();
+        const state = ctx.scene.state as CommunityWizardState;
+        if (ctx.message === undefined || !('text' in ctx.message))
+          throw new Error('ctx.message is undefined');
+        const [, value] = ctx.message.text.trim().split(/\s+/);
+        const parsed = parseInt(value, 10);
+        if (!isNonNegativeInt(parsed)) throw new Error('NotValidNumber');
+        const max = readNonNegativeInt(process.env[envVar], fallbackMax);
+        if (parsed > max) {
+          state.error = {
+            i18n: 'invalid_range',
+            command: '/' + command,
+            max,
+          };
+          return await updateMessage(ctx);
+        }
+        const user = state.user;
+        if (!user.counterparty_requirements) {
+          user.counterparty_requirements = {
+            ...DEFAULT_COUNTERPARTY_REQUIREMENTS,
+          };
+        }
+        user.counterparty_requirements[field] = parsed;
+        await user.save();
+        state.feedback = { i18n: feedbackKey, [paramKey]: parsed };
+        await updateMessage(ctx);
+      } catch (err) {
+        logger.error(err);
+        (ctx.scene.state as CommunityWizardState).error = {
+          i18n:
+            err instanceof Error && err.message === 'NotValidNumber'
+              ? 'invalid_number'
+              : 'generic_error',
+        };
+        await updateMessage(ctx);
+      }
+    });
+  };
+
+  makeRequirementCommand({
+    command: 'counterpartyage',
+    envVar: 'MAX_COUNTERPARTY_AGE_REQUIREMENT',
+    fallbackMax: DEFAULT_MAX_COUNTERPARTY_AGE,
+    field: 'min_days_using_bot',
+    feedbackKey: 'counterpartyage_updated',
+    paramKey: 'days',
+  });
+
+  makeRequirementCommand({
+    command: 'counterpartyorders',
+    envVar: 'MAX_COUNTERPARTY_ORDERS_REQUIREMENT',
+    fallbackMax: DEFAULT_MAX_COUNTERPARTY_ORDERS,
+    field: 'min_completed_orders',
+    feedbackKey: 'counterpartyorders_updated',
+    paramKey: 'orders',
+  });
+
+  scene.command(
+    'resetrequirements',
+    resetMessage,
+    async (ctx: CommunityContext) => {
+      try {
+        await ctx.deleteMessage();
+        const state = ctx.scene.state as CommunityWizardState;
+        const user = state.user;
+        user.counterparty_requirements = undefined;
+        await user.save();
+        state.feedback = { i18n: 'requirements_reset' };
+        await updateMessage(ctx);
+      } catch (err) {
+        logger.error(err);
+        (ctx.scene.state as CommunityWizardState).error = {
+          i18n: 'generic_error',
+        };
+        await updateMessage(ctx);
+      }
+    },
+  );
 
   return scene;
 }

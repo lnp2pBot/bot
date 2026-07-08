@@ -197,7 +197,7 @@ async function enterWizard(
     const { community, isBanned } = communityInfo;
 
     if (!community) {
-      throw new Error('Default community not found');
+      return deletedCommunityMessage(ctx);
     }
 
     // Check if user is banned

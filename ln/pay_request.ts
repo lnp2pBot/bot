@@ -4,6 +4,7 @@ import {
   deleteForwardingReputations,
   AuthenticatedLnd,
 } from 'lightning';
+import type { PayViaPaymentRequestResult } from 'lightning/lnd_methods/offchain/pay_via_payment_request';
 import { User, PendingPayment } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
@@ -12,6 +13,7 @@ import { logger, logTimeout, logOperationDuration } from '../logger';
 import * as OrderEvents from '../bot/modules/events/orders';
 import { IOrder } from '../models/order';
 import { HasTelegram } from '../bot/start';
+import util from 'node:util';
 
 const { parsePaymentRequest } = require('invoices');
 
@@ -42,6 +44,21 @@ const payRequest = async ({
     if (!invoice) return false;
     // If the invoice is expired we return is_expired = true
     if (invoice.is_expired) return invoice;
+
+    // SECURITY: never pay an amount different from the order amount.
+    // If the invoice encodes an amount, it MUST match the expected amount
+    // exactly. This prevents an attacker from supplying an inflated invoice
+    // (e.g. via a malicious LNURL/Lightning Address endpoint) and draining
+    // the node by being paid more than was held from the seller.
+    if (invoice.tokens && invoice.tokens !== amount) {
+      logger.error(
+        `payRequest: invoice amount (${invoice.tokens}) does not match the expected amount (${amount}); refusing to pay`,
+      );
+      return {
+        error: 'AMOUNT_MISMATCH',
+        message: 'invoice amount does not match order amount',
+      };
+    }
 
     const maxRoutingFee = process.env.MAX_ROUTING_FEE;
     if (maxRoutingFee === undefined)
@@ -107,9 +124,18 @@ const payRequest = async ({
 
 const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   try {
-    // We check if the payment is on flight we don't do anything
-    const isPending = await isPendingPayment(order.buyer_invoice);
-    if (isPending) {
+    // Skip if the payment is already in-flight or was confirmed
+    const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(
+      order.buyer_invoice,
+    );
+    if (isPaymentPendingOrConfirmed) {
+      order.status = 'ERROR';
+      await order.save();
+      await messages.toAdminChannelOrderErrorMessage(
+        bot,
+        order,
+        'Payment is already in-flight or was confirmed',
+      );
       return;
     }
     const payment = await payRequest({
@@ -147,6 +173,21 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       );
       await messages.rateUserMessage(bot, buyerUser, order, i18nCtx);
     } else {
+      // SECURITY: a structural amount mismatch must never be retried — the
+      // invoice itself is wrong. Alert and stop instead of scheduling a retry,
+      // otherwise the pending payments job would keep attempting to pay it.
+      if (
+        payment &&
+        typeof payment === 'object' &&
+        'error' in payment &&
+        payment.error === 'AMOUNT_MISMATCH'
+      ) {
+        logger.error(
+          `payToBuyer: AMOUNT_MISMATCH for order ${order._id}; refusing to pay and not scheduling a retry`,
+        );
+        await messages.invoicePaymentFailedMessage(bot, buyerUser, i18nCtx);
+        return;
+      }
       // Handle different types of payment failures
       if (payment && typeof payment === 'object' && 'error' in payment) {
         const errorType = payment.error as string;
@@ -192,17 +233,62 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   }
 };
 
-const isPendingPayment = async (request: string) => {
-  try {
-    const { id } = parsePaymentRequest({ request });
-    const { is_pending } = await getPayment({ lnd, id });
+type LndPayment = PayViaPaymentRequestResult;
 
-    return !!is_pending;
+interface PaymentStatus {
+  is_confirmed: boolean;
+  is_pending: boolean;
+  payment?: LndPayment;
+  // True when is_pending was forced by an unknown/transient LND error (fail
+  // closed) rather than a genuine in-flight payment. Lets callers tell a real
+  // in-flight payment apart from a node fault that would wedge retries.
+  is_error?: boolean;
+}
+
+const getPaymentStatus = async (request: string): Promise<PaymentStatus> => {
+  try {
+    if (!request) {
+      return { is_confirmed: false, is_pending: false };
+    }
+    const { id } = parsePaymentRequest({ request });
+    const res = await getPayment({ lnd, id });
+    return {
+      is_confirmed: !!res.is_confirmed,
+      is_pending: !!res.is_pending,
+      payment: res.payment as LndPayment | undefined,
+    };
   } catch (error: any) {
-    const message = error.toString();
-    logger.error(`isPendingPayment catch error: ${message}`);
-    return false;
+    // lightning lib returns errors as arrays: [code, message, details]
+    const code = Array.isArray(error) ? error[0] : undefined;
+    const message = Array.isArray(error)
+      ? String(error[1] ?? '')
+      : String(error);
+    const isNotFound =
+      code === 404 ||
+      message.includes('SentPaymentNotFound') ||
+      message.includes('PaymentNotFound');
+    if (isNotFound) {
+      return { is_confirmed: false, is_pending: false };
+    }
+    // Use util.inspect to log the error more specifically
+    logger.error(`getPaymentStatus error: ` + util.inspect(error));
+    // We prefer to handle this case manually preventing potential fund loss.
+    // Fail closed: mark is_error so callers can tell an unknown/transient LND
+    // fault apart from a genuine in-flight payment.
+    return { is_confirmed: false, is_pending: true, is_error: true };
   }
 };
 
-export { payRequest, payToBuyer, isPendingPayment };
+const isPendingOrConfirmed = async (request: string) => {
+  const { is_confirmed, is_pending } = await getPaymentStatus(request);
+  return is_confirmed || is_pending;
+};
+
+export {
+  payRequest,
+  payToBuyer,
+  isPendingOrConfirmed,
+  getPaymentStatus,
+  LndPayment,
+  PaymentStatus,
+};

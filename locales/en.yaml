@@ -182,6 +182,8 @@ order_detail: |
   
   Status: ${status}
 
+  Settled by admin: ${settledByAdmin}
+
   Creator: @${creator || ''}
 
   Buyer: @${buyerUsername || ''}
@@ -241,6 +243,7 @@ must_be_valid_currency: 'Fiat_code must be a valid code, for example: USD, EUR. 
 must_be_number_or_range: 'Fiat_amount must be a number or numeric range in the  <minimum>-<maximum> format'
 invalid_lightning_address: Invalid lightning address
 unavailable_lightning_address: Unavailable lightning address ${la}
+ln_address_temporarily_disabled: ⚠️ Lightning Address payouts are temporarily disabled for maintenance. Please send a regular Lightning invoice (BOLT11) for the exact order amount to receive your sats.
 help: |
   /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] - Creates a Sell order
   /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] - Creates a Purchase Order
@@ -252,11 +255,18 @@ help: |
   /setaddress <_lightning address / off_> - Allows the buyer to establish a static payment address (lightning address), _off_ to deactivate 
   /setlang - Allows the user to change the language
   /settings - Displays the user's current settings
-  /listorders - Use this command to list all your pending transactions 
+  While in /settings you can configure counterparty requirements:
+    /counterpartyage <days> - Sets the minimum account age (in days) required for the counterparty to take your orders
+    /counterpartyorders <orders> - Sets the minimum number of completed orders required for the counterparty
+    /resetrequirements - Resets counterparty requirements to default
+  /listorders - Use this command to list all your pending transactions
   /listcurrencies - Lists all the currencies we can use to without indicatin the amount in sats. 
   /fiatsent <_order id_> - Buyer informs that he has already sent FIAT money to seller
   /release <_order id_> - Seller releases satoshis 
   /dispute <_order id_> - Opens a dispute between participant parties
+  /block <_@username/id_> - Blocks a user from interacting with your orders
+  /unblock <_@username/id_> - Unblocks a user
+  /blocklist - List of your blocked users
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
   /terms - Shows the terms and conditions when using the bot
@@ -424,6 +434,14 @@ expired_order_to_seller: |
 didnt_add_invoice: '🤨 You have not sent the invoice to receive sats for the order ID: ${orderId}'
 buyer_havent_add_invoice: '😔 Buyer has not sent me the invoice to receive the sats for your order ID: ${orderId}, your sats were sent back to you'
 buyer_havent_add_invoice_to_admin_channel: 'Buyer @${username} (${tgId}) took the order ID: ${orderId} but has not sent the invoice where to receive sats, time has expired, the order has being republished.'
+hold_invoice_expired_to_buyer: |
+  The hold invoice for order ID ${orderId} expired before the trade was completed. The sats have been returned to the seller.
+
+  If you need help, you can write to the group ${helpGroup}
+hold_invoice_expired_to_seller: |
+  The hold invoice for order ID ${orderId} expired before the trade was completed. Your sats have been returned to you.
+
+  If you need help, you can write to the group ${helpGroup}
 havent_paid_invoice: '🤨 You have not paid the invoice to sell sats for the order ID: ${orderId}'
 seller_havent_paid_invoice: '😔 Seller has not paid the invoice for your purchase ID: ${orderId}, the operation was cancelled.'
 seller_havent_add_invoice_to_admin_channel: 'Seller @${username} (${tgId}) has not paid the invoice of order ID: ${orderId} time lapse ended and the order has been published again.'
@@ -437,12 +455,26 @@ pending_payment_success: |
   Proof of payment: ${paymentSecret}
 pending_payment_failed: |
   🤖 I have tried to pay your invoice ${attempts} times and failed. Sometimes the Lightning Network users can't receive payments because their wallet has not enough inbound liquidity or the node is not well connected in the network. You might want to try to generate an invoice from another wallet.
+pending_payment_failed_earnings: |
+  🤖 I have tried to pay your withdrawal invoice ${attempts} times and failed. Please try again with a new invoice from another wallet.
 pending_payment_failed_to_admin: |
   Payment of the invoice for the Buy order ${orderId} of user @${username} has failed.
 
   Payment attempts: ${attempts}
+order_error_to_admin: |
+  ⚠️ Order ${orderId} transitioned to ERROR state
+  The payout may be stuck — please check the order, it may require manual resolution.
+  Details: ${details}
 selling: Selling
 buying: Buying
+selling_sats: Selling sats
+selling_sats_with_amount: 'Selling ${amount} sats'
+buying_sats: Buying sats
+buying_sats_with_amount: 'Buying ${amount} sats'
+showusername_selling_sats: '@${username} is selling sats'
+showusername_selling_sats_with_amount: '@${username} is selling ${amount} sats'
+showusername_buying_sats: '@${username} is buying sats'
+showusername_buying_sats_with_amount: '@${username} is buying ${amount} sats'
 receive_payment: Receive payment
 pay: Pay
 is: is
@@ -629,9 +661,24 @@ user_settings: |
   lightning address:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>Counterparty requirements</strong>
+  Min. account age: ${min_days_using_bot} days
+  Min. completed orders: ${min_completed_orders}
+
   <strong># HELP</strong>
   /setnpub &lt;npub&gt; - Configure user's Nostr public key.
+  /counterpartyage &lt;days&gt; - Sets the minimum account age (in days) for the counterparty.
+  /counterpartyorders &lt;orders&gt; - Sets the minimum number of completed orders for the counterparty.
+  /resetrequirements - Resets counterparty requirements to default.
   /exit - to exit the wizard.
+not_meeting_requirements_header: "You do not meet the counterparty's requirements to take this order:"
+not_meeting_age_detail: "Required age: ${required} days: Your age: ${actual} days"
+not_meeting_orders_detail: "Required orders: ${required}: Your number of orders: ${actual}"
+counterpartyage_updated: Counterparty age requirement updated to ${days} days.
+counterpartyorders_updated: Counterparty completed orders requirement updated to ${orders}.
+requirements_reset: Counterparty requirements have been reset to default.
+invalid_number: Invalid number.
+invalid_range: Invalid value for ${command}, please choose a number in the range [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Invoice already settled
@@ -650,7 +697,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Golden Honey Badger! No fee will be charged! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
@@ -666,7 +712,7 @@ disclaimer: |
 
   Neither the developers nor the dispute resolvers are responsible for any losses or damages that the user may suffer as a result of using the bot.
 order_frozen: You have frozen the order
-paytobuyer_only_frozen_orders: The paytobuyer command can only be used on orders with FROZEN or PAID_HOLD_INVOICE status
+paytobuyer_only_frozen_orders: The paytobuyer command can only be used on orders with FROZEN, PAID_HOLD_INVOICE or ERROR status
 settleorder_only_dispute_orders: The settleorder command can only be used on orders with DISPUTE status
 dispute_solver: 👮‍♂️ A solver will be attending your dispute, you can write to him/her directly by tapping his/her username => @${solver} <=, if the solver writes to you first, you should ask him/her to tell you what is the token of your dispute, your token is ${token}.
 setinvoice_no_response: You have no orders to be paid
@@ -689,6 +735,31 @@ blocklist_empty: You do not have any blocked user
 orders_in_process: There are orders in process with this user
 user_order_is_blocked_by_user_taker: You can't take this order because you blocked its maker
 user_taker_is_blocked_by_user_order: You can't take this order because its maker blocked you
+block_usage: "Usage: /block @Username or /block telegramId"
+unblock_usage: "Usage: /unblock @Username or /unblock telegramId"
+block_failed: "Error blocking the user"
+unblock_failed: "Error unblocking the user"
 check_solvers: Your community ${communityName} does not have any solvers. Please add at least one within ${remainingDays} days to prevent the community from being disabled.
 check_solvers_last_warning: Your community ${communityName} does not have any solvers. Please add at least one today to prevent the community from being disabled.
 image_processing_error: We had an error processing the image, please wait a few minutes and try again
+order_channel_validation_failed: "Unable to publish your order. Try disabling the default community /setcomm off, or ask your community administrator to reconfigure the community channels and groups."
+community_payment_methods: "Payment methods"
+enter_community_payment_methods: "Enter the payment methods accepted in your community, separated by commas (e.g.: Bank transfer, Cash, PayPal)"
+current_payment_methods: "Current payment methods: ${methods}"
+select_payment_methods: "Select one or more payment methods:"
+confirm_payment_methods: "✅ Confirm"
+no_payment_method_selected: "Please select at least one payment method"
+payment_methods_saved: "Payment methods saved ✅"
+custom_payment_method: "✍️ Custom payment method"
+payment_methods_reset: "Payment methods removed. Users can now enter any payment method freely."
+payment_methods_wizard_commands: "/reset — remove all payment methods and restore default behavior\n/exit — exit without saving"
+community_disabled_by_admin: An administrator has disabled your community ${communityName}
+community_enabled_by_admin: An administrator has re-enabled your community ${communityName}
+community_creation_requirements_not_met_header: "You do not meet the requirements to create a community:"
+community_creation_requirements_not_met_orders: "* Orders: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volume: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Days using the bot: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requiredRep}"
+community_already_disabled: This community is already disabled
+community_already_enabled: This community is already enabled
+ambiguous_community_input: Multiple communities match that username, please use the community ID instead

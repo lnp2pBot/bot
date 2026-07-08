@@ -71,6 +71,7 @@ import {
   // deleteCommunity,
   nodeInfo,
   checkSolvers,
+  checkHoldInvoiceExpired,
 } from '../jobs';
 import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
@@ -133,16 +134,10 @@ const askForConfirmation = async (user: UserDocument, command: string) => {
       orders = await Order.find(where);
     } else if (command === '/setinvoice') {
       const where: FilterQuery<OrderQuery> = {
-        $and: [
-          { buyer_id: user._id },
-          {
-            $or: [
-              { status: 'PAID_HOLD_INVOICE' },
-              { status: 'COMPLETED_BY_ADMIN' },
-            ],
-          },
-        ],
+        buyer_id: user._id,
+        status: { $in: ['PAID_HOLD_INVOICE', 'WAITING_BUYER_INVOICE'] },
       };
+
       orders = await Order.find(where);
     }
 
@@ -236,6 +231,10 @@ const initialize = (
 
   schedule.scheduleJob(`0 0 * * *`, async () => {
     await checkSolvers(bot as any as Telegraf<MainContext>);
+  });
+
+  schedule.scheduleJob(`0 * * * * *`, async () => {
+    await checkHoldInvoiceExpired(bot);
   });
 
   bot.start(async (ctx: MainContext) => {
@@ -340,23 +339,57 @@ const initialize = (
 
       if (!order) return;
 
+      // freezeorder settles the hold invoice, so it must only run on orders
+      // that still have funds in escrow. Refuse terminal/paid states.
+      const freezableStatuses = ['ACTIVE', 'FIAT_SENT', 'DISPUTE'];
+      if (!freezableStatuses.includes(order.status)) {
+        logger.warning(
+          `freezeorder ${order._id}: refused, status ${order.status} is not freezable`,
+        );
+        return await messages.notAuthorized(ctx);
+      }
+
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
+
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
         if (!order.community_id) {
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.admin.default_community_id) {
+        if (
+          String(order.community_id) !== String(ctx.admin.default_community_id)
+        ) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a community solver may only act on the dispute they were
+        // assigned to (parity with settleorder/cancelorder).
+        if (dispute && String(dispute.solver_id) !== String(ctx.admin._id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a solver must never resolve an order they are a party to.
+        if (
+          String(order.buyer_id) === String(ctx.admin._id) ||
+          String(order.seller_id) === String(ctx.admin._id)
+        ) {
+          logger.warning(
+            `freezeorder ${order._id}: @${ctx.admin.username} is a party to this order`,
+          );
           return await messages.notAuthorized(ctx);
         }
       }
+
+      // Settle the hold invoice first; only persist the FROZEN status
+      // if the settlement succeeded.
+      if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       order.is_frozen = true;
       order.status = 'FROZEN';
       order.action_by = ctx.admin._id;
       await order.save();
-
-      if (order.secret) await settleHoldInvoice({ secret: order.secret });
 
       await ctx.reply(ctx.i18n.t('order_frozen'));
     } catch (error) {
@@ -469,38 +502,22 @@ const initialize = (
   // pending orders are the ones that are not taken by another user
   bot.command('cancelall', userMiddleware, async (ctx: CommunityContext) => {
     try {
-      const pending_orders =
-        (await ordersActions.getOrders(ctx.user, 'PENDING')) || [];
-      const seller_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE')) ||
-        [];
-      const buyer_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT')) || [];
+      // /cancelall only cancels PENDING orders (published orders that nobody
+      // has taken yet). Orders already being taken (WAITING_PAYMENT /
+      // WAITING_BUYER_INVOICE) must be handled individually with /cancel or
+      // through a dispute, just like single /cancel rejects them.
+      const orders = await ordersActions.getOrders(ctx.user, 'PENDING');
 
-      const orders = [...pending_orders, ...seller_orders, ...buyer_orders];
+      // getOrders returns undefined when the query itself failed (already
+      // logged). Bail out instead of telling the user they have no orders,
+      // which would otherwise leave their pending orders silently uncanceled.
+      if (orders === undefined) return;
 
       if (orders.length === 0) {
         return await messages.notOrdersMessage(ctx);
       }
 
       for (const order of orders) {
-        // If a buyer is taking a sell offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
-          return await cancelAddInvoice(ctx, order);
-        }
-
-        // If a seller is taking a buy offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
-          return await cancelShowHoldInvoice(ctx, order);
-        }
-
-        // If a buyer wants cancel but the seller already pay the hold invoice
-        if (order.type === 'buy' && order.status === 'WAITING_BUYER_INVOICE') {
-          if (order.hash) await cancelHoldInvoice({ hash: order.hash });
-        }
-
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
@@ -550,15 +567,17 @@ const initialize = (
         }
       }
 
-      if (order.secret) await settleHoldInvoice({ secret: order.secret });
+      if (order.secret) {
+        await settleHoldInvoice({ secret: order.secret });
+        order.settled_by_admin = true;
+        await order.save();
+      }
 
       if (dispute) {
         dispute.status = 'SETTLED';
         await dispute.save();
       }
 
-      order.status = 'COMPLETED_BY_ADMIN';
-      await order.save();
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
       if (buyer === null || seller === null)
@@ -579,7 +598,7 @@ const initialize = (
     }
   });
 
-  bot.command('checkorder', superAdminMiddleware, async (ctx: MainContext) => {
+  bot.command('checkorder', adminMiddleware, async (ctx: MainContext) => {
     try {
       const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
       if (!orderId) return;
@@ -587,6 +606,14 @@ const initialize = (
       const order = await Order.findOne({ _id: orderId });
 
       if (order === null) return;
+
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
+      }
 
       const buyer = await User.findOne({ _id: order.buyer_id });
       const seller = await User.findOne({ _id: order.seller_id });
@@ -597,35 +624,39 @@ const initialize = (
     }
   });
 
-  bot.command(
-    'checkinvoice',
-    superAdminMiddleware,
-    async (ctx: MainContext) => {
-      try {
-        const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
-        if (!orderId) return;
-        if (!(await validateObjectId(ctx, orderId))) return;
-        const order = await Order.findOne({ _id: orderId });
+  bot.command('checkinvoice', adminMiddleware, async (ctx: MainContext) => {
+    try {
+      const [orderId] = (await validateParams(ctx, 2, '\\<_order id_\\>'))!;
+      if (!orderId) return;
+      if (!(await validateObjectId(ctx, orderId))) return;
+      const order = await Order.findOne({ _id: orderId });
 
-        if (order === null) return;
-        if (!order.hash) return;
+      if (order === null) return;
+      if (!order.hash) return;
 
-        const invoice = await getInvoice({ hash: order.hash });
-        if (invoice === undefined) {
-          throw new Error('invoice is undefined');
-        }
-
-        await messages.checkInvoiceMessage(
-          ctx,
-          invoice.is_confirmed,
-          invoice.is_canceled!,
-          invoice.is_held!,
-        );
-      } catch (error) {
-        logger.error(error);
+      // If the user is a community admin but not a superadmin we need to check the communities match
+      if (
+        !ctx.admin.admin &&
+        String(order.community_id) !== String(ctx.admin.default_community_id)
+      ) {
+        return await messages.notAuthorized(ctx, ctx.admin.tg_id);
       }
-    },
-  );
+
+      const invoice = await getInvoice({ hash: order.hash });
+      if (invoice === undefined) {
+        throw new Error('invoice is undefined');
+      }
+
+      await messages.checkInvoiceMessage(
+        ctx,
+        invoice.is_confirmed,
+        invoice.is_canceled!,
+        invoice.is_held!,
+      );
+    } catch (error) {
+      logger.error(error);
+    }
+  });
 
   bot.command('resubscribe', superAdminMiddleware, async (ctx: MainContext) => {
     try {
@@ -879,8 +910,19 @@ const initialize = (
       if (ctx.match === null) {
         throw new Error('ctx.match should not be null');
       }
-      ctx.deleteMessage();
-      await addInvoicePHI(ctx, bot, ctx.match[1]);
+      const order = await Order.findOne({ _id: ctx.match[1] });
+      if (!order) return;
+
+      // Only the order's buyer may set/replace the payout invoice. The order
+      // id comes from the callback data, so we verify the caller is the buyer
+      // before driving the invoice flow.
+      if (String(order.buyer_id) !== String(ctx.user._id)) return;
+
+      if (order.status === 'WAITING_BUYER_INVOICE') {
+        await addInvoice(ctx, bot, order);
+      } else {
+        await addInvoicePHI(ctx, bot, ctx.match[1]);
+      }
     },
   );
 
@@ -978,10 +1020,24 @@ const initialize = (
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
 
-      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
-      if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
+      // paytobuyer can only be used if the order status is FROZEN,
+      // PAID_HOLD_INVOICE or ERROR (manual resolution of stuck payouts)
+      if (
+        order.status !== 'FROZEN' &&
+        order.status !== 'PAID_HOLD_INVOICE' &&
+        order.status !== 'ERROR'
+      ) {
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
       }
+
+      // SECURITY: only a superadmin may resolve ERROR orders manually;
+      // community solvers are limited to FROZEN and PAID_HOLD_INVOICE.
+      if (order.status === 'ERROR' && !ctx.admin.admin) {
+        return await messages.notAuthorized(ctx);
+      }
+
+      // We look for a dispute for this order
+      const dispute = await Dispute.findOne({ order_id: order._id });
 
       // We check if this is a solver, the order must be from the same community
       if (!ctx.admin.admin) {
@@ -989,7 +1045,27 @@ const initialize = (
           return await messages.notAuthorized(ctx);
         }
 
-        if (order.community_id != ctx.admin.default_community_id) {
+        if (
+          String(order.community_id) !== String(ctx.admin.default_community_id)
+        ) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a community solver may only act on the dispute they were
+        // assigned to (parity with settleorder/cancelorder).
+        if (dispute && String(dispute.solver_id) !== String(ctx.admin._id)) {
+          return await messages.notAuthorized(ctx);
+        }
+
+        // SECURITY: a solver must never push the payout of an order they are
+        // a party to.
+        if (
+          String(order.buyer_id) === String(ctx.admin._id) ||
+          String(order.seller_id) === String(ctx.admin._id)
+        ) {
+          logger.warning(
+            `paytobuyer ${order._id}: @${ctx.admin.username} is a party to this order`,
+          );
           return await messages.notAuthorized(ctx);
         }
       }
@@ -1091,13 +1167,13 @@ const initialize = (
   return bot;
 };
 
-const start = (
+const start = async (
   botToken: string,
   options: Partial<Telegraf.Options<CommunityContext>>,
-): Telegraf<CommunityContext> => {
+): Promise<Telegraf<CommunityContext>> => {
   const bot = initialize(botToken, options);
 
-  bot.launch();
+  await bot.launch();
 
   logger.notice('Bot launched.');
 

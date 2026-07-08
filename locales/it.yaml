@@ -179,6 +179,8 @@ order_detail: |
 
   Stato: ${status}
 
+  Completato dall'amministratore: ${settledByAdmin}
+
   Creato da: @${creator || ''}
 
   Acquirente: @${buyerUsername || ''}
@@ -249,11 +251,18 @@ help: |
   /setaddress <_lightning address / off_> - Consente all'acquirente di indicare un indirizzo di pagamento statico (lightning address), _off_ per disattivarlo 
   /setlang - Consente all'utente di cambiare lingua
   /settings - Visualizza le impostazioni correnti dell'utente
+  In /settings puoi configurare i requisiti della controparte:
+    /counterpartyage <giorni> - Imposta l'età minima (in giorni) richiesta per la controparte
+    /counterpartyorders <ordini> - Imposta il numero minimo di ordini completati richiesti per la controparte
+    /resetrequirements - Ripristina i requisiti ai valori predefiniti
   /listorders - Utilizzare questo comando per verificare tutte le transazioni in sospeso
   /listcurrencies - Elenca tutte le valute che si possono usare senza indicare l'importo in sats. 
   /fiatsent <_order id_> - L'acquirente informa che ha inviato FIAT al venditore
   /release <_order id_> - Il venditore rilascia i sats
   /dispute <_order id_> - Apre una disputa tra le parti
+  /block <_@username/id_> - Blocca un utente per impedire che interagisca con i tuoi ordini
+  /unblock <_@username/id_> - Sblocca un utente
+  /blocklist - Elenco degli utenti bloccati
   /cancel <_order id_> - Cancella un ordine che non è ancora stato accettato
   /cancelall - Cancella tutti gli ordini non ancora accettati
   /terms: mostra i termini e le condizioni quando si utilizza il bot
@@ -415,6 +424,14 @@ expired_order_to_seller: |
 didnt_add_invoice: "🤨 Non è stata inviata la fattura per ricevere i sats relativi all'ordine ID: ${orderId}"
 buyer_havent_add_invoice: "😔 L'acquirente non mi ha inviato la fattura per ricevere i sats relativi al tuo ordine ID: ${orderId}, i sats sono stati rispediti a te"
 buyer_havent_add_invoice_to_admin_channel: "L'acquirente @${username} (${tgId}) ha accettato l'ordine ID: ${orderId} ma non ha inviato la fattura dove ricevere sats, il tempo è scaduto e l'ordine è stato ripubblicato."
+hold_invoice_expired_to_buyer: |
+  La fattura di deposito a garanzia per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I sats sono stati restituiti al venditore.
+
+  Se hai bisogno di aiuto, puoi scrivere al gruppo ${helpGroup}
+hold_invoice_expired_to_seller: |
+  La fattura di deposito a garanzia per l'ordine ID ${orderId} è scaduta prima del completamento dello scambio. I tuoi sats ti sono stati restituiti.
+
+  Se hai bisogno di aiuto, puoi scrivere al gruppo ${helpGroup}
 havent_paid_invoice: "🤨 Non hai pagato la invoice per vendere i sats relativi all' ordineID:${orderId}"
 seller_havent_paid_invoice: "😔 Il venditore non ha pagato la invoice per il tuo ordine di acquisto ID: ${orderId}, l'operazione è stata annullata."
 seller_havent_add_invoice_to_admin_channel: "Il venditore @${username} (${tgId}) non ha pagato la invoice per l'ordine ID: ${orderId} il termine è scaduto e l'ordine è stato ripubblicato"
@@ -428,16 +445,30 @@ pending_payment_success: |
   Prova di pagamento: ${paymentSecret}
 pending_payment_failed: |
   🤖 Ho tentato di pagare la tua invoice ${attempts} volte ma senza successo, a volte gli utenti della rete Lightning non possono ricevere pagamenti perché il loro wallet non ha sufficiente capacità in entrata o perché il nodo non è ben collegato alla rete. Puoi provare a generare una fattura da un altro wallet.
+pending_payment_failed_earnings: |
+  🤖 Ho tentato di pagare la tua invoice di prelievo ${attempts} volte ma senza successo. Per favore riprova con una nuova invoice da un altro wallet.
 pending_payment_failed_to_admin: |
   Il pagamento della invoice per l'ordine di acquisto ${orderId} dell'utente @${username} è fallito.
 
   Payment attempts: ${attempts}
+order_error_to_admin: |
+  ⚠️ L'ordine ${orderId} è passato allo stato ERROR
+  Il pagamento potrebbe essere bloccato — controlla l'ordine, potrebbe richiedere una risoluzione manuale.
+  Dettagli: ${details}
 selling: Vendita
 buying: Acquisto
+selling_sats: Vendita sats
+selling_sats_with_amount: 'Vendita ${amount} sats'
+buying_sats: Acquisto sats
+buying_sats_with_amount: 'Acquisto ${amount} sats'
 receive_payment: Ricezione del pagamento
 pay: Paga
 is: è
 trading_volume: 'Volume scambio: ${volume} sats'
+showusername_buying_sats: '@${username} sta comprando sats'
+showusername_buying_sats_with_amount: '@${username} sta comprando ${amount} sats'
+showusername_selling_sats: '@${username} sta vendendo sats'
+showusername_selling_sats_with_amount: '@${username} sta vendendo ${amount} sats'
 satoshis: satoshi
 by: da
 rate: Valutazione
@@ -609,20 +640,35 @@ order_not_found: Ordine non trovato.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Impostazioni utente per @${user.username}</strong>
 
-  Language:
+  Lingua:
     ${language.emoji} ${language.name}
-  Community:
+  Comunità:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  indirizzo lightning:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Requisiti della controparte</strong>
+  Età minima: ${min_days_using_bot} giorni
+  Ordini completati minimi: ${min_completed_orders}
+
+  <strong># AIUTO</strong>
+  /setnpub &lt;npub&gt; - Configura la chiave pubblica Nostr dell'utente.
+  /counterpartyage &lt;giorni&gt; - Imposta l'età minima (in giorni) per la controparte.
+  /counterpartyorders &lt;ordini&gt; - Imposta il numero minimo di ordini completati per la controparte.
+  /resetrequirements - Ripristina i requisiti della controparte ai valori predefiniti.
+  /exit - per uscire dall'assistente.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Requisito di età della controparte aggiornato a ${days} giorni.
+counterpartyorders_updated: Requisito di ordini completati della controparte aggiornato a ${orders}.
+requirements_reset: I requisiti della controparte sono stati ripristinati ai valori predefiniti.
+invalid_number: Numero non valido.
+invalid_range: Valore non valido per ${command}, scegli un numero nell'intervallo [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Fattura già risolta
@@ -641,7 +687,6 @@ bot_info: |
   User info:
 
   ${user_info}
-golden_honey_badger: 🍯 Tasso del Miele Dorato! Non verrà addebitata alcuna commissione! 🦡
 user_info: |
   Volume traded: ${volume_traded}
   Total rating: ${total_rating}
@@ -657,7 +702,7 @@ disclaimer: |
 
   Né gli sviluppatori né i risolutori di controversie sono responsabili di eventuali perdite o danni che l'utente potrebbe subire a causa dell'utilizzo del bot.
 order_frozen: hai congelato l'ordine
-paytobuyer_only_frozen_orders: Il comando paytobuyer può essere utilizzato solo su ordini con stato FROZEN o PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: Il comando paytobuyer può essere utilizzato solo su ordini con stato FROZEN, PAID_HOLD_INVOICE o ERROR
 settleorder_only_dispute_orders: Il comando settleorder può essere utilizzato solo su ordini con stato DISPUTE
 dispute_solver: 👮‍♂️ Un solutore si occuperà della vostra controversia, potete scrivergli direttamente toccando il suo nome utente => @${solver} <=, se il solutore vi scrive per primo, dovreste chiedergli di dirvi qual è il token della vostra controversia, il vostro token è ${token}.
 setinvoice_no_response: Non ci sono ordini da pagare.
@@ -681,6 +726,31 @@ blocklist_empty: Non hai alcun utente bloccato
 orders_in_process: Ci sono ordini in corso con questo utente
 user_order_is_blocked_by_user_taker: Non puoi accettare questo ordine perché hai bloccato il suo creatore
 user_taker_is_blocked_by_user_order: Non puoi accettare questo ordine perché il suo creatore ti ha bloccato
+block_usage: "Utilizzo: /block @Username o /block telegramId"
+unblock_usage: "Utilizzo: /unblock @Username o /unblock telegramId"
+block_failed: "Errore nel bloccare l'utente"
+unblock_failed: "Errore nello sbloccare l'utente"
 check_solvers: La tua community ${communityName} non ha risolutori. Aggiungine almeno uno entro ${remainingDays} giorni per evitare che la community venga disabilitata.
 check_solvers_last_warning: La tua community ${communityName} non ha risolutori. Per favore aggiungine almeno uno oggi per evitare che la community venga disabilitata.
 image_processing_error: Abbiamo avuto un errore nel processare l'immagine, per favore attendi qualche minuto e prova di nuovo.
+order_channel_validation_failed: "Impossibile pubblicare il tuo ordine. Prova a disattivare la community predefinita con /setcomm off, o chiedi all'amministratore della tua community di riconfigurare i canali e i gruppi della community."
+community_payment_methods: "Metodi di pagamento"
+enter_community_payment_methods: "Inserisci i metodi di pagamento accettati nella tua community, separati da virgole (es.: Bonifico bancario, Contanti, PayPal)"
+current_payment_methods: "Metodi di pagamento attuali: ${methods}"
+select_payment_methods: "Seleziona uno o più metodi di pagamento:"
+confirm_payment_methods: "✅ Conferma"
+no_payment_method_selected: "Seleziona almeno un metodo di pagamento"
+payment_methods_saved: "Metodi di pagamento salvati ✅"
+custom_payment_method: "✍️ Metodo di pagamento personalizzato"
+payment_methods_reset: "Metodi di pagamento rimossi. Gli utenti possono ora inserire qualsiasi metodo di pagamento liberamente."
+payment_methods_wizard_commands: "/reset — rimuovere tutti i metodi di pagamento e ripristinare il comportamento predefinito\n/exit — uscire senza salvare"
+community_disabled_by_admin: Un amministratore ha disabilitato la tua comunità ${communityName}
+community_enabled_by_admin: Un amministratore ha riabilitato la tua comunità ${communityName}
+community_creation_requirements_not_met_header: "Non soddisfi i requisiti per creare una comunità:"
+community_creation_requirements_not_met_orders: "* Ordini: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volume: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Giorni di utilizzo del bot: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputazione: ${userRep} / ${requiredRep}"
+community_already_disabled: Questa comunità è già disabilitata
+community_already_enabled: Questa comunità è già abilitata
+ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità
