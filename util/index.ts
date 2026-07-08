@@ -393,7 +393,7 @@ const getUserI18nContext = async (user: UserDocument) => {
     directory: 'locales',
   });
 
-  return i18n.createContext(user.lang);
+  return i18n.createContext(language);
 };
 
 const getDetailedOrder = async (
