@@ -459,11 +459,15 @@ order_error_to_admin: |
   Détails : ${details}
 selling: Vente
 buying: Achat
-selling_sats: 'Vente de ${amount}sats'
-buying_sats: 'Achat de ${amount}sats'
+selling_sats: Vente de sats
+selling_sats_with_amount: 'Vente de ${amount} sats'
+buying_sats: Achat de sats
+buying_sats_with_amount: 'Achat de ${amount} sats'
 receive_payment: Réception du paiement
-showusername_buying_sats: "@${username} achète ${amount}sats"
-showusername_selling_sats: "@${username} vend ${amount}sats"
+showusername_buying_sats: "@${username} achète des sats"
+showusername_buying_sats_with_amount: "@${username} achète ${amount} sats"
+showusername_selling_sats: "@${username} vend des sats"
+showusername_selling_sats_with_amount: "@${username} vend ${amount} sats"
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'

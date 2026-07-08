@@ -467,10 +467,14 @@ order_error_to_admin: |
   Details: ${details}
 selling: Selling
 buying: Buying
-selling_sats: 'Selling ${amount}sats'
-buying_sats: 'Buying ${amount}sats'
-showusername_selling_sats: '@${username} is selling ${amount}sats'
-showusername_buying_sats: '@${username} is buying ${amount}sats'
+selling_sats: Selling sats
+selling_sats_with_amount: 'Selling ${amount} sats'
+buying_sats: Buying sats
+buying_sats_with_amount: 'Buying ${amount} sats'
+showusername_selling_sats: '@${username} is selling sats'
+showusername_selling_sats_with_amount: '@${username} is selling ${amount} sats'
+showusername_buying_sats: '@${username} is buying sats'
+showusername_buying_sats_with_amount: '@${username} is buying ${amount} sats'
 receive_payment: Receive payment
 pay: Pay
 is: is
