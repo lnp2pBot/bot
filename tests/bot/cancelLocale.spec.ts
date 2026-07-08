@@ -34,7 +34,7 @@ const messagesMock: any = new Proxy(
         return Promise.resolve();
       };
     },
-  }
+  },
 );
 
 // getUserI18nContext returns a context tagged with the user's language.
@@ -52,7 +52,9 @@ const utilMock = {
 };
 
 const lnMock = {
-  createHoldInvoice: sinon.stub().resolves({ request: 'r', hash: 'h', secret: 's' }),
+  createHoldInvoice: sinon
+    .stub()
+    .resolves({ request: 'r', hash: 'h', secret: 's' }),
   subscribeInvoice: sinon.stub().resolves(),
   cancelHoldInvoice: sinon.stub().resolves(),
   settleHoldInvoice: sinon.stub().resolves(),
@@ -130,16 +132,16 @@ const baseOrder = (over: any) => ({
 const assertRecipientLanguages = () => {
   for (const call of messageCalls) {
     const recipient = call.args.find(
-      a => a && typeof a === 'object' && 'tg_id' in a && 'lang' in a
+      a => a && typeof a === 'object' && 'tg_id' in a && 'lang' in a,
     );
     const i18n = call.args.find(
-      a => a && typeof a === 'object' && '__lang' in a
+      a => a && typeof a === 'object' && '__lang' in a,
     );
     if (recipient && i18n) {
       expect(
         i18n.__lang,
         `${call.name}: message sent to ${recipient.tg_id} used locale ` +
-          `"${i18n.__lang}" but recipient language is "${recipient.lang}"`
+          `"${i18n.__lang}" but recipient language is "${recipient.lang}"`,
       ).to.equal(recipient.lang);
     }
   }
@@ -192,7 +194,9 @@ describe('Cancel flow: messages must use each recipient language', () => {
       const ctx = makeCtx(BUYER.tg_id, BUYER.lang);
       await commands.cancelAddInvoice(ctx, currentOrder);
       assertRecipientLanguages();
-      expect(messageCalls.map(c => c.name)).to.include('publishSellOrderMessage');
+      expect(messageCalls.map(c => c.name)).to.include(
+        'publishSellOrderMessage',
+      );
     });
   });
 
@@ -236,7 +240,9 @@ describe('Cancel flow: messages must use each recipient language', () => {
       const ctx = makeCtx(SELLER.tg_id, SELLER.lang);
       await commands.cancelShowHoldInvoice(ctx, currentOrder);
       assertRecipientLanguages();
-      expect(messageCalls.map(c => c.name)).to.include('publishBuyOrderMessage');
+      expect(messageCalls.map(c => c.name)).to.include(
+        'publishBuyOrderMessage',
+      );
     });
   });
 
@@ -287,7 +293,7 @@ describe('Cancel flow: messages must use each recipient language', () => {
       await commands.cancelOrder(ctx, 'ORDER1', { ...BUYER });
       assertRecipientLanguages();
       expect(messageCalls.map(c => c.name)).to.include(
-        'counterPartyWantsCooperativeCancelMessage'
+        'counterPartyWantsCooperativeCancelMessage',
       );
     });
   });
