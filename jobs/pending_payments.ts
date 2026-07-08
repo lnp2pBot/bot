@@ -319,17 +319,28 @@ export const attemptCommunitiesPendingPayments = async (
 
       if (status.is_confirmed) {
         if (!status.payment) {
+          // This branch of the code is not recheable under normal conditions. A confirmed status should always return a payment if it is confirmed.
+          // This branch is keeped only for defensive reasons, and because it's not strictly enforced by the api.
+          // This protects the bot if LND starts to have unexpected behaviors.
           logger.error(
             `Community ${pending.community_id} pending payment confirmed but LND returned no details; ` +
               `not marking SUCCESS — needs manual resolution`,
           );
           pending.paid = true;
           pending.is_invoice_expired = true;
-          pending.last_error = 'CONFIRMED_NO_PAYLOAD';
+          pending.last_error = 'CONFIRMED_NO_PAYMENT';
+
+          try {
+            // No locales yet, we are only sending the message to superadmins. Should be internationalized if we decide to alert the user.
+            await bot.telegram.sendMessage(
+              String(process.env.ADMIN_CHANNEL),
+              `Community pending payment confirmed but LND returned no details; Pending payment id: ${pending._id}\ncommunity id: ${pending.community_id}\nuser id: ${pending.user_id}`
+            );
+          } catch (error) {
+            logger.error(error);
+          }
           await pending.save();
-          // Notify admin (using Telegram bot's admin capability if possible,
-          // or just generic bot.telegram.sendMessage to an admin ID if available.
-          // For now, mirroring the logic of failing and continuing.)
+          // Deliberatelly not alerting the user. This should be handled manually.
           continue;
         }
 

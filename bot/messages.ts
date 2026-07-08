@@ -2027,6 +2027,19 @@ const toAdminChannelOrderErrorMessage = async (
         details,
       }),
     );
+    if (order.community_id) {
+      // If the order comes from a community, notify also the administrators of the community to accelerate the resolution of the order
+      const community = await Community.findById(order.community_id);
+      if (community) {
+        await bot.telegram.sendMessage(
+          String(community.dispute_channel),
+          i18n.t(community.language || 'en', 'order_error_to_admin', {
+            orderId: order._id,
+            details,
+          }),
+        );
+      }
+    }
   } catch (error) {
     logger.error(error);
   }
