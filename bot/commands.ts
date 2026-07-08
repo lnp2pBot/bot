@@ -353,11 +353,12 @@ const cancelAddInvoice = async (
       order.status = 'CLOSED';
       await order.save();
       await messages.successCancelOrderMessage(ctx, sellerUser, order, i18nCtx);
+      const i18nCtxBuyer = await getUserI18nContext(buyerUser);
       await messages.counterPartyCancelOrderMessage(
         ctx,
         buyerUser,
         order,
-        i18nCtx,
+        i18nCtxBuyer,
       );
     } else {
       // Re-publish order
