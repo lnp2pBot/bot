@@ -251,6 +251,10 @@ help: |
   /setaddress <_lightning Adresse / off_> - Ermöglicht es dem Käufer, eine statische Zahlungsadresse (Lightning-Adresse) einzurichten, _off_ zum Deaktivieren 
   /setlang - Ermöglicht dem Benutzer, die Sprache zu ändern
   /settings - Zeigt die aktuellen Einstellungen des Benutzers an
+  Innerhalb von /settings kannst du Gegenpartei-Anforderungen konfigurieren:
+    /counterpartyage <Tage> - Legt das Mindestalter (in Tagen) für die Gegenpartei fest
+    /counterpartyorders <Aufträge> - Legt die Mindestanzahl abgeschlossener Aufträge für die Gegenpartei fest
+    /resetrequirements - Setzt die Anforderungen auf Standardwerte zurück
   /listorders - Benutze diesen Befehl, um alle deine ausstehenden Transaktionen aufzulisten
   /listcurrencies - Listet alle FIAT Währungen auf, die wir verwenden können 
   /fiatsent <_order id_> - Der Käufer teilt mit, dass er dem Verkäufer das FIAT-Geld geschickt hat
@@ -450,13 +454,21 @@ pending_payment_failed_to_admin: |
   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
   Zahlungsversuche: ${attempts}
+order_error_to_admin: |
+  ⚠️ Auftrag ${orderId} ist in den ERROR-Status übergegangen
+  Die Auszahlung könnte feststecken — bitte den Auftrag prüfen, eventuell ist eine manuelle Lösung erforderlich.
+  Details: ${details}
 selling: Verkaufe
 buying: Kaufe
 selling_sats: Verkaufe Sats
+selling_sats_with_amount: 'Verkaufe ${amount} Sats'
 buying_sats: Kaufe Sats
+buying_sats_with_amount: 'Kaufe ${amount} Sats'
 receive_payment: Zahlung erhalten
 showusername_buying_sats: '@${username} kauft Sats'
+showusername_buying_sats_with_amount: '@${username} kauft ${amount} Sats'
 showusername_selling_sats: '@${username} verkauft Sats'
+showusername_selling_sats_with_amount: '@${username} verkauft ${amount} Sats'
 pay: Bezahlen
 is: ist
 trading_volume: 'Handelsvolumen: ${Volumen} Sats'
@@ -631,20 +643,35 @@ order_not_found: Bestellung nicht gefunden.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Benutzereinstellungen für @${user.username}</strong>
 
-  Language:
+  Sprache:
     ${language.emoji} ${language.name}
-  Community:
+  Gemeinschaft:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  Lightning-Adresse:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Gegenpartei-Anforderungen</strong>
+  Mindestalter: ${min_days_using_bot} Tage
+  Mindestanzahl abgeschlossener Aufträge: ${min_completed_orders}
+
+  <strong># HILFE</strong>
+  /setnpub &lt;npub&gt; - Nostr-Schlüssel des Benutzers konfigurieren.
+  /counterpartyage &lt;Tage&gt; - Legt das Mindestalter (in Tagen) für die Gegenpartei fest.
+  /counterpartyorders &lt;Aufträge&gt; - Legt die Mindestanzahl abgeschlossener Aufträge fest.
+  /resetrequirements - Setzt die Gegenpartei-Anforderungen auf Standardwerte zurück.
+  /exit - um den Assistenten zu verlassen.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Altersanforderung der Gegenpartei auf ${days} Tage aktualisiert.
+counterpartyorders_updated: Auftragsanforderung der Gegenpartei auf ${orders} aktualisiert.
+requirements_reset: Gegenpartei-Anforderungen wurden auf Standardwerte zurückgesetzt.
+invalid_number: Ungültige Zahl.
+invalid_range: Ungültiger Wert für ${command}, bitte wähle eine Zahl im Bereich [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Rechnung wurde bereits niedergelassen
@@ -678,7 +705,7 @@ disclaimer: |
 
   Weder die Entwickler noch die Streitschlichter sind für Verluste oder Schäden verantwortlich, die dem Benutzer durch die Nutzung des Bots entstehen können.
 order_frozen: Sie haben die Bestellung eingefroren
-paytobuyer_only_frozen_orders: Der paytobuyer-Befehl kann nur bei Bestellungen mit dem Status FROZEN oder PAID_HOLD_INVOICE verwendet werden
+paytobuyer_only_frozen_orders: Der paytobuyer-Befehl kann nur bei Bestellungen mit dem Status FROZEN, PAID_HOLD_INVOICE oder ERROR verwendet werden
 settleorder_only_dispute_orders: Der settleorder-Befehl kann nur bei Bestellungen mit dem Status DISPUTE verwendet werden
 dispute_solver: 👮‍♂️ Ein Löser wird sich um Ihren Streitfall kümmern, Sie können ihn/sie direkt anschreiben, indem Sie auf seinen/ihren Benutzernamen tippen => @${solver} <=, wenn der Löser Sie zuerst anschreibt, sollten Sie ihn/sie bitten, Ihnen mitzuteilen, was das Token Ihres Streitfalls ist, Ihr Token ist ${token}.
 setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge
@@ -709,6 +736,7 @@ unblock_failed: "Fehler beim Freigeben des Benutzers"
 check_solvers: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie innerhalb von ${remainingDays} Tagen mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 check_solvers_last_warning: Ihre Community ${communityName} hat keine Solver. Bitte fügen Sie noch heute mindestens einen hinzu, um zu verhindern, dass die Community deaktiviert wird.
 image_processing_error: Wir hatten einen Fehler beim Verarbeiten des Bildes, bitte warten Sie ein paar Minuten und versuchen Sie es erneut.
+order_channel_validation_failed: "Ihre Bestellung konnte nicht veröffentlicht werden. Versuchen Sie, die Standard-Community mit /setcomm off zu deaktivieren, oder bitten Sie Ihren Community-Administrator, die Kanäle und Gruppen der Community neu zu konfigurieren."
 community_payment_methods: "Zahlungsmethoden"
 enter_community_payment_methods: "Gib die in deiner Community akzeptierten Zahlungsmethoden ein, getrennt durch Kommas (z.B.: Banküberweisung, Bargeld, PayPal)"
 current_payment_methods: "Aktuelle Zahlungsmethoden: ${methods}"
@@ -721,6 +749,11 @@ payment_methods_reset: "Zahlungsmethoden entfernt. Benutzer können jetzt belieb
 payment_methods_wizard_commands: "/reset — alle Zahlungsmethoden entfernen und Standardverhalten wiederherstellen\n/exit — ohne Speichern beenden"
 community_disabled_by_admin: Ein Administrator hat deine Community ${communityName} deaktiviert
 community_enabled_by_admin: Ein Administrator hat deine Community ${communityName} wieder aktiviert
+community_creation_requirements_not_met_header: "Du erfüllst nicht die Anforderungen zur Erstellung einer Community:"
+community_creation_requirements_not_met_orders: "* Bestellungen: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volumen: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Tage der Nutzung des Bots: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requiredRep}"
 community_already_disabled: Diese Community ist bereits deaktiviert
 community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID

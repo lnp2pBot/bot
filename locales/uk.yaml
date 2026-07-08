@@ -250,6 +250,10 @@ help: |
   /setaddress <_lightning address / off_> - Дозволяє покупцеві вказати статичну платіжну адресу (lightning address), _off_ - відключено
   /setlang - Дозволяє користувачеві змінювати мову
   /settings - відображає поточні налаштування користувача
+  У /settings можна налаштувати вимоги до контрагента:
+    /counterpartyage <днів> - Встановлює мінімальний вік (у днях) для контрагента
+    /counterpartyorders <ордерів> - Встановлює мінімальну кількість виконаних ордерів для контрагента
+    /resetrequirements - Скидає вимоги до значень за замовчуванням
   /listorders - Використовуйте цю команду, щоб переглянути всі Ваші транзакції, що очікують на розгляд.
   /listcurrencies - Перелічує всі валюти, які ми можемо використовувати, не вказуючи суми в сатоші
   /fiatsent <_order id_> - Покупець повідомляє, що вже відправив фіатні гроші продавцю
@@ -447,16 +451,24 @@ pending_payment_failed_to_admin: |
   Платіж за рахунком-фактурою на покупку з ідентифікатором ${orderId} користувача @${username} не виконаний!
 
   Спроб оплати: ${attempts}
+order_error_to_admin: |
+  ⚠️ Ордер ${orderId} перейшов у стан ERROR
+  Виплата може бути заблокована — будь ласка, перевірте ордер, може знадобитися ручне вирішення.
+  Деталі: ${details}
 selling: Продаю
 buying: Купую
 selling_sats: Продаж сатоші
+selling_sats_with_amount: 'Продаж ${amount} сатоші'
 buying_sats: Купівля сатоші
+buying_sats_with_amount: 'Купівля ${amount} сатоші'
 receive_payment: Розрахунок
 pay: Оплата
 is: є
 trading_volume: 'Обсяг торгів: ${volume} сат'
 showusername_buying_sats: '@${username} купує сатоші'
+showusername_buying_sats_with_amount: '@${username} купує ${amount} сатоші'
 showusername_selling_sats: '@${username} продає сатоші'
+showusername_selling_sats_with_amount: '@${username} продає ${amount} сатоші'
 satoshis: сатоші
 by: за допомогою
 rate: Kурс
@@ -627,20 +639,35 @@ order_not_found: Замовлення не знайдено.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Налаштування користувача @${user.username}</strong>
 
-  Language:
+  Мова:
     ${language.emoji} ${language.name}
-  Community:
+  Спільнота:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  Lightning-адреса:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Вимоги до контрагента</strong>
+  Мінімальний вік: ${min_days_using_bot} днів
+  Мінімум виконаних ордерів: ${min_completed_orders}
+
+  <strong># ДОПОМОГА</strong>
+  /setnpub &lt;npub&gt; - Налаштувати публічний ключ Nostr користувача.
+  /counterpartyage &lt;днів&gt; - Встановлює мінімальний вік (у днях) для контрагента.
+  /counterpartyorders &lt;ордерів&gt; - Встановлює мінімальну кількість виконаних ордерів для контрагента.
+  /resetrequirements - Скидає вимоги до контрагента до значень за замовчуванням.
+  /exit - вийти з майстра.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Вимогу до віку контрагента оновлено до ${days} днів.
+counterpartyorders_updated: Вимогу до виконаних ордерів контрагента оновлено до ${orders}.
+requirements_reset: Вимоги до контрагента скинуто до значень за замовчуванням.
+invalid_number: Невірне число.
+invalid_range: Недопустиме значення для ${command}, будь ласка, виберіть число в діапазоні [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Invoice already settled
@@ -674,7 +701,7 @@ disclaimer: |
 
   Ані розробники, ані сторони, що вирішують спори, не несуть відповідальності за будь-які збитки або шкоду, яких користувач може зазнати в результаті використання бота.
 order_frozen: Ви заморозили замовлення
-paytobuyer_only_frozen_orders: Команда paytobuyer може використовуватися лише для замовлень зі статусом FROZEN або PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: Команда paytobuyer може використовуватися лише для замовлень зі статусом FROZEN, PAID_HOLD_INVOICE або ERROR
 settleorder_only_dispute_orders: Команда settleorder може використовуватися лише для замовлень зі статусом DISPUTE
 dispute_solver: 👮‍♂️ У вашій суперечці буде присутній розв'язувач, ви можете написати йому безпосередньо, натиснувши його ім'я користувача => @${solver} <=, якщо розв'язувач напише вам першим, ви повинні попросити його повідомити вам токен вашої суперечки, вашим токеном буде ${token}.
 setinvoice_no_response: У вас немає замовлень для оплати
@@ -705,6 +732,7 @@ unblock_failed: "Помилка при розблокуванні користу
 check_solvers: У вашій спільноті ${communityName} немає розв’язувачів. Додайте принаймні одну протягом ${remainingDays} днів, щоб запобігти вимкненню спільноти.
 check_solvers_last_warning: У вашій спільноті ${communityName} немає розв’язувачів. Будь ласка, додайте принаймні одну сьогодні, щоб запобігти вимкненню спільноти.
 image_processing_error: У нас виникла помилка при обробці зображення, будь ласка, почекайте кілька хвилин і спробуйте знову.
+order_channel_validation_failed: "Не вдалося опублікувати ваше замовлення. Спробуйте вимкнути спільноту за замовчуванням за допомогою /setcomm off або попросіть адміністратора спільноти переналаштувати канали та групи спільноти."
 community_payment_methods: "Способи оплати"
 enter_community_payment_methods: "Введіть способи оплати, прийняті у вашій спільноті, розділені комами (напр.: Банківський переказ, Готівка, PayPal)"
 current_payment_methods: "Поточні способи оплати: ${methods}"
@@ -717,6 +745,11 @@ payment_methods_reset: "Способи оплати видалено. Корис
 payment_methods_wizard_commands: "/reset — видалити всі способи оплати та відновити поведінку за замовчуванням\n/exit — вийти без збереження"
 community_disabled_by_admin: Адміністратор вимкнув вашу спільноту ${communityName}
 community_enabled_by_admin: Адміністратор повторно увімкнув вашу спільноту ${communityName}
+community_creation_requirements_not_met_header: "Ви не відповідаєте вимогам для створення спільноти:"
+community_creation_requirements_not_met_orders: "* Замовлення: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Обсяг: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Днів використання бота: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Репутація: ${userRep} / ${requiredRep}"
 community_already_disabled: Ця спільнота вже вимкнена
 community_already_enabled: Ця спільнота вже увімкнена
 ambiguous_community_input: Кілька спільнот відповідають цьому імені користувача, будь ласка, використовуйте ID спільноти

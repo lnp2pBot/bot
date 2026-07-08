@@ -14,6 +14,7 @@ import {
   getUserI18nContext,
   getFee,
   removeLightningPrefix,
+  PerOrderIdMutex,
 } from '../util';
 import * as ordersActions from './ordersActions';
 import * as OrderEvents from './modules/events/orders';
@@ -178,12 +179,24 @@ const addInvoice = async (
     const seller = await User.findOne({ _id: order.seller_id });
     if (seller === null) throw new Error('seller was not found');
 
-    if (buyer.lightning_address) {
+    // Temporary mitigation: when DISABLE_LN_ADDRESS is enabled we skip the
+    // Lightning Address auto-resolution and route the buyer to the manual
+    // BOLT11 invoice flow. We do NOT delete the saved address, so this is
+    // fully reversible by unsetting the flag.
+    const lnAddressDisabled = process.env.DISABLE_LN_ADDRESS === 'true';
+    if (buyer.lightning_address && lnAddressDisabled) {
+      await bot.telegram.sendMessage(
+        buyer.tg_id,
+        ctx.i18n.t('ln_address_temporarily_disabled'),
+      );
+    }
+
+    if (buyer.lightning_address && !lnAddressDisabled) {
       const laRes = await resolvLightningAddress(
         buyer.lightning_address,
         order.amount * 1000,
       );
-      if (!!laRes && !laRes.pr) {
+      if (!laRes || !laRes.pr) {
         logger.error(
           `lightning address ${buyer.lightning_address} not available`,
         );
@@ -656,6 +669,11 @@ const addInvoicePHI = async (
     // only orders with status PAID_HOLD_INVOICE are released payments
     if (order.status !== 'PAID_HOLD_INVOICE') return;
 
+    // Only the order's buyer may (re)submit the payout invoice. The order id
+    // comes from the callback data, so we verify the caller is the buyer
+    // before entering the invoice flow.
+    if (!ctx.user || String(order.buyer_id) !== String(ctx.user._id)) return;
+
     const buyer = await User.findOne({ _id: order.buyer_id });
     if (buyer === null) return;
     if (order.amount === 0) {
@@ -872,18 +890,42 @@ const release = async (
     if (user.banned) return await messages.bannedUserErrorMessage(ctx, user);
     const order = await validateReleaseOrder(ctx, user, orderId);
     if (!order) return;
-    // We look for a dispute for this order
-    const dispute = await Dispute.findOne({ order_id: order._id });
 
-    if (dispute) {
-      dispute.status = 'RELEASED';
-      await dispute.save();
-    }
+    // SECURITY: serialize the settle under the per-order mutex (the same lock
+    // used by payHoldInvoice and the cancel/expiry jobs) and re-read the order
+    // under the lock. validateReleaseOrder ran without the lock, so the order
+    // may have been canceled, settled or otherwise advanced in between. Only
+    // settle if it is still in a releasable state — this closes the
+    // settle-vs-cancel race over the same hold invoice.
+    await PerOrderIdMutex.instance.runExclusive(String(order._id), async () => {
+      const currentOrder = await Order.findById(order._id);
+      if (currentOrder === null) throw new Error('order was not found');
 
-    if (order.secret === null) {
-      throw new Error('order.secret is null');
-    }
-    await settleHoldInvoice({ secret: order.secret });
+      const releasableStatuses = ['ACTIVE', 'FIAT_SENT', 'DISPUTE'];
+      if (!releasableStatuses.includes(currentOrder.status)) {
+        logger.info(
+          `release: order ${order._id} no longer releasable ` +
+            `(status ${currentOrder.status}), skipping settle`,
+        );
+        return;
+      }
+
+      if (currentOrder.secret === null) {
+        throw new Error('order.secret is null');
+      }
+
+      await settleHoldInvoice({ secret: currentOrder.secret });
+
+      // Only mark the dispute as released once the Lightning settle has
+      // actually completed. Otherwise a failed settle would leave a stale
+      // RELEASED dispute that makes solvers believe the seller already
+      // released (see bot/modules/dispute/actions.ts).
+      const dispute = await Dispute.findOne({ order_id: currentOrder._id });
+      if (dispute) {
+        dispute.status = 'RELEASED';
+        await dispute.save();
+      }
+    });
   } catch (error) {
     logger.error(error);
   }

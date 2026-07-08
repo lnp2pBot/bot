@@ -252,6 +252,10 @@ help: |
   /setaddress <_라이트닝 주소 / off_> - 구매자가 정적인 결제 주소 (라이트닝 주소)를 설정할 수 있게 해 줍니다. 주소 대신 _off_를 넣으면 비활성화됩니다.
   /setlang - 사용자 언어를 변경합니다.
   /settings - 사용자의 현재 설정을 표시합니다.
+  /settings 안에서 거래 상대방 요구 사항을 설정할 수 있습니다:
+    /counterpartyage <일> - 거래 상대방의 최소 가입 기간(일)을 설정합니다
+    /counterpartyorders <주문> - 거래 상대방의 최소 완료 주문 수를 설정합니다
+    /resetrequirements - 요구 사항을 기본값으로 초기화합니다
   /listorders - 대기 중인 결제 내역들을 모두 보려면 이 명령어를 사용하세요.
   /listcurrencies - 사용 가능한 모든 법정화폐 종류를 나열합니다. (sat 단위 제외)
   /fiatsent <_주문 id_> - 구매자가 판매자에게 법정화폐의 지불을 마쳤다고 알려주는 명령어입니다.
@@ -447,16 +451,24 @@ pending_payment_failed_to_admin: |
   
   결제 시도 횟수: ${attempts}
 
+order_error_to_admin: |
+  ⚠️ 주문 ${orderId}이(가) ERROR 상태로 전환되었습니다
+  지급이 중단되었을 수 있습니다 — 주문을 확인해 주세요. 수동 해결이 필요할 수 있습니다.
+  상세 정보: ${details}
 selling: 팝니다
 buying: 삽니다
 selling_sats: sats 판매
+selling_sats_with_amount: '${amount} sats 판매'
 buying_sats: sats 구매
+buying_sats_with_amount: '${amount} sats 구매'
 receive_payment: 입금
 pay: 결제
 is: is
 trading_volume: '거래량: ${volume} sats'
 showusername_buying_sats: '@${username} 님이 sats를 구매합니다'
+showusername_buying_sats_with_amount: '@${username} 님이 ${amount} sats를 구매합니다'
 showusername_selling_sats: '@${username} 님이 sats를 판매합니다'
+showusername_selling_sats_with_amount: '@${username} 님이 ${amount} sats를 판매합니다'
 satoshis: 사토시
 by: 방법 - 
 rate: 환율
@@ -639,9 +651,24 @@ user_settings: |
   라이트닝 주소:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>거래 상대방 요구 사항</strong>
+  최소 가입 기간: ${min_days_using_bot}일
+  최소 완료 주문 수: ${min_completed_orders}
+
   <strong># 도움말</strong>
-  /setnpub &lt;npub&gt; - 사용자의 nostr 공개키를 설정해주세요. Nostr 이벤트들이 이 공개키로 등록됩니다.
+  /setnpub &lt;npub&gt; - 사용자의 Nostr 공개키를 설정합니다.
+  /counterpartyage &lt;일&gt; - 거래 상대방의 최소 가입 기간(일)을 설정합니다.
+  /counterpartyorders &lt;주문&gt; - 거래 상대방의 최소 완료 주문 수를 설정합니다.
+  /resetrequirements - 거래 상대방 요구 사항을 기본값으로 초기화합니다.
   /exit - 설정 모드 나가기.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: 거래 상대방 가입 기간 요구 사항이 ${days}일로 업데이트되었습니다.
+counterpartyorders_updated: 거래 상대방 완료 주문 수 요구 사항이 ${orders}개로 업데이트되었습니다.
+requirements_reset: 거래 상대방 요구 사항이 기본값으로 초기화되었습니다.
+invalid_number: 유효하지 않은 숫자입니다.
+invalid_range: ${command}의 값이 잘못되었습니다. [0 - ${max}] 사이의 숫자를 선택해 주세요.
 # END modules/user
 # check hold invoice
 invoice_settled: 인보이스가 이미 체결되었습니다.
@@ -675,7 +702,7 @@ disclaimer: |
 
   개발자나 분쟁 해소자 모두 봇을 사용하는 사용자들이 겪는 어떠한 손실이나 손해에 대한 어떠한 책임을 지지 않습니다.
 order_frozen: 주문을 동결시켰습니다
-paytobuyer_only_frozen_orders: paytobuyer 명령은 FROZEN 또는 PAID_HOLD_INVOICE 상태의 주문에서만 사용할 수 있습니다
+paytobuyer_only_frozen_orders: paytobuyer 명령은 FROZEN, PAID_HOLD_INVOICE 또는 ERROR 상태의 주문에서만 사용할 수 있습니다
 settleorder_only_dispute_orders: settleorder 명령은 DISPUTE 상태의 주문에서만 사용할 수 있습니다
 dispute_solver: 👮‍♂️ 분쟁 해결사가 분쟁에 참석할 것이며, 사용자 아이디 => @${해결사} <=를 눌러 해결사에게 직접 편지를 보낼 수 있으며, 해결사가 먼저 편지를 보내면 분쟁의 토큰이 무엇인지 물어봐야 하며, 토큰은 ${토큰}입니다.
 setinvoice_no_response: 결제할 주문이 없습니다.
@@ -706,6 +733,7 @@ unblock_failed: "사용자 차단 해제 중 오류 발생"
 check_solvers: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 ${remainingDays}일 이내에 하나 이상 추가하세요.
 check_solvers_last_warning: ${communityName} 커뮤니티에 해결사가 없습니다. 커뮤니티가 비활성화되는 것을 방지하려면 오늘 하나 이상 추가하세요.
 image_processing_error: 이미지 처리에 오류가 발생했습니다. 몇 분 후에 다시 시도해 주세요.
+order_channel_validation_failed: "주문을 등록할 수 없습니다. /setcomm off 로 기본 커뮤니티를 비활성화하거나, 커뮤니티 관리자에게 커뮤니티 채널 및 그룹을 재설정해 달라고 요청하세요."
 community_payment_methods: "결제 방법"
 enter_community_payment_methods: "커뮤니티에서 허용되는 결제 방법을 쉼표로 구분하여 입력하세요 (예: 은행 이체, 현금, PayPal)"
 current_payment_methods: "현재 결제 방법: ${methods}"
@@ -718,6 +746,11 @@ payment_methods_reset: "결제 방법이 삭제되었습니다. 이제 사용자
 payment_methods_wizard_commands: "/reset — 모든 결제 방법을 삭제하고 기본 동작을 복원합니다\n/exit — 저장하지 않고 종료"
 community_disabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 비활성화했습니다
 community_enabled_by_admin: 관리자가 커뮤니티 ${communityName}을(를) 다시 활성화했습니다
+community_creation_requirements_not_met_header: "커뮤니티를 생성하기 위한 요건을 충족하지 못했습니다:"
+community_creation_requirements_not_met_orders: "* 주문: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* 거래량: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* 봇 사용 일수: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* 평판: ${userRep} / ${requiredRep}"
 community_already_disabled: 이 커뮤니티는 이미 비활성화되어 있습니다
 community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니다
 ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요

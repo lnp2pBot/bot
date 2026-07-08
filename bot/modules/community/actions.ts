@@ -128,8 +128,13 @@ export const onSetCommunity = async (ctx: CommunityContext) => {
 
 export const withdrawEarnings = async (ctx: CommunityContext) => {
   ctx.deleteMessage();
+  // Only the community creator may withdraw its earnings. The community id
+  // comes from the callback data, so we scope the lookup by creator_id to
+  // match the other community-management handlers (deleteCommunity,
+  // changeVisibility, updateCommunity).
   const community = await Community.findOne({
     _id: ctx.match?.[1],
+    creator_id: ctx.user._id,
     enabled: { $ne: false },
   });
   if (!community) return ctx.reply(ctx.i18n.t('community_not_found'));

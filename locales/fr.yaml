@@ -253,7 +253,11 @@ help: |
   /setaddress <_addresse lightning / off_> - Permet à l'acheteur de définir une adresse de paiement statique (adresse lightning), _off_ pour désactiver 
   /setlang - Change la langue de l'interface
   /settings - Affiche tes réglages actuels
-  /listorders - Utilise cette commande pour afficher toutes tes offres en attente 
+  Dans /settings tu peux configurer les exigences de contrepartie:
+    /counterpartyage <jours> - Définit l'âge minimum (en jours) requis pour la contrepartie
+    /counterpartyorders <ordres> - Définit le nombre minimum d'ordres complétés requis pour la contrepartie
+    /resetrequirements - Réinitialise les exigences aux valeurs par défaut
+  /listorders - Utilise cette commande pour afficher toutes tes offres en attente
   /listcurrencies - Lister les devises que nous pouvons utiliser sans spécifier le montant en satoshi. 
   /fiatsent <_order id_> - L'acheteur informe qu'il a déjà envoyé de l'argent FIAT au vendeur
   /release <_order id_> - Le vendeur libère les satoshis 
@@ -449,13 +453,21 @@ pending_payment_failed_to_admin: |
   Le paiement de la facture pour l'offre d'achat ${orderId} de l'utilisateur @${username} a échoué.
 
   Tentatives de paiement : ${attempts}
+order_error_to_admin: |
+  ⚠️ L'ordre ${orderId} est passé à l'état ERROR
+  Le paiement pourrait être bloqué — veuillez vérifier l'ordre, une résolution manuelle peut être nécessaire.
+  Détails : ${details}
 selling: Vente
 buying: Achat
 selling_sats: Vente de sats
+selling_sats_with_amount: 'Vente de ${amount} sats'
 buying_sats: Achat de sats
+buying_sats_with_amount: 'Achat de ${amount} sats'
 receive_payment: Réception du paiement
 showusername_buying_sats: "@${username} achète des sats"
+showusername_buying_sats_with_amount: "@${username} achète ${amount} sats"
 showusername_selling_sats: "@${username} vend des sats"
+showusername_selling_sats_with_amount: "@${username} vend ${amount} sats"
 pay: Payer
 is: est
 trading_volume: 'Volume de transactions : ${volume} sats'
@@ -641,9 +653,24 @@ user_settings: |
   adresse lightning:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>Exigences de contrepartie</strong>
+  Âge minimum: ${min_days_using_bot} jours
+  Ordres complétés minimum: ${min_completed_orders}
+
   <strong># AIDE</strong>
-  /setnpub &lt;npub&gt; - Configurer la clé publique de l'utilisateur.
+  /setnpub &lt;npub&gt; - Configurer la clé publique Nostr de l'utilisateur.
+  /counterpartyage &lt;jours&gt; - Définit l'âge minimum (en jours) pour la contrepartie.
+  /counterpartyorders &lt;ordres&gt; - Définit le nombre minimum d'ordres complétés pour la contrepartie.
+  /resetrequirements - Réinitialise les exigences de contrepartie aux valeurs par défaut.
   /exit - pour quitter l'assistant.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Exigence d'âge de la contrepartie mise à jour à ${days} jours.
+counterpartyorders_updated: Exigence d'ordres complétés de la contrepartie mise à jour à ${orders}.
+requirements_reset: Les exigences de contrepartie ont été réinitialisées aux valeurs par défaut.
+invalid_number: Nombre invalide.
+invalid_range: Valeur invalide pour ${command}, veuillez choisir un nombre dans la plage [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Facture déjà installée
@@ -677,7 +704,7 @@ disclaimer: |
 
   Ni les développeurs ni les responsables de la résolution des litiges ne sont responsables des pertes ou des dommages que l'utilisateur pourrait subir à la suite de l'utilisation du bot.
 order_frozen: Vous avez gelé la commande
-paytobuyer_only_frozen_orders: La commande paytobuyer ne peut être utilisée que sur des commandes avec le statut FROZEN ou PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: La commande paytobuyer ne peut être utilisée que sur des commandes avec le statut FROZEN, PAID_HOLD_INVOICE ou ERROR
 settleorder_only_dispute_orders: La commande settleorder ne peut être utilisée que sur des commandes avec le statut DISPUTE
 dispute_solver: 👮‍♂️ Un résolveur va s'occuper de votre litige, vous pouvez lui écrire directement en tapant son nom d'utilisateur => @${solver} <=, si le résolveur vous écrit en premier, vous devriez lui demander de vous dire quel est le jeton de votre litige, votre jeton est ${token}.
 setinvoice_no_response : Vous n'avez pas d'ordre à payer
@@ -708,6 +735,7 @@ unblock_failed: "Erreur lors du déblocage de l'utilisateur"
 check_solvers: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un dans les ${remainingDays} jours pour éviter que la communauté ne soit désactivée.
 check_solvers_last_warning: Votre communauté ${communityName} ne possède aucun solveur. Veuillez en ajouter au moins un aujourd'hui pour éviter que la communauté ne soit désactivée.
 image_processing_error: Nous avons eu une erreur lors du traitement de l'image, veuillez attendre quelques minutes et réessayer.
+order_channel_validation_failed: "Impossible de publier votre commande. Essayez de désactiver la communauté par défaut avec /setcomm off, ou demandez à l'administrateur de votre communauté de reconfigurer les canaux et groupes de la communauté."
 community_payment_methods: "Méthodes de paiement"
 enter_community_payment_methods: "Entrez les méthodes de paiement acceptées dans votre communauté, séparées par des virgules (ex. : Virement bancaire, Espèces, PayPal)"
 current_payment_methods: "Méthodes de paiement actuelles : ${methods}"
@@ -720,6 +748,11 @@ payment_methods_reset: "Méthodes de paiement supprimées. Les utilisateurs peuv
 payment_methods_wizard_commands: "/reset — supprimer toutes les méthodes de paiement et restaurer le comportement par défaut\n/exit — quitter sans enregistrer"
 community_disabled_by_admin: Un administrateur a désactivé votre communauté ${communityName}
 community_enabled_by_admin: Un administrateur a réactivé votre communauté ${communityName}
+community_creation_requirements_not_met_header: "Vous ne remplissez pas les conditions pour créer une communauté :"
+community_creation_requirements_not_met_orders: "* Commandes : ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volume : ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Jours d'utilisation du bot : ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Réputation : ${userRep} / ${requiredRep}"
 community_already_disabled: Cette communauté est déjà désactivée
 community_already_enabled: Cette communauté est déjà activée
 ambiguous_community_input: Plusieurs communautés correspondent à ce nom d'utilisateur, veuillez utiliser l'ID de la communauté à la place

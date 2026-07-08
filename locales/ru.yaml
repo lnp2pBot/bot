@@ -250,6 +250,10 @@ help: |
   /setaddress <_lightning address / off_> - Позволяет покупателю указать статический платежный адрес (lightning address), _off_ - отключить
   /setlang - Позволяет пользователю изменить язык
   /settings - Отображает текущие настройки пользователя
+  В /settings можно настроить требования к контрагенту:
+    /counterpartyage <дней> - Устанавливает минимальный возраст (в днях) для контрагента
+    /counterpartyorders <ордеров> - Устанавливает минимальное количество выполненных ордеров для контрагента
+    /resetrequirements - Сбрасывает требования до значений по умолчанию
   /listorders - Пользователь может перечислить свои незавершенные заявки
   /listcurrencies - Перечислите валюты, которые мы можем использовать без указания суммы в сатоши
   /fiatsent <_order id_> - Покупатель указывает, что уже отправил фиатные деньги продавцу
@@ -450,13 +454,21 @@ pending_payment_failed_to_admin: |
   Платеж по счету-фактуре на покупку с идентификатором ${orderId} пользователя @${username} не выполнен!
 
   Попытка оплаты: ${attempts}
+order_error_to_admin: |
+  ⚠️ Ордер ${orderId} перешёл в состояние ERROR
+  Выплата может быть заблокирована — пожалуйста, проверьте ордер, может потребоваться ручное решение.
+  Подробности: ${details}
 selling: Продаю
 buying: Покупаю
 selling_sats: Продажа сат
+selling_sats_with_amount: 'Продажа ${amount} сат'
 buying_sats: Покупка сат
+buying_sats_with_amount: 'Покупка ${amount} сат'
 receive_payment: Расчет
-showusername_buying_sats: '@${username} покупает саты'
-showusername_selling_sats: '@${username} продает саты'
+showusername_buying_sats: '@${username} покупает сат'
+showusername_buying_sats_with_amount: '@${username} покупает ${amount} сат'
+showusername_selling_sats: '@${username} продает сат'
+showusername_selling_sats_with_amount: '@${username} продает ${amount} сат'
 pay: Расчет
 is: Я
 trading_volume: 'Обьем торгов: ${volume} сат'
@@ -631,20 +643,35 @@ order_not_found: Заказ не найден.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Настройки пользователя @${user.username}</strong>
 
-  Language:
+  Язык:
     ${language.emoji} ${language.name}
-  Community:
+  Сообщество:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  Lightning-адрес:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user public key.
-  /exit - to exit the wizard.
+  <strong>Требования к контрагенту</strong>
+  Минимальный возраст: ${min_days_using_bot} дней
+  Минимум выполненных ордеров: ${min_completed_orders}
+
+  <strong># ПОМОЩЬ</strong>
+  /setnpub &lt;npub&gt; - Настроить публичный ключ Nostr пользователя.
+  /counterpartyage &lt;дней&gt; - Устанавливает минимальный возраст (в днях) для контрагента.
+  /counterpartyorders &lt;ордеров&gt; - Устанавливает минимальное количество выполненных ордеров для контрагента.
+  /resetrequirements - Сбрасывает требования к контрагенту до значений по умолчанию.
+  /exit - выйти из мастера.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Требование к возрасту контрагента обновлено до ${days} дней.
+counterpartyorders_updated: Требование к выполненным ордерам контрагента обновлено до ${orders}.
+requirements_reset: Требования к контрагенту сброшены до значений по умолчанию.
+invalid_number: Неверное число.
+invalid_range: Недопустимое значение для ${command}, пожалуйста, выберите число в диапазоне [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Invoice already settled
@@ -678,7 +705,7 @@ disclaimer: |
 
   Ни разработчики, ни разрешители споров не несут ответственности за какие-либо потери или убытки, которые могут возникнуть у пользователя в результате использования бота.
 order_frozen: вы заморозили заказ
-paytobuyer_only_frozen_orders: Команда paytobuyer может использоваться только для заказов со статусом FROZEN или PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: Команда paytobuyer может использоваться только для заказов со статусом FROZEN, PAID_HOLD_INVOICE или ERROR
 settleorder_only_dispute_orders: Команда settleorder может использоваться только для заказов со статусом DISPUTE
 dispute_solver: 👮‍♂️ На вашем споре будет присутствовать решатель, вы можете написать ему напрямую, нажав его имя пользователя => @${solver} <=, если решатель напишет вам первым, вы должны попросить его сообщить вам, какой токен у вашего спора, ваш токен - ${token}.
 setinvoice_no_response: У вас нет заказов для оплаты
@@ -709,6 +736,7 @@ unblock_failed: "Ошибка при разблокировке пользова
 check_solvers: В вашем сообществе ${communityName} нет решателей. Добавьте хотя бы одно в течение ${remainingDays} дн., чтобы сообщество не было отключено.
 check_solvers_last_warning: В вашем сообществе ${communityName} нет решателей. Пожалуйста, добавьте хотя бы один сегодня, чтобы предотвратить отключение сообщества.
 image_processing_error: У нас возникла ошибка при обработке изображения, пожалуйста, подождите несколько минут и попробуйте снова.
+order_channel_validation_failed: "Не удалось опубликовать ваш ордер. Попробуйте отключить сообщество по умолчанию с помощью /setcomm off или попросите администратора сообщества перенастроить каналы и группы сообщества."
 community_payment_methods: "Способы оплаты"
 enter_community_payment_methods: "Введите способы оплаты, принятые в вашем сообществе, разделённые запятыми (напр.: Банковский перевод, Наличные, PayPal)"
 current_payment_methods: "Текущие способы оплаты: ${methods}"
@@ -721,6 +749,11 @@ payment_methods_reset: "Способы оплаты удалены. Пользо
 payment_methods_wizard_commands: "/reset — удалить все способы оплаты и восстановить поведение по умолчанию\n/exit — выйти без сохранения"
 community_disabled_by_admin: Администратор отключил ваше сообщество ${communityName}
 community_enabled_by_admin: Администратор повторно включил ваше сообщество ${communityName}
+community_creation_requirements_not_met_header: "Вы не соответствуете требованиям для создания сообщества:"
+community_creation_requirements_not_met_orders: "* Заказы: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Объем: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Дней использования бота: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Репутация: ${userRep} / ${requiredRep}"
 community_already_disabled: Это сообщество уже отключено
 community_already_enabled: Это сообщество уже включено
 ambiguous_community_input: Несколько сообществ соответствуют этому имени пользователя, пожалуйста, используйте ID сообщества

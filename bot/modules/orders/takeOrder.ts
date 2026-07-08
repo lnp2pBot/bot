@@ -5,6 +5,7 @@ import {
   deleteOrderFromChannel,
   generateRandomImage,
   PerOrderIdMutex,
+  getUserAge,
 } from '../../../util';
 import * as messages from '../../messages';
 import { HasTelegram, MainContext } from '../../start';
@@ -83,6 +84,8 @@ export const takebuy = async (
 
       if (!(await validateTakeBuyOrder(ctx, bot, user, order))) return;
 
+      if (!(await meetsCounterpartyRequirements(ctx, user, userOffer))) return;
+
       await incrementTakeOrderCount(user);
 
       const { randomImage } = generateRandomImage(user._id.toString());
@@ -142,7 +145,10 @@ export const takesell = async (
       // We verify if the user is not banned on this community
       if (await isBannedFromCommunity(user, order.community_id))
         return await messages.bannedUserErrorMessage(ctx, user);
+
       if (!(await validateTakeSellOrder(ctx, bot, user, order))) return;
+
+      if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
 
       await incrementTakeOrderCount(user);
 
@@ -204,6 +210,48 @@ const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
     );
   }
   await user.save();
+};
+
+export const meetsCounterpartyRequirements = async (
+  ctx: MainContext,
+  user: UserDocument,
+  orderCreator: UserDocument,
+) => {
+  if (!orderCreator.counterparty_requirements) return true;
+
+  const { min_days_using_bot, min_completed_orders } =
+    orderCreator.counterparty_requirements;
+
+  const failures = {
+    age: false,
+    orders: false,
+  };
+
+  if (min_days_using_bot > 0) {
+    const ageInDays = getUserAge(user);
+    if (!Number.isNaN(ageInDays) && ageInDays < min_days_using_bot) {
+      failures.age = true;
+    }
+  }
+
+  if (min_completed_orders > 0) {
+    if (user.trades_completed < min_completed_orders) {
+      failures.orders = true;
+    }
+  }
+
+  if (failures.age || failures.orders) {
+    await messages.notMeetingRequirementsMessage(ctx, user, {
+      failures,
+      min_days_using_bot,
+      min_completed_orders,
+      user_age: getUserAge(user),
+      user_trades: user.trades_completed,
+    });
+    return false;
+  }
+
+  return true;
 };
 
 const checkBlockingStatus = async (

@@ -252,6 +252,10 @@ help: |
   /setaddress <lightning address / off> - Permite que o comprador indique um endereço de pagamento estático (lightning address), off para desativá-lo
   /setlang - Permite que o usuário altere o idioma
   /settings - Exibe as configurações atuais do usuário
+  Dentro de /settings você pode configurar os requisitos de contraparte:
+    /counterpartyage <dias> - Define a antiguidade mínima (em dias) exigida para a contraparte
+    /counterpartyorders <ordens> - Define o número mínimo de ordens concluídas exigido para a contraparte
+    /resetrequirements - Redefine os requisitos para os valores padrão
   /listorders - O usuário pode listar seus pedidos inacabados
   /listcurrencies - Lista as moedas que podemos usar sem indicar o valor em satoshis
   /fiatsent <order id> - O comprador indica que já enviou o dinheiro Fiat para o vendedor
@@ -449,14 +453,22 @@ pending_payment_failed_to_admin: |
   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
 
   Tentativas de pagamento: ${attempts}
+order_error_to_admin: |
+  ⚠️ O pedido ${orderId} passou para o estado ERROR
+  O pagamento pode estar travado — por favor verifique o pedido, pode exigir resolução manual.
+  Detalhes: ${details}
 selling: Vendendo
 buying: Comprando
 selling_sats: Vendendo sats
+selling_sats_with_amount: 'Vendendo ${amount} sats'
 buying_sats: Comprando sats
+buying_sats_with_amount: 'Comprando ${amount} sats'
 receive_payment: Receber pagamento
 pay: Pagar
 showusername_buying_sats: '@${username} está comprando sats'
+showusername_buying_sats_with_amount: '@${username} está comprando ${amount} sats'
 showusername_selling_sats: '@${username} está vendendo sats'
+showusername_selling_sats_with_amount: '@${username} está vendendo ${amount} sats'
 is: é
 trading_volume: 'Volume de negócios: ${volume} sats'
 satoshis: satoshis
@@ -630,20 +642,35 @@ order_not_found: Ordem não encontrada.
 
 # START modules/user
 user_settings: |
-  <strong>User settings for @${user.username}</strong>
+  <strong>Configurações de @${user.username}</strong>
 
-  Language:
+  Idioma:
     ${language.emoji} ${language.name}
-  Community:
+  Comunidade:
     ${community || '🛇'}
   npub:
     <code>${npub || '🛇'}</code>
-  lightning address:
+  endereço lightning:
     <code>${lightning_address || '🛇'}</code>
 
-  <strong># HELP</strong>
-  /setnpub &lt;npub&gt; - Configure user's Nostr public key.
-  /exit - to exit the wizard.
+  <strong>Requisitos de contraparte</strong>
+  Antiguidade mínima: ${min_days_using_bot} dias
+  Ordens concluídas mínimas: ${min_completed_orders}
+
+  <strong># AJUDA</strong>
+  /setnpub &lt;npub&gt; - Configura a chave pública Nostr do usuário.
+  /counterpartyage &lt;dias&gt; - Define a antiguidade mínima (em dias) para a contraparte.
+  /counterpartyorders &lt;ordens&gt; - Define o número mínimo de ordens concluídas para a contraparte.
+  /resetrequirements - Redefine os requisitos de contraparte para os valores padrão.
+  /exit - para sair do assistente.
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: Requisito de antiguidade da contraparte atualizado para ${days} dias.
+counterpartyorders_updated: Requisito de ordens concluídas da contraparte atualizado para ${orders}.
+requirements_reset: Os requisitos de contraparte foram redefinidos para os valores padrão.
+invalid_number: Número inválido.
+invalid_range: Valor inválido para ${command}, por favor escolha um número no intervalo [0 - ${max}].
 # END modules/user
 # check hold invoice
 invoice_settled: Fatura já liquidada
@@ -677,7 +704,7 @@ disclaimer: |
 
   Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
 order_frozen: Você congelou o pedido
-paytobuyer_only_frozen_orders: O comando paytobuyer só pode ser usado em pedidos com status FROZEN ou PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: O comando paytobuyer só pode ser usado em pedidos com status FROZEN, PAID_HOLD_INVOICE ou ERROR
 settleorder_only_dispute_orders: O comando settleorder só pode ser usado em pedidos com status DISPUTE
 dispute_solver: 👮‍♂️ Um solucionador atenderá sua disputa. Você pode escrever para ele diretamente tocando no nome de usuário dele => @${solver} <=, se o solucionador escrever para você primeiro, você deve pedir a ele que lhe diga qual é o token de sua disputa, seu token é ${token}.
 setinvoice_no_response: Você não tem ordens a serem pagas
@@ -708,6 +735,7 @@ unblock_failed: "Erro ao desbloquear o usuário"
 check_solvers: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um dentro de ${remainingDays} dias para evitar que a comunidade seja desativada.
 check_solvers_last_warning: Sua comunidade ${communityName} não possui solucionadores. Adicione pelo menos um hoje para evitar que a comunidade seja desativada.
 image_processing_error: Tivemos um erro ao processar a imagem, por favor aguarde alguns minutos e tente novamente.
+order_channel_validation_failed: "Não foi possível publicar a sua ordem. Tente desativar a comunidade padrão com /setcomm off ou peça ao administrador da comunidade para reconfigurar os canais e grupos da comunidade."
 community_payment_methods: "Métodos de pagamento"
 enter_community_payment_methods: "Insira os métodos de pagamento aceitos em sua comunidade, separados por vírgulas (ex.: Transferência bancária, Dinheiro, PayPal)"
 current_payment_methods: "Métodos de pagamento atuais: ${methods}"
@@ -720,6 +748,11 @@ payment_methods_reset: "Métodos de pagamento removidos. Os usuários agora pode
 payment_methods_wizard_commands: "/reset — remover todos os métodos de pagamento e restaurar o comportamento padrão\n/exit — sair sem salvar"
 community_disabled_by_admin: Um administrador desativou sua comunidade ${communityName}
 community_enabled_by_admin: Um administrador reativou sua comunidade ${communityName}
+community_creation_requirements_not_met_header: "Você não atende aos requisitos para criar uma comunidade:"
+community_creation_requirements_not_met_orders: "* Pedidos: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* Volume: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* Dias usando o bot: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* Reputação: ${userRep} / ${requiredRep}"
 community_already_disabled: Esta comunidade já está desativada
 community_already_enabled: Esta comunidade já está ativada
 ambiguous_community_input: Várias comunidades correspondem a esse nome de usuário, por favor use o ID da comunidade
