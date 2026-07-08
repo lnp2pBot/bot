@@ -451,6 +451,10 @@ pending_payment_failed_to_admin: |
   
   결제 시도 횟수: ${attempts}
 
+order_error_to_admin: |
+  ⚠️ 주문 ${orderId}이(가) ERROR 상태로 전환되었습니다
+  지급이 중단되었을 수 있습니다 — 주문을 확인해 주세요. 수동 해결이 필요할 수 있습니다.
+  상세 정보: ${details}
 selling: 팝니다
 buying: 삽니다
 selling_sats: '${amount}sats 판매'
@@ -694,7 +698,7 @@ disclaimer: |
 
   개발자나 분쟁 해소자 모두 봇을 사용하는 사용자들이 겪는 어떠한 손실이나 손해에 대한 어떠한 책임을 지지 않습니다.
 order_frozen: 주문을 동결시켰습니다
-paytobuyer_only_frozen_orders: paytobuyer 명령은 FROZEN 또는 PAID_HOLD_INVOICE 상태의 주문에서만 사용할 수 있습니다
+paytobuyer_only_frozen_orders: paytobuyer 명령은 FROZEN, PAID_HOLD_INVOICE 또는 ERROR 상태의 주문에서만 사용할 수 있습니다
 settleorder_only_dispute_orders: settleorder 명령은 DISPUTE 상태의 주문에서만 사용할 수 있습니다
 dispute_solver: 👮‍♂️ 분쟁 해결사가 분쟁에 참석할 것이며, 사용자 아이디 => @${해결사} <=를 눌러 해결사에게 직접 편지를 보낼 수 있으며, 해결사가 먼저 편지를 보내면 분쟁의 토큰이 무엇인지 물어봐야 하며, 토큰은 ${토큰}입니다.
 setinvoice_no_response: 결제할 주문이 없습니다.

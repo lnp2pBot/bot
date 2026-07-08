@@ -2,7 +2,7 @@ import { Scenes } from 'telegraf';
 import { logger } from '../../../logger';
 import { Community, User, PendingPayment } from '../../../models';
 import { IOrderChannel, IUsernameId } from '../../../models/community';
-import { isPendingPayment } from '../../../ln';
+import { isPendingOrConfirmed } from '../../../ln';
 import { isGroupAdmin, itemsFromMessage, removeAtSymbol } from '../../../util';
 import * as messages from '../../messages';
 import { isValidInvoice } from '../../validations';
@@ -1015,10 +1015,9 @@ export const addEarningsInvoiceWizard = new Scenes.WizardScene(
         paid: false,
         is_invoice_expired: false,
       });
-      // We check if the payment is on flight
-      const isPending = await isPendingPayment(lnInvoice);
-
-      if (!!isScheduled || !!isPending)
+      // Block update if payment is already in-flight or was confirmed
+      const isPaymentPendingOrConfirmed = await isPendingOrConfirmed(lnInvoice);
+      if (!!isScheduled || isPaymentPendingOrConfirmed)
         return await ctx.reply(ctx.i18n.t('invoice_already_being_paid'));
 
       // SECURITY: atomically claim the earnings before scheduling the payout.

@@ -454,6 +454,10 @@ pending_payment_failed_to_admin: |
   Die Bezahlung der LN-Rechnung für den Auftrag ${orderId} des Benutzers @${username} ist fehlgeschlagen.
 
   Zahlungsversuche: ${attempts}
+order_error_to_admin: |
+  ⚠️ Auftrag ${orderId} ist in den ERROR-Status übergegangen
+  Die Auszahlung könnte feststecken — bitte den Auftrag prüfen, eventuell ist eine manuelle Lösung erforderlich.
+  Details: ${details}
 selling: Verkaufe
 buying: Kaufe
 selling_sats: 'Verkaufe ${amount}Sats'
@@ -697,7 +701,7 @@ disclaimer: |
 
   Weder die Entwickler noch die Streitschlichter sind für Verluste oder Schäden verantwortlich, die dem Benutzer durch die Nutzung des Bots entstehen können.
 order_frozen: Sie haben die Bestellung eingefroren
-paytobuyer_only_frozen_orders: Der paytobuyer-Befehl kann nur bei Bestellungen mit dem Status FROZEN oder PAID_HOLD_INVOICE verwendet werden
+paytobuyer_only_frozen_orders: Der paytobuyer-Befehl kann nur bei Bestellungen mit dem Status FROZEN, PAID_HOLD_INVOICE oder ERROR verwendet werden
 settleorder_only_dispute_orders: Der settleorder-Befehl kann nur bei Bestellungen mit dem Status DISPUTE verwendet werden
 dispute_solver: 👮‍♂️ Ein Löser wird sich um Ihren Streitfall kümmern, Sie können ihn/sie direkt anschreiben, indem Sie auf seinen/ihren Benutzernamen tippen => @${solver} <=, wenn der Löser Sie zuerst anschreibt, sollten Sie ihn/sie bitten, Ihnen mitzuteilen, was das Token Ihres Streitfalls ist, Ihr Token ist ${token}.
 setinvoice_no_response: Sie haben keine zu bezahlenden Aufträge

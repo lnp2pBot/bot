@@ -453,6 +453,10 @@ pending_payment_failed_to_admin: |
   Pagamento da fatura para o pedido de compra ${orderId} de usuário @${username} falhou.
 
   Tentativas de pagamento: ${attempts}
+order_error_to_admin: |
+  ⚠️ O pedido ${orderId} passou para o estado ERROR
+  O pagamento pode estar travado — por favor verifique o pedido, pode exigir resolução manual.
+  Detalhes: ${details}
 selling: Vendendo
 buying: Comprando
 selling_sats: 'Vendendo ${amount}sats'
@@ -696,7 +700,7 @@ disclaimer: |
 
   Nem os criadores nem os solucionadores de litígios são responsáveis por quaisquer perdas ou danos que o utilizador possa sofrer como resultado da utilização do bot.
 order_frozen: Você congelou o pedido
-paytobuyer_only_frozen_orders: O comando paytobuyer só pode ser usado em pedidos com status FROZEN ou PAID_HOLD_INVOICE
+paytobuyer_only_frozen_orders: O comando paytobuyer só pode ser usado em pedidos com status FROZEN, PAID_HOLD_INVOICE ou ERROR
 settleorder_only_dispute_orders: O comando settleorder só pode ser usado em pedidos com status DISPUTE
 dispute_solver: 👮‍♂️ Um solucionador atenderá sua disputa. Você pode escrever para ele diretamente tocando no nome de usuário dele => @${solver} <=, se o solucionador escrever para você primeiro, você deve pedir a ele que lhe diga qual é o token de sua disputa, seu token é ${token}.
 setinvoice_no_response: Você não tem ordens a serem pagas
