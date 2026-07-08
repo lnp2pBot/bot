@@ -517,38 +517,22 @@ const initialize = (
   // pending orders are the ones that are not taken by another user
   bot.command('cancelall', userMiddleware, async (ctx: CommunityContext) => {
     try {
-      const pending_orders =
-        (await ordersActions.getOrders(ctx.user, 'PENDING')) || [];
-      const seller_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_BUYER_INVOICE')) ||
-        [];
-      const buyer_orders =
-        (await ordersActions.getOrders(ctx.user, 'WAITING_PAYMENT')) || [];
+      // /cancelall only cancels PENDING orders (published orders that nobody
+      // has taken yet). Orders already being taken (WAITING_PAYMENT /
+      // WAITING_BUYER_INVOICE) must be handled individually with /cancel or
+      // through a dispute, just like single /cancel rejects them.
+      const orders = await ordersActions.getOrders(ctx.user, 'PENDING');
 
-      const orders = [...pending_orders, ...seller_orders, ...buyer_orders];
+      // getOrders returns undefined when the query itself failed (already
+      // logged). Bail out instead of telling the user they have no orders,
+      // which would otherwise leave their pending orders silently uncanceled.
+      if (orders === undefined) return;
 
       if (orders.length === 0) {
         return await messages.notOrdersMessage(ctx);
       }
 
       for (const order of orders) {
-        // If a buyer is taking a sell offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'sell' && order.status === 'WAITING_BUYER_INVOICE') {
-          return await cancelAddInvoice(ctx, order);
-        }
-
-        // If a seller is taking a buy offer and accidentally touch continue button we
-        // let the user to cancel
-        if (order.type === 'buy' && order.status === 'WAITING_PAYMENT') {
-          return await cancelShowHoldInvoice(ctx, order);
-        }
-
-        // If a buyer wants cancel but the seller already pay the hold invoice
-        if (order.type === 'buy' && order.status === 'WAITING_BUYER_INVOICE') {
-          if (order.hash) await cancelHoldInvoice({ hash: order.hash });
-        }
-
         order.status = 'CANCELED';
         order.canceled_by = ctx.user.id;
         await order.save();
@@ -1051,9 +1035,20 @@ const initialize = (
       });
       if (!order) return await messages.notActiveOrderMessage(ctx);
 
-      // paytobuyer can only be used if the order status is FROZEN or PAID_HOLD_INVOICE
-      if (order.status !== 'FROZEN' && order.status !== 'PAID_HOLD_INVOICE') {
+      // paytobuyer can only be used if the order status is FROZEN,
+      // PAID_HOLD_INVOICE or ERROR (manual resolution of stuck payouts)
+      if (
+        order.status !== 'FROZEN' &&
+        order.status !== 'PAID_HOLD_INVOICE' &&
+        order.status !== 'ERROR'
+      ) {
         return await ctx.reply(ctx.i18n.t('paytobuyer_only_frozen_orders'));
+      }
+
+      // SECURITY: only a superadmin may resolve ERROR orders manually;
+      // community solvers are limited to FROZEN and PAID_HOLD_INVOICE.
+      if (order.status === 'ERROR' && !ctx.admin.admin) {
+        return await messages.notAuthorized(ctx);
       }
 
       // We look for a dispute for this order

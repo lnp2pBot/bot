@@ -63,18 +63,17 @@ const plural = (n: number): string => {
 exports.plural = plural;
 
 // This function formats a number to locale strings.
-// If Iso code or locale code doesn´t exist, the function will return a number without format.
-const numberFormat = (code: string, number: number) => {
-  if (!isIso4217(code)) return false;
+// If Iso code or locale code doesn´t exist, the function will return the number as a plain string.
+const numberFormat = (code: string, number: number): string => {
+  if (!isIso4217(code)) return String(number);
 
-  if (!currencies[code]) return number;
+  if (!currencies[code]) return String(number);
 
   const locale = currencies[code].locale;
-  const numberToLocaleString = Intl.NumberFormat(locale);
 
-  if (!locale || isNaN(number)) return number;
+  if (!locale || isNaN(number)) return String(number);
 
-  return numberToLocaleString.format(number);
+  return Intl.NumberFormat(locale).format(number);
 };
 
 // This function checks if the current buyer and seller were doing circular operations

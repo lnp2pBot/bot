@@ -999,6 +999,43 @@ const userTakerIsBlockedByUserOrder = async (
   }
 };
 
+const notMeetingRequirementsMessage = async (
+  ctx: MainContext,
+  user: UserDocument,
+  requirements?: {
+    failures: { age: boolean; orders: boolean };
+    min_days_using_bot: number;
+    min_completed_orders: number;
+    user_age: number | typeof NaN;
+    user_trades: number;
+  },
+) => {
+  try {
+    const lines = [ctx.i18n.t('not_meeting_requirements_header')];
+
+    if (requirements?.failures.age) {
+      lines.push(
+        ctx.i18n.t('not_meeting_age_detail', {
+          required: requirements.min_days_using_bot,
+          actual: requirements.user_age,
+        }),
+      );
+    }
+    if (requirements?.failures.orders) {
+      lines.push(
+        ctx.i18n.t('not_meeting_orders_detail', {
+          required: requirements.min_completed_orders,
+          actual: requirements.user_trades,
+        }),
+      );
+    }
+
+    await ctx.telegram.sendMessage(user.tg_id, lines.join('\n'));
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const fiatSentMessages = async (
   ctx: MainContext,
   buyer: UserDocument,
@@ -2007,6 +2044,45 @@ const toAdminChannelPendingPaymentFailedMessage = async (
   }
 };
 
+// Notifies the admin channel that an order transitioned to the ERROR state.
+// The admin channel has no per-user language, so we use an English context.
+const toAdminChannelOrderErrorMessage = async (
+  bot: HasTelegram,
+  order: IOrder,
+  details: string,
+) => {
+  logger.error(`Order ${order._id} transitioned to ERROR state: ${details}`);
+  try {
+    const i18n = new I18n({
+      locale: 'en',
+      defaultLanguageOnMissing: true,
+      directory: 'locales',
+    });
+    await bot.telegram.sendMessage(
+      String(process.env.ADMIN_CHANNEL),
+      i18n.t('en', 'order_error_to_admin', {
+        orderId: order._id,
+        details,
+      }),
+    );
+    if (order.community_id) {
+      // If the order comes from a community, notify also the administrators of the community to accelerate the resolution of the order
+      const community = await Community.findById(order.community_id);
+      if (community) {
+        await bot.telegram.sendMessage(
+          String(community.dispute_channel),
+          i18n.t(community.language || 'en', 'order_error_to_admin', {
+            orderId: order._id,
+            details,
+          }),
+        );
+      }
+    }
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const currencyNotSupportedMessage = async (
   ctx: MainContext,
   currencies: Array<string>,
@@ -2232,6 +2308,7 @@ export {
   toBuyerPendingPaymentSuccessMessage,
   toBuyerPendingPaymentFailedMessage,
   toAdminChannelPendingPaymentFailedMessage,
+  toAdminChannelOrderErrorMessage,
   genericErrorMessage,
   refundCooperativeCancelMessage,
   toBuyerExpiredOrderMessage,
@@ -2249,4 +2326,5 @@ export {
   userTakerIsBlockedByUserOrder,
   userOrderIsBlockedByUserTaker,
   showQRCodeMessage,
+  notMeetingRequirementsMessage,
 };

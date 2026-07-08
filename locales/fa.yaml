@@ -283,6 +283,10 @@ help: |
 
   /settings
   تنظیمات کنونی کاربر را نمایش می‌دهد.
+  در /settings می‌توانید الزامات طرف مقابل را تنظیم کنید:
+    /counterpartyage <روز> - حداقل سابقه (به روز) برای طرف مقابل
+    /counterpartyorders <سفارش> - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل
+    /resetrequirements - بازگرداندن الزامات به مقادیر پیش‌فرض
 
   /listorders
   از این دستور برای مشاهده لیستی از تمامی سفارش‌ها فعال خود استفاده کنید.
@@ -533,16 +537,24 @@ pending_payment_failed_earnings: |
 pending_payment_failed_to_admin: |
   پرداخت صورتحساب سفارش خرید کاربر @${username} با شناسه ${orderId} شکست خورد.
   تعداد تلاش‌های پرداخت: ${attempts}
+order_error_to_admin: |
+  ⚠️ سفارش ${orderId} به وضعیت ERROR منتقل شد
+  ممکن است پرداخت گیر کرده باشد — لطفاً سفارش را بررسی کنید، ممکن است به حل دستی نیاز داشته باشد.
+  جزئیات: ${details}
 selling: فروختن
 buying: خریدن
 selling_sats: فروش ساتوشی
+selling_sats_with_amount: 'فروش ${amount} ساتوشی'
 buying_sats: خرید ساتوشی
+buying_sats_with_amount: 'خرید ${amount} ساتوشی'
 receive_payment: دریافت وجه
 pay: پرداخت
 is: هست
 trading_volume: 'حجم معاملات: ${volume} sat'
 showusername_buying_sats: '@${username} در حال خرید ساتوشی است'
+showusername_buying_sats_with_amount: '@${username} در حال خرید ${amount} ساتوشی است'
 showusername_selling_sats: '@${username} در حال فروش ساتوشی است'
+showusername_selling_sats_with_amount: '@${username} در حال فروش ${amount} ساتوشی است'
 satoshis: ساتوشی‌ها
 by: توسط
 rate: نرخ
@@ -739,12 +751,28 @@ user_settings: |
   نشانی لایتنینگ:
     <code>${lightning_address || '🛇'}</code>
 
+  <strong>الزامات طرف مقابل</strong>
+  حداقل سابقه: ${min_days_using_bot} روز
+  حداقل سفارش‌های تکمیل شده: ${min_completed_orders}
+
   <strong># راهنما</strong>
   تنظیم کلید عمومی نوستر کاربر:
   /setnpub &lt;npub&gt;
 
+  /counterpartyage &lt;روز&gt; - حداقل سابقه (به روز) برای طرف مقابل.
+  /counterpartyorders &lt;سفارش&gt; - حداقل تعداد سفارش‌های تکمیل شده برای طرف مقابل.
+  /resetrequirements - بازگرداندن الزامات طرف مقابل به مقادیر پیش‌فرض.
+
   خروج از راهنما:
   /exit
+not_meeting_requirements_header: "No cumples con los requisitos de la contraparte para tomar esta orden:"
+not_meeting_age_detail: "Edad requerida: ${required} días: Tu edad: ${actual} días"
+not_meeting_orders_detail: "Órdenes requeridas: ${required}: Tu cantidad de órdenes: ${actual}"
+counterpartyage_updated: الزامات سابقه طرف مقابل به ${days} روز به‌روزرسانی شد.
+counterpartyorders_updated: الزامات سفارش‌های تکمیل شده طرف مقابل به ${orders} عدد به‌روزرسانی شد.
+requirements_reset: الزامات طرف مقابل به مقادیر پیش‌فرض بازگردانده شد.
+invalid_number: عدد نامعتبر است.
+invalid_range: مقدار نامعتبر برای ${command}، لطفاً عددی در محدوده [0 - ${max}] انتخاب کنید.
 # END modules/user
 # check hold invoice
 invoice_settled: صورتحساب تسویه شده است.
@@ -780,7 +808,7 @@ disclaimer: |
   
   توسعه‌دهندگان و حل‌کنندگان مشاجره‌ها مسئول هیچ زیان یا آسیبی که کاربر ممکن است بر اثر استفاده از این ربات متحمل شود نخواهند بود.
 order_frozen: شما سفارش را مسدود کردید
-paytobuyer_only_frozen_orders: 'دستور paytobuyer تنها برای سفارش‌هایی با وضعیت «مسدود شده» یا PAID_HOLD_INVOICE می‌تواند استفاده شود.'
+paytobuyer_only_frozen_orders: 'دستور paytobuyer تنها برای سفارش‌هایی با وضعیت «مسدود شده»، PAID_HOLD_INVOICE یا ERROR می‌تواند استفاده شود.'
 settleorder_only_dispute_orders: 'دستور settleorder تنها برای سفارش‌هایی با وضعیت «مشاجره» می‌تواند استفاده شود.'
 dispute_solver: '👮‍♂️ یک داور به مشاجره شما رسیدگی خواهد کرد. شما می‌توانید با لمس نام کاربری او (@${solver}) مسقیماً به خودش پیام دهید. اگر داور ابتدا به شما پیام داد، باید از او بخواهید که رمز مشاجره‌تان را به شما بگوید؛ رمز مشاجره شما ${token} است.'
 setinvoice_no_response: شما هیچ سفارشی که در مرحله پرداخت باشد ندارید.
@@ -821,6 +849,11 @@ payment_methods_reset: "روش‌های پرداخت حذف شدند. کاربر
 payment_methods_wizard_commands: "/reset — حذف همه روش‌های پرداخت و بازگرداندن رفتار پیش‌فرض\n/exit — خروج بدون ذخیره"
 community_disabled_by_admin: یک مدیر جامعه ${communityName} شما را غیرفعال کرد
 community_enabled_by_admin: یک مدیر جامعه ${communityName} شما را دوباره فعال کرد
+community_creation_requirements_not_met_header: "شما شرایط لازم برای ایجاد جامعه را ندارید:"
+community_creation_requirements_not_met_orders: "* سفارش‌ها: ${userOrders} / ${requiredOrders}"
+community_creation_requirements_not_met_volume: "* حجم: ${userVolume} / ${requiredVolume}"
+community_creation_requirements_not_met_days: "* روزهای استفاده از ربات: ${userDays} / ${requiredDays}"
+community_creation_requirements_not_met_rep: "* اعتبار: ${userRep} / ${requiredRep}"
 community_already_disabled: این جامعه از قبل غیرفعال است
 community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید

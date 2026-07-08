@@ -47,6 +47,14 @@ interface BuildDescriptionArguments {
   currency: IFiat;
 }
 
+interface OrderTitleArguments {
+  user: UserDocument;
+  type: string;
+  amount: number;
+  fiatCode: string;
+  priceFromAPI: boolean;
+}
+
 interface FiatAmountData {
   fiat_amount?: number;
   min_amount?: number;
@@ -248,7 +256,13 @@ const buildDescription = (
 
     const ageInDays = getUserAge(user);
 
-    const firstLine = getOrderTitleMessage(user, type, i18n);
+    const firstLine = getOrderTitleMessage(i18n, {
+      user,
+      type,
+      amount,
+      fiatCode,
+      priceFromAPI,
+    });
 
     let description: string = `${firstLine}\n`;
     description += i18n.t('for') + ` ${currencyString}\n`;
@@ -267,21 +281,38 @@ const buildDescription = (
 };
 
 const getOrderTitleMessage = (
-  user: UserDocument,
-  type: string,
   i18n: I18nContext,
+  { user, type, amount, fiatCode, priceFromAPI }: OrderTitleArguments,
 ) => {
   const isSell = type === 'sell';
 
-  // Guard Clause: The user DOES want to show their name, we resolve and leave.
-  if (user.show_username) {
-    return isSell
-      ? i18n.t('showusername_selling_sats', { username: user.username })
-      : i18n.t('showusername_buying_sats', { username: user.username });
+  // Market and range orders take their price from the API and have no fixed
+  // sats amount at creation time, so their title shows no amount.
+  if (priceFromAPI) {
+    if (user.show_username) {
+      return isSell
+        ? i18n.t('showusername_selling_sats', { username: user.username })
+        : i18n.t('showusername_buying_sats', { username: user.username });
+    }
+    return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
   }
 
-  // The user DOES NOT want to show their name.
-  return isSell ? i18n.t('selling_sats') : i18n.t('buying_sats');
+  // Fixed orders show the sats amount.
+  const formattedAmount = numberFormat(fiatCode, amount);
+  if (user.show_username) {
+    return isSell
+      ? i18n.t('showusername_selling_sats_with_amount', {
+          username: user.username,
+          amount: formattedAmount,
+        })
+      : i18n.t('showusername_buying_sats_with_amount', {
+          username: user.username,
+          amount: formattedAmount,
+        });
+  }
+  return isSell
+    ? i18n.t('selling_sats_with_amount', { amount: formattedAmount })
+    : i18n.t('buying_sats_with_amount', { amount: formattedAmount });
 };
 
 const getOrder = async (
@@ -378,4 +409,10 @@ const getNewRangeOrderPayload = async (order: IOrder) => {
   }
 };
 
-export { createOrder, getOrder, getOrders, getNewRangeOrderPayload };
+export {
+  createOrder,
+  getOrder,
+  getOrders,
+  getNewRangeOrderPayload,
+  getOrderTitleMessage,
+};

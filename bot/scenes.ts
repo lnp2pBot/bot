@@ -6,7 +6,8 @@ import { Order, PendingPayment } from '../models';
 import { waitPayment, addInvoice, showHoldInvoice } from './commands';
 import { getCurrency, getUserI18nContext } from '../util';
 import * as messages from './messages';
-import { isPendingPayment } from '../ln';
+import { getPaymentStatus } from '../ln';
+import { healConfirmedOrder } from '../util/completeOrder';
 import { logger } from '../logger';
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { CommunityContext } from './modules/community/communityContext';
@@ -129,6 +130,7 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         return await ctx.reply(ctx.i18n.t('must_enter_text'));
 
       let { buyer, order } = ctx.wizard.state;
+      const { bot } = ctx.wizard.state;
       // We get an updated order from the DB
       const updatedOrder = await Order.findOne({ _id: order._id });
       if (updatedOrder === null) {
@@ -168,15 +170,35 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       if (!!res.invoice.tokens && res.invoice.tokens !== order.amount)
         return await messages.incorrectAmountInvoiceMessage(ctx);
 
+      // If the original invoice was already paid (e.g. bot restarted mid-payment
+      // while a hold invoice was ACCEPTED), heal the order and reject the update.
+      // Without this check an attacker can settle the hold invoice after restart
+      // and then claim a second payment via /setinvoice.
+      // We fetch the status once and reuse it for the in-flight check below.
+      const originalStatus = order.buyer_invoice
+        ? await getPaymentStatus(order.buyer_invoice)
+        : undefined;
+      if (originalStatus?.is_confirmed) {
+        // Shared, idempotent fail-closed healing routine: if the payment payload
+        // is present the order is closed as SUCCESS (the compare-and-set inside
+        // makes this a no-op if the pending-payments job already closed it, so
+        // the buyer is not notified twice); if LND returned no payload the order
+        // is flagged ERROR and the admin channel is notified.
+        const healed = await healConfirmedOrder(bot, order, originalStatus);
+        if (!healed) {
+          const i18nCtx = await getUserI18nContext(buyer);
+          await messages.genericErrorMessage(bot, buyer, i18nCtx);
+        }
+        return ctx.scene.leave();
+      }
+
       const isScheduled = await PendingPayment.findOne({
         order_id: order._id,
         attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
         is_invoice_expired: false,
       });
-      // We check if the payment is on flight
-      const isPending = await isPendingPayment(order.buyer_invoice);
-
-      if (!!isScheduled || !!isPending)
+      // Block update if payment is already in-flight (confirmed is handled above)
+      if (!!isScheduled || !!originalStatus?.is_pending)
         return await messages.invoiceAlreadyUpdatedMessage(ctx);
 
       // if the payment is not on flight, we create a pending payment
