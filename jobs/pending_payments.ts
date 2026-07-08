@@ -334,7 +334,7 @@ export const attemptCommunitiesPendingPayments = async (
             // No locales yet, we are only sending the message to superadmins. Should be internationalized if we decide to alert the user.
             await bot.telegram.sendMessage(
               String(process.env.ADMIN_CHANNEL),
-              `Community pending payment confirmed but LND returned no details; Pending payment id: ${pending._id}\ncommunity id: ${pending.community_id}\nuser id: ${pending.user_id}`
+              `Community pending payment confirmed but LND returned no details; Pending payment id: ${pending._id}\ncommunity id: ${pending.community_id}\nuser id: ${pending.user_id}`,
             );
           } catch (error) {
             logger.error(error);
