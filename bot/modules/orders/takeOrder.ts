@@ -86,8 +86,6 @@ export const takebuy = async (
 
       if (!(await meetsCounterpartyRequirements(ctx, user, userOffer))) return;
 
-      await incrementTakeOrderCount(user);
-
       const { randomImage } = generateRandomImage(user._id.toString());
 
       order.status = 'WAITING_PAYMENT';
@@ -97,6 +95,11 @@ export const takebuy = async (
       order.random_image = randomImage;
 
       await order.save();
+
+      // Increment the take counter only after the order was saved, so a failed
+      // save does not penalize the user for a take that never completed.
+      await incrementTakeOrderCount(user);
+
       order.status = 'in-progress';
       OrderEvents.orderUpdated(order);
 
@@ -150,13 +153,15 @@ export const takesell = async (
 
       if (!(await meetsCounterpartyRequirements(ctx, user, seller))) return;
 
-      await incrementTakeOrderCount(user);
-
       order.status = 'WAITING_BUYER_INVOICE';
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
 
       await order.save();
+
+      // Increment the take counter only after the order was saved, so a failed
+      // save does not penalize the user for a take that never completed.
+      await incrementTakeOrderCount(user);
 
       order.status = 'in-progress';
       OrderEvents.orderUpdated(order);
@@ -203,13 +208,25 @@ const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
       ? cooldownHoursRaw
       : 24;
 
-  user.take_order_count = (user.take_order_count || 0) + 1;
-  if (user.take_order_count >= maxOrdersTake) {
-    user.take_order_cooldown_until = new Date(
-      Date.now() + cooldownHours * 60 * 60 * 1000,
+  // Atomic increment to avoid a race condition where two concurrent takes by
+  // the same user read the same count and bypass the cap.
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: user._id },
+    { $inc: { take_order_count: 1 } },
+    { new: true },
+  );
+  if (updatedUser === null) return;
+
+  user.take_order_count = updatedUser.take_order_count;
+
+  if (updatedUser.take_order_count >= maxOrdersTake) {
+    const cooldownUntil = new Date(Date.now() + cooldownHours * 60 * 60 * 1000);
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { take_order_cooldown_until: cooldownUntil } },
     );
+    user.take_order_cooldown_until = cooldownUntil;
   }
-  await user.save();
 };
 
 export const meetsCounterpartyRequirements = async (
