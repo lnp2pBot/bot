@@ -80,7 +80,14 @@ export const attemptPendingPayments = async (
           logger.info(
             `Order ${order._id}: original buyer invoice already confirmed, running success routine`,
           );
-          await healConfirmedOrder(bot, order, originalStatus, pending);
+          // The original buyer_invoice is the one that was paid here.
+          await healConfirmedOrder(
+            bot,
+            order,
+            originalStatus,
+            pending,
+            order.buyer_invoice,
+          );
           continue;
         }
         if (originalStatus.is_pending) {
@@ -137,7 +144,14 @@ export const attemptPendingPayments = async (
           await prev.save();
           pending.is_invoice_expired = true; // prevents retrying on this PendingPayment
           await pending.save();
-          await healConfirmedOrder(bot, order, prevStatus, prev);
+          // prev.payment_request is the invoice that was actually paid.
+          await healConfirmedOrder(
+            bot,
+            order,
+            prevStatus,
+            prev,
+            prev.payment_request,
+          );
           shouldSkip = true;
           break;
         } else if (prevStatus.is_pending) {
@@ -160,7 +174,14 @@ export const attemptPendingPayments = async (
         logger.info(
           `Invoice with hash: ${pending.hash} already paid, running success routine`,
         );
-        await healConfirmedOrder(bot, order, currentStatus, pending);
+        // pending.payment_request is the invoice that was actually paid.
+        await healConfirmedOrder(
+          bot,
+          order,
+          currentStatus,
+          pending,
+          pending.payment_request,
+        );
         continue;
       }
 
@@ -226,9 +247,16 @@ export const attemptPendingPayments = async (
       }
 
       if (!!payment && !!payment.confirmed_at) {
-        logger.info(`Invoice with hash: ${pending.hash} paid`);
+        // Log the real payment hash (payment.id); pending.hash stores the hold
+        // invoice hash, not the payout's, which made this line misleading (#864).
+        logger.info(
+          `Order ${order._id} - Invoice with hash: ${payment.id} paid`,
+        );
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
+        // Record the invoice actually paid (pending.payment_request) in
+        // order.buyer_invoice_paid, without overwriting the original
+        // order.buyer_invoice, so reconciliation/auditing can rely on it. See #864.
         await completeOrderAsSuccess(
           bot,
           order,
@@ -237,6 +265,7 @@ export const attemptPendingPayments = async (
           sellerUser,
           i18nCtx,
           pending,
+          pending.payment_request,
         );
       } else {
         // Enhanced error handling for different payment failure types

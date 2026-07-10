@@ -26,18 +26,24 @@ export const completeOrderAsSuccess = async (
   sellerUser: UserDocument,
   i18nCtx: I18nContext,
   pending?: IPendingPayment,
+  // The invoice that was actually paid. When a payout is retried after the buyer
+  // runs /setinvoice, the buyer is paid on a new invoice, so order.buyer_invoice
+  // (the original) no longer reflects the real payment. Callers pass the paid
+  // invoice here so it is recorded in order.buyer_invoice_paid without losing the
+  // original invoice. See #864.
+  paidInvoice?: string,
 ): Promise<boolean> => {
+  const update: Record<string, unknown> = {
+    status: 'SUCCESS',
+    routing_fee: payment.fee,
+    payout_hash: payment.id,
+    payout_preimage: payment.secret,
+  };
+  if (paidInvoice) update.buyer_invoice_paid = paidInvoice;
   // If this coroutine come first and successfully updated the order status then continue the routine
   const won = await Order.findOneAndUpdate(
     { _id: order._id, status: { $ne: 'SUCCESS' } },
-    {
-      $set: {
-        status: 'SUCCESS',
-        routing_fee: payment.fee,
-        payout_hash: payment.id,
-        payout_preimage: payment.secret,
-      },
-    },
+    { $set: update },
   );
   if (won === null) return false;
   // Keep the in-memory document consistent for any later save by the caller.
@@ -45,6 +51,7 @@ export const completeOrderAsSuccess = async (
   order.routing_fee = payment.fee;
   order.payout_hash = payment.id;
   order.payout_preimage = payment.secret;
+  if (paidInvoice) order.buyer_invoice_paid = paidInvoice;
 
   if (pending) {
     pending.paid = true;
@@ -88,6 +95,9 @@ export const healConfirmedOrder = async (
   order: IOrder,
   status: PaymentStatus,
   pending?: IPendingPayment,
+  // Invoice that was actually paid (see completeOrderAsSuccess). Forwarded so a
+  // payout healed on confirmation still records the real invoice. See #864.
+  paidInvoice?: string,
 ): Promise<boolean> => {
   const buyerUser = await User.findOne({ _id: order.buyer_id });
   if (buyerUser === null) throw Error('buyerUser was not found in DB');
@@ -103,6 +113,7 @@ export const healConfirmedOrder = async (
       sellerUser,
       i18nCtx,
       pending,
+      paidInvoice,
     );
     return true;
   }

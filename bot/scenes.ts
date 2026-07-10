@@ -184,7 +184,15 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
         // makes this a no-op if the pending-payments job already closed it, so
         // the buyer is not notified twice); if LND returned no payload the order
         // is flagged ERROR and the admin channel is notified.
-        const healed = await healConfirmedOrder(bot, order, originalStatus);
+        // The confirmed payment is the original buyer_invoice (the one just
+        // re-submitted), so record it as the paid invoice.
+        const healed = await healConfirmedOrder(
+          bot,
+          order,
+          originalStatus,
+          undefined,
+          order.buyer_invoice,
+        );
         if (!healed) {
           const i18nCtx = await getUserI18nContext(buyer);
           await messages.genericErrorMessage(bot, buyer, i18nCtx);
