@@ -1323,11 +1323,12 @@ const successCancelOrderByAdminMessage = async (
   bot: Telegraf<CommunityContext>,
   user: UserDocument,
   order: IOrder,
+  i18n: I18nContext,
 ) => {
   try {
     await bot.telegram.sendMessage(
       user.tg_id,
-      ctx.i18n.t('order_cancelled_by_admin', { orderId: order._id }),
+      i18n.t('order_cancelled_by_admin', { orderId: order._id }),
     );
   } catch (error) {
     logger.error(error);

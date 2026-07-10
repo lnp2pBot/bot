@@ -385,19 +385,14 @@ const getDisputeChannel = async (order: IOrder) => {
  * @returns i18n context
  */
 const getUserI18nContext = async (user: UserDocument) => {
-  let language = null;
-  if (!('language' in user)) {
-    language = 'en';
-  } else {
-    language = user.language;
-  }
+  const language = user.lang || 'en';
   const i18n = new I18n({
     locale: language,
     defaultLanguageOnMissing: true,
     directory: 'locales',
   });
 
-  return i18n.createContext(user.lang || language || 'en');
+  return i18n.createContext(language);
 };
 
 const getDetailedOrder = async (

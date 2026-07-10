@@ -19,6 +19,7 @@ import {
   getCurrenciesWithPrice,
   deleteOrderFromChannel,
   removeAtSymbol,
+  getUserI18nContext,
 } from '../util';
 import {
   commandArgsMiddleware,
@@ -463,9 +464,23 @@ const initialize = (
       // we sent a private message to the admin
       await messages.successCancelOrderMessage(ctx, ctx.admin, order, ctx.i18n);
       // we sent a private message to the seller
-      await messages.successCancelOrderByAdminMessage(ctx, bot, seller, order);
+      const i18nCtxSeller = await getUserI18nContext(seller);
+      await messages.successCancelOrderByAdminMessage(
+        ctx,
+        bot,
+        seller,
+        order,
+        i18nCtxSeller,
+      );
       // we sent a private message to the buyer
-      await messages.successCancelOrderByAdminMessage(ctx, bot, buyer, order);
+      const i18nCtxBuyer = await getUserI18nContext(buyer);
+      await messages.successCancelOrderByAdminMessage(
+        ctx,
+        bot,
+        buyer,
+        order,
+        i18nCtxBuyer,
+      );
     } catch (error) {
       logger.error(error);
     }
