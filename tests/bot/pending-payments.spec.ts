@@ -35,6 +35,8 @@ function makeFakeOrder(overrides = {}) {
     fiat_code: 'ARS',
     status: 'PAID_HOLD_INVOICE',
     routing_fee: 0,
+    payout_hash: null,
+    payout_preimage: null,
     paid_hold_buyer_invoice_updated: false,
     save: sinon.stub().resolves(),
     ...overrides,
@@ -198,6 +200,14 @@ describe('attemptPendingPayments healing branches', () => {
 
       expect(order.status).to.equal('SUCCESS', 'order must be marked SUCCESS');
       expect(order.routing_fee).to.equal(fakePayment.fee);
+      expect(order.payout_hash).to.equal(
+        fakePayment.id,
+        'payout hash must be persisted for reconciliation',
+      );
+      expect(order.payout_preimage).to.equal(
+        fakePayment.secret,
+        'payout preimage (proof of payment) must be persisted',
+      );
       expect(pending.paid).to.equal(true);
       expect(buyer.trades_completed).to.equal(
         6,

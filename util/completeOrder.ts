@@ -30,12 +30,21 @@ export const completeOrderAsSuccess = async (
   // If this coroutine come first and successfully updated the order status then continue the routine
   const won = await Order.findOneAndUpdate(
     { _id: order._id, status: { $ne: 'SUCCESS' } },
-    { $set: { status: 'SUCCESS', routing_fee: payment.fee } },
+    {
+      $set: {
+        status: 'SUCCESS',
+        routing_fee: payment.fee,
+        payout_hash: payment.id,
+        payout_preimage: payment.secret,
+      },
+    },
   );
   if (won === null) return false;
   // Keep the in-memory document consistent for any later save by the caller.
   order.status = 'SUCCESS';
   order.routing_fee = payment.fee;
+  order.payout_hash = payment.id;
+  order.payout_preimage = payment.secret;
 
   if (pending) {
     pending.paid = true;
