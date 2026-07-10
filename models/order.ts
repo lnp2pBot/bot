@@ -10,6 +10,8 @@ export interface IOrder extends Document<string> {
   bot_fee: number;
   community_fee: number;
   routing_fee: number;
+  payout_hash?: string | null;
+  payout_preimage?: string | null;
   hash: string | null;
   secret: string | null;
   creator_id: string;
@@ -70,6 +72,8 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   bot_fee: { type: Number, min: 0 }, // bot MAX_FEE at the moment of order creation
   community_fee: { type: Number, min: 0 }, // community FEE_PERCENT at the moment of order creation
   routing_fee: { type: Number, min: 0, default: 0 },
+  payout_hash: { type: String }, // payment hash of the buyer payout (proof of payment / reconciliation)
+  payout_preimage: { type: String }, // preimage of the buyer payout (cryptographic proof it settled)
   hash: {
     type: String,
     index: {

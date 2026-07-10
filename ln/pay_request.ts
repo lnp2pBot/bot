@@ -161,6 +161,8 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       logger.info(`Order ${order._id} - Invoice with hash: ${payment.id} paid`);
       order.status = 'SUCCESS';
       order.routing_fee = payment.fee;
+      order.payout_hash = payment.id;
+      order.payout_preimage = payment.secret;
 
       await order.save();
       OrderEvents.orderUpdated(order);
