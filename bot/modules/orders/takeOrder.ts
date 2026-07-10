@@ -65,8 +65,6 @@ export const takebuy = async (
       const { user } = ctx;
       if (!(await validateObjectId(ctx, orderId))) return;
 
-      if (await checkTakeRateLimit(ctx, user)) return;
-
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
 
@@ -94,11 +92,20 @@ export const takebuy = async (
 
       order.random_image = randomImage;
 
-      await order.save();
+      // Atomically reserve a take slot (enforces the cap and increments the
+      // counter in a single conditional update) right before persisting the
+      // order, so concurrent takes cannot bypass the limit and validation
+      // rejections above never consume a slot.
+      if (await reserveTakeSlot(ctx, user)) return;
 
-      // Increment the take counter only after the order was saved, so a failed
-      // save does not penalize the user for a take that never completed.
-      await incrementTakeOrderCount(user);
+      try {
+        await order.save();
+      } catch (error) {
+        // The take did not complete; release the reserved slot so a failed save
+        // does not penalize the user for a take that never happened.
+        await releaseTakeSlot(user);
+        throw error;
+      }
 
       order.status = 'in-progress';
       OrderEvents.orderUpdated(order);
@@ -120,8 +127,6 @@ export const takesell = async (
     await PerOrderIdMutex.instance.runExclusive(orderId, async () => {
       const { user } = ctx;
       if (!orderId) return;
-
-      if (await checkTakeRateLimit(ctx, user)) return;
 
       const order = await Order.findOne({ _id: orderId });
       if (!order) return;
@@ -157,11 +162,20 @@ export const takesell = async (
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
 
-      await order.save();
+      // Atomically reserve a take slot (enforces the cap and increments the
+      // counter in a single conditional update) right before persisting the
+      // order, so concurrent takes cannot bypass the limit and validation
+      // rejections above never consume a slot.
+      if (await reserveTakeSlot(ctx, user)) return;
 
-      // Increment the take counter only after the order was saved, so a failed
-      // save does not penalize the user for a take that never completed.
-      await incrementTakeOrderCount(user);
+      try {
+        await order.save();
+      } catch (error) {
+        // The take did not complete; release the reserved slot so a failed save
+        // does not penalize the user for a take that never happened.
+        await releaseTakeSlot(user);
+        throw error;
+      }
 
       order.status = 'in-progress';
       OrderEvents.orderUpdated(order);
@@ -174,29 +188,10 @@ export const takesell = async (
   }
 };
 
-const checkTakeRateLimit = async (
-  ctx: MainContext,
-  user: UserDocument,
-): Promise<boolean> => {
-  const now = new Date();
-  if (user.take_order_cooldown_until && user.take_order_cooldown_until <= now) {
-    user.take_order_count = 0;
-    user.take_order_cooldown_until = null;
-    await user.save();
-  }
-
-  if (user.take_order_cooldown_until && user.take_order_cooldown_until > now) {
-    await messages.orderTakeRateLimitMessage(
-      ctx,
-      user,
-      user.take_order_cooldown_until,
-    );
-    return true;
-  }
-  return false;
-};
-
-const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
+const getTakeRateLimitConfig = (): {
+  maxOrdersTake: number;
+  cooldownHours: number;
+} => {
   const maxOrdersTakeRaw = Number(process.env.MAX_ORDERS_TAKE ?? 10);
   const cooldownHoursRaw = Number(process.env.ORDER_TAKE_COOLDOWN_HOURS ?? 24);
   const maxOrdersTake =
@@ -207,25 +202,126 @@ const incrementTakeOrderCount = async (user: UserDocument): Promise<void> => {
     Number.isFinite(cooldownHoursRaw) && cooldownHoursRaw > 0
       ? cooldownHoursRaw
       : 24;
+  return { maxOrdersTake, cooldownHours };
+};
 
-  // Atomic increment to avoid a race condition where two concurrent takes by
-  // the same user read the same count and bypass the cap.
+// Atomically reserve a take slot for the user. A single conditional document
+// update does everything at once: it (1) rejects the take when the user is
+// inside an active cooldown (the filter does not match), (2) resets the counter
+// when a previous cooldown has already expired, (3) increments the counter, and
+// (4) opens a fresh cooldown as soon as the cap is reached. Because check and
+// increment are one atomic update on a single document, concurrent takes by the
+// same user cannot each pass a stale read and push the counter past
+// MAX_ORDERS_TAKE. Returns true when the take must be blocked.
+const reserveTakeSlot = async (
+  ctx: MainContext,
+  user: UserDocument,
+): Promise<boolean> => {
+  const { maxOrdersTake, cooldownHours } = getTakeRateLimitConfig();
+  const now = new Date();
+  const cooldownUntil = new Date(
+    now.getTime() + cooldownHours * 60 * 60 * 1000,
+  );
+
   const updatedUser = await User.findOneAndUpdate(
-    { _id: user._id },
-    { $inc: { take_order_count: 1 } },
+    {
+      _id: user._id,
+      // Only proceed when there is no active cooldown ({ field: null } also
+      // matches a missing field).
+      $or: [
+        { take_order_cooldown_until: null },
+        { take_order_cooldown_until: { $lte: now } },
+      ],
+    },
+    [
+      {
+        $set: {
+          // Reset to 0 before incrementing when the matched cooldown had
+          // expired, so a new window starts fresh.
+          take_order_count: {
+            $add: [
+              {
+                $cond: [
+                  {
+                    $and: [
+                      { $ne: ['$take_order_cooldown_until', null] },
+                      { $lte: ['$take_order_cooldown_until', now] },
+                    ],
+                  },
+                  0,
+                  { $ifNull: ['$take_order_count', 0] },
+                ],
+              },
+              1,
+            ],
+          },
+        },
+      },
+      {
+        $set: {
+          // Open a new cooldown once the (new) counter reaches the cap; clear it
+          // otherwise (this also clears an expired cooldown we just reset).
+          take_order_cooldown_until: {
+            $cond: [
+              { $gte: ['$take_order_count', maxOrdersTake] },
+              cooldownUntil,
+              null,
+            ],
+          },
+        },
+      },
+    ],
     { new: true },
   );
-  if (updatedUser === null) return;
 
+  if (updatedUser === null) {
+    // The user is inside an active cooldown (or was not found). Re-read to show
+    // the accurate remaining time.
+    const current = await User.findById(user._id);
+    if (current && current.take_order_cooldown_until) {
+      user.take_order_count = current.take_order_count;
+      user.take_order_cooldown_until = current.take_order_cooldown_until;
+      await messages.orderTakeRateLimitMessage(
+        ctx,
+        user,
+        current.take_order_cooldown_until,
+      );
+    }
+    return true;
+  }
+
+  // Keep the in-memory document consistent for any later use by the caller.
   user.take_order_count = updatedUser.take_order_count;
+  user.take_order_cooldown_until = updatedUser.take_order_cooldown_until;
+  return false;
+};
 
-  if (updatedUser.take_order_count >= maxOrdersTake) {
-    const cooldownUntil = new Date(Date.now() + cooldownHours * 60 * 60 * 1000);
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { take_order_cooldown_until: cooldownUntil } },
-    );
-    user.take_order_cooldown_until = cooldownUntil;
+// Release a slot reserved by reserveTakeSlot when the take could not be
+// completed. Decrements the counter and, if that drops the user back below the
+// cap, clears any cooldown the reservation had just opened.
+const releaseTakeSlot = async (user: UserDocument): Promise<void> => {
+  const { maxOrdersTake } = getTakeRateLimitConfig();
+  const updatedUser = await User.findOneAndUpdate(
+    { _id: user._id, take_order_count: { $gt: 0 } },
+    [
+      { $set: { take_order_count: { $add: ['$take_order_count', -1] } } },
+      {
+        $set: {
+          take_order_cooldown_until: {
+            $cond: [
+              { $gte: ['$take_order_count', maxOrdersTake] },
+              '$take_order_cooldown_until',
+              null,
+            ],
+          },
+        },
+      },
+    ],
+    { new: true },
+  );
+  if (updatedUser !== null) {
+    user.take_order_count = updatedUser.take_order_count;
+    user.take_order_cooldown_until = updatedUser.take_order_cooldown_until;
   }
 };
 
