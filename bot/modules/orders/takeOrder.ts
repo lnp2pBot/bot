@@ -216,6 +216,7 @@ const getTakeRateLimitConfig = (): {
 const reserveTakeSlot = async (
   ctx: MainContext,
   user: UserDocument,
+  retried = false,
 ): Promise<boolean> => {
   const { maxOrdersTake, cooldownHours } = getTakeRateLimitConfig();
   const now = new Date();
@@ -286,7 +287,11 @@ const reserveTakeSlot = async (
         user,
         current.take_order_cooldown_until,
       );
+      return true;
     }
+    // The cooldown expired between the update and this re-read: the user is no
+    // longer blocked, so retry the reservation once instead of blocking silently.
+    if (!retried) return reserveTakeSlot(ctx, user, true);
     return true;
   }
 
