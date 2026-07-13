@@ -18,6 +18,7 @@ export interface IOrder extends Document<string> {
   seller_id: string | null;
   buyer_id: string | null;
   buyer_invoice: string;
+  buyer_invoice_paid?: string;
   buyer_dispute_token: string;
   seller_dispute_token: string;
   buyer_dispute: boolean;
@@ -91,7 +92,12 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   creator_id: { type: String },
   seller_id: { type: String },
   buyer_id: { type: String },
-  buyer_invoice: { type: String },
+  buyer_invoice: { type: String }, // invoice originally provided by the buyer
+  // Invoice that was actually paid to the buyer. When a payout fails and the
+  // buyer runs /setinvoice, the retry pays a new invoice; we persist it here so
+  // buyer_invoice (the original) is never lost and reconciliation/auditing can
+  // rely on the real paid invoice. See #864.
+  buyer_invoice_paid: { type: String },
   buyer_dispute_token: { type: String },
   seller_dispute_token: { type: String },
   buyer_dispute: { type: Boolean, default: false },
