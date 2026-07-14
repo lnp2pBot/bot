@@ -642,16 +642,19 @@ type LockCountedMutex = {
   mutex: Mutex;
 };
 
-class PerOrderIdMutex {
+// Serializes async callbacks that share the same key, so only one runs at a
+// time per key. Used to guard against race conditions on a single order or a
+// single user.
+class KeyedMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 
-  async runExclusive(orderId: string, callback: () => Promise<any>) {
+  async runExclusive(key: string, callback: () => Promise<any>) {
     let mtx: LockCountedMutex;
-    if (!this.mutexes.has(orderId)) {
+    if (!this.mutexes.has(key)) {
       mtx = { lockCount: 1, mutex: new Mutex() };
-      this.mutexes.set(orderId, mtx);
+      this.mutexes.set(key, mtx);
     } else {
-      mtx = this.mutexes.get(orderId)!;
+      mtx = this.mutexes.get(key)!;
       mtx.lockCount++;
     }
     let ret: any;
@@ -660,14 +663,17 @@ class PerOrderIdMutex {
     } finally {
       mtx.lockCount--;
       if (mtx.lockCount == 0) {
-        this.mutexes.delete(orderId);
+        this.mutexes.delete(key);
       }
     }
     return ret;
   }
-
-  static instance = new PerOrderIdMutex();
 }
+
+// Lock per order id.
+const PerOrderIdMutex = { instance: new KeyedMutex() };
+// Lock per user id.
+const PerUserIdMutex = { instance: new KeyedMutex() };
 
 export {
   isIso4217,
@@ -703,4 +709,5 @@ export {
   generateRandomImage,
   generateQRWithImage,
   PerOrderIdMutex,
+  PerUserIdMutex,
 };

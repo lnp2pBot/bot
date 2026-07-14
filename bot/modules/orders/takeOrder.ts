@@ -5,6 +5,7 @@ import {
   deleteOrderFromChannel,
   generateRandomImage,
   PerOrderIdMutex,
+  PerUserIdMutex,
   getUserAge,
 } from '../../../util';
 import * as messages from '../../messages';
@@ -205,129 +206,84 @@ const getTakeRateLimitConfig = (): {
   return { maxOrdersTake, cooldownHours };
 };
 
-// Atomically reserve a take slot for the user. A single conditional document
-// update does everything at once: it (1) rejects the take when the user is
-// inside an active cooldown (the filter does not match), (2) resets the counter
-// when a previous cooldown has already expired, (3) increments the counter, and
-// (4) opens a fresh cooldown as soon as the cap is reached. Because check and
-// increment are one atomic update on a single document, concurrent takes by the
-// same user cannot each pass a stale read and push the counter past
-// MAX_ORDERS_TAKE. Returns true when the take must be blocked.
-const reserveTakeSlot = async (
+// Reserve a take slot for the user. Enforces the cap and increments the
+// counter. Everything runs inside a per-user lock, so concurrent takes by the
+// same user are serialized and cannot push the counter past MAX_ORDERS_TAKE.
+// Returns true when the take must be blocked.
+export const reserveTakeSlot = async (
   ctx: MainContext,
   user: UserDocument,
-  retried = false,
 ): Promise<boolean> => {
   const { maxOrdersTake, cooldownHours } = getTakeRateLimitConfig();
-  const now = new Date();
-  const cooldownUntil = new Date(
-    now.getTime() + cooldownHours * 60 * 60 * 1000,
-  );
 
-  const updatedUser = await User.findOneAndUpdate(
-    {
-      _id: user._id,
-      // Only proceed when there is no active cooldown ({ field: null } also
-      // matches a missing field).
-      $or: [
-        { take_order_cooldown_until: null },
-        { take_order_cooldown_until: { $lte: now } },
-      ],
+  return PerUserIdMutex.instance.runExclusive(
+    user._id.toString(),
+    async (): Promise<boolean> => {
+      const now = new Date();
+      const dbUser = await User.findById(user._id);
+      if (dbUser === null) return true;
+
+      // Still inside an active cooldown: block and show the remaining time.
+      if (
+        dbUser.take_order_cooldown_until &&
+        dbUser.take_order_cooldown_until > now
+      ) {
+        user.take_order_count = dbUser.take_order_count;
+        user.take_order_cooldown_until = dbUser.take_order_cooldown_until;
+        await messages.orderTakeRateLimitMessage(
+          ctx,
+          user,
+          dbUser.take_order_cooldown_until,
+        );
+        return true;
+      }
+
+      // A previous cooldown has expired: start a fresh window.
+      if (dbUser.take_order_cooldown_until) {
+        dbUser.take_order_count = 0;
+        dbUser.take_order_cooldown_until = null;
+      }
+
+      // Consume a slot and open a new cooldown once the cap is reached.
+      dbUser.take_order_count += 1;
+      dbUser.take_order_cooldown_until =
+        dbUser.take_order_count >= maxOrdersTake
+          ? new Date(now.getTime() + cooldownHours * 60 * 60 * 1000)
+          : null;
+
+      await dbUser.save();
+
+      // Keep the in-memory document consistent for any later use by the caller.
+      user.take_order_count = dbUser.take_order_count;
+      user.take_order_cooldown_until = dbUser.take_order_cooldown_until;
+      return false;
     },
-    [
-      {
-        $set: {
-          // Reset to 0 before incrementing when the matched cooldown had
-          // expired, so a new window starts fresh.
-          take_order_count: {
-            $add: [
-              {
-                $cond: [
-                  {
-                    $and: [
-                      { $ne: ['$take_order_cooldown_until', null] },
-                      { $lte: ['$take_order_cooldown_until', now] },
-                    ],
-                  },
-                  0,
-                  { $ifNull: ['$take_order_count', 0] },
-                ],
-              },
-              1,
-            ],
-          },
-        },
-      },
-      {
-        $set: {
-          // Open a new cooldown once the (new) counter reaches the cap; clear it
-          // otherwise (this also clears an expired cooldown we just reset).
-          take_order_cooldown_until: {
-            $cond: [
-              { $gte: ['$take_order_count', maxOrdersTake] },
-              cooldownUntil,
-              null,
-            ],
-          },
-        },
-      },
-    ],
-    { new: true },
   );
-
-  if (updatedUser === null) {
-    // The user is inside an active cooldown (or was not found). Re-read to show
-    // the accurate remaining time.
-    const current = await User.findById(user._id);
-    if (current && current.take_order_cooldown_until) {
-      user.take_order_count = current.take_order_count;
-      user.take_order_cooldown_until = current.take_order_cooldown_until;
-      await messages.orderTakeRateLimitMessage(
-        ctx,
-        user,
-        current.take_order_cooldown_until,
-      );
-      return true;
-    }
-    // The cooldown expired between the update and this re-read: the user is no
-    // longer blocked, so retry the reservation once instead of blocking silently.
-    if (!retried) return reserveTakeSlot(ctx, user, true);
-    return true;
-  }
-
-  // Keep the in-memory document consistent for any later use by the caller.
-  user.take_order_count = updatedUser.take_order_count;
-  user.take_order_cooldown_until = updatedUser.take_order_cooldown_until;
-  return false;
 };
 
 // Release a slot reserved by reserveTakeSlot when the take could not be
 // completed. Decrements the counter and, if that drops the user back below the
 // cap, clears any cooldown the reservation had just opened.
-const releaseTakeSlot = async (user: UserDocument): Promise<void> => {
+export const releaseTakeSlot = async (user: UserDocument): Promise<void> => {
   const { maxOrdersTake } = getTakeRateLimitConfig();
-  const updatedUser = await User.findOneAndUpdate(
-    { _id: user._id, take_order_count: { $gt: 0 } },
-    [
-      { $set: { take_order_count: { $add: ['$take_order_count', -1] } } },
-      {
-        $set: {
-          take_order_cooldown_until: {
-            $cond: [
-              { $gte: ['$take_order_count', maxOrdersTake] },
-              '$take_order_cooldown_until',
-              null,
-            ],
-          },
-        },
-      },
-    ],
-    { new: true },
+
+  await PerUserIdMutex.instance.runExclusive(
+    user._id.toString(),
+    async (): Promise<void> => {
+      const dbUser = await User.findById(user._id);
+      if (dbUser === null || dbUser.take_order_count <= 0) return;
+
+      dbUser.take_order_count -= 1;
+      if (dbUser.take_order_count < maxOrdersTake) {
+        dbUser.take_order_cooldown_until = null;
+      }
+
+      await dbUser.save();
+
+      user.take_order_count = dbUser.take_order_count;
+      user.take_order_cooldown_until = dbUser.take_order_cooldown_until;
+    },
   );
-  if (updatedUser !== null) {
-    user.take_order_count = updatedUser.take_order_count;
-    user.take_order_cooldown_until = updatedUser.take_order_cooldown_until;
-  }
 };
 
 export const meetsCounterpartyRequirements = async (
