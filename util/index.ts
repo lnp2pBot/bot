@@ -141,12 +141,25 @@ const handleReputationItems = async (
       buyer.volume_traded += amount;
       seller.volume_traded += amount;
     }
-    buyer.take_order_count = 0;
-    buyer.take_order_cooldown_until = null;
-    seller.take_order_count = 0;
-    seller.take_order_cooldown_until = null;
-    await buyer.save();
-    await seller.save();
+    // Reset the take-limit state under the same per-user lock used by
+    // reserveTakeSlot()/releaseTakeSlot(), so a completion cannot race with a
+    // concurrent take on the same user and overwrite a newer counter/cooldown.
+    await PerUserIdMutex.instance.runExclusive(
+      buyer._id.toString(),
+      async () => {
+        buyer.take_order_count = 0;
+        buyer.take_order_cooldown_until = null;
+        await buyer.save();
+      },
+    );
+    await PerUserIdMutex.instance.runExclusive(
+      seller._id.toString(),
+      async () => {
+        seller.take_order_count = 0;
+        seller.take_order_cooldown_until = null;
+        await seller.save();
+      },
+    );
   } catch (error) {
     logger.error(error);
   }
