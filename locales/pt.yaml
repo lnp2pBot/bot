@@ -777,6 +777,7 @@ all_schedules_cancelled: "✅ Foram canceladas ${count} ordem(ns) programada(s).
 schedule_req_max_reached: "⚠️ Você já tem ${max} ordens programadas ativas, que é o máximo permitido. Cancele uma com /cancelschedule antes de criar uma nova."
 schedule_req_account_age: "⚠️ Sua conta deve ter pelo menos ${days} dias para criar ordens programadas."
 schedule_req_completed_orders: "⚠️ Você precisa de pelo menos ${count} ordens concluídas para criar ordens programadas."
+schedule_req_dormant: "⚠️ Você precisa ter concluído uma ordem nos últimos ${days} dias para criar ordens programadas."
 schedule_req_volume: "⚠️ Você precisa de um volume negociado de pelo menos ${volume} sats para criar ordens programadas."
 schedule_req_rating: "⚠️ Você precisa de uma reputação de pelo menos ${rating} para criar ordens programadas."
 schedule_req_completion_rate: "⚠️ Sua taxa de conclusão de ordens (${current}%) está abaixo dos ${rate}% exigidos. Conclua mais das suas ordens antes de programar."

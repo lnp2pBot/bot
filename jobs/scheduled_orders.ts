@@ -1,6 +1,6 @@
 import { Telegraf } from 'telegraf';
 
-import { ScheduledOrder, User } from '../models';
+import { Order, ScheduledOrder, User } from '../models';
 import { getUserI18nContext } from '../util';
 import { logger } from '../logger';
 import { CommunityContext } from '../bot/modules/community/communityContext';
@@ -79,6 +79,23 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
           continue;
         }
 
+        // Respect MAX_PENDING_ORDERS just like manual order creation does.
+        // If the maker is already at the limit, skip this cycle without
+        // consuming republish_count so it retries on the next matching hour.
+        const maxPending = parseInt(process.env.MAX_PENDING_ORDERS || '0', 10);
+        if (maxPending > 0) {
+          const pendingCount = await Order.countDocuments({
+            creator_id: user._id,
+            status: 'PENDING',
+          });
+          if (pendingCount >= maxPending) {
+            logger.info(
+              `ScheduledOrder ${schedule._id}: creator ${schedule.creator_id} at MAX_PENDING_ORDERS, skipping this cycle`,
+            );
+            continue;
+          }
+        }
+
         const order = await ordersActions.createOrder(i18n, bot, user, {
           type: schedule.type,
           amount: schedule.amount,
@@ -119,7 +136,9 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
         );
 
         if (!reserved) {
-          // Another run already claimed this cycle; drop the order we created.
+          // Another run already claimed this cycle; drop the order we created
+          // so it does not linger as an unpublished PENDING order.
+          await Order.deleteOne({ _id: order._id });
           logger.warning(
             `ScheduledOrder ${schedule._id}: cycle already claimed, skipping publish`,
           );

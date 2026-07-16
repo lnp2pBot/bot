@@ -1,4 +1,5 @@
 import { CommunityContext } from '../community/communityContext';
+import { sanitizeMD } from '../../../util';
 
 const DAY_LABELS: Record<number, string> = {
   0: 'Sun',
@@ -67,7 +68,7 @@ export const askScheduleConfirm = async (
     type: ctx.i18n.t(typeKey),
     fiatAmount: summaryData.fiatAmount.join('-'),
     fiatCode: summaryData.fiatCode,
-    paymentMethod: summaryData.paymentMethod,
+    paymentMethod: sanitizeMD(summaryData.paymentMethod),
     days: formatDays(summaryData.days),
     hour: `${hour}:00 UTC`,
   });

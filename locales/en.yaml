@@ -784,6 +784,7 @@ all_schedules_cancelled: "✅ Cancelled ${count} scheduled order(s). No more ord
 schedule_req_max_reached: "⚠️ You already have ${max} active scheduled orders, which is the maximum allowed. Cancel one with /cancelschedule before creating a new one."
 schedule_req_account_age: "⚠️ Your account must be at least ${days} days old to create scheduled orders."
 schedule_req_completed_orders: "⚠️ You need at least ${count} completed orders to create scheduled orders."
+schedule_req_dormant: "⚠️ You need to have completed an order in the last ${days} days to create scheduled orders."
 schedule_req_volume: "⚠️ You need a traded volume of at least ${volume} sats to create scheduled orders."
 schedule_req_rating: "⚠️ You need a reputation of at least ${rating} to create scheduled orders."
 schedule_req_completion_rate: "⚠️ Your order completion rate (${current}%) is below the required ${rate}%. Complete more of your orders before scheduling."

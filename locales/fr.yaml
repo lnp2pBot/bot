@@ -777,6 +777,7 @@ all_schedules_cancelled: "✅ ${count} commande(s) planifiée(s) annulée(s). Au
 schedule_req_max_reached: "⚠️ Vous avez déjà ${max} commandes planifiées actives, ce qui est le maximum autorisé. Annulez-en une avec /cancelschedule avant d'en créer une nouvelle."
 schedule_req_account_age: "⚠️ Votre compte doit exister depuis au moins ${days} jours pour créer des commandes planifiées."
 schedule_req_completed_orders: "⚠️ Vous devez avoir au moins ${count} commandes terminées pour créer des commandes planifiées."
+schedule_req_dormant: "⚠️ Vous devez avoir terminé une commande au cours des ${days} derniers jours pour créer des commandes planifiées."
 schedule_req_volume: "⚠️ Vous devez avoir un volume échangé d'au moins ${volume} sats pour créer des commandes planifiées."
 schedule_req_rating: "⚠️ Vous devez avoir une réputation d'au moins ${rating} pour créer des commandes planifiées."
 schedule_req_completion_rate: "⚠️ Votre taux de complétion des commandes (${current}%) est inférieur aux ${rate}% requis. Terminez davantage de vos commandes avant de planifier."

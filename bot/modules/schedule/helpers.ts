@@ -114,6 +114,17 @@ export const checkScheduleRequirements = async (
     };
   }
 
+  // Recency: reject up front if the maker is dormant (no completed order in the
+  // configured window) instead of creating a schedule that the publish job
+  // would silently remove on its first run.
+  if (await isDormantMaker(String(user._id))) {
+    return {
+      ok: false,
+      messageKey: 'schedule_req_dormant',
+      params: { days: getDormantDays() },
+    };
+  }
+
   // Minimum traded volume (skipped when threshold is 0).
   if (minVolume > 0 && user.volume_traded < minVolume) {
     return {

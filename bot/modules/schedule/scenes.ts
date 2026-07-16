@@ -1,10 +1,15 @@
 import { Scenes } from 'telegraf';
 import { logger } from '../../../logger';
-import { ScheduledOrder } from '../../../models';
+import { ScheduledOrder, User } from '../../../models';
 import { CommunityContext } from '../community/communityContext';
 import { UserDocument } from '../../../models/user';
 import * as messages from './messages';
-import { getRepublishCount, parseCustomDays, PRESET_DAYS } from './helpers';
+import {
+  checkScheduleRequirements,
+  getRepublishCount,
+  parseCustomDays,
+  PRESET_DAYS,
+} from './helpers';
 
 export const SCHEDULE_ORDER = 'SCHEDULE_ORDER_WIZARD';
 
@@ -123,14 +128,29 @@ export const scheduleOrderWizard = new Scenes.WizardScene<CommunityContext>(
         return ctx.scene.leave();
       }
 
+      // Re-check eligibility right before insert: the command-time check can go
+      // stale while the wizard is open (e.g. the user reaches
+      // SCHEDULE_MAX_PER_USER through another schedule created meanwhile).
+      const freshUser = await User.findById(state.user._id);
+      if (!freshUser) return ctx.scene.leave();
+      const requirement = await checkScheduleRequirements(freshUser);
+      if (!requirement.ok) {
+        await ctx.reply(
+          ctx.i18n.t(requirement.messageKey!, requirement.params),
+        );
+        return ctx.scene.leave();
+      }
+
       const schedule = await ScheduledOrder.create({
-        creator_id: state.user._id,
+        creator_id: freshUser._id,
         type: state.scheduleType,
         amount: state.amount,
         fiat_amount: state.fiatAmount,
         fiat_code: state.fiatCode,
         payment_method: state.paymentMethod,
         price_margin: Number(state.priceMargin) || 0,
+        // Snapshot the maker's default community so publications land there.
+        community_id: freshUser.default_community_id,
         days: state.days,
         hour: state.hour,
         republish_count: getRepublishCount(),
