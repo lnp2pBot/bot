@@ -780,7 +780,7 @@ schedule_req_completed_orders: "⚠️ Você precisa de pelo menos ${count} orde
 schedule_req_volume: "⚠️ Você precisa de um volume negociado de pelo menos ${volume} sats para criar ordens programadas."
 schedule_req_rating: "⚠️ Você precisa de uma reputação de pelo menos ${rating} para criar ordens programadas."
 schedule_req_completion_rate: "⚠️ Sua taxa de conclusão de ordens (${current}%) está abaixo dos ${rate}% exigidos. Conclua mais das suas ordens antes de programar."
-schedule_dormant_removed: "⚠️ Removi todas as suas ordens programadas porque você não concluiu suas últimas ${count} ordens aceitas."
+schedule_dormant_removed: "⚠️ Removi todas as suas ordens programadas porque você não concluiu nenhuma ordem nos últimos ${days} dias."
 schedule_creation_cancelled: "❌ Criação do schedule cancelada."
 schedule_created: "✅ Ordem programada criada! Seu ID é: ${scheduleId}\nUse /cancelschedule ${scheduleId} para pará-la."
 schedule_choose_days: "📅 Em quais dias a ordem deve ser publicada?"

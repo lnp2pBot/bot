@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 import { CommunityContext } from '../community/communityContext';
 import { ScheduledOrder } from '../../../models';
 import { validateSellOrder, validateBuyOrder } from '../../validations';
-import { getCurrency } from '../../../util';
+import { getCurrency, sanitizeMD } from '../../../util';
 import { logger } from '../../../logger';
 import { SCHEDULE_ORDER } from './scenes';
 import { formatDays } from './messages';
@@ -63,6 +63,10 @@ export const scheduleorder = async (ctx: CommunityContext) => {
 
 export const cancelschedule = async (ctx: CommunityContext) => {
   try {
+    // Schedule management must stay in the private DM to avoid leaking or
+    // destroying schedule data from a group chat.
+    if (ctx.message?.chat.type !== 'private') return;
+
     const user = ctx.user;
     const args = ctx.state?.command?.args || [];
     const scheduleId = args[0];
@@ -92,6 +96,10 @@ export const cancelschedule = async (ctx: CommunityContext) => {
 
 export const listschedules = async (ctx: CommunityContext) => {
   try {
+    // Schedule management must stay in the private DM to avoid leaking or
+    // destroying schedule data from a group chat.
+    if (ctx.message?.chat.type !== 'private') return;
+
     const user = ctx.user;
 
     const schedules = await ScheduledOrder.find({
@@ -112,7 +120,7 @@ export const listschedules = async (ctx: CommunityContext) => {
           type: ctx.i18n.t(typeKey),
           fiatAmount: schedule.fiat_amount.join('-'),
           fiatCode: schedule.fiat_code,
-          paymentMethod: schedule.payment_method,
+          paymentMethod: sanitizeMD(schedule.payment_method),
           days: formatDays(schedule.days),
           hour: `${hour}:00 UTC`,
         });
@@ -129,6 +137,10 @@ export const listschedules = async (ctx: CommunityContext) => {
 
 export const cancelallschedules = async (ctx: CommunityContext) => {
   try {
+    // Schedule management must stay in the private DM to avoid leaking or
+    // destroying schedule data from a group chat.
+    if (ctx.message?.chat.type !== 'private') return;
+
     const user = ctx.user;
 
     const result = await ScheduledOrder.updateMany(

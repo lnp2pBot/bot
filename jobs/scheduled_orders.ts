@@ -10,7 +10,7 @@ import {
   publishSellOrderMessage,
 } from '../bot/messages';
 import {
-  getDormantLimit,
+  getDormantDays,
   isDormantMaker,
 } from '../bot/modules/schedule/helpers';
 
@@ -66,7 +66,7 @@ const publishScheduledOrders = async (bot: Telegraf<CommunityContext>) => {
           try {
             await bot.telegram.sendMessage(
               user.tg_id,
-              i18n.t('schedule_dormant_removed', { count: getDormantLimit() }),
+              i18n.t('schedule_dormant_removed', { days: getDormantDays() }),
             );
           } catch (error) {
             logger.warning(

@@ -781,7 +781,7 @@ schedule_req_completed_orders: "⚠️ Du benötigst mindestens ${count} abgesch
 schedule_req_volume: "⚠️ Du benötigst ein gehandeltes Volumen von mindestens ${volume} Sats, um geplante Aufträge zu erstellen."
 schedule_req_rating: "⚠️ Du benötigst eine Reputation von mindestens ${rating}, um geplante Aufträge zu erstellen."
 schedule_req_completion_rate: "⚠️ Deine Auftrags-Abschlussquote (${current}%) liegt unter den erforderlichen ${rate}%. Schließe mehr deiner Aufträge ab, bevor du planst."
-schedule_dormant_removed: "⚠️ Ich habe alle deine geplanten Aufträge entfernt, weil du deine letzten ${count} angenommenen Aufträge nicht abgeschlossen hast."
+schedule_dormant_removed: "⚠️ Ich habe alle deine geplanten Aufträge entfernt, weil du in den letzten ${days} Tagen keinen Auftrag abgeschlossen hast."
 schedule_creation_cancelled: "❌ Erstellung des Schedules abgebrochen."
 schedule_created: "✅ Geplante Bestellung erstellt! Deine ID ist: ${scheduleId}\nVerwende /cancelschedule ${scheduleId} zum Stoppen."
 schedule_choose_days: "📅 An welchen Tagen soll die Bestellung veröffentlicht werden?"

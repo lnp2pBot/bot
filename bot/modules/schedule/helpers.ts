@@ -52,6 +52,9 @@ export const PRESET_DAYS: Record<string, number[]> = {
 };
 
 const envNumber = (raw: string | undefined, fallback: number): number => {
+  // Treat missing or blank/whitespace-only values as absent. Number('') is 0
+  // (a finite number), which would otherwise silently disable env-gated checks.
+  if (raw === undefined || raw.trim() === '') return fallback;
   const value = Number(raw);
   return Number.isFinite(value) ? value : fallback;
 };
@@ -163,27 +166,26 @@ export const checkScheduleRequirements = async (
   return { ok: true };
 };
 
-// Hard limit on how many of a maker's most recent taken orders may go
-// uncompleted in a row before their schedules are removed as dormant.
-export const getDormantLimit = (): number =>
-  envNumber(process.env.SCHEDULE_MAX_CONSECUTIVE_UNCOMPLETED, 5);
+// Number of days a maker may go without completing any order before their
+// schedules are removed as dormant.
+export const getDormantDays = (): number =>
+  envNumber(process.env.SCHEDULE_MAX_DAYS_WITHOUT_COMPLETION, 7);
 
-// A maker is "dormant" when their last N taken orders all ended without
-// success. Such a user keeps getting orders taken but never follows through, so
-// their auto-published orders only waste takers' time. Returns false while
-// there is not enough taken-order history to judge.
+// A maker is "dormant" when they have not successfully completed any order
+// within the last N days. Such a user keeps auto-publishing orders they no
+// longer follow through on, so their schedules only waste takers' time. We use
+// taken_at as the completion proxy since taken orders resolve within ~27h.
+// Returns false when the check is disabled (days <= 0).
 export const isDormantMaker = async (userId: string): Promise<boolean> => {
-  const limit = getDormantLimit();
-  if (limit <= 0) return false;
+  const days = getDormantDays();
+  if (days <= 0) return false;
 
-  const recent = await Order.find({
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const recentSuccess = await Order.countDocuments({
     creator_id: userId,
-    taken_at: { $ne: null },
-  })
-    .sort({ taken_at: -1 })
-    .limit(limit)
-    .select('status');
+    status: 'SUCCESS',
+    taken_at: { $gte: since },
+  });
 
-  if (recent.length < limit) return false;
-  return recent.every(order => order.status !== 'SUCCESS');
+  return recentSuccess === 0;
 };
