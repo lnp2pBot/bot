@@ -755,4 +755,4 @@ community_already_disabled: Questa comunità è già disabilitata
 community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità
 
-order_take_rate_limit: "Hai raggiunto il limite di ordini presi. Attendi ${hours} ora/e prima di prendere un nuovo ordine, oppure completa un ordine attivo per azzerare il contatore."
+order_take_rate_limit: "Hai raggiunto il limite di ordini presi. Attendi ${hours} ora/e prima di prendere un nuovo ordine, oppure completa un ordine con successo per azzerare il contatore."

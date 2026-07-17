@@ -117,6 +117,15 @@ describe('take slot rate limit — concurrency', () => {
     expect(store.get(USER_ID).take_order_cooldown_until).to.equal(null);
   });
 
+  it('does not send the rate-limit message on an allowed take', async () => {
+    const blocked = await reserveTakeSlot(ctx, freshUser());
+
+    expect(blocked).to.equal(false);
+    expect(store.get(USER_ID).take_order_count).to.equal(1);
+    // The user is well below the cap, so no rate-limit message is sent.
+    expect(messagesMock.orderTakeRateLimitMessage.called).to.equal(false);
+  });
+
   it('blocks a take while a cooldown is active', async () => {
     store.set(USER_ID, {
       take_order_count: 10,

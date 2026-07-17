@@ -764,4 +764,4 @@ community_already_disabled: This community is already disabled
 community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead
 
-order_take_rate_limit: "You have reached the order-take limit. Please wait ${hours} hour(s) before taking a new order, or complete an active order to reset the counter."
+order_take_rate_limit: "You have reached the order-take limit. Please wait ${hours} hour(s) before taking a new order, or successfully complete an order to reset the counter."

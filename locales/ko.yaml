@@ -755,4 +755,4 @@ community_already_disabled: 이 커뮤니티는 이미 비활성화되어 있습
 community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니다
 ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요
 
-order_take_rate_limit: "주문 수락 한도에 도달했습니다. 새 주문을 수락하기 전에 ${hours}시간 기다리거나, 진행 중인 주문을 완료하면 카운터가 초기화됩니다."
+order_take_rate_limit: "주문 수락 한도에 도달했습니다. 새 주문을 수락하기 전에 ${hours}시간 기다리거나, 주문을 성공적으로 완료하면 카운터가 초기화됩니다."

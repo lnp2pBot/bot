@@ -658,6 +658,13 @@ type LockCountedMutex = {
 // Serializes async callbacks that share the same key, so only one runs at a
 // time per key. Used to guard against race conditions on a single order or a
 // single user.
+//
+// NOTE: this is an in-memory lock, so it only serializes within a SINGLE
+// process. The bot runs today with bot.launch() (long polling), which is
+// single-process, so this is correct. If the deployment ever moves to webhooks
+// with multiple replicas (or this logic is split into a separate process), the
+// read-modify-write it protects (e.g. reserveTakeSlot) could race across
+// processes and would need a distributed lock or an atomic DB update instead.
 class KeyedMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 

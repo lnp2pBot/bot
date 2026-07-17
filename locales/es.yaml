@@ -761,4 +761,4 @@ community_already_disabled: Esta comunidad ya está deshabilitada
 community_already_enabled: Esta comunidad ya está habilitada
 ambiguous_community_input: Varias comunidades coinciden con ese nombre de usuario, por favor usa el ID de la comunidad
 
-order_take_rate_limit: "Has alcanzado el límite de órdenes tomadas. Espera ${hours} hora(s) antes de tomar una nueva orden, o completa una orden activa para reiniciar el contador."
+order_take_rate_limit: "Has alcanzado el límite de órdenes tomadas. Espera ${hours} hora(s) antes de tomar una nueva orden, o completa una orden con éxito para reiniciar el contador."

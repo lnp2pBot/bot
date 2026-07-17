@@ -93,10 +93,10 @@ export const takebuy = async (
 
       order.random_image = randomImage;
 
-      // Atomically reserve a take slot (enforces the cap and increments the
-      // counter in a single conditional update) right before persisting the
-      // order, so concurrent takes cannot bypass the limit and validation
-      // rejections above never consume a slot.
+      // Reserve a take slot (enforces the cap and increments the counter under a
+      // per-user mutex) right before persisting the order, so concurrent takes
+      // cannot bypass the limit and validation rejections above never consume a
+      // slot.
       if (await reserveTakeSlot(ctx, user)) return;
 
       try {
@@ -163,10 +163,10 @@ export const takesell = async (
       order.buyer_id = user._id;
       order.taken_at = new Date(Date.now());
 
-      // Atomically reserve a take slot (enforces the cap and increments the
-      // counter in a single conditional update) right before persisting the
-      // order, so concurrent takes cannot bypass the limit and validation
-      // rejections above never consume a slot.
+      // Reserve a take slot (enforces the cap and increments the counter under a
+      // per-user mutex) right before persisting the order, so concurrent takes
+      // cannot bypass the limit and validation rejections above never consume a
+      // slot.
       if (await reserveTakeSlot(ctx, user)) return;
 
       try {
@@ -221,7 +221,13 @@ export const reserveTakeSlot = async (
     async (): Promise<boolean> => {
       const now = new Date();
       const dbUser = await User.findById(user._id);
-      if (dbUser === null) return true;
+      // The user should always exist (middleware creates it), but if it somehow
+      // does not we block the take rather than let it bypass the limit, and give
+      // the user feedback instead of failing silently.
+      if (dbUser === null) {
+        await messages.genericErrorMessage(ctx, user, ctx.i18n);
+        return true;
+      }
 
       // Still inside an active cooldown: block and show the remaining time.
       if (
@@ -274,6 +280,11 @@ export const releaseTakeSlot = async (user: UserDocument): Promise<void> => {
       if (dbUser === null || dbUser.take_order_count <= 0) return;
 
       dbUser.take_order_count -= 1;
+      // Dropping back below the cap clears the cooldown. In the rare case where
+      // several concurrent takes opened a cooldown and only one save() failed,
+      // this lets the user take again slightly early; the impact is minimal and
+      // it keeps count/cooldown consistent (a sub-cap user should never be in a
+      // cooldown).
       if (dbUser.take_order_count < maxOrdersTake) {
         dbUser.take_order_cooldown_until = null;
       }
