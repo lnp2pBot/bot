@@ -359,12 +359,19 @@ const cancelAddInvoice = async (
       // The maker (seller) cancelled the order, so the taker (buyer) is not at
       // fault: give the reserved take slot back.
       await releaseTakeSlot(buyerUser);
-      await messages.successCancelOrderMessage(ctx, sellerUser, order, i18nCtx);
+      const i18nCtxSeller = await getUserI18nContext(sellerUser);
+      await messages.successCancelOrderMessage(
+        ctx,
+        sellerUser,
+        order,
+        i18nCtxSeller,
+      );
+      const i18nCtxBuyer = await getUserI18nContext(buyerUser);
       await messages.counterPartyCancelOrderMessage(
         ctx,
         buyerUser,
         order,
-        i18nCtx,
+        i18nCtxBuyer,
       );
     } else {
       // Re-publish order

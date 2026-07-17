@@ -7,6 +7,7 @@ import {
   isFloat,
   toKebabCase,
   getDetailedOrder,
+  getUserI18nContext,
 } from '../../util/index';
 
 const { expect } = require('chai');
@@ -204,6 +205,21 @@ describe('Utility Functions', () => {
 
       const result = await getDetailedOrder(i18n, order, buyer, seller);
       expect(result).to.equal('Settled by admin: No');
+    });
+  });
+
+  describe('getUserI18nContext', () => {
+    // Guards the root cause of the wrong-language bug: the User model stores
+    // the language in `lang`, so the context must be built from that field
+    // (a previous version read a non-existent `user.language`).
+    it("builds the context from the user's lang field", async () => {
+      const ctx = await getUserI18nContext({ lang: 'es' } as any);
+      expect(ctx.locale()).to.equal('es');
+    });
+
+    it('falls back to English when lang is missing', async () => {
+      const ctx = await getUserI18nContext({} as any);
+      expect(ctx.locale()).to.equal('en');
     });
   });
 });

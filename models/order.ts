@@ -10,12 +10,15 @@ export interface IOrder extends Document<string> {
   bot_fee: number;
   community_fee: number;
   routing_fee: number;
+  payout_hash?: string | null;
+  payout_preimage?: string | null;
   hash: string | null;
   secret: string | null;
   creator_id: string;
   seller_id: string | null;
   buyer_id: string | null;
   buyer_invoice: string;
+  buyer_invoice_paid?: string;
   buyer_dispute_token: string;
   seller_dispute_token: string;
   buyer_dispute: boolean;
@@ -70,6 +73,8 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   bot_fee: { type: Number, min: 0 }, // bot MAX_FEE at the moment of order creation
   community_fee: { type: Number, min: 0 }, // community FEE_PERCENT at the moment of order creation
   routing_fee: { type: Number, min: 0, default: 0 },
+  payout_hash: { type: String }, // payment hash of the buyer payout (proof of payment / reconciliation)
+  payout_preimage: { type: String }, // preimage of the buyer payout (cryptographic proof it settled)
   hash: {
     type: String,
     index: {
@@ -87,7 +92,12 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   creator_id: { type: String },
   seller_id: { type: String },
   buyer_id: { type: String },
-  buyer_invoice: { type: String },
+  buyer_invoice: { type: String }, // invoice originally provided by the buyer
+  // Invoice that was actually paid to the buyer. When a payout fails and the
+  // buyer runs /setinvoice, the retry pays a new invoice; we persist it here so
+  // buyer_invoice (the original) is never lost and reconciliation/auditing can
+  // rely on the real paid invoice. See #864.
+  buyer_invoice_paid: { type: String },
   buyer_dispute_token: { type: String },
   seller_dispute_token: { type: String },
   buyer_dispute: { type: Boolean, default: false },
