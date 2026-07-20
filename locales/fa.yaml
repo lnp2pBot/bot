@@ -859,3 +859,5 @@ community_creation_requirements_not_met_rep: "* اعتبار: ${userRep} / ${req
 community_already_disabled: این جامعه از قبل غیرفعال است
 community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید
+
+order_take_rate_limit: "شما به حد مجاز دریافت سفارش رسیده‌اید. لطفاً ${hours} ساعت صبر کنید یا یک سفارش را با موفقیت تکمیل کنید تا شمارنده بازنشینی شود."

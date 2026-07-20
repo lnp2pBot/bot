@@ -18,6 +18,7 @@ import {
 } from '../util';
 import * as ordersActions from './ordersActions';
 import * as OrderEvents from './modules/events/orders';
+import { releaseTakeSlot } from './modules/orders/takeOrder';
 
 import { resolvLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
@@ -341,6 +342,9 @@ const cancelAddInvoice = async (
     if (order.creator_id === order.buyer_id) {
       order.status = 'CLOSED';
       await order.save();
+      // The maker (buyer) closed the order, so the taker (seller) is not at
+      // fault: give the reserved take slot back.
+      await releaseTakeSlot(sellerUser);
       await messages.toBuyerDidntAddInvoiceMessage(ctx, user, order, i18nCtx);
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.toSellerBuyerDidntAddInvoiceMessage(
@@ -352,6 +356,9 @@ const cancelAddInvoice = async (
     } else if (order.creator_id === order.seller_id && userTgId == sellerTgId) {
       order.status = 'CLOSED';
       await order.save();
+      // The maker (seller) cancelled the order, so the taker (buyer) is not at
+      // fault: give the reserved take slot back.
+      await releaseTakeSlot(buyerUser);
       const i18nCtxSeller = await getUserI18nContext(sellerUser);
       await messages.successCancelOrderMessage(
         ctx,
@@ -558,6 +565,9 @@ const cancelShowHoldInvoice = async (
     if (order.creator_id === order.seller_id) {
       order.status = 'CLOSED';
       await order.save();
+      // The maker (seller) closed the order, so the taker (buyer) is not at
+      // fault: give the reserved take slot back.
+      await releaseTakeSlot(buyerUser);
       await messages.toSellerDidntPayInvoiceMessage(
         ctx,
         sellerUser,
@@ -573,6 +583,9 @@ const cancelShowHoldInvoice = async (
     } else if (order.creator_id === order.buyer_id && userTgId == buyerTgId) {
       order.status = 'CLOSED';
       await order.save();
+      // The maker (buyer) cancelled the order, so the taker (seller) is not at
+      // fault: give the reserved take slot back.
+      await releaseTakeSlot(sellerUser);
       await messages.successCancelOrderMessage(
         ctx,
         buyerUser,

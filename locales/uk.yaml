@@ -753,3 +753,5 @@ community_creation_requirements_not_met_rep: "* Репутація: ${userRep} /
 community_already_disabled: Ця спільнота вже вимкнена
 community_already_enabled: Ця спільнота вже увімкнена
 ambiguous_community_input: Кілька спільнот відповідають цьому імені користувача, будь ласка, використовуйте ID спільноти
+
+order_take_rate_limit: "Ви досягли ліміту прийнятих замовлень. Зачекайте ${hours} годину(и) перед прийняттям нового замовлення або успішно завершіть замовлення, щоб скинути лічильник."

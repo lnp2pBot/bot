@@ -141,8 +141,25 @@ const handleReputationItems = async (
       buyer.volume_traded += amount;
       seller.volume_traded += amount;
     }
-    await buyer.save();
-    await seller.save();
+    // Reset the take-limit state under the same per-user lock used by
+    // reserveTakeSlot()/releaseTakeSlot(), so a completion cannot race with a
+    // concurrent take on the same user and overwrite a newer counter/cooldown.
+    await PerUserIdMutex.instance.runExclusive(
+      buyer._id.toString(),
+      async () => {
+        buyer.take_order_count = 0;
+        buyer.take_order_cooldown_until = null;
+        await buyer.save();
+      },
+    );
+    await PerUserIdMutex.instance.runExclusive(
+      seller._id.toString(),
+      async () => {
+        seller.take_order_count = 0;
+        seller.take_order_cooldown_until = null;
+        await seller.save();
+      },
+    );
   } catch (error) {
     logger.error(error);
   }
@@ -633,16 +650,26 @@ type LockCountedMutex = {
   mutex: Mutex;
 };
 
-class PerOrderIdMutex {
+// Serializes async callbacks that share the same key, so only one runs at a
+// time per key. Used to guard against race conditions on a single order or a
+// single user.
+//
+// NOTE: this is an in-memory lock, so it only serializes within a SINGLE
+// process. The bot runs today with bot.launch() (long polling), which is
+// single-process, so this is correct. If the deployment ever moves to webhooks
+// with multiple replicas (or this logic is split into a separate process), the
+// read-modify-write it protects (e.g. reserveTakeSlot) could race across
+// processes and would need a distributed lock or an atomic DB update instead.
+class KeyedMutex {
   mutexes: Map<string, LockCountedMutex> = new Map();
 
-  async runExclusive(orderId: string, callback: () => Promise<any>) {
+  async runExclusive(key: string, callback: () => Promise<any>) {
     let mtx: LockCountedMutex;
-    if (!this.mutexes.has(orderId)) {
+    if (!this.mutexes.has(key)) {
       mtx = { lockCount: 1, mutex: new Mutex() };
-      this.mutexes.set(orderId, mtx);
+      this.mutexes.set(key, mtx);
     } else {
-      mtx = this.mutexes.get(orderId)!;
+      mtx = this.mutexes.get(key)!;
       mtx.lockCount++;
     }
     let ret: any;
@@ -651,14 +678,17 @@ class PerOrderIdMutex {
     } finally {
       mtx.lockCount--;
       if (mtx.lockCount == 0) {
-        this.mutexes.delete(orderId);
+        this.mutexes.delete(key);
       }
     }
     return ret;
   }
-
-  static instance = new PerOrderIdMutex();
 }
+
+// Lock per order id.
+const PerOrderIdMutex = { instance: new KeyedMutex() };
+// Lock per user id.
+const PerUserIdMutex = { instance: new KeyedMutex() };
 
 export {
   isIso4217,
@@ -694,4 +724,5 @@ export {
   generateRandomImage,
   generateQRWithImage,
   PerOrderIdMutex,
+  PerUserIdMutex,
 };

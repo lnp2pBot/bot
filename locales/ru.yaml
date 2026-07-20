@@ -757,3 +757,5 @@ community_creation_requirements_not_met_rep: "* Репутация: ${userRep} /
 community_already_disabled: Это сообщество уже отключено
 community_already_enabled: Это сообщество уже включено
 ambiguous_community_input: Несколько сообществ соответствуют этому имени пользователя, пожалуйста, используйте ID сообщества
+
+order_take_rate_limit: "Вы достигли лимита принятых заявок. Подождите ${hours} час(ов) перед принятием новой заявки или успешно завершите заявку, чтобы сбросить счётчик."

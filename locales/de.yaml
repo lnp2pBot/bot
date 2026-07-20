@@ -757,3 +757,5 @@ community_creation_requirements_not_met_rep: "* Reputation: ${userRep} / ${requi
 community_already_disabled: Diese Community ist bereits deaktiviert
 community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
+
+order_take_rate_limit: "Du hast das Limit für angenommene Aufträge erreicht. Bitte warte ${hours} Stunde(n), bevor du einen neuen Auftrag annimmst, oder schließe einen Auftrag erfolgreich ab, um den Zähler zurückzusetzen."

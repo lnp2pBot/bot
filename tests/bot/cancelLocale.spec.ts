@@ -94,6 +94,7 @@ const commands = proxyquire('../../bot/commands', {
   './messages': messagesMock,
   './ordersActions': ordersActionsMock,
   './modules/events/orders': { orderUpdated: sinon.stub() },
+  './modules/orders/takeOrder': { releaseTakeSlot: sinon.stub().resolves() },
 });
 
 // Builds a minimal ctx whose implicit i18n (ctx.i18n) belongs to `caller`.
