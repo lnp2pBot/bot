@@ -156,11 +156,20 @@ describe('Validations', () => {
       expect(result.priceMargin).to.equal('5');
     });
 
-    it('should return false if price margin is not a number', async () => {
-      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
+    it('should treat a non-numeric trailing param as the community name', async () => {
+      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'mycommunity'];
       const result = await validateSellOrder(ctx);
-      expect(result).to.equal(false);
-      expect(replyStub.calledOnce).to.be.equal(true);
+      if (result === false) throw new Error('object expected');
+      expect(result.communityName).to.equal('mycommunity');
+      expect(result.priceMargin).to.equal(undefined);
+    });
+
+    it('should parse both price margin and community name', async () => {
+      ctx.state.command.args = ['0', '100', 'USD', 'zelle', '5', 'mycommunity'];
+      const result = await validateSellOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('mycommunity');
     });
 
     it('should work with ranges', async () => {
@@ -230,11 +239,20 @@ describe('Validations', () => {
       expect(result.priceMargin).to.equal('5');
     });
 
-    it('should return false if price margin is not a number', async () => {
-      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
+    it('should treat a non-numeric trailing param as the community name', async () => {
+      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'mycommunity'];
       const result = await validateBuyOrder(ctx);
-      expect(result).to.equal(false);
-      expect(replyStub.calledOnce).to.be.equal(true);
+      if (result === false) throw new Error('object expected');
+      expect(result.communityName).to.equal('mycommunity');
+      expect(result.priceMargin).to.equal(undefined);
+    });
+
+    it('should parse both price margin and community name', async () => {
+      ctx.state.command.args = ['0', '100', 'USD', 'zelle', '5', 'mycommunity'];
+      const result = await validateBuyOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('mycommunity');
     });
 
     it('should work with ranges', async () => {

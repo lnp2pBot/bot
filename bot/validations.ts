@@ -161,6 +161,28 @@ const processParameters = (args: string[]) => {
   return correctedArgs;
 };
 
+// The two optional trailing params of /buy and /sell are the price margin and
+// the community name. They are told apart by type, not position: the numeric
+// one is the price margin, the non-numeric one is the community name. This
+// works whether the user passes both, only one, or none of them.
+const parseOptionalOrderParams = (optionalArgs: string[]) => {
+  // priceMargin is kept loosely typed because downstream callers feed it
+  // through isFloat/parseInt/isNaN, matching the previous untyped behaviour.
+  let priceMargin: any;
+  let communityName: string | undefined;
+
+  for (const arg of optionalArgs) {
+    if (arg === '') continue;
+    if (isNaN(Number(arg))) {
+      communityName = arg;
+    } else {
+      priceMargin = arg;
+    }
+  }
+
+  return { priceMargin, communityName };
+};
+
 const validateSellOrder = async (ctx: MainContext) => {
   try {
     let args = ctx.state.command.args;
@@ -170,7 +192,10 @@ const validateSellOrder = async (ctx: MainContext) => {
     }
     args = processParameters(args);
 
-    let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [amount, fiatAmount, fiatCode, paymentMethod] = args;
+    const { priceMargin, communityName } = parseOptionalOrderParams(
+      args.slice(4),
+    );
 
     if (priceMargin && isNaN(priceMargin)) {
       await ctx.reply(
@@ -244,6 +269,7 @@ const validateSellOrder = async (ctx: MainContext) => {
       fiatCode: fiatCode.toUpperCase(),
       paymentMethod,
       priceMargin,
+      communityName,
     };
   } catch (error) {
     logger.error(error);
@@ -260,7 +286,10 @@ const validateBuyOrder = async (ctx: MainContext) => {
     }
     args = processParameters(args);
 
-    let [amount, fiatAmount, fiatCode, paymentMethod, priceMargin] = args;
+    let [amount, fiatAmount, fiatCode, paymentMethod] = args;
+    const { priceMargin, communityName } = parseOptionalOrderParams(
+      args.slice(4),
+    );
 
     if (priceMargin && isNaN(priceMargin)) {
       await ctx.reply(
@@ -332,6 +361,7 @@ const validateBuyOrder = async (ctx: MainContext) => {
       fiatCode: fiatCode.toUpperCase(),
       paymentMethod,
       priceMargin,
+      communityName,
     };
   } catch (error) {
     logger.error(error);

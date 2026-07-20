@@ -71,7 +71,9 @@ must_be_numeric: ${fieldName} deve essere numerico
 sats_amount: importo in sats
 fiat_amount: importo in fiat
 sell_correct_format: |
-  /sell \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/sconto_\]
+  /sell \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/sconto_\] \[_community_\]
+
+  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\.
 
   Per creare un ordine di vendita di 1000 satoshi per 2 euro \(EUR\) e indicare che il pagamento in fiat avviene tramite bonifico o deposito ATM, occorre evitare di \<\> e \[\]\.
 
@@ -85,7 +87,9 @@ sell_correct_format: |
 
   `/sell 0 100\-500 EUR "metodo di pagamento" 3`
 buy_correct_format: |
-  /buy \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/discount_\]
+  /buy \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/discount_\] \[_community_\]
+
+  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\.
 
   Per creare un ordine di 1000 satoshi per 2 euro \(EUR\) e indicare che il pagamento in fiat avviene tramite bonifico, è necessario omettere entrambe le diciture \<\> e \[\]\.
 
@@ -241,8 +245,8 @@ must_be_number_or_range: 'Importo in fiat deve essere un numero o un range numer
 invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Lightning adress non disponibile ${la}
 help: |
-  /sell <_importo in satoshi_> <_importo in fiat_> <_fiat code_> <_metodo di pagamento_> [surplus/sconto] - Crea un ordine di vendita
-  /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [premium/discount] - Crea un ordine di acquisto
+  /sell <_importo in satoshi_> <_importo in fiat_> <_fiat code_> <_metodo di pagamento_> [surplus/sconto] [community] - Crea un ordine di vendita
+  /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [premium/discount] [community] - Crea un ordine di acquisto
   /takeorder <_order id_> - Permette di prendere un ordine dalla chat con il bot senza passare al canale dove è stato pubblicato
   /info - Mostra indo aggiuntive sul Bot
   /showusername - Disattiva la visualizzazione del nome utente in ogni nuovo ordine creato. Il valore predefinito è settato su no (false)

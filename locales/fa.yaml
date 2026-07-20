@@ -74,7 +74,9 @@ must_be_numeric: '${fieldName} باید عدد باشد.'
 sats_amount: تعداد ساتوشی
 fiat_amount: مقدار فیات
 sell_correct_format: |
-  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_community_\]
+
+  می‌توانید نام یکی از اجتماع‌های خود را به عنوان آخرین پارامتر اضافه کنید تا سفارش به جای اجتماع پیش‌فرض شما در آنجا منتشر شود\.
 
   جهت ایجاد سفارش فروش 1000 ساتوشی در ازای 300 هزار تومان \(IRT\) و اعلام «کارت به کارت» به عنوان روش پرداخت، باید از به کار بردن \<\> و \[\]\ اجتناب کنید\.
 
@@ -88,7 +90,9 @@ sell_correct_format: |
 
   `/sell 0 300000\-500000 IRT "payment method" 3`
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_community_\]
+
+  می‌توانید نام یکی از اجتماع‌های خود را به عنوان آخرین پارامتر اضافه کنید تا سفارش به جای اجتماع پیش‌فرض شما در آنجا منتشر شود\.
 
   جهت ایجاد سفارش خرید 1000 ساتوشی در ازای 300 هزار تومان \(IRT\) و اعلام «کارت به کارت» به عنوان روش پرداخت، باید از به کار بردن \<\> و \[\]\ اجتناب کنید\.
 
@@ -254,10 +258,10 @@ must_be_number_or_range: |
 invalid_lightning_address: نشانی لایتنینگ نامعتبر است.
 unavailable_lightning_address: 'نشانی لایتنینگ ${la} در دسترس نیست.'
 help: |
-  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount]
+  /sell <_sats amount_> <_fiat amount_> <_fiat code_> <_payment method_> [premium/discount] [community]
   سفارش فروش ایجاد می‌کند.
 
-  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount]
+  /buy <_sats amount_> <_fiat amount_> <_Fiat code_> <_payment method_> [premium/discount] [community]
   سفارش خرید ایجاد می‌کند.
 
   /takeorder <_order id_>

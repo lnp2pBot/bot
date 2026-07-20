@@ -71,7 +71,9 @@ must_be_numeric: ${fieldName} debe ser numérico
 sats_amount: monto en sats
 fiat_amount: monto en fiat
 sell_correct_format: |
-  /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+  /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\] \[_comunidad_\]
+
+  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\.
 
   Para crear una venta de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
@@ -85,7 +87,9 @@ sell_correct_format: |
 
   `/sell 0 100\-500 ves "pago móvil" 3`
 buy_correct_format: |
-  /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\]
+  /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\] \[_comunidad_\]
+
+  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\.
 
   Para crear una compra de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
@@ -242,8 +246,8 @@ invalid_lightning_address: Dirección lightning no válida
 unavailable_lightning_address: Dirección lightning ${la} no disponible
 ln_address_temporarily_disabled: ⚠️ Los pagos a Lightning Address están temporalmente deshabilitados por mantenimiento. Por favor envía una factura Lightning normal (BOLT11) por el monto exacto de la orden para recibir tus sats.
 help: |
-  /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de venta
-  /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] - Crea una orden de compra
+  /sell <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] [comunidad] - Crea una orden de venta
+  /buy <_monto en sats_> <_monto en fiat_> <_código fiat_> <_método de pago_> [prima/descuento] [comunidad] - Crea una orden de compra
   /takeorder <_order id_> - Permite tomar una orden desde el chat con el bot sin ir al canal donde fue publicada
   /info - Muestra información sobre el bot
   /showusername - Permite mostrar u ocultar el username en cada nueva orden creada, el valor predeterminado es no (falso)

@@ -73,7 +73,9 @@ must_be_numeric: ${fieldName} doit être numérique
 sats_amount: montant en sats
 fiat_amount: montant en fiat
 sell_correct_format: |
-  /sell \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\]
+  /sell \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\] \[_communauté_\]
+
+  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\.
 
   Pour créer une offre de vente de 1000 satoshis pour 6000 Francs CFA \(XOF\) et indiquer que le paiement fiat doit se faire via Wave ou Mobile Money, il faut omettre les caractères \<\> and \[\]\.
 
@@ -87,7 +89,9 @@ sell_correct_format: |
 
   `/sell 0 50000\-100000 XOF "Wave ou Mobile Money" 3`
 buy_correct_format: |
-  /buy \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\]
+  /buy \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\] \[_communauté_\]
+
+  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\.
 
   Pour créer une offre d'achat de 1000 satoshis pour 6000 Francs CFA \(XOF\) et indiquer que le paiement fiat doit se faire via transfert en ligne, il faut omettre les caractères \<\> and \[\]\.
 
@@ -243,8 +247,8 @@ must_be_number_or_range: 'Le montant fiat doit être un nombre entier ou une pla
 invalid_lightning_address: Adresse Lightning invalide !
 unavailable_lightning_address: Adresse Lightning non disponible ${la}
 help: |
-  /sell <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre de vente
-  /buy <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] - Pour créer une offre d'achat
+  /sell <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] [communauté] - Pour créer une offre de vente
+  /buy <_montant en sats_> <_montant en fiat_> <_code fiat_> <_méthode de paiement_> [plus-value/remise] [communauté] - Pour créer une offre d'achat
   /takeorder <_order id_> - Vous permet de prendre une commande depuis le chat avec le bot sans accéder au canal où elle a été publiée
   /info - Affiche des informations additionnelles à propos du bot
   /showusername - Désactive l'affichage du nom d'utilisateur dans chaque offre nouvellement créée. La valeur par défaut est définie sur false

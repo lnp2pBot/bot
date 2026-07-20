@@ -73,6 +73,40 @@ export const getCommunityInfo = async (
 };
 
 /**
+ * Look up an enabled community by the identifier the user typed, ignoring
+ * uppercase/lowercase. It first tries the community group (the @handle or
+ * telegram group id, the same identifier used by /setcomm) and falls back to
+ * the display name. Also reports whether the given user is banned from it.
+ */
+export const getCommunityByIdentifier = async (
+  user: UserDocument,
+  identifier: string,
+): Promise<CommunityLookupResult> => {
+  try {
+    // Escape regex metacharacters so the identifier is matched literally
+    const escaped = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`^${escaped}$`, 'i');
+
+    const community =
+      (await Community.findOne({ group: regex, enabled: { $ne: false } })) ||
+      (await Community.findOne({ name: regex, enabled: { $ne: false } }));
+
+    if (!community) {
+      return { community: null, communityId: undefined, isBanned: false };
+    }
+
+    const isBanned = community.banned_users.some(
+      (buser: any) => String(buser.id) === String(user._id),
+    );
+
+    return { community, communityId: community._id, isBanned };
+  } catch (error) {
+    logger.error(`Error in getCommunityByIdentifier: ${error}`);
+    return { community: null, communityId: undefined, isBanned: false };
+  }
+};
+
+/**
  * Check if a currency is supported by a community
  */
 export const isCurrencySupported = (

@@ -12,6 +12,7 @@ import * as ordersActions from '../../ordersActions';
 import { deletedCommunityMessage } from './messages';
 import {
   getCommunityInfo,
+  getCommunityByIdentifier,
   isCurrencySupported,
 } from '../../../util/communityHelper';
 import { takebuy, takesell, takebuyValidation } from './takeOrder';
@@ -50,18 +51,15 @@ const sell = async (ctx: MainContext) => {
     const sellOrderParams = await validateSellOrder(ctx);
 
     if (!sellOrderParams) return;
-    const { amount, fiatAmount, fiatCode, paymentMethod } = sellOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod, communityName } =
+      sellOrderParams;
     let priceMargin = sellOrderParams.priceMargin;
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
 
-    // Optimized community lookup - single database query instead of multiple
-    const communityInfo = await getCommunityInfo(
-      user,
-      ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat,
-    );
+    const communityInfo = await resolveOrderCommunity(ctx, user, communityName);
+    if (!communityInfo) return;
 
     const { community, communityId, isBanned } = communityInfo;
 
@@ -119,18 +117,15 @@ const buy = async (ctx: MainContext) => {
     const buyOrderParams = await validateBuyOrder(ctx);
     if (!buyOrderParams) return;
 
-    const { amount, fiatAmount, fiatCode, paymentMethod } = buyOrderParams;
+    const { amount, fiatAmount, fiatCode, paymentMethod, communityName } =
+      buyOrderParams;
     let priceMargin = buyOrderParams.priceMargin;
     priceMargin = isFloat(priceMargin)
       ? parseFloat(priceMargin.toFixed(2))
       : parseInt(priceMargin);
 
-    // Optimized community lookup - single database query instead of multiple
-    const communityInfo = await getCommunityInfo(
-      user,
-      ctx.message?.chat.type || 'private',
-      ctx.message?.chat as Chat.UserNameChat,
-    );
+    const communityInfo = await resolveOrderCommunity(ctx, user, communityName);
+    if (!communityInfo) return;
 
     const { community, communityId, isBanned } = communityInfo;
 
@@ -181,6 +176,37 @@ const buy = async (ctx: MainContext) => {
     logger.error(error);
   }
 };
+
+// Decides which community an order should be published to.
+// When the user passes a community name in a private chat, the order is
+// published to that community. Otherwise the default behaviour applies: the
+// group's community when the command runs inside a group, or the user's
+// default community in private. Returns null when the flow must stop because
+// an error was already reported to the user.
+async function resolveOrderCommunity(
+  ctx: MainContext,
+  user: UserDocument,
+  communityName?: string,
+) {
+  const isPrivate = (ctx.message?.chat.type || 'private') === 'private';
+
+  // The community name is only honored in private chats; inside a group the
+  // group's own community always wins.
+  if (communityName && isPrivate) {
+    const communityInfo = await getCommunityByIdentifier(user, communityName);
+    if (!communityInfo.community) {
+      await ctx.reply(ctx.i18n.t('community_not_found'));
+      return null;
+    }
+    return communityInfo;
+  }
+
+  return getCommunityInfo(
+    user,
+    ctx.message?.chat.type || 'private',
+    ctx.message?.chat as Chat.UserNameChat,
+  );
+}
 
 async function enterWizard(
   ctx: CommunityContext,

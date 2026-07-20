@@ -72,7 +72,9 @@ must_be_numeric: ${fieldName} deve ser numérico
 sats_amount: quantidade de sats
 fiat_amount: quantidade fiduciária
 sell_correct_format: |
-  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_comunidade_\]
+
+  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\.
 
   Para criar uma oferta de venda de 1000 satoshis por 2 dólares americanos \(USD\) e indicar que o pagamento fiduciário é por transferência ou depósito no caixa eletrônico, você deve evitar \<\> e \[\]\.
 
@@ -86,7 +88,9 @@ sell_correct_format: |
 
   `/sell 0 100\-500 USD "forma de pagamento" 3`
 buy_correct_format: |
-  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\]
+  /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_comunidade_\]
+
+  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\.
 
   Para criar uma oferta e pedir 1000 Satoshis por 2 \(USD\) e indicar que o pagamento fiduciário é através de transferência, você deve omitir os dois \<\> e \[\]\.
 
@@ -242,8 +246,8 @@ must_be_number_or_range: 'Fiat_amount deve ser um número ou intervalo numérico
 invalid_lightning_address: Inválida lightning address
 unavailable_lightning_address: Indisponível lightning address ${la}
 help: |
-  /sell <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto - Criar uma ordem de venda
-  /buy <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto - Cria um pedido de compra
+  /sell <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto comunidade - Criar uma ordem de venda
+  /buy <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto comunidade - Cria um pedido de compra
   /takeorder <_order id_> - Permite ao usuário fazer um pedido dentro do chat com o bot, sem precisar ir até o canal onde foi publicado
   /info - Mostra informações sobre o bot
   /showusername - Permite mostrar ou ocultar o nome de usuário em cada novo pedido criado, o valor padrão é não (falso)
