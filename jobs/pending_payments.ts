@@ -254,9 +254,9 @@ export const attemptPendingPayments = async (
         );
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
-        // Persist the routing fee paid for this order payout in the PendingPayment object.
-        // It also allows to persist the fee in the order object.
-        pending.fee = payment.fee;
+        // The routing fee is recorded on both the order and the pending payment
+        // inside completeOrderAsSuccess, which every settle path funnels
+        // through (see #867).
         // Record the invoice actually paid (pending.payment_request) in
         // order.buyer_invoice_paid, without overwriting the original
         // order.buyer_invoice, so reconciliation/auditing can rely on it. See #864.
@@ -379,6 +379,11 @@ export const attemptCommunitiesPendingPayments = async (
         const payment = status.payment;
         pending.paid = true;
         pending.paid_at = new Date();
+        // Reconciliation path: the withdrawal was already paid by an earlier
+        // run that lost the response (timeout / in-flight). The fee is just as
+        // real here as in the fresh-payment branch below, so it must be
+        // recorded too, otherwise the most common case would keep losing it.
+        pending.routing_fee = payment.fee ?? 0;
 
         const community = await Community.findById(pending.community_id);
         if (community === null) throw Error('Community was not found in DB');
@@ -474,7 +479,7 @@ export const attemptCommunitiesPendingPayments = async (
         // payouts (whose fee is stored on the order), community withdrawals
         // have no order, so without this the cost would only live in the log
         // and be invisible to the operator/accounting (see issue #867).
-        pending.fee = payment.fee;
+        pending.routing_fee = payment.fee ?? 0;
 
         // The earnings were already atomically zeroed when this withdrawal was
         // claimed at scheduling time, so don't reset them again here: doing so

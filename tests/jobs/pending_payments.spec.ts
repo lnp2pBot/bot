@@ -3,6 +3,11 @@ export {};
 const { expect } = require('chai');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire').noCallThru();
+const {
+  usePaymentAttempts,
+  loggerStub,
+  utilStub,
+} = require('../helpers/stubs');
 
 /**
  * Regression tests for issue #864: on a successful retry, the order must record
@@ -11,16 +16,7 @@ const proxyquire = require('proxyquire').noCallThru();
  * preserved so no data is lost for debugging/reconciliation.
  */
 describe('attemptPendingPayments (issue #864)', () => {
-  const originalAttempts = process.env.PAYMENT_ATTEMPTS;
-
-  beforeEach(() => {
-    process.env.PAYMENT_ATTEMPTS = '3';
-  });
-
-  afterEach(() => {
-    process.env.PAYMENT_ATTEMPTS = originalAttempts;
-    sinon.restore();
-  });
+  usePaymentAttempts('3');
 
   // A payment status that is neither confirmed nor pending, so the job falls
   // through the double-pay guards and actually attempts the retry payment.
@@ -120,18 +116,9 @@ describe('attemptPendingPayments (issue #864)', () => {
       {
         '../models': models,
         '../bot/messages': messages,
-        '../logger': {
-          logger: {
-            info: sinon.stub(),
-            error: sinon.stub(),
-            warning: sinon.stub(),
-            warn: sinon.stub(),
-          },
-        },
+        '../logger': loggerStub(),
         '../ln': { payRequest, getPaymentStatus },
-        '../util': {
-          getUserI18nContext: sinon.stub().resolves({ t: (k: string) => k }),
-        },
+        '../util': utilStub(),
         '../bot/modules/events/orders': { orderUpdated },
         '../util/completeOrder': { completeOrderAsSuccess, healConfirmedOrder },
       },

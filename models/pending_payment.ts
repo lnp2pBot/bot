@@ -3,10 +3,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IPendingPayment extends Document {
   description: string;
   amount: number;
-  // Lightning routing fee paid for this payment, in satoshis. Mainly relevant
-  // for community earnings withdrawals, which have no associated order to hold
-  // the fee (see issue #867).
-  fee: number;
+  // Lightning routing fee paid for this payment, in satoshis. Named after
+  // Order.routing_fee on purpose: in Order, `fee` is the platform commission
+  // and `routing_fee` is the Lightning routing cost, so reusing `fee` here
+  // would mean two different things under the same name. Set on every path
+  // that settles a pending payment, so community earnings withdrawals (which
+  // have no order to hold the fee) also record what they cost. See #867.
+  routing_fee: number;
   attempts: number;
   paid: boolean;
   is_invoice_expired: boolean;
@@ -32,7 +35,7 @@ const PendingPaymentSchema = new Schema<IPendingPayment>({
       message: '{VALUE} is not an integer value',
     },
   },
-  fee: { type: Number, min: 0, default: 0 },
+  routing_fee: { type: Number, min: 0, default: 0 },
   attempts: { type: Number, min: 0, default: 0 },
   paid: { type: Boolean, default: false },
   is_invoice_expired: { type: Boolean, default: false },
