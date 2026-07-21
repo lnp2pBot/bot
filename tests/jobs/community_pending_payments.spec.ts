@@ -32,7 +32,12 @@ describe('attemptCommunitiesPendingPayments (issue #867)', () => {
     payment: any;
   }) {
     const payRequest = sinon.stub().resolves(payment);
-    const isPendingPayment = sinon.stub().resolves(false);
+    const getPaymentStatus = sinon.stub().resolves({
+      is_confirmed: false,
+      is_failed: false,
+      is_pending: false,
+      payment: undefined,
+    });
 
     const models = {
       PendingPayment: { find: sinon.stub().resolves([pending]) },
@@ -56,7 +61,7 @@ describe('attemptCommunitiesPendingPayments (issue #867)', () => {
             warning: sinon.stub(),
           },
         },
-        '../ln': { payRequest, isPendingPayment },
+        '../ln': { payRequest, getPaymentStatus },
         '../util': {
           getUserI18nContext: sinon.stub().resolves({ t: (k: string) => k }),
         },
