@@ -254,6 +254,9 @@ export const attemptPendingPayments = async (
         );
         const sellerUser = await User.findOne({ _id: order.seller_id });
         if (sellerUser === null) throw Error('sellerUser was not found in DB');
+        // Persist the routing fee paid for this order payout in the PendingPayment object.
+        // It also allows to persist the fee in the order object.
+        pending.fee = payment.fee;
         // Record the invoice actually paid (pending.payment_request) in
         // order.buyer_invoice_paid, without overwriting the original
         // order.buyer_invoice, so reconciliation/auditing can rely on it. See #864.
