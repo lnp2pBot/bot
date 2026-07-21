@@ -266,6 +266,10 @@ help: |
   /blocklist - Lista de seus usuários bloqueados
   /cancel <ID do pedido> - Cancela um pedido que não foi feito
   /cancelall - Cancela todos os pedidos postados e não atendidos
+  /scheduleorder <_buy|sell_> <_sats_> <_valor fiat_> <_código fiat_> <_método de pagamento_> [_prêmio_] - Cria um pedido recorrente que se republica automaticamente
+  /cancelschedule <_id do schedule_> - Para a republicação automática de um pedido programado
+  /listschedules - Lista seus pedidos programados ativos com seus IDs
+  /cancelallschedules - Cancela todos os seus pedidos programados
   /terms - Mostra os termos e condições ao usar o bot
 
   Nostr:
@@ -758,3 +762,42 @@ community_already_enabled: Esta comunidade já está ativada
 ambiguous_community_input: Várias comunidades correspondem a esse nome de usuário, por favor use o ID da comunidade
 
 order_take_rate_limit: "Você atingiu o limite de ordens aceitas. Aguarde ${hours} hora(s) antes de aceitar uma nova ordem, ou conclua uma ordem com sucesso para reiniciar o contador."
+scheduleorder_usage: "Uso: /scheduleorder <buy|sell> <sats> <valor fiat> <código fiat> <método de pagamento> [prêmio]"
+cancelschedule_usage: "Uso: /cancelschedule <id do schedule>"
+schedule_not_found: "⚠️ Schedule não encontrado ou já inativo."
+schedule_cancelled: "✅ Schedule ${scheduleId} cancelado. Não serão mais publicadas ordens automaticamente."
+listschedules_empty: "Você não tem ordens programadas ativas."
+listschedules_header: "📋 Suas ordens programadas:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Você não tem ordens programadas ativas para cancelar."
+all_schedules_cancelled: "✅ Foram canceladas ${count} ordem(ns) programada(s). Não serão mais publicadas ordens automaticamente."
+schedule_req_max_reached: "⚠️ Você já tem ${max} ordens programadas ativas, que é o máximo permitido. Cancele uma com /cancelschedule antes de criar uma nova."
+schedule_req_account_age: "⚠️ Sua conta deve ter pelo menos ${days} dias para criar ordens programadas."
+schedule_req_completed_orders: "⚠️ Você precisa de pelo menos ${count} ordens concluídas para criar ordens programadas."
+schedule_req_dormant: "⚠️ Você precisa ter concluído uma ordem nos últimos ${days} dias para criar ordens programadas."
+schedule_req_volume: "⚠️ Você precisa de um volume negociado de pelo menos ${volume} sats para criar ordens programadas."
+schedule_req_rating: "⚠️ Você precisa de uma reputação de pelo menos ${rating} para criar ordens programadas."
+schedule_req_completion_rate: "⚠️ Sua taxa de conclusão de ordens (${current}%) está abaixo dos ${rate}% exigidos. Conclua mais das suas ordens antes de programar."
+schedule_dormant_removed: "⚠️ Removi todas as suas ordens programadas porque você não concluiu nenhuma ordem nos últimos ${days} dias."
+schedule_creation_cancelled: "❌ Criação do schedule cancelada."
+schedule_created: "✅ Ordem programada criada! Seu ID é: ${scheduleId}\nUse /cancelschedule ${scheduleId} para pará-la."
+schedule_choose_days: "📅 Em quais dias a ordem deve ser publicada?"
+sched_daily: Todos os dias
+sched_weekdays: Seg–Sex
+sched_weekend: Fim de semana
+sched_custom: Personalizado
+schedule_enter_custom_days: "✍️ Insira os dias em inglês separados por vírgulas (ex: sunday, wednesday, friday)"
+invalid_days: "⚠️ Dias inválidos. Insira os nomes dos dias em inglês separados por vírgulas (ex: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 Em que hora a ordem deve ser publicada? Insira um número entre 0 e 23 (UTC)."
+invalid_hour: "⚠️ Hora inválida. Por favor insira um número entre 0 e 23."
+schedule_confirm_summary: |
+  📋 *Resumo da ordem programada*
+
+  Tipo: ${type}
+  Valor: ${fiatAmount} ${fiatCode}
+  Método de pagamento: ${paymentMethod}
+  Dias: ${days}
+  Hora: ${hour}

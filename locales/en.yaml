@@ -269,6 +269,10 @@ help: |
   /blocklist - List of your blocked users
   /cancel <_order id_> - Cancel an order that has not been taken yet
   /cancelall - Cancel all posted and untaken orders
+  /scheduleorder <_buy|sell_> <_sats_> <_fiat amount_> <_fiat code_> <_payment method_> [_premium_] - Creates a recurring order that auto-republishes
+  /cancelschedule <_schedule id_> - Stops auto-republishing of a scheduled order
+  /listschedules - Lists your active scheduled orders with their IDs
+  /cancelallschedules - Cancels all your scheduled orders
   /terms - Shows the terms and conditions when using the bot
 
   Nostr:
@@ -765,3 +769,44 @@ community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead
 
 order_take_rate_limit: "You have reached the order-take limit. Please wait ${hours} hour(s) before taking a new order, or successfully complete an order to reset the counter."
+scheduleorder_usage: "Usage: /scheduleorder <buy|sell> <sats> <fiat amount> <fiat code> <payment method> [premium]"
+cancelschedule_usage: "Usage: /cancelschedule <schedule id>"
+schedule_not_found: "⚠️ Schedule not found or already inactive."
+schedule_cancelled: "✅ Schedule ${scheduleId} cancelled. No more orders will be auto-published."
+listschedules_empty: "You have no active scheduled orders."
+listschedules_header: "📋 Your scheduled orders:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "You have no active scheduled orders to cancel."
+all_schedules_cancelled: "✅ Cancelled ${count} scheduled order(s). No more orders will be auto-published."
+schedule_req_max_reached: "⚠️ You already have ${max} active scheduled orders, which is the maximum allowed. Cancel one with /cancelschedule before creating a new one."
+schedule_req_account_age: "⚠️ Your account must be at least ${days} days old to create scheduled orders."
+schedule_req_completed_orders: "⚠️ You need at least ${count} completed orders to create scheduled orders."
+schedule_req_dormant: "⚠️ You need to have completed an order in the last ${days} days to create scheduled orders."
+schedule_req_volume: "⚠️ You need a traded volume of at least ${volume} sats to create scheduled orders."
+schedule_req_rating: "⚠️ You need a reputation of at least ${rating} to create scheduled orders."
+schedule_req_completion_rate: "⚠️ Your order completion rate (${current}%) is below the required ${rate}%. Complete more of your orders before scheduling."
+schedule_dormant_removed: "⚠️ I removed all your scheduled orders because you didn't complete any order in the last ${days} days."
+schedule_creation_cancelled: "❌ Schedule creation cancelled."
+schedule_created: "✅ Scheduled order created! Your ID is: ${scheduleId}\nUse /cancelschedule ${scheduleId} to stop it."
+schedule_choose_days: "📅 On which days should the order be published?"
+sched_daily: Every day
+sched_weekdays: Mon–Fri
+sched_weekend: Weekend
+sched_custom: Custom
+schedule_enter_custom_days: "✍️ Enter the days separated by commas (e.g.: sunday, wednesday, friday)"
+invalid_days: "⚠️ Invalid days. Enter English day names separated by commas (e.g.: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 At what hour should the order be published? Enter a number between 0 and 23 (UTC)."
+invalid_hour: "⚠️ Invalid hour. Please enter a number between 0 and 23."
+schedule_confirm_summary: |
+  📋 *Order schedule summary*
+
+  Type: ${type}
+  Amount: ${fiatAmount} ${fiatCode}
+  Payment method: ${paymentMethod}
+  Days: ${days}
+  Hour: ${hour}
+
+  Confirm?
