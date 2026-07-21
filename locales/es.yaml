@@ -73,7 +73,7 @@ fiat_amount: monto en fiat
 sell_correct_format: |
   /sell \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\] \[_comunidad_\]
 
-  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\.
+  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\. Debes incluir la prima/descuento antes \(usa 0 si no quieres ninguno\)\.
 
   Para crear una venta de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 
@@ -89,7 +89,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_monto en sats_\> \<_monto en fiat_\> \<_código fiat_\> \<_método de pago_\> \[_prima/descuento_\] \[_comunidad_\]
 
-  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\.
+  Puedes agregar el nombre de una de tus comunidades como último parámetro para publicar la orden ahí en lugar de en tu comunidad por defecto\. Debes incluir la prima/descuento antes \(usa 0 si no quieres ninguno\)\.
 
   Para crear una compra de 1000 satoshis por 2 bolívares \(VES\) e indicar que el método de pago fiat es pago móvil, debes omitir los \<\> y los \[\]\.
 

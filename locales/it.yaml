@@ -73,7 +73,7 @@ fiat_amount: importo in fiat
 sell_correct_format: |
   /sell \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/sconto_\] \[_community_\]
 
-  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\.
+  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\. Devi indicare il surplus/sconto prima \(usa 0 se non ne vuoi\)\.
 
   Per creare un ordine di vendita di 1000 satoshi per 2 euro \(EUR\) e indicare che il pagamento in fiat avviene tramite bonifico o deposito ATM, occorre evitare di \<\> e \[\]\.
 
@@ -89,7 +89,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/discount_\] \[_community_\]
 
-  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\.
+  Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\. Devi indicare il surplus/sconto prima \(usa 0 se non ne vuoi\)\.
 
   Per creare un ordine di 1000 satoshi per 2 euro \(EUR\) e indicare che il pagamento in fiat avviene tramite bonifico, è necessario omettere entrambe le diciture \<\> e \[\]\.
 

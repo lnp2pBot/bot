@@ -74,7 +74,7 @@ fiat_amount: quantidade fiduciária
 sell_correct_format: |
   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_comunidade_\]
 
-  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\.
+  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\. Você deve incluir o premium/desconto antes \(use 0 se não quiser nenhum\)\.
 
   Para criar uma oferta de venda de 1000 satoshis por 2 dólares americanos \(USD\) e indicar que o pagamento fiduciário é por transferência ou depósito no caixa eletrônico, você deve evitar \<\> e \[\]\.
 
@@ -90,7 +90,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_comunidade_\]
 
-  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\.
+  Você pode adicionar o nome de uma de suas comunidades como último parâmetro para publicar a ordem lá em vez de na sua comunidade padrão\. Você deve incluir o premium/desconto antes \(use 0 se não quiser nenhum\)\.
 
   Para criar uma oferta e pedir 1000 Satoshis por 2 \(USD\) e indicar que o pagamento fiduciário é através de transferência, você deve omitir os dois \<\> e \[\]\.
 

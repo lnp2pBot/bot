@@ -161,24 +161,19 @@ const processParameters = (args: string[]) => {
   return correctedArgs;
 };
 
-// The two optional trailing params of /buy and /sell are the price margin and
-// the community name. They are told apart by type, not position: the numeric
-// one is the price margin, the non-numeric one is the community name. This
-// works whether the user passes both, only one, or none of them.
+// The two optional trailing params of /buy and /sell are, in order, the price
+// margin and the community. They are told apart by position, not by type: the
+// first optional arg is always the price margin, the second is always the
+// community. Positional parsing keeps numeric community identifiers (e.g. a
+// Telegram group id) from being mistaken for a price margin, and makes any
+// leftover non-numeric token fail the price-margin check instead of being
+// silently swallowed as a community.
 const parseOptionalOrderParams = (optionalArgs: string[]) => {
   // priceMargin is kept loosely typed because downstream callers feed it
   // through isFloat/parseInt/isNaN, matching the previous untyped behaviour.
-  let priceMargin: any;
-  let communityName: string | undefined;
-
-  for (const arg of optionalArgs) {
-    if (arg === '') continue;
-    if (isNaN(Number(arg))) {
-      communityName = arg;
-    } else {
-      priceMargin = arg;
-    }
-  }
+  const priceMargin: any = optionalArgs[0] === '' ? undefined : optionalArgs[0];
+  const communityName: string | undefined =
+    optionalArgs[1] === '' ? undefined : optionalArgs[1];
 
   return { priceMargin, communityName };
 };

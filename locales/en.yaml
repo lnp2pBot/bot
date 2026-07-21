@@ -75,7 +75,7 @@ fiat_amount: fiat amount
 sell_correct_format: |
   /sell \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_community_\]
 
-  You can add the name of one of your communities as the last parameter to publish the order there instead of your default community\.
+  You can add the name of one of your communities as the last parameter to publish the order there instead of your default community\. You must include the premium/discount before it \(use 0 if you don't want any\)\.
 
   In order to create a sell order of 1000 satoshis for 2 US dollars \(USD\) and indicate that the fiat payment is through transfer or ATM deposit, you must avoid \<\> and \[\]\.
 
@@ -91,7 +91,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_sats amount_\> \<_fiat amount_\> \<_fiat code_\> \<_payment method_\> \[_premium/discount_\] \[_community_\]
 
-  You can add the name of one of your communities as the last parameter to publish the order there instead of your default community\.
+  You can add the name of one of your communities as the last parameter to publish the order there instead of your default community\. You must include the premium/discount before it \(use 0 if you don't want any\)\.
 
   In order to create an order for 1000 satoshis for 2 \(USD\) and indicate that fiat payment is through transfer, you must to omit both \<\> and \[\]\.
 

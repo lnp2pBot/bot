@@ -75,7 +75,7 @@ fiat_amount: montant en fiat
 sell_correct_format: |
   /sell \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\] \[_communauté_\]
 
-  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\.
+  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\. Vous devez indiquer la plus\-value/remise avant \(utilisez 0 si vous n'en voulez pas\)\.
 
   Pour créer une offre de vente de 1000 satoshis pour 6000 Francs CFA \(XOF\) et indiquer que le paiement fiat doit se faire via Wave ou Mobile Money, il faut omettre les caractères \<\> and \[\]\.
 
@@ -91,7 +91,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_montant en sats_\> \<_montant en fiat_\> \<_code monnaie fiat_\> \<_méthode de paiement_\> \[_plus-value/remise_\] \[_communauté_\]
 
-  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\.
+  Vous pouvez ajouter le nom d'une de vos communautés comme dernier paramètre pour y publier l'ordre au lieu de votre communauté par défaut\. Vous devez indiquer la plus\-value/remise avant \(utilisez 0 si vous n'en voulez pas\)\.
 
   Pour créer une offre d'achat de 1000 satoshis pour 6000 Francs CFA \(XOF\) et indiquer que le paiement fiat doit se faire via transfert en ligne, il faut omettre les caractères \<\> and \[\]\.
 

@@ -188,11 +188,10 @@ async function resolveOrderCommunity(
   user: UserDocument,
   communityName?: string,
 ) {
-  const isPrivate = (ctx.message?.chat.type || 'private') === 'private';
-
-  // The community name is only honored in private chats; inside a group the
-  // group's own community always wins.
-  if (communityName && isPrivate) {
+  // An explicit community always wins, in private chats and in groups alike.
+  // Only when none is passed do we fall back to the group's community (in a
+  // group) or the user's default community (in private).
+  if (communityName) {
     const communityInfo = await getCommunityByIdentifier(user, communityName);
     if (!communityInfo.community) {
       await ctx.reply(ctx.i18n.t('community_not_found'));

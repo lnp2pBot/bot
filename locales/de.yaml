@@ -73,7 +73,7 @@ fiat_amount: fiat Wert
 sell_correct_format: |
   /sell \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\] \[_Community_\]
 
-  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\.
+  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\. Du musst den Zuschlag/Rabatt davor angeben \(nutze 0, wenn du keinen möchtest\)\.
 
   Um einen Verkaufsauftrag von 1000 Sats für 2 Euro \(EUR\) zu erstellen und anzugeben, dass die Zahlung in FIAT durch Überweisung oder Einzahlung am Geldautomaten erfolgt, musst du \<\> und \[\] weglassen\.
 
@@ -89,7 +89,7 @@ sell_correct_format: |
 buy_correct_format: |
   /buy \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\] \[_Community_\]
 
-  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\.
+  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\. Du musst den Zuschlag/Rabatt davor angeben \(nutze 0, wenn du keinen möchtest\)\.
 
   Um einen Auftrag über 1000 Sats für 2 \(EUR\) zu erstellen und anzugeben, dass die Zahlung per Überweisung erfolgt, musst du sowohl \<\> als auch \[\] weglassen\.
 

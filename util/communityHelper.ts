@@ -73,10 +73,14 @@ export const getCommunityInfo = async (
 };
 
 /**
- * Look up an enabled community by the identifier the user typed, ignoring
- * uppercase/lowercase. It first tries the community group (the @handle or
- * telegram group id, the same identifier used by /setcomm) and falls back to
- * the display name. Also reports whether the given user is banned from it.
+ * Look up an enabled community by the identifier the user typed. It first tries
+ * the community group (the @handle or telegram group id, the same identifier
+ * used by /setcomm), matched ignoring uppercase/lowercase since the group is
+ * stored lowercase and unique. It then falls back to the display name, matched
+ * exactly (case-sensitive) and restricted to public communities: the name is
+ * only case-sensitively unique, so an exact match stays unambiguous, and
+ * private communities can only be reached through their canonical group id.
+ * Also reports whether the given user is banned from it.
  */
 export const getCommunityByIdentifier = async (
   user: UserDocument,
@@ -85,11 +89,18 @@ export const getCommunityByIdentifier = async (
   try {
     // Escape regex metacharacters so the identifier is matched literally
     const escaped = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`^${escaped}$`, 'i');
+    const groupRegex = new RegExp(`^${escaped}$`, 'i');
 
     const community =
-      (await Community.findOne({ group: regex, enabled: { $ne: false } })) ||
-      (await Community.findOne({ name: regex, enabled: { $ne: false } }));
+      (await Community.findOne({
+        group: groupRegex,
+        enabled: { $ne: false },
+      })) ||
+      (await Community.findOne({
+        name: identifier,
+        public: true,
+        enabled: { $ne: false },
+      }));
 
     if (!community) {
       return { community: null, communityId: undefined, isBanned: false };
