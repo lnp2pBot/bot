@@ -56,6 +56,11 @@ export const completeOrderAsSuccess = async (
   if (pending) {
     pending.paid = true;
     pending.paid_at = new Date();
+    // Record the routing fee here rather than at the call sites: every path
+    // that settles an order payout (a fresh retry payment, or reconciliation
+    // of an already-confirmed one via healConfirmedOrder) funnels through this
+    // function, so the pending payment is never left with a stale 0. See #867.
+    pending.routing_fee = payment.fee ?? 0;
     await pending.save();
   }
   buyerUser.trades_completed++;
