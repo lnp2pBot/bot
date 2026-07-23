@@ -2,6 +2,8 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IOrder extends Document<string> {
   _id: string;
+  // mongoose 9 no longer exposes the `id` virtual on the Document type
+  id: string;
   description?: string;
   amount: number;
   max_amount: number;

@@ -25,12 +25,16 @@ const advanceNextRetry = (pending: IPendingPayment): void => {
   );
 };
 
+const maxPaymentAttempts = process.env.PAYMENT_ATTEMPTS
+  ? parseInt(process.env.PAYMENT_ATTEMPTS, 10)
+  : 3;
+
 export const attemptPendingPayments = async (
   bot: Telegraf<CommunityContext>,
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: maxPaymentAttempts },
     is_invoice_expired: false,
     community_id: null,
     next_retry: { $lte: new Date() },
@@ -336,7 +340,7 @@ export const attemptCommunitiesPendingPayments = async (
 ): Promise<void> => {
   const pendingPayments = await PendingPayment.find({
     paid: false,
-    attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+    attempts: { $lt: maxPaymentAttempts },
     is_invoice_expired: false,
     community_id: { $ne: null },
     next_retry: { $lte: new Date() },
