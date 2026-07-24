@@ -1,6 +1,7 @@
 import { HasTelegram } from '../bot/start';
 import { User, Order } from '../models';
 import { cancelShowHoldInvoice, cancelAddInvoice } from '../bot/commands';
+import { cancelHoldInvoice } from '../ln';
 import * as messages from '../bot/messages';
 import {
   getUserI18nContext,
@@ -116,10 +117,41 @@ const cancelOrders = async (bot: HasTelegram) => {
       ],
     });
     for (const order of expiredOrders) {
-      order.status = 'EXPIRED';
-      await order.save();
-      OrderEvents.orderUpdated(order);
-      logger.info(`Order Id ${order.id} expired!`);
+      await PerOrderIdMutex.instance.runExclusive(
+        String(order._id),
+        async () => {
+          const updatedOrder = await Order.findById(order._id);
+          if (!updatedOrder) return;
+          // Don't stomp an order that advanced after the find above (e.g. a
+          // release/payout currently in flight under the same mutex).
+          if (
+            updatedOrder.status !== 'ACTIVE' &&
+            updatedOrder.status !== 'FIAT_SENT'
+          )
+            return;
+
+          // For ACTIVE orders the buyer never signalled fiat-sent, so it is
+          // safe to cancel the hold invoice and refund the seller instead of
+          // orphaning the hash. check_hold_invoice_expired ignores EXPIRED
+          // orders, so without this the seller's funds would stay locked until
+          // the on-chain CLTV timeout. FIAT_SENT orders are NOT auto-refunded
+          // here (the buyer claims to have paid) and are left for the
+          // dispute/admin flow.
+          if (updatedOrder.status === 'ACTIVE' && updatedOrder.hash) {
+            await cancelHoldInvoice({ hash: updatedOrder.hash });
+          } else if (updatedOrder.status === 'FIAT_SENT' && updatedOrder.hash) {
+            logger.warning(
+              `Order Id ${updatedOrder.id} expired in FIAT_SENT with an open ` +
+                `hold invoice; leaving it for dispute/admin handling`,
+            );
+          }
+
+          updatedOrder.status = 'EXPIRED';
+          await updatedOrder.save();
+          OrderEvents.orderUpdated(updatedOrder);
+          logger.info(`Order Id ${updatedOrder.id} expired!`);
+        },
+      );
     }
   } catch (error) {
     logger.error(error);
