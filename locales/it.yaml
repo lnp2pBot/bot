@@ -87,7 +87,7 @@ sell_correct_format: |
 
   `/sell 0 100\-500 EUR "metodo di pagamento" 3`
 buy_correct_format: |
-  /buy \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/discount_\] \[_community_\]
+  /buy \<_importo in sats_\> \<_importo in fiat_\> \<_fiat code_\> \<_metodo di pagamento_\> \[_surplus/sconto_\] \[_community_\]
 
   Puoi aggiungere il nome di una delle tue community come ultimo parametro per pubblicare l'ordine lì invece che nella tua community predefinita\. Devi indicare il surplus/sconto prima \(usa 0 se non ne vuoi\)\.
 
@@ -246,7 +246,7 @@ invalid_lightning_address: Invalid lightning adress
 unavailable_lightning_address: Lightning adress non disponibile ${la}
 help: |
   /sell <_importo in satoshi_> <_importo in fiat_> <_fiat code_> <_metodo di pagamento_> [surplus/sconto] [community] - Crea un ordine di vendita
-  /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [premium/discount] [community] - Crea un ordine di acquisto
+  /buy <_importo in satoshi_> <_importo in fiat_> <_Fiat code_> <_metodo di pagamento_> [surplus/sconto] [community] - Crea un ordine di acquisto
   /takeorder <_order id_> - Permette di prendere un ordine dalla chat con il bot senza passare al canale dove è stato pubblicato
   /info - Mostra indo aggiuntive sul Bot
   /showusername - Disattiva la visualizzazione del nome utente in ogni nuovo ordine creato. Il valore predefinito è settato su no (false)

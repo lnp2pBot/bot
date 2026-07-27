@@ -186,6 +186,24 @@ describe('Validations', () => {
       expect(result.communityName).to.equal('mycommunity');
     });
 
+    it('should reject a surplus argument after the community name', async () => {
+      // Only two optional params exist, so a third token means the user
+      // mistyped. It must be reported instead of silently dropped, which would
+      // publish an order the user did not ask for.
+      ctx.state.command.args = [
+        '0',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        'mycommunity',
+        'unexpected',
+      ];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
+    });
+
     it('should work with ranges', async () => {
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle', '5'];
       const result = await validateSellOrder(ctx);
@@ -281,6 +299,24 @@ describe('Validations', () => {
       if (result === false) throw new Error('object expected');
       expect(result.priceMargin).to.equal('5');
       expect(result.communityName).to.equal('mycommunity');
+    });
+
+    it('should reject a surplus argument after the community name', async () => {
+      // Only two optional params exist, so a third token means the user
+      // mistyped. It must be reported instead of silently dropped, which would
+      // publish an order the user did not ask for.
+      ctx.state.command.args = [
+        '0',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        'mycommunity',
+        'unexpected',
+      ];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
     });
 
     it('should work with ranges', async () => {

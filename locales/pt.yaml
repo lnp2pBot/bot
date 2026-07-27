@@ -246,8 +246,8 @@ must_be_number_or_range: 'Fiat_amount deve ser um número ou intervalo numérico
 invalid_lightning_address: Inválida lightning address
 unavailable_lightning_address: Indisponível lightning address ${la}
 help: |
-  /sell <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto comunidade - Criar uma ordem de venda
-  /buy <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> premium/desconto comunidade - Cria um pedido de compra
+  /sell <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> [premium/desconto] [comunidade] - Criar uma ordem de venda
+  /buy <quantia em sats> <quantia em fiat> <código fiduciário> <forma de pagamento> [premium/desconto] [comunidade] - Cria um pedido de compra
   /takeorder <_order id_> - Permite ao usuário fazer um pedido dentro do chat com o bot, sem precisar ir até o canal onde foi publicado
   /info - Mostra informações sobre o bot
   /showusername - Permite mostrar ou ocultar o nome de usuário em cada novo pedido criado, o valor padrão é não (falso)

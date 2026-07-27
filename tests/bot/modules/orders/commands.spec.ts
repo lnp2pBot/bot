@@ -118,7 +118,9 @@ describe('/buy and /sell community routing (command path)', () => {
     // The explicit destination wins; the group fallback is never consulted
     expect(communityHelper.getCommunityInfo.called).to.equal(false);
     expect(createOrder.calledOnce).to.equal(true);
-    expect(createOrder.firstCall.args[3].community_id).to.equal('community-explicit');
+    expect(createOrder.firstCall.args[3].community_id).to.equal(
+      'community-explicit',
+    );
     expect(createOrder.firstCall.args[3].type).to.equal('sell');
   });
 
@@ -166,7 +168,9 @@ describe('/buy and /sell community routing (command path)', () => {
     await buy(ctx);
 
     expect(createOrder.calledOnce).to.equal(true);
-    expect(createOrder.firstCall.args[3].community_id).to.equal('community-priv');
+    expect(createOrder.firstCall.args[3].community_id).to.equal(
+      'community-priv',
+    );
     expect(createOrder.firstCall.args[3].type).to.equal('buy');
   });
 
@@ -233,7 +237,10 @@ describe('/buy and /sell community routing (command path)', () => {
       isBanned: false,
     });
 
-    const ctx = buildCtx('supergroup', { ...baseParams, communityName: 'ghost' });
+    const ctx = buildCtx('supergroup', {
+      ...baseParams,
+      communityName: 'ghost',
+    });
     await buy(ctx);
 
     expect(ctx.deleteMessage.calledOnce).to.equal(true);

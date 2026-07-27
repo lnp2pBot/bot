@@ -187,6 +187,14 @@ const validateSellOrder = async (ctx: MainContext) => {
     }
     args = processParameters(args);
 
+    // Only two optional trailing params exist (price margin and community), so
+    // a third token means the command is malformed. Rejecting it here keeps a
+    // typo from being silently dropped and the order published anyway.
+    if (args.length > 6) {
+      await messages.sellOrderCorrectFormatMessage(ctx);
+      return false;
+    }
+
     let [amount, fiatAmount, fiatCode, paymentMethod] = args;
     const { priceMargin, communityName } = parseOptionalOrderParams(
       args.slice(4),
@@ -280,6 +288,14 @@ const validateBuyOrder = async (ctx: MainContext) => {
       return false;
     }
     args = processParameters(args);
+
+    // Only two optional trailing params exist (price margin and community), so
+    // a third token means the command is malformed. Rejecting it here keeps a
+    // typo from being silently dropped and the order published anyway.
+    if (args.length > 6) {
+      await messages.buyOrderCorrectFormatMessage(ctx);
+      return false;
+    }
 
     let [amount, fiatAmount, fiatCode, paymentMethod] = args;
     const { priceMargin, communityName } = parseOptionalOrderParams(
