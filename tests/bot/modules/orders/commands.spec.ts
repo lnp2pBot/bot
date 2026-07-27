@@ -3,12 +3,12 @@ export {};
 const { expect } = require('chai');
 const sinon = require('sinon');
 
-const { Order } = require('../../models');
-const validations = require('../../bot/validations');
-const ordersActions = require('../../bot/ordersActions');
-const messages = require('../../bot/messages');
-const communityHelper = require('../../util/communityHelper');
-const { buy, sell } = require('../../bot/modules/orders/commands');
+const { Order } = require('../../../../models');
+const validations = require('../../../../bot/validations');
+const ordersActions = require('../../../../bot/ordersActions');
+const messages = require('../../../../bot/messages');
+const communityHelper = require('../../../../util/communityHelper');
+const { buy, sell } = require('../../../../bot/modules/orders/commands');
 
 /**
  * Command-path integration tests for /buy and /sell.
@@ -117,9 +117,9 @@ describe('/buy and /sell community routing (command path)', () => {
 
     // The explicit destination wins; the group fallback is never consulted
     expect(communityHelper.getCommunityInfo.called).to.equal(false);
-    expect(createOrder.firstCall.args[3].community_id).to.equal(
-      'community-explicit',
-    );
+    expect(createOrder.calledOnce).to.equal(true);
+    expect(createOrder.firstCall.args[3].community_id).to.equal('community-explicit');
+    expect(createOrder.firstCall.args[3].type).to.equal('sell');
   });
 
   it('falls back to the group community when no explicit community is passed', async () => {
@@ -165,9 +165,9 @@ describe('/buy and /sell community routing (command path)', () => {
     });
     await buy(ctx);
 
-    expect(createOrder.firstCall.args[3].community_id).to.equal(
-      'community-priv',
-    );
+    expect(createOrder.calledOnce).to.equal(true);
+    expect(createOrder.firstCall.args[3].community_id).to.equal('community-priv');
+    expect(createOrder.firstCall.args[3].type).to.equal('buy');
   });
 
   it('rejects and does not create an order when the user is banned', async () => {
@@ -223,6 +223,21 @@ describe('/buy and /sell community routing (command path)', () => {
     await buy(ctx);
 
     expect(ctx.reply.calledWith('community_not_found')).to.equal(true);
+    expect(createOrder.called).to.equal(false);
+  });
+
+  it('deletes the command and does not reply when an explicit community is not found in a group chat', async () => {
+    communityHelper.getCommunityByIdentifier.resolves({
+      community: null,
+      communityId: undefined,
+      isBanned: false,
+    });
+
+    const ctx = buildCtx('supergroup', { ...baseParams, communityName: 'ghost' });
+    await buy(ctx);
+
+    expect(ctx.deleteMessage.calledOnce).to.equal(true);
+    expect(ctx.reply.called).to.equal(false);
     expect(createOrder.called).to.equal(false);
   });
 });

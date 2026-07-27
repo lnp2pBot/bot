@@ -194,7 +194,11 @@ async function resolveOrderCommunity(
   if (communityName) {
     const communityInfo = await getCommunityByIdentifier(user, communityName);
     if (!communityInfo.community) {
-      await ctx.reply(ctx.i18n.t('community_not_found'));
+      if ((ctx.message?.chat.type || 'private') !== 'private') {
+        await ctx.deleteMessage();
+      } else {
+        await ctx.reply(ctx.i18n.t('community_not_found'));
+      }
       return null;
     }
     return communityInfo;
