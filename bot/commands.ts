@@ -10,6 +10,7 @@ import { Order, User, Dispute } from '../models';
 import * as messages from './messages';
 import {
   getBtcFiatPrice,
+  satsLimitViolation,
   deleteOrderFromChannel,
   getUserI18nContext,
   getFee,
@@ -167,6 +168,13 @@ const addInvoice = async (
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
+      // The market price can drift out of MIN/MAX between publication and take,
+      // so re-check the definitive sats before mutating the order (PR #778).
+      const violation = satsLimitViolation(amount);
+      if (violation) {
+        await messages.satsLimitViolationMessage(ctx, violation);
+        return;
+      }
       order.fee = await getFee(amount, order.community_id);
       order.amount = amount;
     }
@@ -487,6 +495,14 @@ const showHoldInvoice = async (
       const marginPercent = order.price_margin / 100;
       amount = amount - amount * marginPercent;
       amount = Math.floor(amount);
+
+      // The market price can drift out of MIN/MAX between publication and take,
+      // so re-check the definitive sats before creating the hold invoice (PR #778).
+      const violation = satsLimitViolation(amount);
+      if (violation) {
+        await messages.satsLimitViolationMessage(ctx, violation);
+        return;
+      }
 
       order.fee = await getFee(amount, order.community_id);
       order.amount = amount;

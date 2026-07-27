@@ -276,9 +276,13 @@ const validateSellOrder = async (ctx: MainContext) => {
         return false;
       }
       if (check.status === 'price_unavailable') {
+        // Fail closed: without a price we can't guarantee the order respects the
+        // configured MIN/MAX, so we don't publish it (see PR #778 review).
         logger.warning(
-          'Market price order sats estimate skipped: price API unavailable',
+          'Market price order rejected: price API unavailable, cannot verify sats limits',
         );
+        await messages.cantVerifySatsLimitsMessage(ctx);
+        return false;
       }
     }
 
@@ -410,9 +414,13 @@ const validateBuyOrder = async (ctx: MainContext) => {
         return false;
       }
       if (check.status === 'price_unavailable') {
+        // Fail closed: without a price we can't guarantee the order respects the
+        // configured MIN/MAX, so we don't publish it (see PR #778 review).
         logger.warning(
-          'Market price order sats estimate skipped: price API unavailable',
+          'Market price order rejected: price API unavailable, cannot verify sats limits',
         );
+        await messages.cantVerifySatsLimitsMessage(ctx);
+        return false;
       }
     }
 

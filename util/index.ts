@@ -204,6 +204,12 @@ const checkMarketOrderSatsLimits = async (
 ): Promise<SatsLimitCheck> => {
   const min = Number(process.env.MIN_PAYMENT_AMT);
   const max = Number(process.env.MAX_PAYMENT_AMT);
+  const hasMin = Number.isFinite(min) && min > 0;
+  const hasMax = Number.isFinite(max) && max > 0;
+  // Nothing to enforce: skip the price lookup so callers don't fail closed when
+  // there are no configured bounds a market order could ever violate.
+  if (!hasMin && !hasMax) return { status: 'ok' };
+
   const marginPercent = priceMargin / 100;
   const lo = fiatAmount[0];
   const hi = fiatAmount[fiatAmount.length - 1];
@@ -216,15 +222,31 @@ const checkMarketOrderSatsLimits = async (
 
   const loSats = await estimate(lo);
   if (loSats === undefined) return { status: 'price_unavailable' };
-  if (Number.isFinite(min) && min > 0 && loSats < min)
-    return { status: 'below_min', limit: min };
+  if (hasMin && loSats < min) return { status: 'below_min', limit: min };
 
   const hiSats = lo === hi ? loSats : await estimate(hi);
   if (hiSats === undefined) return { status: 'price_unavailable' };
-  if (Number.isFinite(max) && max > 0 && hiSats > max)
-    return { status: 'above_max', limit: max };
+  if (hasMax && hiSats > max) return { status: 'above_max', limit: max };
 
   return { status: 'ok' };
+};
+
+// Re-checks a known sats amount against MIN/MAX_PAYMENT_AMT. Market-price orders
+// are validated against an estimate at publication, but the definitive sats are
+// only computed when the order is taken; the live price can drift out of range
+// in between, so both take paths (see bot/commands.ts) re-check here before
+// creating the hold invoice. Returns the violated bound, or null if within
+// limits (or no bounds are configured).
+const satsLimitViolation = (
+  sats: number,
+): { status: 'below_min' | 'above_max'; limit: number } | null => {
+  const min = Number(process.env.MIN_PAYMENT_AMT);
+  const max = Number(process.env.MAX_PAYMENT_AMT);
+  if (Number.isFinite(min) && min > 0 && sats < min)
+    return { status: 'below_min', limit: min };
+  if (Number.isFinite(max) && max > 0 && sats > max)
+    return { status: 'above_max', limit: max };
+  return null;
 };
 
 const getBtcExchangePrice = (fiatAmount: number, satsAmount: number) => {
@@ -740,6 +762,7 @@ export {
   handleReputationItems,
   getBtcFiatPrice,
   checkMarketOrderSatsLimits,
+  satsLimitViolation,
   getBtcExchangePrice,
   getCurrenciesWithPrice,
   getEmojiRate,
