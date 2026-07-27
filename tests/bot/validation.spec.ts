@@ -189,7 +189,12 @@ describe('Validations', () => {
         INVOICE_EXPIRATION_WINDOW: 3600000,
       });
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle'];
-      const result = await validateSellOrder(ctx);
+      const validate = proxyquire('../../bot/validations', {
+        '../util': {
+          checkMarketOrderSatsLimits: sinon.stub().resolves({ status: 'ok' }),
+        },
+      }).validateSellOrder;
+      const result = await validate(ctx);
       expect(result).to.be.an('object');
       if (result === false) throw new Error('object expected');
       expect(result.amount).to.equal(0);
@@ -231,7 +236,12 @@ describe('Validations', () => {
 
     it('should work with ranges', async () => {
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle', '5'];
-      const result = await validateSellOrder(ctx);
+      const validate = proxyquire('../../bot/validations', {
+        '../util': {
+          checkMarketOrderSatsLimits: sinon.stub().resolves({ status: 'ok' }),
+        },
+      }).validateSellOrder;
+      const result = await validate(ctx);
       if (result === false) throw new Error('object expected');
       expect(result.fiatAmount).to.deep.equal([100, 200]);
     });
@@ -322,7 +332,12 @@ describe('Validations', () => {
         INVOICE_EXPIRATION_WINDOW: 3600000,
       });
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle'];
-      const result = await validateBuyOrder(ctx);
+      const validate = proxyquire('../../bot/validations', {
+        '../util': {
+          checkMarketOrderSatsLimits: sinon.stub().resolves({ status: 'ok' }),
+        },
+      }).validateBuyOrder;
+      const result = await validate(ctx);
       expect(result).to.be.an('object');
       if (result === false) throw new Error('object expected');
       expect(result.amount).to.equal(0);
@@ -364,7 +379,12 @@ describe('Validations', () => {
 
     it('should work with ranges', async () => {
       ctx.state.command.args = ['0', '100-200', 'USD', 'zelle', '5'];
-      const result = await validateBuyOrder(ctx);
+      const validate = proxyquire('../../bot/validations', {
+        '../util': {
+          checkMarketOrderSatsLimits: sinon.stub().resolves({ status: 'ok' }),
+        },
+      }).validateBuyOrder;
+      const result = await validate(ctx);
       if (result === false) throw new Error('object expected');
       expect(result.fiatAmount).to.deep.equal([100, 200]);
     });
@@ -1483,12 +1503,12 @@ describe('Validations', () => {
       expect(result).to.be.an('object');
     });
 
-    it('accepts (pass-through) when the price oracle is unavailable', async () => {
+    it('rejects (fail closed) when the price oracle is unavailable', async () => {
       const checkStub = sinon.stub().resolves({ status: 'price_unavailable' });
       const validate = loadWith(checkStub);
       ctx.state.command.args = ['0', '100', 'USD', 'zelle'];
       const result = await validate(ctx);
-      expect(result).to.be.an('object');
+      expect(result).to.equal(false);
       expect(checkStub.calledOnce).to.equal(true);
     });
   });
@@ -1539,12 +1559,12 @@ describe('Validations', () => {
       expect(result).to.be.an('object');
     });
 
-    it('accepts (pass-through) when the price oracle is unavailable', async () => {
+    it('rejects (fail closed) when the price oracle is unavailable', async () => {
       const checkStub = sinon.stub().resolves({ status: 'price_unavailable' });
       const validate = loadWith(checkStub);
       ctx.state.command.args = ['0', '100', 'USD', 'zelle'];
       const result = await validate(ctx);
-      expect(result).to.be.an('object');
+      expect(result).to.equal(false);
       expect(checkStub.calledOnce).to.equal(true);
     });
   });
