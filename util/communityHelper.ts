@@ -89,11 +89,10 @@ export const getCommunityByIdentifier = async (
   try {
     // Escape regex metacharacters so the identifier is matched literally
     const escaped = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const groupRegex = new RegExp(`^${escaped}$`, 'i');
 
     const community =
       (await Community.findOne({
-        group: groupRegex,
+        group: escaped.toLowerCase(),
         enabled: { $ne: false },
       })) ||
       (await Community.findOne({

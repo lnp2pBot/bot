@@ -32,8 +32,9 @@ describe('getCommunityByIdentifier routing', () => {
 
     expect(String(result.communityId)).to.equal('community-private');
     const groupQuery = findOne.firstCall.args[0];
-    expect(groupQuery.group).to.be.an.instanceOf(RegExp);
-    expect(groupQuery.group.flags).to.contain('i');
+    // Now matches literally (and case-insensitively via toLowerCase() in the impl)
+    expect(groupQuery.group).to.not.be.an.instanceOf(RegExp);
+    expect(groupQuery.group).to.equal('-1001234567890'.toLowerCase());
   });
 
   it('matches the display name exactly and only among public communities', async () => {
