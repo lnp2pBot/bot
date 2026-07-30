@@ -2,6 +2,8 @@
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "mocha",
+  "checkers": ["typescript"],
+  "tsconfigFile": "tsconfig.json",
   "buildCommand": "npm run build:test",
   "coverageAnalysis": "perTest",
   "mutate": ["util/**/*.ts", "!**/*.spec.ts"],
