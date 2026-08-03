@@ -139,6 +139,32 @@ const cancelOrders = async (bot: HasTelegram) => {
           // dispute/admin flow.
           if (updatedOrder.status === 'ACTIVE' && updatedOrder.hash) {
             await cancelHoldInvoice({ hash: updatedOrder.hash });
+
+            // The seller's sats are no longer in escrow: warn both parties so
+            // the buyer doesn't send fiat off-platform expecting the hold
+            // invoice to still be backing the trade.
+            const buyerUser = await User.findOne({
+              _id: updatedOrder.buyer_id,
+            });
+            const sellerUser = await User.findOne({
+              _id: updatedOrder.seller_id,
+            });
+            if (buyerUser !== null && sellerUser !== null) {
+              const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+              const i18nCtxSeller = await getUserI18nContext(sellerUser);
+              await messages.toBuyerHoldInvoiceExpiredMessage(
+                bot,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+              );
+              await messages.toSellerHoldInvoiceExpiredMessage(
+                bot,
+                sellerUser,
+                updatedOrder,
+                i18nCtxSeller,
+              );
+            }
           } else if (updatedOrder.status === 'FIAT_SENT' && updatedOrder.hash) {
             logger.warning(
               `Order Id ${updatedOrder.id} expired in FIAT_SENT with an open ` +
