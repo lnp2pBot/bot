@@ -19,7 +19,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@grammyjs/i18n": "^0.5.1",
+    "@grammyjs/i18n": "^1.1.2",
     "@grammyjs/ratelimiter": "^1.1.5",
     "async-mutex": "^0.5.0",
     "axios": "^1.15.0",
