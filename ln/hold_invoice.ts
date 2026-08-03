@@ -56,6 +56,9 @@ const cancelHoldInvoice = async ({ hash }: { hash: string }) => {
     await lightning.cancelHodlInvoice({ lnd, id: hash });
   } catch (error) {
     logger.error(error);
+    // Callers must not mark an order as canceled/expired if the
+    // invoice cancellation did not happen.
+    throw error;
   }
 };
 

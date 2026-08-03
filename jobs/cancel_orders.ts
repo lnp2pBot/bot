@@ -138,8 +138,16 @@ const cancelOrders = async (bot: HasTelegram) => {
           // here (the buyer claims to have paid) and are left for the
           // dispute/admin flow.
           if (updatedOrder.status === 'ACTIVE' && updatedOrder.hash) {
-            await cancelHoldInvoice({ hash: updatedOrder.hash });
+            try {
+              await cancelHoldInvoice({ hash: updatedOrder.hash });
+            } catch (error) {
+              logger.error(
+                `Order Id ${updatedOrder.id}: failed to cancel hold invoice, will retry on next run: ${error}`,
+              );
+              return; // leave the order ACTIVE so the next run retries it
+            }
 
+            // Only reached if the cancellation succeeded.
             // The seller's sats are no longer in escrow: warn both parties so
             // the buyer doesn't send fiat off-platform expecting the hold
             // invoice to still be backing the trade.
