@@ -13,16 +13,22 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      image: 'ubuntu:24.04'
+      # node:20-bookworm provides Node 20 from the official Node image (no
+      # NodeSource, no distro-apt Node), and MongoDB 8.0 installs from the
+      # officially supported Debian bookworm repo. This keeps both Node and
+      # MongoDB on supported, reproducible sources at the same time.
+      image: 'node:20-bookworm'
     steps:
       - name: Update apt and install required packages
         run: |
-          apt update --yes
-          apt install --yes sudo
+          apt-get update --yes
+          apt-get install --yes sudo curl git
 
-          sudo apt install --yes --no-install-recommends npm
+          # Dependencies required to compile the canvas package from source
+          sudo apt-get install --yes --no-install-recommends \
+            build-essential pkg-config libcairo2-dev libpango1.0-dev \
+            libjpeg-dev libgif-dev librsvg2-dev
 
-          sudo apt install --yes git
           # one time fix to avoid permission problems later on
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
@@ -30,17 +36,14 @@ jobs:
 
       - name: Import MongoDB's public key for the package management system
         run: |
-          sudo apt install --yes --no-install-recommends curl gnupg
-          sudo rm -f /etc/ssl/certs/ca-bundle.crt
-          sudo apt reinstall --yes ca-certificates
-          sudo update-ca-certificates
-          curl -fsSL https://pgp.mongodb.com/server-6.0.asc | \
-            sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg \
+          sudo apt-get install --yes --no-install-recommends curl gnupg
+          curl -fsSL https://pgp.mongodb.com/server-8.0.asc | \
+            sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
             --dearmor
 
       - name: Install MongoDB
         run: |
-          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+          echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/debian bookworm/mongodb-org/8.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
           sudo apt-get update
           sudo apt-get install -y mongodb-org
       - name: Check Mongo version
