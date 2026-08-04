@@ -67,7 +67,8 @@ describe('Job: cancel_orders (ACTIVE hold invoice cancellation branch)', () => {
         toBuyerExpiredOrderMessage: sandbox.stub().resolves(),
         toSellerExpiredOrderMessage: sandbox.stub().resolves(),
         toBuyerHoldInvoiceExpiredMessage: toBuyerHoldInvoiceExpiredMessageStub,
-        toSellerHoldInvoiceExpiredMessage: toSellerHoldInvoiceExpiredMessageStub,
+        toSellerHoldInvoiceExpiredMessage:
+          toSellerHoldInvoiceExpiredMessageStub,
       },
       '../util': {
         getUserI18nContext: getUserI18nContextStub,
