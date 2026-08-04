@@ -168,6 +168,29 @@ describe('Job: cancel_orders (ACTIVE hold invoice cancellation branch)', () => {
     expect(orderUpdatedStub.calledOnceWith(updatedOrder)).to.equal(true);
   });
 
+  it('does not touch an order that already advanced past ACTIVE/FIAT_SENT by the time the mutex runs', async () => {
+    // expiredOrders is a stale snapshot taken before the mutex lock; the
+    // job re-fetches with Order.findById() inside the mutex and must bail
+    // out if the status changed underneath it (e.g. it was released).
+    updatedOrder = {
+      _id: 'order1',
+      id: 'order1',
+      status: 'COMPLETED',
+      hash: 'hash1',
+      buyer_id: 'buyer1',
+      seller_id: 'seller1',
+      save: sandbox.stub().resolves(),
+    };
+    expiredOrders = [{ _id: 'order1' }];
+
+    await cancelOrders({} as any);
+
+    expect(cancelHoldInvoiceStub.called).to.equal(false);
+    expect(updatedOrder.status).to.equal('COMPLETED');
+    expect(updatedOrder.save.called).to.equal(false);
+    expect(orderUpdatedStub.called).to.equal(false);
+  });
+
   it('marks a FIAT_SENT order as EXPIRED without calling cancelHoldInvoice, warning instead', async () => {
     updatedOrder = {
       _id: 'order1',
