@@ -1,6 +1,7 @@
 import { HasTelegram } from '../bot/start';
 import { User, Order } from '../models';
 import { cancelShowHoldInvoice, cancelAddInvoice } from '../bot/commands';
+import { cancelHoldInvoice } from '../ln';
 import * as messages from '../bot/messages';
 import {
   getUserI18nContext,
@@ -116,10 +117,75 @@ const cancelOrders = async (bot: HasTelegram) => {
       ],
     });
     for (const order of expiredOrders) {
-      order.status = 'EXPIRED';
-      await order.save();
-      OrderEvents.orderUpdated(order);
-      logger.info(`Order Id ${order.id} expired!`);
+      await PerOrderIdMutex.instance.runExclusive(
+        String(order._id),
+        async () => {
+          const updatedOrder = await Order.findById(order._id);
+          if (!updatedOrder) return;
+          // Don't stomp an order that advanced after the find above (e.g. a
+          // release/payout currently in flight under the same mutex).
+          if (
+            updatedOrder.status !== 'ACTIVE' &&
+            updatedOrder.status !== 'FIAT_SENT'
+          )
+            return;
+
+          // For ACTIVE orders the buyer never signalled fiat-sent, so it is
+          // safe to cancel the hold invoice and refund the seller instead of
+          // orphaning the hash. check_hold_invoice_expired ignores EXPIRED
+          // orders, so without this the seller's funds would stay locked until
+          // the on-chain CLTV timeout. FIAT_SENT orders are NOT auto-refunded
+          // here (the buyer claims to have paid) and are left for the
+          // dispute/admin flow.
+          if (updatedOrder.status === 'ACTIVE' && updatedOrder.hash) {
+            try {
+              await cancelHoldInvoice({ hash: updatedOrder.hash });
+            } catch (error) {
+              logger.error(
+                `Order Id ${updatedOrder.id}: failed to cancel hold invoice, will retry on next run: ${error}`,
+              );
+              return; // leave the order ACTIVE so the next run retries it
+            }
+
+            // Only reached if the cancellation succeeded.
+            // The seller's sats are no longer in escrow: warn both parties so
+            // the buyer doesn't send fiat off-platform expecting the hold
+            // invoice to still be backing the trade.
+            const buyerUser = await User.findOne({
+              _id: updatedOrder.buyer_id,
+            });
+            const sellerUser = await User.findOne({
+              _id: updatedOrder.seller_id,
+            });
+            if (buyerUser !== null && sellerUser !== null) {
+              const i18nCtxBuyer = await getUserI18nContext(buyerUser);
+              const i18nCtxSeller = await getUserI18nContext(sellerUser);
+              await messages.toBuyerHoldInvoiceExpiredMessage(
+                bot,
+                buyerUser,
+                updatedOrder,
+                i18nCtxBuyer,
+              );
+              await messages.toSellerHoldInvoiceExpiredMessage(
+                bot,
+                sellerUser,
+                updatedOrder,
+                i18nCtxSeller,
+              );
+            }
+          } else if (updatedOrder.status === 'FIAT_SENT' && updatedOrder.hash) {
+            logger.warning(
+              `Order Id ${updatedOrder.id} expired in FIAT_SENT with an open ` +
+                `hold invoice; leaving it for dispute/admin handling`,
+            );
+          }
+
+          updatedOrder.status = 'EXPIRED';
+          await updatedOrder.save();
+          OrderEvents.orderUpdated(updatedOrder);
+          logger.info(`Order Id ${updatedOrder.id} expired!`);
+        },
+      );
     }
   } catch (error) {
     logger.error(error);
