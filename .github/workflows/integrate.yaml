@@ -32,7 +32,7 @@ jobs:
           # one time fix to avoid permission problems later on
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Import MongoDB's public key for the package management system
         run: |
