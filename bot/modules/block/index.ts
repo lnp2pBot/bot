@@ -2,9 +2,9 @@ import { Telegraf } from 'telegraf';
 import { CommunityContext } from '../community/communityContext';
 import { logger } from '../../../logger';
 
-const commands = require('./commands');
-const messages = require('./messages');
-const { userMiddleware } = require('../../middleware/user');
+import * as commands from './commands';
+import * as messages from './messages';
+import { userMiddleware } from '../../middleware/user';
 
 export const configure = (bot: Telegraf<CommunityContext>) => {
   bot.command('block', userMiddleware, async ctx => {

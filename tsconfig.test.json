@@ -1,6 +1,18 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["mocha"]
+  },
   "include": [
+    "app.ts",
+    "monitoring.ts",
+    "bot/**/*",
+    "jobs/**/*",
+    "ln/**/*",
+    "lnurl/**/*",
+    "models/**/*",
+    "util/**/*",
+    "scripts/**/*",
     "tests/**/*"
   ],
   "exclude": [
