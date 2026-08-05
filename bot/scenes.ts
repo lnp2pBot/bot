@@ -27,7 +27,7 @@ const addInvoiceWizard = new Scenes.WizardScene(
         process.env.HOLD_INVOICE_EXPIRATION_WINDOW;
       if (holdInvoiceExpirationWindow === undefined)
         throw new Error(
-          'Enviroment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined',
+          'Environment variable HOLD_INVOICE_EXPIRATION_WINDOW not defined',
         );
       const expirationTime = parseInt(holdInvoiceExpirationWindow) / 60;
       await messages.wizardAddInvoiceInitMessage(
