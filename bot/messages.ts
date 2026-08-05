@@ -960,6 +960,34 @@ const mustBeGreatherEqThan = async (
   }
 };
 
+const mustBeLessEqThan = async (
+  ctx: MainContext,
+  fieldName: string,
+  qty: number,
+) => {
+  try {
+    await ctx.reply(
+      ctx.i18n.t('must_be_lt_or_eq', {
+        fieldName,
+        qty,
+      }),
+    );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+// Tells the taker their market order can no longer settle within MIN/MAX because
+// the live price drifted between publication and take (see bot/commands.ts).
+const satsLimitViolationMessage = async (
+  ctx: MainContext,
+  violation: { status: 'below_min' | 'above_max'; limit: number },
+) => {
+  if (violation.status === 'below_min')
+    await mustBeGreatherEqThan(ctx, ctx.i18n.t('sats_amount'), violation.limit);
+  else await mustBeLessEqThan(ctx, ctx.i18n.t('sats_amount'), violation.limit);
+};
+
 const bannedUserErrorMessage = async (ctx: MainContext, user: UserDocument) => {
   try {
     await ctx.telegram.sendMessage(
@@ -1569,6 +1597,17 @@ const priceApiFailedMessage = async (
       user.tg_id,
       ctx.i18n.t('problem_getting_price'),
     );
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
+// Used when a market-price order can't be published because the price oracle is
+// down and we therefore can't verify it respects MIN/MAX_PAYMENT_AMT. Replies in
+// the current chat (the ctx author) rather than messaging a specific user.
+const cantVerifySatsLimitsMessage = async (ctx: MainContext) => {
+  try {
+    await ctx.reply(ctx.i18n.t('problem_getting_price'));
   } catch (error) {
     logger.error(error);
   }
@@ -2258,6 +2297,7 @@ export {
   termsMessage,
   privacyMessage,
   mustBeGreatherEqThan,
+  mustBeLessEqThan,
   bannedUserErrorMessage,
   fiatSentMessages,
   orderOnfiatSentStatusMessages,
@@ -2292,6 +2332,8 @@ export {
   rateUserMessage,
   listCurrenciesResponse,
   priceApiFailedMessage,
+  cantVerifySatsLimitsMessage,
+  satsLimitViolationMessage,
   showHoldInvoiceMessage,
   waitingForBuyerOrderMessage,
   invoiceUpdatedPaymentWillBeSendMessage,
