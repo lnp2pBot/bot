@@ -8,6 +8,7 @@ import {
   toKebabCase,
   getDetailedOrder,
   getUserI18nContext,
+  buildSocksProxyUrl,
 } from '../../util/index';
 
 const { expect } = require('chai');
@@ -220,6 +221,35 @@ describe('Utility Functions', () => {
     it('falls back to English when lang is missing', async () => {
       const ctx = await getUserI18nContext({} as any);
       expect(ctx.locale()).to.equal('en');
+    });
+  });
+
+  describe('buildSocksProxyUrl', () => {
+    // Guards a regression (#826) where socks5h:// (used with Tor to resolve
+    // DNS through the proxy) was treated as a bare host and got a scheme
+    // prepended twice, producing an invalid URL like socks5://socks5h://...
+    ['socks', 'socks4', 'socks5', 'socks5h'].forEach(scheme => {
+      it(`passes through URLs with the ${scheme}:// scheme unchanged`, () => {
+        const url = `${scheme}://localhost:9050`;
+        expect(buildSocksProxyUrl(url)).to.equal(url);
+      });
+    });
+
+    it('is case-insensitive when matching the scheme', () => {
+      const url = 'SOCKS5H://localhost:9050';
+      expect(buildSocksProxyUrl(url)).to.equal(url);
+    });
+
+    it('prepends socks5:// to a bare host with no scheme', () => {
+      expect(buildSocksProxyUrl('localhost:9050')).to.equal(
+        'socks5://localhost:9050',
+      );
+    });
+
+    it('prepends socks5:// to an unsupported scheme, such as socks4h', () => {
+      expect(buildSocksProxyUrl('socks4h://localhost:9050')).to.equal(
+        'socks5://socks4h://localhost:9050',
+      );
     });
   });
 });

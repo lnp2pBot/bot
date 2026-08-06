@@ -7,7 +7,7 @@ import { connect as mongoConnect } from './db_connect';
 import { resubscribeInvoices } from './ln';
 import { logger } from './logger';
 import { Telegraf } from 'telegraf';
-import { delay } from './util';
+import { delay, buildSocksProxyUrl } from './util';
 import { imageCache } from './util/imageCache';
 import { createIndexes } from './models/indexes';
 import { CommunityContext } from './bot/modules/community/communityContext';
@@ -50,11 +50,7 @@ import { startMonitoring } from './monitoring';
         const socksProxyHost = process.env.SOCKS_PROXY_HOST?.trim();
         const telegramAgent = socksProxyHost
           ? (() => {
-              const proxyUrl = /^(?:socks|socks4|socks5|socks5h):\/\//i.test(
-                socksProxyHost,
-              )
-                ? socksProxyHost
-                : `socks5://${socksProxyHost}`;
+              const proxyUrl = buildSocksProxyUrl(socksProxyHost);
               logger.info(`Using SOCKS proxy for Telegram API: ${proxyUrl}`);
               return new SocksProxyAgent(proxyUrl) as any;
             })()
