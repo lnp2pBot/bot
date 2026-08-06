@@ -318,6 +318,18 @@ help: |
   /cancelall
   تمامی سفارش‌های منتشر شده و پذیرفته نشده را لغو می‌کند.
 
+  /scheduleorder <_buy|sell_> <_sats_> <_مبلغ فیات_> <_کد فیات_> <_روش پرداخت_> [_پریمیوم_]
+  یک سفارش تکرارشونده ایجاد می‌کند که به‌صورت خودکار بازنشر می‌شود.
+
+  /cancelschedule <_شناسه زمان‌بندی_>
+  بازنشر خودکار سفارش زمان‌بندی‌شده را متوقف می‌کند.
+
+  /listschedules
+  سفارش‌های زمان‌بندی‌شده فعال شما را همراه با شناسه‌هایشان فهرست می‌کند.
+
+  /cancelallschedules
+  تمام سفارش‌های زمان‌بندی‌شده شما را لغو می‌کند.
+
   /terms
   شرایط و ضوابط استفاده از ربات را نمایش می‌دهد.
 
@@ -861,3 +873,42 @@ community_already_enabled: این جامعه از قبل فعال است
 ambiguous_community_input: چندین جامعه با این نام کاربری مطابقت دارند، لطفاً از شناسه جامعه استفاده کنید
 
 order_take_rate_limit: "شما به حد مجاز دریافت سفارش رسیده‌اید. لطفاً ${hours} ساعت صبر کنید یا یک سفارش را با موفقیت تکمیل کنید تا شمارنده بازنشینی شود."
+scheduleorder_usage: "راهنما: /scheduleorder <buy|sell> <سات> <مبلغ فیات> <کد فیات> <روش پرداخت> [پریمیوم]"
+cancelschedule_usage: "راهنما: /cancelschedule <شناسه زمان‌بندی>"
+schedule_not_found: "⚠️ زمان‌بندی پیدا نشد یا قبلاً غیرفعال شده است."
+schedule_cancelled: "✅ زمان‌بندی ${scheduleId} لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
+listschedules_empty: "شما هیچ سفارش زمان‌بندی‌شده فعالی ندارید."
+listschedules_header: "📋 سفارش‌های زمان‌بندی‌شده شما:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "شما هیچ سفارش زمان‌بندی‌شده فعالی برای لغو ندارید."
+all_schedules_cancelled: "✅ ${count} سفارش زمان‌بندی‌شده لغو شد. دیگر هیچ سفارشی به‌صورت خودکار منتشر نخواهد شد."
+schedule_req_max_reached: "⚠️ شما در حال حاضر ${max} سفارش زمان‌بندی‌شده فعال دارید که حداکثر مجاز است. پیش از ساختن سفارش جدید، یکی را با /cancelschedule لغو کنید."
+schedule_req_account_age: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده، حساب شما باید حداقل ${days} روز قدمت داشته باشد."
+schedule_req_completed_orders: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به حداقل ${count} سفارش تکمیل‌شده نیاز دارید."
+schedule_req_dormant: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده باید در ${days} روز گذشته یک سفارش را تکمیل کرده باشید."
+schedule_req_volume: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به حجم معاملاتی حداقل ${volume} ساتوشی نیاز دارید."
+schedule_req_rating: "⚠️ برای ساختن سفارش‌های زمان‌بندی‌شده به اعتبار حداقل ${rating} نیاز دارید."
+schedule_req_completion_rate: "⚠️ نرخ تکمیل سفارش‌های شما (${current}%) کمتر از ${rate}% موردنیاز است. پیش از زمان‌بندی، سفارش‌های بیشتری را تکمیل کنید."
+schedule_dormant_removed: "⚠️ همه سفارش‌های زمان‌بندی‌شده شما را حذف کردم، زیرا در ${days} روز گذشته هیچ سفارشی را تکمیل نکردید."
+schedule_creation_cancelled: "❌ ایجاد زمان‌بندی لغو شد."
+schedule_created: "✅ سفارش زمان‌بندی‌شده ایجاد شد! شناسه شما: ${scheduleId}\nبرای توقف از /cancelschedule ${scheduleId} استفاده کنید."
+schedule_choose_days: "📅 در چه روزهایی سفارش منتشر شود؟"
+sched_daily: هر روز
+sched_weekdays: دوشنبه–جمعه
+sched_weekend: آخر هفته
+sched_custom: سفارشی
+schedule_enter_custom_days: "✍️ روزها را به انگلیسی و با کاما وارد کنید (مثال: sunday, wednesday, friday)"
+invalid_days: "⚠️ روزهای نامعتبر. نام روزها را به انگلیسی با کاما جدا کنید (مثال: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 سفارش در چه ساعتی منتشر شود؟ عددی بین ۰ تا ۲۳ وارد کنید (UTC)."
+invalid_hour: "⚠️ ساعت نامعتبر است. لطفاً عددی بین ۰ تا ۲۳ وارد کنید."
+schedule_confirm_summary: |
+  📋 *خلاصه سفارش زمان‌بندی‌شده*
+
+  نوع: ${type}
+  مبلغ: ${fiatAmount} ${fiatCode}
+  روش پرداخت: ${paymentMethod}
+  روزها: ${days}
+  ساعت: ${hour}

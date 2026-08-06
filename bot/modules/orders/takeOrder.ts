@@ -18,7 +18,6 @@ import {
   validateTakeSellOrder,
   validateUserWaitingOrder,
 } from '../../validations';
-
 const OrderEvents = require('../../modules/events/orders');
 
 export const takeOrderActionValidation = async (
@@ -112,7 +111,6 @@ export const takebuy = async (
       OrderEvents.orderUpdated(order);
 
       await deleteOrderFromChannel(order, bot.telegram);
-
       await messages.beginTakeBuyMessage(ctx, bot, user, order);
     });
   } catch (error) {

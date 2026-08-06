@@ -267,6 +267,10 @@ help: |
   /blocklist - Liste de vos utilisateurs bloqués
   /cancel <_order id_> - Annule une commande qui n'a pas encore été prise
   /cancelall - Annule toutes les commandes validées et non prises
+  /scheduleorder <_buy|sell_> <_sats_> <_montant fiat_> <_code fiat_> <_méthode de paiement_> [_prime_] - Crée une commande récurrente qui se republie automatiquement
+  /cancelschedule <_id du schedule_> - Arrête la republication automatique d'une commande planifiée
+  /listschedules - Liste vos commandes planifiées actives avec leurs identifiants
+  /cancelallschedules - Annule toutes vos commandes planifiées
   /terms - Affiche les termes et conditions lors de l'utilisation du bot
 
   Nostr:
@@ -758,3 +762,42 @@ community_already_enabled: Cette communauté est déjà activée
 ambiguous_community_input: Plusieurs communautés correspondent à ce nom d'utilisateur, veuillez utiliser l'ID de la communauté à la place
 
 order_take_rate_limit: "Vous avez atteint la limite de prises d'ordres. Veuillez attendre ${hours} heure(s) avant de prendre un nouvel ordre, ou complétez un ordre avec succès pour réinitialiser le compteur."
+scheduleorder_usage: "Utilisation : /scheduleorder <buy|sell> <sats> <montant fiat> <code fiat> <méthode de paiement> [prime]"
+cancelschedule_usage: "Utilisation : /cancelschedule <id du schedule>"
+schedule_not_found: "⚠️ Schedule introuvable ou déjà inactif."
+schedule_cancelled: "✅ Schedule ${scheduleId} annulé. Aucune autre commande ne sera publiée automatiquement."
+listschedules_empty: "Vous n'avez aucune commande planifiée active."
+listschedules_header: "📋 Vos commandes planifiées :"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Vous n'avez aucune commande planifiée active à annuler."
+all_schedules_cancelled: "✅ ${count} commande(s) planifiée(s) annulée(s). Aucune autre commande ne sera publiée automatiquement."
+schedule_req_max_reached: "⚠️ Vous avez déjà ${max} commandes planifiées actives, ce qui est le maximum autorisé. Annulez-en une avec /cancelschedule avant d'en créer une nouvelle."
+schedule_req_account_age: "⚠️ Votre compte doit exister depuis au moins ${days} jours pour créer des commandes planifiées."
+schedule_req_completed_orders: "⚠️ Vous devez avoir au moins ${count} commandes terminées pour créer des commandes planifiées."
+schedule_req_dormant: "⚠️ Vous devez avoir terminé une commande au cours des ${days} derniers jours pour créer des commandes planifiées."
+schedule_req_volume: "⚠️ Vous devez avoir un volume échangé d'au moins ${volume} sats pour créer des commandes planifiées."
+schedule_req_rating: "⚠️ Vous devez avoir une réputation d'au moins ${rating} pour créer des commandes planifiées."
+schedule_req_completion_rate: "⚠️ Votre taux de complétion des commandes (${current}%) est inférieur aux ${rate}% requis. Terminez davantage de vos commandes avant de planifier."
+schedule_dormant_removed: "⚠️ J'ai supprimé toutes vos commandes planifiées car vous n'avez terminé aucune commande au cours des ${days} derniers jours."
+schedule_creation_cancelled: "❌ Création du schedule annulée."
+schedule_created: "✅ Ordre planifié créé ! Votre ID est : ${scheduleId}\nUtilisez /cancelschedule ${scheduleId} pour l'arrêter."
+schedule_choose_days: "📅 Quels jours l'ordre doit-il être publié ?"
+sched_daily: Tous les jours
+sched_weekdays: Lun–Ven
+sched_weekend: Week-end
+sched_custom: Personnalisé
+schedule_enter_custom_days: "✍️ Entrez les jours en anglais séparés par des virgules (ex : sunday, wednesday, friday)"
+invalid_days: "⚠️ Jours invalides. Entrez les noms des jours en anglais séparés par des virgules (ex : sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 À quelle heure l'ordre doit-il être publié ? Entrez un nombre entre 0 et 23 (UTC)."
+invalid_hour: "⚠️ Heure invalide. Veuillez entrer un nombre entre 0 et 23."
+schedule_confirm_summary: |
+  📋 *Résumé de l'ordre planifié*
+
+  Type : ${type}
+  Montant : ${fiatAmount} ${fiatCode}
+  Méthode de paiement : ${paymentMethod}
+  Jours : ${days}
+  Heure : ${hour}

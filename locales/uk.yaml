@@ -264,6 +264,10 @@ help: |
   /blocklist - Список ваших заблокованих користувачів
   /cancel <_order id_> - Скасувати заявку до її виконання
   /cancelall - Скасувати всі виставлені заявки
+  /scheduleorder <_buy|sell_> <_sats_> <_сума фіат_> <_код фіат_> <_спосіб оплати_> [_преміум_] - Створити повторювану заявку з автопублікацією
+  /cancelschedule <_id розкладу_> - Зупинити автопублікацію запланованої заявки
+  /listschedules - Показує ваші активні заплановані заявки з їх ID
+  /cancelallschedules - Скасовує всі ваші заплановані заявки
   /terms - Показати умови використання бота
 
   Nostr:
@@ -755,3 +759,42 @@ community_already_enabled: Ця спільнота вже увімкнена
 ambiguous_community_input: Кілька спільнот відповідають цьому імені користувача, будь ласка, використовуйте ID спільноти
 
 order_take_rate_limit: "Ви досягли ліміту прийнятих замовлень. Зачекайте ${hours} годину(и) перед прийняттям нового замовлення або успішно завершіть замовлення, щоб скинути лічильник."
+scheduleorder_usage: "Використання: /scheduleorder <buy|sell> <sats> <сума фіат> <код фіат> <спосіб оплати> [преміум]"
+cancelschedule_usage: "Використання: /cancelschedule <id розкладу>"
+schedule_not_found: "⚠️ Розклад не знайдено або вже неактивний."
+schedule_cancelled: "✅ Розклад ${scheduleId} скасовано. Ордери більше не будуть публікуватися автоматично."
+listschedules_empty: "У вас немає активних запланованих заявок."
+listschedules_header: "📋 Ваші заплановані заявки:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "У вас немає активних запланованих заявок для скасування."
+all_schedules_cancelled: "✅ Скасовано запланованих заявок: ${count}. Ордери більше не будуть публікуватися автоматично."
+schedule_req_max_reached: "⚠️ У вас уже є ${max} активних запланованих заявок — це максимум. Скасуйте одну командою /cancelschedule, перш ніж створювати нову."
+schedule_req_account_age: "⚠️ Вашому акаунту має бути щонайменше ${days} днів, щоб створювати заплановані заявки."
+schedule_req_completed_orders: "⚠️ Вам потрібно щонайменше ${count} завершених ордерів, щоб створювати заплановані заявки."
+schedule_req_dormant: "⚠️ Щоб створювати заплановані заявки, ви маєте завершити хоча б один ордер за останні ${days} днів."
+schedule_req_volume: "⚠️ Вам потрібен торговий обсяг щонайменше ${volume} сатоші, щоб створювати заплановані заявки."
+schedule_req_rating: "⚠️ Вам потрібна репутація щонайменше ${rating}, щоб створювати заплановані заявки."
+schedule_req_completion_rate: "⚠️ Ваш показник завершення ордерів (${current}%) нижчий за необхідні ${rate}%. Завершіть більше своїх ордерів, перш ніж планувати."
+schedule_dormant_removed: "⚠️ Я видалив усі ваші заплановані заявки, тому що ви не завершили жодного ордера за останні ${days} днів."
+schedule_creation_cancelled: "❌ Створення розкладу скасовано."
+schedule_created: "✅ Плановий ордер створено! Ваш ID: ${scheduleId}\nВикористовуйте /cancelschedule ${scheduleId} для зупинки."
+schedule_choose_days: "📅 У які дні публікувати ордер?"
+sched_daily: Щодня
+sched_weekdays: Пн–Пт
+sched_weekend: Вихідні
+sched_custom: Налаштувати
+schedule_enter_custom_days: "✍️ Введіть дні англійською через кому (наприклад: sunday, wednesday, friday)"
+invalid_days: "⚠️ Невірні дні. Введіть назви днів англійською через кому (наприклад: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 О якій годині публікувати ордер? Введіть число від 0 до 23 (UTC)."
+invalid_hour: "⚠️ Недійсна година. Введіть число від 0 до 23."
+schedule_confirm_summary: |
+  📋 *Зведення планового ордера*
+
+  Тип: ${type}
+  Сума: ${fiatAmount} ${fiatCode}
+  Спосіб оплати: ${paymentMethod}
+  Дні: ${days}
+  Година: ${hour}

@@ -265,6 +265,10 @@ help: |
   /blocklist - Liste Ihrer blockierten Benutzer
   /cancel <_order id_> - Einen Auftrag stornieren, die noch nicht angenommen wurde
   /cancelall - Storniere alle aufgegebenen und nicht angenommenen Aufträge
+  /scheduleorder <_buy|sell_> <_sats_> <_Fiat-Betrag_> <_Fiat-Code_> <_Zahlungsmethode_> [_Aufschlag_] - Erstellt einen wiederkehrenden Auftrag, der automatisch neu veröffentlicht wird
+  /cancelschedule <_Schedule-ID_> - Stoppt die automatische Neuveröffentlichung eines geplanten Auftrags
+  /listschedules - Listet deine aktiven geplanten Aufträge mit ihren IDs auf
+  /cancelallschedules - Bricht alle deine geplanten Aufträge ab
   /terms - Zeigt die Allgemeinen Geschäftsbedingungen bei der Nutzung des Bots an
 
   Nostr:
@@ -759,3 +763,42 @@ community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
 
 order_take_rate_limit: "Du hast das Limit für angenommene Aufträge erreicht. Bitte warte ${hours} Stunde(n), bevor du einen neuen Auftrag annimmst, oder schließe einen Auftrag erfolgreich ab, um den Zähler zurückzusetzen."
+scheduleorder_usage: "Verwendung: /scheduleorder <buy|sell> <sats> <Fiat-Betrag> <Fiat-Code> <Zahlungsmethode> [Aufschlag]"
+cancelschedule_usage: "Verwendung: /cancelschedule <Schedule-ID>"
+schedule_not_found: "⚠️ Schedule nicht gefunden oder bereits inaktiv."
+schedule_cancelled: "✅ Schedule ${scheduleId} abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
+listschedules_empty: "Du hast keine aktiven geplanten Aufträge."
+listschedules_header: "📋 Deine geplanten Aufträge:"
+schedule_list_item: |
+  🆔 `${scheduleId}`
+  ${type} · ${fiatAmount} ${fiatCode} · ${paymentMethod}
+  📅 ${days} · 🕐 ${hour}
+cancelallschedules_none: "Du hast keine aktiven geplanten Aufträge zum Abbrechen."
+all_schedules_cancelled: "✅ ${count} geplante(r) Auftrag/Aufträge abgebrochen. Es werden keine Bestellungen mehr automatisch veröffentlicht."
+schedule_req_max_reached: "⚠️ Du hast bereits ${max} aktive geplante Aufträge, das ist das erlaubte Maximum. Brich einen mit /cancelschedule ab, bevor du einen neuen erstellst."
+schedule_req_account_age: "⚠️ Dein Konto muss mindestens ${days} Tage alt sein, um geplante Aufträge zu erstellen."
+schedule_req_completed_orders: "⚠️ Du benötigst mindestens ${count} abgeschlossene Aufträge, um geplante Aufträge zu erstellen."
+schedule_req_dormant: "⚠️ Du musst in den letzten ${days} Tagen einen Auftrag abgeschlossen haben, um geplante Aufträge zu erstellen."
+schedule_req_volume: "⚠️ Du benötigst ein gehandeltes Volumen von mindestens ${volume} Sats, um geplante Aufträge zu erstellen."
+schedule_req_rating: "⚠️ Du benötigst eine Reputation von mindestens ${rating}, um geplante Aufträge zu erstellen."
+schedule_req_completion_rate: "⚠️ Deine Auftrags-Abschlussquote (${current}%) liegt unter den erforderlichen ${rate}%. Schließe mehr deiner Aufträge ab, bevor du planst."
+schedule_dormant_removed: "⚠️ Ich habe alle deine geplanten Aufträge entfernt, weil du in den letzten ${days} Tagen keinen Auftrag abgeschlossen hast."
+schedule_creation_cancelled: "❌ Erstellung des Schedules abgebrochen."
+schedule_created: "✅ Geplante Bestellung erstellt! Deine ID ist: ${scheduleId}\nVerwende /cancelschedule ${scheduleId} zum Stoppen."
+schedule_choose_days: "📅 An welchen Tagen soll die Bestellung veröffentlicht werden?"
+sched_daily: Jeden Tag
+sched_weekdays: Mo–Fr
+sched_weekend: Wochenende
+sched_custom: Benutzerdefiniert
+schedule_enter_custom_days: "✍️ Gib die Tage auf Englisch durch Kommas getrennt ein (z.B.: sunday, wednesday, friday)"
+invalid_days: "⚠️ Ungültige Tage. Gib englische Tagnamen durch Kommas getrennt ein (z.B.: sunday, wednesday, friday)."
+schedule_enter_hour: "🕐 Zu welcher Uhrzeit soll die Bestellung veröffentlicht werden? Gib eine Zahl zwischen 0 und 23 ein (UTC)."
+invalid_hour: "⚠️ Ungültige Stunde. Bitte gib eine Zahl zwischen 0 und 23 ein."
+schedule_confirm_summary: |
+  📋 *Zusammenfassung der geplanten Bestellung*
+
+  Typ: ${type}
+  Betrag: ${fiatAmount} ${fiatCode}
+  Zahlungsmethode: ${paymentMethod}
+  Tage: ${days}
+  Uhrzeit: ${hour}
