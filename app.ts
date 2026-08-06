@@ -50,7 +50,9 @@ import { startMonitoring } from './monitoring';
         const socksProxyHost = process.env.SOCKS_PROXY_HOST?.trim();
         const telegramAgent = socksProxyHost
           ? (() => {
-              const proxyUrl = /^socks[45]?h?:\/\//i.test(socksProxyHost)
+              const proxyUrl = /^(?:socks|socks4|socks5|socks5h):\/\//i.test(
+                socksProxyHost,
+              )
                 ? socksProxyHost
                 : `socks5://${socksProxyHost}`;
               logger.info(`Using SOCKS proxy for Telegram API: ${proxyUrl}`);
