@@ -1,5 +1,8 @@
 name: Release
 
+# Pushing a `v*` tag is the only manual step: this workflow bumps the version
+# files on main, re-points the tag at that commit and publishes the release.
+
 on:
   push:
     tags:
@@ -8,22 +11,69 @@ on:
 permissions:
   contents: write
 
+# Every release run commits to the default branch, so two tags pushed close
+# together must queue instead of interleaving their version bumps. Never
+# cancel: a half-applied release would leave the branch mid-bump.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history plus tags, needed to diff against the previous release.
+          fetch-depth: 0
 
-      - name: Extract changelog for this version
-        id: changelog
+      - name: Sync version files and tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+          BRANCH: ${{ github.event.repository.default_branch }}
+        run: node .github/scripts/release-sync.mjs
+
+      - name: Build release notes
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md > /tmp/release-notes.md
+
+          # The sync step already rejects anything else, but the tag name is
+          # interpolated into an awk program below, so do not rely on step order
+          # for that.
+          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)*$' || {
+            echo "Refusing to build notes for unexpected tag ${GITHUB_REF_NAME}"
+            exit 1
+          }
+          # Dots are regex wildcards in the awk pattern; 0.16.0 must not match 0x16y0.
+          ESCAPED_VERSION="${VERSION//./\\.}"
+
+          awk "/^## \[${ESCAPED_VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md > /tmp/release-notes.md
+
+          # No hand-written changelog entry for this version: fall back to the
+          # commit subjects since the previous tag. The version bumps are this
+          # workflow's own noise, so leave them out.
+          if [ ! -s /tmp/release-notes.md ]; then
+            PREVIOUS_TAG="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
+            RANGE="${GITHUB_REF_NAME}"
+            [ -n "$PREVIOUS_TAG" ] && RANGE="${PREVIOUS_TAG}..${GITHUB_REF_NAME}"
+            {
+              echo "### Changes"
+              echo
+              git log --no-merges --pretty='- %s' \
+                --invert-grep \
+                --grep='^chore: bump package\.json to v' \
+                --grep='^chore: sync package-lock\.json to v' \
+                "$RANGE"
+            } > /tmp/release-notes.md
+          fi
+
           cat /tmp/release-notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ github.ref_name }}
           body_path: /tmp/release-notes.md
           generate_release_notes: false
         env:
