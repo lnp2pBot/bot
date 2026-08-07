@@ -11,6 +11,13 @@ on:
 permissions:
   contents: write
 
+# Every release run commits to the default branch, so two tags pushed close
+# together must queue instead of interleaving their version bumps. Never
+# cancel: a half-applied release would leave the branch mid-bump.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest

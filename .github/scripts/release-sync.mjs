@@ -66,7 +66,10 @@ const readJsonFile = async path => {
   return { sha: file.sha, data: JSON.parse(text) };
 };
 
-const commitJsonFile = async (path, sha, data, message) => {
+// The blob sha only guards against a concurrent change to this same file, so
+// also assert what the new commit was built on: anything else means the branch
+// moved and the release would carry commits the tag never covered.
+const commitJsonFile = async (path, sha, data, message, expectedParent) => {
   const content = Buffer.from(
     `${JSON.stringify(data, null, 2)}\n`,
     'utf8'
@@ -75,6 +78,12 @@ const commitJsonFile = async (path, sha, data, message) => {
     method: 'PUT',
     body: JSON.stringify({ message, content, sha, branch }),
   });
+  const parent = result.commit.parents?.[0]?.sha;
+  if (parent !== expectedParent) {
+    throw new Error(
+      `Commit for ${path} was built on ${parent} instead of ${expectedParent}; ${branch} moved mid-release`
+    );
+  }
   console.log(`${message} (${result.commit.sha})`);
   return result.commit.sha;
 };
@@ -83,8 +92,9 @@ const commitJsonFile = async (path, sha, data, message) => {
 // moved onto it. Unless the tag already points at that same head, moving it
 // would pull commits into the release that were never tagged, so require an
 // exact match: "ahead" means the tag is not merged, "behind" means the branch
-// moved on after tagging, and both need a human decision.
-const assertTagIsBranchHead = async () => {
+// moved on after tagging, and both need a human decision. Returns the head the
+// bump commits must build on.
+const resolveReleaseHead = async () => {
   const { status } = await api(
     `/compare/${encodeURIComponent(branch)}...${encodeURIComponent(tag)}`
   );
@@ -93,20 +103,23 @@ const assertTagIsBranchHead = async () => {
       `Tag ${tag} is "${status}" relative to ${branch}; tag the current ${branch} head`
     );
   }
+  const { sha } = await api(`/commits/${encodeURIComponent(branch)}`);
+  return sha;
 };
 
-const bumpPackageJson = async () => {
+const bumpPackageJson = async parent => {
   const { sha, data } = await readJsonFile('package.json');
   if (data.version === version) return null;
   return commitJsonFile(
     'package.json',
     sha,
     { ...data, version },
-    `chore: bump package.json to ${tag}`
+    `chore: bump package.json to ${tag}`,
+    parent
   );
 };
 
-const bumpPackageLock = async () => {
+const bumpPackageLock = async parent => {
   const { sha, data } = await readJsonFile('package-lock.json');
   const root = data.packages?.[''];
   if (data.version === version && root?.version === version) return null;
@@ -121,7 +134,8 @@ const bumpPackageLock = async () => {
     'package-lock.json',
     sha,
     next,
-    `chore: sync package-lock.json to ${tag}`
+    `chore: sync package-lock.json to ${tag}`,
+    parent
   );
 };
 
@@ -133,16 +147,16 @@ const repointTag = async sha => {
   console.log(`Tag ${tag} now points at ${sha}`);
 };
 
-await assertTagIsBranchHead();
+const taggedHead = await resolveReleaseHead();
 
 // Sequential on purpose: each Contents API commit must build on the previous
-// one, and a concurrent PUT would fail on a stale blob sha.
-const packageJsonCommit = await bumpPackageJson();
-const packageLockCommit = await bumpPackageLock();
-const lastCommit = packageLockCommit || packageJsonCommit;
+// one, so each call also becomes the expected parent of the next.
+let head = taggedHead;
+head = (await bumpPackageJson(head)) ?? head;
+head = (await bumpPackageLock(head)) ?? head;
 
-if (lastCommit) {
-  await repointTag(lastCommit);
-} else {
+if (head === taggedHead) {
   console.log(`Version files already at ${version}; tag left untouched`);
+} else {
+  await repointTag(head);
 }
