@@ -37,10 +37,22 @@ jobs:
       - name: Build release notes
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
-          awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md > /tmp/release-notes.md
+
+          # The sync step already rejects anything else, but the tag name is
+          # interpolated into an awk program below, so do not rely on step order
+          # for that.
+          echo "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)*$' || {
+            echo "Refusing to build notes for unexpected tag ${GITHUB_REF_NAME}"
+            exit 1
+          }
+          # Dots are regex wildcards in the awk pattern; 0.16.0 must not match 0x16y0.
+          ESCAPED_VERSION="${VERSION//./\\.}"
+
+          awk "/^## \[${ESCAPED_VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md > /tmp/release-notes.md
 
           # No hand-written changelog entry for this version: fall back to the
-          # commit subjects since the previous tag.
+          # commit subjects since the previous tag. The version bumps are this
+          # workflow's own noise, so leave them out.
           if [ ! -s /tmp/release-notes.md ]; then
             PREVIOUS_TAG="$(git describe --tags --abbrev=0 "${GITHUB_REF_NAME}^" 2>/dev/null || true)"
             RANGE="${GITHUB_REF_NAME}"
@@ -48,7 +60,11 @@ jobs:
             {
               echo "### Changes"
               echo
-              git log --no-merges --pretty='- %s' "$RANGE"
+              git log --no-merges --pretty='- %s' \
+                --invert-grep \
+                --grep='^chore: bump package\.json to v' \
+                --grep='^chore: sync package-lock\.json to v' \
+                "$RANGE"
             } > /tmp/release-notes.md
           fi
 

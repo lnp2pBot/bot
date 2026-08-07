@@ -6,7 +6,16 @@
 //
 // Commits go through the Contents API instead of `git push` because the
 // default branch requires signed commits, and only API-created commits are
-// signed by GitHub.
+// signed by GitHub. Known limits of that API, neither of them reached today:
+// it commits one file at a time, which is why a release adds two commits, and
+// it cannot read or write blobs above 1 MB. package-lock.json is at ~264 KB;
+// when it approaches 1 MB this has to move to the Git Database API, which
+// would also collapse the two commits into one.
+//
+// An annotated tag is recreated over the bump commit so `git tag -a` keeps its
+// message. A *signature* cannot survive this: it covers the object the tag was
+// made on, so moving the tag necessarily invalidates it. Release tags are
+// therefore unsigned by design, and `git tag -s` is downgraded with a warning.
 
 const API = 'https://api.github.com';
 
@@ -24,6 +33,9 @@ if (!token || !repo || !tag) {
 const SEMVER =
   /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 const REQUEST_TIMEOUT_MS = 30_000;
+const PACKAGE_JSON_MESSAGE = `chore: bump package.json to ${tag}`;
+const PACKAGE_LOCK_MESSAGE = `chore: sync package-lock.json to ${tag}`;
+const BUMP_MESSAGES = [PACKAGE_JSON_MESSAGE, PACKAGE_LOCK_MESSAGE];
 
 const version = tag.replace(/^v/, '');
 if (!SEMVER.test(version)) {
@@ -99,6 +111,25 @@ const resolveReleaseHead = async () => {
     `/compare/${encodeURIComponent(branch)}...${encodeURIComponent(tag)}`
   );
   if (status !== 'identical') {
+    // A run that died between the bump commits and the re-point leaves exactly
+    // this state, and "tag the current head" alone would not explain it.
+    if (status === 'behind') {
+      const { commits } = await api(
+        `/compare/${encodeURIComponent(tag)}...${encodeURIComponent(branch)}`
+      );
+      const onlyOurBumps =
+        commits.length > 0 &&
+        commits.every(({ commit }) =>
+          BUMP_MESSAGES.some(message => commit.message.startsWith(message))
+        );
+      if (onlyOurBumps) {
+        throw new Error(
+          `An earlier run already bumped the version files for ${tag} but did not finish. ` +
+            `Move the tag onto them and re-run this workflow: ` +
+            `git fetch origin && git tag -f ${tag} origin/${branch} && git push -f origin ${tag}`
+        );
+      }
+    }
     throw new Error(
       `Tag ${tag} is "${status}" relative to ${branch}; tag the current ${branch} head`
     );
@@ -114,7 +145,7 @@ const bumpPackageJson = async parent => {
     'package.json',
     sha,
     { ...data, version },
-    `chore: bump package.json to ${tag}`,
+    PACKAGE_JSON_MESSAGE,
     parent
   );
 };
@@ -134,20 +165,49 @@ const bumpPackageLock = async parent => {
     'package-lock.json',
     sha,
     next,
-    `chore: sync package-lock.json to ${tag}`,
+    PACKAGE_LOCK_MESSAGE,
     parent
   );
 };
 
-const repointTag = async sha => {
+// Read before anything moves the ref, since re-pointing orphans the object.
+const readAnnotation = async () => {
+  const { object } = await api(`/git/ref/tags/${tag}`);
+  if (object.type !== 'tag') return null;
+  const { message, verification } = await api(`/git/tags/${object.sha}`);
+  return { message, signed: Boolean(verification?.signature) };
+};
+
+const repointTag = async (sha, annotation) => {
+  let target = sha;
+  if (annotation) {
+    if (annotation.signed) {
+      console.log(
+        `::warning::${tag} was signed; the release tag cannot carry that signature over to the bump commit`
+      );
+    }
+    const created = await api('/git/tags', {
+      method: 'POST',
+      body: JSON.stringify({
+        tag,
+        message: annotation.message,
+        object: sha,
+        type: 'commit',
+      }),
+    });
+    target = created.sha;
+  }
   await api(`/git/refs/tags/${tag}`, {
     method: 'PATCH',
-    body: JSON.stringify({ sha, force: true }),
+    body: JSON.stringify({ sha: target, force: true }),
   });
-  console.log(`Tag ${tag} now points at ${sha}`);
+  console.log(
+    `Tag ${tag} now points at ${sha}${annotation ? ' (annotation preserved)' : ''}`
+  );
 };
 
 const taggedHead = await resolveReleaseHead();
+const annotation = await readAnnotation();
 
 // Sequential on purpose: each Contents API commit must build on the previous
 // one, so each call also becomes the expected parent of the next.
@@ -158,5 +218,5 @@ head = (await bumpPackageLock(head)) ?? head;
 if (head === taggedHead) {
   console.log(`Version files already at ${version}; tag left untouched`);
 } else {
-  await repointTag(head);
+  await repointTag(head, annotation);
 }
