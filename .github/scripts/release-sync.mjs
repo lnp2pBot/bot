@@ -19,9 +19,17 @@ if (!token || !repo || !tag) {
   throw new Error('GITHUB_TOKEN, GITHUB_REPOSITORY and TAG are required');
 }
 
+// MAJOR.MINOR.PATCH with the optional prerelease and build metadata that the
+// `v*` workflow trigger also accepts, e.g. v1.2.3-rc.1 or v1.2.3+build.5.
+const SEMVER =
+  /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
+const REQUEST_TIMEOUT_MS = 30_000;
+
 const version = tag.replace(/^v/, '');
-if (!/^\d+\.\d+\.\d+$/.test(version)) {
-  throw new Error(`Tag "${tag}" must look like vMAJOR.MINOR.PATCH`);
+if (!SEMVER.test(version)) {
+  throw new Error(
+    `Tag "${tag}" must look like vMAJOR.MINOR.PATCH[-prerelease][+build]`
+  );
 }
 
 const api = async (path, init = {}) => {
@@ -33,6 +41,9 @@ const api = async (path, init = {}) => {
       'content-type': 'application/json',
       ...init.headers,
     },
+    // Without this a stalled connection would hang the job until its own
+    // timeout hours later.
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!res.ok) {
     throw new Error(
@@ -44,6 +55,13 @@ const api = async (path, init = {}) => {
 
 const readJsonFile = async path => {
   const file = await api(`/contents/${path}?ref=${branch}`);
+  // Files above 1 MB come back with an empty body and encoding "none", which
+  // would otherwise surface as an opaque JSON parse error.
+  if (file.encoding !== 'base64') {
+    throw new Error(
+      `${path} came back with encoding "${file.encoding}"; it is too large for the Contents API`
+    );
+  }
   const text = Buffer.from(file.content, 'base64').toString('utf8');
   return { sha: file.sha, data: JSON.parse(text) };
 };
@@ -61,15 +79,18 @@ const commitJsonFile = async (path, sha, data, message) => {
   return result.commit.sha;
 };
 
-// A tag pointing at a commit that never reached the default branch would make
-// the bump commit graft unrelated history onto the release, so refuse it.
-const assertTagIsOnBranch = async () => {
+// The bump commit is created on top of the branch head, and the tag is then
+// moved onto it. Unless the tag already points at that same head, moving it
+// would pull commits into the release that were never tagged, so require an
+// exact match: "ahead" means the tag is not merged, "behind" means the branch
+// moved on after tagging, and both need a human decision.
+const assertTagIsBranchHead = async () => {
   const { status } = await api(
     `/compare/${encodeURIComponent(branch)}...${encodeURIComponent(tag)}`
   );
-  if (status !== 'identical' && status !== 'behind') {
+  if (status !== 'identical') {
     throw new Error(
-      `Tag ${tag} is "${status}" relative to ${branch}; tag a commit that is already merged`
+      `Tag ${tag} is "${status}" relative to ${branch}; tag the current ${branch} head`
     );
   }
 };
@@ -112,7 +133,7 @@ const repointTag = async sha => {
   console.log(`Tag ${tag} now points at ${sha}`);
 };
 
-await assertTagIsOnBranch();
+await assertTagIsBranchHead();
 
 // Sequential on purpose: each Contents API commit must build on the previous
 // one, and a concurrent PUT would fail on a stale blob sha.
