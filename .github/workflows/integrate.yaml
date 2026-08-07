@@ -1,7 +1,13 @@
 name: NodeJS Continuous Integration
 
-on: 
+on:
   push:
+    # The Release workflow moves a release tag onto the version-bump commit it
+    # creates, so a tag-triggered run aborts in checkout with "the ref does not
+    # point to the expected commit". The tagged tree is the branch tip, which
+    # this workflow already checked on push and on the pull request.
+    tags-ignore:
+      - '**'
   pull_request:
   workflow_dispatch:
 

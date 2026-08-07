@@ -1,7 +1,13 @@
 name: Auto Check Lint
 on:
-  - pull_request
-  - push
+  pull_request:
+  push:
+    # The Release workflow moves a release tag onto the version-bump commit it
+    # creates, so a tag-triggered run aborts in checkout with "the ref does not
+    # point to the expected commit". The tagged tree is the branch tip, which
+    # this workflow already linted on push and on the pull request.
+    tags-ignore:
+      - '**'
 
 jobs: 
   Lint:
