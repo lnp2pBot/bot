@@ -76,6 +76,7 @@ describe('attemptPendingPayments healing branches', () => {
   let sandbox: any;
   let getPaymentStatusStub: any;
   let payRequestStub: any;
+  let recordPayoutIntentStub: any;
   let orderFindOneStub: any;
   let userFindOneStub: any;
   let pendingFindStub: any;
@@ -95,6 +96,7 @@ describe('attemptPendingPayments healing branches', () => {
 
     getPaymentStatusStub = sandbox.stub();
     payRequestStub = sandbox.stub();
+    recordPayoutIntentStub = sandbox.stub().resolves();
     orderFindOneStub = sandbox.stub();
     userFindOneStub = sandbox.stub();
     pendingFindStub = sandbox.stub();
@@ -134,6 +136,7 @@ describe('attemptPendingPayments healing branches', () => {
       '../ln': {
         payRequest: payRequestStub,
         getPaymentStatus: getPaymentStatusStub,
+        recordPayoutIntent: recordPayoutIntentStub,
         '@global': true,
         '@noCallThru': true,
       },
@@ -304,6 +307,35 @@ describe('attemptPendingPayments healing branches', () => {
       expect(toBuyerStub.calledOnce).to.equal(true, 'buyer must be notified');
       expect(rateUserStub.calledOnce).to.equal(true, 'rating must be sent');
       expect(payRequestStub.called).to.equal(false);
+    });
+  });
+
+  // ── Payout intent: the attempt's hash must be recorded BEFORE paying ───────────
+
+  describe('payment attempt', () => {
+    it('records the payout intent before attempting the payment', async () => {
+      const order = makeFakeOrder();
+      const pending = makeFakePending();
+      const buyer = makeFakeUser(BUYER_ID);
+
+      pendingFindStub.onFirstCall().resolves([pending]);
+      pendingFindStub.onSecondCall().resolves([]);
+      orderFindOneStub.resolves(order);
+      userFindOneStub.withArgs({ _id: BUYER_ID }).resolves(buyer);
+      getPaymentStatusStub.resolves({ is_confirmed: false, is_pending: false });
+      payRequestStub.resolves({ error: 'TIMEOUT', message: 'timed out' });
+
+      await job.attemptPendingPayments(fakeBot);
+
+      // The hash of the invoice about to be paid must be persisted before the
+      // payment starts, so a settlement that outlives the local timeout is
+      // never an unrecorded outgoing payment.
+      sinon.assert.calledWith(
+        recordPayoutIntentStub,
+        order,
+        pending.payment_request,
+      );
+      sinon.assert.callOrder(recordPayoutIntentStub, payRequestStub);
     });
   });
 

@@ -73,7 +73,7 @@ const orderSchema = new Schema<IOrder, mongoose.Model<IOrder>>({
   bot_fee: { type: Number, min: 0 }, // bot MAX_FEE at the moment of order creation
   community_fee: { type: Number, min: 0 }, // community FEE_PERCENT at the moment of order creation
   routing_fee: { type: Number, min: 0, default: 0 },
-  payout_hash: { type: String }, // payment hash of the buyer payout (proof of payment / reconciliation)
+  payout_hash: { type: String }, // payment hash of the latest recorded buyer payout attempt; written best-effort BEFORE paying (recordPayoutIntent) and confirmed on completion (completeOrderAsSuccess)
   payout_preimage: { type: String }, // preimage of the buyer payout (cryptographic proof it settled)
   hash: {
     type: String,

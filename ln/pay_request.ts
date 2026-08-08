@@ -5,7 +5,7 @@ import {
   AuthenticatedLnd,
 } from 'lightning';
 import type { PayViaPaymentRequestResult } from 'lightning/lnd_methods/offchain/pay_via_payment_request';
-import { User, PendingPayment } from '../models';
+import { User, PendingPayment, Order } from '../models';
 import lnd from './connect';
 import { handleReputationItems, getUserI18nContext } from '../util';
 import * as messages from '../bot/messages';
@@ -122,6 +122,29 @@ const payRequest = async ({
   }
 };
 
+// Persist the payout attempt's payment hash on the order BEFORE any money
+// moves. LND can settle a payment after payRequest times out locally
+// (pathfinding_timeout), and the completion callbacks then run minutes later
+// via the pending-payments job — during that window an outgoing payment
+// exists on the node with no trace in the DB, which the external
+// reconciliation monitor must treat as suspicious. Writing the hash
+// pre-flight narrows that window to the rare case where this write itself
+// fails. Best-effort by design: a failure here must never block the payout —
+// the completion path (completeOrderAsSuccess) records the same hash again
+// when it later runs.
+const recordPayoutIntent = async (order: IOrder, request: string) => {
+  try {
+    const { id } = parsePaymentRequest({ request });
+    if (!id) return;
+    await Order.updateOne({ _id: order._id }, { $set: { payout_hash: id } });
+    order.payout_hash = id;
+  } catch (error) {
+    logger.error(
+      `recordPayoutIntent: failed to record hash for order ${order._id}: ${error}`,
+    );
+  }
+};
+
 const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
   try {
     // Skip if the payment is already in-flight or was confirmed
@@ -138,6 +161,7 @@ const payToBuyer = async (bot: HasTelegram, order: IOrder) => {
       );
       return;
     }
+    await recordPayoutIntent(order, order.buyer_invoice);
     const payment = await payRequest({
       request: order.buyer_invoice,
       amount: order.amount,
@@ -290,6 +314,7 @@ const isPendingOrConfirmed = async (request: string) => {
 export {
   payRequest,
   payToBuyer,
+  recordPayoutIntent,
   isPendingOrConfirmed,
   getPaymentStatus,
   LndPayment,

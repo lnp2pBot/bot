@@ -37,6 +37,7 @@ describe('attemptPendingPayments (issue #864)', () => {
     payment: any;
   }) {
     const payRequest = sinon.stub().resolves(payment);
+    const recordPayoutIntent = sinon.stub().resolves();
     const getPaymentStatus = sinon.stub().resolves(notPaidStatus);
     const orderUpdated = sinon.stub();
 
@@ -117,7 +118,7 @@ describe('attemptPendingPayments (issue #864)', () => {
         '../models': models,
         '../bot/messages': messages,
         '../logger': loggerStub(),
-        '../ln': { payRequest, getPaymentStatus },
+        '../ln': { payRequest, getPaymentStatus, recordPayoutIntent },
         '../util': utilStub(),
         '../bot/modules/events/orders': { orderUpdated },
         '../util/completeOrder': { completeOrderAsSuccess, healConfirmedOrder },
