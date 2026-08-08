@@ -1,5 +1,6 @@
 /**
- * Tests for recordPayoutIntent (ln/pay_request.ts).
+ * Tests for recordPayoutIntent and the payout-intent wiring in payToBuyer
+ * (ln/pay_request.ts).
  *
  * The payout attempt's payment hash must be persisted on the order BEFORE any
  * money moves: LND can settle a payment after payRequest times out locally,

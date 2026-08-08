@@ -128,9 +128,10 @@ const payRequest = async ({
 // via the pending-payments job — during that window an outgoing payment
 // exists on the node with no trace in the DB, which the external
 // reconciliation monitor must treat as suspicious. Writing the hash
-// pre-flight closes that window. Best-effort by design: a failure here must
-// never block the payout — the completion path (completeOrderAsSuccess)
-// records the same hash again.
+// pre-flight narrows that window to the rare case where this write itself
+// fails. Best-effort by design: a failure here must never block the payout —
+// the completion path (completeOrderAsSuccess) records the same hash again
+// when it later runs.
 const recordPayoutIntent = async (order: IOrder, request: string) => {
   try {
     const { id } = parsePaymentRequest({ request });
