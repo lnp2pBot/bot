@@ -10,6 +10,7 @@ import { resubscribeInvoices } from './resubscribe_invoices';
 import {
   payRequest,
   payToBuyer,
+  recordPayoutIntent,
   isPendingOrConfirmed,
   getPaymentStatus,
   LndPayment,
@@ -25,6 +26,7 @@ export {
   cancelHoldInvoice,
   payRequest,
   payToBuyer,
+  recordPayoutIntent,
   getInfo,
   isPendingOrConfirmed,
   getPaymentStatus,

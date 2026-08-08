@@ -4,7 +4,12 @@ import * as messages from '../bot/messages';
 import { logger } from '../logger';
 import { Telegraf } from 'telegraf';
 import { I18nContext } from '@grammyjs/i18n';
-import { payRequest, getPaymentStatus, LndPayment } from '../ln';
+import {
+  payRequest,
+  getPaymentStatus,
+  recordPayoutIntent,
+  LndPayment,
+} from '../ln';
 import { getUserI18nContext } from '../util';
 import { CommunityContext } from '../bot/modules/community/communityContext';
 import { orderUpdated } from '../bot/modules/events/orders';
@@ -226,6 +231,10 @@ export const attemptPendingPayments = async (
       const nextRetryDelay = Math.min(exponentialDelay, maxDelay);
       pending.next_retry = new Date(Date.now() + nextRetryDelay);
 
+      // The retry may pay a NEW invoice (buyer ran /setinvoice), so the hash
+      // of THIS attempt must be recorded before the payment starts — see
+      // recordPayoutIntent for the reconciliation-window rationale.
+      await recordPayoutIntent(order, pending.payment_request);
       const payment = await payRequest({
         amount: pending.amount,
         request: pending.payment_request,
