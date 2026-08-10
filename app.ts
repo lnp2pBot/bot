@@ -74,6 +74,12 @@ import { startMonitoring } from './monitoring';
           },
         };
         const bot = await start(String(process.env.BOT_TOKEN), options);
+        if (process.env.SUNSET_MODE === 'true') {
+          logger.notice(
+            'SUNSET_MODE is on: skipping LN node connection and monitoring.',
+          );
+          return;
+        }
         // Wait 1 seconds before try to resubscribe hold invoices
         await delay(1000);
         await resubscribeInvoices(bot);

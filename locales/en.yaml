@@ -595,6 +595,17 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the ID has cha
 community_deleted: This community was deleted due to inactivity. I have unlinked you from it, try to create the order again
 dispute_too_soon: You can't start a dispute too soon, be patient and wait a few minutes for your counterparty to reply
 maintenance: 🚨 Bot in maintenance, please try again later 🚨
+sunset: |
+  ⚠️ This bot is no longer in service
+
+  Thank you for being part of this community. The bot no longer processes orders or payments.
+
+  📄 Official announcement: https://x.com/negrunch/status/2086899005355704703
+
+  🥜 We invite you to keep trading Bitcoin P2P without KYC using Mostro:
+
+  If you want to use Mostro: https://mostro.network
+  If you want to run your own Mostro node: https://mostro.community/
 
 # START modules/community
 community_admin: |
