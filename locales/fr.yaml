@@ -587,6 +587,19 @@ upgraded_to_supergroup: Le chat a été transformé en "supergroupe" et l'identi
 community_deleted: Cette communauté a été supprimée pour cause d'inactivité. Je vous en ai dissocié, essayez de créer l'offre à nouveau.
 dispute_too_soon: Vous ne pouvez pas lancer un litige trop tôt, soyez patient et attendez quelques minutes pour que votre contrepartie vous réponde.
 maintenance: 🚨 Bot en maintenance, veuillez réessayer plus tard 🚨
+sunset: |
+  ⚠️ Ce bot a cessé de fournir ses services
+
+  Merci d'avoir fait partie de cette communauté. Le bot ne traite plus les ordres ni les paiements.
+
+  📄 Annonce officielle : https://x.com/negrunch/status/2086899005355704703
+
+  🥜 Nous vous invitons à continuer d'échanger du Bitcoin en P2P et sans KYC avec Mostro :
+
+  Si vous voulez utiliser Mostro : https://mostro.network
+  Si vous voulez faire tourner votre propre nœud Mostro : https://mostro.community/
+
+  🎥 Tutoriel vidéo : https://www.youtube.com/watch?v=Lnyjgecfd_w
 
 # START modules/community
 community_admin: |
