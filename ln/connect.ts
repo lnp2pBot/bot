@@ -32,9 +32,14 @@ if (
   macaroon = fs.readFileSync(macaroonPath).toString('base64');
 }
 
-// Enforcing presence of LND_GRPC_HOST environment variable
+// Enforcing presence of LND_GRPC_HOST environment variable,
+// not needed in sunset mode because the node is never called
 const socket = process.env.LND_GRPC_HOST;
-if (!socket && process.env.NODE_ENV !== 'test') {
+if (
+  !socket &&
+  process.env.NODE_ENV !== 'test' &&
+  process.env.SUNSET_MODE !== 'true'
+) {
   throw new Error('You must provide a LND_GRPC_HOST environment variable');
 }
 

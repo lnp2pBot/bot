@@ -175,6 +175,22 @@ const COMMIT_HASH = (() => {
   }
 })();
 
+const isSunsetMode = (): boolean => process.env.SUNSET_MODE === 'true';
+
+// When SUNSET_MODE is on the bot no longer trades: every incoming update is
+// answered with a service-discontinued notice in the user's language
+const sunsetMiddleware = async (ctx: MainContext): Promise<void> => {
+  try {
+    if (ctx.from === undefined) return;
+    const user = await User.findOne({ tg_id: ctx.from.id.toString() });
+    const language = user?.lang || ctx.from.language_code || 'en';
+    ctx.i18n.locale(language);
+    await ctx.reply(ctx.i18n.t('sunset'), { disable_web_page_preview: true });
+  } catch (error) {
+    logger.error(error);
+  }
+};
+
 const initialize = (
   botToken: string,
   options: Partial<Telegraf.Options<CommunityContext>>,
@@ -194,6 +210,12 @@ const initialize = (
   bot.use(session());
   bot.use(limit());
   bot.use(i18n.middleware());
+
+  if (isSunsetMode()) {
+    bot.use(sunsetMiddleware);
+    return bot;
+  }
+
   bot.use(stageMiddleware());
   bot.use(commandArgsMiddleware());
 
@@ -1199,4 +1221,4 @@ const start = async (
   return bot;
 };
 
-export { initialize, start };
+export { initialize, start, sunsetMiddleware };

@@ -590,6 +590,17 @@ upgraded_to_supergroup: El chat fue actualizado a 'supergrupo' y el Id ha cambia
 community_deleted: Esta comunidad fue eliminada por inactividad, te he desvinculado de ella, intenta crear la orden nuevamente
 dispute_too_soon: No puedes iniciar una disputa tan pronto, ten paciencia y espera unos minutos a que tu contraparte responda
 maintenance: 🚨 Bot en mantenimiento, inténtalo de nuevo más tarde 🚨
+sunset: |
+  ⚠️ Este bot ha dejado de prestar servicios
+
+  Gracias por haber sido parte de esta comunidad. El bot ya no procesa órdenes ni pagos.
+
+  📄 Comunicado oficial: https://x.com/negrunch/status/2086896990256799795
+
+  🥜 Te invitamos a seguir comerciando Bitcoin de forma P2P y sin KYC con Mostro:
+
+  Si quieres usar Mostro: https://mostro.network
+  Si quieres correr tu propio nodo Mostro: https://mostro.community/
 
 # START modules/community
 community_admin: |
