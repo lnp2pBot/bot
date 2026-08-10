@@ -11,6 +11,8 @@ const SPANISH_ANNOUNCEMENT =
   'https://x.com/negrunch/status/2086896990256799795';
 const ENGLISH_ANNOUNCEMENT =
   'https://x.com/negrunch/status/2086899005355704703';
+const SPANISH_VIDEO_TUTORIAL = 'https://www.youtube.com/watch?v=lbenPWNlykk';
+const ENGLISH_VIDEO_TUTORIAL = 'https://www.youtube.com/watch?v=Lnyjgecfd_w';
 
 const makeCtx = (from: any) => {
   const locales: string[] = [];
@@ -90,6 +92,7 @@ describe('sunset mode', () => {
       const es = readLocale('es');
       expect(es).to.include('sunset:');
       expect(es).to.include(SPANISH_ANNOUNCEMENT);
+      expect(es).to.include(SPANISH_VIDEO_TUTORIAL);
       expect(es).to.include('https://mostro.network');
       expect(es).to.include('https://mostro.community');
     });
@@ -98,6 +101,7 @@ describe('sunset mode', () => {
       const en = readLocale('en');
       expect(en).to.include('sunset:');
       expect(en).to.include(ENGLISH_ANNOUNCEMENT);
+      expect(en).to.include(ENGLISH_VIDEO_TUTORIAL);
       expect(en).to.include('https://mostro.network');
       expect(en).to.include('https://mostro.community');
     });
