@@ -555,6 +555,28 @@ const onGoingTakeBuyMessage = async (
   }
 };
 
+// Sends a MarkdownV2 message, retrying once as plain text if Telegram rejects
+// the formatting. A single unescaped reserved character in a translation makes
+// sendMessage throw, and callers that send follow-up messages (e.g. the order
+// action buttons) would never reach them. Escaping locales fixes the known
+// cases; this keeps the message deliverable when a new one slips through.
+// The failing locale is logged so the offending translation can be corrected.
+const sendMarkdownV2WithPlainFallback = async (
+  bot: HasTelegram,
+  tgId: string,
+  text: string,
+  locale: string,
+) => {
+  try {
+    await bot.telegram.sendMessage(tgId, text, { parse_mode: 'MarkdownV2' });
+  } catch (error) {
+    logger.warning(
+      `MarkdownV2 send failed for locale "${locale}", retrying as plain text: ${error}`,
+    );
+    await bot.telegram.sendMessage(tgId, text);
+  }
+};
+
 const beginTakeSellMessage = async (
   ctx: MainContext,
   bot: HasTelegram,
@@ -570,10 +592,11 @@ const beginTakeSellMessage = async (
     let expirationTime = time.hours + ' ' + ctx.i18n.t('hours');
     expirationTime +=
       time.minutes > 0 ? ' ' + time.minutes + ' ' + ctx.i18n.t('minutes') : '';
-    await bot.telegram.sendMessage(
+    await sendMarkdownV2WithPlainFallback(
+      bot,
       buyer.tg_id,
       ctx.i18n.t('you_took_someone_order', { expirationTime }),
-      { parse_mode: 'MarkdownV2' },
+      ctx.i18n.locale(),
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
