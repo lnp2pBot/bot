@@ -588,6 +588,19 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has cha
 community_deleted: Diese Community wurde aufgrund von Inaktivität gelöscht, ich habe dich davon getrennt, versuche die Bestellung erneut zu erstellen
 disput_too_soon: Sie können einen Streit nicht so früh beginnen, seien Sie geduldig und warten Sie ein paar Minuten, bis Ihre Gegenpartei antwortet
 maintenance: 🚨 Bot in Wartung, bitte versuche es später noch einmal 🚨
+sunset: |
+  ⚠️ Dieser Bot hat seinen Dienst eingestellt
+
+  Danke, dass du Teil dieser Community warst. Der Bot verarbeitet keine Orders und Zahlungen mehr.
+
+  📄 Offizielle Ankündigung: https://x.com/negrunch/status/2086899005355704703
+
+  🥜 Wir laden dich ein, weiterhin Bitcoin P2P und ohne KYC mit Mostro zu handeln:
+
+  Wenn du Mostro nutzen möchtest: https://mostro.network
+  Wenn du deinen eigenen Mostro-Node betreiben möchtest: https://mostro.community/
+
+  🎥 Video-Tutorial: https://www.youtube.com/watch?v=Lnyjgecfd_w
 # START modules/nostr
 user_npub_updated: Sie haben Ihren Pubkey ${npub} erfolgreich hinzugefügt!
 nostr_info: |

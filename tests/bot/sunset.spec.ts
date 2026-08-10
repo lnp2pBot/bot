@@ -105,5 +105,16 @@ describe('sunset mode', () => {
       expect(en).to.include('https://mostro.network');
       expect(en).to.include('https://mostro.community');
     });
+
+    ['de', 'fr', 'it', 'pt', 'ru', 'uk', 'ko', 'fa'].forEach(lang => {
+      it(`${lang} message links to the english announcement and Mostro`, () => {
+        const content = readLocale(lang);
+        expect(content).to.include('sunset:');
+        expect(content).to.include(ENGLISH_ANNOUNCEMENT);
+        expect(content).to.include(ENGLISH_VIDEO_TUTORIAL);
+        expect(content).to.include('https://mostro.network');
+        expect(content).to.include('https://mostro.community');
+      });
+    });
   });
 });

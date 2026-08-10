@@ -584,6 +584,19 @@ upgraded_to_supergroup: The chat was upgraded to 'supergroup' and the Id has cha
 community_deleted: Ця спільнота була видалена через бездіяльність, я від’єднав вас від неї, спробуйте створити замовлення знову
 dispute_too_soon: Ви не можете розпочати диспут так рано, наберіться терпіння та зачекайте кілька хвилин, поки ваш контрагент відповість
 maintenance: 🚨 Бот виконує технічне обслуговування, спробуйте пізніше 🚨
+sunset: |
+  ⚠️ Цей бот припинив надання послуг
+
+  Дякуємо, що були частиною цієї спільноти. Бот більше не обробляє ордери та платежі.
+
+  📄 Офіційне оголошення: https://x.com/negrunch/status/2086899005355704703
+
+  🥜 Запрошуємо вас продовжити P2P-торгівлю біткоїном без KYC із Mostro:
+
+  Якщо ви хочете користуватися Mostro: https://mostro.network
+  Якщо ви хочете запустити власний вузол Mostro: https://mostro.community/
+
+  🎥 Відеоурок: https://www.youtube.com/watch?v=Lnyjgecfd_w
 # START modules/nostr
 user_npub_updated: Ви успішно додали свій pubkey ${npub}!
 nostr_info: |

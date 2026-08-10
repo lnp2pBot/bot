@@ -585,6 +585,19 @@ upgraded_to_supergroup: 해당 대화는 '슈퍼그룹'으로 승격되었습니
 community_deleted: 이 커뮤니티는 활동이 없는 관계로 삭제되었습니다. 당신은 해당 커뮤니티에서 연결이 해제되었습니다. 주문을 다시 생성해보세요.
 dispute_too_soon: 이렇게 빨리 분쟁 해소 절차를 시작할 수 없습니다. 거래 상대방이 응답할 때까지 몇 분만 더 기다려 주세요.
 maintenance: 🚨 봇이 정비 중에 있습니다. 잠시 후 다시 시도해 주세요. 🚨
+sunset: |
+  ⚠️ 이 봇은 서비스를 종료했습니다
+
+  이 커뮤니티의 일원이 되어 주셔서 감사합니다. 봇은 더 이상 주문과 결제를 처리하지 않습니다.
+
+  📄 공식 공지: https://x.com/negrunch/status/2086899005355704703
+
+  🥜 Mostro와 함께 KYC 없이 P2P 비트코인 거래를 계속하세요:
+
+  Mostro를 사용하려면: https://mostro.network
+  자신만의 Mostro 노드를 운영하려면: https://mostro.community/
+
+  🎥 튜토리얼 영상: https://www.youtube.com/watch?v=Lnyjgecfd_w
 
 # START modules/community
 community_admin: |
