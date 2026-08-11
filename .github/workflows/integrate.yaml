@@ -21,11 +21,11 @@ jobs:
   ci_to_main:
     runs-on: ubuntu-latest
     container:
-      # node:20-bookworm provides Node 20 from the official Node image (no
+      # node:22-bookworm provides Node 22 from the official Node image (no
       # NodeSource, no distro-apt Node), and MongoDB 8.0 installs from the
       # officially supported Debian bookworm repo. This keeps both Node and
       # MongoDB on supported, reproducible sources at the same time.
-      image: 'node:20-bookworm'
+      image: 'node:22-bookworm'
     steps:
       - name: Update apt and install required packages
         run: |
