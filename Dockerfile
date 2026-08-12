@@ -1,7 +1,7 @@
 # Multi-stage build for secure, optimized container
 
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Install build dependencies required for canvas and other native modules
 RUN apk add --no-cache \
@@ -45,7 +45,7 @@ RUN git rev-parse HEAD > /tmp/git-commit-hash 2>/dev/null || echo "unknown" > /t
 RUN rm -rf node_modules && npm ci --omit=dev
 
 # Production stage
-FROM node:20-alpine AS production
+FROM node:22-alpine AS production
 
 # Install runtime dependencies for canvas and git for version info
 RUN apk add --no-cache \
