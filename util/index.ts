@@ -605,6 +605,12 @@ export const removeLightningPrefix = (invoice: string) => {
   return invoice;
 };
 
+export const buildSocksProxyUrl = (socksProxyHost: string) => {
+  return /^(?:socks|socks4|socks5|socks5h):\/\//i.test(socksProxyHost)
+    ? socksProxyHost
+    : `socks5://${socksProxyHost}`;
+};
+
 const generateRandomImage = (nonce: string) => {
   // Import imageCache here to avoid circular dependency
   const { imageCache } = require('./imageCache');
