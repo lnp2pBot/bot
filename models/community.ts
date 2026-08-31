@@ -43,6 +43,8 @@ const usernameIdSchema = new Schema<IUsernameId>({
 
 export interface ICommunity extends Document<string> {
   _id: string;
+  // mongoose 9 no longer exposes the `id` virtual on the Document type
+  id: string;
   name: string;
   creator_id: string;
   group: string;

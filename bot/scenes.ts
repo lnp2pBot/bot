@@ -201,8 +201,8 @@ const addInvoicePHIWizard = new Scenes.WizardScene(
       }
 
       const isScheduled = await PendingPayment.findOne({
-        order_id: order._id,
-        attempts: { $lt: process.env.PAYMENT_ATTEMPTS },
+        order_id: order._id.toString(),
+        attempts: { $lt: Number(process.env.PAYMENT_ATTEMPTS) },
         is_invoice_expired: false,
       });
       // Block update if payment is already in-flight (confirmed is handled above)

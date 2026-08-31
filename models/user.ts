@@ -7,6 +7,8 @@ interface UserReview {
 
 export interface UserDocument extends Document<string> {
   _id: string;
+  // mongoose 9 no longer exposes the `id` virtual on the Document type
+  id: string;
   tg_id: string;
   username?: string;
   lang: string;
