@@ -3,7 +3,7 @@ import { Telegraf, session, Context, Telegram } from 'telegraf';
 import { I18n, I18nContext } from '@grammyjs/i18n';
 import { Message } from 'typegram';
 import { UserDocument } from '../models/user';
-import { FilterQuery } from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 import * as OrderEvents from './modules/events/orders';
 import { limit } from '@grammyjs/ratelimiter';
 import schedule from 'node-schedule';
@@ -175,14 +175,32 @@ const COMMIT_HASH = (() => {
   }
 })();
 
+// mongoose.ConnectionStates.connected, inlined because that enum is types-only
+const MONGO_CONNECTED_STATE = 1;
+
 const isSunsetMode = (): boolean => process.env.SUNSET_MODE === 'true';
+
+// Sunset mode can run without a database, so the stored language is a
+// best-effort lookup: it's skipped when Mongo is not connected and any query
+// failure falls back to the language reported by the Telegram client
+const findSunsetUser = async (tgId: string): Promise<UserDocument | null> => {
+  if (mongoose.connection.readyState !== MONGO_CONNECTED_STATE) {
+    return null;
+  }
+  try {
+    return await User.findOne({ tg_id: tgId });
+  } catch (error) {
+    logger.warning(`Could not read user language from database: ${error}`);
+    return null;
+  }
+};
 
 // When SUNSET_MODE is on the bot no longer trades: every incoming update is
 // answered with a service-discontinued notice in the user's language
 const sunsetMiddleware = async (ctx: MainContext): Promise<void> => {
   try {
     if (ctx.from === undefined) return;
-    const user = await User.findOne({ tg_id: ctx.from.id.toString() });
+    const user = await findSunsetUser(ctx.from.id.toString());
     const language = user?.lang || ctx.from.language_code || 'en';
     ctx.i18n.locale(language);
     await ctx.reply(ctx.i18n.t('sunset'), { disable_web_page_preview: true });
@@ -1221,4 +1239,4 @@ const start = async (
   return bot;
 };
 
-export { initialize, start, sunsetMiddleware };
+export { initialize, start, sunsetMiddleware, isSunsetMode };
