@@ -1,7 +1,10 @@
 import path from 'path';
 import fs from 'fs';
 
-import { sunsetMiddleware } from '../../bot/start';
+import mongoose from 'mongoose';
+
+import { sunsetMiddleware, isSunsetMode } from '../../bot/start';
+import { buildMongoUri } from '../../db_connect';
 import { User } from '../../models';
 
 const sinon = require('sinon');
@@ -32,6 +35,8 @@ describe('sunset mode', () => {
 
   beforeEach(() => {
     sandbox = sinon.createSandbox();
+    // Pretend Mongo is connected unless a test says otherwise
+    sandbox.stub(mongoose.connection, 'readyState').value(1);
   });
 
   afterEach(() => {
@@ -68,6 +73,30 @@ describe('sunset mode', () => {
 
       expect(ctx.locales).to.deep.equal(['en']);
       expect(ctx.reply.calledOnce).to.equal(true);
+    });
+
+    it('replies using the Telegram language when the database is not connected', async () => {
+      sandbox.stub(mongoose.connection, 'readyState').value(0);
+      const findOne = sandbox.stub(User, 'findOne');
+      const ctx = makeCtx({ id: 1, language_code: 'it' });
+
+      await sunsetMiddleware(ctx as any);
+
+      expect(findOne.called).to.equal(false);
+      expect(ctx.locales).to.deep.equal(['it']);
+      expect(ctx.reply.calledOnce).to.equal(true);
+      expect(ctx.reply.firstCall.args[0]).to.equal('translated:sunset');
+    });
+
+    it('still replies when the user query fails', async () => {
+      sandbox.stub(User, 'findOne').rejects(new Error('no connection'));
+      const ctx = makeCtx({ id: 1, language_code: 'pt' });
+
+      await sunsetMiddleware(ctx as any);
+
+      expect(ctx.locales).to.deep.equal(['pt']);
+      expect(ctx.reply.calledOnce).to.equal(true);
+      expect(ctx.reply.firstCall.args[0]).to.equal('translated:sunset');
     });
 
     it('does not reply when the update has no sender', async () => {
@@ -115,6 +144,54 @@ describe('sunset mode', () => {
         expect(content).to.include('https://mostro.network');
         expect(content).to.include('https://mostro.community');
       });
+    });
+  });
+
+  describe('isSunsetMode', () => {
+    const original = process.env.SUNSET_MODE;
+
+    afterEach(() => {
+      if (original === undefined) delete process.env.SUNSET_MODE;
+      else process.env.SUNSET_MODE = original;
+    });
+
+    it('is enabled only when SUNSET_MODE is the string true', () => {
+      process.env.SUNSET_MODE = 'true';
+      expect(isSunsetMode()).to.equal(true);
+
+      process.env.SUNSET_MODE = 'false';
+      expect(isSunsetMode()).to.equal(false);
+
+      delete process.env.SUNSET_MODE;
+      expect(isSunsetMode()).to.equal(false);
+    });
+  });
+
+  describe('database configuration', () => {
+    const env = { ...process.env };
+
+    afterEach(() => {
+      process.env = { ...env };
+    });
+
+    it('does not require DB variables to be read at import time', () => {
+      delete process.env.MONGO_URI;
+      delete process.env.DB_HOST;
+
+      expect(() => buildMongoUri()).to.throw('You must provide a MongoDB URI');
+    });
+
+    it('builds the URI from DB_* variables', () => {
+      delete process.env.MONGO_URI;
+      process.env.DB_USER = 'user';
+      process.env.DB_PASS = 'pass';
+      process.env.DB_HOST = 'localhost';
+      process.env.DB_PORT = '27017';
+      process.env.DB_NAME = 'p2plnbot';
+
+      expect(buildMongoUri()).to.equal(
+        'mongodb://user:pass@localhost:27017/p2plnbot?authSource=admin',
+      );
     });
   });
 });
