@@ -8,9 +8,11 @@ import {
   toKebabCase,
   getDetailedOrder,
   getUserI18nContext,
+  satsLimitViolation,
 } from '../../util/index';
 
 const { expect } = require('chai');
+const sinon = require('sinon');
 
 describe('Utility Functions', () => {
   describe('getCurrency', () => {
@@ -220,6 +222,54 @@ describe('Utility Functions', () => {
     it('falls back to English when lang is missing', async () => {
       const ctx = await getUserI18nContext({} as any);
       expect(ctx.locale()).to.equal('en');
+    });
+  });
+
+  // satsLimitViolation re-checks the definitive sats of a market-price order at
+  // take time, since the live price can drift out of MIN/MAX between publication
+  // and take (see PR #778 review). It reads MIN/MAX_PAYMENT_AMT from the env.
+  describe('satsLimitViolation', () => {
+    let sandbox: any;
+
+    afterEach(() => {
+      if (sandbox) sandbox.restore();
+    });
+
+    const withEnv = (env: Record<string, any>) => {
+      sandbox = sinon.createSandbox();
+      sandbox.stub(process, 'env').value(env);
+    };
+
+    it('returns below_min when sats fall under MIN_PAYMENT_AMT', () => {
+      withEnv({ MIN_PAYMENT_AMT: 100, MAX_PAYMENT_AMT: 5000 });
+      expect(satsLimitViolation(50)).to.deep.equal({
+        status: 'below_min',
+        limit: 100,
+      });
+    });
+
+    it('returns above_max when sats exceed MAX_PAYMENT_AMT', () => {
+      withEnv({ MIN_PAYMENT_AMT: 100, MAX_PAYMENT_AMT: 5000 });
+      expect(satsLimitViolation(6000)).to.deep.equal({
+        status: 'above_max',
+        limit: 5000,
+      });
+    });
+
+    it('returns null when sats are within the configured bounds', () => {
+      withEnv({ MIN_PAYMENT_AMT: 100, MAX_PAYMENT_AMT: 5000 });
+      expect(satsLimitViolation(1000)).to.equal(null);
+    });
+
+    it('returns null when no bounds are configured', () => {
+      withEnv({});
+      expect(satsLimitViolation(1)).to.equal(null);
+    });
+
+    it('enforces only MIN when MAX is not configured', () => {
+      withEnv({ MIN_PAYMENT_AMT: 100 });
+      expect(satsLimitViolation(50)?.status).to.equal('below_min');
+      expect(satsLimitViolation(1000000)).to.equal(null);
     });
   });
 });
