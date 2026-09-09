@@ -156,11 +156,52 @@ describe('Validations', () => {
       expect(result.priceMargin).to.equal('5');
     });
 
-    it('should return false if price margin is not a number', async () => {
-      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
+    it('should reject a non-numeric price margin (positional)', async () => {
+      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'mycommunity'];
       const result = await validateSellOrder(ctx);
       expect(result).to.equal(false);
-      expect(replyStub.calledOnce).to.be.equal(true);
+      expect(replyStub.calledOnce).to.equal(true);
+    });
+
+    it('should keep numeric community identifiers as the community', async () => {
+      ctx.state.command.args = [
+        '10000',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        '-1001234567890',
+      ];
+      const result = await validateSellOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('-1001234567890');
+    });
+
+    it('should parse both price margin and community name', async () => {
+      ctx.state.command.args = ['0', '100', 'USD', 'zelle', '5', 'mycommunity'];
+      const result = await validateSellOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('mycommunity');
+    });
+
+    it('should reject a surplus argument after the community name', async () => {
+      // Only two optional params exist, so a third token means the user
+      // mistyped. It must be reported instead of silently dropped, which would
+      // publish an order the user did not ask for.
+      ctx.state.command.args = [
+        '0',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        'mycommunity',
+        'unexpected',
+      ];
+      const result = await validateSellOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
     });
 
     it('should work with ranges', async () => {
@@ -230,11 +271,52 @@ describe('Validations', () => {
       expect(result.priceMargin).to.equal('5');
     });
 
-    it('should return false if price margin is not a number', async () => {
-      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'test'];
+    it('should reject a non-numeric price margin (positional)', async () => {
+      ctx.state.command.args = ['10000', '100', 'USD', 'zelle', 'mycommunity'];
       const result = await validateBuyOrder(ctx);
       expect(result).to.equal(false);
-      expect(replyStub.calledOnce).to.be.equal(true);
+      expect(replyStub.calledOnce).to.equal(true);
+    });
+
+    it('should keep numeric community identifiers as the community', async () => {
+      ctx.state.command.args = [
+        '10000',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        '-1001234567890',
+      ];
+      const result = await validateBuyOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('-1001234567890');
+    });
+
+    it('should parse both price margin and community name', async () => {
+      ctx.state.command.args = ['0', '100', 'USD', 'zelle', '5', 'mycommunity'];
+      const result = await validateBuyOrder(ctx);
+      if (result === false) throw new Error('object expected');
+      expect(result.priceMargin).to.equal('5');
+      expect(result.communityName).to.equal('mycommunity');
+    });
+
+    it('should reject a surplus argument after the community name', async () => {
+      // Only two optional params exist, so a third token means the user
+      // mistyped. It must be reported instead of silently dropped, which would
+      // publish an order the user did not ask for.
+      ctx.state.command.args = [
+        '0',
+        '100',
+        'USD',
+        'zelle',
+        '5',
+        'mycommunity',
+        'unexpected',
+      ];
+      const result = await validateBuyOrder(ctx);
+      expect(result).to.equal(false);
+      expect(replyStub.calledOnce).to.equal(true);
     });
 
     it('should work with ranges', async () => {
