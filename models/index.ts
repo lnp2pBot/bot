@@ -5,5 +5,15 @@ import Community from './community';
 import Dispute from './dispute';
 import Config from './config';
 import Block from './block';
+import ScheduledOrder from './scheduled_order';
 
-export { User, Order, PendingPayment, Community, Dispute, Config, Block };
+export {
+  User,
+  Order,
+  PendingPayment,
+  Community,
+  Dispute,
+  Config,
+  Block,
+  ScheduledOrder,
+};

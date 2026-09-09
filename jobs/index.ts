@@ -9,6 +9,7 @@ import deleteCommunity from './communities';
 import nodeInfo from './node_info';
 import checkSolvers from './check_solvers';
 import checkHoldInvoiceExpired from './check_hold_invoice_expired';
+import publishScheduledOrders from './scheduled_orders';
 
 export {
   attemptPendingPayments,
@@ -20,4 +21,5 @@ export {
   nodeInfo,
   checkSolvers,
   checkHoldInvoiceExpired,
+  publishScheduledOrders,
 };
