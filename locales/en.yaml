@@ -786,3 +786,8 @@ reputation_confirm: "Your reputation will be exported to this Mostro identity:\n
 reputation_confirm_button: "Confirm and export"
 reputation_bound_other: "Your reputation here is already bound to another Mostro identity:\n\n${npub}\n\nTo move it to a new identity, authorize the move from your Mostro app with the identity it is bound to."
 reputation_exported: "Here is your reputation for ${npub}: ${reviews} ratings received, ${rating} on average. Copy the next message whole and paste it into your Mostro app to import it. It is valid for 7 days."
+reputation_rebind_invalid: "That is not a valid authorization to move your reputation: it must be signed in your Mostro app by the identity your account is bound to, for this bot, within the last hour. Create a new one and paste it again."
+reputation_rebind_confirm: "Your reputation will move\n\nfrom: ${from}\nto: ${to}\n\nCheck that the new identity is the one your Mostro app shows. The old identity keeps what it already imported."
+reputation_admin_rebind_usage: "Usage: /reputation_rebind <telegram id or account id> <npub or hex key> <reason>"
+reputation_admin_rebind_not_found: "No account found, or its binding changed meanwhile."
+reputation_admin_rebind_done: "Reputation binding moved\n\nfrom: ${from}\nto: ${to}"

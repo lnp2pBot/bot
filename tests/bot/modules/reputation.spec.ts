@@ -10,12 +10,16 @@ const {
   decodeIdentity,
   encodeIdentity,
   formatRating,
+  parseRebind,
   ratingHundredths,
 } = require('../../../bot/modules/reputation/attestation');
 const { limit } = require('@grammyjs/ratelimiter');
 const {
   configure,
+  handleAdminRebind,
   handleConfirm,
+  handleRebindConfirm,
+  handleRebindPaste,
   handleStart,
   limiterKey,
 } = require('../../../bot/modules/reputation');
@@ -117,6 +121,15 @@ const makeDeps = (user: any, overrides: any = {}) => ({
     return user;
   }),
   firstTradeSince: sinon.stub().resolves(1696204800),
+  rebind: sinon
+    .stub()
+    .callsFake(async (_u: any, from: string, to: string, day: Date) => {
+      if (user.reputation_exported_to !== from) return null;
+      user.reputation_exported_to = to;
+      user.reputation_exported_at = day;
+      return user;
+    }),
+  findAccount: sinon.stub().callsFake(async () => user),
   ...overrides,
 });
 
@@ -284,7 +297,7 @@ describe('reputation export routing', () => {
       message: { text: `/start rep_${encodeIdentity(IDENTITY)}` },
     });
     expect(replies(start.ctx)[0]).to.match(/^reputation_confirm /);
-    expect(start.next.callCount).to.equal(1); // only the button handler passed it on
+    expect(start.next.callCount).to.equal(2); // the other two pass it on
 
     const button = await route({
       callbackQuery: { data: `repok_${encodeIdentity(IDENTITY)}` },
@@ -298,7 +311,7 @@ describe('reputation export routing', () => {
       { callbackQuery: { data: 'showqrcode_1' } },
     ]) {
       const other = await route(update);
-      expect(other.next.callCount, JSON.stringify(update)).to.equal(2);
+      expect(other.next.callCount, JSON.stringify(update)).to.equal(3);
       expect(other.ctx.reply.called).to.equal(false);
     }
   });
@@ -388,3 +401,202 @@ describe('reputation export rate limiting', () => {
     expect(limiterKey({})).to.equal(undefined);
   });
 });
+
+const rebindVectors = vectors.rebind;
+const REBIND_NOW = rebindVectors.context.now;
+const NEW_IDENTITY = rebindVectors.valid.expect.new_identity;
+const REBIND_CONTEXT_REFUSALS = ['signed_by_other_identity', 'other_issuer'];
+
+describe('rebind authorisation', () => {
+  it('parses the valid vector to its expected fields', () => {
+    const parsed = parseRebind(rebindVectors.valid.event, REBIND_NOW);
+    const want = rebindVectors.valid.expect;
+    expect(parsed).to.deep.equal({
+      boundIdentity: want.bound_identity,
+      newIdentity: want.new_identity,
+      issuer: want.issuer,
+      createdAt: want.created_at,
+      expiration: want.expiration,
+    });
+  });
+
+  it('refuses every invalid vector, by the event or by the issuer checks', () => {
+    for (const c of rebindVectors.invalid) {
+      const parsed = parseRebind(c.event, REBIND_NOW);
+      if (REBIND_CONTEXT_REFUSALS.includes(c.name)) {
+        expect(parsed, c.name).to.not.equal(null);
+        expect(
+          parsed.boundIdentity !== rebindVectors.context.bound_identity ||
+            parsed.issuer !== rebindVectors.context.issuer_key,
+          c.name,
+        ).to.equal(true);
+      } else {
+        expect(parsed, c.name).to.equal(null);
+      }
+    }
+    expect(parseRebind(valid.event, REBIND_NOW), 'an attestation').to.equal(
+      null,
+    );
+  });
+});
+
+describe('rebinding flow', () => {
+  const pasted = JSON.stringify(rebindVectors.valid.event);
+  const boundUser = () => makeUser({ reputation_exported_to: IDENTITY });
+  const at = (user: any, overrides: any = {}) =>
+    makeDeps(user, { now: () => REBIND_NOW, ...overrides });
+  const withSession = () => ({ ...makeCtx(), session: {} as any });
+
+  it('asks to confirm the move, then moves the binding and issues to the new identity', async () => {
+    const user = boundUser();
+    const deps = at(user);
+    const ctx = withSession();
+    await handleRebindPaste(ctx, pasted, deps);
+    expect(replies(ctx)[0]).to.match(/^reputation_rebind_confirm /);
+    expect(user.reputation_exported_to).to.equal(IDENTITY);
+    const keyboard = ctx.reply.firstCall.args[1].reply_markup.inline_keyboard;
+    expect(keyboard[0][0].callback_data).to.equal('reprb_ok');
+
+    const confirm = { ...makeCtx(), session: ctx.session };
+    await handleRebindConfirm(confirm, deps);
+    expect(user.reputation_exported_to).to.equal(NEW_IDENTITY);
+    expect(replies(confirm)[0]).to.match(/^reputation_exported /);
+    const event = attestationIn(confirm);
+    expect(verifyEvent(event)).to.equal(true);
+    expect(event.tags).to.deep.include(['p', NEW_IDENTITY]);
+    expect(confirm.session.reputationRebind).to.equal(undefined);
+  });
+
+  it('makes a replayed authorisation a no-op', async () => {
+    const user = boundUser();
+    const deps = at(user);
+    const first = withSession();
+    await handleRebindPaste(first, pasted, deps);
+    await handleRebindConfirm({ ...makeCtx(), session: first.session }, deps);
+    expect(user.reputation_exported_to).to.equal(NEW_IDENTITY);
+
+    const replay = withSession();
+    await handleRebindPaste(replay, pasted, deps);
+    expect(replies(replay)).to.deep.equal(['reputation_rebind_invalid']);
+    expect(user.reputation_exported_to).to.equal(NEW_IDENTITY);
+  });
+
+  it('refuses an authorisation signed by any other key', async () => {
+    const signedByOther = rebindVectors.invalid.find(
+      (c: any) => c.name === 'signed_by_other_identity',
+    ).event;
+    const user = boundUser();
+    const ctx = withSession();
+    await handleRebindPaste(ctx, JSON.stringify(signedByOther), at(user));
+    expect(replies(ctx)).to.deep.equal(['reputation_rebind_invalid']);
+    expect(user.reputation_exported_to).to.equal(IDENTITY);
+  });
+
+  it('refuses one for another issuer, an expired one and garbage', async () => {
+    const otherIssuer = rebindVectors.invalid.find(
+      (c: any) => c.name === 'other_issuer',
+    ).event;
+    for (const text of [
+      JSON.stringify(otherIssuer),
+      pasted,
+      '{"reputation-rebind": true',
+    ]) {
+      const user = boundUser();
+      // The valid vector is expired an hour and a half later.
+      const deps = at(
+        user,
+        text === pasted ? { now: () => REBIND_NOW + 5400 } : {},
+      );
+      const ctx = withSession();
+      await handleRebindPaste(ctx, text, deps);
+      expect(replies(ctx), text.slice(0, 30)).to.deep.equal([
+        'reputation_rebind_invalid',
+      ]);
+      expect(user.reputation_exported_to).to.equal(IDENTITY);
+    }
+  });
+
+  it('refuses a confirmation with nothing pending', async () => {
+    const ctx = withSession();
+    await handleRebindConfirm(ctx, at(boundUser()));
+    expect(replies(ctx)).to.deep.equal(['reputation_rebind_invalid']);
+  });
+});
+
+describe('admin rebind', () => {
+  const admin = makeUser({ _id: 'admin', admin: true });
+
+  it('moves the binding for an admin, given an account, a key and a reason', async () => {
+    const target = makeUser({ reputation_exported_to: IDENTITY });
+    const deps = makeDeps(target, {
+      findUser: sinon.stub().resolves(admin),
+      findAccount: sinon.stub().resolves(target),
+    });
+    const ctx = makeCtx();
+    await handleAdminRebind(ctx, `42 ${nip19npub(OTHER)} lost the phone`, deps);
+    expect(target.reputation_exported_to).to.equal(OTHER);
+    expect(replies(ctx)[0]).to.match(/^reputation_admin_rebind_done /);
+  });
+
+  it('binds an unbound account too, from a hex key', async () => {
+    const target = makeUser();
+    const deps = makeDeps(target, {
+      findUser: sinon.stub().resolves(admin),
+      findAccount: sinon.stub().resolves(target),
+    });
+    await handleAdminRebind(makeCtx(), `42 ${OTHER} support ticket 7`, deps);
+    expect(target.reputation_exported_to).to.equal(OTHER);
+  });
+
+  it('ignores a non-admin and explains the usage to an admin', async () => {
+    const target = makeUser({ reputation_exported_to: IDENTITY });
+    const notAdmin = makeCtx();
+    await handleAdminRebind(notAdmin, `42 ${OTHER} reason`, makeDeps(target));
+    expect(notAdmin.reply.called).to.equal(false);
+    expect(target.reputation_exported_to).to.equal(IDENTITY);
+
+    for (const args of ['', '42', `42 ${OTHER}`, '42 nothex reason']) {
+      const ctx = makeCtx();
+      await handleAdminRebind(
+        ctx,
+        args,
+        makeDeps(target, { findUser: sinon.stub().resolves(admin) }),
+      );
+      expect(replies(ctx), args).to.deep.equal([
+        'reputation_admin_rebind_usage',
+      ]);
+    }
+  });
+});
+
+describe('rebind routing', () => {
+  it('takes a pasted authorisation, its confirm button and the admin command', async () => {
+    const seen: string[] = [];
+    const handlers: any[] = [];
+    const user = makeUser({ reputation_exported_to: IDENTITY, admin: true });
+    configure(
+      { use: (h: any) => handlers.push(h) },
+      makeDeps(user, { now: () => REBIND_NOW }),
+    );
+    for (const update of [
+      { message: { text: JSON.stringify(rebindVectors.valid.event) } },
+      { callbackQuery: { data: 'reprb_ok' } },
+      { message: { text: '/reputation_rebind' } },
+    ]) {
+      const ctx = { ...makeCtx(), session: {}, ...update };
+      const next = sinon.stub().resolves();
+      for (const handler of handlers) await handler(ctx, next);
+      seen.push(replies(ctx)[0].split(' ')[0]);
+      expect(next.callCount, JSON.stringify(update)).to.equal(2);
+    }
+    expect(seen).to.deep.equal([
+      'reputation_rebind_confirm',
+      'reputation_rebind_invalid',
+      'reputation_admin_rebind_usage',
+    ]);
+  });
+});
+
+function nip19npub(hex: string): string {
+  return require('nostr-tools').nip19.npubEncode(hex);
+}

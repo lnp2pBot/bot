@@ -779,3 +779,8 @@ reputation_confirm: "Votre réputation sera exportée vers cette identité Mostr
 reputation_confirm_button: "Confirmer et exporter"
 reputation_bound_other: "Votre réputation ici est déjà liée à une autre identité Mostro :\n\n${npub}\n\nPour la transférer vers une nouvelle identité, autorisez le transfert depuis votre application Mostro avec l'identité à laquelle elle est liée."
 reputation_exported: "Voici votre réputation pour ${npub} : ${reviews} évaluations reçues, ${rating} en moyenne. Copiez le message suivant en entier et collez-le dans votre application Mostro pour l'importer. Il est valable 7 jours."
+reputation_rebind_invalid: "Ce n'est pas une autorisation valide pour transférer votre réputation : elle doit être signée dans votre application Mostro par l'identité à laquelle votre compte est lié, pour ce bot, dans la dernière heure. Créez-en une nouvelle et collez-la à nouveau."
+reputation_rebind_confirm: "Votre réputation sera transférée\n\nde : ${from}\nvers : ${to}\n\nVérifiez que la nouvelle identité est celle qu'affiche votre application Mostro. L'ancienne identité conserve ce qu'elle a déjà importé."
+reputation_admin_rebind_usage: "Usage : /reputation_rebind <id telegram ou id de compte> <npub ou clé hex> <motif>"
+reputation_admin_rebind_not_found: "Aucun compte trouvé, ou son lien a changé entre-temps."
+reputation_admin_rebind_done: "Lien de réputation transféré\n\nde : ${from}\nvers : ${to}"

@@ -779,3 +779,8 @@ reputation_confirm: "Sua reputação será exportada para esta identidade Mostro
 reputation_confirm_button: "Confirmar e exportar"
 reputation_bound_other: "Sua reputação aqui já está vinculada a outra identidade Mostro:\n\n${npub}\n\nPara movê-la para uma nova identidade, autorize a mudança no seu app Mostro com a identidade à qual está vinculada."
 reputation_exported: "Aqui está a sua reputação para ${npub}: ${reviews} avaliações recebidas, média de ${rating}. Copie a próxima mensagem inteira e cole no seu app Mostro para importá-la. Ela é válida por 7 dias."
+reputation_rebind_invalid: "Esta não é uma autorização válida para mover a sua reputação: ela deve ser assinada no seu app Mostro pela identidade à qual a sua conta está vinculada, para este bot, na última hora. Crie uma nova e cole novamente."
+reputation_rebind_confirm: "Sua reputação será movida\n\nde: ${from}\npara: ${to}\n\nConfira se a nova identidade é a que o seu app Mostro mostra. A identidade anterior mantém o que já importou."
+reputation_admin_rebind_usage: "Uso: /reputation_rebind <id do telegram ou id da conta> <npub ou chave hex> <motivo>"
+reputation_admin_rebind_not_found: "Nenhuma conta encontrada, ou o vínculo dela mudou nesse meio-tempo."
+reputation_admin_rebind_done: "Vínculo de reputação movido\n\nde: ${from}\npara: ${to}"
