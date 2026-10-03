@@ -771,3 +771,11 @@ community_already_enabled: Cette communauté est déjà activée
 ambiguous_community_input: Plusieurs communautés correspondent à ce nom d'utilisateur, veuillez utiliser l'ID de la communauté à la place
 
 order_take_rate_limit: "Vous avez atteint la limite de prises d'ordres. Veuillez attendre ${hours} heure(s) avant de prendre un nouvel ordre, ou complétez un ordre avec succès pour réinitialiser le compteur."
+
+reputation_invalid_link: "Ce lien d'export de réputation n'est pas valide. Ouvrez-le à nouveau depuis votre application Mostro."
+reputation_unavailable: "L'export de réputation n'est pas disponible pour le moment. Réessayez plus tard."
+reputation_not_eligible: "Votre compte ne peut pas exporter sa réputation : il lui faut au moins 10 échanges terminés et 5 évaluations reçues, et ne pas être banni."
+reputation_confirm: "Votre réputation sera exportée vers cette identité Mostro :\n\n${npub}\n\nVérifiez que c'est celle qu'affiche votre application Mostro. Une fois confirmé, votre compte ici y est lié et ne pourra pas être exporté vers une autre identité sans le consentement de celle-ci."
+reputation_confirm_button: "Confirmer et exporter"
+reputation_bound_other: "Votre réputation ici est déjà liée à une autre identité Mostro :\n\n${npub}\n\nPour la transférer vers une nouvelle identité, autorisez le transfert depuis votre application Mostro avec l'identité à laquelle elle est liée."
+reputation_exported: "Voici votre réputation pour ${npub} : ${reviews} évaluations reçues, ${rating} en moyenne. Copiez le message suivant en entier et collez-le dans votre application Mostro pour l'importer. Il est valable 7 jours."

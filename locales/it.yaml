@@ -769,3 +769,11 @@ community_already_enabled: Questa comunità è già abilitata
 ambiguous_community_input: Più comunità corrispondono a quel nome utente, usa invece l'ID della comunità
 
 order_take_rate_limit: "Hai raggiunto il limite di ordini presi. Attendi ${hours} ora/e prima di prendere un nuovo ordine, oppure completa un ordine con successo per azzerare il contatore."
+
+reputation_invalid_link: "Questo link per esportare la tua reputazione non è valido. Aprilo di nuovo dalla tua app Mostro."
+reputation_unavailable: "L'esportazione della reputazione non è disponibile in questo momento. Riprova più tardi."
+reputation_not_eligible: "Il tuo account non può esportare la sua reputazione: servono almeno 10 scambi completati e 5 valutazioni ricevute, e non deve essere bannato."
+reputation_confirm: "La tua reputazione verrà esportata verso questa identità Mostro:\n\n${npub}\n\nVerifica che sia quella mostrata dalla tua app Mostro. Una volta confermato, il tuo account qui è legato a essa e non potrà essere esportato verso un'altra identità senza il consenso di questa."
+reputation_confirm_button: "Conferma ed esporta"
+reputation_bound_other: "La tua reputazione qui è già legata a un'altra identità Mostro:\n\n${npub}\n\nPer spostarla su una nuova identità, autorizza lo spostamento dalla tua app Mostro con l'identità a cui è legata."
+reputation_exported: "Ecco la tua reputazione per ${npub}: ${reviews} valutazioni ricevute, ${rating} di media. Copia il messaggio successivo per intero e incollalo nella tua app Mostro per importarla. È valida per 7 giorni."

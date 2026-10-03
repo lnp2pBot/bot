@@ -771,3 +771,11 @@ community_already_enabled: Esta comunidade já está ativada
 ambiguous_community_input: Várias comunidades correspondem a esse nome de usuário, por favor use o ID da comunidade
 
 order_take_rate_limit: "Você atingiu o limite de ordens aceitas. Aguarde ${hours} hora(s) antes de aceitar uma nova ordem, ou conclua uma ordem com sucesso para reiniciar o contador."
+
+reputation_invalid_link: "Este link para exportar a sua reputação não é válido. Abra-o novamente no seu app Mostro."
+reputation_unavailable: "A exportação de reputação não está disponível agora. Tente novamente mais tarde."
+reputation_not_eligible: "Sua conta não pode exportar a reputação: precisa de pelo menos 10 negociações concluídas e 5 avaliações recebidas, e não pode estar banida."
+reputation_confirm: "Sua reputação será exportada para esta identidade Mostro:\n\n${npub}\n\nConfira se é a que o seu app Mostro mostra. Ao confirmar, sua conta aqui fica vinculada a ela e não poderá ser exportada para outra identidade sem o consentimento desta."
+reputation_confirm_button: "Confirmar e exportar"
+reputation_bound_other: "Sua reputação aqui já está vinculada a outra identidade Mostro:\n\n${npub}\n\nPara movê-la para uma nova identidade, autorize a mudança no seu app Mostro com a identidade à qual está vinculada."
+reputation_exported: "Aqui está a sua reputação para ${npub}: ${reviews} avaliações recebidas, média de ${rating}. Copie a próxima mensagem inteira e cole no seu app Mostro para importá-la. Ela é válida por 7 dias."

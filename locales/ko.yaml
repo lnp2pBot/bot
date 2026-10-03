@@ -769,3 +769,11 @@ community_already_enabled: 이 커뮤니티는 이미 활성화되어 있습니�
 ambiguous_community_input: 해당 사용자 이름과 일치하는 커뮤니티가 여러 개 있습니다. 커뮤니티 ID를 사용해 주세요
 
 order_take_rate_limit: "주문 수락 한도에 도달했습니다. 새 주문을 수락하기 전에 ${hours}시간 기다리거나, 주문을 성공적으로 완료하면 카운터가 초기화됩니다."
+
+reputation_invalid_link: "이 평판 내보내기 링크는 유효하지 않습니다. Mostro 앱에서 다시 열어 주세요."
+reputation_unavailable: "지금은 평판 내보내기를 사용할 수 없습니다. 나중에 다시 시도해 주세요."
+reputation_not_eligible: "계정에서 평판을 내보낼 수 없습니다: 완료된 거래 10건 이상, 받은 평가 5개 이상이 필요하며 차단되지 않아야 합니다."
+reputation_confirm: "평판이 다음 Mostro 신원으로 내보내집니다:\n\n${npub}\n\nMostro 앱에 표시된 신원과 같은지 확인하세요. 확인하면 이 계정은 해당 신원에 연결되며, 그 신원의 동의 없이는 다른 신원으로 내보낼 수 없습니다."
+reputation_confirm_button: "확인하고 내보내기"
+reputation_bound_other: "이 계정의 평판은 이미 다른 Mostro 신원에 연결되어 있습니다:\n\n${npub}\n\n새 신원으로 옮기려면 연결된 신원으로 Mostro 앱에서 이동을 승인하세요."
+reputation_exported: "${npub}의 평판입니다: 받은 평가 ${reviews}개, 평균 ${rating}. 다음 메시지 전체를 복사해 Mostro 앱에 붙여 넣어 가져오세요. 7일 동안 유효합니다."

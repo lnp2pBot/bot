@@ -778,3 +778,11 @@ community_already_enabled: This community is already enabled
 ambiguous_community_input: Multiple communities match that username, please use the community ID instead
 
 order_take_rate_limit: "You have reached the order-take limit. Please wait ${hours} hour(s) before taking a new order, or successfully complete an order to reset the counter."
+
+reputation_invalid_link: "This reputation export link is not valid. Open it again from your Mostro app."
+reputation_unavailable: "Reputation export is not available right now. Please try again later."
+reputation_not_eligible: "Your account cannot export its reputation: it needs at least 10 completed trades and 5 ratings received, and must not be banned."
+reputation_confirm: "Your reputation will be exported to this Mostro identity:\n\n${npub}\n\nCheck that it is the one your Mostro app shows. Once confirmed, your account here is bound to it and cannot be exported to another identity without that identity's consent."
+reputation_confirm_button: "Confirm and export"
+reputation_bound_other: "Your reputation here is already bound to another Mostro identity:\n\n${npub}\n\nTo move it to a new identity, authorize the move from your Mostro app with the identity it is bound to."
+reputation_exported: "Here is your reputation for ${npub}: ${reviews} ratings received, ${rating} on average. Copy the next message whole and paste it into your Mostro app to import it. It is valid for 7 days."
