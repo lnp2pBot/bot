@@ -4,15 +4,29 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire');
 const { getPublicKey } = require('nostr-tools');
+const { Types } = require('mongoose');
 
-// firstTradeSince runs one query: Order.findOne(...).sort(...).lean().
-const lean = sinon.stub();
-const sort = sinon.stub().returns({ lean });
-const findOne = sinon.stub().returns({ sort });
+// firstTradeSince runs one query: Order.aggregate(pipeline).
+const aggregate = sinon.stub();
 
 const reputation = proxyquire('../../util/reputation', {
-  '../models': { Order: { findOne }, '@noCallThru': true },
+  '../models': { Order: { aggregate }, '@noCallThru': true },
 });
+
+// Runs the pipeline's $project, $match, $sort and $limit stages over
+// in-memory orders, enough to check what the query selects.
+const runPipeline = (pipeline: any[], orders: any[]) => {
+  const project = pipeline.find(stage => stage.$project).$project;
+  const [taken, created] = project.startedAt.$ifNull;
+  const field = (ref: string) => ref.slice(1);
+  return orders
+    .map(order => ({
+      startedAt: order[field(taken)] ?? order[field(created)] ?? null,
+    }))
+    .filter(row => row.startedAt !== null)
+    .sort((a, b) => a.startedAt.getTime() - b.startedAt.getTime())
+    .slice(0, 1);
+};
 
 const ISSUER_SK =
   '4fa1a2d2b5f0c6e1c0d2a7d3a9e6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8';
@@ -91,42 +105,72 @@ describe('reputation export eligibility', () => {
 
 describe('first completed trade', () => {
   beforeEach(() => {
-    findOne.resetHistory();
-    lean.reset();
+    aggregate.reset();
   });
 
-  it('queries the earliest SUCCESS order the user bought or sold in', async () => {
-    lean.resolves(null);
-    await reputation.firstTradeSince({ _id: 'u1' });
-    expect(findOne.firstCall.args[0]).to.deep.equal({
-      status: 'SUCCESS',
-      $or: [{ buyer_id: 'u1' }, { seller_id: 'u1' }],
+  const withOrders = (orders: any[]) =>
+    aggregate.callsFake(async (pipeline: any[]) =>
+      runPipeline(pipeline, orders),
+    );
+
+  it('queries the SUCCESS orders the user bought or sold in', async () => {
+    aggregate.resolves([]);
+    const _id = new Types.ObjectId();
+    await reputation.firstTradeSince({ _id });
+    const pipeline = aggregate.firstCall.args[0];
+    // Order party ids are strings and aggregate() does not cast them.
+    expect(pipeline[0]).to.deep.equal({
+      $match: {
+        status: 'SUCCESS',
+        $or: [{ buyer_id: String(_id) }, { seller_id: String(_id) }],
+      },
     });
-    expect(sort.lastCall.args[0]).to.deep.equal({ created_at: 1 });
+    expect(pipeline).to.deep.include({ $sort: { startedAt: 1 } });
+    expect(pipeline).to.deep.include({ $limit: 1 });
   });
 
   it('is null without a completed order', async () => {
-    lean.resolves(null);
+    aggregate.resolves([]);
     expect(await reputation.firstTradeSince({ _id: 'u1' })).to.equal(null);
   });
 
   it('is the UTC day the trade was taken', async () => {
-    lean.resolves({
-      taken_at: new Date('2023-10-02T17:45:12Z'),
-      created_at: new Date('2023-10-01T09:00:00Z'),
-    });
+    withOrders([
+      {
+        taken_at: new Date('2023-10-02T17:45:12Z'),
+        created_at: new Date('2023-10-01T09:00:00Z'),
+      },
+    ]);
     expect(await reputation.firstTradeSince({ _id: 'u1' })).to.equal(
       1696204800,
     );
   });
 
   it('falls back to the creation day for an order without taken_at', async () => {
-    lean.resolves({
-      taken_at: null,
-      created_at: new Date('2023-10-02T00:00:00Z'),
-    });
+    withOrders([
+      { taken_at: null, created_at: new Date('2023-10-02T00:00:00Z') },
+    ]);
     expect(await reputation.firstTradeSince({ _id: 'u1' })).to.equal(
       1696204800,
+    );
+  });
+
+  it('picks the earliest trade taken, not the earliest order created', async () => {
+    withOrders([
+      // Listed first, taken last.
+      {
+        taken_at: new Date('2023-10-10T12:00:00Z'),
+        created_at: new Date('2023-10-01T12:00:00Z'),
+      },
+      // Listed later, taken first.
+      {
+        taken_at: new Date('2023-10-03T12:00:00Z'),
+        created_at: new Date('2023-10-02T12:00:00Z'),
+      },
+    ]);
+    // 2023-10-03T00:00:00Z
+    expect(await reputation.firstTradeSince({ _id: 'u1' })).to.equal(
+      1696291200,
     );
   });
 });

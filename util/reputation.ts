@@ -73,18 +73,27 @@ export const isEligible = (
  * Unix seconds, or `null` when no completed order is on record.
  *
  * A trade is dated from when it was taken, the moment it started; orders
- * from before that field existed fall back to their creation.
+ * from before that field existed fall back to their creation. The earliest
+ * of those effective dates wins, so an old listing taken late does not hide
+ * a newer one taken first.
  */
 export const firstTradeSince = async (
   user: Pick<UserDocument, '_id'>,
 ): Promise<number | null> => {
-  const first = await Order.findOne({
-    status: 'SUCCESS',
-    $or: [{ buyer_id: user._id }, { seller_id: user._id }],
-  })
-    .sort({ created_at: 1 })
-    .lean();
-  if (!first) return null;
-  const startedAt: Date = first.taken_at || first.created_at;
-  return startedAt ? dayTruncate(new Date(startedAt)) : null;
+  // Orders keep party ids as strings, and aggregate() does not cast.
+  const id = String(user._id);
+  const [first] = await Order.aggregate<{ startedAt: Date | null }>([
+    {
+      $match: {
+        status: 'SUCCESS',
+        $or: [{ buyer_id: id }, { seller_id: id }],
+      },
+    },
+    { $project: { startedAt: { $ifNull: ['$taken_at', '$created_at'] } } },
+    { $match: { startedAt: { $ne: null } } },
+    { $sort: { startedAt: 1 } },
+    { $limit: 1 },
+  ]);
+  if (!first || !first.startedAt) return null;
+  return dayTruncate(new Date(first.startedAt));
 };
