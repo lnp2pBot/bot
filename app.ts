@@ -12,6 +12,7 @@ import { imageCache } from './util/imageCache';
 import { createIndexes } from './models/indexes';
 import { CommunityContext } from './bot/modules/community/communityContext';
 import { startMonitoring } from './monitoring';
+import { connectSunsetDatabase } from './util/reputation';
 
 const buildBotOptions = (): Partial<Telegraf.Options<CommunityContext>> => {
   // Use configurable bot handler timeout, default to 60 seconds
@@ -43,10 +44,15 @@ const buildBotOptions = (): Partial<Telegraf.Options<CommunityContext>> => {
 };
 
 // In sunset mode the bot only answers with a service-discontinued notice, so
-// it must be able to run even when MongoDB is gone
+// it must be able to run even when MongoDB is gone. The one exception is
+// reputation export: with REPUTATION_ISSUER_SK set it connects to MongoDB,
+// and if that fails the notice keeps working without it.
 const startSunsetBot = async (): Promise<void> => {
+  const withDatabase = connectSunsetDatabase(mongoConnect);
   logger.notice(
-    'SUNSET_MODE is on: starting bot without database, LN node connection or monitoring.',
+    withDatabase
+      ? 'SUNSET_MODE is on: starting bot without LN node connection or monitoring; MongoDB is used for reputation export only.'
+      : 'SUNSET_MODE is on: starting bot without database, LN node connection or monitoring.',
   );
   await start(String(process.env.BOT_TOKEN), buildBotOptions());
 };

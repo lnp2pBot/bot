@@ -174,3 +174,53 @@ describe('first completed trade', () => {
     );
   });
 });
+
+describe('sunset mode database for reputation export', () => {
+  const connection = () => {
+    const handlers: Record<string, any> = {};
+    const on = sinon.stub().callsFake((event: string, handler: any) => {
+      handlers[event] = handler;
+      return conn;
+    });
+    const conn: any = { on, once: on, handlers };
+    return conn;
+  };
+
+  it('stays without a database when no issuer key is set', () => {
+    const connect = sinon.stub();
+    expect(reputation.connectSunsetDatabase(connect, {})).to.equal(false);
+    expect(connect.called).to.equal(false);
+  });
+
+  it('connects when the issuer key is set', () => {
+    const conn = connection();
+    const connect = sinon.stub().returns({ connection: conn });
+    expect(
+      reputation.connectSunsetDatabase(connect, {
+        REPUTATION_ISSUER_SK: ISSUER_SK,
+      }),
+    ).to.equal(true);
+    expect(connect.calledOnce).to.equal(true);
+    // A failed connection is logged, never thrown: the notice keeps working.
+    expect(() => conn.handlers.error(new Error('refused'))).to.not.throw();
+  });
+
+  it('falls back to plain sunset when no database is configured', () => {
+    const connect = sinon.stub().throws(new Error('no MongoDB URI'));
+    expect(
+      reputation.connectSunsetDatabase(connect, {
+        REPUTATION_ISSUER_SK: ISSUER_SK,
+      }),
+    ).to.equal(false);
+  });
+
+  it('refuses to start with a malformed issuer key', () => {
+    const connect = sinon.stub();
+    expect(() =>
+      reputation.connectSunsetDatabase(connect, {
+        REPUTATION_ISSUER_SK: 'abc',
+      }),
+    ).to.throw(/64-character hex/);
+    expect(connect.called).to.equal(false);
+  });
+});
