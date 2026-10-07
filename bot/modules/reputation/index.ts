@@ -186,6 +186,27 @@ export const handleConfirm = async (
 };
 
 /**
+ * Binding happens only in the user's private chat with the bot: in a group,
+ * anyone could press the confirm button and bind their own account to an
+ * identity someone else chose.
+ */
+const isPrivateChat = (ctx: any): boolean => ctx.chat?.type === 'private';
+
+/**
+ * Rate-limiter key: the sender, like the limiter's default, except that the
+ * confirm button gets a bucket of its own so a press right after
+ * `/start rep_` is not dropped as a repeat of it.
+ */
+export const limiterKey = (ctx: any): string | undefined => {
+  if (ctx.from === undefined) return undefined;
+  const sender = String(ctx.from.id);
+  const data = ctx.callbackQuery?.data;
+  return typeof data === 'string' && CONFIRM.test(data)
+    ? `reputation_confirm:${sender}`
+    : sender;
+};
+
+/**
  * Register the export. Must run before any middleware that answers every
  * update, sunset mode's included.
  */
@@ -193,7 +214,7 @@ export const configure = (bot: Telegraf<any>, deps: ReputationDeps): void => {
   bot.use(async (ctx: any, next: () => Promise<void>) => {
     const text = ctx.message?.text;
     const match = typeof text === 'string' ? START.exec(text) : null;
-    if (!match) return next();
+    if (!match || !isPrivateChat(ctx)) return next();
     try {
       await handleStart(ctx, match[1], deps);
     } catch (error) {
@@ -206,6 +227,7 @@ export const configure = (bot: Telegraf<any>, deps: ReputationDeps): void => {
     if (!match) return next();
     try {
       await ctx.answerCbQuery?.();
+      if (!isPrivateChat(ctx)) return;
       await handleConfirm(ctx, match[1], deps);
     } catch (error) {
       logger.error(`reputation: ${error}`);

@@ -228,7 +228,9 @@ const initialize = (
 
   bot.use(commandLogger());
   bot.use(session());
-  bot.use(limit());
+  // The reputation confirm button has its own bucket: it is pressed right
+  // after the /start that showed it.
+  bot.use(limit({ keyGenerator: Reputation.limiterKey }));
   bot.use(i18n.middleware());
 
   // Reputation export answers ahead of sunset mode's catch-all notice: a

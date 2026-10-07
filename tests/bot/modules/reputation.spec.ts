@@ -12,10 +12,12 @@ const {
   formatRating,
   ratingHundredths,
 } = require('../../../bot/modules/reputation/attestation');
+const { limit } = require('@grammyjs/ratelimiter');
 const {
   configure,
   handleConfirm,
   handleStart,
+  limiterKey,
 } = require('../../../bot/modules/reputation');
 
 // The protocol's test vectors (MostroP2P/protocol src/vectors/reputation_v1.json).
@@ -131,6 +133,7 @@ const makeUser = (fields: any = {}) => ({
 
 const makeCtx = () => ({
   from: { id: 42 },
+  chat: { id: 42, type: 'private' },
   i18n: {
     locale: sinon.stub(),
     t: (key: string, vars?: any) =>
@@ -298,5 +301,57 @@ describe('reputation export routing', () => {
       expect(other.next.callCount, JSON.stringify(update)).to.equal(2);
       expect(other.ctx.reply.called).to.equal(false);
     }
+  });
+
+  it('ignores a binding link or confirm button outside a private chat', async () => {
+    const group = { chat: { id: -100, type: 'supergroup' } };
+    const start = await route({
+      ...group,
+      message: { text: `/start@lnp2pbot rep_${encodeIdentity(IDENTITY)}` },
+    });
+    expect(start.ctx.reply.called).to.equal(false);
+    expect(start.next.callCount).to.equal(2); // left to the rest of the bot
+
+    const deps = makeDeps(makeUser());
+    const handlers: any[] = [];
+    configure({ use: (h: any) => handlers.push(h) }, deps);
+    const ctx = {
+      ...makeCtx(),
+      ...group,
+      callbackQuery: { data: `repok_${encodeIdentity(IDENTITY)}` },
+    };
+    const next = sinon.stub().resolves();
+    for (const handler of handlers) await handler(ctx, next);
+    expect(ctx.answerCbQuery.called).to.equal(true);
+    expect(deps.bind.called).to.equal(false);
+    expect(ctx.reply.called).to.equal(false);
+  });
+});
+
+describe('reputation export rate limiting', () => {
+  it('lets the confirm button through right after /start rep_', async () => {
+    const limiter = limit({ keyGenerator: limiterKey });
+    const next = sinon.stub().resolves();
+    const from = { id: 42 };
+    const confirm = `repok_${encodeIdentity(IDENTITY)}`;
+    await limiter(
+      { from, message: { text: `/start rep_${encodeIdentity(IDENTITY)}` } },
+      next,
+    );
+    await limiter({ from, callbackQuery: { data: confirm } }, next);
+    expect(next.callCount).to.equal(2);
+
+    // Each stage still has its own one-per-second budget.
+    await limiter({ from, callbackQuery: { data: confirm } }, next);
+    await limiter({ from, message: { text: '/start' } }, next);
+    expect(next.callCount).to.equal(2);
+  });
+
+  it('keys everything else by the sender, like the default', () => {
+    expect(limiterKey({ from: { id: 42 } })).to.equal('42');
+    expect(
+      limiterKey({ from: { id: 42 }, callbackQuery: { data: 'showqrcode_1' } }),
+    ).to.equal('42');
+    expect(limiterKey({})).to.equal(undefined);
   });
 });
