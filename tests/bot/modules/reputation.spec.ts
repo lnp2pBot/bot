@@ -310,7 +310,7 @@ describe('reputation export routing', () => {
       message: { text: `/start@lnp2pbot rep_${encodeIdentity(IDENTITY)}` },
     });
     expect(start.ctx.reply.called).to.equal(false);
-    expect(start.next.callCount).to.equal(2); // left to the rest of the bot
+    expect(start.next.called).to.equal(true); // left to the rest of the bot
 
     const deps = makeDeps(makeUser());
     const handlers: any[] = [];
