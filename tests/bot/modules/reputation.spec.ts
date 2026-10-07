@@ -394,6 +394,16 @@ describe('reputation export rate limiting', () => {
     expect(next.callCount).to.equal(2);
   });
 
+  it('lets the rebind confirm button through right after the paste', async () => {
+    const limiter = limit({ keyGenerator: limiterKey });
+    const next = sinon.stub().resolves();
+    const from = { id: 43 };
+    const text = JSON.stringify(rebindVectors.valid.event);
+    await limiter({ from, message: { text } }, next);
+    await limiter({ from, callbackQuery: { data: 'reprb_ok' } }, next);
+    expect(next.callCount).to.equal(2);
+  });
+
   it('keys everything else by the sender, like the default', () => {
     expect(limiterKey({ from: { id: 42 } })).to.equal('42');
     expect(

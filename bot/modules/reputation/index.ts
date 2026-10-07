@@ -103,6 +103,16 @@ const today = (deps: ReputationDeps): Date =>
 
 const npub = (hex: string): string => nip19.npubEncode(hex);
 
+/**
+ * The chat session, started if this is the user's first update: Telegraf's
+ * session middleware leaves it unset until something writes to it, and in
+ * sunset mode nothing else does.
+ */
+const sessionOf = (ctx: any): Record<string, any> => {
+  if (ctx.session == null) ctx.session = {};
+  return ctx.session;
+};
+
 /** Look the requester up and check they may export at all. */
 const eligibleUser = async (
   ctx: any,
@@ -168,10 +178,8 @@ export const handleStart = async (
   const { user, firstTrade } = found;
   const bound = user.reputation_exported_to;
   // A rebind authorisation pasted next must name the identity asked for here.
-  if (ctx.session) {
-    ctx.session.reputationDestination =
-      bound && bound !== identity ? identity : undefined;
-  }
+  sessionOf(ctx).reputationDestination =
+    bound && bound !== identity ? identity : undefined;
   if (bound && bound !== identity) {
     await ctx.reply(
       ctx.i18n.t('reputation_bound_other', { npub: npub(bound) }),
@@ -284,7 +292,7 @@ export const handleRebindPaste = async (
   if (!found) return;
   const rebind = await checkRebind(ctx, deps, found.user, text);
   if (!rebind) return;
-  if (ctx.session) ctx.session.reputationRebind = text;
+  sessionOf(ctx).reputationRebind = text;
   await ctx.reply(
     ctx.i18n.t('reputation_rebind_confirm', {
       from: npub(rebind.boundIdentity),
@@ -310,8 +318,9 @@ export const handleRebindConfirm = async (
   ctx: any,
   deps: ReputationDeps,
 ): Promise<void> => {
-  const text: string | undefined = ctx.session?.reputationRebind;
-  if (ctx.session) delete ctx.session.reputationRebind;
+  const session = sessionOf(ctx);
+  const text: string | undefined = session.reputationRebind;
+  delete session.reputationRebind;
   if (!text) {
     await ctx.reply(ctx.i18n.t('reputation_rebind_invalid'));
     return;
@@ -331,7 +340,7 @@ export const handleRebindConfirm = async (
     await ctx.reply(ctx.i18n.t('reputation_rebind_invalid'));
     return;
   }
-  if (ctx.session) delete ctx.session.reputationDestination;
+  delete session.reputationDestination;
   logger.notice(
     `reputation: account ${moved._id} rebound from ${rebind.boundIdentity} to ${rebind.newIdentity} by its owner`,
   );
@@ -412,16 +421,17 @@ const fail = async (ctx: any, error: unknown): Promise<void> => {
 
 /**
  * Rate-limiter key: the sender, like the limiter's default, except that the
- * confirm button gets a bucket of its own so a press right after
- * `/start rep_` is not dropped as a repeat of it.
+ * confirm buttons get a bucket of their own so a press right after the
+ * `/start rep_` or the pasted authorisation that showed them is not dropped
+ * as a repeat of it.
  */
 export const limiterKey = (ctx: any): string | undefined => {
   if (ctx.from === undefined) return undefined;
   const sender = String(ctx.from.id);
   const data = ctx.callbackQuery?.data;
-  return typeof data === 'string' && CONFIRM.test(data)
-    ? `reputation_confirm:${sender}`
-    : sender;
+  const isConfirm =
+    typeof data === 'string' && (CONFIRM.test(data) || data === REBIND_CONFIRM);
+  return isConfirm ? `reputation_confirm:${sender}` : sender;
 };
 
 /**
