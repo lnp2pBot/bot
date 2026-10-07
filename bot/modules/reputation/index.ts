@@ -24,6 +24,7 @@ import {
   formatRating,
   parseRebind,
   ratingHundredths,
+  Rebind,
   REBIND_DOCUMENT,
 } from './attestation';
 
@@ -166,6 +167,11 @@ export const handleStart = async (
   if (!found) return;
   const { user, firstTrade } = found;
   const bound = user.reputation_exported_to;
+  // A rebind authorisation pasted next must name the identity asked for here.
+  if (ctx.session) {
+    ctx.session.reputationDestination =
+      bound && bound !== identity ? identity : undefined;
+  }
   if (bound && bound !== identity) {
     await ctx.reply(
       ctx.i18n.t('reputation_bound_other', { npub: npub(bound) }),
@@ -214,9 +220,28 @@ export const handleConfirm = async (
 };
 
 /**
- * Check a pasted rebind authorisation against the account: signed by the
- * identity it is bound to, for this issuer, still valid. Returns it, or
- * `null` after telling the user why not.
+ * Whether a parsed rebind authorisation applies here: it names this issuer,
+ * is signed by the identity the account is bound to, and moves the binding to
+ * the identity the user asked for (`destination`), so an authorisation for
+ * one identity can never move the binding to another.
+ */
+export const rebindMatches = (
+  rebind: Rebind,
+  issuer: string,
+  boundIdentity: string | null | undefined,
+  destination: string | null | undefined,
+): boolean =>
+  rebind.issuer === issuer &&
+  !!boundIdentity &&
+  rebind.boundIdentity === boundIdentity &&
+  !!destination &&
+  rebind.newIdentity === destination;
+
+/**
+ * Check a pasted rebind authorisation against the account and the identity
+ * last asked for with `/start rep_`: signed by the identity it is bound to,
+ * for this issuer, naming that identity, still valid. Returns it, or `null`
+ * after telling the user why not.
  */
 const checkRebind = async (
   ctx: any,
@@ -233,9 +258,12 @@ const checkRebind = async (
   const rebind = event ? parseRebind(event, deps.now()) : null;
   const valid =
     rebind !== null &&
-    rebind.issuer === getPublicKey(deps.issuerKey) &&
-    !!user.reputation_exported_to &&
-    rebind.boundIdentity === user.reputation_exported_to;
+    rebindMatches(
+      rebind,
+      getPublicKey(deps.issuerKey),
+      user.reputation_exported_to,
+      ctx.session?.reputationDestination,
+    );
   if (!valid) {
     await ctx.reply(ctx.i18n.t('reputation_rebind_invalid'));
     return null;
@@ -303,6 +331,7 @@ export const handleRebindConfirm = async (
     await ctx.reply(ctx.i18n.t('reputation_rebind_invalid'));
     return;
   }
+  if (ctx.session) delete ctx.session.reputationDestination;
   logger.notice(
     `reputation: account ${moved._id} rebound from ${rebind.boundIdentity} to ${rebind.newIdentity} by its owner`,
   );

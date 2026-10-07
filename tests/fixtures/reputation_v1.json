@@ -1711,6 +1711,7 @@
     "context": {
       "bound_identity": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
       "clock_skew": 300,
+      "destination": "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d",
       "issuer_key": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
       "now": 1790902800
     },
@@ -1837,6 +1838,68 @@
           ]
         },
         "name": "expired",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`created_at` is 301 seconds after `now`, beyond the clock skew.",
+        "event": {
+          "content": "",
+          "created_at": 1790903101,
+          "id": "914dcc36b2149e9d92d24dab9189891869bf6edc70623c19bf7d23e3d215da1c",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "e2668c48a5137f5e12dcc9c479bae5443840fe267368bfd74514b4783ae96d79eea7cfdb924476708b4dc87b00596a6d0810e8d84d03a5d0ba258849b7322fa4",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790903701"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "future_created_at",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`p` names another identity than the `destination` of the request.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "0a3de41c23ecfb78ede0daf016f7ad0622978f4a5354e0379127d641bf26be96",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "cdfb5460594d57368ac6d10043d2edb599efc1c566df7936fbbe32ad10c809a4a95d7887bb4e5ce6c4cc5d36151d1a3721c194813c855f5c58b2504573e01dfa",
+          "tags": [
+            [
+              "p",
+              "708fe596e895c30458deedf0321a53bb640cb5c3e38e4660f652f2b2e5c2feab"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790902800"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "other_destination",
         "reason": "invalid_reputation_rebind"
       },
       {

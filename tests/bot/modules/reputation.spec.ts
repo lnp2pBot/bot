@@ -22,6 +22,7 @@ const {
   handleRebindPaste,
   handleStart,
   limiterKey,
+  rebindMatches,
 } = require('../../../bot/modules/reputation');
 
 // The protocol's test vectors (MostroP2P/protocol src/vectors/reputation_v1.json).
@@ -405,7 +406,7 @@ describe('reputation export rate limiting', () => {
 const rebindVectors = vectors.rebind;
 const REBIND_NOW = rebindVectors.context.now;
 const NEW_IDENTITY = rebindVectors.valid.expect.new_identity;
-const REBIND_CONTEXT_REFUSALS = ['signed_by_other_identity', 'other_issuer'];
+const REBIND_DESTINATION = rebindVectors.context.destination;
 
 describe('rebind authorisation', () => {
   it('parses the valid vector to its expected fields', () => {
@@ -421,22 +422,43 @@ describe('rebind authorisation', () => {
   });
 
   it('refuses every invalid vector, by the event or by the issuer checks', () => {
+    const { context } = rebindVectors;
+    const accepts = (event: any) => {
+      const parsed = parseRebind(event, context.now);
+      return (
+        parsed !== null &&
+        rebindMatches(
+          parsed,
+          context.issuer_key,
+          context.bound_identity,
+          context.destination,
+        )
+      );
+    };
+    expect(accepts(rebindVectors.valid.event)).to.equal(true);
     for (const c of rebindVectors.invalid) {
-      const parsed = parseRebind(c.event, REBIND_NOW);
-      if (REBIND_CONTEXT_REFUSALS.includes(c.name)) {
-        expect(parsed, c.name).to.not.equal(null);
-        expect(
-          parsed.boundIdentity !== rebindVectors.context.bound_identity ||
-            parsed.issuer !== rebindVectors.context.issuer_key,
-          c.name,
-        ).to.equal(true);
-      } else {
-        expect(parsed, c.name).to.equal(null);
-      }
+      expect(accepts(c.event), c.name).to.equal(false);
     }
     expect(parseRebind(valid.event, REBIND_NOW), 'an attestation').to.equal(
       null,
     );
+  });
+
+  it('refuses one dated beyond the clock skew, and one for another destination', () => {
+    const { context } = rebindVectors;
+    const named = (name: string) =>
+      rebindVectors.invalid.find((c: any) => c.name === name).event;
+    expect(parseRebind(named('future_created_at'), context.now)).to.equal(null);
+    const other = parseRebind(named('other_destination'), context.now);
+    expect(other).to.not.equal(null);
+    expect(
+      rebindMatches(
+        other,
+        context.issuer_key,
+        context.bound_identity,
+        context.destination,
+      ),
+    ).to.equal(false);
   });
 });
 
@@ -445,7 +467,11 @@ describe('rebinding flow', () => {
   const boundUser = () => makeUser({ reputation_exported_to: IDENTITY });
   const at = (user: any, overrides: any = {}) =>
     makeDeps(user, { now: () => REBIND_NOW, ...overrides });
-  const withSession = () => ({ ...makeCtx(), session: {} as any });
+  // The client opened `/start rep_<new identity>` before the paste.
+  const withSession = () => ({
+    ...makeCtx(),
+    session: { reputationDestination: REBIND_DESTINATION } as any,
+  });
 
   it('asks to confirm the move, then moves the binding and issues to the new identity', async () => {
     const user = boundUser();
@@ -512,6 +538,29 @@ describe('rebinding flow', () => {
       expect(replies(ctx), text.slice(0, 30)).to.deep.equal([
         'reputation_rebind_invalid',
       ]);
+      expect(user.reputation_exported_to).to.equal(IDENTITY);
+    }
+  });
+
+  it('remembers the identity a bound account asked for', async () => {
+    const ctx = { ...makeCtx(), session: {} as any };
+    await handleStart(ctx, encodeIdentity(REBIND_DESTINATION), at(boundUser()));
+    expect(replies(ctx)[0]).to.match(/^reputation_bound_other /);
+    expect(ctx.session.reputationDestination).to.equal(REBIND_DESTINATION);
+  });
+
+  it('refuses an authorisation for another identity than the one asked for', async () => {
+    const otherDestination = rebindVectors.invalid.find(
+      (c: any) => c.name === 'other_destination',
+    ).event;
+    for (const [text, session] of [
+      [JSON.stringify(otherDestination), withSession().session],
+      [pasted, {}],
+    ]) {
+      const user = boundUser();
+      const ctx = { ...makeCtx(), session };
+      await handleRebindPaste(ctx, text, at(user));
+      expect(replies(ctx)).to.deep.equal(['reputation_rebind_invalid']);
       expect(user.reputation_exported_to).to.equal(IDENTITY);
     }
   });
@@ -595,7 +644,11 @@ describe('rebind routing', () => {
       { callbackQuery: { data: 'reprb_ok' } },
       { message: { text: '/reputation_rebind' } },
     ]) {
-      const ctx = { ...makeCtx(), session: {}, ...update };
+      const ctx = {
+        ...makeCtx(),
+        session: { reputationDestination: REBIND_DESTINATION },
+        ...update,
+      };
       const next = sinon.stub().resolves();
       for (const handler of handlers) await handler(ctx, next);
       seen.push(replies(ctx)[0].split(' ')[0]);
