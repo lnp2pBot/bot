@@ -548,6 +548,18 @@ describe('admin rebind', () => {
     expect(target.reputation_exported_to).to.equal(OTHER);
   });
 
+  it("answers in the admin's stored language", async () => {
+    const target = makeUser({ reputation_exported_to: IDENTITY });
+    const deps = makeDeps(target, {
+      findUser: sinon.stub().resolves({ ...admin, lang: 'es' }),
+      findAccount: sinon.stub().resolves(target),
+    });
+    const ctx = makeCtx();
+    await handleAdminRebind(ctx, `42 ${OTHER} support ticket 7`, deps);
+    expect(ctx.i18n.locale.calledWith('es')).to.equal(true);
+    expect(ctx.i18n.locale.calledBefore(ctx.reply)).to.equal(true);
+  });
+
   it('ignores a non-admin and explains the usage to an admin', async () => {
     const target = makeUser({ reputation_exported_to: IDENTITY });
     const notAdmin = makeCtx();

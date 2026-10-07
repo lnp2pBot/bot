@@ -326,6 +326,8 @@ export const handleAdminRebind = async (
   }
   const admin = await deps.findUser(String(ctx.from.id));
   if (!admin?.admin) return;
+  // This runs ahead of the admin middleware that would set the language.
+  if (admin.lang) ctx.i18n.locale(admin.lang);
   const [account, key, ...words] = args.trim().split(/\s+/);
   const reason = words.join(' ').trim();
   let identity: string | null = null;
