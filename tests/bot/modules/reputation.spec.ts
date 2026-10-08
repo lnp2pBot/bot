@@ -270,9 +270,9 @@ describe('reputation export flow', () => {
 });
 
 describe('reputation export routing', () => {
-  const route = async (update: any) => {
+  const route = async (update: any, deps = makeDeps(makeUser())) => {
     const handlers: any[] = [];
-    configure({ use: (h: any) => handlers.push(h) }, makeDeps(makeUser()));
+    configure({ use: (h: any) => handlers.push(h) }, deps);
     const ctx = { ...makeCtx(), ...update };
     const next = sinon.stub().resolves();
     for (const handler of handlers) await handler(ctx, next);
@@ -301,6 +301,39 @@ describe('reputation export routing', () => {
       expect(other.next.callCount, JSON.stringify(update)).to.equal(2);
       expect(other.ctx.reply.called).to.equal(false);
     }
+  });
+
+  it('tells the user it is unavailable when a step throws', async () => {
+    const failing = makeDeps(makeUser(), {
+      findUser: sinon.stub().rejects(new Error('db down')),
+    });
+    const start = await route(
+      { message: { text: `/start rep_${encodeIdentity(IDENTITY)}` } },
+      failing,
+    );
+    expect(replies(start.ctx)).to.deep.equal(['reputation_unavailable']);
+
+    const button = await route(
+      { callbackQuery: { data: `repok_${encodeIdentity(IDENTITY)}` } },
+      makeDeps(makeUser(), {
+        bind: sinon.stub().rejects(new Error('db down')),
+      }),
+    );
+    expect(replies(button.ctx)).to.deep.equal(['reputation_unavailable']);
+  });
+
+  it('swallows a failure to send the unavailable reply', async () => {
+    const failing = makeDeps(makeUser(), {
+      findUser: sinon.stub().rejects(new Error('db down')),
+    });
+    const { ctx } = await route(
+      {
+        message: { text: `/start rep_${encodeIdentity(IDENTITY)}` },
+        reply: sinon.stub().rejects(new Error('blocked by user')),
+      },
+      failing,
+    );
+    expect(replies(ctx)).to.deep.equal(['reputation_unavailable']);
   });
 
   it('ignores a binding link or confirm button outside a private chat', async () => {

@@ -192,6 +192,12 @@ export const handleConfirm = async (
  */
 const isPrivateChat = (ctx: any): boolean => ctx.chat?.type === 'private';
 
+/** Log a failed step and tell the user, without letting the reply throw too. */
+const fail = async (ctx: any, error: unknown): Promise<void> => {
+  logger.error(`reputation: ${error}`);
+  await ctx.reply(ctx.i18n.t('reputation_unavailable')).catch(() => {});
+};
+
 /**
  * Rate-limiter key: the sender, like the limiter's default, except that the
  * confirm button gets a bucket of its own so a press right after
@@ -218,7 +224,7 @@ export const configure = (bot: Telegraf<any>, deps: ReputationDeps): void => {
     try {
       await handleStart(ctx, match[1], deps);
     } catch (error) {
-      logger.error(`reputation: ${error}`);
+      await fail(ctx, error);
     }
   });
   bot.use(async (ctx: any, next: () => Promise<void>) => {
@@ -230,7 +236,8 @@ export const configure = (bot: Telegraf<any>, deps: ReputationDeps): void => {
       if (!isPrivateChat(ctx)) return;
       await handleConfirm(ctx, match[1], deps);
     } catch (error) {
-      logger.error(`reputation: ${error}`);
+      if (isPrivateChat(ctx)) await fail(ctx, error);
+      else logger.error(`reputation: ${error}`);
     }
   });
 };
