@@ -3,7 +3,7 @@
 // addressed to one Mostro identity. It is never published to relays; the user
 // carries it to a Mostro instance. Rules:
 // https://mostro.network/protocol/reputation_attestation.html
-import { finalizeEvent, VerifiedEvent } from 'nostr-tools';
+import { finalizeEvent, verifyEvent, VerifiedEvent } from 'nostr-tools';
 
 export const ATTESTATION_KIND = 38388;
 export const ATTESTATION_DOCUMENT = 'reputation-attestation';
@@ -110,4 +110,77 @@ export const buildAttestation = (
     },
     issuerKey,
   );
+};
+
+export const REBIND_DOCUMENT = 'reputation-rebind';
+/** Longest a rebind authorisation may live. */
+export const REBIND_MAX_LIFETIME_SECS = 3600;
+/** Clock skew tolerated on `created_at` and `expiration`. */
+export const MAX_CLOCK_SKEW_SECS = 300;
+
+/** A verified rebind authorisation. */
+export interface Rebind {
+  /** The identity that signed it, which must be the one currently bound. */
+  boundIdentity: string;
+  /** The identity the binding moves to. */
+  newIdentity: string;
+  /** The issuer key it is valid at. */
+  issuer: string;
+  createdAt: number;
+  expiration: number;
+}
+
+const DECIMAL = /^(0|[1-9][0-9]*)$/;
+
+/** The value of a tag that must appear exactly once, or `null`. */
+const single = (tags: string[][], name: string): string | null => {
+  const found = tags.filter(t => Array.isArray(t) && t[0] === name);
+  return found.length === 1 && typeof found[0][1] === 'string'
+    ? found[0][1]
+    : null;
+};
+
+/**
+ * Parse and verify a rebind authorisation: id and signature, kind, `z`,
+ * each tag once and well formed, a lifetime of at most an hour, and the
+ * clock with a 300-second skew. Whether it is signed by the identity
+ * actually bound, and names this issuer, is the caller's to check.
+ * Returns `null` for anything that fails.
+ */
+export const parseRebind = (event: any, now: number): Rebind | null => {
+  try {
+    if (!verifyEvent(event) || event.kind !== ATTESTATION_KIND) return null;
+  } catch (error) {
+    return null;
+  }
+  const tags: string[][] = event.tags;
+  if (single(tags, 'z') !== REBIND_DOCUMENT) return null;
+  const newIdentity = single(tags, 'p');
+  const issuer = single(tags, 'issuer');
+  const expirationText = single(tags, 'expiration');
+  if (
+    newIdentity === null ||
+    issuer === null ||
+    expirationText === null ||
+    !HEX_KEY.test(newIdentity) ||
+    !HEX_KEY.test(issuer) ||
+    !DECIMAL.test(expirationText)
+  )
+    return null;
+  const createdAt: number = event.created_at;
+  const expiration = Number(expirationText);
+  if (
+    expiration <= createdAt ||
+    expiration - createdAt > REBIND_MAX_LIFETIME_SECS ||
+    createdAt > now + MAX_CLOCK_SKEW_SECS ||
+    now > expiration + MAX_CLOCK_SKEW_SECS
+  )
+    return null;
+  return {
+    boundIdentity: event.pubkey,
+    newIdentity,
+    issuer,
+    createdAt,
+    expiration,
+  };
 };

@@ -363,5 +363,75 @@ describe('sunset mode', () => {
       expect(sent()[0]).to.include(nip19.npubEncode(IDENTITY));
       expect(sent()[0]).to.not.include(NOTICE);
     });
+
+    describe('rebinding', () => {
+      const vectors = JSON.parse(
+        fs.readFileSync(
+          path.join(process.cwd(), 'tests/fixtures/reputation_v1.json'),
+          'utf8',
+        ),
+      );
+      const { context } = vectors.rebind;
+      const rebindEnv = {
+        SUNSET_MODE: 'true',
+        REPUTATION_ISSUER_SK: vectors.secret_keys['issuer-a'],
+      };
+
+      let clock: any;
+
+      beforeEach(() => {
+        // The vectors are dated: run at their clock. The rate limiter's reset
+        // interval is faked too, so the test can let the user take a while.
+        clock = sandbox.useFakeTimers({
+          now: context.now * 1000,
+          toFake: ['Date', 'setInterval', 'clearInterval'],
+        });
+        const bound = {
+          ...eligibleUser(),
+          admin: true,
+          reputation_exported_to: context.bound_identity,
+        };
+        (User.findOne as any).resolves(bound);
+        (User.findOneAndUpdate as any).callsFake(async () => ({
+          ...bound,
+          reputation_exported_to: context.destination,
+        }));
+      });
+
+      it('moves a binding with a pasted authorisation in sunset mode', async () => {
+        const { bot, sent } = makeBot(rebindEnv);
+
+        await bot.handleUpdate(
+          message(
+            from,
+            `/start rep_${encodeIdentity(context.destination)}`,
+          ) as any,
+        );
+        // Pasting the authorisation from the app takes the user a moment.
+        clock.tick(5000);
+        await bot.handleUpdate(
+          message(from, JSON.stringify(vectors.rebind.valid.event)) as any,
+        );
+        await bot.handleUpdate(button(from, 'reprb_ok') as any);
+
+        const [boundOther, confirm, exported, attestation] = sent();
+        expect(boundOther).to.include(nip19.npubEncode(context.bound_identity));
+        expect(confirm).to.include(nip19.npubEncode(context.destination));
+        expect(exported).to.include(nip19.npubEncode(context.destination));
+        expect(JSON.parse(attestation).tags).to.deep.include([
+          'p',
+          context.destination,
+        ]);
+        expect(sent().join('\n')).to.not.include(NOTICE);
+      });
+
+      it('takes the admin rebind command in sunset mode', async () => {
+        const { bot, sent } = makeBot(rebindEnv);
+
+        await bot.handleUpdate(message(from, '/reputation_rebind') as any);
+        expect(sent()).to.have.length(1);
+        expect(sent()[0]).to.include('/reputation_rebind <telegram id');
+      });
+    });
   });
 });

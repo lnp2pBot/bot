@@ -777,3 +777,8 @@ reputation_confirm: "평판이 다음 Mostro 신원으로 내보내집니다:\n\
 reputation_confirm_button: "확인하고 내보내기"
 reputation_bound_other: "이 계정의 평판은 이미 다른 Mostro 신원에 연결되어 있습니다:\n\n${npub}\n\n새 신원으로 옮기려면 연결된 신원으로 Mostro 앱에서 이동을 승인하세요."
 reputation_exported: "${npub}의 평판입니다: 받은 평가 ${reviews}개, 평균 ${rating}. 다음 메시지 전체를 복사해 Mostro 앱에 붙여 넣어 가져오세요. 7일 동안 유효합니다."
+reputation_rebind_invalid: "평판을 옮기기 위한 유효한 승인이 아닙니다: 계정이 연결된 신원이 이 봇을 대상으로 지난 1시간 안에 Mostro 앱에서 서명해야 합니다. 새로 만들어 다시 붙여 넣으세요."
+reputation_rebind_confirm: "평판이 다음과 같이 옮겨집니다\n\n이전: ${from}\n새: ${to}\n\n새 신원이 Mostro 앱에 표시된 것과 같은지 확인하세요. 이전 신원은 이미 가져온 평판을 유지합니다."
+reputation_admin_rebind_usage: "사용법: /reputation_rebind <텔레그램 id 또는 계정 id> <npub 또는 hex 키> <사유>"
+reputation_admin_rebind_not_found: "계정을 찾을 수 없거나 그사이 연결이 바뀌었습니다."
+reputation_admin_rebind_done: "평판 연결이 옮겨졌습니다\n\n이전: ${from}\n새: ${to}"
