@@ -334,6 +334,15 @@ describe('reputation export routing', () => {
       }),
     );
     expect(replies(button.ctx)).to.deep.equal(['reputation_unavailable']);
+
+    const rebindButton = await route(
+      {
+        callbackQuery: { data: 'reprb_ok' },
+        session: { reputationRebind: '{}' },
+      },
+      failing,
+    );
+    expect(replies(rebindButton.ctx)).to.deep.equal(['reputation_unavailable']);
   });
 
   it('swallows a failure to send the unavailable reply', async () => {

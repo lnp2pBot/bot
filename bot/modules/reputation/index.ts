@@ -459,7 +459,8 @@ export const configure = (bot: Telegraf<any>, deps: ReputationDeps): void => {
       if (match) await handleConfirm(ctx, match[1], deps);
       else await handleRebindConfirm(ctx, deps);
     } catch (error) {
-      logger.error(`reputation: ${error}`);
+      if (isPrivateChat(ctx)) await fail(ctx, error);
+      else logger.error(`reputation: ${error}`);
     }
   });
   bot.use(async (ctx: any, next: () => Promise<void>) => {
