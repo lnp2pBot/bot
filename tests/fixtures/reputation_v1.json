@@ -1,0 +1,1979 @@
+{
+  "attestation": {
+    "accepted": [
+      {
+        "description": "`created_at` is exactly 300 seconds after `now`.",
+        "event": {
+          "content": "",
+          "created_at": 1790903100,
+          "id": "0c5ad1dc4fb7c8712e791e5381eacbf22d881fdaf4e3a0f8436ba1ff4a35b2e7",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "27e3be41e8a0dc396aab60a7203e3722eacb3b54f0a1587629a3994659ab0e1b0503d8ba293cb94f0063e366a852f2355ab6af6899210e6c25d869223a3cfd4b",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "5"
+            ],
+            [
+              "rating",
+              "1.00"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1790989500"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "created_at_skew_limit"
+      },
+      {
+        "description": "`expiration` is exactly 300 seconds before `now`.",
+        "event": {
+          "content": "",
+          "created_at": 1790816100,
+          "id": "287811077ae87e24be5af7f79255e66d5d42c5cdba4472f4b3f879c5f76690c8",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "67bc3c47b031f14e8a486b55409522f635a8eb0f567829d4ad1f4217009af917d3e81c26b8a1f90eca087acc2d6f138514ef5b932c7cb296d0090a3a114a481e",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "5"
+            ],
+            [
+              "rating",
+              "1.00"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1790902500"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "expiration_skew_limit"
+      },
+      {
+        "description": "`expiration - created_at` is exactly the 7-day cap; `reviews` and `rating` sit at their floors.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "d0c47d5a8269c40289a0d20cda55eedbd44d44c7d9e5ae4f8a90a8b64d50b6d0",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "0d65a625912993ec696754c8a8b948a3fd395e3a2955b5292a3d34e713f101face9a93984441aa1a08ae400d264a1fcffd5f2447e6698453caf6b9981bd387a7",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "5"
+            ],
+            [
+              "rating",
+              "1.00"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "lifetime_at_cap"
+      },
+      {
+        "description": "Carries a tag the rules do not name, which a receiver ignores.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "9cef32d9580e29c3132cea5e2d830e8662f87e890f06f8358bd85be631f6fc3f",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "76e7749cce406fd52df59695f767738db9b1c742e3bb1434d4e83db06b93eb160019e58f9845e3d1ce050c9c5f031755987dfa0a1b1f2d518f03f40632bfb9d5",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "5"
+            ],
+            [
+              "rating",
+              "1.00"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ],
+            [
+              "client",
+              "lnp2pbot"
+            ]
+          ]
+        },
+        "name": "unknown_tag_ignored"
+      }
+    ],
+    "invalid": [
+      {
+        "description": "Kind 38384 instead of 38388.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "3855b73587e7bc93af7114c7e4906fa523ee0acbf022f3153abda58901ce6b08",
+          "kind": 38384,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "aa82e118f4753424cc045b2aad18817d1899f8413404b70a76ee26110de33ae295d9e396a92f53d6cd0a52d3ff23e493da72c5aada12fbae145a2e2d45b626e8",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "wrong_kind",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "No `z` tag.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "ed4f92c3f165d5c2186b020d5985619b1563d726a33192e3480b3a1a2b768a50",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "6295e21476f45530c443073f9f2f1148f5a27cf2fb2f59fff04148d6997cc602d0233e81021429e470f983fa774ba3adcee77da17c68025c1469ba54b6e97fa3",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ]
+          ]
+        },
+        "name": "missing_z",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`z` is `reputation-rebind`: a rebind authorisation is never an attestation.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "6658c5a1e190800006e1d03b935e8c7cdf1f2df0e1403efb96b0247a15dc27f4",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "9d955183778a6f4bfcf1bbeed6dd287281d85c039f6f9c2fd44dd0dd420d8c5b9abda31cee681b831fd99ae509a3b515c9335d3db4b3fde577d0e903e9f44085",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "rebind_z",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "No `p` tag.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "2819c37d15fdd21d6fb6281af47f36f56b5de4670e67b04e671bed709757772f",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "67ce56586ae1e7f992e527c86667848ef5fbf753604786a7416f68f6bc9e5c821365afb2f716b9838d8be28a25400863daf8a6fdf777831464ad81d161a83562",
+          "tags": [
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "missing_p",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "No `since` tag.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "1e9d01a04593fd3ca3b4c9af2d1d59e22eef1aaf42a8e817f2116167e13fdafd",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "2f278e9e821f346f75f7f385e7b9df8cb381fe5dd13101e8604f5ede8015f70f51150b7d568663201cbdd40704741d921ff8fd838e77c6eb12cc5c22ea264705",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "missing_since",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`reviews` appears twice.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "66ad4c648d7be9aa41ee9658e0f917e8d7b1b34fc01d409b71873d051f8aa1c7",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "b82e6cfee17562ad41253a59db418605ad388014b5aaa24eb5d0cea6fc80afba265f551de6725ed01c5c713055ae825a7c5cd6d29fc20402784f23b0f31b2035",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ],
+            [
+              "reviews",
+              "214"
+            ]
+          ]
+        },
+        "name": "repeated_reviews",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`p` is not lowercase hex.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "f66d94844cc05f5ecc6c0426a1efd54586ee7cf6d7be679e20d8fa2bfba5bbfd",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "e938cf76da44d3dfe9334fad6a1ede3e8c0aa311c714d2ad82e289d1d23e8356d1d94281448fb0e23547acec706c8e01ee49813e8888c8946f93149b53727d9b",
+          "tags": [
+            [
+              "p",
+              "2CAA699EC98B1AFE69EB3ED919FE2F3E06E6C3E932C290B4B520D1DD351ED590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "uppercase_p",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`subject` is empty.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "106a9c3a2e991c282531c29cdb5ff33eefd216948730ff64a2b3e5f05cad35c6",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "72ffd168336a6ce481d4d716b316518712b72740d1cfd6791b270e49be2a0007a9e5b0ef132e2aaf3cbf238fcd63597025172910cc72d7a65769e2bef622a262",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              ""
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "subject_empty",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`subject` holds a character outside `[0-9A-Za-z_-]`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "320283bbd4d11114e636a17d518cdbea833604f6a9d6e060e1959ab491c8b393",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "37151a39de83f05fba0d5b9a49bf9810d2a6435a8684751b24619fe66d7d0e7c73643bc46b791600e336f2e7c79ac4f8cc56109cb6cc27598b7693515160ffd6",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "user 42"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "subject_bad_characters",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`subject` is 65 characters long.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "03c3f5d175e75563d5d7c29a6fa60cc26e15486dd792baff902d722b1bf9d07d",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "ef61e81805edd4834bd27212d05fa1dbb980f052dc03be782a968ce363ede62a03bc4bbdd91f61c232d7e32d51d2e29801b173c176182025757c2a3abde3ae28",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "subject_too_long",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`rating` is 5.01.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "88ef37fc95777ec73a365315c70b774195dc58f71bbdbf314d073a3e38bceb62",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "76bc6a508b851d8f5355a1b8ff7d77b05b78d4bc7b90caa665737d4e93dcd8effea0e6f816de5a94ea9446a0c5ee22015e0d638ab5baf3566a9c199c5908ab48",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "5.01"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "rating_above_range",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`rating` is 0.99.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "1b846d7207afd51502b8d721a658fa0bc0fd98e6e7b19fe797e6a13a5b318c70",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "e043ce66671e26b9385d243dd7338c9bc39920d7c591b651d0bdb60fecaec285d5809117c379950c00da4c116d99d375b4e9586258fc0253b9606cbbf7a66736",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "0.99"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "rating_below_range",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`rating` has one decimal.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "69fd7f4b2a61a2e1962d474d59b8d00cab3ce1d7889202b5b936ef9562f41711",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "6b813bf76d852973f1b4c76f775910fe7b73e491d6e6d30ea2ccbc7febb7fef4f80bc4eed59a2329927d2347d794d10c42eb34109e69d0d51be80913c0de1b1d",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.8"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "rating_one_decimal",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`rating` has three decimals.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "b8632d2476f59687793495be09d6ce73376e1de92423d8967ae489eec9e319b8",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "838f1fbc2d0015b56fa83bd31e3d6e290f297a92074bab5ac3579538a7d9855d4e5a13179aec9d49720c63a94ca4a38454d4d113a73fb0cb2d15aa68795a87ff",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.870"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "rating_three_decimals",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`rating` is `4,87`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "aa7fb5d1b8ccfb833d97eebaad2133226f6ec6a179b57113da7f6aad6e07b4dc",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "44bc8455ef42f9b755e6a9050f4c182631d46b47ec5ae4420433f232036ac376fa4e81f85d3e2da03bef639edf91cbc2efc291df053da4d3d33839ead9d4a17f",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4,87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "rating_not_a_number",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`reviews` is 4.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "4d3a104bca2248cbbe2d6559b489abdf75a306b47ecedaf89f2f6ebfb8fd92c7",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "f0b0964179284917fee9f3830e3d711a9cccdb05881134e1862393b7a2ba2f1ffe04075546c3ad766aafc94cd0553f5ccdeb38c5f0f9f5fa1a8f1b39a70ad1dd",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "4"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "reviews_below_floor",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`reviews` is written `0214`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "d3ac0dba0eb9d509484e8fa13d19bfc86551169291f452a5eee88cd5829e2884",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "53967be757bb5e306a177b12bc3adb7506bbf1630fa0772afa5365361577ba487cfbfc892391d73c1d87c8b91a54f1bbb706830d76aeed1d11f54161881919ce",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "0214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "reviews_leading_zero",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`reviews` is written `+214`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "804d5678024cb63511037595a7f6f6dd37c8b58adfef801c5cea5f86a7abcbb2",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "9faa38a38e8a5aff5bb3b00b4cdea5603e769db7a3810189644c55d82ae5f2997f40820253a4e18337ffc903e8c4c8a5e5a77b78299d3c52c8acbed867aeb062",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "+214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "reviews_signed",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`reviews` is 4294967296.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "129be843748c6b8401c575b3adf3e01873e6e8c7e843a4f8f9957a3200d75764",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "226811dad2447cbb31b06e659c4719b05d003be512420e80226082461b075d8d5ea41d956698a438afa2f8f19b095e1ed09da99b0e2f9dc0b6ab3cfdc9c2a7dc",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "4294967296"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "reviews_overflow",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`since` is not a multiple of 86400.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "1ee8c88c50552e4e2fda423f912242aa221e4f5d8c55e0c1cc09031db9e818cf",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "bd92e9b7ce159fa95ba1ee21e4a61fbbd41c5bcf30d5e41799806a56cd2715a9a11029ec0e9bb294489075dd7647380b3fb72e16b1f08730d99665920c69662c",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204801"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "since_not_day_aligned",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`since` is 2019-12-31.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "861365acaf65c45c0ae06557f217027ca4beb2cd9fe2dda87843cc26bce1c615",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "e15d2b81e0075288454889c65e5974445a5ce2e686e697b65142ce6cec3d3912ade83cfdc9665a62d913b8deb0053c2a59b58e1bfd3d4c4cc2f1900634bd0476",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1577750400"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "since_before_2020",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`since` is the day after `created_at`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "744e2256f3914b742fc24ce44c3699d15f340c6908f14cc70dba621f963235fb",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "bce9d53ddbc4c85fd4318c81300fb867babe71bdfe904b42ef9696ab0f07f7e6e98a1b36dba015a774503c313002341f2224697b8e24e1b3c4b3be46ee55a4e6",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1790985600"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "since_after_created_at",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`expiration` equals `created_at`.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "53e33cb0fbbc140d7b31795c1ffc41cddbfb3e543abc986d4c4f1c51cf1a5b17",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "f453c34248cd5f56117d2fc8219007f9c5664ab2dc523e6729a3cf1e2ae1b2602cb10f7b0e057132cdef18a8a69a16753ce12d8d998f25a1778aab220bb22684",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1790899200"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "expiration_not_after_created_at",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`expiration - created_at` is one second over the 7-day cap.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "47d288ad1c94dec85b64a5119e9a8fd7fb77a944c29bc010909cd1d361bb5d48",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "fa2bb9c338932e359c9cf7c0d522240a979eaf2868dafcd625ab92d58ffc1e242bc02625f6966e734fac8f8ffa622cc91b7e7083602e9a97008b42065e2a9ce2",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504001"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "lifetime_over_cap",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`created_at` is 301 seconds after `now`.",
+        "event": {
+          "content": "",
+          "created_at": 1790903101,
+          "id": "228842f0664f236b8229dd5a76f444847a2ffd62eb03302c19c7f26f5df31e67",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "4741eed59ce3b24dee6ded8032f5c0f741cfe687926d513a0018b3d855cba9fc7be692456bbaa9d9c6d14cafe3cae9346c792fbc8155915a215d552e5ab6ecf8",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1790989501"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "created_in_the_future",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`expiration` is 301 seconds before `now`.",
+        "event": {
+          "content": "",
+          "created_at": 1790816099,
+          "id": "7df85be68a2679b3ca3511d0d4aea9609c05e2fe91d21beaa0f5ef0b628f5a3a",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "4a200b727f1ee13c6667c4d76148cceb660139614cee3514d3349d251a774405ee71c06074b8e5885e1b5ca6a6720f1b0b576d28eb315d808b7d4e5f8830748d",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1790902499"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "expired",
+        "reason": "expired_reputation_attestation"
+      },
+      {
+        "description": "Last byte of `sig` flipped.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "a52ccf54b31581681c681b9fe939a8742705c7af231ef3a7e33b9c86d3d6a78a",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "583660a36bd95ed4bd85cab708ccce531031c5fce2194483a002eb126c3741f068d4684f2f849e056dadfa1972513010cdc05c254a1ba60ea279af20a9d418ee",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "mauled_signature",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "`content` changed after signing, so `id` no longer matches.",
+        "event": {
+          "content": "x",
+          "created_at": 1790899200,
+          "id": "a52ccf54b31581681c681b9fe939a8742705c7af231ef3a7e33b9c86d3d6a78a",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "583660a36bd95ed4bd85cab708ccce531031c5fce2194483a002eb126c3741f068d4684f2f849e056dadfa1972513010cdc05c254a1ba60ea279af20a9d418ef",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "id_mismatch",
+        "reason": "invalid_reputation_attestation"
+      },
+      {
+        "description": "Well formed, but names another identity than the one the request proves.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "5e8f9fc5f86eb530aa48719ef9ddcb10ea504c8c581ec6af8d3b7606c775ea30",
+          "kind": 38388,
+          "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+          "sig": "bb106619d4ad4440e00b011d74c1b64403e89a2d83b76be25da3f2f594498c9b0b512d1bd58e0af55a988cc2eac9789fd020e3c20d2d328ffa1e952dee89b39f",
+          "tags": [
+            [
+              "p",
+              "708fe596e895c30458deedf0321a53bb640cb5c3e38e4660f652f2b2e5c2feab"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "identity_mismatch",
+        "reason": "reputation_identity_mismatch"
+      },
+      {
+        "description": "Well formed, but signed by a key in no trust-list entry.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "560e44fb6ab80926713d3564a982d3abe8c008f569dacc07d569837f80c00906",
+          "kind": 38388,
+          "pubkey": "b8e18d18d33cbaf837fda291f9f78e974b92ca83865a61f69a38fabba99846df",
+          "sig": "837a7c2f2ad754cdec60f88e02332cb5df769306001eff50405b1ac99248c988fa214f3cfcc92000be0becad694a2c571bc4205109b4a13ed843f295eb2eed55",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "untrusted_issuer",
+        "reason": "untrusted_reputation_issuer"
+      },
+      {
+        "description": "Well formed, but signed by the destination's own issuer key, which its trust list also holds.",
+        "event": {
+          "content": "",
+          "created_at": 1790899200,
+          "id": "9a0afe9dd7b422a495bcc15df86016b091f6dfbc8ea26c64ef52b35bad11b2a0",
+          "kind": 38388,
+          "pubkey": "4aaed1ec5ce1e8e04e2e97183fe1eea0569adfa3679c20d3479a7da54e348fd5",
+          "sig": "fdeeb8a30266e04a9532869245b5c82804354e407c623248dae719c58932da90521c4f5dffff120e64170dc8c9535821237653b99f416f3d9d8f704f34ae5190",
+          "tags": [
+            [
+              "p",
+              "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+            ],
+            [
+              "subject",
+              "64f1c9f4e3a2b1c0d9e8f7a6"
+            ],
+            [
+              "reviews",
+              "214"
+            ],
+            [
+              "rating",
+              "4.87"
+            ],
+            [
+              "since",
+              "1696204800"
+            ],
+            [
+              "expiration",
+              "1791504000"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "own_issuer_key",
+        "reason": "untrusted_reputation_issuer"
+      }
+    ],
+    "valid": {
+      "description": "Signed by the trusted issuer for the proven identity, inside its lifetime.",
+      "event": {
+        "content": "",
+        "created_at": 1790899200,
+        "id": "a52ccf54b31581681c681b9fe939a8742705c7af231ef3a7e33b9c86d3d6a78a",
+        "kind": 38388,
+        "pubkey": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+        "sig": "583660a36bd95ed4bd85cab708ccce531031c5fce2194483a002eb126c3741f068d4684f2f849e056dadfa1972513010cdc05c254a1ba60ea279af20a9d418ef",
+        "tags": [
+          [
+            "p",
+            "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590"
+          ],
+          [
+            "subject",
+            "64f1c9f4e3a2b1c0d9e8f7a6"
+          ],
+          [
+            "reviews",
+            "214"
+          ],
+          [
+            "rating",
+            "4.87"
+          ],
+          [
+            "since",
+            "1696204800"
+          ],
+          [
+            "expiration",
+            "1791504000"
+          ],
+          [
+            "z",
+            "reputation-attestation"
+          ]
+        ]
+      },
+      "expect": {
+        "created_at": 1790899200,
+        "destination": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+        "expiration": 1791504000,
+        "issuer_key": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+        "issuer_name": "issuer-a",
+        "rating": "4.87",
+        "reviews": 214,
+        "since": 1696204800,
+        "subject": "64f1c9f4e3a2b1c0d9e8f7a6"
+      },
+      "id": "a52ccf54b31581681c681b9fe939a8742705c7af231ef3a7e33b9c86d3d6a78a",
+      "json": "{\"id\":\"a52ccf54b31581681c681b9fe939a8742705c7af231ef3a7e33b9c86d3d6a78a\",\"pubkey\":\"fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21\",\"created_at\":1790899200,\"kind\":38388,\"tags\":[[\"p\",\"2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590\"],[\"subject\",\"64f1c9f4e3a2b1c0d9e8f7a6\"],[\"reviews\",\"214\"],[\"rating\",\"4.87\"],[\"since\",\"1696204800\"],[\"expiration\",\"1791504000\"],[\"z\",\"reputation-attestation\"]],\"content\":\"\",\"sig\":\"583660a36bd95ed4bd85cab708ccce531031c5fce2194483a002eb126c3741f068d4684f2f849e056dadfa1972513010cdc05c254a1ba60ea279af20a9d418ef\"}"
+    }
+  },
+  "context": {
+    "clock_skew": 300,
+    "max_lifetime": 604800,
+    "now": 1790902800,
+    "own_issuer_key": "4aaed1ec5ce1e8e04e2e97183fe1eea0569adfa3679c20d3479a7da54e348fd5",
+    "proven_identity": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+    "trust_list": [
+      {
+        "keys": [
+          "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+        ],
+        "name": "issuer-a"
+      },
+      {
+        "keys": [
+          "4aaed1ec5ce1e8e04e2e97183fe1eea0569adfa3679c20d3479a7da54e348fd5"
+        ],
+        "name": "self"
+      }
+    ]
+  },
+  "description": "Test vectors for the reputation attestation (kind 38388). See reputation_vectors.md.",
+  "merge": {
+    "cases": [
+      {
+        "after": {
+          "created_at": 1696204800,
+          "last_rating": 5,
+          "max_rating": 5,
+          "min_rating": 4,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 9.0,
+          "seeded_rating_sum": 1042.18,
+          "seeded_reviews": 214,
+          "total_rating": 4.866574074074074,
+          "total_reviews": 216
+        },
+        "before": {
+          "created_at": 1790047545,
+          "last_rating": 5,
+          "max_rating": 5,
+          "min_rating": 4,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 9.0,
+          "seeded_rating_sum": 0.0,
+          "seeded_reviews": 0,
+          "total_rating": 4.5,
+          "total_reviews": 2
+        },
+        "description": "The plan's worked example: 2 native ratings averaging 4.5, 10 days on the instance.",
+        "import": {
+          "rating": "4.87",
+          "reviews": 214,
+          "since": 1696204800
+        },
+        "name": "existing_reputation",
+        "reverted": {
+          "created_at": 1790047545,
+          "last_rating": 5,
+          "max_rating": 5,
+          "min_rating": 4,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 9.0,
+          "seeded_rating_sum": 0.0,
+          "seeded_reviews": 0,
+          "total_rating": 4.5,
+          "total_reviews": 2
+        }
+      },
+      {
+        "after": {
+          "created_at": 1696204800,
+          "last_rating": 5,
+          "max_rating": 5,
+          "min_rating": 5,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 0.0,
+          "seeded_rating_sum": 1042.18,
+          "seeded_reviews": 214,
+          "total_rating": 4.87,
+          "total_reviews": 214
+        },
+        "before": {
+          "created_at": 1790047545,
+          "last_rating": 0,
+          "max_rating": 0,
+          "min_rating": 0,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 0.0,
+          "seeded_rating_sum": 0.0,
+          "seeded_reviews": 0,
+          "total_rating": 0.0,
+          "total_reviews": 0
+        },
+        "description": "No rating at all: the import also sets the rating extrema, and reverting clears them.",
+        "import": {
+          "rating": "4.87",
+          "reviews": 214,
+          "since": 1696204800
+        },
+        "name": "no_reputation",
+        "reverted": {
+          "created_at": 1790047545,
+          "last_rating": 0,
+          "max_rating": 0,
+          "min_rating": 0,
+          "native_created_at": 1790047545,
+          "native_rating_sum": 0.0,
+          "seeded_rating_sum": 0.0,
+          "seeded_reviews": 0,
+          "total_rating": 0.0,
+          "total_reviews": 0
+        }
+      }
+    ],
+    "tolerance": 1e-9
+  },
+  "rating_rounding": [
+    {
+      "average": 4.866574074074074,
+      "rating": "4.87"
+    },
+    {
+      "average": 4.125,
+      "rating": "4.13"
+    },
+    {
+      "average": 4.895,
+      "rating": "4.89"
+    },
+    {
+      "average": 4.875,
+      "rating": "4.88"
+    },
+    {
+      "average": 4.005,
+      "rating": "4.01"
+    },
+    {
+      "average": 0.9,
+      "rating": "1.00"
+    },
+    {
+      "average": 5.0,
+      "rating": "5.00"
+    },
+    {
+      "average": 5.2,
+      "rating": "5.00"
+    }
+  ],
+  "rebind": {
+    "context": {
+      "bound_identity": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+      "clock_skew": 300,
+      "issuer_key": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+      "now": 1790902800
+    },
+    "invalid": [
+      {
+        "description": "Valid signature, but not by the identity the account is bound to.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "33707347bdc31326b9008ac448d80be1c3dec82ca46a44ee9fbf49f33223aeb0",
+          "kind": 38388,
+          "pubkey": "708fe596e895c30458deedf0321a53bb640cb5c3e38e4660f652f2b2e5c2feab",
+          "sig": "559f977ba64b731943d471f650bec739051b2fc974397e1c4b2a917e93c3f8267e5c8474c6c1918367f61c8054426fb1efb0bc6d636d91359c751dba50d26918",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790902800"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "signed_by_other_identity",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`issuer` names another issuer, so it cannot be replayed here.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "08ff8d0ec16eea59a8434408173714694f1c26311a235259712335dfaa790906",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "38574c451edc4451f3f96e1bb44ab27aecb81d5e5997ea2aef2860c0130cb61e21ad704602ac1afb79081082ceb2755c42653793d187a2bbf28c852c055b334e",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "b8e18d18d33cbaf837fda291f9f78e974b92ca83865a61f69a38fabba99846df"
+            ],
+            [
+              "expiration",
+              "1790902800"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "other_issuer",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`expiration - created_at` is 3601 seconds.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "421192787ffa71946c75cd7120b8a135ecf456c538ea3d4eecc83e5cfc55570a",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "0e22e1673d7dc895f89735a0778e8541764f82fc9d1f27fc386a751434c229700143ee10e00be05f183c93559172d9e7963cf3dc882260e33a22b5e9416179c3",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790905801"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "lifetime_over_an_hour",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`expiration` is 301 seconds before `now`.",
+        "event": {
+          "content": "",
+          "created_at": 1790901600,
+          "id": "5e35ad33b4e8bb066245f79c2739288a6c3059d1cee814701dd8ce72e0755c17",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "381455289ba9c4e24c84537769de75372b80d0cf038fa536e61fd3e54c3357ba5ba9358e4b2044e5fa84e1617a85ff2cb1ef4c639c5f8e5542fd1a3f7eecff5b",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790902499"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "expired",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`z` is `reputation-attestation`.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "67bc39dab3070c83110bf393aefbb52d4352e10f1947c43cc1bc83a8b3ca56c5",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "bce4cb7a2ea1bba4d170fc11181e560c332e67dbd476d8d2dfb4f506b0b3d15633269a87ef5849cabb4de7308d4f5aa68962c5b327bb806b779732033f49f48c",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790902800"
+            ],
+            [
+              "z",
+              "reputation-attestation"
+            ]
+          ]
+        },
+        "name": "attestation_z",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "No `issuer` tag.",
+        "event": {
+          "content": "",
+          "created_at": 1790902200,
+          "id": "f3bbb1578b5dc39a9f4d8530145b00192af41083267893c07158a86f2abacf8f",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "49d43af28be4601fd9d192489e298b8c6fcf244de0a0538c8f5ac99b9225731d60589b0f02fa702b9da6d300aa1ebdb1c6a1567e0ce5df610ae0006f0c3270e9",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "expiration",
+              "1790902800"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "missing_issuer",
+        "reason": "invalid_reputation_rebind"
+      },
+      {
+        "description": "`created_at` changed after signing.",
+        "event": {
+          "content": "",
+          "created_at": 1790902201,
+          "id": "6da754add522f76fa0e515a7a1cf9c577f3cee2e9b5a022211cb5803f9d7bf82",
+          "kind": 38388,
+          "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+          "sig": "09bb6711aada783d032a25766f5782f70905ed8c24bc8f80d0ebb35d8223e3bdc432166ee0a2b0c37d1d4de0c7502647b5464a917d16b8079ec0536e12c436bf",
+          "tags": [
+            [
+              "p",
+              "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+            ],
+            [
+              "issuer",
+              "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+            ],
+            [
+              "expiration",
+              "1790905800"
+            ],
+            [
+              "z",
+              "reputation-rebind"
+            ]
+          ]
+        },
+        "name": "id_mismatch",
+        "reason": "invalid_reputation_rebind"
+      }
+    ],
+    "valid": {
+      "description": "Signed by the bound identity, for this issuer, inside its hour.",
+      "event": {
+        "content": "",
+        "created_at": 1790902200,
+        "id": "6da754add522f76fa0e515a7a1cf9c577f3cee2e9b5a022211cb5803f9d7bf82",
+        "kind": 38388,
+        "pubkey": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+        "sig": "09bb6711aada783d032a25766f5782f70905ed8c24bc8f80d0ebb35d8223e3bdc432166ee0a2b0c37d1d4de0c7502647b5464a917d16b8079ec0536e12c436bf",
+        "tags": [
+          [
+            "p",
+            "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+          ],
+          [
+            "issuer",
+            "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21"
+          ],
+          [
+            "expiration",
+            "1790905800"
+          ],
+          [
+            "z",
+            "reputation-rebind"
+          ]
+        ]
+      },
+      "expect": {
+        "bound_identity": "2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590",
+        "created_at": 1790902200,
+        "expiration": 1790905800,
+        "issuer": "fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21",
+        "new_identity": "a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d"
+      },
+      "json": "{\"id\":\"6da754add522f76fa0e515a7a1cf9c577f3cee2e9b5a022211cb5803f9d7bf82\",\"pubkey\":\"2caa699ec98b1afe69eb3ed919fe2f3e06e6c3e932c290b4b520d1dd351ed590\",\"created_at\":1790902200,\"kind\":38388,\"tags\":[[\"p\",\"a3362049acac57a043dcafc35229c563c764bc22b84a18698a71c2e8e0fd706d\"],[\"issuer\",\"fd85e22382d4720a042cc000e0fa24ea12781c2321fe47fb53d413c57596eb21\"],[\"expiration\",\"1790905800\"],[\"z\",\"reputation-rebind\"]],\"content\":\"\",\"sig\":\"09bb6711aada783d032a25766f5782f70905ed8c24bc8f80d0ebb35d8223e3bdc432166ee0a2b0c37d1d4de0c7502647b5464a917d16b8079ec0536e12c436bf\"}"
+    }
+  },
+  "secret_keys": {
+    "destination-issuer": "cae35bead45bc66452742ef609768807e600a48c47dba638c95326c223bc6a83",
+    "identity": "2aa2122269ed35a5cd916ff66f53d57eaac7a0339413c1b4e125af2bcfdde187",
+    "issuer-a": "00002be611259ef49554a87dc387a8e6471e759ac055af006e859afc40b7a0cd",
+    "issuer-b": "fb7f417bbe175dcd1d34d8968a3a0975caf25e94910c90ff26c4695e9586e8da",
+    "new-identity": "2efa1f1c0415d65fe56d12393634a4ee9e875ec6afd9a5a8f987aedc5d593b8b",
+    "other-identity": "1e0a216d75a09b8306efd7d645265c247a436d5ce20e35ceb7488527d1dc52a1"
+  },
+  "version": 1
+}

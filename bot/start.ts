@@ -78,6 +78,8 @@ import { logger } from '../logger';
 import { IUsernameId } from '../models/community';
 import { CommunityContext } from './modules/community/communityContext';
 import { commandLogger } from './middleware/commandlogging';
+import * as Reputation from './modules/reputation';
+import { loadIssuerKey } from '../util/reputation';
 
 export interface MainContext extends Context {
   match: Array<string> | null;
@@ -226,8 +228,18 @@ const initialize = (
 
   bot.use(commandLogger());
   bot.use(session());
-  bot.use(limit());
+  // The reputation confirm button has its own bucket: it is pressed right
+  // after the /start that showed it.
+  bot.use(limit({ keyGenerator: Reputation.limiterKey }));
   bot.use(i18n.middleware());
+
+  // Reputation export answers ahead of sunset mode's catch-all notice: a
+  // retiring bot is exactly when users carry their reputation away. A
+  // malformed REPUTATION_ISSUER_SK throws here and stops the bot.
+  const issuerKey = loadIssuerKey();
+  if (issuerKey) {
+    Reputation.configure(bot, Reputation.defaultDeps(issuerKey));
+  }
 
   if (isSunsetMode()) {
     bot.use(sunsetMiddleware);

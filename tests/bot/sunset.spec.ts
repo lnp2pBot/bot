@@ -3,9 +3,14 @@ import fs from 'fs';
 
 import mongoose from 'mongoose';
 
-import { sunsetMiddleware, isSunsetMode } from '../../bot/start';
+import schedule from 'node-schedule';
+import { Telegram } from 'telegraf';
+import { getPublicKey, nip19 } from 'nostr-tools';
+
+import { initialize, sunsetMiddleware, isSunsetMode } from '../../bot/start';
+import { encodeIdentity } from '../../bot/modules/reputation/attestation';
 import { buildMongoUri } from '../../db_connect';
-import { User } from '../../models';
+import { Order, User } from '../../models';
 
 const sinon = require('sinon');
 const { expect } = require('chai');
@@ -192,6 +197,171 @@ describe('sunset mode', () => {
       expect(buildMongoUri()).to.equal(
         'mongodb://user:pass@localhost:27017/p2plnbot?authSource=admin',
       );
+    });
+  });
+
+  describe('reputation export', () => {
+    const ISSUER_SK =
+      '4fa1a2d2b5f0c6e1c0d2a7d3a9e6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8';
+    const IDENTITY = getPublicKey(
+      Uint8Array.from(Buffer.from('11'.repeat(32), 'hex')),
+    );
+    const REP_LINK = `/start rep_${encodeIdentity(IDENTITY)}`;
+    const NOTICE = 'This bot is no longer in service';
+    let senderId = 1000;
+
+    const eligibleUser = () => ({
+      _id: '64f1c9f4e3a2b1c0d9e8f7a6',
+      tg_id: '1',
+      lang: 'en',
+      banned: false,
+      trades_completed: 12,
+      total_reviews: 214,
+      total_rating: 4.87,
+      reputation_exported_to: null,
+    });
+
+    // A bot built by initialize() whose Telegram API calls are recorded.
+    const makeBot = (env: Record<string, string>) => {
+      sandbox.stub(process, 'env').value({ ...process.env, ...env });
+      const bot = initialize('123:token', {});
+      // handleUpdate builds a fresh Telegram client per update.
+      const callApi = sandbox
+        .stub(Telegram.prototype, 'callApi')
+        .callsFake(async (method: string) =>
+          method === 'getMe'
+            ? { id: 1, is_bot: true, first_name: 'bot', username: 'lnp2pbot' }
+            : true,
+        );
+      const sent = () =>
+        callApi
+          .getCalls()
+          .filter((call: any) => call.args[0] === 'sendMessage')
+          .map((call: any) => call.args[1].text as string);
+      return { bot, callApi, sent };
+    };
+
+    const message = (from: any, text: string, chatType = 'private') => ({
+      update_id: 1,
+      message: {
+        message_id: 1,
+        date: 0,
+        from,
+        chat: { id: chatType === 'private' ? from.id : -100, type: chatType },
+        text,
+        entities: [{ type: 'bot_command', offset: 0, length: 6 }],
+      },
+    });
+
+    const button = (from: any, data: string) => ({
+      update_id: 2,
+      callback_query: {
+        id: '1',
+        from,
+        chat_instance: '1',
+        data,
+        message: {
+          message_id: 2,
+          date: 0,
+          chat: { id: from.id, type: 'private' },
+        },
+      },
+    });
+
+    let from: any;
+
+    beforeEach(() => {
+      senderId += 1;
+      from = {
+        id: senderId,
+        is_bot: false,
+        first_name: 'A',
+        language_code: 'en',
+      };
+      const user = eligibleUser();
+      sandbox.stub(User, 'findOne').resolves(user);
+      sandbox
+        .stub(User, 'findOneAndUpdate')
+        .callsFake(async () => ({ ...user, reputation_exported_to: IDENTITY }));
+      sandbox
+        .stub(Order, 'aggregate')
+        .resolves([{ startedAt: new Date('2023-10-02T17:45:12Z') }]);
+    });
+
+    afterEach(async () => {
+      await schedule.gracefulShutdown();
+    });
+
+    const sunsetWithIssuer = {
+      SUNSET_MODE: 'true',
+      REPUTATION_ISSUER_SK: ISSUER_SK,
+    };
+
+    it('answers /start rep_ and its confirm button in sunset mode', async () => {
+      const { bot, callApi, sent } = makeBot(sunsetWithIssuer);
+
+      await bot.handleUpdate(message(from, REP_LINK) as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include(nip19.npubEncode(IDENTITY));
+      expect(sent()[0]).to.not.include(NOTICE);
+
+      // Pressed right away: the rate limiter must not drop it.
+      await bot.handleUpdate(
+        button(from, `repok_${encodeIdentity(IDENTITY)}`) as any,
+      );
+      expect(callApi.calledWith('answerCallbackQuery')).to.equal(true);
+      const [, exported, attestation] = sent();
+      expect(exported).to.include('214');
+      expect(JSON.parse(attestation).kind).to.equal(38388);
+      expect(sent().join('\n')).to.not.include(NOTICE);
+    });
+
+    it('answers every other update with the sunset notice', async () => {
+      const { bot, sent } = makeBot(sunsetWithIssuer);
+
+      await bot.handleUpdate(message(from, '/help') as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include(NOTICE);
+    });
+
+    it('leaves a /start rep_ sent in a group to the sunset notice', async () => {
+      const { bot, sent } = makeBot(sunsetWithIssuer);
+
+      await bot.handleUpdate(message(from, REP_LINK, 'supergroup') as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include(NOTICE);
+    });
+
+    it('says export is unavailable when the database is not connected', async () => {
+      sandbox.stub(mongoose.connection, 'readyState').value(0);
+      const { bot, sent } = makeBot(sunsetWithIssuer);
+
+      await bot.handleUpdate(message(from, REP_LINK) as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include('Reputation export is not available');
+    });
+
+    it('answers /start rep_ with the notice when no issuer key is set', async () => {
+      const { bot, sent } = makeBot({
+        SUNSET_MODE: 'true',
+        REPUTATION_ISSUER_SK: '',
+      });
+
+      await bot.handleUpdate(message(from, REP_LINK) as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include(NOTICE);
+    });
+
+    it('answers /start rep_ the same way outside sunset mode', async () => {
+      const { bot, sent } = makeBot({
+        SUNSET_MODE: 'false',
+        REPUTATION_ISSUER_SK: ISSUER_SK,
+      });
+
+      await bot.handleUpdate(message(from, REP_LINK) as any);
+      expect(sent()).to.have.length(1);
+      expect(sent()[0]).to.include(nip19.npubEncode(IDENTITY));
+      expect(sent()[0]).to.not.include(NOTICE);
     });
   });
 });

@@ -772,3 +772,11 @@ community_already_enabled: Diese Community ist bereits aktiviert
 ambiguous_community_input: Mehrere Communities stimmen mit diesem Benutzernamen überein, bitte verwende stattdessen die Community-ID
 
 order_take_rate_limit: "Du hast das Limit für angenommene Aufträge erreicht. Bitte warte ${hours} Stunde(n), bevor du einen neuen Auftrag annimmst, oder schließe einen Auftrag erfolgreich ab, um den Zähler zurückzusetzen."
+
+reputation_invalid_link: "Dieser Link zum Exportieren deiner Reputation ist ungültig. Öffne ihn erneut aus deiner Mostro-App."
+reputation_unavailable: "Der Reputationsexport ist gerade nicht verfügbar. Bitte versuche es später erneut."
+reputation_not_eligible: "Dein Konto kann seine Reputation nicht exportieren: Es braucht mindestens 10 abgeschlossene Trades und 5 erhaltene Bewertungen und darf nicht gesperrt sein."
+reputation_confirm: "Deine Reputation wird an diese Mostro-Identität exportiert:\n\n${npub}\n\nPrüfe, dass es die ist, die deine Mostro-App anzeigt. Nach der Bestätigung ist dein Konto hier an sie gebunden und kann ohne deren Zustimmung nicht an eine andere Identität exportiert werden."
+reputation_confirm_button: "Bestätigen und exportieren"
+reputation_bound_other: "Deine Reputation hier ist bereits an eine andere Mostro-Identität gebunden:\n\n${npub}\n\nUm sie auf eine neue Identität zu übertragen, autorisiere den Wechsel in deiner Mostro-App mit der Identität, an die sie gebunden ist."
+reputation_exported: "Hier ist deine Reputation für ${npub}: ${reviews} erhaltene Bewertungen, im Durchschnitt ${rating}. Kopiere die nächste Nachricht vollständig und füge sie in deine Mostro-App ein, um sie zu importieren. Sie ist 7 Tage gültig."
