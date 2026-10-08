@@ -31,6 +31,8 @@ export interface UserDocument extends Document<string> {
     min_days_using_bot: number;
     min_completed_orders: number;
   };
+  reputation_exported_to?: string | null;
+  reputation_exported_at?: Date | null;
 }
 
 const UserReviewSchema = new Schema<UserReview>({
@@ -66,6 +68,12 @@ const UserSchema = new Schema<UserDocument>({
     },
     required: false,
   },
+  // Reputation export (util/reputation.ts): the Mostro identity this
+  // account's reputation is bound to, as 64 lowercase hex characters, and the
+  // UTC day of the last export. Day precision, so the record cannot be used
+  // to time-correlate an export with an import on Mostro.
+  reputation_exported_to: { type: String, default: null },
+  reputation_exported_at: { type: Date, default: null },
 });
 
 export default mongoose.model<UserDocument>('User', UserSchema);
