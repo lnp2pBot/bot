@@ -1,6 +1,6 @@
 import { Scenes, Markup } from 'telegraf';
 import { logger } from '../../../logger';
-import { getCurrency } from '../../../util';
+import { getCurrency, checkMarketOrderSatsLimits } from '../../../util';
 import { Community } from '../../../models';
 import * as ordersActions from '../../ordersActions';
 import {
@@ -67,6 +67,35 @@ export const createOrder = new Scenes.WizardScene(
         return createOrderSteps.priceMargin(ctx);
       if (undefined === method) return createOrderSteps.method(ctx);
 
+      // Market price orders (sats === 0) settle in sats at take time. Estimate
+      // the sats at the current market price and enforce MIN/MAX on the
+      // estimate before creating the order. Covers both the range path and the
+      // "market price" button, since both reach this gate with sats === 0.
+      if (sats === 0) {
+        const check = await checkMarketOrderSatsLimits(
+          currency,
+          fiatAmount,
+          priceMargin ?? 0,
+        );
+        if (check.status === 'below_min' || check.status === 'above_max') {
+          ctx.wizard.state.error = ctx.i18n.t(
+            check.status === 'below_min'
+              ? 'must_be_gt_or_eq'
+              : 'must_be_lt_or_eq',
+            { fieldName: ctx.i18n.t('sats_amount'), qty: check.limit },
+          );
+          ctx.wizard.state.fiatAmount = undefined;
+          await ctx.wizard.state.updateUI();
+          return createOrderSteps.fiatAmount(ctx);
+        }
+        if (check.status === 'price_unavailable') {
+          logger.warning(
+            'Market price order sats estimate skipped: price API unavailable',
+          );
+        }
+      }
+
+      // We remove all special characters from the payment method(s)
       const replaceRegex = /[&/\\#,+~%.'":*?<>{}]/g;
       const paymentMethod = selectedMethods?.length
         ? selectedMethods.map(m => m.replace(replaceRegex, '')).join(', ')
@@ -392,7 +421,7 @@ const createOrderPrompts = {
   },
 };
 
-const createOrderHandlers = {
+export const createOrderHandlers = {
   async fiatAmount(ctx: CommunityContext) {
     if (ctx.message === undefined) return ctx.scene.leave();
     ctx.wizard.state.error = null;
@@ -436,19 +465,41 @@ const createOrderHandlers = {
       await ctx.wizard.state.updateUI();
       return true;
     }
-    const input = Number(ctx.message?.text);
+    if (!ctx.message?.text) {
+      return ctx.scene.leave();
+    }
+    const rawInput = Number(ctx.message.text);
     await ctx.deleteMessage();
-    if (isNaN(input)) {
+    if (isNaN(rawInput)) {
       ctx.wizard.state.error = ctx.i18n.t('not_number');
       await ctx.wizard.state.updateUI();
       return;
     }
-    if (input < 0) {
+    if (rawInput < 0) {
       ctx.wizard.state.error = ctx.i18n.t('not_negative');
       await ctx.wizard.state.updateUI();
       return;
     }
-    ctx.wizard.state.sats = Math.floor(input);
+    const input = Math.floor(rawInput);
+    const minPaymentAmt = Number(process.env.MIN_PAYMENT_AMT) || 0;
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT) || 0;
+    if (input !== 0 && minPaymentAmt > 0 && input < minPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_gt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: minPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    if (input !== 0 && maxPaymentAmt > 0 && input > maxPaymentAmt) {
+      ctx.wizard.state.error = ctx.i18n.t('must_be_lt_or_eq', {
+        fieldName: ctx.i18n.t('sats_amount'),
+        qty: maxPaymentAmt,
+      });
+      await ctx.wizard.state.updateUI();
+      return;
+    }
+    ctx.wizard.state.sats = input;
     await ctx.wizard.state.updateUI();
     return true;
   },

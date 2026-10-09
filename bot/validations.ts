@@ -17,6 +17,7 @@ import {
   isDisputeSolver,
   removeLightningPrefix,
   isOrderCreator,
+  checkMarketOrderSatsLimits,
 } from '../util';
 import { existLightningAddress } from '../lnurl/lnurl-pay';
 import { logger } from '../logger';
@@ -206,12 +207,26 @@ const validateSellOrder = async (ctx: MainContext) => {
       return false;
     }
 
-    // TODO, this validation could be amount > 0?
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
-        'monto_en_sats',
+        ctx.i18n.t('sats_amount'),
         Number(process.env.MIN_PAYMENT_AMT),
+      );
+      return false;
+    }
+
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
+    if (
+      amount !== 0 &&
+      Number.isFinite(maxPaymentAmt) &&
+      maxPaymentAmt > 0 &&
+      amount > maxPaymentAmt
+    ) {
+      await messages.mustBeLessEqThan(
+        ctx,
+        ctx.i18n.t('sats_amount'),
+        maxPaymentAmt,
       );
       return false;
     }
@@ -227,13 +242,48 @@ const validateSellOrder = async (ctx: MainContext) => {
     }
 
     if (fiatAmount.some((x: number) => x < 1)) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, ctx.i18n.t('fiat_amount'), 1);
       return false;
     }
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(ctx);
       return false;
+    }
+
+    // Market price orders (amount === 0) settle in sats at take time. Estimate
+    // the sats at the current market price and enforce MIN/MAX on the estimate.
+    if (amount === 0) {
+      const check = await checkMarketOrderSatsLimits(
+        fiatCode.toUpperCase(),
+        fiatAmount,
+        Number(priceMargin) || 0,
+      );
+      if (check.status === 'below_min') {
+        await messages.mustBeGreatherEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'above_max') {
+        await messages.mustBeLessEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'price_unavailable') {
+        // Fail closed: without a price we can't guarantee the order respects the
+        // configured MIN/MAX, so we don't publish it (see PR #778 review).
+        logger.warning(
+          'Market price order rejected: price API unavailable, cannot verify sats limits',
+        );
+        await messages.cantVerifySatsLimitsMessage(ctx);
+        return false;
+      }
     }
 
     paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
@@ -298,8 +348,23 @@ const validateBuyOrder = async (ctx: MainContext) => {
     if (amount !== 0 && amount < Number(process.env.MIN_PAYMENT_AMT)) {
       await messages.mustBeGreatherEqThan(
         ctx,
-        'monto_en_sats',
+        ctx.i18n.t('sats_amount'),
         Number(process.env.MIN_PAYMENT_AMT),
+      );
+      return false;
+    }
+
+    const maxPaymentAmt = Number(process.env.MAX_PAYMENT_AMT);
+    if (
+      amount !== 0 &&
+      Number.isFinite(maxPaymentAmt) &&
+      maxPaymentAmt > 0 &&
+      amount > maxPaymentAmt
+    ) {
+      await messages.mustBeLessEqThan(
+        ctx,
+        ctx.i18n.t('sats_amount'),
+        maxPaymentAmt,
       );
       return false;
     }
@@ -315,13 +380,48 @@ const validateBuyOrder = async (ctx: MainContext) => {
     }
 
     if (fiatAmount.some((x: number) => x < 1)) {
-      await messages.mustBeGreatherEqThan(ctx, 'monto_en_fiat', 1);
+      await messages.mustBeGreatherEqThan(ctx, ctx.i18n.t('fiat_amount'), 1);
       return false;
     }
 
     if (!isIso4217(fiatCode)) {
       await messages.mustBeValidCurrency(ctx);
       return false;
+    }
+
+    // Market price orders (amount === 0) settle in sats at take time. Estimate
+    // the sats at the current market price and enforce MIN/MAX on the estimate.
+    if (amount === 0) {
+      const check = await checkMarketOrderSatsLimits(
+        fiatCode.toUpperCase(),
+        fiatAmount,
+        Number(priceMargin) || 0,
+      );
+      if (check.status === 'below_min') {
+        await messages.mustBeGreatherEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'above_max') {
+        await messages.mustBeLessEqThan(
+          ctx,
+          ctx.i18n.t('sats_amount'),
+          check.limit,
+        );
+        return false;
+      }
+      if (check.status === 'price_unavailable') {
+        // Fail closed: without a price we can't guarantee the order respects the
+        // configured MIN/MAX, so we don't publish it (see PR #778 review).
+        logger.warning(
+          'Market price order rejected: price API unavailable, cannot verify sats limits',
+        );
+        await messages.cantVerifySatsLimitsMessage(ctx);
+        return false;
+      }
     }
 
     paymentMethod = paymentMethod.replace(/[&/\\#,+~%.'":*?<>{}]/g, '');
