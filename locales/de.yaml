@@ -71,7 +71,9 @@ must_be_numeric: ${fieldName} muss numerisch sein
 sats_amount: sats Wert
 fiat_amount: fiat Wert
 sell_correct_format: |
-  /sell \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\]
+  /sell \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\] \[_Community_\]
+
+  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\. Du musst den Zuschlag/Rabatt davor angeben \(nutze 0, wenn du keinen möchtest\)\.
 
   Um einen Verkaufsauftrag von 1000 Sats für 2 Euro \(EUR\) zu erstellen und anzugeben, dass die Zahlung in FIAT durch Überweisung oder Einzahlung am Geldautomaten erfolgt, musst du \<\> und \[\] weglassen\.
 
@@ -85,7 +87,9 @@ sell_correct_format: |
 
   `/sell 0 100\-500 EUR "Zahlungsmethode" 3`
 buy_correct_format: |
-  /buy \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\]
+  /buy \<_Anzahl sats_\> \<_fiat Wert_\> \<_fiat code_\> \<_Zahlungsmethode_\> \[_Zuschlag/Rabatt_\] \[_Community_\]
+
+  Du kannst den Namen einer deiner Communities als letzten Parameter hinzufügen, um die Order dort statt in deiner Standard\-Community zu veröffentlichen\. Du musst den Zuschlag/Rabatt davor angeben \(nutze 0, wenn du keinen möchtest\)\.
 
   Um einen Auftrag über 1000 Sats für 2 \(EUR\) zu erstellen und anzugeben, dass die Zahlung per Überweisung erfolgt, musst du sowohl \<\> als auch \[\] weglassen\.
 
@@ -241,8 +245,8 @@ must_be_number_or_range: 'Fiat_amount muss eine Zahl oder ein numerischer Bereic
 invalid_lightning_address: Ungültige Lightning-Adresse
 unavailable_lightning_address: Nicht verfügbare Lightning-Adresse ${la}
 help: |
-  /sell <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt einen Bitcoin Verkaufsauftrag
-  /buy <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] - Erstellt eine Bitcoin Kaufauftrag
+  /sell <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] \[_Community_] - Erstellt einen Bitcoin Verkaufsauftrag
+  /buy <_Anzahl sats_> <_fiat Wert_> <_fiat code_> <_Zahlungsmethode_> \[_Zuschlag/Rabatt_] \[_Community_] - Erstellt eine Bitcoin Kaufauftrag
   /takeorder <_order id_> - Ermöglicht Ihnen, eine Bestellung aus dem Chat mit dem Bot anzunehmen, ohne zu dem Kanal zu gehen, in dem sie veröffentlicht wurde
   /info - Zeigt zusätzliche Informationen über das Bot an
   /showusername - Schaltet die Anzeige des Benutzernamens in jedem neu erstellten Auftrag aus. Der Standardwert ist *nein* (false)
