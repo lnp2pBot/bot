@@ -56,7 +56,7 @@
     "@types/qrcode": "^1.5.2",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
-    "chai": "^4.3.4",
+    "chai": "^6.2.2",
     "chokidar": "^3.5.3",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.5.0",
