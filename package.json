@@ -58,7 +58,7 @@
     "@typescript-eslint/parser": "^8.11.0",
     "chai": "^4.3.4",
     "chokidar": "^3.5.3",
-    "eslint": "^8.57.1",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
