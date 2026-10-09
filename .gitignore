@@ -5,3 +5,6 @@ tls.cert
 dist/
 .history/
 commands.log
+# StrykerJS mutation testing
+.stryker-tmp/
+reports/
