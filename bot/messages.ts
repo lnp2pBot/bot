@@ -555,6 +555,42 @@ const onGoingTakeBuyMessage = async (
   }
 };
 
+// Telegram rejects a MarkdownV2 message with 400 "can't parse entities" when a
+// translation contains an unescaped reserved character.
+const isMarkdownParseError = (error: unknown) =>
+  error instanceof TelegramError &&
+  error.response.error_code === 400 &&
+  /can't parse entities/i.test(error.response.description ?? '');
+
+// MarkdownV2 escapes (`\.`, `\(`, …) are meaningless once parse_mode is
+// dropped, so strip them before falling back or the reader sees the backslashes.
+const unescapeMarkdownV2 = (text: string) => text.replace(/\\(.)/g, '$1');
+
+// Sends a MarkdownV2 message, retrying once as plain text when Telegram rejects
+// the formatting. A single unescaped reserved character makes sendMessage throw,
+// and callers that send follow-up messages (e.g. the order action buttons) never
+// reach them. Escaping locales fixes the known characters; this keeps the
+// message deliverable when a new one slips through. Errors that aren't parse
+// failures (rate limits, blocked bot, network) are re-thrown untouched so we
+// don't duplicate a message that may already have been delivered.
+// The failing locale is logged so the translation can be corrected.
+const sendMarkdownV2WithPlainFallback = async (
+  bot: HasTelegram,
+  tgId: string,
+  text: string,
+  locale: string,
+) => {
+  try {
+    await bot.telegram.sendMessage(tgId, text, { parse_mode: 'MarkdownV2' });
+  } catch (error) {
+    if (!isMarkdownParseError(error)) throw error;
+    logger.warning(
+      `MarkdownV2 send failed for locale "${locale}", retrying as plain text: ${error}`,
+    );
+    await bot.telegram.sendMessage(tgId, unescapeMarkdownV2(text));
+  }
+};
+
 const beginTakeSellMessage = async (
   ctx: MainContext,
   bot: HasTelegram,
@@ -570,10 +606,11 @@ const beginTakeSellMessage = async (
     let expirationTime = time.hours + ' ' + ctx.i18n.t('hours');
     expirationTime +=
       time.minutes > 0 ? ' ' + time.minutes + ' ' + ctx.i18n.t('minutes') : '';
-    await bot.telegram.sendMessage(
+    await sendMarkdownV2WithPlainFallback(
+      bot,
       buyer.tg_id,
       ctx.i18n.t('you_took_someone_order', { expirationTime }),
-      { parse_mode: 'MarkdownV2' },
+      ctx.i18n.locale(),
     );
     await bot.telegram.sendMessage(buyer.tg_id, order._id, {
       reply_markup: {
